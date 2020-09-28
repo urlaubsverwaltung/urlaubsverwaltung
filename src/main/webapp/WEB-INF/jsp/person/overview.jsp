@@ -170,13 +170,13 @@
             <div class="col-xs-12">
                 <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
                 <div class="tw-w-full sm:tw-w-1/2">
-                    <div class="box tw-border-none tw-p-0">
-                        <span class="box-icon-container">
-                            <span class="box-icon tw-bg-yellow-500 tw-text-white">
+                    <uv:box className="tw-border-none tw-p-0">
+                        <jsp:attribute name="icon">
+                            <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
                                 <uv:icon-sun className="tw-w-8 tw-h-8" />
-                            </span>
-                        </span>
-                        <div class="box-text tw-flex tw-flex-col">
+                            </uv:box-icon>
+                        </jsp:attribute>
+                        <jsp:body>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <spring:message code="overview.vacations.holidayLeave.1" />
                             </span>
@@ -191,17 +191,17 @@
                                     &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
                                 </span>
                             </span>
-                        </div>
-                    </div>
+                        </jsp:body>
+                    </uv:box>
                 </div>
                 <div class="tw-w-full sm:tw-w-1/2">
-                    <div class="box tw-border-none tw-p-0">
-                        <div class="box-icon-container">
-                            <div class="box-icon tw-bg-yellow-500 tw-text-white">
+                    <uv:box className="tw-border-none tw-p-0">
+                        <jsp:attribute name="icon">
+                            <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
                                 <uv:icon-flag className="tw-w-8 tw-h-8" />
-                            </div>
-                        </div>
-                        <div class="box-text tw-flex tw-flex-col">
+                            </uv:box-icon>
+                        </jsp:attribute>
+                        <jsp:body>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <spring:message code="overview.vacations.otherLeave.1" />
                             </span>
@@ -216,8 +216,8 @@
                                     &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
                                 </span>
                             </span>
-                        </div>
-                    </div>
+                        </jsp:body>
+                    </uv:box>
                 </div>
             </div>
             </div>
@@ -250,13 +250,13 @@
                 <div class="col-xs-12">
                     <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
                     <div class="tw-w-full sm:tw-w-1/2">
-                        <div class="box tw-border-none tw-p-0">
-                            <span class="box-icon-container">
-                                <span class="box-icon tw-bg-red-600 tw-text-white">
+                        <uv:box className="tw-border-none tw-p-0">
+                            <jsp:attribute name="icon">
+                                <uv:box-icon className="tw-bg-red-600 tw-text-white">
                                     <uv:icon-medkit className="tw-w-8 tw-h-8" />
-                                </span>
-                            </span>
-                            <span class="box-text tw-flex tw-flex-col">
+                                </uv:box-icon>
+                            </jsp:attribute>
+                            <jsp:body>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <spring:message code="overview.sicknotes.sickdays.1" />
                                 </span>
@@ -271,17 +271,17 @@
                                         &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
                                     </span>
                                 </span>
-                            </span>
-                        </div>
+                            </jsp:body>
+                        </uv:box>
                     </div>
                     <div class="tw-w-full sm:tw-w-1/2">
-                        <div class="box tw-border-none tw-p-0">
-                            <span class="box-icon-container">
-                                <span class="box-icon tw-bg-red-600 tw-text-white">
+                        <uv:box className="tw-border-none tw-p-0">
+                            <jsp:attribute name="icon">
+                                <uv:box-icon className="tw-bg-red-600 tw-text-white">
                                     <uv:icon-child className="tw-w-8 tw-h-8" />
-                                </span>
-                            </span>
-                            <span class="box-text tw-flex tw-flex-col">
+                                </uv:box-icon>
+                            </jsp:attribute>
+                            <jsp:body>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <spring:message code="overview.sicknotes.sickdays.child.1" />
                                 </span>
@@ -296,8 +296,8 @@
                                         &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
                                     </span>
                                 </span>
-                            </span>
-                        </div>
+                            </jsp:body>
+                        </uv:box>
                     </div>
                 </div>
                 </div>

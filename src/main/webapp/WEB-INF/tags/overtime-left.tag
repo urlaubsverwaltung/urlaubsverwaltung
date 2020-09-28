@@ -4,13 +4,13 @@
 <%@attribute name="hours" type="java.math.BigDecimal" required="true" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 
-<div class="box ${cssClass}">
-    <div class="box-icon-container hidden-print">
-        <div class="box-icon tw-bg-green-500 tw-text-white">
+<uv:box className="${cssClass}">
+    <jsp:attribute name="icon">
+        <uv:box-icon className="tw-bg-green-500 tw-text-white">
             <uv:icon-sort-descending className="tw-w-8 tw-h-8" />
-        </div>
-    </div>
-    <div class="box-text tw-flex tw-flex-col">
+        </uv:box-icon>
+    </jsp:attribute>
+    <jsp:body>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
             <spring:message code="overtime.person.left.1" />
         </span>
@@ -20,5 +20,5 @@
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
             <spring:message code="overtime.person.left.3" />
         </span>
-    </div>
-</div>
+    </jsp:body>
+</uv:box>

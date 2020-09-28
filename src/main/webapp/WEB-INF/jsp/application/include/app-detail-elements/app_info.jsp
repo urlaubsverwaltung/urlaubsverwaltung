@@ -4,46 +4,46 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<div class="box tw-h-32 tw-mb-4">
-    <span class="box-icon-container">
-        <span class="box-icon tw-bg-yellow-500 tw-text-white">
-        <c:choose>
-            <c:when test="${application.vacationType.category == 'HOLIDAY'}">
-                <uv:icon-sun className="tw-w-8 tw-h-8" />
-            </c:when>
-            <c:otherwise>
-                <uv:icon-flag className="tw-w-8 tw-h-8" />
-            </c:otherwise>
-        </c:choose>
-        </span>
-    </span>
-    <span class="box-text tw-flex tw-flex-col">
+<uv:box className="tw-h-32 tw-mb-4">
+    <jsp:attribute name="icon">
+        <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
+            <c:choose>
+                <c:when test="${application.vacationType.category == 'HOLIDAY'}">
+                    <uv:icon-sun className="tw-w-8 tw-h-8" />
+                </c:when>
+                <c:otherwise>
+                    <uv:icon-flag className="tw-w-8 tw-h-8" />
+                </c:otherwise>
+            </c:choose>
+        </uv:box-icon>
+    </jsp:attribute>
+    <jsp:body>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
             <c:out value="${application.person.niceName}"/> <spring:message code="application.applier.applied"/>
         </span>
         <span class="tw-mt-2 tw-mb-1 tw-text-lg tw-font-medium">
             <spring:message code="${application.vacationType.messageKey}"/>
             <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
-            <c:choose>
-                <c:when test="${application.status == 'WAITING'}">
-                    <uv:icon-question-mark-circle className="tw-w-5 tw-h-5" />
-                </c:when>
-                <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                    <uv:icon-check className="tw-w-5 tw-h-5" />
-                </c:when>
-                <c:when test="${application.status == 'ALLOWED'}">
-                    <uv:icon-check className="tw-w-5 tw-h-5" />
-                </c:when>
-                <c:when test="${application.status == 'REJECTED'}">
-                    <uv:icon-ban className="tw-w-5 tw-h-5" />
-                </c:when>
-                <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                    <uv:icon-trash className="tw-w-5 tw-h-5" />
-                </c:when>
-                <c:otherwise>
-                    &nbsp;
-                </c:otherwise>
-            </c:choose>
+                <c:choose>
+                    <c:when test="${application.status == 'WAITING'}">
+                        <uv:icon-question-mark-circle className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
+                        <uv:icon-check className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'ALLOWED'}">
+                        <uv:icon-check className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'REJECTED'}">
+                        <uv:icon-ban className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
+                        <uv:icon-trash className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:otherwise>
+                        &nbsp;
+                    </c:otherwise>
+                </c:choose>
             </span>
         </span>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -71,8 +71,8 @@
                 </c:otherwise>
             </c:choose>
         </span>
-    </span>
-</div>
+    </jsp:body>
+</uv:box>
 
 <table class="list-table striped-table bordered-table tw-text-sm">
 

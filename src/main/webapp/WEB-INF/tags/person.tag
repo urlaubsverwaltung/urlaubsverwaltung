@@ -8,18 +8,20 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<div class="box tw-items-center ${cssClass}">
-    <div class="box-icon-container">
-        <img
-            src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
-            alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
-            class="gravatar tw-rounded-full"
-            width="60px"
-            height="60px"
-            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-        />
-    </div>
-    <div class="box-text">
+<uv:box className="tw-items-center ${cssClass}">
+    <jsp:attribute name="icon">
+        <uv:box-icon>
+            <img
+                src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
+                alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                class="gravatar tw-rounded-full"
+                width="60px"
+                height="60px"
+                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+            />
+        </uv:box-icon>
+    </jsp:attribute>
+    <jsp:body>
         <div class="tw-text-lg tw-mb-1">
             <c:choose>
                 <c:when test="${nameIsNoLink}">
@@ -38,5 +40,5 @@
                 &nbsp;<c:out value="${person.email}"/>
             </span>
         </a>
-    </div>
-</div>
+    </jsp:body>
+</uv:box>

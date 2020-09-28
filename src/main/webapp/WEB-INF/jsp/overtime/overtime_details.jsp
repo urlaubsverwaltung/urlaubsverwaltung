@@ -49,11 +49,14 @@
                         </h1>
                     </jsp:body>
                 </uv:section-heading>
-                <div class="box tw-flex tw-h-32 tw-mb-8">
-                    <span class="tw-bg-green-500 tw-text-white tw-mr-6 tw-rounded-full tw-p-1 tw-h-16 tw-w-16 tw-flex tw-items-center tw-justify-center">
-                        <uv:icon-briefcase className="tw-w-8 tw-h-8" />
-                    </span>
-                    <span class="box-text">
+
+                <uv:box className="tw-h-32 tw-mb-8">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-green-500 tw-text-white">
+                            <uv:icon-briefcase className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
                         <h5 class="is-inline-block is-sticky"><c:out value="${record.person.niceName}"/></h5>
                         <spring:message code="overtime.details.hours" arguments="${record.hours}"/>
                         <c:set var="START_DATE">
@@ -62,10 +65,13 @@
                         <c:set var="END_DATE">
                             <h5 class="is-inline-block is-sticky"><uv:date date="${record.endDate}"/></h5>
                         </c:set>
-                        <spring:message code="overtime.details.period" arguments="${START_DATE};${END_DATE}"
-                                        argumentSeparator=";"/>
-                    </span>
-                </div>
+                        <spring:message
+                            code="overtime.details.period"
+                            arguments="${START_DATE};${END_DATE}"
+                            argumentSeparator=";"
+                        />
+                    </jsp:body>
+                </uv:box>
 
                 <uv:section-heading>
                     <h2>

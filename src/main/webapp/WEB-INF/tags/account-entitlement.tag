@@ -5,13 +5,13 @@
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
-<div class="box ${className}">
-    <div class="box-icon-container">
-        <div class="box-icon tw-bg-green-500 tw-text-white">
+<uv:box className="${className}">
+    <jsp:attribute name="icon">
+        <uv:box-icon className="tw-bg-green-500 tw-text-white">
             <uv:icon-calendar className="tw-w-8 tw-h-8" />
-        </div>
-    </div>
-    <div class="box-text tw-text-sm tw-flex tw-flex-col">
+        </uv:box-icon>
+    </jsp:attribute>
+    <jsp:body>
         <c:choose>
             <c:when test="${account != null}">
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
@@ -25,8 +25,10 @@
                 </span>
             </c:when>
             <c:otherwise>
-                <spring:message code='person.account.vacation.noInformation'/>
+                <span class="tw-text-sm">
+                    <spring:message code='person.account.vacation.noInformation'/>
+                </span>
             </c:otherwise>
         </c:choose>
-    </div>
-</div>
+    </jsp:body>
+</uv:box>

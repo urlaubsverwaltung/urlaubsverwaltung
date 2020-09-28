@@ -86,20 +86,20 @@
                     </div>
                 </form:form>
 
-                <div class="box tw-mb-6">
-                    <span class="box-icon-container hidden-print">
-                        <span class="box-icon tw-bg-red-600 tw-text-white">
-                        <c:choose>
-                            <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                                <uv:icon-child className="tw-w-8 tw-h-8" />
-                            </c:when>
-                            <c:otherwise>
-                                <uv:icon-medkit className="tw-w-8 tw-h-8" />
-                            </c:otherwise>
-                        </c:choose>
-                        </span>
-                    </span>
-                    <span class="box-text tw-flex tw-flex-col">
+                <uv:box className="tw-mb-6">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-red-600 tw-text-white">
+                            <c:choose>
+                                <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
+                                    <uv:icon-child className="tw-w-8 tw-h-8" />
+                                </c:when>
+                                <c:otherwise>
+                                    <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                                </c:otherwise>
+                            </c:choose>
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
                         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                             <spring:message
                                 code="sicknotes.details.box.person.has"
@@ -142,8 +142,8 @@
                                 </c:otherwise>
                             </c:choose>
                         </span>
-                    </span>
-                </div>
+                    </jsp:body>
+                </uv:box>
 
                 <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
