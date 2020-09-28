@@ -71,16 +71,18 @@
                         </c:if>
                     </div>
                     <div class="col-xs-12">
-                        <legend>
-                            <c:choose>
-                                <c:when test="${overtime.id == null}">
-                                    <spring:message code="overtime.record.new"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="overtime.record.edit"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </legend>
+                        <uv:section-heading>
+                            <h2>
+                                <c:choose>
+                                    <c:when test="${overtime.id == null}">
+                                        <spring:message code="overtime.record.new"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="overtime.record.edit"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </h2>
+                        </uv:section-heading>
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">

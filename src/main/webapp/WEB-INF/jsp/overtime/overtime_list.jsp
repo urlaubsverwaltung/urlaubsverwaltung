@@ -28,19 +28,21 @@
     <div class="container">
         <div class="row tw-mb-4 lg:tw-mb-6">
             <div class="col-xs-12">
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="overtime.title"/>
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
+                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.overtime.new"/>">
+                                <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                            </a>
+                        </c:if>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="overtime.title"/>
+                        </h1>
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/overtime?person=${person.id}&year="/>
-                    </div>
-                    <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
-                    <div class="print:tw-hidden">
-                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.overtime.new"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                        </a>
-                    </div>
-                    </c:if>
-                </legend>
+                    </jsp:body>
+                </uv:section-heading>
             </div>
 
             <div class="tw-space-y-4 lg:tw-space-y-0">
@@ -58,9 +60,11 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <legend>
-                    <spring:message code="overtime.list"/>
-                </legend>
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="overtime.list"/>
+                    </h2>
+                </uv:section-heading>
                 <c:choose>
                     <c:when test="${empty records}">
                         <p><spring:message code="overtime.none"/></p>
