@@ -30,10 +30,12 @@
     <main>
         <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me"
                    modelAttribute="privateCalendarShare" cssClass="tw-mb-8">
-            <fieldset class="tw-mb-4">
-                <legend class="tw-text-xl">
-                    <spring:message code="calendar.share.me.title"/>
-                </legend>
+            <div class="tw-mb-4">
+                <uv:section-heading>
+                    <h2 class="tw-text-xl">
+                        <spring:message code="calendar.share.me.title"/>
+                    </h2>
+                </uv:section-heading>
                 <c:choose>
                     <c:when test="${empty privateCalendarShare.calendarUrl}">
                         <div class="tw-max-w-3xl">
@@ -81,15 +83,17 @@
                         </div>
                     </c:otherwise>
                 </c:choose>
-            </fieldset>
+            </div>
         </form:form>
 
         <c:if test="${departmentCalendars.size() > 0}">
         <div class="tw-mb-8">
-            <fieldset class="tw-mb-4">
-                <legend class="tw-text-xl">
-                    <spring:message code="calendar.share.department.title"/>
-                </legend>
+            <div class="tw-mb-4">
+                <uv:section-heading>
+                    <h2 class="tw-text-xl">
+                        <spring:message code="calendar.share.department.title"/>
+                    </h2>
+                </uv:section-heading>
                 <div>
                     <c:if test="${departmentCalendars.size() > 1}">
                     <ul class="nav nav-tabs">
@@ -160,16 +164,18 @@
                     </div>
                 </div>
 
-            </fieldset>
+            </div>
         </div>
         </c:if>
 
         <c:if test="${companyCalendarAccessible != null || companyCalendarShare != null}">
         <div>
-            <fieldset>
-                <legend class="tw-text-xl">
-                    <spring:message code="calendar.share.company.title"/>
-                </legend>
+            <div>
+                <uv:section-heading>
+                    <h2 class="tw-text-xl">
+                        <spring:message code="calendar.share.company.title"/>
+                    </h2>
+                </uv:section-heading>
                 <c:if test="${companyCalendarAccessible != null}">
                     <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible" modelAttribute="companyCalendarAccessible">
                         <form:hidden path="accessible" value="${!companyCalendarAccessible.accessible}" />
@@ -251,7 +257,7 @@
                     </c:choose>
                 </form:form>
                 </c:if>
-            </fieldset>
+            </div>
         </div>
         </c:if>
     </main>
