@@ -74,7 +74,7 @@
                             <spring:message code="absence.period"/>:
                         </label>
 
-                        <div class="col-md-7">
+                        <div class="col-md-7 tw-text-sm">
                             <uv:date date="${sickNoteConvertForm.startDate}"/> - <uv:date
                             date="${sickNoteConvertForm.endDate}"/>, <spring:message
                             code="${sickNoteConvertForm.dayLength}"/>
@@ -87,13 +87,16 @@
                         </label>
 
                         <div class="col-md-7">
-                            <span id="count-chars"></span><spring:message code="action.comment.maxChars"/>
-                            <br/>
+                            <small>
+                                <span id="count-chars"></span> <spring:message code="action.comment.maxChars"/>
+                            </small>
                             <form:textarea id="reason" path="reason" cssClass="form-control"
                                            cssErrorClass="form-control error" rows="2"
                                            onkeyup="count(this.value, 'count-chars');"
                                            onkeydown="maxChars(this,200); count(this.value, 'count-chars');"/>
-                            <span class="help-inline"><form:errors path="reason" cssClass="error"/></span>
+                            <span class="help-inline">
+                                <form:errors path="reason" cssClass="error"/>
+                            </span>
                         </div>
 
                     </div>
@@ -162,7 +165,7 @@
                         </span>
                     </div>
 
-                    <table class="list-table striped-table bordered-table">
+                    <table class="list-table striped-table bordered-table tw-text-sm">
                         <tbody>
                         <tr>
                             <td>

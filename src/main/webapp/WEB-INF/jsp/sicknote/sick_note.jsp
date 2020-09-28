@@ -145,7 +145,7 @@
                     </span>
                 </div>
 
-                <table class="list-table striped-table bordered-table">
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <tr>
                         <td>
@@ -197,7 +197,7 @@
                     </sec:authorize>
                 </legend>
 
-                <table class="list-table striped-table bordered-table">
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                         <tr>
@@ -260,7 +260,9 @@
                     <div id="comment-form" style="${STYLE}">
                         <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment"
                                    modelAttribute="comment">
-                            <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                            <small>
+                                <span id="text-comment"></span> <spring:message code="action.comment.maxChars"/>
+                            </small>
                             <form:textarea rows="2" path="text" cssClass="form-control"
                                            cssErrorClass="form-control error"
                                            onkeyup="count(this.value, 'text-comment');"
