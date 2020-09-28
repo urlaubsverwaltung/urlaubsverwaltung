@@ -86,7 +86,7 @@
                     </div>
                 </form:form>
 
-                <div class="box">
+                <div class="box tw-mb-6">
                     <span class="box-icon-container hidden-print">
                         <span class="box-icon tw-bg-red-600 tw-text-white">
                         <c:choose>
@@ -99,42 +99,49 @@
                         </c:choose>
                         </span>
                     </span>
-                    <span class="box-text">
-                        <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
-
-                        <spring:message code="sicknotes.details.title" arguments="${SICK_NOTE_MESSAGEKEY}"/>
-
-                        <c:choose>
-                            <c:when test="${sickNote.startDate == sickNote.endDate}">
-                                <c:set var="SICK_NOTE_DATE">
-                                    <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
-                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
-                                </c:set>
-                                <c:set var="SICK_NOTE_DAY_LENGTH">
-                                    <spring:message code="${sickNote.dayLength}"/>
-                                </c:set>
-                                <spring:message code="absence.period.singleDay"
-                                                arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}"
-                                                argumentSeparator=";"/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="SICK_NOTE_START_DATE">
-                                    <h5 class="is-inline-block is-sticky">
+                    <span class="box-text tw-flex tw-flex-col">
+                        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <spring:message
+                                code="sicknotes.details.box.person.has"
+                                arguments="${sickNote.person.niceName}"
+                            />
+                        </span>
+                        <span class="tw-my-1 tw-text-lg tw-font-medium">
+                            <c:out value="${SICK_NOTE_MESSAGEKEY}" />
+                        </span>
+                        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <c:choose>
+                                <c:when test="${sickNote.startDate == sickNote.endDate}">
+                                    <c:set var="SICK_NOTE_DATE">
                                         <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
                                         <uv:date date="${sickNote.startDate}"/>
-                                    </h5>
-                                </c:set>
-                                <c:set var="SICK_NOTE_END_DATE">
-                                    <h5 class="is-inline-block is-sticky">
+                                    </c:set>
+                                    <c:set var="SICK_NOTE_DAY_LENGTH">
+                                        <spring:message code="${sickNote.dayLength}"/>
+                                    </c:set>
+                                    <spring:message
+                                        code="absence.period.singleDay"
+                                        arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}"
+                                        argumentSeparator=";"
+                                    />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="SICK_NOTE_START_DATE">
+                                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
+                                        <uv:date date="${sickNote.startDate}"/>
+                                    </c:set>
+                                    <c:set var="SICK_NOTE_END_DATE">
                                         <spring:message code="${sickNote.weekDayOfEndDate}.short"/>,
                                         <uv:date date="${sickNote.endDate}"/>
-                                    </h5>
-                                </c:set>
-                                <spring:message code="absence.period.multipleDays"
-                                                arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}"
-                                                argumentSeparator=";"/>
-                            </c:otherwise>
-                        </c:choose>
+                                    </c:set>
+                                    <spring:message
+                                        code="absence.period.multipleDays"
+                                        arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}"
+                                        argumentSeparator=";"
+                                    />
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
                     </span>
                 </div>
 
