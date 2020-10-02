@@ -49,14 +49,16 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="application.data.title"/>
-                    </div>
-                    <div class="print:tw-hidden">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
                         <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
-                    </div>
-                </legend>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="application.data.title"/>
+                        </h1>
+                    </jsp:body>
+                </uv:section-heading>
 
                 <div class="feedback">
                     <c:choose>
@@ -119,13 +121,15 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
-                <legend>
-                    <spring:message code="person.account.vacation.title"/>
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.account.vacation.title"/>
+                    </h2>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
-                </legend>
+                </uv:section-heading>
 
-                <uv:person person="${application.person}"/>
-                <uv:account-entitlement account="${account}"/>
+                <uv:person person="${application.person}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:account-entitlement account="${account}" className="tw-mb-4" />
                 <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
                                  beforeApril="${beforeApril}"/>
 
@@ -140,10 +144,12 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
-                <legend>
-                    <spring:message code="application.department.title"/>
-                </legend>
-                <table class="list-table striped-table bordered-table">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="application.department.title"/>
+                    </h2>
+                </uv:section-heading>
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <c:choose>
                         <c:when test="${empty departmentApplications}">

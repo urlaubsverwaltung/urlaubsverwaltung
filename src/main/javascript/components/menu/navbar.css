@@ -5,7 +5,6 @@
 **************************************************************************/
 
 .navbar {
-  font-size: 14px;
   background-image: none;
   background-color: #f5f5f5;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
@@ -30,8 +29,7 @@
 }
 
 .navbar a.navbar-brand {
-  font-family: Verdana, sans-serif;
-  font-size: 24px;
+  font-size: 1.5rem;
   color: #4d5258 !important;
   line-height: 24px; /* height of the brand logo */
   vertical-align: middle;

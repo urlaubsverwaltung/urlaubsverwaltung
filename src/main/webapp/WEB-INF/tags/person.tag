@@ -6,38 +6,4 @@
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 <%@attribute name="nameIsNoLink" type="java.lang.Boolean" required="false" %>
 
-<spring:url var="URL_PREFIX" value="/web"/>
-
-<div class="box ${cssClass}">
-    <div class="box-icon">
-        <img
-            src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
-            alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
-            class="gravatar tw-rounded-full"
-            width="60px"
-            height="60px"
-            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-        />
-    </div>
-    <span class="box-text">
-        <h4>
-            <c:choose>
-                <c:when test="${nameIsNoLink}">
-                    <span class="hidden-print"><c:out value="${person.niceName}"/></span>
-                </c:when>
-                <c:otherwise>
-                    <a class="hidden-print" href="${URL_PREFIX}/person/${person.id}/overview">
-                        <c:out value="${person.niceName}"/>
-                    </a>
-                </c:otherwise>
-            </c:choose>
-            <span class="visible-print">
-                <c:out value="${person.niceName}"/>
-            </span>
-        </h4>
-        <a href="mailto:<c:out value='${person.email}'/>" class="tw-flex tw-items-center">
-            <uv:icon-mail className="tw-w-4 tw-h-4" />
-            &nbsp;<c:out value="${person.email}"/>
-        </a>
-    </span>
-</div>
+<uv:person-box__ person="${person}" nameIsNoLink="${nameIsNoLink}" cssClass="tw-p-5 ${cssClass}" />

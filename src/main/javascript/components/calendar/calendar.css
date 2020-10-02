@@ -20,7 +20,6 @@
   justify-content: space-between;
   cursor: default;
   border-radius: 0;
-  margin-bottom: 27px;
 }
 
 /* BUTTONS */
@@ -31,7 +30,6 @@
   padding: 0;
   cursor: pointer;
   background-color: transparent;
-  font-size: 20px;
   color: #7b7b7b;
 }
 
@@ -100,24 +98,25 @@
 
 .datepicker-month h3 {
   margin: 0;
-  padding: 8px;
-  font-size: 12px;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-size: 0.875rem;
+  font-weight: 400;
   text-align: center;
-  color: #7b7b7b;
 }
 
 .datepicker-table {
   border: none;
   border-spacing: 0;
   border-collapse: collapse;
-  font-size: 1em;
+  font-size: 0.75rem;
 }
 
 .datepicker-table th,
 .datepicker-table td {
   padding: 0;
   margin: 0;
-  color: #7b7b7b;
+  color: #4a5568;
 }
 
 .datepicker-table td {
@@ -133,11 +132,14 @@
   --background-color-left: #e5e5e5;
   --background-color-right: #e5e5e5;
   --font-color: #6f6f6f;
-  display: table-cell;
+  display: block;
   padding: 12px;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
+}
+td.datepicker-day {
+  display: table-cell;
 }
 
 /* NOTE: Order of the day classes is very important because of css classes overloading! */

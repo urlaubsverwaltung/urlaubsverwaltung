@@ -42,7 +42,7 @@
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />"/>
 </head>
 
-<body>
+<body class="md:tw-bg-gray-100">
 
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
@@ -55,12 +55,9 @@
     </div><!-- /.container-fluid -->
 </nav>
 
-<div class="row">
-
-    <div class="col-xs-12">
-
+<div class="col-xs-12">
+    <div class="row">
         <div class="content">
-
             <div class="login">
 
                 <spring:url var="LOGIN" value="/login"/>
@@ -93,16 +90,18 @@
                 </form>
 
             </div>
-
         </div>
-
     </div>
 </div>
 
 <footer>
-    <div class="row">
-        <div class="col-xs-12">
-            <p><spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a></p>
+    <div class="col-xs-12">
+        <div class="row">
+            <p>
+                <small>
+                    <spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a>
+                </small>
+            </p>
         </div>
     </div>
 </footer>

@@ -22,8 +22,11 @@ tr.inactive td > * {
 
 .list-table {
   width: 100%;
-  font-size: 13px;
   margin-bottom: 27px;
+}
+
+.list-table.list-table-bt-0 tr:first-child td {
+  border-top: none;
 }
 
 .list-table td {

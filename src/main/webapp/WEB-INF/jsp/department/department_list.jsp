@@ -31,24 +31,24 @@
 <div class="content print--only-landscape">
     <div class="container">
 
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
+                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                </sec:authorize>
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="departments.title"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
         <div class="row">
-
             <div class="col-xs-12">
-
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="departments.title"/>
-                    </div>
-                    <div class="print:tw-hidden">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                        </a>
-                        </sec:authorize>
-                        <uv:print/>
-                    </div>
-                </legend>
-
                 <div class="feedback">
                     <c:choose>
                         <c:when test="${not empty createdDepartment}">
@@ -77,7 +77,7 @@
                         <spring:message code="departments.none"/>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>

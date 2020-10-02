@@ -26,15 +26,16 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<h1 class="tw-sr-only"><spring:message code="settings.header.title" /></h1>
+
 <div class="content">
     <div class="container">
-
         <form:form method="POST" action="${URL_PREFIX}/settings" modelAttribute="settings" class="form-horizontal"
                    role="form">
             <form:hidden path="id"/>
             <button type="submit" hidden></button>
 
-            <div class="row">
+            <div class="row tw-mb-4">
                 <div class="col-xs-12 feedback">
                     <c:if test="${not empty errors}">
                         <div class="alert alert-danger">
@@ -89,19 +90,21 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="tab-content">
+            <div class="tab-content tw-mb-16">
 
-                    <div class="tab-pane active" id="absence">
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.vacation.title"/></legend>
-                            </div>
+                <div class="tab-pane active" id="absence">
+                    <div class="form-section tw-mb-8">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.vacation.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.vacation.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.vacation.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -136,18 +139,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend>
-                                    <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
-                                </legend>
-                            </div>
+                    <div class="form-section tw-mb-8">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
 
@@ -192,16 +197,20 @@
 
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.sickDays.title"/></legend>
-                            </div>
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.sickDays.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.sickDays.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.sickDays.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -235,17 +244,21 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="tab-pane" id="publicHolidays">
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.publicHolidays.title"/></legend>
-                            </div>
+                <div class="tab-pane" id="publicHolidays">
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.publicHolidays.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.publicHolidays.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.publicHolidays.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -299,16 +312,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.overtime.title"/></legend>
-                            </div>
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.overtime.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.overtime.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.overtime.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
 
@@ -359,23 +376,27 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="tab-pane" id="calendar">
+                <div class="tab-pane" id="calendar">
 
-                        <div class="alert alert-danger tw-flex tw-items-center" role="alert">
-                            <uv:icon-speakerphone className="tw-w-4 tw-h-4" solid="true" />
-                            &nbsp;<spring:message code="settings.calendar.deprecated"/>
-                        </div>
+                    <div class="alert alert-danger tw-flex tw-items-center" role="alert">
+                        <uv:icon-speakerphone className="tw-w-4 tw-h-4" solid="true" />
+                        &nbsp;<spring:message code="settings.calendar.deprecated"/>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.calendar.title"/></legend>
-                            </div>
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.calendar.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.calendar.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.calendar.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -422,16 +443,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section" id="exchange-calendar">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.calendar.ews.title"/></legend>
-                            </div>
+                    <div class="form-section" id="exchange-calendar">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.calendar.ews.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.calendar.ews.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.calendar.ews.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group">
@@ -528,16 +553,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section" id="google-calendar">
+                    <div class="form-section" id="google-calendar">
+                        <div class="row">
                             <div class="col-xs-12">
-                                <legend><spring:message code="settings.calendar.google.title"/></legend>
+                                <h2><spring:message code="settings.calendar.google.title"/></h2>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.calendar.google.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.calendar.google.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group">
@@ -620,17 +649,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="form-section">
-                        <div class="col-xs-12">
-                            <hr/>
-                            <p class="help-block"><spring:message code="settings.action.update.description"/></p>
-                            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
-                                <spring:message code='action.save'/>
-                            </button>
-                        </div>
+            <div class="form-section">
+                <div class="row tw-mb-16">
+                    <div class="col-xs-12">
+                        <p class="help-block tw-text-sm"><spring:message code="settings.action.update.description"/></p>
+                        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                            <spring:message code='action.save'/>
+                        </button>
                     </div>
-
                 </div>
             </div>
         </form:form>

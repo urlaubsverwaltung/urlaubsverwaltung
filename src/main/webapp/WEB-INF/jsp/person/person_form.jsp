@@ -28,23 +28,20 @@
             <form:hidden path="id"/>
             <form:hidden path="password"/>
 
-            <div class="row">
+            <div class="form-section tw-mb-8">
+                <uv:section-heading>
+                    <h1>
+                        <spring:message code="person.form.data.title"/>
+                    </h1>
+                </uv:section-heading>
 
-                <div class="form-section">
-
-                    <div class="col-xs-12">
-                        <legend>
-                            <spring:message code="person.form.data.title"/>
-                        </legend>
-                    </div>
-
+                <div class="row">
                     <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
+                        <span class="help-block tw-text-sm">
                             <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="person.form.data.description"/>
                         </span>
                     </div>
-
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group">
                             <label class="control-label col-md-3" for="username">
@@ -87,15 +84,17 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-section">
 
-                    <div class="col-xs-12">
-                        <legend>
-                            <spring:message code="person.form.permissions.title"/>
-                        </legend>
-                    </div>
+            <div class="form-section tw-mb-16">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.form.permissions.title"/>
+                    </h2>
+                </uv:section-heading>
 
+                <div class="row">
                     <c:set var="permissionsError">
                         <form:errors path="permissions" cssClass="error"/>
                     </c:set>
@@ -117,7 +116,7 @@
                     </c:if>
 
                     <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
+                        <span class="help-block tw-text-sm">
                             <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="person.form.permissions.description"/>
                         </span>
@@ -136,7 +135,7 @@
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.INACTIVE"/>
                                     </strong>
-                                    <label>
+                                    <label class="tw-leading-snug">
                                         <form:checkbox path="permissions" value="INACTIVE"/><spring:message
                                         code="person.form.permissions.roles.INACTIVE.description"/>
                                     </label>
@@ -146,7 +145,7 @@
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.USER"/>
                                     </strong>
-                                    <label>
+                                    <label class="tw-leading-snug">
                                         <form:checkbox path="permissions" value="USER"/><spring:message
                                         code="person.form.permissions.roles.USER.description"/>
                                     </label>
@@ -158,15 +157,15 @@
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
                                     </strong>
-                                    <label class="tw-mb-2">
+                                    <label class="tw-leading-snug tw-mb-2">
                                         <form:checkbox path="permissions" value="DEPARTMENT_HEAD"/><spring:message
                                         code="person.form.permissions.roles.DEPARTMENT_HEAD.description"/>
                                     </label>
-                                    <label class="tw-ml-5 tw-pb-2">
+                                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
                                         <form:checkbox path="notifications" value="NOTIFICATION_DEPARTMENT_HEAD"/>
                                         <spring:message code="person.form.notifications.DEPARTMENT_HEAD"/>
                                     </label>
-                                    <label class="${!empty departments ? 'info' : ''}">
+                                    <label class="tw-leading-snug ${!empty departments ? 'info' : ''}">
                                         <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                         <c:choose>
                                             <c:when test="${empty departments}">
@@ -188,17 +187,17 @@
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                                     </strong>
-                                    <label class="tw-mb-2">
+                                    <label class="tw-leading-snug tw-mb-2">
                                         <form:checkbox path="permissions"
                                                        value="SECOND_STAGE_AUTHORITY"/><spring:message
                                         code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description"/>
                                     </label>
-                                    <label class="tw-ml-5 tw-pb-2">
+                                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
                                         <form:checkbox path="notifications"
                                                        value="NOTIFICATION_SECOND_STAGE_AUTHORITY"/>
                                         <spring:message code="person.form.notifications.SECOND_STAGE_AUTHORITY"/>
                                     </label>
-                                    <label class="${!empty secondStageDepartments ? 'info' : ''}">
+                                    <label class="tw-leading-snug ${!empty secondStageDepartments ? 'info' : ''}">
                                         <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                                         <c:choose>
                                             <c:when test="${empty secondStageDepartments}">
@@ -221,37 +220,37 @@
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.BOSS"/>
                                     </strong>
-                                    <label class="tw-mb-2">
+                                    <label class="tw-leading-snug tw-mb-2">
                                         <form:checkbox path="permissions" value="BOSS"/><spring:message
                                         code="person.form.permissions.roles.BOSS.description"/>
                                     </label>
-                                    <label class="tw-mb-2">
+                                    <label class="tw-leading-snug tw-mb-2">
                                         <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_ALL"/>
                                         <spring:message code="person.form.notifications.BOSS.all"/>
                                     </label>
-                                    <label>
+                                    <label class="tw-leading-snug">
                                         <form:radiobutton path="notifications" value="NOTIFICATION_BOSS_DEPARTMENTS"/>
                                         <spring:message code="person.form.notifications.BOSS.departments"/>
                                     </label>
-                                <label>
-                                            <form:radiobutton path="notifications" value=""/>
-                                            <spring:message code="person.form.notifications.BOSS.none"/>
-                                        </label>
-                                    </div>
+                                    <label class="tw-leading-snug">
+                                        <form:radiobutton path="notifications" value=""/>
+                                        <spring:message code="person.form.notifications.BOSS.none"/>
+                                    </label>
+                                </div>
 
                                 <div class="checkbox">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.OFFICE"/>
                                     </strong>
-                                    <label class="tw-mb-2">
+                                    <label class="tw-leading-snug tw-mb-2">
                                         <form:checkbox path="permissions" value="OFFICE"/>
                                         <spring:message code="person.form.permissions.roles.OFFICE.description"/>
                                     </label>
-                                    <label class="tw-ml-5 tw-pb-2">
+                                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
                                         <form:checkbox path="notifications" value="NOTIFICATION_OFFICE"/>
                                         <spring:message code="person.form.notifications.OFFICE"/>
                                     </label>
-                                    <label class="tw-ml-5 tw-pb-2">
+                                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
                                         <form:checkbox path="notifications" value="OVERTIME_NOTIFICATION_OFFICE"/>
                                         <spring:message code="person.form.notifications.OFFICE.overtime"/>
                                     </label>
@@ -260,10 +259,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-section">
+            <div class="form-section tw-mb-16">
+                <div class="row">
                     <div class="col-xs-12">
-                        <hr/>
+                        <hr />
                         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
                             code="action.save"/></button>
                         <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
@@ -271,7 +272,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </form:form>
     </div>

@@ -36,20 +36,18 @@
            action="${ACTION_URL}" modelAttribute="comment">
 
     <div class="form-group">
-        <div class="control-label">
-            <c:choose>
-                <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
-                    <strong><spring:message code='action.temporary_allow.confirm'/></strong>
-                </c:when>
-                <c:otherwise>
-                    <strong><spring:message code='action.allow.confirm'/></strong>
-                </c:otherwise>
-            </c:choose>
-        </div>
+        <c:choose>
+            <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                <strong class="tw-font-medium"><spring:message code='action.temporary_allow.confirm'/></strong>
+            </c:when>
+            <c:otherwise>
+                <strong class="tw-font-medium"><spring:message code='action.allow.confirm'/></strong>
+            </c:otherwise>
+        </c:choose>
     </div>
 
     <div class="form-group">
-        <div class="control-label">
+        <div class="tw-text-sm">
             <spring:message code="action.comment.optional"/>: (<span
             id="text-confirm"></span><spring:message code="action.comment.maxChars"/>)
         </div>

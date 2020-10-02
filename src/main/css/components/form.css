@@ -62,10 +62,6 @@ textarea.error {
 
 **************************************************************************/
 
-.form-section:not(:first-of-type) legend {
-  margin-top: 21px;
-}
-
 .form-section .btn:last-child {
   margin-bottom: 21px;
 }
@@ -115,7 +111,6 @@ textarea.error {
 }
 
 .department--member-info {
-  font-size: 120%;
   margin: 0;
 }
 

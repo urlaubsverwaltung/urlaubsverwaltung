@@ -50,30 +50,30 @@
 
     <div class="container">
 
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
+                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                </sec:authorize>
+                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
+                    <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                </a>
+                <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
+                    <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
+                </a>
+                <uv:print />
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="applications.waiting"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
         <div class="row">
-
             <div class="col-xs-12">
-
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="applications.waiting"/>
-                    </div>
-                    <div class="print:tw-hidden">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
-                        </a>
-                        </sec:authorize>
-                        <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
-                            <uv:icon-calendar className="tw-w-5 tw-h-5" />
-                        </a>
-                        <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
-                            <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
-                        </a>
-                        <uv:print />
-                    </div>
-                </legend>
-
                 <div class="feedback">
                     <c:choose>
                         <c:when test="${allowSuccess}">
@@ -93,18 +93,19 @@
                         </c:when>
                     </c:choose>
                 </div>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-xs-12">
                 <c:choose>
-
                     <c:when test="${empty applications}">
-
-                        <spring:message code="applications.none"/>
-
+                        <p>
+                            <spring:message code="applications.none"/>
+                        </p>
                     </c:when>
-
                     <c:otherwise>
-
-                        <table class="list-table selectable-table">
+                        <table class="list-table selectable-table list-table-bt-0 tw-text-sm">
                             <tbody>
                             <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
@@ -119,28 +120,29 @@
                                         />
                                     </td>
                                     <td class="hidden-xs">
-                                        <h5><c:out value="${application.person.niceName}"/></h5>
-                                        <p><spring:message code="application.applier.applied"/></p>
+                                        <span class="tw-block tw-text-lg tw-mb-1">
+                                            <c:out value="${application.person.niceName}"/>
+                                        </span>
+                                        <span>
+                                            <spring:message code="application.applier.applied"/>
+                                        </span>
                                     </td>
                                     <td class="halves">
-                                        <a class="vacation ${application.vacationType.category} hidden-print"
-                                           href="${URL_PREFIX}/application/${application.id}">
-                                            <h4>
-                                                <c:choose>
-                                                    <c:when test="${application.hours != null}">
-                                                        <uv:number number="${application.hours}"/>
-                                                        <spring:message code="duration.hours"/>
-                                                        <spring:message code="${application.vacationType.messageKey}"/>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <uv:number number="${application.workDays}"/>
-                                                        <spring:message code="duration.days"/>
-                                                        <spring:message code="${application.vacationType.messageKey}"/>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </h4>
+                                        <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}" href="${URL_PREFIX}/application/${application.id}">
+                                            <c:choose>
+                                                <c:when test="${application.hours != null}">
+                                                    <uv:number number="${application.hours}"/>
+                                                    <spring:message code="duration.hours"/>
+                                                    <spring:message code="${application.vacationType.messageKey}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <uv:number number="${application.workDays}"/>
+                                                    <spring:message code="duration.days"/>
+                                                    <spring:message code="${application.vacationType.messageKey}"/>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </a>
-                                        <p>
+                                        <div>
                                             <c:choose>
                                                 <c:when test="${application.startDate == application.endDate}">
                                                     <c:set var="APPLICATION_DATE">
@@ -189,7 +191,7 @@
                                                                     argumentSeparator=";"/>
                                                 </c:otherwise>
                                             </c:choose>
-                                        </p>
+                                        </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right">
                                         <div class="print:tw-hidden">
@@ -213,10 +215,9 @@
                         </table>
                     </c:otherwise>
                 </c:choose>
-
             </div>
-
         </div>
+
     </div>
 </div>
 

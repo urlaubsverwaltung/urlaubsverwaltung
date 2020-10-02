@@ -24,33 +24,29 @@
 <div class="content">
     <div class="container">
 
-        <div class="row">
-
-            <div class="col-xs-12">
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="sicknotes.statistics.title"/>
-                        <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
-                    </div>
-                    <div>
-                        <uv:print/>
-                    </div>
-                </legend>
-            </div>
-
-        </div>
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
+                    <spring:message code="sicknotes.statistics.title"/>
+                </h1>
+                <uv:year-selector year="${statistics.year}" hrefPrefix="${URL_PREFIX}/sicknote/statistics?year="/>
+            </jsp:body>
+        </uv:section-heading>
 
         <div class="row">
 
             <div class="col-xs-12">
 
-                <table class="list-table">
+                <table class="list-table tw-text-sm">
 
                     <thead>
-                    <tr>
-                        <th scope="col" colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
-                            date="${statistics.created}"/></th>
-                    </tr>
+                        <tr>
+                            <th scope="col" colspan="2" class="text-right"><spring:message code="filter.validity"/> <uv:date
+                                date="${statistics.created}"/></th>
+                        </tr>
                     </thead>
 
                     <tbody>

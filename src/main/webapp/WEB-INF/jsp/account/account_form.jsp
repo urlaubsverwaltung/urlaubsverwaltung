@@ -36,27 +36,28 @@
         <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/account"
                    modelAttribute="account" class="form-horizontal">
 
-            <div class="row">
+            <form:hidden path="holidaysAccountYear"/>
 
-                <div class="form-section">
-                    <div class="col-md-12">
-                        <legend>
-                            <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
-                            <uv:year-selector year="${year}"
-                                              hrefPrefix="${URL_PREFIX}/person/${person.id}/account?year="/>
-                        </legend>
+            <div class="form-section">
+
+                <uv:section-heading>
+                    <h1>
+                        <spring:message code="person.form.annualVacation.title" arguments="${person.niceName}"/>
+                    </h1>
+                    <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}/account?year="/>
+                </uv:section-heading>
+
+                <c:if test="${not empty errors}">
+                <div class="row tw-mb-8">
+                    <div class="col-xs-12">
+                        <div class="alert alert-danger"><form:errors cssClass="error"/></div>
                     </div>
+                </div>
+                </c:if>
 
-                    <c:if test="${not empty errors}">
-                        <div class="col-xs-12">
-                            <div class="alert alert-danger"><form:errors cssClass="error"/></div>
-                        </div>
-                    </c:if>
-
-                    <form:hidden path="holidaysAccountYear"/>
-
+                <div class="row tw-mb-16">
                     <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
+                        <span class="help-block tw-text-sm">
                             <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="person.form.annualVacation.description"/>
                         </span>
@@ -64,7 +65,7 @@
 
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-                            <label for="holidaysAccountValidFrom" class="control-label col-md-3">
+                            <label for="holidaysAccountValidFrom" class="control-label col-md-3 tw-leading-snug">
                                 <spring:message code="person.form.annualVacation.period.start"/>:
                             </label>
 
@@ -79,7 +80,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label for="holidaysAccountValidTo" class="control-label col-md-3">
+                            <label for="holidaysAccountValidTo" class="control-label col-md-3 tw-leading-snug">
                                 <spring:message code="person.form.annualVacation.period.end"/>:
                             </label>
 
@@ -94,7 +95,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="annualVacationDays">
+                            <label class="control-label col-md-3 tw-leading-snug" for="annualVacationDays">
                                 <spring:message code='person.form.annualVacation.annualVacation'/>:
                             </label>
 
@@ -110,7 +111,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="actualVacationDays">
+                            <label class="control-label col-md-3 tw-leading-snug" for="actualVacationDays">
                                 <spring:message code='person.form.annualVacation.actualVacation'/>:
                             </label>
 
@@ -126,7 +127,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="remainingVacationDays">
+                            <label class="control-label col-md-3 tw-leading-snug" for="remainingVacationDays">
                                 <spring:message code="person.form.annualVacation.remainingVacation"/>:
                             </label>
 
@@ -141,7 +142,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3">
+                            <label class="control-label col-md-3 tw-leading-snug">
                                 <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>:
                             </label>
 
@@ -156,11 +157,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-3" for="comment">
+                            <label class="control-label col-md-3 tw-leading-snug" for="comment">
                                 <spring:message code='person.form.annualVacation.comment'/>:
                             </label>
                             <div class="col-md-9">
-                                <span id="text-comment"></span><spring:message code='action.comment.maxChars'/>
+                                <small>
+                                    <span id="text-comment"></span><spring:message code='action.comment.maxChars'/>
+                                </small>
                                 <form:textarea id="comment" rows="3" path="comment" class="form-control"
                                                cssErrorClass="form-control error"
                                                onkeyup="count(this.value, 'text-comment');"
@@ -172,10 +175,12 @@
 
                     </div>
                 </div>
+            </div>
 
-                <div class="form-section">
+            <div class="form-section">
+                <div class="row tw-mb-16">
                     <div class="col-xs-12">
-                        <hr/>
+                        <hr />
                         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
                             code="action.save"/></button>
                         <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
@@ -183,8 +188,8 @@
                         </button>
                     </div>
                 </div>
-
             </div>
+
         </form:form>
     </div>
 </div>

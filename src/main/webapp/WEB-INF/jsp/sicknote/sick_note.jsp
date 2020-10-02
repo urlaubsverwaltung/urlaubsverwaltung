@@ -38,27 +38,29 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="sicknote.title"/>
-                    </div>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <c:if test="${sickNote.active}">
-                        <div class="print:tw-hidden">
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
-                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
-                            </a>
-                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
-                                <uv:icon-refresh className="tw-w-5 tw-h-5" />
-                            </a>
-                            <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
-                                <uv:icon-trash className="tw-w-5 tw-h-5" />
-                            </a>
-                            <uv:print/>
-                        </div>
-                        </c:if>
-                    </sec:authorize>
-                </legend>
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <c:if test="${sickNote.active}">
+                                <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
+                                    <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                </a>
+                                <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
+                                    <uv:icon-refresh className="tw-w-5 tw-h-5" />
+                                </a>
+                                <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
+                                    <uv:icon-trash className="tw-w-5 tw-h-5" />
+                                </a>
+                                <uv:print/>
+                            </c:if>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="sicknote.title"/>
+                        </h1>
+                    </jsp:body>
+                </uv:section-heading>
 
                 <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/cancel">
                     <div id="modal-cancel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -86,57 +88,66 @@
                     </div>
                 </form:form>
 
-                <div class="box">
-                    <span class="box-icon tw-w-16 tw-h-16 hidden-print tw-bg-red-600 tw-text-white tw-flex tw-items-center tw-justify-center">
-                        <c:choose>
-                            <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                                <uv:icon-child className="tw-w-8 tw-h-8" />
-                            </c:when>
-                            <c:otherwise>
-                                <uv:icon-medkit className="tw-w-8 tw-h-8" />
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                    <span class="box-text">
-                        <h5 class="is-inline-block is-sticky"><c:out value="${sickNote.person.niceName}"/></h5>
-
-                        <spring:message code="sicknotes.details.title" arguments="${SICK_NOTE_MESSAGEKEY}"/>
-
-                        <c:choose>
-                            <c:when test="${sickNote.startDate == sickNote.endDate}">
-                                <c:set var="SICK_NOTE_DATE">
-                                    <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
-                                    <h5 class="is-inline-block is-sticky"><uv:date date="${sickNote.startDate}"/></h5>
-                                </c:set>
-                                <c:set var="SICK_NOTE_DAY_LENGTH">
-                                    <spring:message code="${sickNote.dayLength}"/>
-                                </c:set>
-                                <spring:message code="absence.period.singleDay"
-                                                arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}"
-                                                argumentSeparator=";"/>
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="SICK_NOTE_START_DATE">
-                                    <h5 class="is-inline-block is-sticky">
+                <uv:box className="tw-mb-6">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-red-600 tw-text-white">
+                            <c:choose>
+                                <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
+                                    <uv:icon-child className="tw-w-8 tw-h-8" />
+                                </c:when>
+                                <c:otherwise>
+                                    <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                                </c:otherwise>
+                            </c:choose>
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <spring:message
+                                code="sicknotes.details.box.person.has"
+                                arguments="${sickNote.person.niceName}"
+                            />
+                        </span>
+                        <span class="tw-my-1 tw-text-lg tw-font-medium">
+                            <c:out value="${SICK_NOTE_MESSAGEKEY}" />
+                        </span>
+                        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <c:choose>
+                                <c:when test="${sickNote.startDate == sickNote.endDate}">
+                                    <c:set var="SICK_NOTE_DATE">
                                         <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
                                         <uv:date date="${sickNote.startDate}"/>
-                                    </h5>
-                                </c:set>
-                                <c:set var="SICK_NOTE_END_DATE">
-                                    <h5 class="is-inline-block is-sticky">
+                                    </c:set>
+                                    <c:set var="SICK_NOTE_DAY_LENGTH">
+                                        <spring:message code="${sickNote.dayLength}"/>
+                                    </c:set>
+                                    <spring:message
+                                        code="absence.period.singleDay"
+                                        arguments="${SICK_NOTE_DATE};${SICK_NOTE_DAY_LENGTH}"
+                                        argumentSeparator=";"
+                                    />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="SICK_NOTE_START_DATE">
+                                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>,
+                                        <uv:date date="${sickNote.startDate}"/>
+                                    </c:set>
+                                    <c:set var="SICK_NOTE_END_DATE">
                                         <spring:message code="${sickNote.weekDayOfEndDate}.short"/>,
                                         <uv:date date="${sickNote.endDate}"/>
-                                    </h5>
-                                </c:set>
-                                <spring:message code="absence.period.multipleDays"
-                                                arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}"
-                                                argumentSeparator=";"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                </div>
+                                    </c:set>
+                                    <spring:message
+                                        code="absence.period.multipleDays"
+                                        arguments="${SICK_NOTE_START_DATE};${SICK_NOTE_END_DATE}"
+                                        argumentSeparator=";"
+                                    />
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                    </jsp:body>
+                </uv:box>
 
-                <table class="list-table striped-table bordered-table">
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <tr>
                         <td>
@@ -175,20 +186,22 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend class="tw-flex">
-                    <div class="tw-flex-1">
-                        <spring:message code="sicknote.progress.title"/>
-                    </div>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <div class="print:tw-hidden">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <uv:icon-annotation className="tw-w-5 tw-h-5" />
                             </a>
-                        </div>
-                    </sec:authorize>
-                </legend>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="sicknote.progress.title"/>
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
 
-                <table class="list-table striped-table bordered-table">
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                         <tr>
@@ -251,7 +264,9 @@
                     <div id="comment-form" style="${STYLE}">
                         <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment"
                                    modelAttribute="comment">
-                            <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                            <small>
+                                <span id="text-comment"></span> <spring:message code="action.comment.maxChars"/>
+                            </small>
                             <form:textarea rows="2" path="text" cssClass="form-control"
                                            cssErrorClass="form-control error"
                                            onkeyup="count(this.value, 'text-comment');"
@@ -269,11 +284,14 @@
 
                 </sec:authorize>
 
-                <legend class="hidden-print">
-                    <spring:message code="sicknote.data.person"/>
-                </legend>
-
-                <uv:person person="${sickNote.person}" cssClass="hidden-print"/>
+                <div class="print:hidden">
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code="sicknote.data.person"/>
+                        </h2>
+                    </uv:section-heading>
+                    <uv:person person="${sickNote.person}" />
+                </div>
             </div>
             <%-- End of second column --%>
 

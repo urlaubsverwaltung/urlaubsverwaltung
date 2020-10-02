@@ -32,21 +32,23 @@
 
     <div class="container">
 
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <uv:export />
+                <uv:print />
+            </jsp:attribute>
+            <jsp:body>
+                <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
+                    <spring:message code="applications.statistics"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
         <div class="row">
 
             <div class="col-xs-12">
 
-                <legend class="is-sticky tw-flex tw-items-center">
-                    <div class="tw-flex-1">
-                        <spring:message code="applications.statistics"/>
-                    </div>
-                    <div class="print:tw-hidden">
-                        <uv:export />
-                        <uv:print />
-                    </div>
-                </legend>
-
-                <p class="is-inline-block">
+                <p class="tw-text-sm tw-mb-8">
                     <c:choose>
                         <c:when test="${not empty errors}">
                             <a href="#filterModal" data-toggle="modal">
@@ -71,7 +73,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>
