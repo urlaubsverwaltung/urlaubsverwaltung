@@ -282,6 +282,7 @@
 
             <div class="form-section">
                 <div class="col-xs-12">
+                    <hr />
                     <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
                         <spring:message code="action.save"/>
                     </button>
