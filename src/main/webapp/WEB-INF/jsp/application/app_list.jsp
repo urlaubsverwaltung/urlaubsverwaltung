@@ -195,17 +195,17 @@
                                         </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right">
-                                        <div class="print:tw-hidden">
-                                        <c:if
-                                            test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="icon-link tw-p-1 hover:tw-text-green-500" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true" data-title="<spring:message code='action.allow'/>">
-                                                <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                        <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                                        <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
+                                                <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true" />
+                                                <spring:message code='action.allow'/>
                                             </a>
                                         </c:if>
-                                        <c:if
-                                            test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="icon-link tw-p-1 hover:tw-text-red-500" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true" data-title="<spring:message code='action.reject'/>">
-                                                <icon:ban className="tw-w-5 tw-h-5" solid="true" />
+                                        <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
+                                                <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true" />
+                                                <spring:message code='action.reject'/>
                                             </a>
                                         </c:if>
                                         </div>

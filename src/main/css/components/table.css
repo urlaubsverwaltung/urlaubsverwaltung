@@ -81,6 +81,13 @@ tr.inactive td > * {
   background-color: #fafafa;
 }
 
+.selectable-table tr:hover .action-link {
+  @apply text-opacity-75 !important;
+}
+.selectable-table tr:hover .action-link:hover {
+  @apply text-opacity-100 !important;
+}
+
 /**************************************************************************
   TABLE SORTER
 **************************************************************************/
