@@ -86,10 +86,12 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Mock
     private WorkingTimeService workingTimeService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, accountService, applicationService,
-            applicationInteractionService, commentService, workDaysCountService, commentValidator, departmentService, workingTimeService, Clock.systemUTC());
+            applicationInteractionService, commentService, workDaysCountService, commentValidator, departmentService, workingTimeService, clock);
     }
 
     @Test
@@ -118,7 +120,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailUsesProvidedYear() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
@@ -133,7 +135,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailDefaultsToApplicationEndDateYearIfNoYearProvided() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
         when(personService.getSignedInUser()).thenReturn(somePerson());
 
         Application application = someApplication();
@@ -149,7 +151,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailUsesCorrectView() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);

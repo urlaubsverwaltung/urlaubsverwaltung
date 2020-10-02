@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 
+import java.time.Clock;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ class OvertimeMailServiceTest {
     @Test
     void sendOvertimeNotification() {
         final Overtime overtime = new Overtime();
-        final OvertimeComment overtimeComment = new OvertimeComment();
+        final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());
 
         final Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);

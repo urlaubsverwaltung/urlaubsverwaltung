@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,18 +22,20 @@ import java.util.Optional;
 class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
     private final ApplicationCommentRepository commentRepository;
+    private final Clock clock;
 
     @Autowired
-    ApplicationCommentServiceImpl(ApplicationCommentRepository commentRepository) {
+    ApplicationCommentServiceImpl(ApplicationCommentRepository commentRepository, Clock clock) {
 
         this.commentRepository = commentRepository;
+        this.clock = clock;
     }
 
     @Override
     public ApplicationComment create(Application application, ApplicationAction action, Optional<String> text,
                                      Person author) {
 
-        final ApplicationComment comment = new ApplicationComment(author);
+        final ApplicationComment comment = new ApplicationComment(author, clock);
         comment.setAction(action);
         comment.setApplication(application);
         text.ifPresent(comment::setText);

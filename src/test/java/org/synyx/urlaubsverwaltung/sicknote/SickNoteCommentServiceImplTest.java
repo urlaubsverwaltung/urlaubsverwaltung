@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Clock;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,17 +28,17 @@ class SickNoteCommentServiceImplTest {
     private SickNoteCommentService sut;
 
     @Mock
-    private SickNoteCommentRepository commentDAO;
+    private SickNoteCommentRepository sickNoteCommentRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteCommentServiceImpl(commentDAO);
+        sut = new SickNoteCommentServiceImpl(sickNoteCommentRepository, Clock.systemUTC());
     }
 
     @Test
     void ensureCreatesACommentAndPersistsIt() {
 
-        when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(sickNoteCommentRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(author);
@@ -52,13 +54,13 @@ class SickNoteCommentServiceImplTest {
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getText()).isEmpty();
 
-        verify(commentDAO).save(eq(comment));
+        verify(sickNoteCommentRepository).save(eq(comment));
     }
 
     @Test
     void ensureCreationOfCommentWithTextWorks() {
 
-        when(commentDAO.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(sickNoteCommentRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final String givenComment = "Foo";
         final Person givenAuthor = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -72,6 +74,6 @@ class SickNoteCommentServiceImplTest {
         assertThat(sickNoteComment.getPerson()).isEqualTo(givenAuthor);
         assertThat(sickNoteComment.getText()).isEqualTo(givenComment);
 
-        verify(commentDAO).save(eq(sickNoteComment));
+        verify(sickNoteCommentRepository).save(eq(sickNoteComment));
     }
 }

@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 class ApplicationMailServiceTest {
 
     private ApplicationMailService sut;
+    private final Clock clock = Clock.systemUTC();
 
     @Mock
     private MailService mailService;
@@ -89,7 +91,7 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person);
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -133,7 +135,7 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.MAX);
         application.setStatus(ALLOWED);
 
-        final ApplicationComment applicationComment = new ApplicationComment(person);
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -189,7 +191,7 @@ class ApplicationMailServiceTest {
     void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
         final Application application = new Application();
-        final ApplicationComment applicationComment = new ApplicationComment(new Person());
+        final ApplicationComment applicationComment = new ApplicationComment(new Person(), clock);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -276,7 +278,7 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.MAX);
         application.setStatus(WAITING);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -315,7 +317,7 @@ class ApplicationMailServiceTest {
         application.setPerson(person);
         application.setDayLength(dayLength);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -342,7 +344,7 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setPerson(person);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -387,7 +389,7 @@ class ApplicationMailServiceTest {
         final List<Person> recipients = singletonList(person);
         when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(recipients);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
@@ -437,7 +439,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
         when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(recipients);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);

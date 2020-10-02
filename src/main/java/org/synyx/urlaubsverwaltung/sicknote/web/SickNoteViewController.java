@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteAction;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
@@ -27,10 +28,12 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
+import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -58,6 +61,7 @@ public class SickNoteViewController {
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
+    private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
@@ -65,7 +69,7 @@ public class SickNoteViewController {
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
                                   WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
-                                  SickNoteConvertFormValidator sickNoteConvertFormValidator, Clock clock) {
+                                  SickNoteConvertFormValidator sickNoteConvertFormValidator, SettingsService settingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
@@ -76,12 +80,14 @@ public class SickNoteViewController {
         this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
+        this.settingsService = settingsService;
         this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder) {
 
+        binder.registerCustomEditor(Instant.class, new InstantPropertyEditor(clock, settingsService));
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
@@ -96,7 +102,7 @@ public class SickNoteViewController {
 
         if (signedInUser.hasRole(Role.OFFICE) || sickNote.getPerson().equals(signedInUser)) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
-            model.addAttribute("comment", new SickNoteComment());
+            model.addAttribute("comment", new SickNoteComment(clock));
 
             List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);

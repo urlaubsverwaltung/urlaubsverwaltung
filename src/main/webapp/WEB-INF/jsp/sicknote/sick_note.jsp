@@ -223,11 +223,11 @@
                                 <c:choose>
                                     <c:when test="${empty comment.text}">
                                         <spring:message code="sicknote.progress.${comment.action}"/>
-                                        <uv:date date="${comment.date}"/>
+                                        <uv:instant date="${comment.date}"/>
                                     </c:when>
                                     <c:otherwise>
                                         <spring:message code="sicknote.progress.${comment.action}"/>
-                                        <uv:date date="${comment.date}"/>
+                                        <uv:instant date="${comment.date}"/>
                                         <c:choose>
                                             <c:when test="${comment.action == 'COMMENTED'}">
                                                 :

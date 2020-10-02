@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,15 +31,18 @@ class OvertimeServiceImpl implements OvertimeService {
     private final OvertimeCommentRepository overtimeCommentRepository;
     private final ApplicationService applicationService;
     private final OvertimeMailService overtimeMailService;
+    private final Clock clock;
 
     @Autowired
     public OvertimeServiceImpl(OvertimeRepository overtimeRepository, OvertimeCommentRepository overtimeCommentRepository,
-                               ApplicationService applicationService, OvertimeMailService overtimeMailService) {
+                               ApplicationService applicationService, OvertimeMailService overtimeMailService,
+                               Clock clock) {
 
         this.overtimeRepository = overtimeRepository;
         this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
         this.overtimeMailService = overtimeMailService;
+        this.clock = clock;
     }
 
     @Override
@@ -70,7 +74,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         // save comment
         OvertimeAction action = isNewOvertime ? OvertimeAction.CREATED : OvertimeAction.EDITED;
-        OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action);
+        OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
         comment.ifPresent(overtimeComment::setText);
 
         overtimeCommentRepository.save(overtimeComment);

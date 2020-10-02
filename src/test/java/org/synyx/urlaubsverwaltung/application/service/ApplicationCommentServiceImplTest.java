@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Clock;
 import java.util.Optional;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -35,11 +36,11 @@ class ApplicationCommentServiceImplTest {
     private ApplicationCommentService commentService;
 
     @Mock
-    private ApplicationCommentRepository commentDAO;
+    private ApplicationCommentRepository commentRepository;
 
     @BeforeEach
     void setUp() {
-        commentService = new ApplicationCommentServiceImpl(commentDAO);
+        commentService = new ApplicationCommentServiceImpl(commentRepository, Clock.systemUTC());
     }
 
 
@@ -50,7 +51,7 @@ class ApplicationCommentServiceImplTest {
         final VacationType vacationType = createVacationType(HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
-        when(commentDAO.save(any())).then(returnsFirstArg());
+        when(commentRepository.save(any())).then(returnsFirstArg());
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationComment comment = commentService.create(application, ALLOWED, Optional.empty(), author);
@@ -67,7 +68,7 @@ class ApplicationCommentServiceImplTest {
 
         Assert.assertNull("Text should not be set", comment.getText());
 
-        verify(commentDAO).save(eq(comment));
+        verify(commentRepository).save(eq(comment));
     }
 
 
@@ -78,7 +79,7 @@ class ApplicationCommentServiceImplTest {
         final VacationType vacationType = createVacationType(HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
-        when(commentDAO.save(any())).then(returnsFirstArg());
+        when(commentRepository.save(any())).then(returnsFirstArg());
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationComment savedComment = commentService.create(application, REJECTED, Optional.of("Foo"), author);
@@ -94,6 +95,6 @@ class ApplicationCommentServiceImplTest {
         Assert.assertEquals("Wrong author", author, savedComment.getPerson());
         Assert.assertEquals("Wrong text", "Foo", savedComment.getText());
 
-        verify(commentDAO).save(eq(savedComment));
+        verify(commentRepository).save(eq(savedComment));
     }
 }

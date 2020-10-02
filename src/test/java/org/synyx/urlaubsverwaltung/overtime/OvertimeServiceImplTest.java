@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +44,7 @@ class OvertimeServiceImplTest {
         applicationService = mock(ApplicationService.class);
         overtimeMailService = mock(OvertimeMailService.class);
 
-        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService);
+        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, Clock.systemUTC());
 
         overtimeMock = mock(Overtime.class);
         authorMock = mock(Person.class);

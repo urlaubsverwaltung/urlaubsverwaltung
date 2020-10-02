@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -14,6 +18,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentService;
@@ -40,7 +45,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +78,8 @@ class SickNoteViewControllerTest {
     private SickNoteValidator validatorMock;
     @Mock
     private SickNoteConvertFormValidator sickNoteConvertFormValidatorMock;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -81,7 +87,7 @@ class SickNoteViewControllerTest {
         sut = new SickNoteViewController(sickNoteServiceMock,
             sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
             vacationTypeServiceMock, personServiceMock, workDaysCountService, validatorMock,
-            sickNoteConvertFormValidatorMock, Clock.systemUTC());
+            sickNoteConvertFormValidatorMock, settingsService, Clock.systemUTC());
     }
 
     @Test
