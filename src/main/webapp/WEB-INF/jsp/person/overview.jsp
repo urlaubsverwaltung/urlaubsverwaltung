@@ -49,7 +49,7 @@
 
     <div class="container">
 
-        <div class="row tw-mb-4 lg:tw-mb-6">
+        <div class="row">
             <div class="col-xs-12">
                 <%@include file="include/overview_header.jsp" %>
             </div>
