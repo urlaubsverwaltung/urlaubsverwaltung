@@ -207,6 +207,7 @@
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+
                                     <spring:message code="settings.sickDays.description"/>
                                 </span>
                             </div>
@@ -245,7 +246,44 @@
                 </div>
 
                 <div class="tab-pane" id="publicHolidays">
-                    <div class="form-section">
+
+                    <div class="form-section tw-mb-8">
+
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.time.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
+
+                            <div class="col-md-4 col-md-push-8">
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    Info Text
+                                </span>
+                            </div>
+                            <div class="col-md-8 col-md-pull-4">
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.exchangeCalendarSettings.timeZoneId">
+                                        <spring:message code="settings.time.timezone"/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:select id="timeSettings.timeZoneId"
+                                                     path="timeSettings.timeZoneId"
+                                                     class="form-control chosenCombo"
+                                                     cssErrorClass="form-control error">
+                                            <c:forEach items="${availableTimezones}" var="timeZoneId">
+                                                <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                            </c:forEach>
+                                        </form:select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section tw-mb-8">
                         <uv:section-heading>
                             <h2>
                                 <spring:message code="settings.publicHolidays.title"/>
@@ -312,7 +350,7 @@
                         </div>
                     </div>
 
-                    <div class="form-section">
+                    <div class="form-section tw-mb-8">
                         <uv:section-heading>
                             <h2>
                                 <spring:message code="settings.overtime.title"/>

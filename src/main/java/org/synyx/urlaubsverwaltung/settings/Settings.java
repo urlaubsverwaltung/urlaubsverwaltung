@@ -16,6 +16,7 @@ public class Settings extends AbstractPersistable<Integer> {
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
+    private TimeSettings timeSettings;
 
     public AbsenceSettings getAbsenceSettings() {
 
@@ -65,6 +66,18 @@ public class Settings extends AbstractPersistable<Integer> {
         this.calendarSettings = calendarSettings;
     }
 
+    public TimeSettings getTimeSettings() {
+
+        if(timeSettings == null) {
+            timeSettings = new TimeSettings();
+        }
+
+        return timeSettings;
+    }
+
+    public void setTimeSettings(TimeSettings timeSettings) {
+        this.timeSettings = timeSettings;
+    }
 
     @Override
     public void setId(Integer id) { // NOSONAR - make it public instead of protected

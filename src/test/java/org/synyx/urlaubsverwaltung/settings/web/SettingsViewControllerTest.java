@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -31,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,10 +58,11 @@ class SettingsViewControllerTest {
     private SettingsService settingsService;
     @Mock
     private SettingsValidator settingsValidator;
+    private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, settingsValidator);
+        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, clock);
     }
 
     @Test
@@ -143,7 +144,7 @@ class SettingsViewControllerTest {
         perform(get("/web/settings"));
 
         assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId())
-            .isEqualTo(TimeZone.getDefault().getID());
+            .isEqualTo(clock.getZone().getId());
     }
 
     @Test
