@@ -3,9 +3,9 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <%@attribute name="icon" fragment="true" required="true" %>
-<%@attribute name="className" type="java.lang.String" required="false" %>
+<%@attribute name="className" type="java.lang.String" %>
 
-<uv:box__ className="tw-p-5 ${className}">
+<uv:box__ className="tw-p-0 ${className}">
     <jsp:attribute name="icon">
         <jsp:invoke fragment="icon" />
     </jsp:attribute>

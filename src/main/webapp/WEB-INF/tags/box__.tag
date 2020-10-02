@@ -5,11 +5,11 @@
 <%@attribute name="icon" fragment="true" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
-<uv:box__ className="tw-p-5 ${className}">
-    <jsp:attribute name="icon">
+<div class="box tw-bg-white tw-flex tw-items-start ${className}">
+    <div class="tw-mr-6 tw-p-1">
         <jsp:invoke fragment="icon" />
-    </jsp:attribute>
-    <jsp:body>
+    </div>
+    <div class="box-text tw-flex-1 tw-flex tw-flex-col">
         <jsp:doBody />
-    </jsp:body>
-</uv:box__>
+    </div>
+</div>

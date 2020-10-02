@@ -5,4 +5,4 @@
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
-<uv:account-entitlement-box__ account="${account}" className="tw-p-5 ${className}" />
+<uv:account-entitlement-box__ account="${account}" className="tw-p-0 ${className}" />

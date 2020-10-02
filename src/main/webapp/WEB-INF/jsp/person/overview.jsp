@@ -59,17 +59,17 @@
             <div class="col-xs-12">
                 <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
                     <div class="tw-w-full lg:tw-w-1/3">
-                        <uv:person person="${person}" nameIsNoLink="${true}" cssClass="tw-border-none tw-p-0" />
+                        <uv:person-box-narrow person="${person}" nameIsNoLink="${true}" cssClass="tw-border-none" />
                     </div>
                     <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-                        <uv:account-entitlement account="${account}" className="tw-border-none tw-p-0" />
+                        <uv:account-entitlement-box-narrow account="${account}" className="tw-border-none" />
                     </div>
                     <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-                        <uv:account-left
+                        <uv:account-left-box-narrow
                             account="${account}"
                             vacationDaysLeft="${vacationDaysLeft}"
                             beforeApril="${beforeApril}"
-                            className="tw-border-none tw-p-0"
+                            className="tw-border-none"
                         />
                     </div>
                 </div>
@@ -103,10 +103,10 @@
                         <div class="tw-w-full lg:tw-w-1/3">
                         </div>
                         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-                            <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-border-none tw-p-0" />
+                            <uv:overtime-total-box-narrow hours="${overtimeTotal}" cssClass="tw-border-none" />
                         </div>
                         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3 tw-mt-8 lg:tw-mt-0">
-                            <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-border-none tw-p-0" />
+                            <uv:overtime-left-box-narrow hours="${overtimeLeft}" cssClass="tw-border-none tw-p-0" />
                         </div>
                     </div>
                 </div>
@@ -170,7 +170,7 @@
             <div class="col-xs-12">
                 <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
                 <div class="tw-w-full sm:tw-w-1/2">
-                    <uv:box className="tw-border-none tw-p-0">
+                    <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
                             <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
                                 <uv:icon-sun className="tw-w-8 tw-h-8" />
@@ -192,10 +192,10 @@
                                 </span>
                             </span>
                         </jsp:body>
-                    </uv:box>
+                    </uv:box-narrow>
                 </div>
                 <div class="tw-w-full sm:tw-w-1/2">
-                    <uv:box className="tw-border-none tw-p-0">
+                    <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
                             <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
                                 <uv:icon-flag className="tw-w-8 tw-h-8" />
@@ -217,7 +217,7 @@
                                 </span>
                             </span>
                         </jsp:body>
-                    </uv:box>
+                    </uv:box-narrow>
                 </div>
             </div>
             </div>
@@ -250,7 +250,7 @@
                 <div class="col-xs-12">
                     <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
                     <div class="tw-w-full sm:tw-w-1/2">
-                        <uv:box className="tw-border-none tw-p-0">
+                        <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
                                 <uv:box-icon className="tw-bg-red-600 tw-text-white">
                                     <uv:icon-medkit className="tw-w-8 tw-h-8" />
@@ -272,10 +272,10 @@
                                     </span>
                                 </span>
                             </jsp:body>
-                        </uv:box>
+                        </uv:box-narrow>
                     </div>
                     <div class="tw-w-full sm:tw-w-1/2">
-                        <uv:box className="tw-border-none tw-p-0">
+                        <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
                                 <uv:box-icon className="tw-bg-red-600 tw-text-white">
                                     <uv:icon-child className="tw-w-8 tw-h-8" />
@@ -297,7 +297,7 @@
                                     </span>
                                 </span>
                             </jsp:body>
-                        </uv:box>
+                        </uv:box-narrow>
                     </div>
                 </div>
                 </div>

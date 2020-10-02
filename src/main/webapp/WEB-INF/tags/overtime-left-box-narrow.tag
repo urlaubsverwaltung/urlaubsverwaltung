@@ -4,4 +4,4 @@
 <%@attribute name="hours" type="java.math.BigDecimal" required="true" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 
-<uv:overtime-total-box__ hours="${hours}" cssClass="tw-p-5 ${cssClass}" />
+<uv:overtime-left-box__ hours="${hours}" cssClass="tw-p-0 ${cssClass}" />

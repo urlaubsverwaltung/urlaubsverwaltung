@@ -6,4 +6,4 @@
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 <%@attribute name="nameIsNoLink" type="java.lang.Boolean" required="false" %>
 
-<uv:person-box__ person="${person}" nameIsNoLink="${nameIsNoLink}" cssClass="tw-p-5 ${cssClass}" />
+<uv:person-box__ person="${person}" nameIsNoLink="${nameIsNoLink}" cssClass="tw-p-0 ${cssClass}" />
