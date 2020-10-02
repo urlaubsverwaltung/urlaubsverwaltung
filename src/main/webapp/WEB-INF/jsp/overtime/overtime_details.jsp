@@ -84,7 +84,7 @@
                         <spring:message code="overtime.progress.title"/>
                     </h2>
                 </uv:section-heading>
-                <table class="list-table striped-table bordered-table tw-mb-8">
+                <table class="list-table striped-table bordered-table tw-mb-8 tw-text-sm">
                     <tbody>
                     <c:forEach items="${comments}" var="comment">
                         <tr>
