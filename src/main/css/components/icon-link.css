@@ -1,5 +1,5 @@
 .icon-link {
-  @apply inline-block !important;
+  @apply flex !important;
   @apply text-gray-700 !important;
   @apply no-underline !important;
 }
