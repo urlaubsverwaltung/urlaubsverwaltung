@@ -57,19 +57,25 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <h5 class="is-inline-block is-sticky"><c:out value="${record.person.niceName}"/></h5>
-                        <spring:message code="overtime.details.hours" arguments="${record.hours}"/>
-                        <c:set var="START_DATE">
-                            <h5 class="is-inline-block is-sticky"><uv:date date="${record.startDate}"/></h5>
-                        </c:set>
-                        <c:set var="END_DATE">
-                            <h5 class="is-inline-block is-sticky"><uv:date date="${record.endDate}"/></h5>
-                        </c:set>
-                        <spring:message
-                            code="overtime.details.period"
-                            arguments="${START_DATE};${END_DATE}"
-                            argumentSeparator=";"
-                        />
+                        <span class="tw-text-sm">
+                            <c:out value="${record.person.niceName}"/>&nbsp;<spring:message code="overtime.details.hours.1"/>
+                        </span>
+                        <span class="tw-my-1 tw-text-lg tw-font-medium">
+                            <spring:message code="overtime.details.hours.2" arguments="${record.hours}"/>
+                        </span>
+                        <span class="tw-text-sm">
+                            <c:set var="START_DATE">
+                                <uv:date date="${record.startDate}"/>
+                            </c:set>
+                            <c:set var="END_DATE">
+                                <uv:date date="${record.endDate}"/>
+                            </c:set>
+                            <spring:message
+                                code="overtime.details.period"
+                                arguments="${START_DATE};${END_DATE}"
+                                argumentSeparator=";"
+                            />
+                        </span>
                     </jsp:body>
                 </uv:box>
 
