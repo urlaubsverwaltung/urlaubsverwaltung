@@ -5,6 +5,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -83,11 +84,11 @@
                 <jsp:attribute name="actions">
                     <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
                         <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.new"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                            <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>
                     </c:if>
                     <a href="${URL_PREFIX}/overtime?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
-                        <uv:icon-view-grid className="tw-w-5 tw-h-5" />
+                        <icon:view-grid className="tw-w-5 tw-h-5" />
                     </a>
                 </jsp:attribute>
                 <jsp:body>
@@ -117,7 +118,7 @@
         <uv:section-heading>
             <jsp:attribute name="actions">
                 <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
-                    <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                    <icon:calendar className="tw-w-5 tw-h-5" />
                     &nbsp;<spring:message code="overview.calendar.share.link.text" />
                 </a>
             </jsp:attribute>
@@ -139,13 +140,13 @@
                 <c:choose>
                     <c:when test="${person.id == signedInUser.id}">
                         <a class="icon-link tw-px-1" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                            <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>
                     </c:when>
                     <c:otherwise>
                         <c:if test="${IS_OFFICE}">
                             <a class="icon-link  tw-px-1" href="${URL_PREFIX}/application/new?person=${person.id}" data-title="<spring:message code="action.apply.vacation"/>">
-                                <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                                <icon:plus-circle className="tw-w-5 tw-h-5" />
                             </a>
                         </c:if>
                     </c:otherwise>
@@ -173,7 +174,7 @@
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
                             <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
-                                <uv:icon-sun className="tw-w-8 tw-h-8" />
+                                <icon:sun className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
                         <jsp:body>
@@ -186,7 +187,7 @@
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <span class="tw-flex tw-items-center">
                                     <span class="tw-text-green-500 tw-flex tw-items-center">
-                                        <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                        <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                     </span>
                                     &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
                                 </span>
@@ -198,7 +199,7 @@
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
                             <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
-                                <uv:icon-flag className="tw-w-8 tw-h-8" />
+                                <icon:flag className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
                         <jsp:body>
@@ -211,7 +212,7 @@
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <span class="tw-flex tw-items-center">
                                     <span class="tw-text-green-500 tw-flex tw-items-center">
-                                        <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                        <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                     </span>
                                     &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
                                 </span>
@@ -235,7 +236,7 @@
                 <jsp:attribute name="actions">
                     <c:if test="${IS_OFFICE}">
                         <a class="icon-link tw-px-1" href="${URL_PREFIX}/sicknote/new?person=${person.id}" data-title="<spring:message code="action.apply.sicknote" />">
-                            <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                            <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>
                     </c:if>
                 </jsp:attribute>
@@ -253,7 +254,7 @@
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
                                 <uv:box-icon className="tw-bg-red-600 tw-text-white">
-                                    <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                                    <icon:medkit className="tw-w-8 tw-h-8" />
                                 </uv:box-icon>
                             </jsp:attribute>
                             <jsp:body>
@@ -266,7 +267,7 @@
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <span class="tw-flex tw-items-center">
                                         <span class="tw-text-green-500 tw-flex tw-items-center">
-                                            <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                            <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                         </span>
                                         &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
                                     </span>
@@ -278,7 +279,7 @@
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
                                 <uv:box-icon className="tw-bg-red-600 tw-text-white">
-                                    <uv:icon-child className="tw-w-8 tw-h-8" />
+                                    <icon:child className="tw-w-8 tw-h-8" />
                                 </uv:box-icon>
                             </jsp:attribute>
                             <jsp:body>
@@ -291,7 +292,7 @@
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <span class="tw-flex tw-items-center">
                                         <span class="tw-text-green-500 tw-flex tw-items-center">
-                                            <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                            <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                         </span>
                                         &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
                                     </span>

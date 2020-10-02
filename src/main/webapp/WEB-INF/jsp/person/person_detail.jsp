@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -42,7 +43,7 @@
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
                             <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
                     </jsp:attribute>
@@ -58,7 +59,7 @@
                 <uv:box className="tw-mb-8">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-blue-500 tw-text-white">
-                            <uv:icon-key className="tw-w-8 tw-h-8" />
+                            <icon:key className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
@@ -80,7 +81,7 @@
                 <uv:box className="tw-mb-8">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-blue-500 tw-text-white">
-                            <uv:icon-user-group className="tw-w-8 tw-h-8" />
+                            <icon:user-group className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
@@ -105,7 +106,7 @@
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
                             <a href="${URL_PREFIX}/person/${person.id}/account?year=${param.year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
                     </jsp:attribute>
@@ -123,7 +124,7 @@
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
                     </jsp:attribute>
@@ -137,7 +138,7 @@
                 <uv:box className="tw-mb-4">
                         <jsp:attribute name="icon">
                             <uv:box-icon className="tw-bg-green-500 tw-text-white">
-                                <uv:icon-clock className="tw-w-8 tw-h-8" />
+                                <icon:clock className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
                     <jsp:body>
@@ -197,7 +198,7 @@
                 <uv:box className="tw-mb-8">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-                            <uv:icon-map className="tw-w-8 tw-h-8" />
+                            <icon:map className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>

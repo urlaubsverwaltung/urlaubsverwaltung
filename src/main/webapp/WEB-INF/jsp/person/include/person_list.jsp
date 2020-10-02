@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -17,7 +18,7 @@
                 <%-- NOTE: class 'search' is needed for list.js --%>
                 <input type="text" class="search form-control" placeholder="<spring:message code='action.search'/>"/>
                 <span class="input-group-addon">
-                    <uv:icon-search className="tw-w-4 tw-h-4" />
+                    <icon:search className="tw-w-4 tw-h-4" />
                 </span>
             </div>
         </div>
@@ -123,7 +124,7 @@
                 <td class="hidden-xs">
                     <div class="print:tw-hidden">
                         <a class="icon-link tw-px-1" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.details" />">
-                            <uv:icon-document-text className="tw-w-5 tw-h-5" />
+                            <icon:document-text className="tw-w-5 tw-h-5" />
                         </a>
                     </div>
                 </td>

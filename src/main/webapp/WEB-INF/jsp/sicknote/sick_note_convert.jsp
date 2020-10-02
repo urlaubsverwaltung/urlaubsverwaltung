@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -119,10 +120,10 @@
                             <uv:box-icon className="tw-bg-red-600 tw-text-white">
                                 <c:choose>
                                     <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
-                                        <uv:icon-child className="tw-w-8 tw-h-8" />
+                                        <icon:child className="tw-w-8 tw-h-8" />
                                     </c:when>
                                     <c:otherwise>
-                                        <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                                        <icon:medkit className="tw-w-8 tw-h-8" />
                                     </c:otherwise>
                                 </c:choose>
                             </uv:box-icon>
@@ -187,11 +188,11 @@
                                 <div class="tw-flex tw-items-center">
                                 <c:choose>
                                     <c:when test="${sickNote.aubPresent}">
-                                        <uv:icon-check className="tw-w-4 tw-h-4" />
+                                        <icon:check className="tw-w-4 tw-h-4" />
                                         &nbsp;<uv:date date="${sickNote.aubStartDate}"/> - <uv:date date="${sickNote.aubEndDate}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <uv:icon-x className="tw-w-4 tw-h-4" />
+                                        <icon:x className="tw-w-4 tw-h-4" />
                                         &nbsp;<spring:message code="sicknote.data.aub.notPresent"/>
                                     </c:otherwise>
                                 </c:choose>

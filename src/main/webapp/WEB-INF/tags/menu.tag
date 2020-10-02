@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -40,7 +41,7 @@
         <sec:authorize access="hasAuthority('USER')">
           <li>
             <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-flex tw-items-center">
-                <uv:icon-plus-circle className="tw-w-4 tw-h-4" solid="true" />
+                <icon:plus-circle className="tw-w-4 tw-h-4" solid="true" />
                 &nbsp;<spring:message code="nav.apply.title"/>
             </a>
           </li>
@@ -49,7 +50,7 @@
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
             <a href="${URL_PREFIX}/application" class="tw-flex tw-items-center">
-                <uv:icon-calendar className="tw-w-4 tw-h-4" solid="true" />
+                <icon:calendar className="tw-w-4 tw-h-4" solid="true" />
                 &nbsp;<spring:message code="nav.vacation.title"/>
             </a>
           </li>
@@ -58,7 +59,7 @@
         <sec:authorize access="hasAuthority('OFFICE')">
           <li>
             <a href="${URL_PREFIX}/sicknote/" class="tw-flex tw-items-center">
-                <uv:icon-medkit className="tw-w-4 tw-h-4" />
+                <icon:medkit className="tw-w-4 tw-h-4" />
                 &nbsp;<spring:message code="nav.sicknote.title"/>
             </a>
           </li>
@@ -67,7 +68,7 @@
         <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
             <a href="${URL_PREFIX}/person?active=true" class="tw-flex tw-items-center">
-                <uv:icon-user className="tw-w-4 tw-h-4" solid="true" />
+                <icon:user className="tw-w-4 tw-h-4" solid="true" />
                 &nbsp;<spring:message code="nav.person.title"/>
             </a>
           </li>
@@ -76,7 +77,7 @@
         <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
           <li>
             <a href="${URL_PREFIX}/department" class="tw-flex tw-items-center">
-                <uv:icon-user-group className="tw-w-4 tw-h-4" solid="true" />
+                <icon:user-group className="tw-w-4 tw-h-4" solid="true" />
                 &nbsp;<spring:message code="nav.department.title"/>
             </a>
           </li>
@@ -85,7 +86,7 @@
         <sec:authorize access="hasAuthority('OFFICE')">
           <li>
             <a href="${URL_PREFIX}/settings" class="tw-flex tw-items-center">
-                <uv:icon-cog className="tw-w-4 tw-h-4" solid="true" />
+                <icon:cog className="tw-w-4 tw-h-4" solid="true" />
                 &nbsp;<spring:message code="nav.settings.title"/>
             </a>
           </li>
@@ -94,7 +95,7 @@
         <sec:authorize access="hasAuthority('USER')">
           <li>
             <a href="<spring:url value='/logout' />" class="tw-flex tw-items-center">
-                <uv:icon-logout className="tw-w-4 tw-h-4" solid="true" />
+                <icon:logout className="tw-w-4 tw-h-4" solid="true" />
                 &nbsp;<spring:message code="nav.signout.title"/>
             </a>
           </li>

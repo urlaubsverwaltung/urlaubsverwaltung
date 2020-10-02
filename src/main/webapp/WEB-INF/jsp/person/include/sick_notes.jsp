@@ -2,6 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <table class="list-table selectable-table tw-text-sm">
     <tbody>
@@ -18,10 +19,10 @@
         <td class="is-centered hidden-print state ${sickNote.sickNoteType}">
             <c:choose>
                 <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                    <uv:icon-child className="tw-w-6 tw-h-6" />
+                    <icon:child className="tw-w-6 tw-h-6" />
                 </c:when>
                 <c:otherwise>
-                    <uv:icon-medkit className="tw-w-6 tw-h-6" />
+                    <icon:medkit className="tw-w-6 tw-h-6" />
                 </c:otherwise>
             </c:choose>
         </td>
@@ -45,7 +46,7 @@
                 <c:if test="${sickNote.aubPresent == true}">
                     <span class="tw-flex tw-items-center">
                         <span class="tw-hidden lg:tw-inline">&nbsp;</span>
-                        (<span class="tw-text-green-500 tw-flex tw-items-center"><uv:icon-check className="tw-w-4 tw-h-4" /></span>
+                        (<span class="tw-text-green-500 tw-flex tw-items-center"><icon:check className="tw-w-4 tw-h-4" /></span>
                         &nbsp;<spring:message code="sicknote.data.aub.short"/>)
                     </span>
                 </c:if>
@@ -56,7 +57,7 @@
         </td>
         <td class="hidden-print is-centered hidden-xs">
             <div class="tw-flex tw-items-center">
-                <uv:icon-clock className="tw-w-4 tw-h-4" />&nbsp;
+                <icon:clock className="tw-w-4 tw-h-4" />&nbsp;
                 <span><spring:message code="sicknote.progress.lastEdited"/> <uv:date date="${sickNote.lastEdited}"/></span>
             </div>
         </td>

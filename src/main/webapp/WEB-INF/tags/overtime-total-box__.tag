@@ -1,5 +1,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <%@attribute name="hours" type="java.math.BigDecimal" required="true" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
@@ -7,7 +8,7 @@
 <uv:box__ className="${cssClass}">
     <jsp:attribute name="icon">
         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-            <uv:icon-briefcase className="tw-w-8 tw-h-8" />
+            <icon:briefcase className="tw-w-8 tw-h-8" />
         </uv:box-icon>
     </jsp:attribute>
     <jsp:body>

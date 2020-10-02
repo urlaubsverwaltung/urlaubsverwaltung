@@ -4,6 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -43,13 +44,13 @@
                         <sec:authorize access="hasAuthority('OFFICE')">
                             <c:if test="${sickNote.active}">
                                 <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
-                                    <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                    <icon:pencil className="tw-w-5 tw-h-5" />
                                 </a>
                                 <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
-                                    <uv:icon-refresh className="tw-w-5 tw-h-5" />
+                                    <icon:refresh className="tw-w-5 tw-h-5" />
                                 </a>
                                 <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
-                                    <uv:icon-trash className="tw-w-5 tw-h-5" />
+                                    <icon:trash className="tw-w-5 tw-h-5" />
                                 </a>
                                 <uv:print/>
                             </c:if>
@@ -69,7 +70,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                        <uv:icon-x-circle className="tw-w-8 tw-h-8" solid="true" />
+                                        <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
                                     </button>
                                     <h4 id="myModalLabel" class="modal-title"><spring:message
                                         code="action.delete"/>?</h4>
@@ -93,10 +94,10 @@
                         <uv:box-icon className="tw-bg-red-600 tw-text-white">
                             <c:choose>
                                 <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                                    <uv:icon-child className="tw-w-8 tw-h-8" />
+                                    <icon:child className="tw-w-8 tw-h-8" />
                                 </c:when>
                                 <c:otherwise>
-                                    <uv:icon-medkit className="tw-w-8 tw-h-8" />
+                                    <icon:medkit className="tw-w-8 tw-h-8" />
                                 </c:otherwise>
                             </c:choose>
                         </uv:box-icon>
@@ -167,11 +168,11 @@
                             <div class="tw-flex tw-items-center">
                             <c:choose>
                                 <c:when test="${sickNote.aubPresent}">
-                                    <uv:icon-check className="tw-w-4 tw-h-4" />
+                                    <icon:check className="tw-w-4 tw-h-4" />
                                     &nbsp;<uv:date date="${sickNote.aubStartDate}"/> - <uv:date date="${sickNote.aubEndDate}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <uv:icon-x className="tw-w-4 tw-h-4" />
+                                    <icon:x className="tw-w-4 tw-h-4" />
                                     &nbsp;<spring:message code="sicknote.data.aub.notPresent"/>
                                 </c:otherwise>
                             </c:choose>
@@ -190,7 +191,7 @@
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
-                                <uv:icon-annotation className="tw-w-5 tw-h-5" />
+                                <icon:annotation className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
                     </jsp:attribute>

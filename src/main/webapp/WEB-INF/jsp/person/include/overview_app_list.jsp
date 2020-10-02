@@ -4,6 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <table class="list-table selectable-table tw-text-sm">
     <tbody>
@@ -25,19 +26,19 @@
             <td class="is-centered state ${app.status} hidden-print">
                 <c:choose>
                     <c:when test="${app.status == 'WAITING'}">
-                        <uv:icon-question-mark-circle className="tw-w-6 tw-h-6" />
+                        <icon:question-mark-circle className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${app.status == 'ALLOWED'}">
-                        <uv:icon-check-circle className="tw-w-6 tw-h-6" />
+                        <icon:check-circle className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
-                        <uv:icon-check-circle className="tw-w-6 tw-h-6" />
+                        <icon:check-circle className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${app.status == 'REJECTED'}">
-                        <uv:icon-ban className="tw-w-6 tw-h-6" />
+                        <icon:ban className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${app.status == 'CANCELLED'}">
-                        <uv:icon-trash className="tw-w-6 tw-h-6" />
+                        <icon:trash className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:otherwise>&nbsp;</c:otherwise>
                 </c:choose>
@@ -109,7 +110,7 @@
             </td>
             <td class="is-centered hidden-xs hidden-print">
                 <div class="tw-flex tw-items-center">
-                    <uv:icon-clock className="tw-w-4 tw-h-4" />&nbsp;
+                    <icon:clock className="tw-w-4 tw-h-4" />&nbsp;
                     <span>
                         <c:choose>
                             <c:when test="${app.status == 'WAITING'}">

@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="person" tagdir="/WEB-INF/tags/person" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
@@ -102,7 +102,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.vacation.description"/>
                                 </span>
                             </div>
@@ -150,7 +150,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
                                 </span>
                             </div>
@@ -208,7 +208,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.sickDays.description"/>
                                 </span>
                             </div>
@@ -256,7 +256,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.publicHolidays.description"/>
                                 </span>
                             </div>
@@ -323,7 +323,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.overtime.description"/>
                                 </span>
                             </div>
@@ -381,7 +381,7 @@
                 <div class="tab-pane" id="calendar">
 
                     <div class="alert alert-danger tw-flex tw-items-center" role="alert">
-                        <uv:icon-speakerphone className="tw-w-4 tw-h-4" solid="true" />
+                        <icon:speakerphone className="tw-w-4 tw-h-4" solid="true" />
                         &nbsp;<spring:message code="settings.calendar.deprecated"/>
                     </div>
 
@@ -394,7 +394,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.calendar.description"/>
                                 </span>
                             </div>
@@ -454,7 +454,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.calendar.ews.description"/>
                                 </span>
                             </div>
@@ -564,7 +564,7 @@
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
-                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="settings.calendar.google.description"/>
                                 </span>
                             </div>

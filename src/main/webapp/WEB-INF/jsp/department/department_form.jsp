@@ -4,6 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
@@ -48,7 +49,7 @@
                 <div class="row">
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="department.data.description"/>
                         </span>
                     </div>
@@ -83,7 +84,7 @@
                 <div class="row tw-mb-8">
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="department.data.twoStageApproval.help"/>
                         </span>
                     </div>
@@ -134,11 +135,11 @@
                 <div class="row tw-mb-16">
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="department.members.description"/>
                         </span>
                         <span class="help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="department.members.secondStageAuthority.description"/>
                         </span>
                     </div>

@@ -3,16 +3,17 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <uv:box className="tw-h-32 tw-mb-4">
     <jsp:attribute name="icon">
         <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
             <c:choose>
                 <c:when test="${application.vacationType.category == 'HOLIDAY'}">
-                    <uv:icon-sun className="tw-w-8 tw-h-8" />
+                    <icon:sun className="tw-w-8 tw-h-8" />
                 </c:when>
                 <c:otherwise>
-                    <uv:icon-flag className="tw-w-8 tw-h-8" />
+                    <icon:flag className="tw-w-8 tw-h-8" />
                 </c:otherwise>
             </c:choose>
         </uv:box-icon>
@@ -26,19 +27,19 @@
             <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
                 <c:choose>
                     <c:when test="${application.status == 'WAITING'}">
-                        <uv:icon-question-mark-circle className="tw-w-5 tw-h-5" />
+                        <icon:question-mark-circle className="tw-w-5 tw-h-5" />
                     </c:when>
                     <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                        <uv:icon-check className="tw-w-5 tw-h-5" />
+                        <icon:check className="tw-w-5 tw-h-5" />
                     </c:when>
                     <c:when test="${application.status == 'ALLOWED'}">
-                        <uv:icon-check className="tw-w-5 tw-h-5" />
+                        <icon:check className="tw-w-5 tw-h-5" />
                     </c:when>
                     <c:when test="${application.status == 'REJECTED'}">
-                        <uv:icon-ban className="tw-w-5 tw-h-5" />
+                        <icon:ban className="tw-w-5 tw-h-5" />
                     </c:when>
                     <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                        <uv:icon-trash className="tw-w-5 tw-h-5" />
+                        <icon:trash className="tw-w-5 tw-h-5" />
                     </c:when>
                     <c:otherwise>
                         &nbsp;
@@ -181,11 +182,11 @@
             <div class="tw-flex tw-items-center">
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
-                    <uv:icon-emoji-happy className="tw-w-4 tw-h-4" />
+                    <icon:emoji-happy className="tw-w-4 tw-h-4" />
                     &nbsp;<spring:message code='application.data.teamInformed.true'/>
                 </c:when>
                 <c:otherwise>
-                    <uv:icon-emoji-sad className="tw-w-4 tw-h-4" />
+                    <icon:emoji-sad className="tw-w-4 tw-h-4" />
                     &nbsp;<spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>

@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
@@ -64,7 +65,7 @@
                         <li>
                             <a href="${URL_PREFIX}/person?active=true&year=${year}" class="tw-flex tw-items-center">
                                     <span class="tw-w-5 tw-flex tw-items-center">
-                                        <uv:icon-eye className="tw-w-4 tw-h-4" solid="true" />
+                                        <icon:eye className="tw-w-4 tw-h-4" solid="true" />
                                     </span>
                                 &nbsp;<spring:message code="persons.active"/>
                             </a>
@@ -83,7 +84,7 @@
                         <li>
                             <a href="${URL_PREFIX}/person?active=false&year=${year}" class="tw-flex tw-items-center">
                                     <span class="tw-w-5 tw-flex tw-items-center">
-                                        <uv:icon-eye-off className="tw-w-4 tw-h-4" solid="true" />
+                                        <icon:eye-off className="tw-w-4 tw-h-4" solid="true" />
                                     </span>
                                 &nbsp;<spring:message code="persons.inactive"/>
                             </a>

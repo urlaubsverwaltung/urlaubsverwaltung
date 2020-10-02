@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -43,13 +44,13 @@
         <uv:section-heading>
             <jsp:attribute name="actions">
                 <a href="${URL_PREFIX}/sicknote/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.sicknote"/>">
-                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                    <icon:plus-circle className="tw-w-5 tw-h-5" />
                 </a>
                 <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
-                    <uv:icon-calendar className="tw-w-5 tw-h-5" />
+                    <icon:calendar className="tw-w-5 tw-h-5" />
                 </a>
                 <a href="${URL_PREFIX}/sicknote/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.sicknotes.statistics"/>">
-                    <uv:icon-presentation-chart-bar className="tw-w-5 tw-h-5" />
+                    <icon:presentation-chart-bar className="tw-w-5 tw-h-5" />
                 </a>
                 <uv:print/>
             </jsp:attribute>
@@ -110,14 +111,14 @@
                         </td>
                         <td class="hidden-xs">
                             <div class="tw-flex tw-items-center">
-                                <uv:icon-medkit className="tw-w-4 tw-h-4" />
+                                <icon:medkit className="tw-w-4 tw-h-4" />
                                 &nbsp;<uv:number number="${sickDays[person].days['TOTAL']}"/>
                                 <spring:message code="sicknotes.daysOverview.sickDays.number"/>
                             </div>
                             <c:if test="${sickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row tw-flex tw-items-center">
                                     <span class="tw-text-green-500 tw-flex tw-items-center">
-                                        <uv:icon-check className="tw-w-4 tw-h-4" />
+                                        <icon:check className="tw-w-4 tw-h-4" />
                                     </span>
                                     &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDays[person].days['WITH_AUB']}"/>
                                 </p>
@@ -125,14 +126,14 @@
                         </td>
                         <td class="hidden-xs">
                             <div class="tw-flex tw-items-center">
-                                <uv:icon-child className="tw-w-3 tw-h-3" />
+                                <icon:child className="tw-w-3 tw-h-3" />
                                 &nbsp;<uv:number number="${childSickDays[person].days['TOTAL']}"/>
                                 <spring:message code="sicknotes.daysOverview.sickDays.child.number"/>
                             </div>
                             <c:if test="${childSickDays[person].days['WITH_AUB'] > 0}">
                                 <p class="list-table--second-row tw-flex tw-items-center">
                                     <span class="tw-text-green-500 tw-flex tw-items-center">
-                                        <uv:icon-check className="tw-w-4 tw-h-4" />
+                                        <icon:check className="tw-w-4 tw-h-4" />
                                     </span>
                                     &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDays[person].days['WITH_AUB']}"/>
                                 </p>
@@ -140,10 +141,10 @@
                         </td>
                         <td class="visible-xs">
                             <div class="tw-flex tw-items-center">
-                                <uv:icon-medkit className="tw-w-3 tw-h-3" />&nbsp;<uv:number number="${sickDays[person].days['TOTAL']}"/>
+                                <icon:medkit className="tw-w-3 tw-h-3" />&nbsp;<uv:number number="${sickDays[person].days['TOTAL']}"/>
                             </div>
                             <div class="tw-flex tw-items-center">
-                                <uv:icon-child className="tw-w-3 tw-h-3" />&nbsp;<uv:number number="${childSickDays[person].days['TOTAL']}"/>
+                                <icon:child className="tw-w-3 tw-h-3" />&nbsp;<uv:number number="${childSickDays[person].days['TOTAL']}"/>
                             </div>
                         </td>
                         </c:forEach>
