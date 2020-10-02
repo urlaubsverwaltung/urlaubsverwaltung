@@ -92,29 +92,12 @@
                                         <li>
                                             <div>
                                                 <spring:message code="person.form.workingTime.validityPeriod"/>
-                                                <uv:date date="${time.validFrom}"/>
+                                                <uv:date date="${time.key}"/>
                                             </div>
-                                            <c:if test="${time.monday.duration > 0}">
-                                                <spring:message code="MONDAY"/>,
-                                            </c:if>
-                                            <c:if test="${time.tuesday.duration > 0}">
-                                                <spring:message code="TUESDAY"/>,
-                                            </c:if>
-                                            <c:if test="${time.wednesday.duration > 0}">
-                                                <spring:message code="WEDNESDAY"/>,
-                                            </c:if>
-                                            <c:if test="${time.thursday.duration > 0}">
-                                                <spring:message code="THURSDAY"/>,
-                                            </c:if>
-                                            <c:if test="${time.friday.duration > 0}">
-                                                <spring:message code="FRIDAY"/>,
-                                            </c:if>
-                                            <c:if test="${time.saturday.duration > 0}">
-                                                <spring:message code="SATURDAY"/>,
-                                            </c:if>
-                                            <c:if test="${time.sunday.duration > 0}">
-                                                <spring:message code="SUNDAY"/>
-                                            </c:if>
+
+                                            <c:forEach items="${time.value}" var="day" varStatus="loop">
+                                                <spring:message code="${day}"/>${loop.last ? '' : ','}
+                                            </c:forEach>
                                         </li>
                                     </c:forEach>
                                 </ul>
