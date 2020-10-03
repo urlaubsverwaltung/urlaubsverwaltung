@@ -68,7 +68,7 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
 
-        webDriver.get("http://172.17.0.1:" + port + "/login");
+        webDriver.get("http://host.docker.internal:" + port + "/login");
         assertThat(webDriver.getTitle()).isEqualTo("Login");
 
         webDriver.findElementById("username").sendKeys(person.getUsername());
