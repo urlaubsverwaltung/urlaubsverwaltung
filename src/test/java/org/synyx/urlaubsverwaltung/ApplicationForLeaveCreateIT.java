@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung;
 
+import de.jollyday.HolidayManager;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -58,6 +59,8 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeService workingTimeService;
+    @Autowired
+    private HolidayManager holidayManager;
 
     @Test
     void title() {
@@ -77,7 +80,7 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
         webDriver.findElementById("application-new-link").click();
 
         new WebDriverWait(webDriver, 20).until(visibilityOfElementLocated(By.id("from")));
-        final String date = ofPattern("dd.MM.yyyy").format(now());
+        final String date = ofPattern("dd.MM.yyyy").format(getNextWorkday());
         assertThat(webDriver.getTitle()).isEqualTo("New vacation request");
         webDriver.findElementById("from").sendKeys(date);
         webDriver.findElementById("to").sendKeys(date);
@@ -101,7 +104,17 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), TEN, TEN, TEN, ZERO, null);
+
 
         return savedPerson;
+    }
+
+    private LocalDate getNextWorkday() {
+        LocalDate nextWorkDay = now();
+        while (holidayManager.isHoliday(nextWorkDay)) {
+            nextWorkDay = nextWorkDay.plusDays(1);
+        }
+        return nextWorkDay;
     }
 }
