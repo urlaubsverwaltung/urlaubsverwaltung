@@ -21,7 +21,7 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <div class="tw-text-center tw-mt-24">
-    <h1 class="tw-text-6xl md:tw-text-10rem tw-leading-normal" style="background-color: #b2c900;" title="${exception.message}">
+    <h1 class="tw-text-6xl md:tw-text-10rem tw-leading-normal" style="background-color: #b2c900;">
         <c:choose>
             <c:when test="${statusCode == 403 || statusCode == 404}">
                 <c:out value="${statusCode}"/>
