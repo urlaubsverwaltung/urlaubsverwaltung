@@ -17,6 +17,7 @@
 .error-code {
   font-size: 200px;
   background-color: #b2c900;
+  line-height: normal;
 }
 
 .error-description {
