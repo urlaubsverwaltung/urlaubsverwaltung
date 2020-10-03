@@ -8,7 +8,12 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -43,6 +48,7 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@ContextConfiguration(initializers = ApplicationForLeaveCreateIT.Initializer.class)
 class ApplicationForLeaveCreateIT extends TestContainersBase {
 
     @LocalServerPort
@@ -68,7 +74,7 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
 
-        webDriver.get("http://host.docker.internal:" + port + "/login");
+        webDriver.get("http://host.testcontainers.internal:" + port + "/login");
         assertThat(webDriver.getTitle()).isEqualTo("Login");
 
         webDriver.findElementById("username").sendKeys(person.getUsername());
@@ -116,5 +122,13 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
+    }
+
+    public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext) {
+            applicationContext.addApplicationListener((ApplicationListener<WebServerInitializedEvent>) event ->
+                org.testcontainers.Testcontainers.exposeHostPorts(event.getWebServer().getPort()));
+        }
     }
 }
