@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -81,7 +82,7 @@
                     <div class="form-group">
                         <button class="btn btn-primary btn-block" type="submit">
                             <span class="tw-flex tw-items-center tw-justify-center">
-                                <uv:icon-login className="tw-w-5 tw-h-5" />
+                                <icon:login className="tw-w-5 tw-h-5" />
                                 &nbsp;<spring:message code="login.form.submit"/>
                             </span>
                         </button>

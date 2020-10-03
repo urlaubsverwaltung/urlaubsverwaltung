@@ -1,6 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
@@ -8,7 +9,7 @@
 <uv:box__ className="${className}">
     <jsp:attribute name="icon">
         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-            <uv:icon-calendar className="tw-w-8 tw-h-8" />
+            <icon:calendar className="tw-w-8 tw-h-8" />
         </uv:box-icon>
     </jsp:attribute>
     <jsp:body>

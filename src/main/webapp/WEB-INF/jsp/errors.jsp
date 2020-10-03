@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 
 <!DOCTYPE html>
@@ -29,7 +30,7 @@
                             <c:out value="${statusCode}"/>
                         </c:when>
                         <c:otherwise>
-                            <uv:icon-emoji-sad className="tw-w-40 tw-h-40" />
+                            <icon:emoji-sad className="tw-w-40 tw-h-40" />
                         </c:otherwise>
                     </c:choose>
                 </h1>

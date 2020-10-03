@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
@@ -86,7 +87,7 @@
                     </div>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="overtime.data.description"/>
                         </span>
                     </div>

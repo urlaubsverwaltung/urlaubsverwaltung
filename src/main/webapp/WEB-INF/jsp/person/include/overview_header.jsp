@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <c:choose>
 <c:when test="${!empty param.year}">
@@ -16,7 +17,7 @@
 <uv:section-heading>
     <jsp:attribute name="actions">
         <a href="${URL_PREFIX}/person/${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.details"/>">
-            <uv:icon-document-text className="tw-w-5 tw-h-5" />
+            <icon:document-text className="tw-w-5 tw-h-5" />
         </a>
         <uv:print />
     </jsp:attribute>

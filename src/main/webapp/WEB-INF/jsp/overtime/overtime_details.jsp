@@ -3,6 +3,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -39,7 +40,7 @@
                     <jsp:attribute name="actions">
                         <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
                             <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
-                                <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -53,7 +54,7 @@
                 <uv:box className="tw-h-32 tw-mb-8">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-                            <uv:icon-briefcase className="tw-w-8 tw-h-8" />
+                            <icon:briefcase className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>

@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -89,7 +90,7 @@
 
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="sicknote.data.description"/>
                         </span>
                     </div>
@@ -214,7 +215,7 @@
                     </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="sicknote.data.person"/>
                         </span>
                     </div>
@@ -256,7 +257,7 @@
                     </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="sicknote.data.furtherInformation.description"/>
                         </span>
                     </div>

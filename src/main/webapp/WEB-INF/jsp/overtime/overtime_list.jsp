@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
@@ -32,7 +33,7 @@
                     <jsp:attribute name="actions">
                         <c:if test="${IS_OFFICE || signedInUser.id == person.id}">
                             <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.overtime.new"/>">
-                                <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                                <icon:plus-circle className="tw-w-5 tw-h-5" />
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -76,7 +77,7 @@
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
                                         <span class="hidden-print">
-                                            <uv:icon-briefcase className="tw-w-4 tw-h-4" />
+                                            <icon:briefcase className="tw-w-4 tw-h-4" />
                                         </span>
                                     </td>
                                     <td>
@@ -95,7 +96,7 @@
                                     </td>
                                     <td class="hidden-print is-centered hidden-xs">
                                         <div class="tw-flex tw-items-center">
-                                            <uv:icon-clock className="tw-w-4 tw-h-4" />
+                                            <icon:clock className="tw-w-4 tw-h-4" />
                                             &nbsp;<spring:message code="overtime.progress.lastEdited"/>
                                             <uv:date date="${record.lastModificationDate}"/>
                                         </div>

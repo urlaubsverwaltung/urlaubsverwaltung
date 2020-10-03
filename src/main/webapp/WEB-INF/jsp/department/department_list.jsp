@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
@@ -35,7 +36,7 @@
             <jsp:attribute name="actions">
                 <sec:authorize access="hasAuthority('OFFICE')">
                 <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
-                    <uv:icon-plus-circle className="tw-w-5 tw-h-5" />
+                    <icon:plus-circle className="tw-w-5 tw-h-5" />
                 </a>
                 </sec:authorize>
                 <uv:print/>
@@ -102,7 +103,7 @@
                                                      title="<spring:message code='department.data.info'/>"
                                                      data-content="${department.description}">
                                                     <c:out value="${department.name}"/>
-                                                    <uv:icon-information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -129,7 +130,7 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                                                    <uv:icon-x-circle className="tw-w-8 tw-h-8" solid="true" />
+                                                                    <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
                                                                     <spring:message
@@ -154,10 +155,10 @@
 
                                             <div class="tw-flex tw-justify-end print:tw-hidden">
                                                 <a class="icon-link tw-p-1 tw-mr-4" href="${URL_PREFIX}/department/${department.id}/edit" data-title="<spring:message code="action.edit" />">
-                                                    <uv:icon-pencil className="tw-w-5 tw-h-5" />
+                                                    <icon:pencil className="tw-w-5 tw-h-5" />
                                                 </a>
                                                 <a class="icon-link tw-p-1 hover:tw-text-red-500 hidden-xs" href="#modal-cancel-${department.id}" data-toggle="modal" data-title="<spring:message code='action.department.delete' />">
-                                                    <uv:icon-trash className="tw-w-5 tw-h-5" />
+                                                    <icon:trash className="tw-w-5 tw-h-5" />
                                                 </a>
                                             </div>
 

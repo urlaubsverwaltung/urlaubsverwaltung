@@ -5,6 +5,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <fmt:parseDate value="${application.startDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date"/>
@@ -199,7 +200,7 @@
                                         </c:choose>
                                         <c:if test="${application.status == 'ALLOWED'}">
                                             <span class="tw-text-green-500">
-                                                <uv:icon-check className="tw-w-5 tw-h-5" solid="true" />
+                                                <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                             </span>
                                         </c:if>
                                         </span>
