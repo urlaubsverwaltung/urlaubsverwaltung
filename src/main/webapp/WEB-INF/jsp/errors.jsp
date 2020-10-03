@@ -21,7 +21,7 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <div class="tw-text-center tw-mt-24">
-    <h1 class="error-code" title="${exception.message}">
+    <h1 class="tw-text-6xl md:tw-text-10rem tw-leading-normal" style="background-color: #b2c900;" title="${exception.message}">
         <c:choose>
             <c:when test="${statusCode == 403 || statusCode == 404}">
                 <c:out value="${statusCode}"/>
@@ -31,7 +31,7 @@
             </c:otherwise>
         </c:choose>
     </h1>
-    <p class="error-description">
+    <p class="md:tw-text-2xl ">
         <c:choose>
             <c:when test="${statusCode == 403}">
                 <spring:message code="errorPage.403"/>
@@ -44,7 +44,7 @@
             </c:otherwise>
         </c:choose>
     </p>
-    <p class="error-link">
+    <p class="error-link md:tw-text-xl">
         <a href="${URL_PREFIX}/overview"><spring:message code="errorPage.back"/></a>
     </p>
 </div>

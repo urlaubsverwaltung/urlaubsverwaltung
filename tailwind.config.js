@@ -21,6 +21,12 @@ module.exports = {
       screens: {
         'print': {'raw': 'print'},
       },
+      lineHeight: {
+        'normal': 'normal',
+      },
+      fontSize: {
+        '10rem': '10rem',
+      }
     },
   },
   variants: {
