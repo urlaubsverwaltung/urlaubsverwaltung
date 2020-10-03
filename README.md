@@ -402,7 +402,7 @@ d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der We
 
 Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
 
-Assets sind in `<root>/src/main/webapp` zu finden
+Assets sind in `<root>/src/main/javascript` zu finden
 
 * `bundles` sind in den JSPs zu integrieren
 * `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
