@@ -1,6 +1,4 @@
 import $ from "jquery";
-import "chosen-js";
-import "chosen-js/chosen.css";
 
 (function () {
   /**
@@ -21,15 +19,6 @@ import "chosen-js/chosen.css";
     const exchangeCalendar = document.querySelector("#exchange-calendar");
     if (exchangeCalendar) {
       exchangeCalendar.hidden = value !== "ExchangeCalendarProvider";
-    }
-
-    if (value === "ExchangeCalendarProvider") {
-      // problem if div is not displayed
-      // https://github.com/harvesthq/chosen/issues/92
-      $(".chosenCombo").chosen({ width: "100%" });
-    } else {
-      // if not visible deactivate
-      $(".chosenCombo").chosen("destroy");
     }
   }
 

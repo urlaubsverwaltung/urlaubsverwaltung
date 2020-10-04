@@ -39,6 +39,7 @@ module.exports = {
     workingtime_form: `${paths.src}/bundles/workingtime-form.js`,
     copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,
     tabs: `${paths.src}/components/tabs/index.js`,
+    datalist_polyfill: `datalist-polyfill`,
   },
 
   output: {
