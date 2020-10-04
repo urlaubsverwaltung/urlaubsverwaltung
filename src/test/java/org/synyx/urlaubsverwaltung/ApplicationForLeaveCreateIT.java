@@ -69,7 +69,7 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
     private HolidayManager holidayManager;
 
     @Test
-    void title() {
+    void checkIfItIsPossibleToRequestAnApplicationForLeave() {
         final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
