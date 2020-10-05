@@ -168,6 +168,9 @@ uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
 uv.security.oidc.logout-uri
 
+# jsp template engine
+uv.template-engine.jsp.use-precompiled=false
+
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 

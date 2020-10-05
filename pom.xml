@@ -308,6 +308,47 @@
         <version>2.5.3</version>
       </plugin>
 
+      <!--
+        run jsp compilation as part of build process
+        so we save huge amount on-demand compilation time
+        in multi-tenant container based deployment
+      -->
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-jspc-maven-plugin</artifactId>
+        <version>9.4.32.v20200930</version>
+        <executions>
+          <execution>
+            <id>jspc</id>
+            <goals>
+              <goal>jspc</goal>
+            </goals>
+            <configuration>
+              <mergeFragment>true</mergeFragment>
+              <sourceVersion>${java.version}</sourceVersion>
+              <targetVersion>${java.version}</targetVersion>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <!-- replace jetty jspc with tomcat jspc -->
+          <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jasper</artifactId>
+            <version>${tomcat.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <!-- include jspc generated web.xml into war file -->
+          <webXml>${project.basedir}/target/web.xml</webXml>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
