@@ -118,8 +118,9 @@ uv.account.update.cron=0 0 5 1 1 *
 # application
 uv.application.reminder-notification.cron=0 0 7 * * *
 
-# development
+# ical calendar
 uv.calendar.organizer
+uv.calendar.refresh-interval=P1D
 
 # development
 uv.development.demodata.create
