@@ -4,6 +4,7 @@ import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.property.Attendee;
@@ -21,7 +22,6 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -50,9 +50,7 @@ class ICalService {
         calendar.getProperties().add(GREGORIAN);
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
-        RefreshInterval refreshInterval = new RefreshInterval();
-        refreshInterval.setValue(Duration.ofHours(1).toString());
-        calendar.getProperties().add(refreshInterval);
+        calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 
         final List<VEvent> absencesVEvents = absences.stream().map(this::toVEvent).collect(toList());
         calendar.getComponents().addAll(absencesVEvents);

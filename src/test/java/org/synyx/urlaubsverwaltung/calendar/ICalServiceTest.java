@@ -55,7 +55,7 @@ class ICalServiceTest {
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:PT1H")
+            .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
@@ -78,7 +78,7 @@ class ICalServiceTest {
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:PT1H")
+            .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190426T080000Z")
@@ -101,7 +101,7 @@ class ICalServiceTest {
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:PT1H")
+            .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
@@ -124,7 +124,7 @@ class ICalServiceTest {
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:PT1H")
+            .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190526T120000Z")
