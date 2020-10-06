@@ -23,5 +23,4 @@ public class JspConfiguration {
         LOG.info("Application will use precompiled JSPs!");
         return new JspServletRegistrator(WEB_XML);
     }
-
 }
