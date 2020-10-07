@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import liquibase.pro.packaged.F;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
