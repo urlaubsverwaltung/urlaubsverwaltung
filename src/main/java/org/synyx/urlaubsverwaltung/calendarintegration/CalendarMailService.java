@@ -35,12 +35,12 @@ public class CalendarMailService {
         model.put("absence", absence);
         model.put(EXCEPTION, exception);
 
-        final Mail toTechnical = Mail.builder()
+        final Mail mailToTechnical = Mail.builder()
             .withRecipient(true)
             .withSubject("subject.error.calendar.sync")
             .withTemplate("error_calendar_sync", model)
             .build();
-        mailService.send(toTechnical);
+        mailService.send(mailToTechnical);
     }
 
     /**

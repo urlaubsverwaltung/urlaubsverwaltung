@@ -93,19 +93,19 @@ public class TurnOfTheYearAccountUpdaterService {
         final String templateName = "updated_accounts";
 
         // send email to office for printing statistic
-        final Mail toOffice= Mail.builder()
+        final Mail mailToOffice= Mail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
-        mailService.send(toOffice);
+        mailService.send(mailToOffice);
 
         // send email to manager to notify about update of accounts
-        final Mail toTechnical = Mail.builder()
+        final Mail mailToTechnical = Mail.builder()
             .withRecipient(true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
-        mailService.send(toTechnical);
+        mailService.send(mailToTechnical);
     }
 }
