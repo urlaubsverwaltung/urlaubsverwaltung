@@ -92,7 +92,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailNotificationRecipients()).isEqualTo(NOTIFICATION_OFFICE);
+        assertThat(mails.get(0).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("updated_accounts");
         assertThat(mails.get(1).isSendToTechnicalMail()).isTrue();

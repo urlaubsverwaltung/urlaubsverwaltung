@@ -46,7 +46,7 @@ class OvertimeMailServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mails = argument.getValue();
-        assertThat(mails.getMailNotificationRecipients()).isEqualTo(OVERTIME_NOTIFICATION_OFFICE);
+        assertThat(mails.getMailNotificationRecipients()).hasValue(OVERTIME_NOTIFICATION_OFFICE);
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created");
         assertThat(mails.getTemplateName()).isEqualTo("overtime_office");
         assertThat(mails.getTemplateModel()).isEqualTo(model);

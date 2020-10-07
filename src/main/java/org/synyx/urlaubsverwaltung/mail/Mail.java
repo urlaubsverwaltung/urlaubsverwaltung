@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Mail {
 
@@ -38,12 +39,12 @@ public class Mail {
         this.mailAttachments = mailAttachments;
     }
 
-    public List<Person> getMailAddressRecipients() {
-        return mailAddressRecipients;
+    public Optional<List<Person>> getMailAddressRecipients() {
+        return Optional.ofNullable(mailAddressRecipients);
     }
 
-    public MailNotification getMailNotificationRecipients() {
-        return mailNotificationRecipients;
+    public Optional<MailNotification> getMailNotificationRecipients() {
+        return Optional.ofNullable(mailNotificationRecipients);
     }
 
     public boolean isSendToTechnicalMail() {
@@ -70,17 +71,20 @@ public class Mail {
         return subjectMessageArguments;
     }
 
-    public List<MailAttachment> getMailAttachments() {
-        return mailAttachments;
+    public Optional<List<MailAttachment>> getMailAttachments() {
+        return Optional.ofNullable(mailAttachments);
     }
 
     public static Mail.Builder builder() {
         return new Mail.Builder();
     }
 
+    /**
+     * Mail Builder for an easier way to create a mail
+     */
     public static class Builder {
 
-        private final List<Person> mailAddressRecipients = new ArrayList<>();
+        private List<Person> mailAddressRecipients = new ArrayList<>();
         private MailNotification mailNotificationRecipients;
         private boolean sendToTechnicalMail;
         private boolean sendToEachIndividually;
@@ -91,7 +95,7 @@ public class Mail {
         private String subjectMessageKey;
         private Object[] subjectMessageArguments;
 
-        private final List<MailAttachment> mailAttachments = new ArrayList<>();
+        private List<MailAttachment> mailAttachments;
 
         public Mail.Builder withRecipient(boolean sendToTechnicalMail) {
             this.sendToTechnicalMail = sendToTechnicalMail;
@@ -104,16 +108,20 @@ public class Mail {
         }
 
         public Mail.Builder withRecipient(Person recipient) {
-            this.mailAddressRecipients.add(recipient);
+            withRecipient(List.of(recipient), this.sendToEachIndividually);
             return this;
         }
 
         public Mail.Builder withRecipient(List<Person> recipients) {
-            this.mailAddressRecipients.addAll(recipients);
+            withRecipient(recipients, this.sendToEachIndividually);
             return this;
         }
 
         public Mail.Builder withRecipient(List<Person> recipients, boolean sendToEachIndividually) {
+            if (mailAddressRecipients == null) {
+                mailAddressRecipients = new ArrayList<>();
+            }
+
             this.mailAddressRecipients.addAll(recipients);
             this.sendToEachIndividually = sendToEachIndividually;
             return this;
@@ -132,6 +140,10 @@ public class Mail {
         }
 
         public Mail.Builder withAttachment(String name, File file) {
+            if (mailAttachments == null) {
+                mailAttachments = new ArrayList<>();
+            }
+
             this.mailAttachments.add(new MailAttachment(name, file));
             return this;
         }

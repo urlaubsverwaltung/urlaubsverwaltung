@@ -23,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -205,6 +206,38 @@ class MailServiceImplTest {
         sut.send(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
+    }
+
+    @Test
+    void sendMailToWithNotificationAndPersonsAndAdministrator() {
+
+        when(mailProperties.getAdministrator()).thenReturn("admin@firma.test");
+
+        setupMockServletRequest();
+
+        final Person hans = new Person();
+        hans.setEmail("hans@firma.test");
+        when(personService.getPersonsWithNotificationType(NOTIFICATION_USER)).thenReturn(List.of(hans));
+
+        final Person franz = new Person();
+        franz.setEmail("franz@firma.test");
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        final Mail mail = Mail.builder()
+            .withRecipient(true)
+            .withRecipient(List.of(franz), true)
+            .withRecipient(NOTIFICATION_USER)
+            .withSubject(subjectMessageKey)
+            .withTemplate(templateName, new HashMap<>())
+            .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("hans@firma.test")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("franz@firma.test")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("admin@firma.test")), eq("subject"), eq("emailBody"));
     }
 
     private void setupMockServletRequest() {

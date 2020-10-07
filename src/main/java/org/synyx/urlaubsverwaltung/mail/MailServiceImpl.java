@@ -51,44 +51,31 @@ class MailServiceImpl implements MailService {
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
         final String sender = mailProperties.getSender();
 
-        if (mail.isSendToTechnicalMail()) {
-            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
-            mailSenderService.sendEmail(sender, List.of(mailProperties.getAdministrator()), subject, body);
+        final List<Person> recipients = getRecipients(mail);
+        if (mail.isSendToEachIndividually()) {
+            recipients.forEach(recipient -> {
+                model.put("recipient", recipient);
+                final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                mail.getMailAttachments().ifPresentOrElse(
+                    mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
+                    () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body));
+            });
         } else {
-            final List<Person> recipients = getRecipients(mail);
-            if (mail.getMailAttachments().isEmpty()) {
-                if (mail.isSendToEachIndividually()) {
-                    recipients.forEach(recipient -> {
-                        model.put("recipient", recipient);
-                        final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
-                        mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body);
-                    });
-                } else {
-                    final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
-                    mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body);
-                }
-            } else {
-                if (mail.isSendToEachIndividually()) {
-                    recipients.forEach(recipient -> {
-                        model.put("recipient", recipient);
-                        final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
-                        mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mail.getMailAttachments());
-                    });
-                } else {
-                    final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
-                    mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body, mail.getMailAttachments());
-                }
-            }
+            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            mail.getMailAttachments().ifPresentOrElse(
+                mailAttachments -> mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body, mailAttachments),
+                () -> mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body));
         }
     }
 
     private List<Person> getRecipients(Mail mail) {
 
         final List<Person> recipients = new ArrayList<>();
-        if (mail.getMailNotificationRecipients() != null) {
-            recipients.addAll(personService.getPersonsWithNotificationType(mail.getMailNotificationRecipients()));
-        } else if (!mail.getMailAddressRecipients().isEmpty()) {
-            recipients.addAll(mail.getMailAddressRecipients());
+        mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getPersonsWithNotificationType(mailNotification)));
+        mail.getMailAddressRecipients().ifPresent(recipients::addAll);
+
+        if (mail.isSendToTechnicalMail()) {
+            recipients.add(new Person(null, null, "Administrator", mailProperties.getAdministrator()));
         }
 
         return recipients;
