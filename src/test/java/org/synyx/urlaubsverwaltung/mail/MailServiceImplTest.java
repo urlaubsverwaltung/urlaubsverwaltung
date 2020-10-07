@@ -116,7 +116,7 @@ class MailServiceImplTest {
         final String templateName = "overtime_office";
 
         final Mail mail = Mail.builder()
-            .withRecipient(persons, true)
+            .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .build();
@@ -146,7 +146,7 @@ class MailServiceImplTest {
         iCal.deleteOnExit();
 
         final Mail mail = Mail.builder()
-            .withRecipient(persons, true)
+            .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .withAttachment("fileName", iCal)
@@ -177,7 +177,7 @@ class MailServiceImplTest {
         iCal.deleteOnExit();
 
         final Mail mail = Mail.builder()
-            .withRecipient(persons, true)
+            .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .withAttachment("fileName", iCal)
@@ -228,7 +228,7 @@ class MailServiceImplTest {
 
         final Mail mail = Mail.builder()
             .withRecipient(true)
-            .withRecipient(List.of(franz), true)
+            .withRecipient(List.of(franz))
             .withRecipient(NOTIFICATION_USER)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())

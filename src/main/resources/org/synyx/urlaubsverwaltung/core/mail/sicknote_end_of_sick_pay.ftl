@@ -1,5 +1,4 @@
-Hallo ${sickNote.person.niceName},
-Hallo Office,
+Hallo ${recipient.niceName},
 
 Hinweis:
 Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal ${maximumSickPayDays} Tag(e).

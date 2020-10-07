@@ -1,4 +1,4 @@
-Hallo Office,
+Hallo ${recipient.niceName},
 
 ${application.person.niceName} hat beantragt den bereits genehmigten Urlaub vom
 ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")} zu stornieren.

@@ -285,7 +285,7 @@ class ApplicationMailService {
 
         final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
         final Mail mailToAllowAndRemind = Mail.builder()
-            .withRecipient(recipients, true)
+            .withRecipient(recipients)
             .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
             .withTemplate("new_applications", model)
             .build();
@@ -329,7 +329,7 @@ class ApplicationMailService {
 
         final List<Person> recipients = applicationRecipientService.getRecipientsForTemporaryAllow(application);
         final Mail mailToTemporaryAllow = Mail.builder()
-            .withRecipient(recipients, true)
+            .withRecipient(recipients)
             .withSubject("subject.application.temporaryAllowed.secondStage")
             .withTemplate("temporary_allowed_second_stage_authority", modelSecondStage)
             .build();
@@ -350,7 +350,7 @@ class ApplicationMailService {
 
         final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
         final Mail mailToAllowAndRemind = Mail.builder()
-            .withRecipient(recipients, true)
+            .withRecipient(recipients)
             .withSubject("subject.application.remind")
             .withTemplate("remind", model)
             .build();

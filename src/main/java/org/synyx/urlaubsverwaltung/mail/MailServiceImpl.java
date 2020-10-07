@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.hasText;
-
 /**
  * Implementation of interface {@link MailService}.
  */
@@ -51,21 +48,13 @@ class MailServiceImpl implements MailService {
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
         final String sender = mailProperties.getSender();
 
-        final List<Person> recipients = getRecipients(mail);
-        if (mail.isSendToEachIndividually()) {
-            recipients.forEach(recipient -> {
-                model.put("recipient", recipient);
-                final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
-                mail.getMailAttachments().ifPresentOrElse(
-                    mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
-                    () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body));
-            });
-        } else {
+        getRecipients(mail).forEach(recipient -> {
+            model.put("recipient", recipient);
             final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
             mail.getMailAttachments().ifPresentOrElse(
-                mailAttachments -> mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body, mailAttachments),
-                () -> mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body));
-        }
+                mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
+                () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body));
+        });
     }
 
     private List<Person> getRecipients(Mail mail) {
@@ -79,13 +68,6 @@ class MailServiceImpl implements MailService {
         }
 
         return recipients;
-    }
-
-    private List<String> getMailAddresses(List<Person> persons) {
-        return persons.stream()
-            .filter(person -> hasText(person.getEmail()))
-            .map(Person::getEmail)
-            .collect(toList());
     }
 
     private String getTranslation(String key, Object... args) {

@@ -110,7 +110,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of office email
         String contentOfficeMail = (String) msgOffice.getContent();
-        assertThat(contentOfficeMail).contains("Hallo Office");
+        assertThat(contentOfficeMail).contains("Hallo Marlene Muster");
         assertThat(contentOfficeMail).contains("es liegt ein neuer genehmigter Antrag vor");
         assertThat(contentOfficeMail).contains("Lieschen Mueller");
         assertThat(contentOfficeMail).contains("Erholungsurlaub");
@@ -208,7 +208,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Office");
+        assertThat(content).contains("Hallo Marlene Muster");
         assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
         assertThat(content).contains("/web/application/1234");
     }

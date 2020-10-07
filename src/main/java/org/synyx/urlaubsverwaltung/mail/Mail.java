@@ -15,7 +15,6 @@ public class Mail {
     private final List<Person> mailAddressRecipients;
     private final MailNotification mailNotificationRecipients;
     private final boolean sendToTechnicalMail;
-    private final boolean sendToEachIndividually;
 
     private final String templateName;
     private final Map<String, Object> templateModel;
@@ -26,12 +25,11 @@ public class Mail {
     private final List<MailAttachment> mailAttachments;
 
     public Mail(List<Person> mailAddressRecipients, MailNotification mailNotificationRecipients, boolean sendToTechnicalMail,
-                boolean sendToEachIndividually, String templateName, Map<String, Object> templateModel, String subjectMessageKey,
+                String templateName, Map<String, Object> templateModel, String subjectMessageKey,
                 Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
         this.mailAddressRecipients = mailAddressRecipients;
         this.mailNotificationRecipients = mailNotificationRecipients;
         this.sendToTechnicalMail = sendToTechnicalMail;
-        this.sendToEachIndividually = sendToEachIndividually;
         this.templateName = templateName;
         this.templateModel = templateModel;
         this.subjectMessageKey = subjectMessageKey;
@@ -49,10 +47,6 @@ public class Mail {
 
     public boolean isSendToTechnicalMail() {
         return sendToTechnicalMail;
-    }
-
-    public boolean isSendToEachIndividually() {
-        return sendToEachIndividually;
     }
 
     public String getTemplateName() {
@@ -87,7 +81,6 @@ public class Mail {
         private List<Person> mailAddressRecipients = new ArrayList<>();
         private MailNotification mailNotificationRecipients;
         private boolean sendToTechnicalMail;
-        private boolean sendToEachIndividually;
 
         private String templateName;
         private Map<String, Object> templateModel = new HashMap<>();
@@ -108,17 +101,16 @@ public class Mail {
         }
 
         public Mail.Builder withRecipient(Person recipient) {
-            withRecipient(List.of(recipient), this.sendToEachIndividually);
+            withRecipient(List.of(recipient));
             return this;
         }
 
-        public Mail.Builder withRecipient(List<Person> recipients, boolean sendToEachIndividually) {
+        public Mail.Builder withRecipient(List<Person> recipients) {
             if (mailAddressRecipients == null) {
                 mailAddressRecipients = new ArrayList<>();
             }
 
             this.mailAddressRecipients.addAll(recipients);
-            this.sendToEachIndividually = sendToEachIndividually;
             return this;
         }
 
@@ -145,7 +137,7 @@ public class Mail {
 
         public Mail build() {
             return new Mail(mailAddressRecipients, mailNotificationRecipients, sendToTechnicalMail,
-                sendToEachIndividually, templateName, templateModel, subjectMessageKey, subjectMessageArguments,
+                templateName, templateModel, subjectMessageKey, subjectMessageArguments,
                 mailAttachments);
         }
     }

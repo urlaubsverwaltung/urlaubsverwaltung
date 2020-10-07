@@ -1,4 +1,4 @@
-Hallo Office,
+Hallo ${recipient.niceName},
 
 es wurden Überstunden erfasst: ${baseLinkURL}web/overtime/${overtime.id?c}
 
