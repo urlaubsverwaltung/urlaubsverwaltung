@@ -146,7 +146,7 @@ class MailServiceImplTest {
         iCal.deleteOnExit();
 
         final Mail mail = Mail.builder()
-            .withRecipient(persons)
+            .withRecipient(persons, true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .withAttachment("fileName", iCal)
@@ -154,7 +154,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("hans@firma.test", "franz@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("franz@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
+        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("hans@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
     }
 
     @Test

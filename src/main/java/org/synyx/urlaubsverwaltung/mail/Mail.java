@@ -112,11 +112,6 @@ public class Mail {
             return this;
         }
 
-        public Mail.Builder withRecipient(List<Person> recipients) {
-            withRecipient(recipients, this.sendToEachIndividually);
-            return this;
-        }
-
         public Mail.Builder withRecipient(List<Person> recipients, boolean sendToEachIndividually) {
             if (mailAddressRecipients == null) {
                 mailAddressRecipients = new ArrayList<>();
