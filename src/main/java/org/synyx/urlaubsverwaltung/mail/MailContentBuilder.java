@@ -16,14 +16,14 @@ import java.util.Map;
  * Builds mail content by filling templates with data.
  */
 @Service
-class MailBuilder {
+class MailContentBuilder {
 
     private static final String FILE_EXTENSION = ".ftl";
 
     private final Configuration freemarkerConfiguration;
 
     @Autowired
-    MailBuilder(Configuration freemarkerConfiguration) {
+    MailContentBuilder(Configuration freemarkerConfiguration) {
         this.freemarkerConfiguration = freemarkerConfiguration;
     }
 
@@ -43,7 +43,7 @@ class MailBuilder {
             final Template template = freemarkerConfiguration.getTemplate(templateFilename, locale);
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (TemplateException | IOException e) {
-            throw new MailBuilderException("Something went wrong processing email template=" + templateName, e);
+            throw new MailContentBuilderException("Something went wrong processing email template=" + templateName, e);
         }
     }
 }

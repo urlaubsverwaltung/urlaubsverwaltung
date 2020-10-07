@@ -26,17 +26,17 @@ class MailServiceImpl implements MailService {
     private static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
-    private final MailBuilder mailBuilder;
+    private final MailContentBuilder mailContentBuilder;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
     private final PersonService personService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSenderService mailSenderService,
+    MailServiceImpl(MessageSource messageSource, MailContentBuilder mailContentBuilder, MailSenderService mailSenderService,
                     MailProperties mailProperties, PersonService personService) {
 
         this.messageSource = messageSource;
-        this.mailBuilder = mailBuilder;
+        this.mailContentBuilder = mailContentBuilder;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
         this.personService = personService;
@@ -52,7 +52,7 @@ class MailServiceImpl implements MailService {
         final String sender = mailProperties.getSender();
 
         if (mail.isSendToTechnicalMail()) {
-            final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
             mailSenderService.sendEmail(sender, List.of(mailProperties.getAdministrator()), subject, body);
         } else {
             final List<Person> recipients = getRecipients(mail);
@@ -60,22 +60,22 @@ class MailServiceImpl implements MailService {
                 if (mail.isSendToEachIndividually()) {
                     recipients.forEach(recipient -> {
                         model.put("recipient", recipient);
-                        final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                        final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
                         mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body);
                     });
                 } else {
-                    final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                    final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
                     mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body);
                 }
             } else {
                 if (mail.isSendToEachIndividually()) {
                     recipients.forEach(recipient -> {
                         model.put("recipient", recipient);
-                        final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                        final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
                         mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mail.getMailAttachments());
                     });
                 } else {
-                    final String body = mailBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+                    final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
                     mailSenderService.sendEmail(sender, getMailAddresses(recipients), subject, body, mail.getMailAttachments());
                 }
             }

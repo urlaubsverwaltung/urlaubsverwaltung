@@ -33,7 +33,7 @@ class MailServiceImplTest {
     @Mock
     private MessageSource messageSource;
     @Mock
-    private MailBuilder mailBuilder;
+    private MailContentBuilder mailContentBuilder;
     @Mock
     private MailSenderService mailSenderService;
     @Mock
@@ -45,10 +45,10 @@ class MailServiceImplTest {
     void setUp() {
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
-        when(mailBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
+        when(mailContentBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
         when(mailProperties.getSender()).thenReturn("no-reply@firma.test");
 
-        sut = new MailServiceImpl(messageSource, mailBuilder, mailSenderService, mailProperties, personService);
+        sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties, personService);
     }
 
     @Test
