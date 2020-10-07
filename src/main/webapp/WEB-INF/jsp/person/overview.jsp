@@ -26,9 +26,9 @@
         window.uv.weekStartsOn = 1;
     </script>
     <script defer src="<asset:url value="npm.date-fns.js" />"></script>
-    <script defer src="<asset:url value="date-fns-localized.js" />"></script>
     <script defer src="<asset:url value="app_detail~app_form~person_overview.js" />"></script>
     <script defer src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
+    <script defer src="<asset:url value='app_detail~app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
     <script defer src="<asset:url value="person_overview.js" />"></script>
 </head>
 

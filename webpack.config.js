@@ -40,6 +40,7 @@ module.exports = {
     copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,
     tabs: `${paths.src}/components/tabs/index.js`,
     datalist_polyfill: `datalist-polyfill`,
+    datepicker: `@duetds/date-picker/dist`,
   },
 
   output: {
@@ -119,11 +120,11 @@ module.exports = {
       minSize: 1024,
       cacheGroups: {
         vendor: {
-          test: /[\\/]node_modules[\\/]/,
+          test: /[/\\]node_modules[/\\]/,
           name(module) {
             // get the name. E.g. node_modules/packageName/not/this/part.js
             // or node_modules/packageName
-            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+            const packageName = module.context.match(/[/\\]node_modules[/\\](.*?)([/\\]|$)/)[1];
 
             if (/node_modules\/jquery-ui\/ui\/i18n/.test(module.context)) {
               const locale = module.resource.match(/datepicker-(\w\w)/)[1];

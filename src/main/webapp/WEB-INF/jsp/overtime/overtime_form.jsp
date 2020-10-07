@@ -28,13 +28,11 @@
     <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />"/>
     <link rel="stylesheet" type="text/css"
           href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />"/>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='date-fns-localized.js' />"></script>
-    <script defer src="<asset:url value='npm.jquery-ui.js' />"></script>
-    <script defer src="<asset:url value='npm.jquery-ui-themes.js' />"></script>
     <script defer src="<asset:url value='app_form~overtime_form~sick_note_form.js' />"></script>
     <script defer src="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
+    <script defer src="<asset:url value='app_detail~app_form~overtime_form~person_overview~sick_note_form.js' />"></script>
     <script defer src="<asset:url value='overtime_form.js' />"></script>
 </head>
 <body>

@@ -1,136 +1,111 @@
-import $ from "jquery";
 import { findWhere } from "underscore";
-import datepicker from "./datepicker";
-import { endOfMonth, formatISO, isToday, isWeekend, parse, startOfMonth } from "date-fns";
-
+import { endOfMonth, formatISO, isToday, isWeekend, parse, parseISO } from "date-fns";
+import { defineCustomElements } from "@duetds/date-picker/dist/loader";
+import { getJSON } from "../../js/fetch";
+import DE from "./locale/de";
+import "@duetds/date-picker/dist/collection/themes/default.css";
+import "./datepicker.css";
 import "../calendar/calendar.css";
 
-export default async function createDatepickerInstances(selectors, regional, urlPrefix, getPerson, onSelect) {
-  let highlighted;
-  let highlightedAbsences;
+// register @duet/datepicker
+defineCustomElements(window);
 
-  const selector = selectors.join(",");
+export default async function createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect) {
+  return Promise.allSettled(
+    selectors.map((selector) => instantiate({ selector, urlPrefix, getPerson, onSelect })),
+  );
+}
 
-  if (regional === "de") {
-    const { default: de } = await import(
-      /* webpackChunkName: "jquery-ui-datepicker-de" */ "jquery-ui/ui/i18n/datepicker-de"
+async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
+
+  const dateFormat = DE.dateFormat;
+
+  const dateElement = document.querySelector(selector);
+  const duetDateElement = document.createElement("duet-date-picker");
+
+  duetDateElement.dateAdapter = DE.dateAdapter;
+  duetDateElement.localization = DE.localization;
+
+  const parsedDate = parse(dateElement.value, dateFormat, new Date());
+  const isoDateString = dateElement.value ? formatISO(parsedDate, { representation: "date" }) : "";
+
+  duetDateElement.setAttribute("style", "--duet-radius=0");
+  duetDateElement.setAttribute("id", dateElement.getAttribute("id"));
+  duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
+  duetDateElement.setAttribute("name", dateElement.getAttribute("name"));
+  duetDateElement.setAttribute("value", isoDateString);
+  dateElement.replaceWith(duetDateElement);
+
+  await waitForDatePickerHydration(duetDateElement);
+
+  const monthElement = duetDateElement.querySelector(".duet-date__select--month");
+  const yearElement = duetDateElement.querySelector(".duet-date__select--year");
+
+  const showAbsences = () => {
+    // clear all days
+    [...duetDateElement.querySelectorAll(".duet-date__day")].forEach((element) =>
+      element.setAttribute("class", "duet-date__day"),
     );
-    datepicker.setDefaults({
-      ...de,
-      weekHeader: "Wo",
-    });
-  } else {
-    const { default: en } = await import(
-      /* webpackChunkName: "jquery-ui-datepicker-en" */ "jquery-ui/ui/i18n/datepicker-en-GB"
-    );
-    datepicker.setDefaults({
-      ...en,
-      dateFormat: "dd.mm.yy",
-    });
-  }
 
-  $(selector).datepicker({
-    numberOfMonths: 1,
-    showOtherMonths: true,
-    selectOtherMonths: false,
-    beforeShow: function (input, inst) {
-      const calendrier = inst.dpDiv;
-      const top = $(this).offset().top + $(this).outerHeight();
-      const left = $(this).offset().left;
-      setTimeout(function () {
-        calendrier.css({ top: top, left: left });
-      }, 10);
+    const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
+    const lastDayOfMonth = formatISO(endOfMonth(parseISO(firstDayOfMonth)), { representation: "date" });
 
-      const date = $(input).datepicker("getDate") || new Date();
-      const firstDayOfMonth = formatISO(startOfMonth(date), {
-        representation: "date",
-      });
-      const lastDayOfMonth = formatISO(endOfMonth(date), {
-        representation: "date",
-      });
+    const personId = getPerson();
+    if (!personId) {
+      return;
+    }
 
-      const personId = getPerson();
-
-      if (!personId) {
-        return;
+    Promise.allSettled([
+      getJSON(`${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
+        pick("publicHolidays"),
+      ),
+      getJSON(`${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
+        pick("absences"),
+      ),
+    ]).then(([publicHolidays, absences]) => {
+      for (let dayElement of [...duetDateElement.querySelectorAll(".duet-date__day")]) {
+        const date = dayElement.querySelector(".duet-date__vhidden").textContent;
+        const cssClasses = getCssClassesForDate(
+          parse(date, dateFormat, new Date()),
+          publicHolidays.value,
+          absences.value,
+        );
+        dayElement.classList.add(...cssClasses);
       }
+    });
+  };
 
-      getHighlighted(
-        urlPrefix + "/persons/" + personId + "/public-holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth,
-        function (data) {
-          highlighted = getPublicHolidays(data);
-        },
-      );
+  const toggleButton = duetDateElement.querySelector("button.duet-date__toggle");
+  toggleButton.addEventListener("click", showAbsences);
+  duetDateElement.addEventListener("duetChange", (event) => onSelect(event));
 
-      getHighlighted(
-        urlPrefix + "/persons/" + personId + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth,
-        function (data) {
-          highlightedAbsences = getAbsences(data);
-        },
-      );
-    },
-    onChangeMonthYear: function (year, month) {
-      const personId = getPerson();
-      if (!personId) {
-        return;
+  duetDateElement.querySelector(".duet-date__prev").addEventListener("click", showAbsences);
+  duetDateElement.querySelector(".duet-date__next").addEventListener("click", showAbsences);
+
+  monthElement.addEventListener("change", showAbsences);
+  yearElement.addEventListener("change", showAbsences);
+}
+
+function waitForDatePickerHydration(rootElement) {
+  return new Promise((resolve) => {
+    const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.target.classList.contains("hydrated")) {
+          resolve();
+          observer.disconnect();
+          return true;
+        }
       }
-
-      const firstDayOfMonth = formatISO(startOfMonth(parse(year + "-" + month, "yyyy-MM", new Date())), {
-        representation: "date",
-      });
-      const lastDayOfMonth = formatISO(endOfMonth(parse(year + "-" + month, "yyyy-MM", new Date())), {
-        representation: "date",
-      });
-
-      getHighlighted(
-        urlPrefix + "/persons/" + personId + "/public-holidays?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth,
-        function (data) {
-          highlighted = getPublicHolidays(data);
-        },
-      );
-      getHighlighted(
-        urlPrefix + "/persons/" + personId + "/absences?from=" + firstDayOfMonth + "&to=" + lastDayOfMonth,
-        function (data) {
-          highlightedAbsences = getAbsences(data);
-        },
-      );
-    },
-    beforeShowDay: function (date) {
-      return colorizeDate(date, highlighted, highlightedAbsences);
-    },
-    onSelect: onSelect,
+    });
+    observer.observe(rootElement, { attributes: true });
   });
 }
 
-function getAbsences(data) {
-  const absences = [];
-
-  for (let i = 0; i < data.absences.length; i++) {
-    const value = data.absences[i];
-    if ($.inArray(value, absences) == -1) {
-      absences.push(value);
-    }
-  }
-
-  return absences;
-}
-
-function getPublicHolidays(data) {
-  const publicHolidayDates = [];
-
-  for (let i = 0; i < data.publicHolidays.length; i++) {
-    const value = data.publicHolidays[i];
-    publicHolidayDates.push(value);
-  }
-
-  return publicHolidayDates;
-}
-
-function colorizeDate(date, publicHolidays, absences) {
-  if (isWeekend(date)) {
-    return [true, "datepicker-day datepicker-day-weekend"];
+function getCssClassesForDate(date, publicHolidays, absences) {
+  if (date && isWeekend(date)) {
+    return ["datepicker-day", "datepicker-day-weekend"];
   } else {
-    const dateString = $.datepicker.formatDate("yy-mm-dd", date);
+    const dateString = date ? formatISO(date, { representation: "date" }) : "";
     const fitsCriteria = (list, filterAttributes) =>
       Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
 
@@ -182,7 +157,7 @@ function colorizeDate(date, publicHolidays, absences) {
       });
     const isSickDayNoon = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "NOON" });
 
-    const cssClasses = [
+    return [
       "datepicker-day",
       isToday(date) && "datepicker-day-today",
       isPast() && "datepicker-day-past",
@@ -199,19 +174,15 @@ function colorizeDate(date, publicHolidays, absences) {
       isSickDayMorning() && "datepicker-day-sick-note-morning",
       isSickDayNoon() && "datepicker-day-sick-note-noon",
     ].filter(Boolean);
-
-    return [true, cssClasses.join(" ").trim()];
   }
 }
 
-function getHighlighted(url, callback) {
-  $.ajax({
-    url: url,
-    async: false,
-    dataType: "json",
-    type: "GET",
-    success: function (data) {
-      callback(data);
-    },
-  });
+function pick(name) {
+  return function (object) {
+    return object[name];
+  };
+}
+
+function twoDigit(nr) {
+  return ("0" + nr).slice(-2);
 }
