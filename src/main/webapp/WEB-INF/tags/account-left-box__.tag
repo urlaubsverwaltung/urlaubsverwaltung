@@ -19,22 +19,22 @@
             <c:when test="${account != null}">
                 <c:choose>
                     <c:when test="${beforeApril}">
-                        <c:set var="remainingVacatioDays" value="${vacationDaysLeft.remainingVacationDays}" />
+                        <c:set var="remainingVacationDays" value="${vacationDaysLeft.remainingVacationDays}" />
                     </c:when>
                     <c:otherwise>
-                        <c:set var="remainingVacatioDays" value="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
+                        <c:set var="remainingVacationDays" value="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
                     </c:otherwise>
                 </c:choose>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message code="person.account.vacation.left.1" />
                 </span>
                 <span class="tw-my-1 tw-text-lg tw-font-medium">
-                    <spring:message code="person.account.vacation.left.2" arguments="${remainingVacatioDays}" />
+                    <spring:message code="person.account.vacation.left.2" arguments="${vacationDaysLeft.vacationDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message
                         code="person.account.vacation.left.remaining"
-                        arguments="${vacationDaysLeft.vacationDaysUsedNextYear}"
+                        arguments="${remainingVacationDays}"
                     />
                 </span>
                 <c:if test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
