@@ -4,7 +4,7 @@
 
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
-  <version>4.0.0.M6-SNAPSHOT</version>
+  <version>4.0.0.M6</version>
   <packaging>war</packaging>
 
   <name>Urlaubsverwaltung</name>
@@ -31,7 +31,7 @@
     <url>https://github.com/synyx/urlaubsverwaltung</url>
     <developerConnection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</developerConnection>
     <connection>scm:git:git@github.com:synyx/urlaubsverwaltung.git</connection>
-    <tag>HEAD</tag>
+    <tag>urlaubsverwaltung-4.0.0.M6</tag>
   </scm>
 
   <dependencies>
