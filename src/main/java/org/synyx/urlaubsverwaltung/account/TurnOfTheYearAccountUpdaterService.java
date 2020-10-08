@@ -102,7 +102,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         // send email to manager to notify about update of accounts
         final Mail mailToTechnical = Mail.builder()
-            .withRecipient(true)
+            .withTechnicalRecipient(true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();

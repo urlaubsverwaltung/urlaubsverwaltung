@@ -200,7 +200,7 @@ class MailServiceImplTest {
         when(mailProperties.getAdministrator()).thenReturn(to);
 
         final Mail mail = Mail.builder()
-            .withRecipient(true)
+            .withTechnicalRecipient(true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .build();
@@ -227,7 +227,7 @@ class MailServiceImplTest {
         final String templateName = "overtime_office";
 
         final Mail mail = Mail.builder()
-            .withRecipient(true)
+            .withTechnicalRecipient(true)
             .withRecipient(List.of(franz))
             .withRecipient(NOTIFICATION_USER)
             .withSubject(subjectMessageKey)

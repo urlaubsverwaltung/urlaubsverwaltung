@@ -90,7 +90,7 @@ public class Mail {
 
         private List<MailAttachment> mailAttachments;
 
-        public Mail.Builder withRecipient(boolean sendToTechnicalMail) {
+        public Mail.Builder withTechnicalRecipient(boolean sendToTechnicalMail) {
             this.sendToTechnicalMail = sendToTechnicalMail;
             return this;
         }

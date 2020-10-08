@@ -36,7 +36,7 @@ public class CalendarMailService {
         model.put(EXCEPTION, exception);
 
         final Mail mailToTechnical = Mail.builder()
-            .withRecipient(true)
+            .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.sync")
             .withTemplate("error_calendar_sync", model)
             .build();
@@ -61,7 +61,7 @@ public class CalendarMailService {
         model.put(EXCEPTION, exception);
 
         final Mail toTechnical = Mail.builder()
-            .withRecipient(true)
+            .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.update")
             .withTemplate("error_calendar_update", model)
             .build();
@@ -83,7 +83,7 @@ public class CalendarMailService {
         model.put(EXCEPTION, exception);
 
         final Mail toTechnical = Mail.builder()
-            .withRecipient(true)
+            .withTechnicalRecipient(true)
             .withSubject("subject.error.calendar.delete")
             .withTemplate("error_calendar_delete", model)
             .build();
