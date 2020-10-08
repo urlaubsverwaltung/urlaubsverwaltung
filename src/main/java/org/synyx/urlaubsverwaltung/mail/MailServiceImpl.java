@@ -4,15 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.person.MailNotification;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static java.util.Collections.singletonList;
-
 
 /**
  * Implementation of interface {@link MailService}.
@@ -24,77 +23,58 @@ class MailServiceImpl implements MailService {
     private static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
-    private final MailBuilder mailBuilder;
+    private final MailContentBuilder mailContentBuilder;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
-    private final RecipientService recipientService;
+    private final PersonService personService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSenderService mailSenderService,
-                    MailProperties mailProperties, RecipientService recipientService) {
+    MailServiceImpl(MessageSource messageSource, MailContentBuilder mailContentBuilder, MailSenderService mailSenderService,
+                    MailProperties mailProperties, PersonService personService) {
 
         this.messageSource = messageSource;
-        this.mailBuilder = mailBuilder;
+        this.mailContentBuilder = mailContentBuilder;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
-        this.recipientService = recipientService;
+        this.personService = personService;
     }
 
     @Override
-    public void sendMailTo(MailNotification mailNotification, String subjectMessageKey, String templateName, Map<String, Object> model) {
+    public void send(Mail mail) {
 
-        final List<Person> persons = recipientService.getRecipientsWithNotificationType(mailNotification);
-        sendMailToPersons(persons, subjectMessageKey, templateName, model);
-    }
+        final Map<String, Object> model = mail.getTemplateModel();
+        model.put("baseLinkURL", getApplicationUrl());
 
-    @Override
-    public void sendMailTo(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
+        final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
+        final String sender = mailProperties.getSender();
 
-        final List<Person> persons = singletonList(person);
-        sendMailToPersons(persons, subjectMessageKey, templateName, model);
-    }
-
-    @Override
-    public void sendMailToEach(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
-
-        persons.forEach(person -> {
-            model.put("recipient", person);
-            final List<String> mailAddress = recipientService.getMailAddresses(person);
-            sendMailToRecipients(mailAddress, subjectMessageKey, templateName, model, args);
+        getRecipients(mail).forEach(recipient -> {
+            model.put("recipient", recipient);
+            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            mail.getMailAttachments().ifPresentOrElse(
+                mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
+                () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body));
         });
     }
 
-    @Override
-    public void sendTechnicalMail(String subjectMessageKey, String templateName, Map<String, Object> model) {
-        sendMailToRecipients(singletonList(mailProperties.getAdministrator()), subjectMessageKey, templateName, model);
-    }
+    private List<Person> getRecipients(Mail mail) {
 
-    private void sendMailToPersons(List<Person> persons, String subjectMessageKey, String templateName, Map<String, Object> model) {
+        final List<Person> recipients = new ArrayList<>();
+        mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getPersonsWithNotificationType(mailNotification)));
+        mail.getMailAddressRecipients().ifPresent(recipients::addAll);
 
-        final List<String> recipients = recipientService.getMailAddresses(persons);
-        sendMailToRecipients(recipients, subjectMessageKey, templateName, model);
-    }
+        if (mail.isSendToTechnicalMail()) {
+            recipients.add(new Person(null, null, "Administrator", mailProperties.getAdministrator()));
+        }
 
-    private void sendMailToRecipients(List<String> recipients, String subjectMessageKey, String templateName, Map<String, Object> model, Object... args) {
-
-        model.put("baseLinkURL", getApplicationUrl());
-
-        final String subject = getTranslation(subjectMessageKey, args);
-        final String text = mailBuilder.buildMailBody(templateName, model, LOCALE);
-
-        mailSenderService.sendEmail(mailProperties.getSender(), recipients, subject, text);
-    }
-
-    private String getApplicationUrl() {
-
-        // TODO use same url generation like in calender
-        final String applicationUrl = mailProperties.getApplicationUrl();
-        return applicationUrl.endsWith("/") ? applicationUrl : applicationUrl + "/";
+        return recipients;
     }
 
     private String getTranslation(String key, Object... args) {
-
         return messageSource.getMessage(key, args, LOCALE);
     }
 
+    private String getApplicationUrl() {
+        return ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath("/").build().toString();
+    }
 }

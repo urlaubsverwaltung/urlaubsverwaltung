@@ -4,6 +4,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
@@ -11,19 +12,27 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -45,14 +54,25 @@ class ApplicationMailServiceTest {
     private ApplicationRecipientService applicationRecipientService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private ICalService iCalService;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, messageSource);
+        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService);
     }
 
     @Test
     void ensureSendsAllowedNotificationToOffice() {
+
+        final Settings settings = new Settings();
+        settings.setAbsenceSettings(new AbsenceSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final File file = new File("");
+        when(iCalService.getCalendar(any(), any())).thenReturn(file);
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -65,8 +85,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
         final ApplicationComment applicationComment = new ApplicationComment(person);
@@ -79,8 +99,19 @@ class ApplicationMailServiceTest {
 
         sut.sendAllowedNotification(application, applicationComment);
 
-        verify(mailService).sendMailTo(person, "subject.application.allowed.user", "allowed_user", model);
-        verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("allowed_user");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ical");
+        assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.office");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("allowed_office");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
     }
 
 
@@ -112,7 +143,13 @@ class ApplicationMailServiceTest {
 
         sut.sendRejectedNotification(application, applicationComment);
 
-        verify(mailService).sendMailTo(person, "subject.application.rejected", "rejected", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.rejected");
+        assertThat(mail.getTemplateName()).isEqualTo("rejected");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
@@ -139,7 +176,13 @@ class ApplicationMailServiceTest {
 
         sut.sendReferApplicationNotification(application, recipient, sender);
 
-        verify(mailService).sendMailTo(recipient, "subject.application.refer", "refer", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.refer");
+        assertThat(mail.getTemplateName()).isEqualTo("refer");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
@@ -154,7 +197,13 @@ class ApplicationMailServiceTest {
 
         sut.sendCancellationRequest(application, applicationComment);
 
-        verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.application.cancellationRequest", "application_cancellation_request", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest");
+        assertThat(mail.getTemplateName()).isEqualTo("application_cancellation_request");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
@@ -169,7 +218,13 @@ class ApplicationMailServiceTest {
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
-        verify(mailService).sendMailTo(person, "subject.sicknote.converted", "sicknote_converted", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
+        assertThat(mail.getTemplateName()).isEqualTo("sicknote_converted");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
@@ -190,7 +245,13 @@ class ApplicationMailServiceTest {
 
         sut.notifyHolidayReplacement(application);
 
-        verify(mailService).sendMailTo(holidayReplacement, "subject.application.holidayReplacement", "notify_holiday_replacement", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement");
+        assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
@@ -225,7 +286,13 @@ class ApplicationMailServiceTest {
 
         sut.sendConfirmation(application, comment);
 
-        verify(mailService).sendMailTo(person, "subject.application.applied.user", "confirm", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.user");
+        assertThat(mail.getTemplateName()).isEqualTo("confirm");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
 
@@ -258,7 +325,13 @@ class ApplicationMailServiceTest {
 
         sut.sendAppliedForLeaveByOfficeNotification(application, comment);
 
-        verify(mailService).sendMailTo(person, "subject.application.appliedByOffice", "new_application_by_office", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.appliedByOffice");
+        assertThat(mail.getTemplateName()).isEqualTo("new_application_by_office");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
@@ -277,7 +350,13 @@ class ApplicationMailServiceTest {
 
         sut.sendCancelledByOfficeNotification(application, comment);
 
-        verify(mailService).sendMailTo(person, "subject.application.cancelled.user", "cancelled_by_office", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
+        assertThat(mail.getTemplateName()).isEqualTo("cancelled_by_office");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
 
@@ -323,7 +402,14 @@ class ApplicationMailServiceTest {
 
         sut.sendNewApplicationNotification(application, comment);
 
-        verify(mailService).sendMailToEach(recipients, "subject.application.applied.boss", "new_applications", model, "Lord Helmchen");
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(recipients);
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.boss");
+        assertThat(mail.getSubjectMessageArguments()[0]).isEqualTo("Lord Helmchen");
+        assertThat(mail.getTemplateName()).isEqualTo("new_applications");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
 
@@ -371,7 +457,16 @@ class ApplicationMailServiceTest {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        verify(mailService).sendMailTo(person, "subject.application.temporaryAllowed.user", "temporary_allowed_user", model);
-        verify(mailService).sendMailToEach(recipients, "subject.application.temporaryAllowed.secondStage", "temporary_allowed_second_stage_authority", modelSecondStage);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.user");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("temporary_allowed_user");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(recipients);
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.secondStage");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("temporary_allowed_second_stage_authority");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelSecondStage);
     }
 }

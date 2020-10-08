@@ -3,14 +3,20 @@ package org.synyx.urlaubsverwaltung.overtime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +43,12 @@ class OvertimeMailServiceTest {
 
         sut.sendOvertimeNotification(overtime, overtimeComment);
 
-        verify(mailService).sendMailTo(OVERTIME_NOTIFICATION_OFFICE, "subject.overtime.created", "overtime_office", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mails = argument.getValue();
+        assertThat(mails.getMailNotificationRecipients()).hasValue(OVERTIME_NOTIFICATION_OFFICE);
+        assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created");
+        assertThat(mails.getTemplateName()).isEqualTo("overtime_office");
+        assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 }

@@ -60,7 +60,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
         // check content of email
         final String text = (String) msg.getContent();
-        assertThat(text).contains("Hallo Office");
+        assertThat(text).contains("Hallo Marlene Muster");
         assertThat(text).contains("es wurden Überstunden erfasst");
         assertThat(text).contains("/web/overtime/1234");
     }

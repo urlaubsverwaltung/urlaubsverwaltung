@@ -3,12 +3,19 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -33,17 +40,24 @@ class ApplicationMailService {
     private final MailService mailService;
     private final DepartmentService departmentService;
     private final ApplicationRecipientService applicationRecipientService;
+    private final ICalService iCalService;
     private final MessageSource messageSource;
+    private final SettingsService settingsService;
 
     @Autowired
-    ApplicationMailService(MailService mailService, DepartmentService departmentService, ApplicationRecipientService applicationRecipientService, MessageSource messageSource) {
+    ApplicationMailService(MailService mailService, DepartmentService departmentService, ApplicationRecipientService applicationRecipientService, ICalService iCalService, MessageSource messageSource, SettingsService settingsService) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
+        this.iCalService = iCalService;
         this.messageSource = messageSource;
+        this.settingsService = settingsService;
     }
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
+
+        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+        final File calendarFile = iCalService.getCalendar(application.getPerson().getNiceName(), List.of(absence));
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -52,10 +66,21 @@ class ApplicationMailService {
         model.put(COMMENT, applicationComment);
 
         // Inform user that the application for leave has been allowed
-        mailService.sendMailTo(application.getPerson(), "subject.application.allowed.user", "allowed_user", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.allowed.user")
+            .withTemplate("allowed_user", model)
+            .withAttachment("calendar.ical", calendarFile)
+            .build();
+        mailService.send(mailToApplicant);
 
         // Inform office that there is a new allowed application for leave
-        mailService.sendMailTo(NOTIFICATION_OFFICE, "subject.application.allowed.office", "allowed_office", model);
+        final Mail mailToOffice = Mail.builder()
+            .withRecipient(NOTIFICATION_OFFICE)
+            .withSubject("subject.application.allowed.office")
+            .withTemplate("allowed_office", model)
+            .build();
+        mailService.send(mailToOffice);
     }
 
     /**
@@ -72,7 +97,13 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        mailService.sendMailTo(application.getPerson(), "subject.application.rejected", "rejected", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.rejected")
+            .withTemplate("rejected", model)
+            .build();
+
+        mailService.send(mailToApplicant);
     }
 
     /**
@@ -90,7 +121,13 @@ class ApplicationMailService {
         model.put("recipient", recipient);
         model.put("sender", sender);
 
-        mailService.sendMailTo(recipient, "subject.application.refer", "refer", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(recipient)
+            .withSubject("subject.application.refer")
+            .withTemplate("refer", model)
+            .build();
+
+        mailService.send(mailToApplicant);
     }
 
     /**
@@ -106,7 +143,13 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, createdComment);
 
-        mailService.sendMailTo(NOTIFICATION_OFFICE, "subject.application.cancellationRequest", "application_cancellation_request", model);
+        final Mail mailToOffice = Mail.builder()
+            .withRecipient(NOTIFICATION_OFFICE)
+            .withSubject("subject.application.cancellationRequest")
+            .withTemplate("application_cancellation_request", model)
+            .build();
+
+        mailService.send(mailToOffice);
     }
 
     /**
@@ -119,7 +162,13 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
 
-        mailService.sendMailTo(application.getPerson(), "subject.sicknote.converted", "sicknote_converted", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.sicknote.converted")
+            .withTemplate("sicknote_converted", model)
+            .build();
+
+        mailService.send(mailToApplicant);
     }
 
     /**
@@ -135,7 +184,13 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
-        mailService.sendMailTo(application.getHolidayReplacement(), "subject.application.holidayReplacement", "notify_holiday_replacement", model);
+        final Mail mailToReplacement = Mail.builder()
+            .withRecipient(application.getHolidayReplacement())
+            .withSubject("subject.application.holidayReplacement")
+            .withTemplate("notify_holiday_replacement", model)
+            .build();
+
+        mailService.send(mailToReplacement);
     }
 
     /**
@@ -153,8 +208,13 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        final Person recipient = application.getPerson();
-        mailService.sendMailTo(recipient, "subject.application.applied.user", "confirm", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.applied.user")
+            .withTemplate("confirm", model)
+            .build();
+
+        mailService.send(mailToApplicant);
     }
 
     /**
@@ -172,8 +232,13 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        final Person recipient = application.getPerson();
-        mailService.sendMailTo(recipient, "subject.application.appliedByOffice", "new_application_by_office", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.appliedByOffice")
+            .withTemplate("new_application_by_office", model)
+            .build();
+
+        mailService.send(mailToApplicant);
     }
 
     /**
@@ -188,8 +253,13 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, comment);
 
-        final Person recipient = application.getPerson();
-        mailService.sendMailTo(recipient, "subject.application.cancelled.user", "cancelled_by_office", model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.cancelled.user")
+            .withTemplate("cancelled_by_office", model)
+            .build();
+
+        mailService.send(mailToApplicant);
     }
 
 
@@ -214,7 +284,13 @@ class ApplicationMailService {
         model.put("departmentVacations", applicationsForLeave);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
-        mailService.sendMailToEach(recipients, "subject.application.applied.boss", "new_applications", model, application.getPerson().getNiceName());
+        final Mail mailToAllowAndRemind = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
+            .withTemplate("new_applications", model)
+            .build();
+
+        mailService.send(mailToAllowAndRemind);
     }
 
 
@@ -227,16 +303,20 @@ class ApplicationMailService {
      */
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
+        // Inform user that the application for leave has been allowed temporary
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        // Inform user that the application for leave has been allowed temporary
-        final String subjectMessageKey = "subject.application.temporaryAllowed.user";
-        final String templateName = "temporary_allowed_user";
-        mailService.sendMailTo(application.getPerson(), subjectMessageKey, templateName, model);
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.temporaryAllowed.user")
+            .withTemplate("temporary_allowed_user", model)
+            .build();
+        mailService.send(mailToApplicant);
 
+        // Inform second stage authorities that there is an application for leave that must be allowed
         final List<Application> applicationsForLeave =
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
 
@@ -247,9 +327,13 @@ class ApplicationMailService {
         modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
-        // Inform second stage authorities that there is an application for leave that must be allowed
         final List<Person> recipients = applicationRecipientService.getRecipientsForTemporaryAllow(application);
-        mailService.sendMailToEach(recipients, "subject.application.temporaryAllowed.secondStage", "temporary_allowed_second_stage_authority", modelSecondStage);
+        final Mail mailToTemporaryAllow = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.application.temporaryAllowed.secondStage")
+            .withTemplate("temporary_allowed_second_stage_authority", modelSecondStage)
+            .build();
+        mailService.send(mailToTemporaryAllow);
     }
 
 
@@ -264,8 +348,13 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
 
-        List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
-        mailService.sendMailToEach(recipients, "subject.application.remind", "remind", model);
+        final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final Mail mailToAllowAndRemind = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.application.remind")
+            .withTemplate("remind", model)
+            .build();
+        mailService.send(mailToAllowAndRemind);
     }
 
 
@@ -299,13 +388,22 @@ class ApplicationMailService {
             model.put("applicationList", applications);
             model.put("recipient", recipient);
 
-            mailService.sendMailTo(recipient, "subject.application.cronRemind", "cron_remind", model);
+            final Mail mailToRemindForWaiting = Mail.builder()
+                .withRecipient(recipient)
+                .withSubject("subject.application.cronRemind")
+                .withTemplate("cron_remind", model)
+                .build();
+
+            mailService.send(mailToRemindForWaiting);
         }
     }
 
-
     private String getTranslation(String key, Object... args) {
-
         return messageSource.getMessage(key, args, LOCALE);
+    }
+
+    private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
+        final CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+        return new AbsenceTimeConfiguration(calendarSettings);
     }
 }

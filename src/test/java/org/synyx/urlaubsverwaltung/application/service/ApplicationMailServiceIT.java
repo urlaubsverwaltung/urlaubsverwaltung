@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -9,9 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -63,7 +64,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
 
-        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
+        final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@firma.test");
 
         final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
         office.setPermissions(singletonList(OFFICE));
@@ -94,12 +95,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
-        String contentUser = (String) msg.getContent();
-        assertThat(contentUser).contains("Lieschen Müller");
+        String contentUser = GreenMailUtil.getBody(msg);
+        assertThat(contentUser).contains("Lieschen Mueller");
         assertThat(contentUser).contains("gestellter Antrag wurde von Hugo Boss genehmigt");
         assertThat(contentUser).contains(comment.getText());
         assertThat(contentUser).contains(comment.getPerson().getNiceName());
         assertThat(contentUser).contains("/web/application/1234");
+        assertThat(contentUser).contains("filename=calendar.ical");
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
@@ -108,14 +110,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of office email
         String contentOfficeMail = (String) msgOffice.getContent();
-        assertThat(contentOfficeMail).contains("Hallo Office");
+        assertThat(contentOfficeMail).contains("Hallo Marlene Muster");
         assertThat(contentOfficeMail).contains("es liegt ein neuer genehmigter Antrag vor");
-        assertThat(contentOfficeMail).contains("Lieschen Müller");
+        assertThat(contentOfficeMail).contains("Lieschen Mueller");
         assertThat(contentOfficeMail).contains("Erholungsurlaub");
         assertThat(contentOfficeMail).contains(comment.getText());
         assertThat(contentOfficeMail).contains(comment.getPerson().getNiceName());
         assertThat(contentOfficeMail).contains("es liegt ein neuer genehmigter Antrag vor:");
         assertThat(contentOfficeMail).contains("/web/application/1234");
+        assertThat(contentOfficeMail).doesNotContain("filename=calendar.ical");
     }
 
     @Test
@@ -205,7 +208,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Office");
+        assertThat(content).contains("Hallo Marlene Muster");
         assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
         assertThat(content).contains("/web/application/1234");
     }

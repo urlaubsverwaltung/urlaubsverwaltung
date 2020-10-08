@@ -1,4 +1,4 @@
-Hallo Office,
+Hallo ${recipient.niceName},
 
 es liegt ein neuer genehmigter Antrag vor: ${baseLinkURL}web/application/${application.id?c}
 

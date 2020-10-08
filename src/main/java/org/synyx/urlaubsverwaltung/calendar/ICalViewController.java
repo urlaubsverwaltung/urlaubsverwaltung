@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 
 @Controller
 @RequestMapping("/web")
@@ -37,7 +39,7 @@ public class ICalViewController {
     @ResponseBody
     public String getCalendarForPerson(Locale locale, HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
 
-        final String iCal;
+        final File iCal;
         try {
             iCal = personCalendarService.getCalendarForPerson(personId, secret, locale);
         } catch (IllegalArgumentException e) {
@@ -48,14 +50,14 @@ public class ICalViewController {
 
         setContentTypeAndHeaders(response);
 
-        return iCal;
+        return fileToString(iCal);
     }
 
     @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
     @ResponseBody
     public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
 
-        final String iCal;
+        final File iCal;
         try {
             iCal = departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret, locale);
         } catch (IllegalArgumentException e) {
@@ -66,14 +68,14 @@ public class ICalViewController {
 
         setContentTypeAndHeaders(response);
 
-        return iCal;
+        return fileToString(iCal);
     }
 
     @GetMapping("/company/persons/{personId}/calendar")
     @ResponseBody
     public String getCalendarForCompany(Locale locale, HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
 
-        final String iCal;
+        final File iCal;
         try {
             iCal = companyCalendarService.getCalendarForAll(personId, secret, locale);
         } catch (CalendarException e) {
@@ -82,7 +84,15 @@ public class ICalViewController {
 
         setContentTypeAndHeaders(response);
 
-        return iCal;
+        return fileToString(iCal);
+    }
+
+    private String fileToString(File file) {
+        try {
+            return Files.readString(file.toPath());
+        } catch (IOException e) {
+            throw new ResponseStatusException(NO_CONTENT);
+        }
     }
 
     private void setContentTypeAndHeaders(HttpServletResponse response) {

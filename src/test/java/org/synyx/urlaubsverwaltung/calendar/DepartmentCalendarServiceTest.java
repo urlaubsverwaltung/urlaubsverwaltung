@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -115,10 +116,12 @@ class DepartmentCalendarServiceTest {
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
-        when(iCalService.generateCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn("calendar");
+        final File iCal = new File("calendar.ics");
+        iCal.deleteOnExit();
+        when(iCalService.getCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
 
-        final String calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
-        assertThat(calendar).isEqualTo("calendar");
+        final File calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
+        assertThat(calendar).hasName("calendar.ics");
     }
 
     @Test

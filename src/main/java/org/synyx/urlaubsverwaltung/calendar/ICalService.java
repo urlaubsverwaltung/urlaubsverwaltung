@@ -19,8 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -32,7 +33,7 @@ import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 
 @Service
-class ICalService {
+public class ICalService {
 
     private final CalendarProperties calendarProperties;
 
@@ -41,9 +42,27 @@ class ICalService {
         this.calendarProperties = calendarProperties;
     }
 
+    public File getCalendar(String title, List<Absence> absences) {
+        final Calendar calendar = generateCalendar(title, absences);
 
-    String generateCalendar(String title, List<Absence> absences) {
+        final File file;
+        try {
+            file = File.createTempFile("calendar-", ".ical");
+        } catch (IOException e) {
+            throw new CalendarException("Could not generate temp file for " + title + " calendar", e);
+        }
 
+        try (final FileWriter calendarFileWriter = new FileWriter(file)) {
+            final CalendarOutputter calendarOutputter = new CalendarOutputter();
+            calendarOutputter.output(calendar, calendarFileWriter);
+        } catch (ValidationException | IOException e) {
+            throw new CalendarException("iCal calender could not be written to file", e);
+        }
+
+        return file;
+    }
+
+    private Calendar generateCalendar(String title, List<Absence> absences) {
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
@@ -55,15 +74,7 @@ class ICalService {
         final List<VEvent> absencesVEvents = absences.stream().map(this::toVEvent).collect(toList());
         calendar.getComponents().addAll(absencesVEvents);
 
-        final StringWriter calenderWriter = new StringWriter();
-        final CalendarOutputter calendarOutputter = new CalendarOutputter();
-        try {
-            calendarOutputter.output(calendar, calenderWriter);
-        } catch (ValidationException | IOException e) {
-            throw new CalendarException("iCal calender could not be generated", e);
-        }
-
-        return calenderWriter.toString();
+        return calendar;
     }
 
     private VEvent toVEvent(Absence absence) {
