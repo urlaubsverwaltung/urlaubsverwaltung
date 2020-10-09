@@ -15,8 +15,6 @@
         <spring:message code="settings.header.title"/>
     </title>
     <uv:custom-head/>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.chosen-js.css' />"/>
-    <script defer src="<asset:url value='npm.chosen-js.js' />"></script>
     <script defer src="<asset:url value='settings_form.js' />"></script>
 </head>
 
@@ -523,16 +521,21 @@
                                         <spring:message code='settings.calendar.ews.timeZoneId'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId"
-                                                     path="calendarSettings.exchangeCalendarSettings.timeZoneId"
-                                                     class="form-control chosenCombo"
-                                                     cssErrorClass="form-control error">
+                                        <form:input
+                                            id="calendarSettings.exchangeCalendarSettings.timeZoneId"
+                                            path="calendarSettings.exchangeCalendarSettings.timeZoneId"
+                                            class="form-control"
+                                            cssErrorClass="form-control error"
+                                            list="exchange-timezones"
+                                        />
+                                        <datalist id="exchange-timezones">
                                             <c:forEach items="${availableTimezones}" var="timeZoneId">
-                                                <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                                <option value="${timeZoneId}">${timeZoneId}</option>
                                             </c:forEach>
-                                        </form:select>
-                                        <span class="help-inline"><form:errors path="calendarSettings.provider"
-                                                                               cssClass="error"/></span>
+                                        </datalist>
+                                        <span class="help-inline">
+                                            <form:errors path="calendarSettings.provider" cssClass="error"/>
+                                        </span>
                                     </div>
                                 </div>
 
