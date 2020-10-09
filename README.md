@@ -421,10 +421,9 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 * `npm run build:watch`
   * baut automatisch nach dem Editieren von JavaScript / CSS Dateien neue Assets
 
-
 #### Long term caching von Assets
 
-Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `asstes-mannifest.json` angelegt.
+Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `assets-manifest.json` angelegt.
 Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
 in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
 Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
@@ -433,6 +432,16 @@ Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert 
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
+```
+
+Während der Weiterentwicklung ist es sinnvoll das Caching zu deaktivieren. Wird das `demodata` Profil verwendet muss
+nichts weiter getan werden. Verwendest du das Profil nicht, kannst du das Caching mit folgenden application Properties
+deaktivieren:
+
+```properties
+spring.resources.chain.cache=false
+spring.resources.cache.cachecontrol.max-age=0
+spring.resources.chain.strategy.content.enabled=false
 ```
 
 
