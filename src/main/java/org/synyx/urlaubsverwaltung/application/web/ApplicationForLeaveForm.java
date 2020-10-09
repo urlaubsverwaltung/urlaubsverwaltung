@@ -9,6 +9,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
 
 
 /**
@@ -23,6 +25,7 @@ public class ApplicationForLeaveForm {
     private LocalDate startDate;
 
     private Time startTime;
+//    private LocalTime startLocalTime;
 
     private LocalDate endDate;
 
@@ -213,8 +216,11 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setPerson(person);
 
         applicationForLeave.setStartDate(startDate);
-        applicationForLeave.setEndDate(endDate);
         applicationForLeave.setStartTime(startTime);
+
+//        ZonedDateTime.of(startDate, startLocalTime, zoneId).witoInstant();
+
+        applicationForLeave.setEndDate(endDate);
         applicationForLeave.setEndTime(endTime);
 
         applicationForLeave.setVacationType(vacationType);

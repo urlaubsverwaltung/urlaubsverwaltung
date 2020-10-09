@@ -20,8 +20,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -52,7 +52,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     private final ApplicationMailService applicationMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
-    private final SettingsService settingsService;
+    private final TimeSettings timeSettings;
     private final DepartmentService departmentService;
     private final Clock clock;
 
@@ -60,7 +60,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public ApplicationInteractionServiceImpl(ApplicationService applicationService,
                                              ApplicationCommentService commentService,
                                              AccountInteractionService accountInteractionService,
-                                             ApplicationMailService applicationMailService, CalendarSyncService calendarSyncService,
+                                             ApplicationMailService applicationMailService,
+                                             CalendarSyncService calendarSyncService,
                                              AbsenceMappingService absenceMappingService,
                                              SettingsService settingsService,
                                              DepartmentService departmentService, Clock clock) {
@@ -71,7 +72,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         this.applicationMailService = applicationMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
-        this.settingsService = settingsService;
+        this.timeSettings = settingsService.getSettings().getTimeSettings();
         this.departmentService = departmentService;
         this.clock = clock;
     }
@@ -115,11 +116,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(savedApplication.getPerson(),
-            savedApplication.getPeriod(), timeConfiguration, clock));
+            savedApplication.getPeriod(), absenceTimeConfiguration));
 
         eventId.ifPresent(s -> absenceMappingService.create(savedApplication.getId(), AbsenceType.VACATION, s));
 

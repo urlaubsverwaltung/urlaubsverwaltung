@@ -12,9 +12,8 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,14 +43,13 @@ class CalendarMailServiceTest {
         final String calendarName = "calendar name";
         final String exception = "Some exception";
 
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettings());
 
         final LocalDate startDate = LocalDate.of(2019, 5, 5);
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
         final Period period = new Period(startDate, endDate, FULL);
 
-        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration, Clock.systemUTC());
+        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration);
 
         Map<String, Object> model = new HashMap<>();
         model.put("calendar", calendarName);
@@ -77,14 +75,13 @@ class CalendarMailServiceTest {
         final String exception = "Some exception";
         final String eventId = "eventId";
 
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettings());
 
         final LocalDate startDate = LocalDate.of(2019, 5, 5);
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
         final Period period = new Period(startDate, endDate, FULL);
 
-        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration, Clock.systemUTC());
+        final Absence absence = new Absence(new Person(), period, absenceTimeConfiguration);
 
         Map<String, Object> model = new HashMap<>();
         model.put("calendar", calendarName);

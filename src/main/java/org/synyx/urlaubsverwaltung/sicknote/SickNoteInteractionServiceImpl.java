@@ -13,8 +13,8 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -114,10 +114,10 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         if (absenceMapping.isPresent()) {
             String eventId = absenceMapping.get().getEventId();
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+            TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
 
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                new AbsenceTimeConfiguration(calendarSettings), clock), eventId);
+                new AbsenceTimeConfiguration(timeSettings)), eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId);
         }
@@ -153,20 +153,20 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             AbsenceType.SICKNOTE);
 
         if (absenceMapping.isPresent()) {
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+            TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
             calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
-                timeConfiguration, clock), absenceMapping.get().getEventId());
+                timeConfiguration), absenceMapping.get().getEventId());
         }
     }
 
     private void updateCalendar(SickNote sickNote) {
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote.getPerson(),
-            sickNote.getPeriod(), timeConfiguration, clock));
+            sickNote.getPeriod(), timeConfiguration));
 
         eventId.ifPresent(s -> absenceMappingService.create(sickNote.getId(), AbsenceType.SICKNOTE, s));
     }

@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -27,17 +28,18 @@ class AbsenceTest {
     private Person person;
     private AbsenceTimeConfiguration timeConfiguration;
     private final Clock clock = Clock.systemUTC();
+    private final TimeSettings timeSettings = new TimeSettings();
 
     @BeforeEach
     void setUp() {
 
         person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        CalendarSettings calendarSettings = new CalendarSettings();
-        calendarSettings.setWorkDayBeginHour(8);
-        calendarSettings.setWorkDayEndHour(16);
+        timeSettings.setTimeZoneId("Europe/Berlin");
+        timeSettings.setWorkDayBeginHour(8);
+        timeSettings.setWorkDayEndHour(16);
 
-        timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
     }
 
 
@@ -48,10 +50,10 @@ class AbsenceTest {
         LocalDate end = LocalDate.of(2015, 9, 23);
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
-        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(clock.getZone()));
-        assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(clock.getZone()).plusDays(1));
+        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(ZoneId.of(timeSettings.getTimeZoneId())));
+        assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(ZoneId.of(timeSettings.getTimeZoneId())).plusDays(1));
         assertThat(absence.getPerson()).isEqualTo(person);
     }
 
@@ -64,10 +66,10 @@ class AbsenceTest {
         LocalDate end = LocalDate.of(2015, 10, 25);
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
+        Absence absence = new Absence(person, period, timeConfiguration);
 
-        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(clock.getZone()));
-        assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(clock.getZone()).plusDays(1));
+        assertThat(absence.getStartDate()).isEqualTo(start.atStartOfDay(ZoneId.of(timeSettings.getTimeZoneId())));
+        assertThat(absence.getEndDate()).isEqualTo(end.atStartOfDay(ZoneId.of(timeSettings.getTimeZoneId())).plusDays(1));
         assertThat(absence.getPerson()).isEqualTo(person);
     }
 
@@ -75,12 +77,12 @@ class AbsenceTest {
     @Test
     void ensureCorrectTimeForMorningAbsence() {
 
-        LocalDateTime today = LocalDate.now(clock.getZone()).atStartOfDay();
-        ZonedDateTime start = today.withHour(8).atZone(clock.getZone());
-        ZonedDateTime end = today.withHour(12).atZone(clock.getZone());
+        LocalDateTime today = LocalDate.now(ZoneId.of(timeSettings.getTimeZoneId())).atStartOfDay();
+        ZonedDateTime start = today.withHour(8).atZone(ZoneId.of(timeSettings.getTimeZoneId()));
+        ZonedDateTime end = today.withHour(12).atZone(ZoneId.of(timeSettings.getTimeZoneId()));
         Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.MORNING);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
+        Absence absence = new Absence(person, period, timeConfiguration);
         assertThat(absence.getStartDate()).isEqualTo(start);
         assertThat(absence.getEndDate()).isEqualTo(end);
     }
@@ -89,12 +91,12 @@ class AbsenceTest {
     @Test
     void ensureCorrectTimeForNoonAbsence() {
 
-        LocalDateTime today = LocalDate.now(clock.getZone()).atStartOfDay();
-        ZonedDateTime start = today.withHour(12).atZone(clock.getZone());
-        ZonedDateTime end = today.withHour(16).atZone(clock.getZone());
+        LocalDateTime today = LocalDate.now(ZoneId.of(timeSettings.getTimeZoneId())).atStartOfDay();
+        ZonedDateTime start = today.withHour(12).atZone(ZoneId.of(timeSettings.getTimeZoneId()));
+        ZonedDateTime end = today.withHour(16).atZone(ZoneId.of(timeSettings.getTimeZoneId()));
         Period period = new Period(today.toLocalDate(), today.toLocalDate(), DayLength.NOON);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
+        Absence absence = new Absence(person, period, timeConfiguration);
         assertThat(absence.getStartDate()).isEqualTo(start);
         assertThat(absence.getEndDate()).isEqualTo(end);
     }
@@ -107,8 +109,7 @@ class AbsenceTest {
         LocalDate end = start.plusDays(2);
         Period period = new Period(start, end, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
-
+        Absence absence = new Absence(person, period, timeConfiguration);
         assertThat(absence.isAllDay()).isTrue();
     }
 
@@ -118,37 +119,38 @@ class AbsenceTest {
 
         Period period = new Period(today, today, DayLength.MORNING);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
-
-        assertThat(absence.isAllDay()).isFalse();    }
+        Absence absence = new Absence(person, period, timeConfiguration);
+        assertThat(absence.isAllDay()).isFalse();
+    }
 
     @Test
     void ensureIsNotAllDayForNoonPeriod() {
 
         LocalDate today = LocalDate.now(clock);
         Period period = new Period(today, today, DayLength.NOON);
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
+
+        Absence absence = new Absence(person, period, timeConfiguration);
         assertThat(absence.isAllDay()).isFalse();
     }
 
     @Test
     void ensureThrowsOnNullPeriod() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Absence(person, null, timeConfiguration, clock));
+            .isThrownBy(() -> new Absence(person, null, timeConfiguration));
     }
 
     @Test
     void ensureThrowsOnNullPerson() {
         Period period = new Period(LocalDate.now(clock), LocalDate.now(clock), DayLength.FULL);
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Absence(null, period, timeConfiguration, clock));
+            .isThrownBy(() -> new Absence(null, period, timeConfiguration));
     }
 
     @Test
     void ensureThrowsOnNullConfiguration() {
         Period period = new Period(LocalDate.now(clock), LocalDate.now(clock), DayLength.FULL);
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Absence(person, period, null, clock));
+            .isThrownBy(() -> new Absence(person, period, null));
     }
 
     @Test
@@ -157,7 +159,7 @@ class AbsenceTest {
         LocalDate today = LocalDate.now(clock);
         Period period = new Period(today, today, DayLength.FULL);
 
-        Absence absence = new Absence(person, period, timeConfiguration, clock);
+        Absence absence = new Absence(person, period, timeConfiguration);
         assertThat(absence.getEventSubject()).isEqualTo("Marlene Muster abwesend");
     }
 
@@ -168,10 +170,13 @@ class AbsenceTest {
         person.setPassword("Theo");
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
-        final Absence absence = new Absence(person, new Period(LocalDate.MIN, LocalDate.MAX.withYear(10), DayLength.FULL), new AbsenceTimeConfiguration(new CalendarSettings()), clock);
+        // Date where daylight saving time is relevant
+        LocalDate start = LocalDate.of(2015, 10, 23);
+        LocalDate end = LocalDate.of(2015, 10, 25);
+        final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(new TimeSettings()));
 
         final String absenceToString = absence.toString();
-        assertThat(absenceToString).isEqualTo("Absence{startDate=-999999999-01-01T00:00Z," +
-            " endDate=0011-01-01T00:00Z, person=Person{id='10'}, isAllDay=true}");
+        assertThat(absenceToString).isEqualTo("Absence{startDate=2015-10-23T00:00+02:00[Europe/Berlin]," +
+            " endDate=2015-10-26T00:00+01:00[Europe/Berlin], person=Person{id='10'}, isAllDay=true}");
     }
 }

@@ -7,8 +7,8 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
@@ -68,19 +68,19 @@ public class AbsenceServiceImpl implements AbsenceService {
     private List<Absence> generateAbsencesFromApplication(List<Application> applications) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return applications.stream()
-            .map(application -> new Absence(application.getPerson(), application.getPeriod(), config, clock))
+            .map(application -> new Absence(application.getPerson(), application.getPeriod(), config))
             .collect(toList());
     }
 
     private List<Absence> generateAbsencesFromSickNotes(List<SickNote> sickNotes) {
         final AbsenceTimeConfiguration config = getAbsenceTimeConfiguration();
         return sickNotes.stream()
-            .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config, clock))
+            .map(sickNote -> new Absence(sickNote.getPerson(), sickNote.getPeriod(), config))
             .collect(toList());
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        final CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        return new AbsenceTimeConfiguration(calendarSettings);
+        final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+        return new AbsenceTimeConfiguration(timeSettings);
     }
 }

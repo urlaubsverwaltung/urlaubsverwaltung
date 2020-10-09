@@ -18,12 +18,12 @@ public class InstantPropertyEditor extends PropertyEditorSupport {
     private static final Logger log = LoggerFactory.getLogger(InstantPropertyEditor.class);
 
     private final SettingsService settingsService;
-    private final Clock systemClock;
+    private final Clock clock;
     private final DateTimeFormatter formatter;
 
-    public InstantPropertyEditor(Clock systemClock, SettingsService settingsService) {
+    public InstantPropertyEditor(Clock clock, SettingsService settingsService) {
 
-        this.systemClock = systemClock;
+        this.clock = clock;
         this.settingsService = settingsService;
         this.formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
     }
@@ -51,7 +51,7 @@ public class InstantPropertyEditor extends PropertyEditorSupport {
             this.setValue(null);
         } else {
             try {
-                this.setValue(Instant.from(formatter.parse(text)).atZone(systemClock.getZone()));
+                this.setValue(Instant.from(formatter.parse(text)).atZone(clock.getZone()));
             } catch (DateTimeParseException exception) {
                 throw new IllegalArgumentException(exception.getMessage());
             }

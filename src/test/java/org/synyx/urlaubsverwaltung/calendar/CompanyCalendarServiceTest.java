@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.io.File;
 import java.time.Clock;
@@ -229,8 +229,8 @@ class CompanyCalendarServiceTest {
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
+        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
 
-        return new Absence(person, period, timeConfig, Clock.systemUTC());
+        return new Absence(person, period, timeConfig);
     }
 }

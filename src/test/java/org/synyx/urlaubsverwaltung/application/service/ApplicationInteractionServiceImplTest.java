@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
@@ -19,13 +20,13 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -46,9 +47,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -78,6 +79,11 @@ class ApplicationInteractionServiceImplTest {
 
     @BeforeEach
     void setUp() {
+
+        Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
             applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, Clock.systemUTC());
     }
@@ -87,7 +93,6 @@ class ApplicationInteractionServiceImplTest {
     void ensureApplyForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -125,7 +130,6 @@ class ApplicationInteractionServiceImplTest {
     void ensureApplyingForLeaveAddsCalendarEvent() {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -145,7 +149,6 @@ class ApplicationInteractionServiceImplTest {
     void ensureSendsConfirmationEmailToPersonAndNotificationEmailToBossesWhenApplyingForOneself() {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -167,7 +170,6 @@ class ApplicationInteractionServiceImplTest {
     void ensureSendsNotificationToPersonIfApplicationForLeaveNotAppliedByOneself() {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -190,7 +192,6 @@ class ApplicationInteractionServiceImplTest {
     void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");

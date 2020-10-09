@@ -10,6 +10,8 @@
 
     <addColumn tableName="Settings">
       <column name="timezoneid" type="VARCHAR(255)"/>
+      <column name="workDayBeginHour" type="INT(2)"/>
+      <column name="workDayEndHour" type="INT(2)"/>
     </addColumn>
   </changeSet>
 
