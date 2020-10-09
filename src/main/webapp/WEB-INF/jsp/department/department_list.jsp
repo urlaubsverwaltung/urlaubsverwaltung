@@ -97,7 +97,7 @@
                                                      data-trigger="hover"
                                                      data-placement="right"
                                                      title="<spring:message code='department.data.info'/>"
-                                                     data-content="${department.description}">
+                                                     data-content="<c:out value="${department.description}"/>">
                                                     <c:out value="${department.name}"/>
                                                     <i class="fa fa-fw fa-info-circle hidden-print"
                                                        aria-hidden="true"></i>
