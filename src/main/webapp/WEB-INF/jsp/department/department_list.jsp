@@ -101,7 +101,7 @@
                                                      data-trigger="hover"
                                                      data-placement="right"
                                                      title="<spring:message code='department.data.info'/>"
-                                                     data-content="${department.description}">
+                                                     data-content="<c:out value="${department.description}"/>">
                                                     <c:out value="${department.name}"/>
                                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                                 </div>
