@@ -14,6 +14,19 @@
         <spring:message code="person.form.workingTime.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~overtime_form~sick_note_form~workingtime_form.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~overtime_form~person_overview~sick_note_form~workingtime_form.css' />" />
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+    </script>
+    <script defer src="<asset:url value='npm.duetds.js' />"></script>
+    <script defer src="<asset:url value='npm.date-fns.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_form~overtime_form~sick_note_form~workingtime_form.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_form~overtime_form~person_overview~sick_note_form~workingtime_form.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_detail~app_form~overtime_form~person_overview~sick_note_form~workingtime_form.js' />"></script>
     <script defer src="<asset:url value='workingtime_form.js' />"></script>
 </head>
 
