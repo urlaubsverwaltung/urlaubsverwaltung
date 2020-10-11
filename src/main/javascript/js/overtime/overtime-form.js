@@ -14,8 +14,7 @@ function getPersonId() {
 }
 
 $(document).ready(async function () {
-  const locale = window.navigator.language;
   const urlPrefix = window.uv.apiPrefix;
 
-  await createDatepickerInstances(["#startDate", "#endDate"], locale, urlPrefix, getPersonId, onSelect);
+  await createDatepickerInstances(["#startDate", "#endDate"], urlPrefix, getPersonId, onSelect);
 });
