@@ -19,7 +19,12 @@ function onSelectAUB(event) {
 
 $(document).ready(async function () {
   const person = window.uv.params.person;
-  $("#employee").val(person);
+  if (person) {
+    const employeeElement = document.querySelector("#employee");
+    if (employeeElement) {
+      employeeElement.value = person;
+    }
+  }
 
   const urlPrefix = window.uv.apiPrefix;
   const sickNotePersonId = window.uv.sickNote.person.id;
