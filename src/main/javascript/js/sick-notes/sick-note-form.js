@@ -1,7 +1,7 @@
 import $ from "jquery";
 import { createDatepickerInstances } from "../../components/datepicker";
 
-function onSelect (event) {
+function onSelect(event) {
   const toElement = document.querySelector("#to");
 
   if (event.target.matches("#from") && !toElement.value) {
@@ -9,7 +9,7 @@ function onSelect (event) {
   }
 }
 
-function onSelectAUB (event) {
+function onSelectAUB(event) {
   const aubToElement = document.querySelector("#aubTo");
 
   if (event.target.matches("aubFrom") && !aubToElement.value) {

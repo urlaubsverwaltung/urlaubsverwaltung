@@ -17,19 +17,19 @@
  *
  * @returns {Promise<void>}
  */
-export async function setup () {
-    // jest is configured with 'jsdom' environment
-    // so window is already available here
-    // and we're able to attach additional custom stuff
-    window.jQuery = window.$ = require('jquery');
+export async function setup() {
+  // jest is configured with 'jsdom' environment
+  // so window is already available here
+  // and we're able to attach additional custom stuff
+  window.jQuery = window.$ = require("jquery");
 
-    // defined in 'actions.js' as global function
-    // setting as spy function to assert things in the tests
-    window.tooltip = jest.fn();
+  // defined in 'actions.js' as global function
+  // setting as spy function to assert things in the tests
+  window.tooltip = jest.fn();
 
-    // trigger ready event
-    // so "modules" registered via $(function() { /* ... */ }) are executed immediately on file import
-    window.jQuery.ready();
+  // trigger ready event
+  // so "modules" registered via $(function() { /* ... */ }) are executed immediately on file import
+  window.jQuery.ready();
 }
 
 /**
@@ -59,16 +59,16 @@ export async function setup () {
  * @returns {Promise<any>}
  */
 export function waitForFinishedJQueryReadyCallbacks() {
-    return new Promise(resolve => {
-        window.jQuery.fn.ready(function() {
-            resolve();
-        });
+  return new Promise((resolve) => {
+    window.jQuery.fn.ready(function () {
+      resolve();
     });
+  });
 }
 
-export async function cleanup () {
-    // we have to reset all modules to be able to reinstantiate jquery stuff in #setup
-    // jest starts a new context for test files only
-    // not for tests defined within a file
-    jest.resetModules();
+export async function cleanup() {
+  // we have to reset all modules to be able to reinstantiate jquery stuff in #setup
+  // jest starts a new context for test files only
+  // not for tests defined within a file
+  jest.resetModules();
 }

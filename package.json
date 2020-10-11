@@ -18,7 +18,7 @@
     "css:watch": "onchange -i src/main/css -- npm run css:dev",
     "format": "concurrently 'npm:format:*'",
     "format:js": "prettier --write src/main/javascript",
-    "format:css": "prettier --write src/main/css src/main/resources/static/css"
+    "format:css": "prettier --write src/main/css"
   },
   "repository": {
     "type": "git",

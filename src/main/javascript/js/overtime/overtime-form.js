@@ -4,7 +4,7 @@ import { createDatepickerInstances } from "../../components/datepicker";
 function onSelect(event) {
   const endDateElement = document.querySelector("#endDate");
 
-  if (event.target.matches('#startDate') && !endDateElement.value) {
+  if (event.target.matches("#startDate") && !endDateElement.value) {
     endDateElement.value = event.target.value;
   }
 }
