@@ -4,7 +4,7 @@
     "eslint:recommended",
     "plugin:@urlaubsverwaltung/recommended",
     "plugin:unicorn/recommended",
-    "prettier"
+    "plugin:prettier/recommended"
   ],
   "env": {
     "browser": true,

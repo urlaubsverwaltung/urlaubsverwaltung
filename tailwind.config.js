@@ -1,4 +1,4 @@
-const plugin = require('tailwindcss/plugin')
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   future: {
@@ -6,10 +6,10 @@ module.exports = {
     purgeLayersByDefault: true,
   },
   purge: {
-    content: ['./src/main/webapp/**/*.jsp', './src/main/webapp/**/*.tag', './src/main/javascript/**/*.js'],
+    content: ["./src/main/webapp/**/*.jsp", "./src/main/webapp/**/*.tag", "./src/main/javascript/**/*.js"],
   },
   // use a prefix to not conflict with bootstrap
-  prefix: 'tw-',
+  prefix: "tw-",
   // use important keyword for tailwind utility classes to override bootstrap selectors
   important: true,
   corePlugins: {
@@ -19,34 +19,33 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        'print': {'raw': 'print'},
+        print: { raw: "print" },
       },
       lineHeight: {
-        'normal': 'normal',
+        normal: "normal",
       },
       fontSize: {
-        '10rem': '10rem',
-      }
+        "10rem": "10rem",
+      },
     },
   },
   variants: {
-    boxShadow: ['responsive', 'hover', 'focus', 'focus-within'],
+    boxShadow: ["responsive", "hover", "focus", "focus-within"],
   },
   plugins: [
-    plugin(function({ addUtilities }) {
+    plugin(function ({ addUtilities }) {
       const printStyles = {
-        '.no-break-inside': {
-          'break-inside': 'avoid',
+        ".no-break-inside": {
+          "break-inside": "avoid",
         },
-        '.no-page-break-inside': {
-          'break-inside': 'avoid-page',
+        ".no-page-break-inside": {
+          "break-inside": "avoid-page",
         },
-        '.no-col-break-inside': {
-          'break-inside': 'avoid-column',
+        ".no-col-break-inside": {
+          "break-inside": "avoid-column",
         },
       };
-      addUtilities(printStyles, ['responsive']);
+      addUtilities(printStyles, ["responsive"]);
     }),
   ],
-}
-
+};

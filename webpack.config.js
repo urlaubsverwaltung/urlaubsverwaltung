@@ -1,11 +1,11 @@
-const path = require('path');
-const webpack = require('webpack');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
+const path = require("path");
+const webpack = require("webpack");
+const WebpackAssetsManifest = require("webpack-assets-manifest");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 const paths = {
   src: `./src/main/javascript`,
@@ -15,8 +15,8 @@ module.exports = {
   devtool: false,
 
   entry: {
-    polyfill: '@babel/polyfill',
-    'date-fns-localized': `${paths.src}/bundles/date-fns-localized.js`,
+    polyfill: "@babel/polyfill",
+    "date-fns-localized": `${paths.src}/bundles/date-fns-localized.js`,
     app_detail: `${paths.src}/bundles/app-detail.js`,
     app_form: `${paths.src}/bundles/app-form.js`,
     app_list: `${paths.src}/bundles/app-list.js`,
@@ -44,9 +44,9 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve(__dirname, 'target/classes/static/assets'),
-    filename: isProduction ? '[name].[contenthash].min.js' : '[name].js',
-    publicPath: '/assets/'
+    path: path.resolve(__dirname, "target/classes/static/assets"),
+    filename: isProduction ? "[name].[contenthash].min.js" : "[name].js",
+    publicPath: "/assets/",
   },
 
   module: {
@@ -54,35 +54,28 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: 'babel-loader'
+        use: "babel-loader",
       },
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-        ],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.less$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "less-loader",
-        ],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"],
       },
       {
         test: /\.(png|jpg|jpeg|gif)$/i,
         use: [
           {
-            loader: 'url-loader',
+            loader: "url-loader",
             options: {
               limit: 8192,
-            }
-          }
-        ]
-      }
-    ]
+            },
+          },
+        ],
+      },
+    ],
   },
 
   plugins: [
@@ -94,28 +87,28 @@ module.exports = {
     // This file is read by the taglib AssetsHashResolverTag.java to ease asset handling in templates
     new WebpackAssetsManifest({
       // output path is relative to webpack.output.path
-      output: path.resolve(__dirname, 'src/main/webapp/WEB-INF/assets-manifest.json'),
+      output: path.resolve(__dirname, "src/main/webapp/WEB-INF/assets-manifest.json"),
       publicPath: true,
     }),
     new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
+      $: "jquery",
+      jQuery: "jquery",
     }),
     new MiniCssExtractPlugin({
       filename: isProduction ? "../assets/[name].[contenthash].css" : "../assets/[name].css",
-    })
+    }),
   ],
 
   optimization: {
-    runtimeChunk: 'single',
+    runtimeChunk: "single",
     // always create named chunkIds to have deterministic builds.
     // default would be 'natural' which uses numeric ids in order of (import) usage.
     //    changing the first import usage results in changing ALL chunk ids independently of the actual chunk content
     //    which reverses the content hash usage in the filename for long-term-caching. (the content hash changes when
     //    the chunkId changes)
-    chunkIds: 'named',
+    chunkIds: "named",
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       maxInitialRequests: Infinity,
       minSize: 1024,
       cacheGroups: {
@@ -134,7 +127,7 @@ module.exports = {
               return `npm.${packageName}.datepicker.${locale}`;
             }
 
-            if (packageName === 'date-fns') {
+            if (packageName === "date-fns") {
               // build separate bundles for dateFn locales
               // which can be included on demand in the view templates
               // or used as dynamic import and handled by webpack
@@ -146,14 +139,11 @@ module.exports = {
             }
 
             // npm package names are URL-safe, but some servers don't like @ symbols
-            return `npm.${packageName.replace('@', '')}`;
+            return `npm.${packageName.replace("@", "")}`;
           },
         },
       },
     },
-    minimizer: [
-      new TerserJSPlugin({}),
-      new OptimizeCSSAssetsPlugin({})
-    ]
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
   },
 };
