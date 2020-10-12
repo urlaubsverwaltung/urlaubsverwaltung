@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: urlaubsverwaltung-mariadb
-          image: mariadb:10.4
+          image: mariadb:10.5
           ports:
             - containerPort: 3306
           livenessProbe:

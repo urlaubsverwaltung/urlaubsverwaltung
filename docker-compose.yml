@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   mariadb:
-    image: mariadb:10.4
+    image: mariadb:10.5
     ports:
       - '3308:3306'
     environment:
