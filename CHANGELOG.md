@@ -1,5 +1,5 @@
 ### [urlaubsverwaltung-3.4.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.5)
-* Fill department description with jstl out tag (for v3.x branch) [#1407](https://github.com/synyx/urlaubsverwaltung/pull/1407)
+* ❗Security-Fix: Fill department description with jstl out tag (for v3.x branch), Issue: [#1399](https://github.com/synyx/urlaubsverwaltung/issues/1399) PR:[#1407](https://github.com/synyx/urlaubsverwaltung/pull/1407)
 
 ### [urlaubsverwaltung-3.4.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.4)
 * Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/76?closed=1)
