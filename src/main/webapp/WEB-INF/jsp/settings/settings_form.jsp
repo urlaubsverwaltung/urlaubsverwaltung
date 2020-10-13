@@ -280,6 +280,32 @@
                                         </form:select>
                                     </div>
                                 </div>
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="timeSettings.workDayBeginHour">
+                                        <spring:message code='settings.time.workDay.begin'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="timeSettings.workDayBeginHour"
+                                                    path="timeSettings.workDayBeginHour" class="form-control"
+                                                    cssErrorClass="form-control error"
+                                                    type="number" step="1"/>
+                                        <span class="help-inline"><form:errors path="timeSettings.workDayBeginHour"
+                                                                               cssClass="error"/></span>
+                                    </div>
+                                </div>
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="timeSettings.workDayEndHour">
+                                        <spring:message code='settings.time.workDay.end'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="timeSettings.workDayEndHour"
+                                                    path="timeSettings.workDayEndHour" class="form-control"
+                                                    cssErrorClass="form-control error"
+                                                    type="number" step="1"/>
+                                        <span class="help-inline"><form:errors path="timeSettings.workDayEndHour"
+                                                                               cssClass="error"/></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -435,32 +461,6 @@
                                 </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
-                                <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="calendarSettings.workDayBeginHour">
-                                        <spring:message code='settings.calendar.workDay.begin'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="calendarSettings.workDayBeginHour"
-                                                    path="calendarSettings.workDayBeginHour" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <span class="help-inline"><form:errors path="calendarSettings.workDayBeginHour"
-                                                                               cssClass="error"/></span>
-                                    </div>
-                                </div>
-                                <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="calendarSettings.workDayEndHour">
-                                        <spring:message code='settings.calendar.workDay.end'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="calendarSettings.workDayEndHour"
-                                                    path="calendarSettings.workDayEndHour" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour"
-                                                                               cssClass="error"/></span>
-                                    </div>
-                                </div>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4" for="calendarSettingsProvider">
                                         <spring:message code='settings.calendar.provider'/>:
