@@ -237,10 +237,19 @@ class ApplicationForLeaveFormViewControllerTest {
     void postNewApplicationFormCallsServiceToApplyApplication() throws Exception {
 
         final Person person = personWithRole(OFFICE);
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final Settings settings = new Settings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
         when(personService.getSignedInUser()).thenReturn(person);
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
 
+        ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
+        applicationForLeaveForm.setStartDate(LocalDate.now());
+        applicationForLeaveForm.setEndDate(LocalDate.now());
+
         perform(post("/web/application")
+            .flashAttr("application", applicationForLeaveForm)
             .param("vacationType.category", "HOLIDAY"));
 
         verify(applicationInteractionService).apply(any(), eq(person), any());
@@ -251,10 +260,19 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final int applicationId = 11;
         final Person person = personWithRole(OFFICE);
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final Settings settings = new Settings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
         when(personService.getSignedInUser()).thenReturn(person);
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(applicationWithId(applicationId));
 
+        ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
+        applicationForLeaveForm.setStartDate(LocalDate.now());
+        applicationForLeaveForm.setEndDate(LocalDate.now());
         perform(post("/web/application")
+            .flashAttr("application", applicationForLeaveForm)
             .param("vacationType.category", "HOLIDAY"))
             .andExpect(flash().attribute("applySuccess", true))
             .andExpect(status().isFound())

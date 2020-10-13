@@ -24,10 +24,12 @@ public class ApplicationComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private ApplicationAction action;
 
+    public ApplicationComment() {
+        // needed for Hibernate
+    }
+
     public ApplicationComment(Clock clock) {
         super(clock);
-
-        // needed for Hibernate
     }
 
     public ApplicationComment(Person person, Clock clock) {

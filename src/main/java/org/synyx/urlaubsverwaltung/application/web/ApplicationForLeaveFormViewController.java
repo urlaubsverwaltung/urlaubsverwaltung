@@ -38,11 +38,13 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 /**
@@ -133,13 +135,12 @@ public class ApplicationForLeaveFormViewController {
             return "application/app_form";
         }
 
-//        String zoneId = settingsService.getSettings().getTimeSettings().getTimeZoneId();
-//        TimeZone timeZone = TimeZone.getTimeZone(zoneId);
-//        Application app = mapToApplication(appForm, timeZone);
+        String zoneId = settingsService.getSettings().getTimeSettings().getTimeZoneId();
+        TimeZone timeZone = TimeZone.getTimeZone(zoneId);
+        Application app = mapToApplication(appForm, timeZone);
 
-        final Application application = appForm.generateApplicationForLeave();
         final Person applier = personService.getSignedInUser();
-        final Application savedApplicationForLeave = applicationInteractionService.apply(application, applier, ofNullable(appForm.getComment()));
+        final Application savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
 
         LOG.info("new application with success applied {}", savedApplicationForLeave);
 

@@ -25,7 +25,6 @@ public class ApplicationForLeaveForm {
     private LocalDate startDate;
 
     private Time startTime;
-//    private LocalTime startLocalTime;
 
     private LocalDate endDate;
 
@@ -217,8 +216,6 @@ public class ApplicationForLeaveForm {
 
         applicationForLeave.setStartDate(startDate);
         applicationForLeave.setStartTime(startTime);
-
-//        ZonedDateTime.of(startDate, startLocalTime, zoneId).witoInstant();
 
         applicationForLeave.setEndDate(endDate);
         applicationForLeave.setEndTime(endTime);
