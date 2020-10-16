@@ -16,7 +16,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * Validates the content of {@link Department}s.
  */
 @Component
-public class DepartmentValidator implements Validator {
+public class DepartmentViewValidator implements Validator {
 
     private static final int MAX_CHARS_NAME = 50;
     private static final int MAX_CHARS_DESCRIPTION = 200;

@@ -19,16 +19,16 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 
 @ExtendWith(MockitoExtension.class)
-class DepartmentValidatorTest {
+class DepartmentViewValidatorTest {
 
-    private DepartmentValidator sut;
+    private DepartmentViewValidator sut;
 
     @Mock
     private Errors errors;
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentValidator();
+        sut = new DepartmentViewValidator();
     }
 
     @Test

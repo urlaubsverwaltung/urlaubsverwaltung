@@ -37,10 +37,10 @@ public class DepartmentViewController {
 
     private final DepartmentService departmentService;
     private final PersonService personService;
-    private final DepartmentValidator validator;
+    private final DepartmentViewValidator validator;
 
     @Autowired
-    public DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentValidator validator) {
+    public DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentViewValidator validator) {
         this.departmentService = departmentService;
         this.personService = personService;
         this.validator = validator;
