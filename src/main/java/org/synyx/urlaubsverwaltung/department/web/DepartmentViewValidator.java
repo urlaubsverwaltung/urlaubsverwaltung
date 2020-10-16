@@ -10,12 +10,13 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Validates the content of {@link Department}s.
  */
 @Component
-public class DepartmentValidator implements Validator {
+public class DepartmentViewValidator implements Validator {
 
     private static final int MAX_CHARS_NAME = 50;
     private static final int MAX_CHARS_DESCRIPTION = 200;
@@ -28,28 +29,21 @@ public class DepartmentValidator implements Validator {
 
     private static final String ERROR_REASON = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
-    private static final String ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED =
-        "department.members.error.departmentHeadNotAssigned";
+    private static final String ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED = "department.members.error.departmentHeadNotAssigned";
     private static final String ERROR_DEPARTMENT_HEAD_NO_ACCESS = "department.members.error.departmentHeadHasNoAccess";
 
-    private static final String ERROR_SECOND_STAGE_AUTHORITY_MISSING =
-        "department.members.error.secondStageAuthorityMissing";
-    private static final String ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING =
-        "department.members.error.twoStageApprovalFlagMissing";
-    private static final String ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS =
-        "department.members.error.secondStageHasNoAccess";
+    private static final String ERROR_SECOND_STAGE_AUTHORITY_MISSING = "department.members.error.secondStageAuthorityMissing";
+    private static final String ERROR_TWO_STAGE_APPROVAL_FLAG_MISSING = "department.members.error.twoStageApprovalFlagMissing";
+    private static final String ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS = "department.members.error.secondStageHasNoAccess";
 
     @Override
     public boolean supports(Class<?> clazz) {
-
         return Department.class.equals(clazz);
     }
 
-
     @Override
     public void validate(Object target, Errors errors) {
-
-        Department department = (Department) target;
+        final Department department = (Department) target;
 
         validateName(errors, department.getName());
         validateDescription(errors, department.getDescription());
@@ -57,10 +51,9 @@ public class DepartmentValidator implements Validator {
         validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getSecondStageAuthorities());
     }
 
-
     private void validateName(Errors errors, String text) {
 
-        boolean hasText = StringUtils.hasText(text);
+        final boolean hasText = StringUtils.hasText(text);
 
         if (!hasText) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_REASON);
@@ -71,16 +64,14 @@ public class DepartmentValidator implements Validator {
         }
     }
 
-
     private void validateDescription(Errors errors, String description) {
 
-        boolean hasText = StringUtils.hasText(description);
+        final boolean hasText = StringUtils.hasText(description);
 
         if (hasText && description.length() > MAX_CHARS_DESCRIPTION) {
             errors.rejectValue(ATTRIBUTE_DESCRIPTION, ERROR_LENGTH);
         }
     }
-
 
     private void validateDepartmentHeads(Errors errors, List<Person> members, List<Person> departmentHeads) {
 
@@ -97,7 +88,6 @@ public class DepartmentValidator implements Validator {
         }
     }
 
-
     private void validateSecondStageAuthorities(Errors errors, boolean twoStageApproval, List<Person> secondStageAuthorities) {
 
         if (twoStageApproval) {
@@ -105,9 +95,7 @@ public class DepartmentValidator implements Validator {
         } else {
             validateNoSecondStageAuthoritiesSet(secondStageAuthorities, errors);
         }
-
     }
-
 
     private void validateNoSecondStageAuthoritiesSet(List<Person> secondStageAuthorities, Errors errors) {
 
@@ -117,15 +105,13 @@ public class DepartmentValidator implements Validator {
         }
     }
 
-
-    private void validateSecondStageAuthoritiesHaveRequiredRole(List<Person> secondStageAuthorities,
-                                                                Errors errors) {
+    private void validateSecondStageAuthoritiesHaveRequiredRole(List<Person> secondStageAuthorities, Errors errors) {
 
         if (secondStageAuthorities != null && !secondStageAuthorities.isEmpty()) {
             for (Person secondStage : secondStageAuthorities) {
 
                 // second stage authority must have required role
-                if (!secondStage.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+                if (!secondStage.hasRole(SECOND_STAGE_AUTHORITY)) {
                     errors.rejectValue(ATTRIBUTE_SECOND_STAGE_AUTHORITIES, ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS);
                 }
             }

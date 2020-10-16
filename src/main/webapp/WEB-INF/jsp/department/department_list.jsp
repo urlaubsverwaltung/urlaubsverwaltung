@@ -122,8 +122,7 @@
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">
                                         <td>
-                                            <form:form method="DELETE"
-                                                       action="${URL_PREFIX}/department/${department.id}">
+                                            <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
                                                 <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"
                                                      role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
@@ -133,20 +132,19 @@
                                                                     <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
-                                                                    <spring:message
-                                                                        code="action.department.delete"/>?</h4>
+                                                                    <spring:message code="action.department.delete"/>?
+                                                                </h4>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <spring:message code="action.department.delete.confirm"
-                                                                                arguments="${department.name}"/>
+                                                                <spring:message code="action.department.delete.confirm" arguments="${department.name}"/>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button class="btn btn-danger is-sticky" type="submit">
-                                                                    <spring:message
-                                                                        code="action.department.delete"/></button>
-                                                                <button class="btn btn-default is-sticky"
-                                                                        data-dismiss="modal" aria-hidden="true">
-                                                                    <spring:message code="action.cancel"/></button>
+                                                                    <spring:message code="action.department.delete"/>
+                                                                </button>
+                                                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true">
+                                                                    <spring:message code="action.cancel"/>
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
