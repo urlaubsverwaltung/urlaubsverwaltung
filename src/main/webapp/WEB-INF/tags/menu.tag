@@ -47,16 +47,14 @@
           </li>
         </sec:authorize>
 
-        <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
           <li>
-            <a href="${URL_PREFIX}/application" class="tw-flex tw-items-center">
-                <icon:calendar className="tw-w-4 tw-h-4" solid="true" />
-                &nbsp;<spring:message code="nav.vacation.title"/>
-            </a>
+              <a href="${URL_PREFIX}/application" class="tw-flex tw-items-center">
+                  <icon:calendar className="tw-w-4 tw-h-4" solid="true"/>
+                  &nbsp;<spring:message code="nav.vacation.title"/>
+              </a>
           </li>
-        </sec:authorize>
 
-        <sec:authorize access="hasAuthority('OFFICE')">
+          <sec:authorize access="hasAuthority('OFFICE')">
           <li>
             <a href="${URL_PREFIX}/sicknote/" class="tw-flex tw-items-center">
                 <icon:medkit className="tw-w-4 tw-h-4" />

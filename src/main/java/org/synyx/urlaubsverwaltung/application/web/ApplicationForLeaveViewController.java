@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Controller for showing applications for leave in a certain state.
@@ -56,7 +55,6 @@ public class ApplicationForLeaveViewController {
     /*
      * Show waiting applications for leave.
      */
-    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping("/application")
     public String showWaiting(Model model) {
 
@@ -70,25 +68,25 @@ public class ApplicationForLeaveViewController {
 
         final Person user = personService.getSignedInUser();
 
-        final boolean isHeadOf = user.hasRole(DEPARTMENT_HEAD);
-        final boolean isSecondStage = user.hasRole(SECOND_STAGE_AUTHORITY);
-        final boolean isBoss = user.hasRole(BOSS);
-        final boolean isOffice = user.hasRole(OFFICE);
-
-        if (isBoss || isOffice) {
+        if (user.hasRole(BOSS) || user.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
             return getApplicationsForLeaveForBossOrOffice();
         }
 
         final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
-        if (isSecondStage) {
+        if (user.hasRole(SECOND_STAGE_AUTHORITY)) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
         }
 
-        if (isHeadOf) {
+        if (user.hasRole(DEPARTMENT_HEAD)) {
             // Department head can see only waiting applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
+        }
+
+        if (user.hasRole(USER)) {
+            // Department head can see only waiting applications for leave of certain department(s)
+            applicationsForLeave.addAll(getApplicationsForLeaveForUser(user));
         }
 
         return applicationsForLeave.stream().filter(distinctByKey(ApplicationForLeave::getId)).collect(toList());
@@ -103,6 +101,14 @@ public class ApplicationForLeaveViewController {
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
 
         return getApplicationsByStates(WAITING, TEMPORARY_ALLOWED).stream()
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
+            .collect(toList());
+    }
+
+    private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
+
+        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
             .collect(toList());

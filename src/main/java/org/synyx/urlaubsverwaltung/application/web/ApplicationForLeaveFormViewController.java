@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -34,6 +36,7 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +46,10 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
+import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplicationForm;
+import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.merge;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 /**
@@ -141,6 +147,76 @@ public class ApplicationForLeaveFormViewController {
         LOG.info("new application with success applied {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
+
+        return "redirect:/web/application/" + savedApplicationForLeave.getId();
+    }
+
+    @GetMapping("/application/{applicationId}/edit")
+    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) throws UnknownApplicationForLeaveException {
+
+        final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
+        if (maybeApplication.isEmpty()) {
+            throw new UnknownApplicationForLeaveException(applicationId);
+        }
+
+        final Application application = maybeApplication.get();
+        if (application.getStatus().compareTo(WAITING) != 0) {
+            return "application/app_notwaiting";
+        }
+
+        final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application);
+        final Person person = personService.getSignedInUser();
+
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
+        if (holidaysAccount.isPresent()) {
+            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+        }
+        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
+
+        model.addAttribute("application", applicationForLeaveForm);
+
+        return "application/app_form";
+    }
+
+    @PostMapping("/application/{applicationId}")
+    public String sendEditApplicationForm(@PathVariable("applicationId") Integer applicationId,
+                                          @ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
+                                          Model model, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
+
+        final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
+        if (maybeApplication.isEmpty()) {
+            throw new UnknownApplicationForLeaveException(applicationId);
+        }
+
+        final Application application = maybeApplication.get();
+        if (application.getStatus().compareTo(WAITING) != 0) {
+            return "application/app_notwaiting";
+        }
+
+        appForm.setId(application.getId());
+        applicationForLeaveFormValidator.validate(appForm, errors);
+
+        if (errors.hasErrors()) {
+            prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
+            if (errors.hasGlobalErrors()) {
+                model.addAttribute("errors", errors);
+            }
+            LOG.info("edit application ({}) has errors: {}", appForm, errors);
+            return "application/app_form";
+        }
+
+        final Application editedApplication = merge(application, appForm);
+        final Application savedApplicationForLeave;
+        final Person signedInUser = personService.getSignedInUser();
+        try {
+            savedApplicationForLeave = applicationInteractionService.edit(editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
+        } catch (EditApplicationForLeaveNotAllowedException e) {
+            return "application/app_notwaiting";
+        }
+
+        LOG.info("Edited application with success applied {}", savedApplicationForLeave);
+
+        redirectAttributes.addFlashAttribute("editSuccess", true);
 
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }

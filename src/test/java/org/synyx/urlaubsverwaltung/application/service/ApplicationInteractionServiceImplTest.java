@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
@@ -17,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
 import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
@@ -36,6 +36,8 @@ import java.util.Optional;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Optional.of;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,10 +49,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.anyAbsenceMapping;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CONVERTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -58,7 +68,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class ApplicationInteractionServiceImplTest {
 
     private ApplicationInteractionService sut;
-    private final Clock clock = Clock.systemUTC();
 
     @Mock
     private ApplicationService applicationService;
@@ -77,15 +86,17 @@ class ApplicationInteractionServiceImplTest {
     @Mock
     private DepartmentService departmentService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
 
-        Settings settings = new Settings();
+        final Settings settings = new Settings();
         settings.setTimeSettings(new TimeSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, Clock.systemUTC());
+            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, clock);
     }
 
     // APPLY FOR LEAVE -------------------------------------------------------------------------------------------------
@@ -112,20 +123,6 @@ class ApplicationInteractionServiceImplTest {
         verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), eq(comment), eq(applier));
     }
 
-
-    private Application getDummyApplication(Person person) {
-
-        Application applicationForLeave = new Application();
-        applicationForLeave.setPerson(person);
-        applicationForLeave.setStartDate(LocalDate.of(2013, 2, 1));
-        applicationForLeave.setEndDate(LocalDate.of(2013, 2, 5));
-        applicationForLeave.setDayLength(DayLength.FULL);
-        applicationForLeave.setHolidayReplacement(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-
-        return applicationForLeave;
-    }
-
-
     @Test
     void ensureApplyingForLeaveAddsCalendarEvent() {
 
@@ -143,7 +140,6 @@ class ApplicationInteractionServiceImplTest {
         verify(calendarSyncService).addAbsence(any(Absence.class));
         verify(absenceMappingService).create(isNull(), eq(AbsenceType.VACATION), anyString());
     }
-
 
     @Test
     void ensureSendsConfirmationEmailToPersonAndNotificationEmailToBossesWhenApplyingForOneself() {
@@ -164,7 +160,6 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService, never()).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
     }
-
 
     @Test
     void ensureSendsNotificationToPersonIfApplicationForLeaveNotAppliedByOneself() {
@@ -187,7 +182,6 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
     }
 
-
     @Test
     void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
 
@@ -206,8 +200,6 @@ class ApplicationInteractionServiceImplTest {
     }
 
     // ALLOW APPLICATION FOR LEAVE -------------------------------------------------------------------------------------
-
-
     // ALLOWING - BOSS
     @Test
     void ensureWaitingApplicationForLeaveCanBeAllowedByBoss() {
@@ -229,39 +221,6 @@ class ApplicationInteractionServiceImplTest {
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
-
-
-    private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
-                                                           Person person, Person privilegedUser) {
-
-        Assert.assertEquals("Wrong state", status, applicationForLeave.getStatus());
-        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
-        Assert.assertEquals("Wrong privileged user", privilegedUser, applicationForLeave.getBoss());
-        Assert.assertEquals("Wrong edited date", LocalDate.now(UTC), applicationForLeave.getEditedDate());
-    }
-
-
-    private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationAction action,
-                                                             Optional<String> optionalComment, Person privilegedUser) {
-
-        verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));
-    }
-
-
-    private void assertNoCalendarSyncIsExecuted() {
-
-        verifyNoInteractions(calendarSyncService);
-        verifyNoInteractions(absenceMappingService);
-    }
-
-
-    private void assertAllowedNotificationIsSent(Application applicationForLeave) {
-
-        verify(applicationMailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService, never()).sendTemporaryAllowedNotification(any(Application.class), any(ApplicationComment.class));
-    }
-
 
     @Test
     void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBoss() {
@@ -286,7 +245,6 @@ class ApplicationInteractionServiceImplTest {
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
-
     @Test
     void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBossEvenWithTwoStageApprovalActive() {
 
@@ -299,7 +257,7 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
+        AbsenceMapping absenceMapping = anyAbsenceMapping();
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, boss, comment);
@@ -309,7 +267,6 @@ class ApplicationInteractionServiceImplTest {
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
-
 
     @Test
     void ensureIfAllowedApplicationForLeaveIsAllowedAgainNothingHappens() {
@@ -332,9 +289,7 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(absenceMappingService);
     }
 
-
     // ALLOWING - DEPARTMENT HEAD
-
     @Test
     void ensureThrowsWhenExecutingAllowProcessWithNotPrivilegedUser() {
 
@@ -350,7 +305,6 @@ class ApplicationInteractionServiceImplTest {
         assertThatIllegalStateException()
             .isThrownBy(() -> sut.allow(applicationForLeave, user, comment));
     }
-
 
     @Test
     void ensureWaitingApplicationForLeaveCanBeAllowedByDepartmentHead() {
@@ -369,23 +323,20 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
-        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person,
-            departmentHead);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
-            departmentHead);
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
-
     @Test
     void ensureWaitingApplicationForLeaveCanOnlyBeAllowedTemporaryByDepartmentHeadIfTwoStageApprovalIsActive() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
@@ -402,38 +353,22 @@ class ApplicationInteractionServiceImplTest {
         assertTemporaryAllowedNotificationIsSent(applicationForLeave);
     }
 
-
-    private void assertNoCalendarSyncOccurs() {
-
-        verifyNoInteractions(calendarSyncService);
-        verifyNoInteractions(absenceMappingService);
-    }
-
-
-    private void assertTemporaryAllowedNotificationIsSent(Application applicationForLeave) {
-
-        verify(applicationMailService).sendTemporaryAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService, never()).sendAllowedNotification(any(Application.class), any(ApplicationComment.class));
-    }
-
-
     @Test
     void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalIsActiveNothingHappens() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
-        Assert.assertEquals("Status should not be changed", ApplicationStatus.TEMPORARY_ALLOWED,
-            applicationForLeave.getStatus());
+        Assert.assertEquals("Status should not be changed", ApplicationStatus.TEMPORARY_ALLOWED, applicationForLeave.getStatus());
 
         verifyNoInteractions(applicationService);
         verifyNoInteractions(commentService);
@@ -442,15 +377,14 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(absenceMappingService);
     }
 
-
     @Test
     void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalNotActiveStatusIsChanged() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
@@ -461,27 +395,23 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
-        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person,
-            departmentHead);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
-            departmentHead);
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
-
     // ALLOWING - SECOND STAGE AUTHORITY
-
     @Test
     void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthority() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
         when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -490,23 +420,21 @@ class ApplicationInteractionServiceImplTest {
         sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
-            secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
-
     @Test
     void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
         when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
@@ -516,23 +444,21 @@ class ApplicationInteractionServiceImplTest {
         sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
-            secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
-
     @Test
     void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
         when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
@@ -543,8 +469,7 @@ class ApplicationInteractionServiceImplTest {
         sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.ALLOWED, person, secondStage);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment,
-            secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
         assertAllowedNotificationIsSent(applicationForLeave);
         verifyNoInteractions(calendarSyncService);
     }
@@ -552,10 +477,10 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureDepartmentHeadCanBeAllowedBySecondStageAuthority() {
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
-        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
         final boolean isSecondStage = departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead));
@@ -565,7 +490,7 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
         when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStageAuthority)).thenReturn(new ApplicationComment(departmentHead, clock));
 
         sut.allow(applicationForLeave, secondStageAuthority, comment);
@@ -575,21 +500,20 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(calendarSyncService);
     }
 
-
     @Test
     void ensureSecondStageAuthorityCanNotBeAllowedByDepartmentHead() {
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
-        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(secondStageAuthority))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(secondStageAuthority);
+        final Application applicationForLeave = getDummyApplication(secondStageAuthority);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setTwoStageApproval(true);
 
@@ -599,46 +523,44 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureSecondStageAuthorityCanNotAllowHimself() {
 
-        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
         when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(secondStageAuthority))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(secondStageAuthority);
+        final Application applicationForLeave = getDummyApplication(secondStageAuthority);
         applicationForLeave.setStatus(WAITING);
 
         assertThatIllegalStateException().isThrownBy(() -> sut.allow(applicationForLeave, secondStageAuthority, comment));
     }
 
-
     @Test
     void ensureDepartmentHeadCanNotAllowHimself() {
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(departmentHead))).thenReturn(true);
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(departmentHead);
+        final Application applicationForLeave = getDummyApplication(departmentHead);
         applicationForLeave.setStatus(WAITING);
 
         assertThatIllegalStateException().isThrownBy(() -> sut.allow(applicationForLeave, departmentHead, comment));
     }
 
     // ALLOWING - HOLIDAY REPLACEMENT NOTIFICATION
-
     @Test
     void ensureAllowingApplicationForLeaveWithHolidayReplacementSendsNotificationToReplacement() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person replacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person boss = createPerson("boss", USER, Role.BOSS);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person replacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = createPerson("boss", USER, Role.BOSS);
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setHolidayReplacement(replacement);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
@@ -648,14 +570,13 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).notifyHolidayReplacement(eq(applicationForLeave));
     }
 
-
     @Test
     void ensureAllowingApplicationForLeaveWithoutHolidayReplacementDoesNotSendNotification() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person boss = createPerson("boss", USER, Role.BOSS);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = createPerson("boss", USER, Role.BOSS);
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setHolidayReplacement(null);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
@@ -665,16 +586,15 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
     }
 
-
     @Test
     void ensureTemporaryAllowingApplicationForLeaveWithHolidayReplacementDoesNotSendNotification() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person replacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person replacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
         when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setHolidayReplacement(replacement);
         applicationForLeave.setTwoStageApproval(true);
@@ -684,16 +604,14 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
     }
 
-
     // REJECT APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
-
     @Test
     void ensureRejectingApplicationForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
@@ -707,25 +625,22 @@ class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong edited date", LocalDate.now(UTC), applicationForLeave.getEditedDate());
 
         verify(applicationService).save(applicationForLeave);
-
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.REJECTED), eq(comment), eq(boss));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REJECTED), eq(comment), eq(boss));
     }
-
 
     @Test
     void ensureRejectingApplicationForLeaveDeletesCalendarEvent() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
+        final AbsenceMapping absenceMapping = anyAbsenceMapping();
         final Optional<AbsenceMapping> absenceByIdAndType = absenceMappingService.getAbsenceByIdAndType(isNull(), eq(AbsenceType.VACATION));
         when(absenceByIdAndType).thenReturn(of(absenceMapping));
 
@@ -735,18 +650,17 @@ class ApplicationInteractionServiceImplTest {
         verify(absenceMappingService).delete(absenceMapping);
     }
 
-
     @Test
     void ensureRejectingApplicationForLeaveSendsEmailToPerson() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        Optional<String> optionalComment = of("Foo");
-        ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        final Optional<String> optionalComment = of("Foo");
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
         when(commentService.create(applicationForLeave, ApplicationAction.REJECTED, optionalComment, boss)).thenReturn(applicationComment);
 
@@ -755,14 +669,12 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendRejectedNotification(eq(applicationForLeave), eq(applicationComment));
     }
 
-
     // CANCEL APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
-
     @Test
     void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Optional<String> comment = of("Foo");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
@@ -777,26 +689,22 @@ class ApplicationInteractionServiceImplTest {
         Assert.assertFalse("Must not be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
-
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(person));
-
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(person));
         verifyNoInteractions(applicationMailService);
     }
-
 
     @Test
     void ensureCancellingApplicationForLeaveDeletesCalendarEvent() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
 
-        AbsenceMapping absenceMapping = TestDataCreator.anyAbsenceMapping();
+        final AbsenceMapping absenceMapping = anyAbsenceMapping();
         when(absenceMappingService.getAbsenceByIdAndType(null, AbsenceType.VACATION)).thenReturn(of(absenceMapping));
 
         sut.cancel(applicationForLeave, canceller, comment);
@@ -805,12 +713,11 @@ class ApplicationInteractionServiceImplTest {
         verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
 
-
     @Test
     void ensureCancellingAllowedApplicationByOwnerCreatesACancellationRequest() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Optional<String> comment = of("Foo");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
@@ -822,21 +729,17 @@ class ApplicationInteractionServiceImplTest {
         sut.cancel(applicationForLeave, person, comment);
 
         verify(applicationService).save(applicationForLeave);
-
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
-
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
         verify(applicationMailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
-
 
     @Test
     void ensureCancellingAllowedApplicationByOwnerThatIsOfficeCancelsTheApplicationForLeaveDirectly() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(asList(USER, Role.OFFICE));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(asList(USER, OFFICE));
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
@@ -851,24 +754,20 @@ class ApplicationInteractionServiceImplTest {
         Assert.assertTrue("Must be formerly allowed", applicationForLeave.isFormerlyAllowed());
 
         verify(applicationService).save(applicationForLeave);
-
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
-
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
         verifyNoInteractions(applicationMailService);
     }
-
 
     @Test
     void ensureCancellingAllowedApplicationForLeaveOnBehalfForSomeOneChangesStateAndOtherAttributesAndSendsAnEmail() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        canceller.setPermissions(asList(USER, Role.OFFICE));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        canceller.setPermissions(asList(USER, OFFICE));
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -888,17 +787,16 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
-
     @Test
     void ensureCancellingNotYetAllowedApplicationForLeaveOnBehalfForSomeOneChangesStateAndOtherAttributesAndSendsAnEmail() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        canceller.setPermissions(asList(USER, Role.OFFICE));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        canceller.setPermissions(asList(USER, OFFICE));
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
-        Application applicationForLeave = getDummyApplication(person);
+        final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -918,15 +816,14 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
-
     @Test
     void ensureCancellingApplicationForLeaveUpdatesRemainingVacationDaysWithTheYearOfTheStartDateAsStartYear() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        canceller.setPermissions(asList(USER, Role.OFFICE));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        canceller.setPermissions(asList(USER, OFFICE));
 
-        Optional<String> comment = of("Foo");
+        final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -941,16 +838,14 @@ class ApplicationInteractionServiceImplTest {
         verify(accountInteractionService).updateRemainingVacationDays(2014, person);
     }
 
-
     // CREATE APPLICATION FOR LEAVE FROM CONVERTED SICK NOTE -----------------------------------------------------------
-
     @Test
     void ensureCreatedApplicationForLeaveFromConvertedSickNoteIsAllowedDirectly() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person creator = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person creator = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Application applicationForLeave = new Application();
+        final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStatus(null);
         applicationForLeave.setStartDate(LocalDate.of(2014, 12, 24));
@@ -961,9 +856,7 @@ class ApplicationInteractionServiceImplTest {
         sut.createFromConvertedSickNote(applicationForLeave, creator);
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService)
-            .create(eq(applicationForLeave), eq(ApplicationAction.CONVERTED), eq(Optional.empty()),
-                eq(creator));
+        verify(commentService).create(eq(applicationForLeave), eq(CONVERTED), eq(Optional.empty()), eq(creator));
         verify(applicationMailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
 
         Assert.assertNotNull("Status should be set", applicationForLeave.getStatus());
@@ -975,13 +868,11 @@ class ApplicationInteractionServiceImplTest {
         Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
     }
 
-
     // REMIND ----------------------------------------------------------------------------------------------------------
-
     @Test
     void ensureThrowsIfAlreadySentRemindToday() {
 
-        Application applicationForLeave = mock(Application.class);
+        final Application applicationForLeave = mock(Application.class);
         when(applicationForLeave.getRemindDate()).thenReturn(LocalDate.now(UTC));
 
         assertThatThrownBy(() -> sut.remind(applicationForLeave)).isInstanceOf(RemindAlreadySentException.class);
@@ -991,11 +882,10 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(applicationMailService);
     }
 
-
     @Test
     void ensureThrowsIfTryingToRemindTooEarly() {
 
-        Application applicationForLeave = mock(Application.class);
+        final Application applicationForLeave = mock(Application.class);
         when(applicationForLeave.getApplicationDate()).thenReturn(LocalDate.now(UTC));
         when(applicationForLeave.getRemindDate()).thenReturn(null);
 
@@ -1007,14 +897,12 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(applicationMailService);
     }
 
-
     @Test
     void ensureUpdatesRemindDateAndSendsMail() throws RemindAlreadySentException,
         ImpatientAboutApplicationForLeaveProcessException {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Application applicationForLeave = TestDataCreator.createApplication(person,
-            TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application applicationForLeave = createApplication(person, createVacationType(HOLIDAY));
         applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
 
@@ -1027,16 +915,14 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendRemindBossNotification(eq(applicationForLeave));
     }
 
-
     // REFER -----------------------------------------------------------------------------------------------------------
-
     @Test
     void ensureReferMailIsSent() {
 
-        Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person sender = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person recipient = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person sender = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Application applicationForLeave = mock(Application.class);
+        final Application applicationForLeave = mock(Application.class);
         sut.refer(applicationForLeave, recipient, sender);
 
         verify(applicationMailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
@@ -1052,5 +938,106 @@ class ApplicationInteractionServiceImplTest {
         sut.refer(applicationForLeave, recipient, sender);
 
         verify(commentService).create(applicationForLeave, REFERRED, Optional.of(recipient.getNiceName()), sender);
+    }
+
+    // GET -----------------------------------------------------------------------------------------------------------
+    @Test
+    void getApplicationForLeave() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        application.setId(applicationId);
+
+        when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
+
+        final Optional<Application> getApplication = sut.get(applicationId);
+        assertThat(getApplication).hasValue(application);
+    }
+
+    // EDIT -----------------------------------------------------------------------------------------------------------
+    @Test
+    void editApplicationForLeave() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        application.setStatus(WAITING);
+        application.setId(applicationId);
+        when(applicationService.save(application)).thenReturn(application);
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(application, person, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
+
+        verify(commentService).create(editedApplication, EDITED, comment, person);
+        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+    }
+
+    @Test
+    void editApplicationForLeaveHasWrongStatus() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        application.setStatus(ALLOWED);
+
+        final Optional<String> comment = of("Comment");
+
+        assertThatThrownBy(() -> sut.edit(application, person, comment))
+            .isInstanceOf(EditApplicationForLeaveNotAllowedException.class);
+
+        verifyNoInteractions(applicationMailService);
+        verifyNoInteractions(commentService);
+    }
+
+
+    private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
+                                                           Person person, Person privilegedUser) {
+
+        Assert.assertEquals("Wrong state", status, applicationForLeave.getStatus());
+        Assert.assertEquals("Wrong person", person, applicationForLeave.getPerson());
+        Assert.assertEquals("Wrong privileged user", privilegedUser, applicationForLeave.getBoss());
+        Assert.assertEquals("Wrong edited date", LocalDate.now(UTC), applicationForLeave.getEditedDate());
+    }
+
+
+    private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationAction action,
+                                                             Optional<String> optionalComment, Person privilegedUser) {
+        verify(applicationService).save(applicationForLeave);
+        verify(commentService).create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));
+    }
+
+    private void assertNoCalendarSyncIsExecuted() {
+        verifyNoInteractions(calendarSyncService);
+        verifyNoInteractions(absenceMappingService);
+    }
+
+    private void assertAllowedNotificationIsSent(Application applicationForLeave) {
+        verify(applicationMailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendTemporaryAllowedNotification(any(Application.class), any(ApplicationComment.class));
+    }
+
+    private void assertNoCalendarSyncOccurs() {
+        verifyNoInteractions(calendarSyncService);
+        verifyNoInteractions(absenceMappingService);
+    }
+
+    private void assertTemporaryAllowedNotificationIsSent(Application applicationForLeave) {
+        verify(applicationMailService).sendTemporaryAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendAllowedNotification(any(Application.class), any(ApplicationComment.class));
+    }
+
+    private Application getDummyApplication(Person person) {
+        final Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setStartDate(LocalDate.of(2013, 2, 1));
+        applicationForLeave.setEndDate(LocalDate.of(2013, 2, 5));
+        applicationForLeave.setDayLength(DayLength.FULL);
+        applicationForLeave.setHolidayReplacement(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+
+        return applicationForLeave;
     }
 }

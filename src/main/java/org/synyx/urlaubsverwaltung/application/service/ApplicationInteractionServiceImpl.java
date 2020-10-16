@@ -32,6 +32,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -379,5 +380,29 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationMailService.sendReferApplicationNotification(application, recipient, sender);
 
         return application;
+    }
+
+    public Optional<Application> get(Integer applicationId) {
+        return applicationService.getApplicationById(applicationId);
+    }
+
+    @Override
+    public Application edit(Application applicationForLeave, Person person, Optional<String> comment) {
+
+        if (applicationForLeave.getStatus().compareTo(WAITING) != 0) {
+            throw new EditApplicationForLeaveNotAllowedException("Cannot edit application for leave " +
+                "with id " + applicationForLeave.getId() + " because the status is " + applicationForLeave.getStatus() +
+                " and not waiting.");
+        }
+
+        applicationForLeave.setStatus(ApplicationStatus.WAITING);
+        applicationForLeave.setEditedDate(LocalDate.now(clock));
+        final Application savedApplication = applicationService.save(applicationForLeave);
+
+        commentService.create(savedApplication, ApplicationAction.EDITED, comment, person);
+
+        applicationMailService.sendEditedApplicationNotification(savedApplication, person);
+
+        return savedApplication;
     }
 }

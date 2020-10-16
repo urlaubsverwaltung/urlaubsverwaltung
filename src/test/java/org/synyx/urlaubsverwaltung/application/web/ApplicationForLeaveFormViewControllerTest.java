@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -26,7 +27,7 @@ import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -48,6 +49,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -130,11 +133,11 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void getNewApplicationFormDefaultsToSignedInPersonIfPersonIdNotGiven() throws Exception {
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        when(accountService.getHolidaysAccount(anyInt(), eq(signedInPerson))).thenReturn(Optional.of(someAccount()));
-        when(settingsService.getSettings()).thenReturn(someSettings());
+        when(accountService.getHolidaysAccount(anyInt(), eq(signedInPerson))).thenReturn(Optional.of(new Account()));
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new"))
             .andExpect(model().attribute("person", signedInPerson));
@@ -145,11 +148,11 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
-        final Person person = somePerson();
+        final Person person = new Person();
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
 
-        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(someAccount()));
-        when(settingsService.getSettings()).thenReturn(someSettings());
+        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(new Account()));
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new")
             .param("person", Integer.toString(PERSON_ID)))
@@ -170,7 +173,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void getNewApplicationFormThrowsAccessDeniedExceptionIfGivenPersonNotSignedInPersonAndNotOffice() {
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person person = personWithId(PERSON_ID);
@@ -185,7 +188,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void getNewApplicationFormAccessibleIfGivenPersonIsSignedInPerson() throws Exception {
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(signedInPerson));
 
@@ -218,7 +221,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void postNewApplicationFormShowFormIfValidationFails() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettings());
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -261,35 +264,214 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(redirectedUrl("/web/application/" + applicationId));
     }
 
-    private Person somePerson() {
-        return new Person();
+    @Test
+    void editApplicationForm() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final int year = Year.now(clock).getValue();
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final VacationType vacationType = new VacationType();
+        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("noHolidaysAccount", is(false)))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void editApplicationFormUnknownApplication() {
+
+        when(applicationInteractionService.get(1)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+            perform(get("/web/application/1/edit"))
+        ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
+    }
+
+    @Test
+    void editApplicationFormNotWaiting() throws Exception {
+
+        when(applicationInteractionService.get(1)).thenReturn(Optional.empty());
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/app_notwaiting"));
+    }
+
+    @Test
+    void editApplicationFormNoHolidayAccount() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final int year = Year.now(clock).getValue();
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.empty());
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("noHolidaysAccount", is(true)))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void sendEditApplicationForm() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.edit(application, person, Optional.of("comment"))).thenReturn(application);
+
+        perform(post("/web/application/1")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.category", "HOLIDAY")
+            .param("dayLength", "FULL")
+            .param("comment", "comment"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"));
+    }
+
+    @Test
+    void sendEditApplicationFormIsNotWaiting() throws Exception {
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(ALLOWED);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(post("/web/application/1")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.category", "HOLIDAY")
+            .param("dayLength", "FULL")
+            .param("comment", "comment"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/app_notwaiting"));
+    }
+
+    @Test
+    void sendEditApplicationFormApplicationNotFound() {
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/1")
+                .param("person.id", "1")
+                .param("startDate", "28.10.2020")
+                .param("endDate", "28.10.2020")
+                .param("vacationType.category", "HOLIDAY")
+                .param("dayLength", "FULL")
+                .param("comment", "comment"))
+        ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
+    }
+
+    @Test
+    void sendEditApplicationFormCannotBeEdited() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.edit(application, person, Optional.of("comment"))).thenThrow(EditApplicationForLeaveNotAllowedException.class);
+
+        perform(post("/web/application/1")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.category", "HOLIDAY")
+            .param("dayLength", "FULL")
+            .param("comment", "comment"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/app_notwaiting"));
+    }
+
+    @Test
+    void sendEditApplicationFormHasErrors() throws Exception {
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        doAnswer(invocation -> {
+            final Errors errors = invocation.getArgument(1);
+            errors.rejectValue("reason", "errors");
+            errors.reject("globalErrors");
+            return null;
+        }).when(applicationForLeaveFormValidator).validate(any(), any());
+
+        perform(post("/web/application/1")
+            .param("person.id", "1")
+            .param("startDate", "28.10.2020")
+            .param("endDate", "28.10.2020")
+            .param("vacationType.category", "HOLIDAY")
+            .param("dayLength", "FULL")
+            .param("comment", "comment"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/app_form"));
     }
 
     private Person personWithRole(Role role) {
-        Person person = somePerson();
-        person.setPermissions(Collections.singletonList(role));
+        Person person = new Person();
+        person.setPermissions(List.of(role));
 
         return person;
     }
 
     private Person personWithId(int id) {
-        Person person = somePerson();
+        Person person = new Person();
         person.setId(id);
 
         return person;
     }
 
-    private Account someAccount() {
-        return new Account();
-    }
-
-    private Settings someSettings() {
-
-        return new Settings();
-    }
-
     private Application someApplication() {
-
         Application application = new Application();
         application.setStartDate(LocalDate.now().plusDays(10));
         application.setEndDate(LocalDate.now().plusDays(20));
@@ -298,7 +480,6 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     private Application applicationWithId(int id) {
-
         Application application = someApplication();
         application.setId(id);
 

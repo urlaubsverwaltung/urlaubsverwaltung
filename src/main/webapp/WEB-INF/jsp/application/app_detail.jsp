@@ -64,6 +64,11 @@
 
                 <div class="feedback">
                     <c:choose>
+                        <c:when test="${editSuccess}">
+                            <div class="alert alert-success">
+                                <spring:message code='application.action.apply.edit'/>
+                            </div>
+                        </c:when>
                         <c:when test="${applySuccess}">
                             <div class="alert alert-success">
                                 <spring:message code='application.action.apply.success'/>

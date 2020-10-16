@@ -63,6 +63,21 @@
 
 <uv:menu/>
 
+<c:choose>
+    <c:when test="${application.id == null}">
+        <c:set var="ACTION" value="${URL_PREFIX}/application"/>
+        <c:set var="heading">
+            <spring:message code="application.data.title"/>
+        </c:set>
+    </c:when>
+    <c:otherwise>
+        <c:set var="ACTION" value="${URL_PREFIX}/application/${application.id}"/>
+        <c:set var="heading">
+            <spring:message code="application.data.title.edit"/>
+        </c:set>
+    </c:otherwise>
+</c:choose>
+
 <div class="content">
     <div class="container">
         <c:choose>
@@ -70,8 +85,8 @@
                 <spring:message code="application.applier.account.none"/>
             </c:when>
             <c:otherwise>
-                <form:form method="POST" action="${URL_PREFIX}/application" modelAttribute="application" class="form-horizontal"
-                           role="form">
+                <form:form method="POST" action="${ACTION}" modelAttribute="application"
+                           class="form-horizontal" role="form">
                 <form:hidden path="person" value="${person.id}"/>
 
                 <c:if test="${not empty errors}">
@@ -82,11 +97,10 @@
                     </div>
                 </c:if>
 
-
                 <div class="form-section tw-mb-8">
                     <uv:section-heading>
                         <h1>
-                            <spring:message code="application.data.title"/>
+                                ${heading}
                         </h1>
                     </uv:section-heading>
                     <div class="row">

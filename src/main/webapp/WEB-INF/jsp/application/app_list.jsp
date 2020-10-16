@@ -5,7 +5,7 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <sec:authorize access="hasAuthority('USER')">
     <c:set var="IS_USER" value="${true}"/>
@@ -53,18 +53,23 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <sec:authorize access="hasAuthority('OFFICE')">
-                <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
-                    <icon:plus-circle className="tw-w-5 tw-h-5" />
-                </a>
+                <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
+                    <sec:authorize access="hasAuthority('OFFICE')">
+                    <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1"
+                       data-title="<spring:message code="action.apply.vacation"/>">
+                        <icon:plus-circle className="tw-w-5 tw-h-5"/>
+                    </a>
+                    </sec:authorize>
+                    <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1"
+                       data-title="<spring:message code="action.applications.absences_overview"/>">
+                        <icon:calendar className="tw-w-5 tw-h-5"/>
+                    </a>
+                    <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1"
+                       data-title="<spring:message code="action.applications.statistics"/>">
+                        <icon:presentation-chart-bar className="tw-w-5 tw-h-5"/>
+                    </a>
                 </sec:authorize>
-                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
-                    <icon:calendar className="tw-w-5 tw-h-5" />
-                </a>
-                <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
-                    <icon:presentation-chart-bar className="tw-w-5 tw-h-5" />
-                </a>
-                <uv:print />
+                <uv:print/>
             </jsp:attribute>
             <jsp:body>
                 <h1>
@@ -129,7 +134,8 @@
                                         </span>
                                     </td>
                                     <td class="halves">
-                                        <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}" href="${URL_PREFIX}/application/${application.id}">
+                                        <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
+                                           href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
                                                 <c:when test="${application.hours != null}">
                                                     <uv:number number="${application.hours}"/>
@@ -196,18 +202,29 @@
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                        <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
-                                                <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true" />
-                                                <spring:message code='action.allow'/>
-                                            </a>
-                                        </c:if>
-                                        <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
-                                                <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true" />
-                                                <spring:message code='action.reject'/>
-                                            </a>
-                                        </c:if>
+                                            <c:if test="${application.person.id == signedInUser.id}">
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                   href="${URL_PREFIX}/application/${application.id}/edit">
+                                                    <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                                    <spring:message code='action.edit'/>
+                                                </a>
+                                            </c:if>
+                                            <c:if
+                                                test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                   href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
+                                                    <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                                    <spring:message code='action.allow'/>
+                                                </a>
+                                            </c:if>
+                                            <c:if
+                                                test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                   href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
+                                                    <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                                    <spring:message code='action.reject'/>
+                                                </a>
+                                            </c:if>
                                         </div>
                                     </td>
                                 </tr>

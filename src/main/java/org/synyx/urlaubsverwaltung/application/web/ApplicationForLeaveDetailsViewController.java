@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -101,7 +99,7 @@ public class ApplicationForLeaveDetailsViewController {
         throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
-            .orElseThrow(() ->new UnknownApplicationForLeaveException(applicationId));
+            .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = application.getPerson();

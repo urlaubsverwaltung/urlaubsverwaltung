@@ -50,6 +50,8 @@ public class ApplicationForLeaveForm {
 
     private String comment;
 
+    private Integer id;
+
     public Person getPerson() {
 
         return person;
@@ -205,11 +207,11 @@ public class ApplicationForLeaveForm {
         this.teamInformed = teamInformed;
     }
 
-
     public Application generateApplicationForLeave() {
 
         Application applicationForLeave = new Application();
 
+        applicationForLeave.setId(id);
         applicationForLeave.setPerson(person);
 
         applicationForLeave.setStartDate(startDate);
@@ -249,6 +251,14 @@ public class ApplicationForLeaveForm {
             '}';
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public static class Builder {
 
         private Person person;
@@ -264,6 +274,7 @@ public class ApplicationForLeaveForm {
         private String address;
         private boolean teamInformed;
         private String comment;
+        private Integer id;
 
         public ApplicationForLeaveForm.Builder person(Person person) {
             this.person = person;
@@ -330,6 +341,11 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
+        public ApplicationForLeaveForm.Builder id(Integer id) {
+            this.id = id;
+            return this;
+        }
+
         public ApplicationForLeaveForm build() {
 
             final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
@@ -347,6 +363,7 @@ public class ApplicationForLeaveForm {
             form.setAddress(address);
             form.setTeamInformed(teamInformed);
             form.setComment(comment);
+            form.setId(id);
 
             return form;
         }

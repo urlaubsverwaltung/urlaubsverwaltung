@@ -93,4 +93,8 @@ public interface ApplicationInteractionService {
      * @return the application for leave that is referred
      */
     Application refer(Application application, Person recipient, Person sender);
+
+    Optional<Application> get(Integer applicationId);
+
+    Application edit(Application application, Person person, Optional<String> comment);
 }
