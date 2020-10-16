@@ -1,9 +1,40 @@
 apiVersion: v1
 entries:
   urlaubsverwaltung:
+  - apiVersion: v2
+    appVersion: 3.4.5
+    created: "2020-10-16T19:24:56.019363862+02:00"
+    dependencies:
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 8.0.3
+    description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
+      Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
+    digest: fed2b85a564c45c2e5b10fc295730397ab3ca6456e98bfae93031632d4e347ea
+    home: https://github.com/synyx/urlaubsverwaltung
+    keywords:
+    - urlaub
+    maintainers:
+    - email: graf@synyx.de
+      name: Johannes Graf
+    - email: schneider@synyx.de
+      name: Tobias Schneider
+    name: urlaubsverwaltung
+    sources:
+    - https://github.com/synyx/urlaubsverwaltung
+    type: application
+    urls:
+    - https://synyx.github.io/urlaubsverwaltung/chart_repo/urlaubsverwaltung-2.0.0.tgz
+    version: 2.0.0
   - apiVersion: v1
     appVersion: 3.0.1
-    created: 2019-12-18T21:32:15.112571481+01:00
+    created: "2020-10-16T19:24:56.013428688+02:00"
+    dependencies:
+    - condition: urlaubsverwaltung.deployMariaDb
+      name: mariadb
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 5.7.2
     description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
       Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
     digest: eb56259c965559247e4e122dcf0cd95f6d176675eede492c7da9790c2527f0f2
@@ -23,7 +54,12 @@ entries:
     version: 1.0.1
   - apiVersion: v1
     appVersion: 3.0.0
-    created: 2019-12-18T21:32:15.111299873+01:00
+    created: "2020-10-16T19:24:56.009732465+02:00"
+    dependencies:
+    - condition: urlaubsverwaltung.deployMariaDb
+      name: mariadb
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 5.7.2
     description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
       Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
     digest: 5c6fc801afce28b97dc30779969bc1ed12e89af15490e5a2fecbb7bc3213469d
@@ -43,7 +79,12 @@ entries:
     version: 1.0.0
   - apiVersion: v1
     appVersion: 2.35.0
-    created: 2019-12-18T21:32:15.110071206+01:00
+    created: "2020-10-16T19:24:56.005112292+02:00"
+    dependencies:
+    - condition: urlaubsverwaltung.deployMariaDb
+      name: mariadb
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      version: 5.7.2
     description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
       Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
     digest: 2e155226b996320a6e25a4b8c6531ea3ee9e98eddbfcf379b276987863f6e5f1
@@ -59,4 +100,4 @@ entries:
     urls:
     - https://synyx.github.io/urlaubsverwaltung/chart_repo/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: 2019-12-18T21:32:15.108791916+01:00
+generated: "2020-10-16T19:24:56.002640135+02:00"
