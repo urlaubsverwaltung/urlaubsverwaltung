@@ -6,11 +6,56 @@ replicaCount: 1
 
 image:
   repository: synyx/urlaubsverwaltung
-  tag: latest
   pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
 
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+# Liveness probe configuration
+livenessProbe: |
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 120
+  periodSeconds: 10
+  failureThreshold: 10
+
+# Readiness probe configuration
+readinessProbe: |
+  httpGet:
+    path: /actuator/health
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  failureThreshold: 10
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  privileged: false
+  runAsUser: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
 
 service:
   type: ClusterIP
@@ -21,9 +66,9 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  path: /
   hosts:
-    - chart-example.local
+    - host: chart-example.local
+      paths: []
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -41,11 +86,12 @@ resources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
-securityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
-  runAsNonRoot: true
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
@@ -53,31 +99,60 @@ tolerations: []
 
 affinity: {}
 
-environment:
-  javaOptions: "-XX:+PrintFlagsFinal -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-  springProfilesActive: default
-  serverPort: 8080
-  # configure database jdbc url - required when deployMariaDb:false
-  springDatasourceUrl: jdbc:mysql://mariadb:3306/urlaubsverwaltung
-
-secrets:
-  # configure ldap bind dn
-  ldapManagerDn: ""
-  # configure ldap bind password
-  ldapManagerPassword: ""
-  # configure ldap sync user dn
-  ldapSyncUserDn: ""
-  # configure ldap sync user password
-  ldapSyncPassword: ""
-  # configure mariadb username - required when deployMariaDb:false
-  databaseUsername: ""
-  # configure mariadb password - required when deployMariaDb:false
-  databasePassword: ""
-
-
-
-deployMariaDb: false
+secrets: {}
 
 # see https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application.properties
 # for configuration options
-applicationProperties: |-
+extraEnv: |
+  - name: JAVA_OPTS
+    value: >-
+      -XX:+PrintFlagsFinal
+  - name: SPRING_PROFILES_ACTIVE
+    value: default
+  - name: SPRING_MAIL_HOST
+    value: localhost
+  - name: SPRING_MAIL_PORT
+    value: "25"
+  - name: UV_MAIL_APPLICATIONURL
+    value: https://urlaubsverwaltung.example.org
+  - name: UV_MAIL_SENDER
+    value: urlaubsverwaltung@example.org
+  - name: UV_MAIL_ADMINISTRATOR
+    value: root@example.org
+  - name: MANAGEMENT_HEALTH_MAIL_ENABLED
+    value: "false"
+  - name: MANAGEMENT_HEALTH_LDAP_ENABLED
+    value: "false"
+
+# customize the spring boot actuator management server settings
+customizedManagementServer:
+  enabled: false
+  port: 8090
+  address: 0.0.0.0
+
+# Support via ServiceMonitor resource for the prometheus-operator
+serviceMonitor:
+  enabled: false
+  # Optionally sets a target namespace in which to deploy the ServiceMonitor resource
+  namespace: ""
+  # Annotations for the ServiceMonitor
+  annotations: {}
+  # Additional labels for the ServiceMonitor
+  labels: {}
+  # Interval at which Prometheus scrapes metrics
+  interval: 30s
+  # Timeout for scraping
+  scrapeTimeout: 10s
+  # The path at which metrics are served
+  path: /actuator/prometheus
+  # The Service port at which metrics are served
+  port: http
+
+
+mariadb:
+  # If `true`, the MariaDB dependency is enabled
+  enabled: true
+  auth:
+    database: urlaubsverwaltung
+    username: urlaubsverwaltung
+
