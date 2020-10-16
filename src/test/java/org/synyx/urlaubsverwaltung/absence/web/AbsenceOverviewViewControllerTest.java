@@ -344,7 +344,10 @@ class AbsenceOverviewViewControllerTest {
 
     @Test
     void ensureOverviewForGivenYear() throws Exception {
-        final var givenYear = LocalDate.now().getYear() - 1;
+        final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+
+        sut = new AbsenceOverviewViewController(
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -355,17 +358,15 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/absences")
-            .param("year", String.valueOf(givenYear))
+            .param("year", "2018")
             .locale(Locale.GERMANY));
 
         resultActions
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedYear", givenYear))
+            .andExpect(model().attribute("selectedYear", 2018))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", hasSize(1))));
 
-        final var currentMonth = LocalDate.now().getMonthValue();
-
-        verify(messageSource).getMessage("month." + currentMonth, new Object[]{}, Locale.GERMANY);
+        verify(messageSource).getMessage("month.october", new Object[]{}, Locale.GERMANY);
         verifyNoMoreInteractions(messageSource);
     }
 
@@ -397,7 +398,7 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("days", hasSize(30)))
                 ))));
 
-        verify(messageSource).getMessage("month.11", new Object[]{}, Locale.GERMANY);
+        verify(messageSource).getMessage("month.november", new Object[]{}, Locale.GERMANY);
         verifyNoMoreInteractions(messageSource);
     }
 
@@ -429,15 +430,16 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("days", hasSize(31)))
                 ))));
 
-        verify(messageSource).getMessage("month.12", new Object[]{}, Locale.GERMANY);
+        verify(messageSource).getMessage("month.december", new Object[]{}, Locale.GERMANY);
         verifyNoMoreInteractions(messageSource);
     }
 
     @Test
     void ensureOverviewForGivenYearAndGivenMonth() throws Exception {
-        final var now = LocalDate.now();
-        final var givenYear = now.getYear() - 1;
-        final var givenMonth = now.getMonthValue() - 1;
+        final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+
+        sut = new AbsenceOverviewViewController(
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -450,8 +452,8 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
 
         final var resultActions = perform(get("/web/absences")
-            .param("year", String.valueOf(givenYear))
-            .param("month", String.valueOf(givenMonth))
+            .param("year", "2018")
+            .param("month", "10")
             .locale(Locale.GERMANY));
 
         resultActions
@@ -466,35 +468,7 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("days"))
                 ))));
 
-        verify(messageSource).getMessage("month." + givenMonth, new Object[]{}, Locale.GERMANY);
-        verifyNoMoreInteractions(messageSource);
-    }
-
-    @Test
-    void ensureOverviewForGivenYearAndAllMonths() throws Exception {
-        final var now = LocalDate.now();
-        final var givenYear = now.getYear() - 1;
-
-        when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
-
-        final var person = new Person();
-        person.setFirstName("boss");
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final var department = department();
-        department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
-
-        final var resultActions = perform(get("/web/absences")
-            .param("year", String.valueOf(givenYear))
-            .param("month", "")
-            .locale(Locale.GERMANY));
-
-        resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("absenceOverview", hasProperty("months", hasSize(12))));
-
-        verify(messageSource, times(12)).getMessage(anyString(), any(), eq(Locale.GERMANY));
+        verify(messageSource).getMessage("month.october", new Object[]{}, Locale.GERMANY);
         verifyNoMoreInteractions(messageSource);
     }
 
@@ -577,7 +551,12 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @Test
-    void ensureOverviewDefault() throws Exception {
+    void ensureOverviewDefaultCurrentYearAndMonth() throws Exception {
+        final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+
+        sut = new AbsenceOverviewViewController(
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
+
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
@@ -602,9 +581,7 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("days"))
                 ))));
 
-        final var currentMonth = LocalDate.now().getMonthValue();
-
-        verify(messageSource).getMessage("month." + currentMonth, new Object[]{}, Locale.GERMANY);
+        verify(messageSource).getMessage("month.october", new Object[]{}, Locale.GERMANY);
         verifyNoMoreInteractions(messageSource);
     }
 

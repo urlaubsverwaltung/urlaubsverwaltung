@@ -111,31 +111,4 @@ public final class DateUtil {
 
         return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(lastDayOfMonth()).toLocalDate();
     }
-
-    /**
-     * Get the German name of a month as text.
-     *
-     * @param month month as number from 1 to 12
-     * @return month as String
-     */
-    public static String getMonthName(Integer month) {
-
-        String[] monthNameArray = new String[12];
-
-        monthNameArray[0] = "Januar";
-        monthNameArray[1] = "Februar";
-        monthNameArray[2] = "März";
-        monthNameArray[3] = "April";
-        monthNameArray[4] = "Mai";
-        monthNameArray[5] = "Juni";
-        monthNameArray[6] = "Juli";
-        monthNameArray[7] = "August";
-        monthNameArray[8] = "September";
-        monthNameArray[9] = "Oktober";
-        monthNameArray[10] = "November";
-        monthNameArray[11] = "Dezember";
-
-        return monthNameArray[month - 1];
-    }
-
 }

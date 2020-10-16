@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import no.api.freemarker.java8.time.LocalDateAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -200,7 +201,38 @@ public class AbsenceOverviewViewController {
     }
 
     private String getMonthText(LocalDate date, Locale locale) {
-        return messageSource.getMessage("month." + date.getMonthValue(), new Object[]{}, locale);
+        return messageSource.getMessage(getMonthMessageCode(date), new Object[]{}, locale);
+    }
+
+    private String getMonthMessageCode(LocalDate localDate) {
+        switch (localDate.getMonthValue()) {
+            case 1:
+                return "month.january";
+            case 2:
+                return "month.february";
+            case 3:
+                return "month.march";
+            case 4:
+                return "month.april";
+            case 5:
+                return "month.may";
+            case 6:
+                return "month.june";
+            case 7:
+                return "month.juli";
+            case 8:
+                return "month.august";
+            case 9:
+                return "month.september";
+            case 10:
+                return "month.october";
+            case 11:
+                return "month.november";
+            case 12:
+                return "month.december";
+            default:
+                throw new IllegalStateException("month value not in range of 1 to 12 cannot be mapped to a message key.");
+        }
     }
 
 

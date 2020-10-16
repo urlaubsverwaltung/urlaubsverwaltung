@@ -103,9 +103,20 @@
                                     <option disabled>──────────</option>
                                     <c:forEach var="i" begin="1" end="12">
                                         <option value="${i}" ${i == selectedMonth ? 'selected="selected"' : ''}>
-                                            <spring:eval var="monthName"
-                                                         expression="T(org.synyx.urlaubsverwaltung.util.DateUtil).getMonthName(i)"/>
-                                            <c:out value="${monthName}"/>
+                                            <c:choose>
+                                                <c:when test="${i == 1}"><spring:message code="month.january"/></c:when>
+                                                <c:when test="${i == 2}"><spring:message code="month.february"/></c:when>
+                                                <c:when test="${i == 3}"><spring:message code="month.march"/></c:when>
+                                                <c:when test="${i == 4}"><spring:message code="month.april"/></c:when>
+                                                <c:when test="${i == 5}"><spring:message code="month.may"/></c:when>
+                                                <c:when test="${i == 6}"><spring:message code="month.june"/></c:when>
+                                                <c:when test="${i == 7}"><spring:message code="month.july"/></c:when>
+                                                <c:when test="${i == 8}"><spring:message code="month.august"/></c:when>
+                                                <c:when test="${i == 9}"><spring:message code="month.september"/></c:when>
+                                                <c:when test="${i == 10}"><spring:message code="month.october"/></c:when>
+                                                <c:when test="${i == 11}"><spring:message code="month.november"/></c:when>
+                                                <c:when test="${i == 12}"><spring:message code="month.december"/></c:when>
+                                            </c:choose>
                                         </option>
                                     </c:forEach>
                                 </select>
