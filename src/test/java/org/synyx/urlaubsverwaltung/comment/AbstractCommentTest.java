@@ -1,29 +1,27 @@
 package org.synyx.urlaubsverwaltung.comment;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 
-public class AbstractCommentTest {
+class AbstractCommentTest {
 
     @Test
-    public void ensureHasDateSetAfterInitialization() {
+    void ensureHasDateSetAfterInitialization() {
 
-        TestComment comment = new TestComment();
-
-        Assert.assertNotNull("Should not be null", comment.getDate());
-        Assert.assertEquals("Wrong date", LocalDate.now(UTC), comment.getDate());
+        final TestComment comment = new TestComment();
+        assertThat(comment.getDate()).isEqualTo(LocalDate.now(UTC));
     }
 
-
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfGettingDateOnACorruptedComment() throws IllegalAccessException {
+    @Test
+    void ensureThrowsIfGettingDateOnACorruptedComment() throws IllegalAccessException {
 
         TestComment comment = new TestComment();
 
@@ -31,13 +29,12 @@ public class AbstractCommentTest {
         dateField.setAccessible(true);
         dateField.set(comment, null);
 
-        comment.getDate();
+        assertThatIllegalStateException()
+            .isThrownBy(comment::getDate);
     }
 
-    private class TestComment extends AbstractComment {
-
+    private static class TestComment extends AbstractComment {
         private TestComment() {
-
             super();
         }
     }

@@ -21,29 +21,31 @@
 
 <uv:menu/>
 
-<div class="content container mb-20">
+<div class="content container tw-mb-20">
     <header>
-        <h1 class="mb-8 text-2xl text-medium">
+        <h1 class="tw-mb-8 tw-text-2xl tw-text-medium">
             <spring:message code="calendar.share.title"/>
         </h1>
     </header>
     <main>
         <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me"
-                   modelAttribute="privateCalendarShare" cssClass="mb-8">
-            <fieldset class="mb-4">
-                <legend class="text-xl">
-                    <spring:message code="calendar.share.me.title"/>
-                </legend>
+                   modelAttribute="privateCalendarShare" cssClass="tw-mb-8">
+            <div class="tw-mb-4">
+                <uv:section-heading>
+                    <h2 class="tw-text-xl">
+                        <spring:message code="calendar.share.me.title"/>
+                    </h2>
+                </uv:section-heading>
                 <c:choose>
                     <c:when test="${empty privateCalendarShare.calendarUrl}">
-                        <div class="max-w-3xl">
-                            <p class="mb-8 text-base">
+                        <div class="tw-max-w-3xl">
+                            <p class="tw-mb-8 tw-text-base">
                                 <spring:message code="calendar.share.me.paragraph.status"/>
                             </p>
-                            <p class="mb-2 text-base">
+                            <p class="tw-mb-2 tw-text-base">
                                 <spring:message code="calendar.share.me.paragraph.info"/>
                             </p>
-                            <p class="mb-4 text-base">
+                            <p class="tw-mb-4 tw-text-base">
                                 <spring:message code="calendar.share.me.paragraph.info.reset"/>
                             </p>
                             <button type="submit" class="btn btn-primary">
@@ -52,46 +54,46 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div class="max-w-4xl">
-                            <p class="mb-8 text-base">
+                        <div class="tw-max-w-4xl">
+                            <p class="tw-mb-8 tw-text-base">
                                 <spring:message code="calendar.share.me.isshared.paragraph.status"/>
                             </p>
-                            <p class="mb-2 text-base">
+                            <p class="tw-mb-2 tw-text-base">
                                 <spring:message code="calendar.share.me.isshared.paragraph.info"/>
                             </p>
                             <div
                                 is="uv-copy-to-clipboard-input"
-                                class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
+                                class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-gray-300 focus-within:tw-shadow-outline"
                                 data-message-button-title="<spring:message code="calendar.share.me.button.clipboard.tooltip" />"
                             >
                                 <input type="text" value="${privateCalendarShare.calendarUrl}"
-                                       class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>
+                                       class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none" readonly/>
                             </div>
-                            <p class="mb-8 text-base">
+                            <p class="tw-mb-8 tw-text-base">
                                 <spring:message code="calendar.share.me.reset.paragraph"/>
                             </p>
-                            <div class="flex flex-col sm:flex-row">
-                                <button type="submit" class="btn btn-default mb-4 sm:mb-0">
+                            <div class="tw-flex tw-flex-col sm:tw-flex-row">
+                                <button type="submit" class="btn btn-default tw-mb-4 sm:tw-mb-0">
                                     <spring:message code="calendar.share.me.reset.form.submit.text"/>
                                 </button>
-                                <button type="submit" name="unlink" class="btn btn-default sm:mb-0">
+                                <button type="submit" name="unlink" class="btn btn-default sm:tw-mb-0">
                                     <spring:message code="calendar.share.me.unlink.form.submit.text"/>
                                 </button>
                             </div>
                         </div>
                     </c:otherwise>
                 </c:choose>
-            </fieldset>
+            </div>
         </form:form>
 
         <c:if test="${departmentCalendars.size() > 0}">
-        <div class="mb-8">
-            <fieldset class="mb-4">
-                <legend class="text-xl">
-                    <spring:message code="calendar.share.department.title"/>
-                </legend>
-                <div>
-                    <c:if test="${departmentCalendars.size() > 1}">
+            <div class="tw-mb-8">
+                <uv:section-heading>
+                    <h2 class="tw-text-xl">
+                        <spring:message code="calendar.share.department.title"/>
+                    </h2>
+                </uv:section-heading>
+                <c:if test="${departmentCalendars.size() > 1}">
                     <ul class="nav nav-tabs">
                         <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
                             <li role="presentation" class="${departmentCal.active ? 'active' : ''}">
@@ -102,78 +104,81 @@
                         </c:forEach>
                     </ul>
                     </c:if>
-                    <div class="tab-content">
-                        <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
-                            <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
-                                <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}" id="department-calendar-form-${loop.index}">
-                                    <c:choose>
-                                    <c:when test="${empty departmentCal.calendarUrl}">
-                                        <div class="max-w-3xl">
-                                            <p class="mb-8 text-base">
-                                                <spring:message code="calendar.share.department.paragraph.status" arguments="${departmentCal.departmentName}"/>
-                                            </p>
-                                            <p class="mb-2 text-base">
-                                                <spring:message code="calendar.share.department.paragraph.info"/>
-                                            </p>
-                                            <p class="mb-4 text-base">
-                                                <spring:message code="calendar.share.department.paragraph.info.reset"/>
-                                            </p>
-                                            <button type="submit" class="btn btn-primary">
-                                                <spring:message code="calendar.share.department.form.submit.text" arguments="${departmentCal.departmentName}" />
+                <c:set var="tabContentCssClass" value="${departmentCalendars.size() > 1 ? 'tab-content' : ''}" />
+                <div class="${tabContentCssClass}">
+                    <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
+                        <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
+                            <form:form
+                                method="POST"
+                                action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}"
+                                id="department-calendar-form-${loop.index}"
+                            >
+                                <c:choose>
+                                <c:when test="${empty departmentCal.calendarUrl}">
+                                    <div class="tw-max-w-3xl">
+                                        <p class="tw-mb-8 tw-text-base">
+                                            <spring:message code="calendar.share.department.paragraph.status" arguments="${departmentCal.departmentName}"/>
+                                        </p>
+                                        <p class="tw-mb-2 tw-text-base">
+                                            <spring:message code="calendar.share.department.paragraph.info"/>
+                                        </p>
+                                        <p class="tw-mb-4 tw-text-base">
+                                            <spring:message code="calendar.share.department.paragraph.info.reset"/>
+                                        </p>
+                                        <button type="submit" class="btn btn-primary">
+                                            <spring:message code="calendar.share.department.form.submit.text" arguments="${departmentCal.departmentName}" />
+                                        </button>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="tw-max-w-4xl">
+                                        <p class="tw-mb-8 tw-text-base">
+                                            <spring:message code="calendar.share.department.isshared.paragraph.status" arguments="${departmentCal.departmentName}" />
+                                        </p>
+                                        <p class="tw-mb-2 tw-text-base">
+                                            <spring:message code="calendar.share.department.isshared.paragraph.info"/>
+                                        </p>
+                                        <div
+                                            is="uv-copy-to-clipboard-input"
+                                            class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-gray-300 focus-within:tw-shadow-outline"
+                                            data-message-button-title="<spring:message code="calendar.share.department.button.clipboard.tooltip" />"
+                                        >
+                                            <input type="text" value="${departmentCal.calendarUrl}"
+                                                   class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none" readonly/>
+                                        </div>
+                                        <p class="tw-mb-8 tw-text-base">
+                                            <spring:message code="calendar.share.department.reset.paragraph"/>
+                                        </p>
+                                        <div class="tw-flex tw-flex-col sm:tw-flex-row">
+                                            <button type="submit" class="btn btn-default tw-mb-4 sm:tw-mb-0">
+                                                <spring:message code="calendar.share.department.reset.form.submit.text"/>
+                                            </button>
+                                            <button type="submit" name="unlink" class="btn btn-default sm:tw-mb-0">
+                                                <spring:message code="calendar.share.department.unlink.form.submit.text"/>
                                             </button>
                                         </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="max-w-4xl">
-                                            <p class="mb-8 text-base">
-                                                <spring:message code="calendar.share.department.isshared.paragraph.status" arguments="${departmentCal.departmentName}" />
-                                            </p>
-                                            <p class="mb-2 text-base">
-                                                <spring:message code="calendar.share.department.isshared.paragraph.info"/>
-                                            </p>
-                                            <div
-                                                is="uv-copy-to-clipboard-input"
-                                                class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
-                                                data-message-button-title="<spring:message code="calendar.share.department.button.clipboard.tooltip" />"
-                                            >
-                                                <input type="text" value="${departmentCal.calendarUrl}"
-                                                       class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>
-                                            </div>
-                                            <p class="mb-8 text-base">
-                                                <spring:message code="calendar.share.department.reset.paragraph"/>
-                                            </p>
-                                            <div class="flex flex-col sm:flex-row">
-                                                <button type="submit" class="btn btn-default mb-4 sm:mb-0">
-                                                    <spring:message code="calendar.share.department.reset.form.submit.text"/>
-                                                </button>
-                                                <button type="submit" name="unlink" class="btn btn-default sm:mb-0">
-                                                    <spring:message code="calendar.share.department.unlink.form.submit.text"/>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </c:otherwise>
-                                    </c:choose>
-                                </form:form>
-                            </div>
-                        </c:forEach>
-                    </div>
+                                    </div>
+                                </c:otherwise>
+                                </c:choose>
+                            </form:form>
+                        </div>
+                    </c:forEach>
                 </div>
-
-            </fieldset>
-        </div>
+            </div>
         </c:if>
 
         <c:if test="${companyCalendarAccessible != null || companyCalendarShare != null}">
-        <div>
-            <fieldset>
-                <legend class="text-xl">
-                    <spring:message code="calendar.share.company.title"/>
-                </legend>
+            <div>
+                <uv:section-heading>
+                    <h2 class="tw-text-xl">
+                        <spring:message code="calendar.share.company.title"/>
+                    </h2>
+            </uv:section-heading>
                 <c:if test="${companyCalendarAccessible != null}">
                     <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible" modelAttribute="companyCalendarAccessible">
                         <form:hidden path="accessible" value="${!companyCalendarAccessible.accessible}" />
-                        <div class="max-w-3xl mb-12">
-                            <p class="mb-4 text-base">
+                        <div class="tw-max-w-3xl tw-mb-12">
+                            <p class="tw-mb-4 tw-text-base">
                             <c:choose>
                                 <c:when test="${companyCalendarAccessible.accessible}">
                                     <spring:message code="calendar.share.company.accessible.enabled.paragraph"/>
@@ -200,58 +205,57 @@
                 </c:if>
 
                 <c:if test="${companyCalendarShare != null}">
-                <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${companyCalendarShare.personId}/company" modelAttribute="companyCalendarShare">
-                    <c:choose>
-                        <c:when test="${empty companyCalendarShare.calendarUrl}">
-                            <div class="max-w-3xl">
-                                <p class="mb-8 text-base">
-                                    <spring:message code="calendar.share.company.paragraph.status"/>
-                                </p>
-                                <p class="mb-2 text-base">
-                                    <spring:message code="calendar.share.company.paragraph.info"/>
-                                </p>
-                                <p class="mb-4 text-base">
-                                    <spring:message code="calendar.share.company.paragraph.info.reset"/>
-                                </p>
-                                <button type="submit" class="btn btn-primary">
-                                    <spring:message code="calendar.share.company.form.submit.text"/>
-                                </button>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="max-w-4xl">
-                                <p class="mb-8 text-base">
-                                    <spring:message code="calendar.share.company.isshared.paragraph.status"/>
-                                </p>
-                                <p class="mb-2 text-base">
-                                    <spring:message code="calendar.share.company.isshared.paragraph.info"/>
-                                </p>
-                                <div
-                                    is="uv-copy-to-clipboard-input"
-                                    class="flex flex-row mb-8 border border-gray-300 focus-within:shadow-outline"
-                                    data-message-button-title="<spring:message code="calendar.share.company.button.clipboard.tooltip" />"
-                                >
-                                    <input type="text" value="${companyCalendarShare.calendarUrl}"
-                                           class="px-3 py-2 text-base flex-1 border-0 outline-none" readonly/>
-                                </div>
-                                <p class="mb-8 text-base">
-                                    <spring:message code="calendar.share.company.reset.paragraph"/>
-                                </p>
-                                <div class="flex flex-col sm:flex-row">
-                                    <button type="submit" class="btn btn-default mb-4 sm:mb-0">
-                                        <spring:message code="calendar.share.company.reset.form.submit.text"/>
-                                    </button>
-                                    <button type="submit" name="unlink" class="btn btn-default sm:mb-0">
-                                        <spring:message code="calendar.share.company.unlink.form.submit.text"/>
+                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${companyCalendarShare.personId}/company" modelAttribute="companyCalendarShare">
+                        <c:choose>
+                            <c:when test="${empty companyCalendarShare.calendarUrl}">
+                                <div class="tw-max-w-3xl">
+                                    <p class="tw-mb-8 tw-text-base">
+                                        <spring:message code="calendar.share.company.paragraph.status"/>
+                                    </p>
+                                    <p class="tw-mb-2 tw-text-base">
+                                        <spring:message code="calendar.share.company.paragraph.info"/>
+                                    </p>
+                                    <p class="tw-mb-4 tw-text-base">
+                                        <spring:message code="calendar.share.company.paragraph.info.reset"/>
+                                    </p>
+                                    <button type="submit" class="btn btn-primary">
+                                        <spring:message code="calendar.share.company.form.submit.text"/>
                                     </button>
                                 </div>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </form:form>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="tw-max-w-4xl">
+                                    <p class="tw-mb-8 tw-text-base">
+                                        <spring:message code="calendar.share.company.isshared.paragraph.status"/>
+                                    </p>
+                                    <p class="tw-mb-2 tw-text-base">
+                                        <spring:message code="calendar.share.company.isshared.paragraph.info"/>
+                                    </p>
+                                    <div
+                                        is="uv-copy-to-clipboard-input"
+                                        class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-gray-300 focus-within:tw-shadow-outline"
+                                        data-message-button-title="<spring:message code="calendar.share.company.button.clipboard.tooltip" />"
+                                    >
+                                        <input type="text" value="${companyCalendarShare.calendarUrl}"
+                                               class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none" readonly/>
+                                    </div>
+                                    <p class="tw-mb-8 tw-text-base">
+                                        <spring:message code="calendar.share.company.reset.paragraph"/>
+                                    </p>
+                                    <div class="tw-flex tw-flex-col sm:tw-flex-row">
+                                        <button type="submit" class="btn btn-default tw-mb-4 sm:tw-mb-0">
+                                            <spring:message code="calendar.share.company.reset.form.submit.text"/>
+                                        </button>
+                                        <button type="submit" name="unlink" class="btn btn-default sm:tw-mb-0">
+                                            <spring:message code="calendar.share.company.unlink.form.submit.text"/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </form:form>
                 </c:if>
-            </fieldset>
-        </div>
+            </div>
         </c:if>
     </main>
 </div>

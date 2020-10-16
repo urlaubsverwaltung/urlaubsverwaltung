@@ -5,6 +5,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -55,92 +56,110 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:person person="${person}" nameIsNoLink="${true}"/>
-            </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:account-entitlement account="${account}"/>
-            </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-4">
-                <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
-                                 beforeApril="${beforeApril}"/>
+        <div class="row tw-mb-12">
+            <div class="col-xs-12">
+                <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
+                    <div class="tw-w-full lg:tw-w-1/3">
+                        <uv:person-box-narrow person="${person}" nameIsNoLink="${true}" cssClass="tw-border-none" />
+                    </div>
+                    <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                        <uv:account-entitlement-box-narrow account="${account}" className="tw-border-none" />
+                    </div>
+                    <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                        <uv:account-left-box-narrow
+                            account="${account}"
+                            vacationDaysLeft="${vacationDaysLeft}"
+                            beforeApril="${beforeApril}"
+                            className="tw-border-none"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Overtime -->
         <c:if test="${settings.workingTimeSettings.overtimeActive}">
-            <div class="row">
-                <div class="col-xs-12">
-                    <legend>
-                        <spring:message code="overtime.title"/>
-                        <a href="${URL_PREFIX}/overtime?person=${person.id}"
-                           class="fa-action pull-right" aria-hidden="true"
-                           style="margin-top: 1px" data-title="<spring:message code="action.overtime.list"/>">
-                            <i class="fa fa-th" aria-hidden="true"></i>
+
+            <uv:section-heading>
+                <jsp:attribute name="actions">
+                    <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
+                        <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.new"/>">
+                            <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>
-                        <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
-                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}"
-                               class="fa-action pull-right" aria-hidden="true"
-                               data-title="<spring:message code="action.overtime.new"/>">
-                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                            </a>
-                        </c:if>
-                    </legend>
-                </div>
-                <div class="col-xs-12 col-md-6">
-                    <uv:overtime-total hours="${overtimeTotal}"/>
-                </div>
-                <div class="col-xs-12 col-md-6">
-                    <uv:overtime-left hours="${overtimeLeft}"/>
+                    </c:if>
+                    <a href="${URL_PREFIX}/overtime?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
+                        <icon:view-grid className="tw-w-5 tw-h-5" />
+                    </a>
+                </jsp:attribute>
+                <jsp:body>
+                    <h2 id="overtime">
+                        <spring:message code="overtime.title"/>
+                    </h2>
+                </jsp:body>
+            </uv:section-heading>
+
+            <div class="row tw-mb-12">
+                <div class="col-xs-12">
+                    <div class="tw-flex tw-flex-wrap">
+                        <div class="tw-w-full lg:tw-w-1/3">
+                        </div>
+                        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+                            <uv:overtime-total-box-narrow hours="${overtimeTotal}" cssClass="tw-border-none" />
+                        </div>
+                        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3 tw-mt-8 lg:tw-mt-0">
+                            <uv:overtime-left-box-narrow hours="${overtimeLeft}" cssClass="tw-border-none tw-p-0" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </c:if>
 
         <!-- Calendar -->
-        <div class="row">
-            <div class="col-xs-12">
-                <legend id="vacation">
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
+                    <icon:calendar className="tw-w-5 tw-h-5" />
+                    &nbsp;<spring:message code="overview.calendar.share.link.text" />
+                </a>
+            </jsp:attribute>
+            <jsp:body>
+                <h2 id="calendar">
                     <spring:message code="overview.calendar.title"/>
-                    <a class="fa-action pull-right text-base flex justify-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
-                        <i class="fa fa-calendar" aria-hidden="true"></i>
-                        &nbsp;<spring:message code="overview.calendar.share.link.text" />
-                    </a>
-                </legend>
+                </h2>
+            </jsp:body>
+        </uv:section-heading>
+        <div class="row tw-mb-4 lg:tw-mb-12">
+            <div class="col-xs-12">
                 <div id="datepicker"></div>
             </div>
         </div>
 
         <!-- Vacation -->
-        <div class="row">
-            <div class="col-xs-12">
-                <legend id="vacation">
-                    <spring:message code="applications.title"/>
-                    <c:choose>
-                        <c:when test="${person.id == signedInUser.id}">
-                            <a class="fa-action pull-right" aria-hidden="true" href="${URL_PREFIX}/application/new"
-                               data-title="<spring:message code="action.apply.vacation"/>">
-                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <c:choose>
+                    <c:when test="${person.id == signedInUser.id}">
+                        <a class="icon-link tw-px-1" href="${URL_PREFIX}/application/new" data-title="<spring:message code="action.apply.vacation"/>">
+                            <icon:plus-circle className="tw-w-5 tw-h-5" />
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <c:if test="${IS_OFFICE}">
+                            <a class="icon-link  tw-px-1" href="${URL_PREFIX}/application/new?person=${person.id}" data-title="<spring:message code="action.apply.vacation"/>">
+                                <icon:plus-circle className="tw-w-5 tw-h-5" />
                             </a>
-                        </c:when>
-                        <c:otherwise>
-                            <c:if test="${IS_OFFICE}">
-                                <a class="fa-action pull-right" aria-hidden="true"
-                                   href="${URL_PREFIX}/application/new?person=${person.id}"
-                                   data-title="<spring:message code="action.apply.vacation"/>">
-                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                </a>
-                            </c:if>
-                        </c:otherwise>
-                    </c:choose>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
+            </jsp:attribute>
+            <jsp:body>
+                <h2 id="vacation">
+                    <spring:message code="applications.title"/>
+                </h2>
+            </jsp:body>
+        </uv:section-heading>
 
-                </legend>
-            </div>
-        </div>
-
-        <div class="row">
+        <div class="row tw-mb-4 lg:tw-mb-6">
 
             <c:set var="holidayLeave"
                    value="${usedDaysOverview.holidayDays.days['WAITING'] + usedDaysOverview.holidayDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.holidayDays.days['ALLOWED'] + 0}"/>
@@ -149,86 +168,139 @@
                    value="${usedDaysOverview.otherDays.days['WAITING'] + usedDaysOverview.otherDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
             <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
 
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="box">
-                    <span class="box-icon bg-yellow hidden-print">
-                        <i class="fa fa-sun-o" aria-hidden="true"></i>
-                    </span>
-                    <span class="box-text">
-                        <spring:message code="overview.vacations.holidayLeave" arguments="${holidayLeave}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i> <spring:message
-                        code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
-                    </span>
+            <div class="col-xs-12">
+                <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
+                <div class="tw-w-full sm:tw-w-1/2">
+                    <uv:box-narrow className="tw-border-none">
+                        <jsp:attribute name="icon">
+                            <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
+                                <icon:sun className="tw-w-8 tw-h-8" />
+                            </uv:box-icon>
+                        </jsp:attribute>
+                        <jsp:body>
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <spring:message code="overview.vacations.holidayLeave.1" />
+                            </span>
+                            <span class="tw-my-1 tw-text-lg tw-font-medium">
+                                <spring:message code="overview.vacations.holidayLeave.2" arguments="${holidayLeave}"/>
+                            </span>
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <span class="tw-flex tw-items-center">
+                                    <span class="tw-text-green-500 tw-flex tw-items-center">
+                                        <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                    </span>
+                                    &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
+                                </span>
+                            </span>
+                        </jsp:body>
+                    </uv:box-narrow>
+                </div>
+                <div class="tw-w-full sm:tw-w-1/2">
+                    <uv:box-narrow className="tw-border-none">
+                        <jsp:attribute name="icon">
+                            <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
+                                <icon:flag className="tw-w-8 tw-h-8" />
+                            </uv:box-icon>
+                        </jsp:attribute>
+                        <jsp:body>
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <spring:message code="overview.vacations.otherLeave.1" />
+                            </span>
+                            <span class="tw-my-1 tw-text-lg tw-font-medium">
+                                <spring:message code="overview.vacations.otherLeave.2" arguments="${otherLeave}"/>
+                            </span>
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <span class="tw-flex tw-items-center">
+                                    <span class="tw-text-green-500 tw-flex tw-items-center">
+                                        <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                    </span>
+                                    &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
+                                </span>
+                            </span>
+                        </jsp:body>
+                    </uv:box-narrow>
                 </div>
             </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-6">
-                <div class="box">
-                    <span class="box-icon bg-yellow hidden-print">
-                        <i class="fa fa-flag-o" aria-hidden="true"></i>
-                    </span>
-                    <span class="box-text">
-                        <spring:message code="overview.vacations.otherLeave" arguments="${otherLeave}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i>
-                        <spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
-                    </span>
-                </div>
             </div>
-
         </div>
 
-        <div class="row">
-
+        <div class="row tw-mb-4 lg:tw-mb-12">
             <div class="col-xs-12">
                 <%@include file="include/overview_app_list.jsp" %>
             </div>
-
         </div>
 
         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
 
-            <div class="row">
-                <div class="col-xs-12">
-                    <legend id="anchorSickNotes">
+            <uv:section-heading>
+                <jsp:attribute name="actions">
+                    <c:if test="${IS_OFFICE}">
+                        <a class="icon-link tw-px-1" href="${URL_PREFIX}/sicknote/new?person=${person.id}" data-title="<spring:message code="action.apply.sicknote" />">
+                            <icon:plus-circle className="tw-w-5 tw-h-5" />
+                        </a>
+                    </c:if>
+                </jsp:attribute>
+                <jsp:body>
+                    <h2 id="anchorSickNotes">
                         <spring:message code="sicknotes.title"/>
-                        <c:if test="${IS_OFFICE}">
-                            <a class="fa-action pull-right" href="${URL_PREFIX}/sicknote/new?person=${person.id}"
-                               data-title="<spring:message code="action.apply.sicknote" />">
-                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                            </a>
-                        </c:if>
-                    </legend>
-                </div>
-            </div>
+                    </h2>
+                </jsp:body>
+            </uv:section-heading>
 
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <div class="box">
-                        <span class="box-icon bg-red hidden-print">
-                            <i class="fa fa-medkit" aria-hidden="true"></i>
-                        </span>
-                        <span class="box-text">
-                        <spring:message code="overview.sicknotes.sickdays"
-                                        arguments="${sickDaysOverview.sickDays.days['TOTAL']}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i>
-                        <spring:message code="overview.sicknotes.sickdays.aub"
-                                        arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
-                    </span>
+            <div class="row tw-mb-4 lg:tw-mb-6">
+                <div class="col-xs-12">
+                    <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
+                    <div class="tw-w-full sm:tw-w-1/2">
+                        <uv:box-narrow className="tw-border-none">
+                            <jsp:attribute name="icon">
+                                <uv:box-icon className="tw-bg-red-600 tw-text-white">
+                                    <icon:medkit className="tw-w-8 tw-h-8" />
+                                </uv:box-icon>
+                            </jsp:attribute>
+                            <jsp:body>
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                    <spring:message code="overview.sicknotes.sickdays.1" />
+                                </span>
+                                <span class="tw-my-1 tw-text-lg tw-font-medium">
+                                    <spring:message code="overview.sicknotes.sickdays.2" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
+                                </span>
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                    <span class="tw-flex tw-items-center">
+                                        <span class="tw-text-green-500 tw-flex tw-items-center">
+                                            <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                        </span>
+                                        &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
+                                    </span>
+                                </span>
+                            </jsp:body>
+                        </uv:box-narrow>
+                    </div>
+                    <div class="tw-w-full sm:tw-w-1/2">
+                        <uv:box-narrow className="tw-border-none">
+                            <jsp:attribute name="icon">
+                                <uv:box-icon className="tw-bg-red-600 tw-text-white">
+                                    <icon:child className="tw-w-8 tw-h-8" />
+                                </uv:box-icon>
+                            </jsp:attribute>
+                            <jsp:body>
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                    <spring:message code="overview.sicknotes.sickdays.child.1" />
+                                </span>
+                                <span class="tw-my-1 tw-text-lg tw-font-medium">
+                                    <spring:message code="overview.sicknotes.sickdays.child.2" arguments="${sickDaysOverview.childSickDays.days['TOTAL']} "/>
+                                </span>
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                    <span class="tw-flex tw-items-center">
+                                        <span class="tw-text-green-500 tw-flex tw-items-center">
+                                            <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                        </span>
+                                        &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
+                                    </span>
+                                </span>
+                            </jsp:body>
+                        </uv:box-narrow>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <div class="box">
-                        <span class="box-icon bg-red hidden-print">
-                            <i class="fa fa-child" aria-hidden="true"></i>
-                        </span>
-                        <span class="box-text">
-                        <spring:message code="overview.sicknotes.sickdays.child"
-                                        arguments="${sickDaysOverview.childSickDays.days['TOTAL']}"/>
-                        <i class="fa fa-check positive" aria-hidden="true"></i>
-                        <spring:message code="overview.sicknotes.sickdays.aub"
-                                        arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>
-                    </span>
-                    </div>
                 </div>
             </div>
 

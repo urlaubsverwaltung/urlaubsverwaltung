@@ -10,15 +10,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-public class UrlaubsverwaltungApplication { // NOSONAR - no private constructor needed
+public class UrlaubsverwaltungApplication {
 
-    /**
-     * Start the Urlaubsverwaltung Spring Boot application.
-     *
-     * @param args arguments
-     */
-    public static void main(String[] args) { // NOSONAR - yes, this main method really should be uncommented!
-
+    public static void main(String[] args) {
         SpringApplication.run(UrlaubsverwaltungApplication.class, args);
     }
 }

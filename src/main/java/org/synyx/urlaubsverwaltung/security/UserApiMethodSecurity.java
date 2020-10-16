@@ -18,8 +18,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 @Component
 public class UserApiMethodSecurity {
 
-    private PersonService personService;
-    private DepartmentService departmentService;
+    private final PersonService personService;
+    private final DepartmentService departmentService;
 
     @Autowired
     public UserApiMethodSecurity(PersonService personService, DepartmentService departmentService) {
@@ -62,7 +62,7 @@ public class UserApiMethodSecurity {
         } else if (principal instanceof User) {
             username = ((User) principal).getUsername();
         } else if (principal instanceof DefaultOidcUser) {
-            username =  ((DefaultOidcUser) principal).getIdToken().getSubject();
+            username = ((DefaultOidcUser) principal).getIdToken().getSubject();
         }
         return username;
     }

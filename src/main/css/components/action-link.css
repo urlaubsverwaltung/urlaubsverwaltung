@@ -1,0 +1,10 @@
+.action-link {
+  @apply no-underline !important;
+  @apply flex !important;
+  @apply items-center !important;
+  @apply transition-opacity duration-100 !important;
+}
+
+.action-link:hover {
+  @apply text-opacity-100 !important;
+}

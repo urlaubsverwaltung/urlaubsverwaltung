@@ -29,15 +29,15 @@
 <meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png' />"/>
 <meta name="theme-color" content="#ffffff">
 
-<link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-<link rel="stylesheet" type="text/css" href="<spring:url value='/css/utility.css' />"/>
+<link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
+<script defer src="<asset:url value='npm.core-js.js' />"></script>
 <script defer src="<asset:url value='npm.babel.js' />"></script>
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
 <script defer src="<asset:url value='npm.bootstrap.js' />"></script>
+<script defer src="<asset:url value='npm.webpack.js' />"></script>
 <script defer src="<asset:url value='npm.underscore.js' />"></script>
-<script defer src="<asset:url value='npm.font-awesome.js' />"></script>
+<script defer src="<asset:url value='npm.datalist-polyfill.js' />"></script>
 <script defer src="<asset:url value='common.js' />"></script>

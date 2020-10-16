@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
@@ -21,18 +21,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickDayAbsenceProviderTest {
+@ExtendWith(MockitoExtension.class)
+class SickDayAbsenceProviderTest {
 
     private SickDayAbsenceProvider sut;
 
@@ -41,15 +39,15 @@ public class SickDayAbsenceProviderTest {
     @Mock
     private VacationAbsenceProvider nextAbsenceProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickDayAbsenceProvider(nextAbsenceProvider, sickNoteService);
     }
 
     @Test
-    public void ensurePersonIsNotAvailableOnFullSickDay() {
+    void ensurePersonIsNotAvailableOnFullSickDay() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -59,15 +57,14 @@ public class SickDayAbsenceProviderTest {
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
-        assertThat(absencesList.get(0).getType()).isEqualTo(SICK_NOTE);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
     }
 
     @Test
-    public void ensurePersonIsNotAvailableOnTwoHalfSickDays() {
+    void ensurePersonIsNotAvailableOnTwoHalfSickDays() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -78,22 +75,20 @@ public class SickDayAbsenceProviderTest {
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(2);
-        assertThat(absencesList.get(0).getType()).isEqualTo(SICK_NOTE);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(MORNING.name());
         assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(0.5));
-        assertThat(absencesList.get(1).getType()).isEqualTo(SICK_NOTE);
         assertThat(absencesList.get(1).getPartOfDay()).isEqualTo(NOON.name());
         assertThat(absencesList.get(1).getRatio()).isEqualTo(BigDecimal.valueOf(0.5));
     }
 
     @Test
-    public void ensurePersonIsAvailableOnFullSickDayCancelled() {
+    void ensurePersonIsAvailableOnFullSickDayCancelled() {
 
         // we need this because sick day provider is not the last provider and otherwise the mock
         // would return null
         when(nextAbsenceProvider.checkForAbsence(any(), any(), any())).then(returnsFirstArg());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -103,17 +98,17 @@ public class SickDayAbsenceProviderTest {
 
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test
-    public void ensurePersonIsAvailableOnFullSickDayConvertedToVacation() {
+    void ensurePersonIsAvailableOnFullSickDayConvertedToVacation() {
 
         // we need this because sick day provider is not the last provider and otherwise the mock
         // would return null
         when(nextAbsenceProvider.checkForAbsence(any(), any(), any())).then(returnsFirstArg());
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
@@ -123,13 +118,13 @@ public class SickDayAbsenceProviderTest {
 
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
-        assertThat(absencesList).hasSize(0);
+        assertThat(absencesList).isEmpty();
     }
 
     @Test
-    public void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
+    void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
         final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
@@ -141,10 +136,10 @@ public class SickDayAbsenceProviderTest {
     }
 
     @Test
-    public void ensureCallsVacationAbsenceProviderIfNotAbsentForSickDay() {
+    void ensureCallsVacationAbsenceProviderIfNotAbsentForSickDay() {
 
         final LocalDate sickDay = LocalDate.of(2016, 1, 5);
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         sut.checkForAbsence(knownAbsences, person, sickDay);
 

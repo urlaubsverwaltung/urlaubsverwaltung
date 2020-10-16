@@ -2,6 +2,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -16,12 +17,14 @@
             <div class="input-group search-field">
                 <%-- NOTE: class 'search' is needed for list.js --%>
                 <input type="text" class="search form-control" placeholder="<spring:message code='action.search'/>"/>
-                <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+                <span class="input-group-addon">
+                    <icon:search className="tw-w-4 tw-h-4" />
+                </span>
             </div>
         </div>
     </form>
 
-    <table class="list-table selectable-table sortable tablesorter">
+    <table class="list-table selectable-table sortable tablesorter tw-text-sm">
         <thead class="hidden-xs hidden-sm">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
@@ -45,8 +48,14 @@
         <c:forEach items="${persons}" var="person" varStatus="loopStatus">
             <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview');">
                 <td class="is-centered">
-                    <div class="gravatar img-circle hidden-print"
-                         data-gravatar="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"></div>
+                    <img
+                        src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
+                        alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                        class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                        width="60px"
+                        height="60px"
+                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                    />
                 </td>
                 <td class="firstname">
                     <c:out value="${person.firstName}"/>
@@ -112,11 +121,13 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="hidden-print hidden-xs">
-                    <a class="fa-action pull-right" href="${URL_PREFIX}/person/${person.id}"
-                       data-title="<spring:message code="action.details" />">
-                        <i class="fa fa-fw fa-list-alt" aria-hidden="true"></i>
-                    </a>
+                <td class="hidden-xs">
+                    <div class="print:tw-hidden">
+                        <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/person/${person.id}">
+                            <icon:document-text className="tw-w-5 tw-h-5 tw-mr-1" />
+                            <spring:message code="action.details" />
+                        </a>
+                    </div>
                 </td>
             </tr>
         </c:forEach>

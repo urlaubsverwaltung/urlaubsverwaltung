@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.period;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.util.function.Consumer;
 
 
-public class WeekDayTest {
+class WeekDayTest {
 
     @Test
-    public void ensureGetByDayOfWeekThrowsForInvalidNumber() {
+    void ensureGetByDayOfWeekThrowsForInvalidNumber() {
 
         Consumer<Integer> assertValidDayOfWeek = (dayOfWeek) -> {
             try {
@@ -28,7 +28,7 @@ public class WeekDayTest {
 
 
     @Test
-    public void ensureGetByDayOfWeekReturnsCorrectWeekDay() {
+    void ensureGetByDayOfWeekReturnsCorrectWeekDay() {
 
         WeekDay weekDay = WeekDay.getByDayOfWeek(DayOfWeek.MONDAY.getValue());
 

@@ -1,8 +1,9 @@
-apiVersion: v1
+apiVersion: v2
 name: urlaubsverwaltung
-version: 1.0.1
-appVersion: 3.0.1
 description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
+type: application
+version: 2.0.0
+appVersion: 3.4.5
 keywords:
   - urlaub
 home: https://github.com/synyx/urlaubsverwaltung
@@ -13,3 +14,8 @@ maintainers:
     email: graf@synyx.de
   - name: Tobias Schneider
     email: schneider@synyx.de
+dependencies:
+  - name: mariadb
+    version: 8.0.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: mariadb.enabled

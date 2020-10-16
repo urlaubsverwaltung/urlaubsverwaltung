@@ -18,13 +18,11 @@
            action="${URL_PREFIX}/application/${application.id}/cancel" modelAttribute="comment">
 
     <div class="form-group">
-        <div class="control-label">
-            <strong><spring:message code='action.delete.confirm'/></strong>
-        </div>
+        <strong class="tw-font-medium"><spring:message code='action.delete.confirm'/></strong>
     </div>
 
     <div class="form-group">
-        <div class="control-label">
+        <div class="tw-text-sm">
             <c:choose>
                 <%-- comment is obligat if it's not the own application or if the application is in status allowed --%>
                 <c:when

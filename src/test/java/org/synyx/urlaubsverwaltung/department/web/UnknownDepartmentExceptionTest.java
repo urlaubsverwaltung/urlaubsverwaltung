@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class UnknownDepartmentExceptionTest {
+class UnknownDepartmentExceptionTest {
 
     @Test
-    public void ensureCorrectExceptionMessage() {
+    void ensureCorrectExceptionMessage() {
 
         UnknownDepartmentException exception = new UnknownDepartmentException(42);
 

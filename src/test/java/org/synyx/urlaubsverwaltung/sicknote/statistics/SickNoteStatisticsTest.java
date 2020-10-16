@@ -1,17 +1,19 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,28 +21,32 @@ import java.util.List;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
 
 
 /**
  * Unit test for {@link SickNoteStatistics}.
  */
-public class SickNoteStatisticsTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteStatisticsTest {
 
-    private SickNoteStatistics statistics;
-    private WorkDaysService calendarService;
+    private SickNoteStatistics sut;
+
+    @Mock
+    private WorkDaysCountService workDaysCountService;
+    @Mock
     private SickNoteService sickNoteDAO;
+
     private List<SickNote> sickNotes;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
-        calendarService = mock(WorkDaysService.class);
-        sickNoteDAO = mock(SickNoteService.class);
         sickNotes = new ArrayList<>();
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         SickNote sickNote1 = TestDataCreator.createSickNote(person,
             LocalDate.of(2013, OCTOBER, 7),
@@ -56,63 +62,53 @@ public class SickNoteStatisticsTest {
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(7L);
         when(sickNoteDAO.getAllActiveByYear(2013)).thenReturn(sickNotes);
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, OCTOBER, 7),
             LocalDate.of(2013, OCTOBER, 11), person))
             .thenReturn(new BigDecimal("5"));
 
-        when(calendarService.getWorkDays(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
+        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2013, DECEMBER, 18),
             LocalDate.of(2013, DECEMBER, 31), person))
             .thenReturn(new BigDecimal("9"));
 
-        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        sut = new SickNoteStatistics(2013, sickNoteDAO, workDaysCountService);
     }
 
-
     @Test
-    public void testGetTotalNumberOfSickNotes() {
-
-        Assert.assertEquals(2, statistics.getTotalNumberOfSickNotes());
+    void testGetTotalNumberOfSickNotes() {
+        Assert.assertEquals(2, sut.getTotalNumberOfSickNotes());
     }
 
-
     @Test
-    public void testGetTotalNumberOfSickDays() {
-
-        Assert.assertEquals(new BigDecimal("14"), statistics.getTotalNumberOfSickDays());
+    void testGetTotalNumberOfSickDays() {
+        Assert.assertEquals(new BigDecimal("14"), sut.getTotalNumberOfSickDays());
     }
 
-
     @Test
-    public void testGetAverageDurationOfDiseasePerPerson() {
+    void testGetAverageDurationOfDiseasePerPerson() {
 
         // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
         // 14 workdays / 7 persons = 2 workdays per person
+        sut = new SickNoteStatistics(2013, sickNoteDAO, workDaysCountService);
 
-        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
-
-        Assert.assertEquals(new BigDecimal("2").setScale(2, RoundingMode.HALF_UP),
-            statistics.getAverageDurationOfDiseasePerPerson().setScale(2, RoundingMode.HALF_UP));
+        final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
+        assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.valueOf(2));
     }
 
-
     @Test
-    public void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
+    void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
 
         when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(2013)).thenReturn(0L);
 
-        statistics = new SickNoteStatistics(2013, sickNoteDAO, calendarService);
+        sut = new SickNoteStatistics(2013, sickNoteDAO, workDaysCountService);
 
-        Assert.assertEquals(BigDecimal.ZERO, statistics.getAverageDurationOfDiseasePerPerson());
+        final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
+        assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGetTotalNumberOfSickDaysInvalidDateRange() {
+    @Test
+    void testGetTotalNumberOfSickDaysInvalidDateRange() {
 
         when(sickNoteDAO.getAllActiveByYear(2015)).thenReturn(sickNotes);
-
-        statistics = new SickNoteStatistics(2015, sickNoteDAO, calendarService);
-
-        statistics.getTotalNumberOfSickDays();
+        assertThatIllegalArgumentException().isThrownBy(() -> new SickNoteStatistics(2015, sickNoteDAO, workDaysCountService));
     }
 }

@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -11,19 +10,21 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-
-@RunWith(MockitoJUnitRunner.class)
-public class ICalServiceTest {
+class ICalServiceTest {
 
     private ICalService sut;
 
@@ -31,82 +32,122 @@ public class ICalServiceTest {
         return LocalDate.parse(input, ofPattern("yyyy-MM-dd"));
     }
 
-    @Before
-    public void setUp() {
-
-        sut = new ICalService();
-    }
-
-    @Test(expected = CalendarException.class)
-    public void getCalendarForPersonAndNoAbsenceFound() {
-
-        sut.generateCalendar("Abwesenheitskalender", List.of());
+    @BeforeEach
+    void setUp() {
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        sut = new ICalService(calendarProperties);
     }
 
     @Test
-    public void getCalendarForPersonForOneFullDay() {
+    void getCalendarForPersonAndNoAbsenceFound() {
+        final List<Absence> absences = List.of();
 
-        final Absence fullDayAbsence = absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
-
-        final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
-
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
-
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
+        assertThatThrownBy(() -> sut.getCalendar("Abwesenheitskalender", absences))
+            .isInstanceOf(CalendarException.class);
     }
 
     @Test
-    public void getCalendarForPersonForHalfDayMorning() {
+    void getCalendarForPersonForOneFullDay() {
 
-        final Absence morningAbsence = absence(createPerson(), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
-        final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(morningAbsence));
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        assertThat(fileToString(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("REFRESH-INTERVAL:P1D")
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;TZID=Etc/UTC:20190426T080000");
-        assertThat(calendar).contains("DTEND;TZID=Etc/UTC:20190426T120000");
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+            .contains("DTSTART;VALUE=DATE:20190326")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
     }
 
     @Test
-    public void getCalendarForPersonForMultipleFullDays() {
+    void getCalendarForPersonForHalfDayMorning() {
 
-        final Absence manyFullDayAbsence = absence(createPerson(), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
-        final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence));
 
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        assertThat(fileToString(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("REFRESH-INTERVAL:P1D")
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;VALUE=DATE:20190326");
-        assertThat(calendar).contains("DTEND;VALUE=DATE:20190402");
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART:20190426T080000Z")
+            .contains("DTEND:20190426T120000Z")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
     }
 
     @Test
-    public void getCalendarForPersonForHalfDayNoon() {
+    void getCalendarForPersonForMultipleFullDays() {
 
-        final Absence noonAbsence = absence(createPerson(), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
-        final String calendar = sut.generateCalendar("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(calendar).contains("VERSION:2.0");
-        assertThat(calendar).contains("CALSCALE:GREGORIAN");
-        assertThat(calendar).contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE");
-        assertThat(calendar).contains("X-WR-CALNAME:Abwesenheitskalender");
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
-        assertThat(calendar).contains("SUMMARY:Marlene Muster abwesend");
-        assertThat(calendar).contains("DTSTART;TZID=Etc/UTC:20190526T120000");
-        assertThat(calendar).contains("DTEND;TZID=Etc/UTC:20190526T160000");
+        assertThat(fileToString(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("REFRESH-INTERVAL:P1D")
+
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+            .contains("DTSTART;VALUE=DATE:20190326")
+            .contains("DTEND;VALUE=DATE:20190402")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
+    }
+
+    @Test
+    void getCalendarForPersonForHalfDayNoon() {
+
+        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        assertThat(fileToString(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("REFRESH-INTERVAL:P1D")
+
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART:20190526T120000Z")
+            .contains("DTEND:20190526T160000Z")
+
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+            .contains("ORGANIZER:mailto:no-reply@example.org");
+    }
+
+    @Test
+    void getCalendarNoOrganizerIfNotProvided() {
+
+        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final ICalService sut = new ICalService(new CalendarProperties());
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        assertThat(fileToString(calendar))
+            .doesNotContain("ORGANIZER:mailto:");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
@@ -114,5 +155,13 @@ public class ICalServiceTest {
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
 
         return new Absence(person, period, timeConfig);
+    }
+
+    private String fileToString(File file) {
+        try {
+            return Files.readString(file.toPath());
+        } catch (IOException e) {
+            return "";
+        }
     }
 }

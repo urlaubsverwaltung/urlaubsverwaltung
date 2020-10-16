@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.settings.web;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
@@ -10,56 +10,53 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 
-public class SettingsValidatorTest {
+class SettingsValidatorTest {
 
     private SettingsValidator settingsValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
-        settingsValidator = new SettingsValidator("unknown");
+        settingsValidator = new SettingsValidator();
     }
 
 
     // Supported class -------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureSettingsClassIsSupported() {
+    void ensureSettingsClassIsSupported() {
 
         Assert.assertTrue("Should return true for Settings class.", settingsValidator.supports(Settings.class));
     }
 
 
     @Test
-    public void ensureOtherClassThanSettingsIsNotSupported() {
+    void ensureOtherClassThanSettingsIsNotSupported() {
 
         Assert.assertFalse("Should return false for other classes than Settings.",
             settingsValidator.supports(Object.class));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThatValidateFailsWithOtherClassThanSettings() {
-
-        Object o = new Object();
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(o, mockError);
+    @Test
+    void ensureThatValidateFailsWithOtherClassThanSettings() {
+        assertThatIllegalArgumentException().isThrownBy(() -> settingsValidator.validate(new Object(), mock(Errors.class)));
     }
 
 
     // Working time settings: Public holidays --------------------------------------------------------------------------
 
     @Test
-    public void ensureWorkingTimeSettingsCanNotBeNull() {
+    void ensureWorkingTimeSettingsCanNotBeNull() {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -81,7 +78,7 @@ public class SettingsValidatorTest {
     // Working time settings: Overtime settings ------------------------------------------------------------------------
 
     @Test
-    public void ensureOvertimeSettingsAreMandatoryIfOvertimeManagementIsActive() {
+    void ensureOvertimeSettingsAreMandatoryIfOvertimeManagementIsActive() {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -99,7 +96,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureOvertimeSettingsAreNotMandatoryIfOvertimeManagementIsInactive() {
+    void ensureOvertimeSettingsAreNotMandatoryIfOvertimeManagementIsInactive() {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -111,12 +108,12 @@ public class SettingsValidatorTest {
 
         settingsValidator.validate(settings, mockError);
 
-        verifyZeroInteractions(mockError);
+        verifyNoInteractions(mockError);
     }
 
 
     @Test
-    public void ensureMaximumOvertimeCanNotBeNegative() {
+    void ensureMaximumOvertimeCanNotBeNegative() {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -132,7 +129,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureMinimumOvertimeCanNotBeNegative() {
+    void ensureMinimumOvertimeCanNotBeNegative() {
 
         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
@@ -150,7 +147,7 @@ public class SettingsValidatorTest {
     // Absence settings ------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureAbsenceSettingsCanNotBeNull() {
+    void ensureAbsenceSettingsCanNotBeNull() {
 
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
@@ -175,7 +172,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureAbsenceSettingsCanNotBeNegative() {
+    void ensureAbsenceSettingsCanNotBeNegative() {
 
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
@@ -200,7 +197,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() {
+    void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() {
 
         Settings settings = new Settings();
         settings.getAbsenceSettings().setMaximumMonthsToApplyForLeaveInAdvance(0);
@@ -213,7 +210,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
+    void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
 
         Settings settings = new Settings();
         settings.getAbsenceSettings().setMaximumAnnualVacationDays(367);
@@ -225,7 +222,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() {
+    void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() {
 
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
@@ -247,7 +244,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureThatDaysBeforeEndOfSickPayNotificationIsSmallerThanMaximumSickPayDays() {
+    void ensureThatDaysBeforeEndOfSickPayNotificationIsSmallerThanMaximumSickPayDays() {
 
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
@@ -262,107 +259,10 @@ public class SettingsValidatorTest {
     }
 
 
-    // Mail settings ---------------------------------------------------------------------------------------------------
-
-    @Test
-    public void ensureMailSettingsAreNotMandatoryIfDeactivated() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(false);
-        mailSettings.setHost(null);
-        mailSettings.setPort(null);
-        mailSettings.setAdministrator(null);
-        mailSettings.setFrom(null);
-        mailSettings.setBaseLinkURL(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        verifyZeroInteractions(mockError);
-    }
-
-
-    @Test
-    public void ensureMandatoryMailSettingsAreMandatoryIfActivated() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setHost(null);
-        mailSettings.setPort(null);
-        mailSettings.setAdministrator(null);
-        mailSettings.setFrom(null);
-        mailSettings.setBaseLinkURL(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.host", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.port", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.from", "error.entry.mandatory");
-        verify(mockError).rejectValue("mailSettings.baseLinkURL", "error.entry.mandatory");
-    }
-
-
-    @Test
-    public void ensureFromAndAdministratorMailAddressesMustBeValid() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setAdministrator("foo");
-        mailSettings.setFrom("bar");
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.administrator", "error.entry.mail");
-        verify(mockError).rejectValue("mailSettings.from", "error.entry.mail");
-    }
-
-
-    @Test
-    public void ensureMailPortMustBeNotNegative() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setPort(-1);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
-    }
-
-
-    @Test
-    public void ensureMailPortMustBeGreaterThanZero() {
-
-        Settings settings = new Settings();
-        MailSettings mailSettings = new MailSettings();
-        settings.setMailSettings(mailSettings);
-
-        mailSettings.setActive(true);
-        mailSettings.setPort(0);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("mailSettings.port", "error.entry.invalid");
-    }
-
-
     // Calendar settings -----------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureCalendarSettingsAreMandatory() {
+    void ensureCalendarSettingsAreMandatory() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -378,7 +278,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginAndEndHoursAreSame() {
+    void ensureCalendarSettingsAreInvalidIfWorkDayBeginAndEndHoursAreSame() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -394,7 +294,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginHourIsGreaterThanEndHour() {
+    void ensureCalendarSettingsAreInvalidIfWorkDayBeginHourIsGreaterThanEndHour() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -410,7 +310,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreNegative() {
+    void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreNegative() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -426,7 +326,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreZero() {
+    void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreZero() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -442,7 +342,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreGreaterThan24() {
+    void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreGreaterThan24() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -458,7 +358,7 @@ public class SettingsValidatorTest {
 
 
     @Test
-    public void ensureCalendarSettingsAreValidIfValidWorkDayBeginAndEndHours() {
+    void ensureCalendarSettingsAreValidIfValidWorkDayBeginAndEndHours() {
 
         Settings settings = new Settings();
         CalendarSettings calendarSettings = settings.getCalendarSettings();
@@ -469,14 +369,14 @@ public class SettingsValidatorTest {
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verifyZeroInteractions(mockError);
+        verifyNoInteractions(mockError);
     }
 
 
     // Exchange calendar settings --------------------------------------------------------------------------------------
 
     @Test
-    public void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
+    void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
 
         Settings settings = new Settings();
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
@@ -489,12 +389,12 @@ public class SettingsValidatorTest {
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verifyZeroInteractions(mockError);
+        verifyNoInteractions(mockError);
     }
 
 
     @Test
-    public void ensureExchangeCalendarSettingsAreMandatory() {
+    void ensureExchangeCalendarSettingsAreMandatory() {
 
         Settings settings = new Settings();
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
@@ -517,7 +417,7 @@ public class SettingsValidatorTest {
     }
 
     @Test
-    public void ensureExchangeCalendarEmailMustHaveValidFormat() {
+    void ensureExchangeCalendarEmailMustHaveValidFormat() {
 
         Settings settings = new Settings();
         ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
@@ -535,7 +435,7 @@ public class SettingsValidatorTest {
     }
 
     @Test
-    public void ensureGoogleCalendarSettingsAreMandatory() {
+    void ensureGoogleCalendarSettingsAreMandatory() {
 
         Settings settings = new Settings();
         GoogleCalendarSettings googleCalendarSettings = settings.getCalendarSettings()

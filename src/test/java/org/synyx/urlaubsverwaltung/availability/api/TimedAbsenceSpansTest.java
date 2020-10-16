@@ -1,27 +1,24 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.FREETIME;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.VACATION;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 
-public class TimedAbsenceSpansTest {
+class TimedAbsenceSpansTest {
 
     @Test
-    public void ensurePresenceRatioCalculatedCorrectly() {
+    void ensurePresenceRatioCalculatedCorrectly() {
 
-        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
-        final TimedAbsence timedAbsence2 = new TimedAbsence(NOON, VACATION);
+        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING);
+        final TimedAbsence timedAbsence2 = new TimedAbsence(NOON);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(List.of(timedAbsence1, timedAbsence2));
 
         final BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
@@ -30,10 +27,10 @@ public class TimedAbsenceSpansTest {
 
 
     @Test
-    public void ensurePresenceRatioIsNotNegative() {
+    void ensurePresenceRatioIsNotNegative() {
 
-        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING, FREETIME);
-        final TimedAbsence timedAbsence2 = new TimedAbsence(FULL, SICK_NOTE);
+        final TimedAbsence timedAbsence1 = new TimedAbsence(MORNING);
+        final TimedAbsence timedAbsence2 = new TimedAbsence(FULL);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(List.of(timedAbsence1, timedAbsence2));
 
         final BigDecimal presenceRatio = timedAbsenceSpans.calculatePresenceRatio();
@@ -42,7 +39,7 @@ public class TimedAbsenceSpansTest {
 
 
     @Test
-    public void ensurePresenceRatioIsCalculatedCorrectlyForEmptyList() {
+    void ensurePresenceRatioIsCalculatedCorrectlyForEmptyList() {
 
         final BigDecimal presenceRatio = new TimedAbsenceSpans(emptyList()).calculatePresenceRatio();
         assertThat(presenceRatio).isEqualTo(BigDecimal.ONE);
@@ -50,7 +47,7 @@ public class TimedAbsenceSpansTest {
 
 
     @Test
-    public void ensureCalculationIsNullSave() {
+    void ensureCalculationIsNullSave() {
 
         final BigDecimal bigDecimal = new TimedAbsenceSpans(null).calculatePresenceRatio();
         assertThat(bigDecimal).isSameAs(BigDecimal.ONE);

@@ -35,8 +35,7 @@ public class OidcLogoutHandler extends SecurityContextLogoutHandler {
     }
 
     private String generateLogoutUri(String returnTo, OidcUser user) {
-        final String endSessionEndpoint = user.getIssuer() + properties.getLogoutPath();
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(endSessionEndpoint)
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(properties.getLogoutUri())
             .queryParam("id_token_hint", user.getIdToken().getTokenValue())
             .queryParam("redirect_uri", returnTo)
             .queryParam("client_id", properties.getClientId())

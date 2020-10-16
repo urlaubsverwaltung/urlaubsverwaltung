@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 
@@ -40,27 +40,27 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationForLeaveViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveViewControllerTest {
 
     private ApplicationForLeaveViewController sut;
 
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private DepartmentService departmentService;
     @Mock
     private PersonService personService;
 
-    @Before
-    public void setUp() {
-        sut = new ApplicationForLeaveViewController(applicationService, calendarService, departmentService, personService);
+    @BeforeEach
+    void setUp() {
+        sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService, personService);
     }
 
     @Test
-    public void getApplicationForDepartmentHead() throws Exception {
+    void getApplicationForDepartmentHead() throws Exception {
 
         final Person person = new Person();
         person.setFirstName("Atticus");
@@ -98,7 +98,7 @@ public class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
-    public void getApplicationForBoss() throws Exception {
+    void getApplicationForBoss() throws Exception {
 
         final Person person = new Person();
         final Application application = new Application();
@@ -138,7 +138,7 @@ public class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
-    public void getApplicationForOffice() throws Exception {
+    void getApplicationForOffice() throws Exception {
 
         final Person person = new Person();
         final Application application = new Application();
@@ -179,7 +179,7 @@ public class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
-    public void getApplicationForSecondStage() throws Exception {
+    void getApplicationForSecondStage() throws Exception {
 
         final Person person = new Person();
         person.setFirstName("person");
@@ -227,7 +227,7 @@ public class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
-    public void departmentHeadAndSecondStageAuthorityOfDifferentDepartmentsGrantsApplications() throws Exception {
+    void departmentHeadAndSecondStageAuthorityOfDifferentDepartmentsGrantsApplications() throws Exception {
 
         final Person departmentHeadAndSecondStageAuth = new Person();
         departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
@@ -273,7 +273,7 @@ public class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
-    public void departmentHeadAndSecondStageAuthorityOfSameDepartmentsGrantsApplications() throws Exception {
+    void departmentHeadAndSecondStageAuthorityOfSameDepartmentsGrantsApplications() throws Exception {
 
         final Person departmentHeadAndSecondStageAuth = new Person();
         departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");

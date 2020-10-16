@@ -1,10 +1,8 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -13,94 +11,74 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
-public class OvertimeTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullPerson() {
-
-        LocalDate now = LocalDate.now(UTC);
-
-        new Overtime(null, now, now, BigDecimal.ONE);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullStartDate() {
-
-        Person person = TestDataCreator.createPerson();
-        LocalDate now = LocalDate.now(UTC);
-
-        new Overtime(person, null, now, BigDecimal.ONE);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullEndDate() {
-
-        Person person = TestDataCreator.createPerson();
-        LocalDate now = LocalDate.now(UTC);
-
-        new Overtime(person, now, null, BigDecimal.ONE);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsOnNullNumberOfHours() {
-
-        Person person = TestDataCreator.createPerson();
-        LocalDate now = LocalDate.now(UTC);
-
-        new Overtime(person, now, now, null);
-    }
-
+class OvertimeTest {
 
     @Test
-    public void ensureReturnsCorrectStartDate() {
+    void ensureThrowsOnNullPerson() {
+        LocalDate now = LocalDate.now(UTC);
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(null, now, now, BigDecimal.ONE));
+    }
 
-        Person person = TestDataCreator.createPerson();
+    @Test
+    void ensureThrowsOnNullStartDate() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        LocalDate now = LocalDate.now(UTC);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, null, now, BigDecimal.ONE));
+    }
+
+    @Test
+    void ensureThrowsOnNullEndDate() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        LocalDate now = LocalDate.now(UTC);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, null, BigDecimal.ONE));
+    }
+
+    @Test
+    void ensureThrowsOnNullNumberOfHours() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        LocalDate now = LocalDate.now(UTC);
+
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, now, null));
+    }
+
+    @Test
+    void ensureReturnsCorrectStartDate() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
-
-        Assert.assertNotNull("Should not be null", overtime.getStartDate());
-        Assert.assertEquals("Wrong start date", now, overtime.getStartDate());
+        assertThat(overtime.getStartDate()).isEqualTo(now);
     }
 
-
     @Test
-    public void ensureReturnsCorrectEndDate() {
-
-        Person person = TestDataCreator.createPerson();
+    void ensureReturnsCorrectEndDate() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
-
-        Assert.assertNotNull("Should not be null", overtime.getEndDate());
-        Assert.assertEquals("Wrong end date", now, overtime.getEndDate());
+        assertThat(overtime.getEndDate()).isEqualTo(now);
     }
 
-
     @Test
-    public void ensureSetLastModificationDateOnInitialization() {
-
-        Person person = TestDataCreator.createPerson();
+    void ensureSetLastModificationDateOnInitialization() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), BigDecimal.ONE);
-
-        Assert.assertNotNull("Should not be null", overtime.getLastModificationDate());
-        Assert.assertEquals("Wrong last modification date", now, overtime.getLastModificationDate());
+        assertThat(overtime.getLastModificationDate()).isEqualTo(now);
     }
 
-
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfGettingStartDateOnACorruptedOvertime() throws IllegalAccessException {
-
-        Person person = TestDataCreator.createPerson();
+    @Test
+    void ensureThrowsIfGettingStartDateOnACorruptedOvertime() throws IllegalAccessException {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -109,14 +87,12 @@ public class OvertimeTest {
         startDateField.setAccessible(true);
         startDateField.set(overtime, null);
 
-        overtime.getStartDate();
+        assertThatIllegalStateException().isThrownBy(overtime::getStartDate);
     }
 
-
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfGettingEndDateOnACorruptedOvertime() throws IllegalAccessException {
-
-        Person person = TestDataCreator.createPerson();
+    @Test
+    void ensureThrowsIfGettingEndDateOnACorruptedOvertime() throws IllegalAccessException {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -125,14 +101,13 @@ public class OvertimeTest {
         endDateField.setAccessible(true);
         endDateField.set(overtime, null);
 
-        overtime.getEndDate();
+        assertThatIllegalStateException().isThrownBy(overtime::getEndDate);
     }
 
+    @Test
+    void ensureThrowsIfGettingLastModificationDateOnACorruptedOvertime() throws IllegalAccessException {
 
-    @Test(expected = IllegalStateException.class)
-    public void ensureThrowsIfGettingLastModificationDateOnACorruptedOvertime() throws IllegalAccessException {
-
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -141,14 +116,13 @@ public class OvertimeTest {
         lastModificationDateField.setAccessible(true);
         lastModificationDateField.set(overtime, null);
 
-        overtime.getLastModificationDate();
+        assertThatIllegalStateException().isThrownBy(overtime::getLastModificationDate);
     }
 
-
     @Test
-    public void ensureCallingOnUpdateChangesLastModificationDate() throws IllegalAccessException {
+    void ensureCallingOnUpdateChangesLastModificationDate() throws IllegalAccessException {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
         Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
@@ -158,44 +132,33 @@ public class OvertimeTest {
         lastModificationDateField.setAccessible(true);
         lastModificationDateField.set(overtime, now.minusDays(3));
 
-        Assert.assertEquals("Wrong initial last modification date", now.minusDays(3),
-            overtime.getLastModificationDate());
-
+        assertThat(overtime.getLastModificationDate()).isEqualTo(now.minusDays(3));
         overtime.onUpdate();
-
-        Assert.assertEquals("Last modification date should be set to now", now, overtime.getLastModificationDate());
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToSetStartDateToNull() {
-
-        new Overtime().setStartDate(null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToSetEndDateToNull() {
-
-        new Overtime().setEndDate(null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToSetHoursToNull() {
-
-        new Overtime().setHours(null);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToSetPersonToNull() {
-
-        new Overtime().setPerson(null);
+        assertThat(overtime.getLastModificationDate()).isEqualTo(now);
     }
 
     @Test
-    public void toStringTest() {
+    void ensureThrowsIfTryingToSetStartDateToNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setStartDate(null));
+    }
+
+    @Test
+    void ensureThrowsIfTryingToSetEndDateToNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setEndDate(null));
+    }
+
+    @Test
+    void ensureThrowsIfTryingToSetHoursToNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setHours(null));
+    }
+
+    @Test
+    void ensureThrowsIfTryingToSetPersonToNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setPerson(null));
+    }
+
+    @Test
+    void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPassword("Theo");

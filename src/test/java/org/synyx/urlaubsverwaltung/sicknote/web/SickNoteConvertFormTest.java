@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -12,21 +12,20 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createVacationType;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.sicknote.web.SickNoteConvertForm}.
  */
-public class SickNoteConvertFormTest {
+class SickNoteConvertFormTest {
 
     @Test
-    public void ensureCorrectProvidedValuesFromSickNote() {
+    void ensureCorrectProvidedValuesFromSickNote() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
         final LocalDate endDate = LocalDate.of(2014, 1, 10);
         final SickNote sickNote = createSickNote(person, startDate, endDate, DayLength.NOON);
@@ -44,9 +43,9 @@ public class SickNoteConvertFormTest {
     }
 
     @Test
-    public void ensureGeneratesBasicApplicationForLeave() {
+    void ensureGeneratesBasicApplicationForLeave() {
 
-        final Person person = createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
         final LocalDate endDate = LocalDate.of(2014, 1, 10);
         final SickNote sickNote = createSickNote(person, startDate, endDate, FULL);

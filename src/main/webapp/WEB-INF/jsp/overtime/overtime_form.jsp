@@ -2,8 +2,9 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -24,9 +25,10 @@
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />" />
+    <link rel="stylesheet" type="text/css" href="<asset:url value='app_form~overtime_form~sick_note_form.css' />"/>
+    <link rel="stylesheet" type="text/css"
+          href="<asset:url value='app_form~overtime_form~person_overview~sick_note_form.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.jquery-ui-themes.css' />"/>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='date-fns-localized.js' />"></script>
     <script defer src="<asset:url value='npm.jquery-ui.js' />"></script>
@@ -70,20 +72,22 @@
                         </c:if>
                     </div>
                     <div class="col-xs-12">
-                        <legend>
-                            <c:choose>
-                                <c:when test="${overtime.id == null}">
-                                    <spring:message code="overtime.record.new"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="overtime.record.edit"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </legend>
+                        <uv:section-heading>
+                            <h2>
+                                <c:choose>
+                                    <c:when test="${overtime.id == null}">
+                                        <spring:message code="overtime.record.new"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="overtime.record.edit"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </h2>
+                        </uv:section-heading>
                     </div>
                     <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <span class="help-block tw-text-sm">
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="overtime.data.description"/>
                         </span>
                     </div>

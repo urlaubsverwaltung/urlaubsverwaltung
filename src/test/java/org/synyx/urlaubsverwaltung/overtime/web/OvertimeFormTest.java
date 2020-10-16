@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -13,21 +13,20 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
-public class OvertimeFormTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullPerson() {
-
-        new OvertimeForm((Person) null);
-    }
-
+class OvertimeFormTest {
 
     @Test
-    public void ensureCanBeInitializedWithPerson() {
+    void ensureThrowsIfInitializedWithNullPerson() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm((Person) null));
+    }
 
-        Person person = TestDataCreator.createPerson();
+    @Test
+    void ensureCanBeInitializedWithPerson() {
+
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
 
@@ -42,11 +41,10 @@ public class OvertimeFormTest {
         Assert.assertNull("Should be not set", overtimeForm.getComment());
     }
 
-
     @Test
-    public void ensureCanConstructAnOvertimeObject() {
+    void ensureCanConstructAnOvertimeObject() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
@@ -67,24 +65,19 @@ public class OvertimeFormTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {
-
-        Person person = TestDataCreator.createPerson();
-
-        new OvertimeForm(person).generateOvertime();
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfInitializedWithNullOvertime() {
-
-        new OvertimeForm((Overtime) null);
+    @Test
+    void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm(new Person("muster", "Muster", "Marlene", "muster@example.org")).generateOvertime());
     }
 
 
     @Test
-    public void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
+    void ensureThrowsIfInitializedWithNullOvertime() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm((Overtime) null));
+    }
+
+    @Test
+    void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
 
         // Simulate existing overtime record
         Overtime overtime = TestDataCreator.createOvertimeRecord();
@@ -106,9 +99,9 @@ public class OvertimeFormTest {
 
 
     @Test
-    public void ensureCanUpdateOvertime() {
+    void ensureCanUpdateOvertime() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));

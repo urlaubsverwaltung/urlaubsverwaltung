@@ -1,18 +1,18 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
-import org.synyx.urlaubsverwaltung.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,7 +45,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -55,8 +57,8 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OverviewViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class OverviewViewControllerTest {
 
     private OverviewViewController sut;
 
@@ -73,7 +75,7 @@ public class OverviewViewControllerTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock
@@ -81,23 +83,21 @@ public class OverviewViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
-    private Person person;
-
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, calendarService, sickNoteService, overtimeService, settingsService, departmentService);
-
-        person = new Person();
-        person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
-        when(personService.getSignedInUser()).thenReturn(person);
+            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService);
     }
 
     @Test
-    public void showOverviewForUnknownPersonIdThrowsUnknownPersonException() {
+    void indexRedirectsToOverview() throws Exception {
+        perform(get("/"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/overview"));
+    }
 
+    @Test
+    void showOverviewForUnknownPersonIdThrowsUnknownPersonException() {
         final int unknownPersonId = 437;
 
         assertThatThrownBy(() ->
@@ -106,8 +106,7 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewForPersonTheSignedInUserIsNotAllowedForThrowsAccessDeniedException() {
-
+    void showOverviewForPersonTheSignedInUserIsNotAllowedForThrowsAccessDeniedException() {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -122,8 +121,7 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewUsesCurrentYearIfNoYearGiven() throws Exception {
-
+    void showOverviewUsesCurrentYearIfNoYearGiven() throws Exception {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -140,8 +138,7 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewUsesYearParamIfYearGiven() throws Exception {
-
+    void showOverviewUsesYearParamIfYearGiven() throws Exception {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
@@ -159,7 +156,11 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
+    void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
@@ -176,11 +177,14 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverviewDoesNotAddApplicationsToModelIfThereAreNoApplications() throws Exception {
+    void showOverviewDoesNotAddApplicationsToModelIfThereAreNoApplications() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
-
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
@@ -188,28 +192,38 @@ public class OverviewViewControllerTest {
     }
 
     @Test
-    public void showOverview() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/web/overview?year=2017");
+    void showOverview() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/overview?year=2017"));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/person/1/overview?year=2017"));
     }
 
     @Test
-    public void showOverviewWithoutYear() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/web/overview");
+    void showOverviewWithoutYear() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/overview"));
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/person/1/overview"));
     }
 
     @Test
-    public void showPersonalOverview() throws Exception {
+    void showPersonalOverview() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(person);
+
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(calendarService.getWorkDays(any(), any(), any(), eq(person))).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         final Application revokedApplication = new Application();
         revokedApplication.setStatus(REVOKED);
@@ -251,12 +265,10 @@ public class OverviewViewControllerTest {
     }
 
     private Person somePerson() {
-
         return new Person();
     }
 
     private Account someAccount() {
-
         Account account = new Account();
         account.setPerson(somePerson());
         account.setValidFrom(LocalDate.now().minusDays(10));
@@ -274,7 +286,7 @@ public class OverviewViewControllerTest {
             .forUsedDaysAfterApril(BigDecimal.ZERO)
             .withVacationDaysUsedNextYear(BigDecimal.ZERO)
             .notExpiring(BigDecimal.ZERO)
-            .get();
+            .build();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

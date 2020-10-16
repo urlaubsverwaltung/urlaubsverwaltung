@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
-<%@taglib prefix="person" tagdir="/WEB-INF/tags/person" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
@@ -15,8 +15,6 @@
         <spring:message code="settings.header.title"/>
     </title>
     <uv:custom-head/>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.chosen-js.css' />"/>
-    <script defer src="<asset:url value='npm.chosen-js.js' />"></script>
     <script defer src="<asset:url value='settings_form.js' />"></script>
 </head>
 
@@ -26,15 +24,16 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<h1 class="tw-sr-only"><spring:message code="settings.header.title" /></h1>
+
 <div class="content">
     <div class="container">
-
         <form:form method="POST" action="${URL_PREFIX}/settings" modelAttribute="settings" class="form-horizontal"
                    role="form">
             <form:hidden path="id"/>
             <button type="submit" hidden></button>
 
-            <div class="row">
+            <div class="row tw-mb-4">
                 <div class="col-xs-12 feedback">
                     <c:if test="${not empty errors}">
                         <div class="alert alert-danger">
@@ -63,14 +62,6 @@
                 <c:set var="WORKING_TIME_ERROR_CSS_CLASS" value="error"/>
             </c:if>
 
-            <c:set var="mailError">
-                <form:errors path="mailSettings.*"/>
-            </c:set>
-
-            <c:if test="${not empty mailError}">
-                <c:set var="MAIL_ERROR_CSS_CLASS" value="error"/>
-            </c:if>
-
             <c:set var="calendarError">
                 <form:errors path="calendarSettings.*"/>
             </c:set>
@@ -89,12 +80,6 @@
                             <a href="#publicHolidays" aria-controls="publicHolidays" role="tab"
                                data-toggle="tab"><spring:message code="settings.tabs.workingTime"/></a>
                         </li>
-                        <c:if test="${not isMailServerFromApplicationProperties}">
-                            <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
-                                <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message
-                                    code="settings.tabs.mail"/></a>
-                            </li>
-                        </c:if>
                         <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
                             <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab"><spring:message
                                 code="settings.tabs.calendar"/></a>
@@ -103,19 +88,21 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="tab-content">
+            <div class="tab-content tw-mb-16">
 
-                    <div class="tab-pane active" id="absence">
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.vacation.title"/></legend>
-                            </div>
+                <div class="tab-pane active" id="absence">
+                    <div class="form-section tw-mb-8">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.vacation.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.vacation.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.vacation.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -150,18 +137,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend>
-                                    <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
-                                </legend>
-                            </div>
+                    <div class="form-section tw-mb-8">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
 
@@ -206,16 +195,20 @@
 
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.sickDays.title"/></legend>
-                            </div>
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.sickDays.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.sickDays.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.sickDays.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -249,17 +242,21 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="tab-pane" id="publicHolidays">
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.publicHolidays.title"/></legend>
-                            </div>
+                <div class="tab-pane" id="publicHolidays">
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.publicHolidays.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.publicHolidays.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.publicHolidays.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -313,16 +310,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.overtime.title"/></legend>
-                            </div>
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.overtime.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.overtime.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.overtime.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
 
@@ -373,139 +374,27 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <c:if test="${not isMailServerFromApplicationProperties}">
-                        <div class="tab-pane" id="mail">
-                            <div class="form-section">
-                                <div class="col-xs-12">
-                                    <legend><spring:message code="settings.mail.title"/></legend>
-                                </div>
-                                <div class="col-md-4 col-md-push-8">
-                            <span class="help-block">
-                                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                                <spring:message code="settings.mail.description"/>
-                            </span>
-                                </div>
-                                <div class="col-md-8 col-md-pull-4">
-                                    <div class="form-group is-required">
-                                        <label class="control-label col-md-4" for="mailSettings.active.true">
-                                            <spring:message code='settings.mail.active'/>:
-                                        </label>
-                                        <div class="col-md-8 radio">
-                                            <label class="halves">
-                                                <form:radiobutton id="mailSettings.active.true"
-                                                                  path="mailSettings.active"
-                                                                  value="true"/>
-                                                <spring:message code="settings.mail.active.true"/>
-                                            </label>
-                                            <label class="halves">
-                                                <form:radiobutton id="mailSettings.active.false"
-                                                                  path="mailSettings.active"
-                                                                  value="false"/>
-                                                <spring:message code="settings.mail.active.false"/>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.from">
-                                            <spring:message code='settings.mail.from'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="mailSettings.from" path="mailSettings.from"
-                                                        class="form-control"
-                                                        cssErrorClass="form-control error" type="email"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.from"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.administrator">
-                                            <spring:message code='settings.mail.administrator'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="mailSettings.administrator"
-                                                        path="mailSettings.administrator"
-                                                        class="form-control" cssErrorClass="form-control error"
-                                                        type="email"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.administrator"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.baseLinkURL">
-                                            <spring:message code='settings.mail.baseURL'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="mailSettings.baseLinkURL" path="mailSettings.baseLinkURL"
-                                                        placeholder="http://urlaubsverwaltung.mydomain.com/"
-                                                        class="form-control" cssErrorClass="form-control error"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.baseLinkURL"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.host">
-                                            <spring:message code='settings.mail.host'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="mailSettings.host" path="mailSettings.host"
-                                                        class="form-control"
-                                                        cssErrorClass="form-control error"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.host"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.port">
-                                            <spring:message code='settings.mail.port'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="mailSettings.port" path="mailSettings.port"
-                                                        class="form-control"
-                                                        cssErrorClass="form-control error"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.port"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.username">
-                                            <spring:message code='settings.mail.username'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="mailSettings.username" path="mailSettings.username"
-                                                        class="form-control" cssErrorClass="form-control error"
-                                                        autocomplete="new-password"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.username"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="mailSettings.password">
-                                            <spring:message code='settings.mail.password'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:password showPassword="true" id="mailSettings.password"
-                                                           path="mailSettings.password" class="form-control"
-                                                           cssErrorClass="form-control error"
-                                                           autocomplete="new-password"/>
-                                            <span class="help-inline"><form:errors path="mailSettings.password"
-                                                                                   cssClass="error"/></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </c:if>
-                    <div class="tab-pane" id="calendar">
-                        <div class="form-section">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.calendar.title"/></legend>
-                            </div>
+                <div class="tab-pane" id="calendar">
+
+                    <div class="alert alert-danger tw-flex tw-items-center" role="alert">
+                        <icon:speakerphone className="tw-w-4 tw-h-4" solid="true" />
+                        &nbsp;<spring:message code="settings.calendar.deprecated"/>
+                    </div>
+
+                    <div class="form-section">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.calendar.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.calendar.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.calendar.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
@@ -552,16 +441,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section" id="exchange-calendar">
-                            <div class="col-xs-12">
-                                <legend><spring:message code="settings.calendar.ews.title"/></legend>
-                            </div>
+                    <div class="form-section" id="exchange-calendar">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.calendar.ews.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.calendar.ews.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.calendar.ews.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group">
@@ -628,16 +521,21 @@
                                         <spring:message code='settings.calendar.ews.timeZoneId'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:select id="calendarSettings.exchangeCalendarSettings.timeZoneId"
-                                                     path="calendarSettings.exchangeCalendarSettings.timeZoneId"
-                                                     class="form-control chosenCombo"
-                                                     cssErrorClass="form-control error">
+                                        <form:input
+                                            id="calendarSettings.exchangeCalendarSettings.timeZoneId"
+                                            path="calendarSettings.exchangeCalendarSettings.timeZoneId"
+                                            class="form-control"
+                                            cssErrorClass="form-control error"
+                                            list="exchange-timezones"
+                                        />
+                                        <datalist id="exchange-timezones">
                                             <c:forEach items="${availableTimezones}" var="timeZoneId">
-                                                <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                                <option value="${timeZoneId}">${timeZoneId}</option>
                                             </c:forEach>
-                                        </form:select>
-                                        <span class="help-inline"><form:errors path="calendarSettings.provider"
-                                                                               cssClass="error"/></span>
+                                        </datalist>
+                                        <span class="help-inline">
+                                            <form:errors path="calendarSettings.provider" cssClass="error"/>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -658,16 +556,20 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-section" id="google-calendar">
+                    <div class="form-section" id="google-calendar">
+                        <div class="row">
                             <div class="col-xs-12">
-                                <legend><spring:message code="settings.calendar.google.title"/></legend>
+                                <h2><spring:message code="settings.calendar.google.title"/></h2>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                            <spring:message code="settings.calendar.google.description"/>
-                        </span>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                    <spring:message code="settings.calendar.google.description"/>
+                                </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group">
@@ -750,17 +652,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="form-section">
-                        <div class="col-xs-12">
-                            <hr/>
-                            <p class="help-block"><spring:message code="settings.action.update.description"/></p>
-                            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
-                                <spring:message code='action.save'/>
-                            </button>
-                        </div>
+            <div class="form-section">
+                <div class="row tw-mb-16">
+                    <div class="col-xs-12">
+                        <p class="help-block tw-text-sm"><spring:message code="settings.action.update.description"/></p>
+                        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                            <spring:message code='action.save'/>
+                        </button>
                     </div>
-
                 </div>
             </div>
         </form:form>

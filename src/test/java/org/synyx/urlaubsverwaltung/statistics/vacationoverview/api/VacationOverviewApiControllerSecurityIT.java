@@ -1,16 +1,15 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 
 import java.util.List;
 
@@ -19,9 +18,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class VacationOverviewApiControllerSecurityIT {
+class VacationOverviewApiControllerSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;
@@ -30,17 +28,17 @@ public class VacationOverviewApiControllerSecurityIT {
     private VacationOverviewService vacationOverviewService;
 
     @Test
-    public void getHolidayOverviewWithoutAuthIsUnauthorized() throws Exception {
+    void getHolidayOverviewWithoutAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/vacationoverview"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void getHolidayOverviewWithUserRoleIsForbidden() throws Exception {
+    void getHolidayOverviewWithUserRoleIsForbidden() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -51,10 +49,10 @@ public class VacationOverviewApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getHolidayOverviewWithAdminRoleIsForbidden() throws Exception {
+    void getHolidayOverviewWithAdminRoleIsForbidden() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -65,10 +63,10 @@ public class VacationOverviewApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getHolidayOverviewWithInactiveRoleIsForbidden() throws Exception {
+    void getHolidayOverviewWithInactiveRoleIsForbidden() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -79,10 +77,10 @@ public class VacationOverviewApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getHolidayOverviewWithOfficeRoleIsOk() throws Exception {
+    void getHolidayOverviewWithOfficeRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -93,10 +91,10 @@ public class VacationOverviewApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getHolidayOverviewWithDepartmentHeadRoleIsOk() throws Exception {
+    void getHolidayOverviewWithDepartmentHeadRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -108,10 +106,10 @@ public class VacationOverviewApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getHolidayOverviewWithBossRoleIsOk() throws Exception {
+    void getHolidayOverviewWithBossRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")
@@ -122,10 +120,10 @@ public class VacationOverviewApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getHolidayOverviewWithSecondStageAuthorityRoleIsOk() throws Exception {
+    void getHolidayOverviewWithSecondStageAuthorityRoleIsOk() throws Exception {
 
         when(vacationOverviewService.getVacationOverviews("niceDepartment", 2015, 1))
-            .thenReturn(List.of(new VacationOverview()));
+            .thenReturn(List.of(new VacationOverviewDto()));
 
         final ResultActions resultActions = perform(get("/api/vacationoverview")
             .param("selectedDepartment", "niceDepartment")

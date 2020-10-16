@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`html-literal returns processed string 1`] = `"<h1>awesome stuff!</h1>"`;
-
-exports[`html-literal returns processed string with array substitutions 1`] = `"<ul><li>Bruce</li><li>Clark</li></ul>"`;

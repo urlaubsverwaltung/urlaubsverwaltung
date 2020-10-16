@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -29,9 +29,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -39,7 +38,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 
 
 /**
@@ -59,7 +61,7 @@ public class ApplicationForLeaveDetailsViewController {
     private final ApplicationInteractionService applicationInteractionService;
     private final VacationDaysService vacationDaysService;
     private final ApplicationCommentService commentService;
-    private final WorkDaysService workDaysService;
+    private final WorkDaysCountService workDaysCountService;
     private final ApplicationCommentValidator commentValidator;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
@@ -68,7 +70,7 @@ public class ApplicationForLeaveDetailsViewController {
     public ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
                                                     AccountService accountService, ApplicationService applicationService,
                                                     ApplicationInteractionService applicationInteractionService,
-                                                    ApplicationCommentService commentService, WorkDaysService workDaysService,
+                                                    ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
                                                     ApplicationCommentValidator commentValidator,
                                                     DepartmentService departmentService, WorkingTimeService workingTimeService) {
         this.vacationDaysService = vacationDaysService;
@@ -77,7 +79,7 @@ public class ApplicationForLeaveDetailsViewController {
         this.applicationService = applicationService;
         this.applicationInteractionService = applicationInteractionService;
         this.commentService = commentService;
-        this.workDaysService = workDaysService;
+        this.workDaysCountService = workDaysCountService;
         this.commentValidator = commentValidator;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
@@ -97,7 +99,7 @@ public class ApplicationForLeaveDetailsViewController {
         Person person = application.getPerson();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to see application for leave of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -133,7 +135,7 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         // APPLICATION FOR LEAVE
-        model.addAttribute("application", new ApplicationForLeave(application, workDaysService));
+        model.addAttribute("application", new ApplicationForLeave(application, workDaysCountService));
 
         // WORKING TIME FOR VACATION PERIOD
         Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
@@ -168,7 +170,7 @@ public class ApplicationForLeaveDetailsViewController {
     /*
      * Allow a not yet allowed application for leave (Privileged user only!).
      */
-    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
+    @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/allow")
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
                                    @ModelAttribute("comment") ApplicationCommentForm comment,
@@ -188,7 +190,7 @@ public class ApplicationForLeaveDetailsViewController {
             && departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
 
         if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to allow application for leave of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -223,39 +225,36 @@ public class ApplicationForLeaveDetailsViewController {
      * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
      * to decide about this application (an email is sent).
      */
-    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD)
+    @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD)
     @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
                                    @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException, UnknownPersonException {
 
-        Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-            new UnknownApplicationForLeaveException(applicationId));
+        final Application application = applicationService.getApplicationById(applicationId)
+            .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
-        String referUsername = referredPerson.getUsername();
-        Person recipient = personService.getPersonByUsername(referUsername).orElseThrow(() ->
-            new UnknownPersonException(referUsername));
+        final String referUsername = referredPerson.getUsername();
+        final Person recipient = personService.getPersonByUsername(referUsername)
+            .orElseThrow(() -> new UnknownPersonException(referUsername));
 
-        Person sender = personService.getSignedInUser();
-
+        final Person sender = personService.getSignedInUser();
         boolean isBoss = sender.hasRole(Role.BOSS);
         boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
 
         if (isBoss || isDepartmentHead) {
             applicationInteractionService.refer(application, recipient, sender);
-
             redirectAttributes.addFlashAttribute("referSuccess", true);
-
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
-        throw new AccessDeniedException(String.format(
+        throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to refer application for leave to user '%s'",
             sender.getId(), referUsername));
     }
 
 
-    @PreAuthorize(SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
+    @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
                                     @ModelAttribute("comment") ApplicationCommentForm comment,
@@ -296,7 +295,7 @@ public class ApplicationForLeaveDetailsViewController {
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
-        throw new AccessDeniedException(String.format(
+        throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to reject application for leave of user '%s'",
             signedInUser.getId(), person.getId()));
     }
@@ -331,7 +330,7 @@ public class ApplicationForLeaveDetailsViewController {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
                 signedInUser.getId(), application.getPerson().getId()));
         }

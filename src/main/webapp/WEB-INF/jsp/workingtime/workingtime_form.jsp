@@ -4,6 +4,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -28,35 +29,35 @@
         <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/workingtime" modelAttribute="workingTime"
                    class="form-horizontal">
 
-            <div class="row">
+            <div class="form-section">
+                <uv:section-heading>
+                    <h1>
+                        <spring:message code="person.form.workingTime.title" arguments="${person.niceName}"/>
+                    </h1>
+                </uv:section-heading>
 
-                <div class="form-section">
+                <c:set var="workingTimeError">
+                    <form:errors path="workingDays" cssClass="error"/>
+                </c:set>
+                <c:if test="${not empty workingTimeError}">
+                <div class="row tw-mb-8">
                     <div class="col-xs-12">
-                        <legend>
-                            <spring:message code="person.form.workingTime.title" arguments="${person.niceName}"/>
-                        </legend>
+                        <div class="alert alert-danger">${workingTimeError}</div>
                     </div>
+                </div>
+                </c:if>
 
-                    <c:set var="workingTimeError">
-                        <form:errors path="workingDays" cssClass="error"/>
-                    </c:set>
-
-                    <c:if test="${not empty workingTimeError}">
-                        <div class="col-xs-12">
-                            <div class="alert alert-danger">${workingTimeError}</div>
-                        </div>
-                    </c:if>
-
+                <div class="row tw-mb-16">
                     <div class="col-md-4 col-md-push-8">
-    <span class="help-block">
-        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-        <spring:message code="federalState.${defaultFederalState}" var="defaultFederalStateName"/>
-        <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultFederalStateName}"/>
-    </span>
-                        <span class="help-block">
-        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-        <spring:message code="person.form.workingTime.description"/>
-    </span>
+                        <span class="help-block tw-text-sm">
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <spring:message code="federalState.${defaultFederalState}" var="defaultFederalStateName"/>
+                            <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultFederalStateName}"/>
+                        </span>
+                        <span class="help-block tw-text-sm">
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <spring:message code="person.form.workingTime.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
@@ -80,46 +81,29 @@
                             </div>
                         </div>
 
-
                         <c:if test="${fn:length(workingTimes) > 1}">
+                        <div class="form-group">
+                            <label class="col-md-3">
+                                <spring:message code='person.form.workingTime.existent'/>:
+                            </label>
 
-                            <div class="form-group">
-                                <label class="col-md-3">
-                                    <spring:message code='person.form.workingTime.existent'/>:
-                                </label>
-
-                                <div class="col-md-9">
+                            <div class="col-md-9">
+                                <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
                                     <c:forEach items="${workingTimes}" var="time">
-                                        <spring:message code="person.form.workingTime.validityPeriod"/>
-                                        <uv:date date="${time.validFrom}"/>
-                                        <br/>
-                                        <c:if test="${time.monday.duration > 0}">
-                                            <spring:message code="MONDAY"/>
-                                        </c:if>
-                                        <c:if test="${time.tuesday.duration > 0}">
-                                            <spring:message code="TUESDAY"/>
-                                        </c:if>
-                                        <c:if test="${time.wednesday.duration > 0}">
-                                            <spring:message code="WEDNESDAY"/>
-                                        </c:if>
-                                        <c:if test="${time.thursday.duration > 0}">
-                                            <spring:message code="THURSDAY"/>
-                                        </c:if>
-                                        <c:if test="${time.friday.duration > 0}">
-                                            <spring:message code="FRIDAY"/>
-                                        </c:if>
-                                        <c:if test="${time.saturday.duration > 0}">
-                                            <spring:message code="SATURDAY"/>
-                                        </c:if>
-                                        <c:if test="${time.sunday.duration > 0}">
-                                            <spring:message code="SUNDAY"/>
-                                        </c:if>
-                                        <br/>
-                                        <br/>
-                                    </c:forEach>
-                                </div>
-                            </div>
+                                        <li>
+                                            <div>
+                                                <spring:message code="person.form.workingTime.validityPeriod"/>
+                                                <uv:date date="${time.key}"/>
+                                            </div>
 
+                                            <c:forEach items="${time.value}" var="day" varStatus="loop">
+                                                <spring:message code="${day}"/>${loop.last ? '' : ','}
+                                            </c:forEach>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                        </div>
                         </c:if>
 
                         <div class="form-group is-required">
@@ -155,10 +139,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-section">
+            <div class="form-section">
+                <div class="row tw-mb-16">
                     <div class="col-xs-12">
-                        <hr/>
+                        <hr />
                         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
                             code="action.save"/></button>
                         <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
@@ -166,7 +152,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
 
         </form:form>

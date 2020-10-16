@@ -21,41 +21,41 @@ import static java.time.ZoneOffset.UTC;
 @Service
 class SickNoteServiceImpl implements SickNoteService {
 
-    private final SickNoteDAO sickNoteDAO;
+    private final SickNoteRepository sickNoteRepository;
     private final SettingsService settingsService;
 
     @Autowired
-    public SickNoteServiceImpl(SickNoteDAO sickNoteDAO, SettingsService settingsService) {
+    public SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService) {
 
-        this.sickNoteDAO = sickNoteDAO;
+        this.sickNoteRepository = sickNoteRepository;
         this.settingsService = settingsService;
     }
 
     @Override
     public void save(SickNote sickNote) {
 
-        sickNoteDAO.save(sickNote);
+        sickNoteRepository.save(sickNote);
     }
 
 
     @Override
     public Optional<SickNote> getById(Integer id) {
 
-        return sickNoteDAO.findById(id);
+        return sickNoteRepository.findById(id);
     }
 
 
     @Override
     public List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to) {
 
-        return sickNoteDAO.findByPersonAndPeriod(person, from, to);
+        return sickNoteRepository.findByPersonAndPeriod(person, from, to);
     }
 
 
     @Override
     public List<SickNote> getByPeriod(LocalDate from, LocalDate to) {
 
-        return sickNoteDAO.findByPeriod(from, to);
+        return sickNoteRepository.findByPeriod(from, to);
     }
 
 
@@ -69,30 +69,30 @@ class SickNoteServiceImpl implements SickNoteService {
             .plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification())
             .toLocalDate();
 
-        return sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
+        return sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
     }
 
     @Override
     public List<SickNote> getAllActiveByYear(int year) {
 
-        return sickNoteDAO.findAllActiveByYear(year);
+        return sickNoteRepository.findAllActiveByYear(year);
     }
 
     @Override
     public Long getNumberOfPersonsWithMinimumOneSickNote(int year) {
 
-        return sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(year);
+        return sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(year);
     }
 
     @Override
     public List<SickNote> getForStates(List<SickNoteStatus> sickNoteStatuses) {
 
-        return sickNoteDAO.findByStatusIn(sickNoteStatuses);
+        return sickNoteRepository.findByStatusIn(sickNoteStatuses);
     }
 
     @Override
     public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
 
-        return sickNoteDAO.findByStatusInAndPersonIn(sickNoteStatuses, persons);
+        return sickNoteRepository.findByStatusInAndPersonIn(sickNoteStatuses, persons);
     }
 }

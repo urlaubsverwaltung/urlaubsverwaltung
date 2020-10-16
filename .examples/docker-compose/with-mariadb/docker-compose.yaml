@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   mariadb:
-    image: mariadb:10.4
+    image: mariadb:10.5
     volumes:
       - mariadb_data:/var/lib/mysql
     environment:
@@ -20,7 +20,7 @@ services:
     ports:
       - '8080:8080'
     environment:
-      SPRING_PROFILES_ACTIVE: 'testdata'
+      SPRING_PROFILES_ACTIVE: 'demodata'
     env_file:
       - db.env
     volumes:

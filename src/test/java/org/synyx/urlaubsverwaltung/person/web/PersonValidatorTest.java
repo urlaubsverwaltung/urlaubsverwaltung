@@ -1,15 +1,14 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -20,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
@@ -35,8 +34,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class PersonValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class PersonValidatorTest {
 
     private PersonValidator sut;
 
@@ -47,14 +46,14 @@ public class PersonValidatorTest {
 
     private Person person;
 
-    @Before
-    public void setUp() {
-        person = TestDataCreator.createPerson();
+    @BeforeEach
+    void setUp() {
+        person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         sut = new PersonValidator(personService);
     }
 
     @Test
-    public void ensureSupportsOnlyPersonClass() {
+    void ensureSupportsOnlyPersonClass() {
 
         boolean returnValue;
 
@@ -69,19 +68,19 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureNameMustNotBeNull() {
+    void ensureNameMustNotBeNull() {
         sut.validateName(null, "nameField", errors);
         verify(errors).rejectValue("nameField", "error.entry.mandatory");
     }
 
     @Test
-    public void ensureNameMustNotBeEmpty() {
+    void ensureNameMustNotBeEmpty() {
         sut.validateName("", "nameField", errors);
         verify(errors).rejectValue("nameField", "error.entry.mandatory");
     }
 
     @Test
-    public void ensureNameMustNotBeTooLong() {
+    void ensureNameMustNotBeTooLong() {
         sut.validateName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "nameField",
             errors);
         verify(errors).rejectValue("nameField", "error.entry.tooManyChars");
@@ -89,75 +88,75 @@ public class PersonValidatorTest {
 
 
     @Test
-    public void ensureValidNameHasNoValidationError() {
+    void ensureValidNameHasNoValidationError() {
         sut.validateName("Hans-Peter", "nameField", errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureEmailMustNotBeNull() {
+    void ensureEmailMustNotBeNull() {
         sut.validateEmail(null, errors);
         verify(errors).rejectValue("email", "error.entry.mandatory");
     }
 
     @Test
-    public void ensureEmailMustNotBeEmpty() {
+    void ensureEmailMustNotBeEmpty() {
         sut.validateEmail("", errors);
         verify(errors).rejectValue("email", "error.entry.mandatory");
     }
 
     @Test
-    public void ensureEmailWithoutAtIsInvalid() {
+    void ensureEmailWithoutAtIsInvalid() {
         sut.validateEmail("fraulyoner(at)verwaltung.de", errors);
         verify(errors).rejectValue("email", "error.entry.mail");
     }
 
     @Test
-    public void ensureEmailWithMoreThanOneAtIsInvalid() {
+    void ensureEmailWithMoreThanOneAtIsInvalid() {
         sut.validateEmail("fraulyoner@verw@ltung.de", errors);
         verify(errors).rejectValue("email", "error.entry.mail");
     }
 
     @Test
-    public void ensureEmailWithAtOnInvalidPlaceIsInvalid() {
+    void ensureEmailWithAtOnInvalidPlaceIsInvalid() {
         sut.validateEmail("@fraulyonerverwaltung.de", errors);
         verify(errors).rejectValue("email", "error.entry.mail");
     }
 
     @Test
-    public void ensureEmailWithInvalidHostNameIsInvalid() {
+    void ensureEmailWithInvalidHostNameIsInvalid() {
         sut.validateEmail("fraulyoner@verwaltungde", errors);
         verify(errors).rejectValue("email", "error.entry.mail");
     }
 
     @Test
-    public void ensureEmailMustNotBeTooLong() {
+    void ensureEmailMustNotBeTooLong() {
         sut.validateEmail("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@net.de", errors);
         verify(errors).rejectValue("email", "error.entry.tooManyChars");
     }
 
     @Test
-    public void ensureValidEmailHasNoValidationError() {
+    void ensureValidEmailHasNoValidationError() {
         sut.validateEmail("müller@verwaltung.com.de", errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureUsernameMustBeUnique() {
-        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(TestDataCreator.createPerson()));
+    void ensureUsernameMustBeUnique() {
+        when(personService.getPersonByUsername("foo")).thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
         sut.validateUsername("foo", errors);
         verify(errors).rejectValue("username", "person.form.data.login.error");
     }
 
     @Test
-    public void ensureUniqueUsernameHasNoValidationError() {
+    void ensureUniqueUsernameHasNoValidationError() {
         when(personService.getPersonByUsername("foo")).thenReturn(Optional.empty());
         sut.validateUsername("foo", errors);
         verify(errors, never()).rejectValue(anyString(), anyString());
     }
 
     @Test
-    public void ensureAtLeastOneRoleMustBeSelected() {
+    void ensureAtLeastOneRoleMustBeSelected() {
         person.setPermissions(new ArrayList<>());
 
         sut.validatePermissions(person, errors);
@@ -165,7 +164,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureIfSelectedInactiveAsRoleNoOtherRoleCanBeSelected() {
+    void ensureIfSelectedInactiveAsRoleNoOtherRoleCanBeSelected() {
         person.setPermissions(asList(INACTIVE, USER));
 
         sut.validatePermissions(person, errors);
@@ -173,15 +172,15 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureSelectingOnlyInactiveRoleIsValid() {
+    void ensureSelectingOnlyInactiveRoleIsValid() {
         person.setPermissions(singletonList(INACTIVE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureUserRoleMustBeSelectedIfUserShouldNotBeDeactivated() {
+    void ensureUserRoleMustBeSelectedIfUserShouldNotBeDeactivated() {
         person.setPermissions(singletonList(OFFICE));
 
         sut.validatePermissions(person, errors);
@@ -189,7 +188,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureDepartmentHeadRoleAndOfficeRoleCanNotBeSelectedBoth() {
+    void ensureDepartmentHeadRoleAndOfficeRoleCanNotBeSelectedBoth() {
         person.setPermissions(asList(USER, OFFICE, DEPARTMENT_HEAD));
 
         sut.validatePermissions(person, errors);
@@ -197,7 +196,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureSecondStageRoleAndOfficeRoleCanNotBeSelectedBoth() {
+    void ensureSecondStageRoleAndOfficeRoleCanNotBeSelectedBoth() {
         person.setPermissions(asList(USER, OFFICE, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(person, errors);
@@ -205,7 +204,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureDepartmentHeadRoleAndBossRoleCanNotBeSelectedBoth() {
+    void ensureDepartmentHeadRoleAndBossRoleCanNotBeSelectedBoth() {
         person.setPermissions(asList(USER, BOSS, DEPARTMENT_HEAD));
 
         sut.validatePermissions(person, errors);
@@ -213,7 +212,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureSecondStageRoleAndBossRoleCanNotBeSelectedBoth() {
+    void ensureSecondStageRoleAndBossRoleCanNotBeSelectedBoth() {
         person.setPermissions(asList(USER, BOSS, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(person, errors);
@@ -221,39 +220,39 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureValidBossRoleSelectionHasNoValidationError() {
+    void ensureValidBossRoleSelectionHasNoValidationError() {
         person.setPermissions(asList(USER, BOSS));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureValidOfficeRoleSelectionHasNoValidationError() {
+    void ensureValidOfficeRoleSelectionHasNoValidationError() {
         person.setPermissions(asList(USER, OFFICE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureValidBossAndOfficeRoleSelectionHasNoValidationError() {
+    void ensureValidBossAndOfficeRoleSelectionHasNoValidationError() {
         person.setPermissions(asList(USER, BOSS, OFFICE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureSecondStageRoleAndDepartmentHeadRolesCanBeSelectedBoth() {
+    void ensureSecondStageRoleAndDepartmentHeadRolesCanBeSelectedBoth() {
         person.setPermissions(asList(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureDepartmentHeadMailNotificationIsOnlyValidIfDepartmentHeadRoleSelected() {
+    void ensureDepartmentHeadMailNotificationIsOnlyValidIfDepartmentHeadRoleSelected() {
         person.setPermissions(asList(USER, BOSS));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
 
@@ -262,7 +261,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureSecondStageMailNotificationIsOnlyValidIfSecondStageRoleSelected() {
+    void ensureSecondStageMailNotificationIsOnlyValidIfSecondStageRoleSelected() {
         person.setPermissions(asList(USER, DEPARTMENT_HEAD));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
@@ -271,7 +270,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
+    void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
         person.setPermissions(singletonList(USER));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
@@ -280,7 +279,7 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureOfficeMailNotificationIsOnlyValidIfOfficeRoleSelected() {
+    void ensureOfficeMailNotificationIsOnlyValidIfOfficeRoleSelected() {
         person.setPermissions(asList(USER, BOSS));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
 
@@ -289,38 +288,38 @@ public class PersonValidatorTest {
     }
 
     @Test
-    public void ensureValidNotificationSelectionForDepartmentHeadHasNoValidationError() {
+    void ensureValidNotificationSelectionForDepartmentHeadHasNoValidationError() {
         person.setPermissions(asList(USER, DEPARTMENT_HEAD));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureValidNotificationSelectionForSecondStageHasNoValidationError() {
+    void ensureValidNotificationSelectionForSecondStageHasNoValidationError() {
         person.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureValidNotificationSelectionForBossHasNoValidationError() {
+    void ensureValidNotificationSelectionForBossHasNoValidationError() {
         person.setPermissions(asList(USER, BOSS));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
-    public void ensureValidNotificationSelectionForOfficeHasNoValidationError() {
+    void ensureValidNotificationSelectionForOfficeHasNoValidationError() {
         person.setPermissions(asList(USER, OFFICE));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_OFFICE));
 
         sut.validatePermissions(person, errors);
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 }

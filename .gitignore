@@ -27,6 +27,7 @@ velocity.log*
 
 # ignore oauth-file with credentials for testing
 src/test/resources/google_oauth.properties
+src/main/resources/application-keycloak.properties
 
 # maven wrapper
 !.mvn/wrapper/maven-wrapper.jar

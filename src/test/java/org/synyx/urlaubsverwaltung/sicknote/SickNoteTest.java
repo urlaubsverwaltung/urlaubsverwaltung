@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -11,15 +11,16 @@ import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
 /**
  * Unit test for {@link org.synyx.urlaubsverwaltung.sicknote.SickNote}.
  */
-public class SickNoteTest {
+class SickNoteTest {
 
     @Test
-    public void ensureLastModificationDateIsSetOnInitialization() {
+    void ensureLastModificationDateIsSetOnInitialization() {
 
         SickNote sickNote = new SickNote();
 
@@ -30,7 +31,7 @@ public class SickNoteTest {
 
 
     @Test
-    public void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
+    void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
 
         SickNote sickNote = new SickNote();
         sickNote.setAubStartDate(LocalDate.now(UTC));
@@ -41,7 +42,7 @@ public class SickNoteTest {
 
 
     @Test
-    public void ensureAUBIsNotPresentIfOnlyAUBStartDateIsSet() {
+    void ensureAUBIsNotPresentIfOnlyAUBStartDateIsSet() {
 
         SickNote sickNote = new SickNote();
         sickNote.setAubStartDate(LocalDate.now(UTC));
@@ -51,7 +52,7 @@ public class SickNoteTest {
 
 
     @Test
-    public void ensureAUBIsNotPresentIfOnlyAUBEndDateIsSet() {
+    void ensureAUBIsNotPresentIfOnlyAUBEndDateIsSet() {
 
         SickNote sickNote = new SickNote();
         sickNote.setAubEndDate(LocalDate.now(UTC));
@@ -61,14 +62,14 @@ public class SickNoteTest {
 
 
     @Test
-    public void ensureAUBIsNotPresentIfNoAUBPeriodIsSet() {
+    void ensureAUBIsNotPresentIfNoAUBPeriodIsSet() {
 
         Assert.assertFalse("AUB should not be present", new SickNote().isAubPresent());
     }
 
 
     @Test
-    public void ensureIsNotActiveForInactiveStatus() {
+    void ensureIsNotActiveForInactiveStatus() {
 
         Consumer<SickNoteStatus> assertNotActive = (status) -> {
             SickNote sickNote = new SickNote();
@@ -83,7 +84,7 @@ public class SickNoteTest {
 
 
     @Test
-    public void ensureIsActiveForActiveStatus() {
+    void ensureIsActiveForActiveStatus() {
 
         Consumer<SickNoteStatus> assertActive = (status) -> {
             SickNote sickNote = new SickNote();
@@ -96,44 +97,44 @@ public class SickNoteTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutStartDate() {
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutStartDate() {
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(null);
         sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(DayLength.FULL);
 
-        sickNote.getPeriod();
+        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(LocalDate.now(UTC));
         sickNote.setEndDate(null);
         sickNote.setDayLength(DayLength.FULL);
 
-        sickNote.getPeriod();
+        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
 
         SickNote sickNote = new SickNote();
         sickNote.setStartDate(LocalDate.now(UTC));
         sickNote.setEndDate(LocalDate.now(UTC));
         sickNote.setDayLength(null);
 
-        sickNote.getPeriod();
+        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
     }
 
 
     @Test
-    public void ensureGetPeriodReturnsCorrectPeriod() {
+    void ensureGetPeriodReturnsCorrectPeriod() {
 
         LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(2);
@@ -152,14 +153,14 @@ public class SickNoteTest {
     }
 
     @Test
-    public void nullsafeToString() {
+    void nullsafeToString() {
         final SickNote sickNote = new SickNote();
         sickNote.setLastEdited(null);
-        assertThat(sickNote.toString()).isEqualTo("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, status=null}");
+        assertThat(sickNote).hasToString("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, status=null}");
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
         sickNoteType.setMessageKey("messageKey");
@@ -179,8 +180,7 @@ public class SickNoteTest {
         sickNote.setLastEdited(LocalDate.EPOCH);
         sickNote.setPerson(person);
 
-        final String sickNoteToString = sickNote.toString();
-        assertThat(sickNoteToString).isEqualTo("SickNote{id=1, person=Person{id='1'}, " +
+        assertThat(sickNote).hasToString("SickNote{id=1, person=Person{id='1'}, " +
             "sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=-999999999-01-01, " +
             "endDate=+999999999-12-31, dayLength=FULL, aubStartDate=-999999999-01-01, aubEndDate=+999999999-12-31," +
             " lastEdited=1970-01-01, status=ACTIVE}");

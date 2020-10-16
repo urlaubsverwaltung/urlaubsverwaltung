@@ -16,6 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Implementation of {@link CalendarSyncService}.
  */
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class CalendarSyncServiceImpl implements CalendarSyncService {
 

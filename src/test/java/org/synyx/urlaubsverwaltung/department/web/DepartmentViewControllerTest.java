@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -27,18 +27,17 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DepartmentViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class DepartmentViewControllerTest {
 
     private DepartmentViewController sut;
 
@@ -52,18 +51,17 @@ public class DepartmentViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private DepartmentValidator validator;
+    private DepartmentViewValidator validator;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         sut = new DepartmentViewController(departmentService, personService, validator);
     }
 
     @Test
-    public void showAllDepartmentsAddsDepartmentsToModel() throws Exception {
+    void showAllDepartmentsAddsDepartmentsToModel() throws Exception {
 
-        final List<Department> departments = Collections.singletonList(someDepartment());
+        final List<Department> departments = Collections.singletonList(new Department());
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
         perform(get("/web/department"))
@@ -71,15 +69,16 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void showAllDepartmentsUsesCorrectView() throws Exception {
+    void showAllDepartmentsUsesCorrectView() throws Exception {
 
-        perform(get("/web/department")).andExpect(view().name("department/department_list"));
+        perform(get("/web/department"))
+            .andExpect(view().name("department/department_list"));
     }
 
     @Test
-    public void getNewDepartmentFormAddsNewDepartmentAndActivePersonsToModel() throws Exception {
+    void getNewDepartmentFormAddsNewDepartmentAndActivePersonsToModel() throws Exception {
 
-        final List<Person> persons = Collections.singletonList(somePerson());
+        final List<Person> persons = Collections.singletonList(new Person());
         when(personService.getActivePersons()).thenReturn(persons);
 
         perform(get("/web/department/new"))
@@ -88,17 +87,16 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void getNewDepartmentFormUsesCorrectView() throws Exception {
+    void getNewDepartmentFormUsesCorrectView() throws Exception {
 
         perform(get("/web/department/new"))
             .andExpect(view().name("department/department_form"));
     }
 
     @Test
-    public void postNewDepartmentShowsFormIfValidationFails() throws Exception {
+    void postNewDepartmentShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
-
             Errors errors = invocation.getArgument(1);
             errors.rejectValue("name", "errors");
             return null;
@@ -112,7 +110,7 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void postNewDepartmentCreatesDepartmentCorrectlyIfValidationSuccessful() throws Exception {
+    void postNewDepartmentCreatesDepartmentCorrectlyIfValidationSuccessful() throws Exception {
 
         perform(post("/web/department"));
 
@@ -120,16 +118,16 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void postNewDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
+    void postNewDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
         perform(post("/web/department"))
             .andExpect(flash().attribute("createdDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/department/"));
+            .andExpect(redirectedUrl("/web/department/"));
     }
 
     @Test
-    public void editDepartmentForUnknownDepartmentIdThrowsUnknownDepartmentException() {
+    void editDepartmentForUnknownDepartmentIdThrowsUnknownDepartmentException() {
 
         assertThatThrownBy(() ->
             perform(get("/web/department/" + UNKNOWN_DEPARTMENT_ID + "/edit"))
@@ -137,12 +135,12 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void editDepartmentAddsDepartmentAndActivePersonsToModel() throws Exception {
+    void editDepartmentAddsDepartmentAndActivePersonsToModel() throws Exception {
 
-        final Department department = someDepartment();
+        final Department department = new Department();
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
-        List<Person> persons = Collections.singletonList(somePerson());
+        List<Person> persons = Collections.singletonList(new Person());
         when(personService.getActivePersons()).thenReturn(persons);
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
@@ -151,16 +149,16 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void editDepartmentUsesCorrectView() throws Exception {
+    void editDepartmentUsesCorrectView() throws Exception {
 
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(someDepartment()));
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
             .andExpect(view().name("department/department_form"));
     }
 
     @Test
-    public void updateDepartmentForUnknownDepartmentIdThrowsUnknownDepartmentException() {
+    void updateDepartmentForUnknownDepartmentIdThrowsUnknownDepartmentException() {
 
         assertThatThrownBy(() ->
             perform(post("/web/department/" + UNKNOWN_DEPARTMENT_ID))
@@ -168,9 +166,9 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void updateDepartmentShowsFormIfValidationFails() throws Exception {
+    void updateDepartmentShowsFormIfValidationFails() throws Exception {
 
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(someDepartment()));
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         doAnswer(invocation -> {
 
@@ -187,9 +185,9 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void updateDepartmentUpdatesDepartmentCorrectIfValidationSuccessful() throws Exception {
+    void updateDepartmentUpdatesDepartmentCorrectIfValidationSuccessful() throws Exception {
 
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(someDepartment()));
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID));
 
@@ -197,63 +195,45 @@ public class DepartmentViewControllerTest {
     }
 
     @Test
-    public void updateDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
+    void updateDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(someDepartment()));
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
             .andExpect(flash().attribute("updatedDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/department/"));
+            .andExpect(redirectedUrl("/web/department/"));
     }
 
     @Test
-    public void deleteDepartmentCallsServiceToDeleteDepartment() throws Exception {
+    void deleteDepartment() throws Exception {
 
-        perform(delete("/web/department/" + SOME_DEPARTMENT_ID));
+        final Department department = new Department();
+        department.setId(SOME_DEPARTMENT_ID);
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
+
+        perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
+            .andExpect(status().isFound())
+            .andExpect(flash().attribute("deletedDepartment", department))
+            .andExpect(redirectedUrl("/web/department/"));
 
         verify(departmentService).delete(SOME_DEPARTMENT_ID);
     }
 
     @Test
-    public void deleteDepartmentAddsFlashAttributeForExistingDepartment() throws Exception {
+    void deleteDepartmentButDoesNotExist() throws Exception {
 
-        final Department department = someDepartment();
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.empty());
 
-        perform(delete("/web/department/" + SOME_DEPARTMENT_ID))
-            .andExpect(flash().attribute("deletedDepartment", department));
-    }
-
-    @Test
-    public void deleteDepartmentDoesNotAddFlashAttributeForNotExistingDepartment() throws Exception {
-
-        when(departmentService.getDepartmentById(UNKNOWN_DEPARTMENT_ID)).thenReturn(Optional.empty());
-
-        perform(delete("/web/department/" + UNKNOWN_DEPARTMENT_ID))
-            .andExpect(flash().attribute("deletedDepartment", nullValue()));
-    }
-
-    @Test
-    public void deleteDepartmentRedirectsToDepartment() throws Exception {
-
-        perform(delete("/web/department/" + SOME_DEPARTMENT_ID))
+        perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/department/"));
-    }
+            .andExpect(flash().attribute("deletedDepartment", nullValue()))
+            .andExpect(redirectedUrl("/web/department/"));
 
-    private Department someDepartment() {
-
-        return new Department();
-    }
-
-    private Person somePerson() {
-
-        return new Person();
+        verify(departmentService, never()).delete(SOME_DEPARTMENT_ID);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
 }

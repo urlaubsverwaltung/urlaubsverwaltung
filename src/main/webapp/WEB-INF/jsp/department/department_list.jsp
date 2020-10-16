@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
@@ -31,21 +32,24 @@
 <div class="content print--only-landscape">
     <div class="container">
 
-        <div class="row">
-
-            <div class="col-xs-12">
-
-                <legend>
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
+                    <icon:plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                </sec:authorize>
+                <uv:print/>
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
                     <spring:message code="departments.title"/>
-                    <uv:print/>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/department/new" class="fa-action pull-right"
-                           data-title="<spring:message code="action.department.create"/>">
-                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
-                        </a>
-                    </sec:authorize>
-                </legend>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
 
+        <div class="row">
+            <div class="col-xs-12">
                 <div class="feedback">
                     <c:choose>
                         <c:when test="${not empty createdDepartment}">
@@ -74,7 +78,7 @@
                         <spring:message code="departments.none"/>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>
@@ -97,10 +101,9 @@
                                                      data-trigger="hover"
                                                      data-placement="right"
                                                      title="<spring:message code='department.data.info'/>"
-                                                     data-content="${department.description}">
+                                                     data-content="<c:out value="${department.description}"/>">
                                                     <c:out value="${department.name}"/>
-                                                    <i class="fa fa-fw fa-info-circle hidden-print"
-                                                       aria-hidden="true"></i>
+                                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
@@ -119,50 +122,46 @@
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">
                                         <td>
-                                            <form:form method="DELETE"
-                                                       action="${URL_PREFIX}/department/${department.id}">
+                                            <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
                                                 <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"
                                                      role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-hidden="true"><i class="fa fa-remove"
-                                                                                              aria-hidden="true"></i>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                                                    <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
                                                                 </button>
                                                                 <h4 id="myModalLabel" class="modal-title">
-                                                                    <spring:message
-                                                                        code="action.department.delete"/>?</h4>
+                                                                    <spring:message code="action.department.delete"/>?
+                                                                </h4>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <spring:message code="action.department.delete.confirm"
-                                                                                arguments="${department.name}"/>
+                                                                <spring:message code="action.department.delete.confirm" arguments="${department.name}"/>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button class="btn btn-danger is-sticky" type="submit">
-                                                                    <spring:message
-                                                                        code="action.department.delete"/></button>
-                                                                <button class="btn btn-default is-sticky"
-                                                                        data-dismiss="modal" aria-hidden="true">
-                                                                    <spring:message code="action.cancel"/></button>
+                                                                    <spring:message code="action.department.delete"/>
+                                                                </button>
+                                                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true">
+                                                                    <spring:message code="action.cancel"/>
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </form:form>
 
-                                            <a class="fa-action negative pull-right hidden-xs"
-                                               href="#modal-cancel-${department.id}"
-                                               data-toggle="modal"
-                                               data-title="<spring:message code='action.department.delete' />">
-                                                <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
-                                            </a>
+                                            <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/department/${department.id}/edit">
+                                                    <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" />
+                                                    <spring:message code="action.edit" />
+                                                </a>
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50" data-toggle="modal" href="#modal-cancel-${department.id}">
+                                                    <icon:trash className="tw-w-4 tw-h-4 tw-mr-1" />
+                                                    <spring:message code='action.department.delete' />
+                                                </a>
+                                            </div>
 
-                                            <a class="fa-action pull-right"
-                                               href="${URL_PREFIX}/department/${department.id}/edit"
-                                               data-title="<spring:message code="action.edit" />">
-                                                <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
-                                            </a>
                                         </td>
                                     </sec:authorize>
                                 </tr>

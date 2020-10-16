@@ -10,31 +10,14 @@ import java.math.BigDecimal;
  */
 class TimedAbsence {
 
-    enum Type {
-
-        VACATION,
-        SICK_NOTE,
-        WORK,
-        FREETIME,
-        HOLIDAY
-    }
-
-    private final Type type;
     private final BigDecimal ratio;
     private final String partOfDay;
 
-    public TimedAbsence(DayLength dayLength, Type type) {
+    public TimedAbsence(DayLength dayLength) {
 
-        this.type = type;
         this.ratio = dayLength.getDuration();
         this.partOfDay = dayLength.name();
     }
-
-    public Type getType() {
-
-        return type;
-    }
-
 
     public BigDecimal getRatio() {
 

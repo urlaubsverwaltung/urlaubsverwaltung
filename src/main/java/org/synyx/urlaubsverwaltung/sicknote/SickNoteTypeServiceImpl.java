@@ -9,17 +9,17 @@ import java.util.List;
 @Service
 class SickNoteTypeServiceImpl implements SickNoteTypeService {
 
-    private final SickNoteTypeDAO sickNoteTypeDAO;
+    private final SickNoteTypeRepository sickNoteTypeRepository;
 
     @Autowired
-    public SickNoteTypeServiceImpl(SickNoteTypeDAO sickNoteTypeDAO) {
+    public SickNoteTypeServiceImpl(SickNoteTypeRepository sickNoteTypeRepository) {
 
-        this.sickNoteTypeDAO = sickNoteTypeDAO;
+        this.sickNoteTypeRepository = sickNoteTypeRepository;
     }
 
     @Override
     public List<SickNoteType> getSickNoteTypes() {
 
-        return this.sickNoteTypeDAO.findAll();
+        return this.sickNoteTypeRepository.findAll();
     }
 }

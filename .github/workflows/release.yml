@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -31,7 +31,37 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
-          draft: false
-          prerelease: false
-      - name: Create docker image
-        run: ./mvnw --batch-mode docker:build docker:push -Ddocker.username=${{ secrets.DOCKER_USERNAME }} -Ddocker.password=${{ secrets.DOCKER_PASSWORD }}
+          prerelease: true
+      - name: Extract release tag
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/${{ steps.vars.outputs.tag }}.war
+          asset_name: ${{ steps.vars.outputs.tag }}.war
+          asset_content_type: application/zip
+      - name: Publish docker image to Docker Hub
+        run: >
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.push.registry=registry.hub.docker.com
+          -Ddocker.push.username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker.push.password=${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish docker image to GitHub Container Registry
+        run: >
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.push.registry=ghcr.io
+          -Ddocker.push.username=${{ github.actor }}
+          -Ddocker.push.password=${{ secrets.CR_PAT }}
+          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}

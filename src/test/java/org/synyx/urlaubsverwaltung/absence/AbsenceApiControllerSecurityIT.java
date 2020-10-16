@@ -1,16 +1,15 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -18,7 +17,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
@@ -32,13 +30,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createSickNote;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class AbsenceApiControllerSecurityIT {
+class AbsenceApiControllerSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;
@@ -53,23 +50,23 @@ public class AbsenceApiControllerSecurityIT {
     private DepartmentService departmentService;
 
     @Test
-    public void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
+    void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/absences"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+    void getAbsencesAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
-    public void getAbsencesAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getAbsencesAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -83,15 +80,15 @@ public class AbsenceApiControllerSecurityIT {
         final List<Department> departments = List.of(department);
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
-    public void getAbsencesAsDepartmentHeadUserForOtherUserInSameDepartmentIsOk() throws Exception {
+    void getAbsencesAsDepartmentHeadUserForOtherUserInSameDepartmentIsOk() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -115,56 +112,56 @@ public class AbsenceApiControllerSecurityIT {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+    void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+    void getAbsencesAsAdminUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+    void getAbsencesAsInactiveUserForOtherUserIsForbidden() throws Exception {
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getAbsencesAsOfficeUserForOtherUserIsOk() throws Exception {
+    void getAbsencesAsOfficeUserForOtherUserIsOk() throws Exception {
 
         testWithUserWithCorrectPermissions();
     }
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getAbsencesAsBossUserForOtherUserIsOk() throws Exception {
+    void getAbsencesAsBossUserForOtherUserIsOk() throws Exception {
 
         testWithUserWithCorrectPermissions();
     }
 
     @Test
     @WithMockUser(username = "user")
-    public void getAbsencesAsOfficeUserForSameUserIsOk() throws Exception {
+    void getAbsencesAsOfficeUserForSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
@@ -181,23 +178,23 @@ public class AbsenceApiControllerSecurityIT {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "differentUser")
-    public void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
+    void getAbsencesAsOfficeUserForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
     }
 
@@ -216,9 +213,9 @@ public class AbsenceApiControllerSecurityIT {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(singletonList(vacation));
 
-        perform(get("/api/absences")
-            .param("year", String.valueOf(LocalDate.now().getYear()))
-            .param("person", "1"))
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
             .andExpect(status().isOk());
     }
 

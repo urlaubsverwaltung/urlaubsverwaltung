@@ -1,0 +1,21 @@
+.content {
+  /* = height of navbar (50px) plus margin-bottom of row (27px) */
+  margin-top: 77px;
+}
+
+.modal-dialog {
+  margin-top: 77px;
+  z-index: 2000;
+}
+
+.is-centered {
+  text-align: center;
+}
+
+.is-inline-block {
+  display: inline-block;
+}
+
+.is-sticky {
+  margin: 0;
+}

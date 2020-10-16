@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -70,7 +71,7 @@ class DepartmentCalendarService {
         return Optional.ofNullable(departmentCalendarRepository.findByDepartmentAndPerson(department, person));
     }
 
-    String getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
+    File getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -91,7 +92,7 @@ class DepartmentCalendarService {
         final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);
         final List<Absence> absences = absenceService.getOpenAbsences(department.getMembers());
 
-        return iCalService.generateCalendar(title, absences);
+        return iCalService.getCalendar(title, absences);
     }
 
     @Transactional

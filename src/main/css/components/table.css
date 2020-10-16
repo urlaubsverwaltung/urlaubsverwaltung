@@ -1,0 +1,147 @@
+/**************************************************************************
+
+  TABLES
+
+**************************************************************************/
+
+/**************************************************************************
+  ACTIVE/INACTIVE ROWS
+**************************************************************************/
+
+tr.active {
+  /* OK */
+}
+
+tr.inactive td > * {
+  opacity: 0.4;
+}
+
+/**************************************************************************
+  LIST TABLE
+**************************************************************************/
+
+.list-table {
+  width: 100%;
+  margin-bottom: 27px;
+}
+
+.list-table.list-table-bt-0 tr:first-child td {
+  border-top: none;
+}
+
+.list-table td {
+  vertical-align: middle !important;
+  padding: 12px;
+  border-top: 1px solid #dddddd;
+}
+
+.list-table td.number {
+  padding-left: 24px;
+}
+
+.list-table tr:last-child td {
+  border-bottom: 1px solid #dddddd;
+}
+
+.list-table th {
+  padding: 8px;
+}
+
+.list-table--second-row {
+  margin: 10px 0 0 0;
+}
+
+/**************************************************************************
+  STRIPED TABLE
+**************************************************************************/
+
+.striped-table tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+/**************************************************************************
+  BORDERED TABLE
+**************************************************************************/
+
+.bordered-table tbody {
+  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+}
+
+.bordered-table td {
+  background-color: #ffffff;
+}
+
+/**************************************************************************
+  SELECTABLE TABLE
+**************************************************************************/
+
+.selectable-table tr:hover td {
+  cursor: pointer;
+  background-color: #fafafa;
+}
+
+.selectable-table tr:hover .action-link {
+  @apply text-opacity-75 !important;
+}
+.selectable-table tr:hover .action-link:hover {
+  @apply text-opacity-100 !important;
+}
+
+/**************************************************************************
+  TABLE SORTER
+**************************************************************************/
+
+.tablesorter-header {
+  color: #2a6496;
+  font-weight: normal;
+}
+
+.tablesorter-header:hover {
+  cursor: pointer;
+  color: #1896db;
+}
+
+.tablesorter-header-inner {
+  display: flex;
+  align-items: center;
+}
+
+th.sortable-field .tablesorter-header-inner:after {
+  content: "";
+  margin-left: 0.5rem;
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+}
+
+th.sortable-field .tablesorter-header-inner:after {
+  background-image: url("../icons/selector.svg");
+}
+
+th.tablesorter-headerDesc .tablesorter-header-inner:after {
+  background-image: url("../icons/chevron-down.svg");
+}
+
+th.tablesorter-headerAsc .tablesorter-header-inner:after {
+  background-image: url("../icons/chevron-up.svg");
+}
+
+/**************************************************************************
+  TABLE OVERFLOW HANDLING
+**************************************************************************/
+.overflow {
+  white-space: nowrap;
+  max-width: 15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+/**************************************************************************
+  CONTROL HEIGHT OF TABLE CELL CONTENT
+**************************************************************************/
+
+td.halves h4 {
+  margin-top: 5px;
+}

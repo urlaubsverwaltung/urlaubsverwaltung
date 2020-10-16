@@ -1,6 +1,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <%@attribute name="id" type="java.lang.String" required="true" %>
 <%@attribute name="actionUrl" type="java.lang.String" required="true" %>
@@ -15,7 +17,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    <i class="fa fa-remove" aria-hidden="true"></i>
+                    <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
                 </button>
                 <h4 id="filterModalLabel" class="modal-title"><spring:message code="filter.title"/></h4>
             </div>

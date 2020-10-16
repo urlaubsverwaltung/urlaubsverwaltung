@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
@@ -12,20 +12,35 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(Parameterized.class)
-public class CalendarServiceTest {
+class CalendarServiceTest {
 
-    private final Class input;
-    private final Class expected;
+    static Stream<Arguments> data() {
+        return Stream.of(
+            arguments(GoogleCalendarSyncProvider.class, GoogleCalendarSyncProvider.class),
+            arguments(ExchangeCalendarProvider.class, ExchangeCalendarProvider.class),
+            arguments(NoopCalendarSyncProvider.class, NoopCalendarSyncProvider.class),
+            arguments(String.class, NoopCalendarSyncProvider.class)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    void testResult(Class input, Class expected) {
+        SettingsService settingsService = getPreparedSettingsServiceForProvider(input);
+        List<CalendarProvider> calendarProviders = getTypicalProviderList();
+        CalendarService cut = new CalendarService(calendarProviders, settingsService);
+
+        assertEquals(expected.getName(), cut.getCalendarProvider().getClass().getName());
+    }
 
     private SettingsService getPreparedSettingsServiceForProvider(Class provider) {
         SettingsService settingsService = mock(SettingsService.class);
@@ -47,33 +62,5 @@ public class CalendarServiceTest {
         calendarProviders.add(new GoogleCalendarSyncProvider(null, null));
 
         return calendarProviders;
-    }
-
-    public CalendarServiceTest(Class input, Class expected, String msg) {
-
-        this.input = input;
-        this.expected = expected;
-    }
-
-
-    @Parameterized.Parameters(name = "{2}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-            {GoogleCalendarSyncProvider.class, GoogleCalendarSyncProvider.class, "select GoogleCalendar"},
-            {ExchangeCalendarProvider.class, ExchangeCalendarProvider.class, "select Exchange"},
-            {NoopCalendarSyncProvider.class, NoopCalendarSyncProvider.class, "select NOOPCalendar"},
-            {String.class, NoopCalendarSyncProvider.class, "select fallback"}
-        });
-    }
-
-    @Test
-    public void testResult() {
-        SettingsService settingsService = getPreparedSettingsServiceForProvider(this.input);
-
-        List<CalendarProvider> calendarProviders = getTypicalProviderList();
-
-        CalendarService cut = new CalendarService(calendarProviders, settingsService);
-
-        assertEquals(this.expected.getName(), cut.getCalendarProvider().getClass().getName());
     }
 }

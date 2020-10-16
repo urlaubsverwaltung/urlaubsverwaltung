@@ -1,0 +1,31 @@
+/**************************************************************************
+
+  LEGEND
+
+**************************************************************************/
+
+legend {
+  border-color: #d5d5d5;
+  margin-bottom: 21px;
+}
+
+.legend-dropdown {
+  display: inline-block;
+}
+
+.legend-dropdown > a {
+  margin-bottom: 0;
+}
+
+.legend-dropdown .caret {
+  opacity: 0.7;
+}
+
+legend,
+.legend-dropdown > a {
+  color: #444444;
+}
+
+legend {
+  line-height: 42px;
+}

@@ -13,15 +13,26 @@
   "globals": {
     "Urlaubsverwaltung": true
   },
+  "rules": {
+    "unicorn/no-fn-reference-in-iterator": "warn",
+    "unicorn/prefer-reflect-apply": "off"
+  },
   "overrides": [
     {
-      "files": "src/main/webapp/lib/date-fns/**",
+      "files": ["**/*.spec.js", "**/*.test.js"],
+      "rules": {
+        "unicorn/consistent-function-scoping": "off",
+        "@urlaubsverwaltung/no-date-fns": "off"
+      }
+    },
+    {
+      "files": "src/main/javascript/lib/date-fns/**",
       "rules": {
         "@urlaubsverwaltung/no-date-fns": "off"
       }
     },
     {
-      "files": "webpack.config.js",
+      "files": ["*.config.js"],
       "env": {
         "node": true
       }

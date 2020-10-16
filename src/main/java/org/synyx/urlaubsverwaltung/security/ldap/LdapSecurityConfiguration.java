@@ -24,23 +24,12 @@ public class LdapSecurityConfiguration {
     static class LdapAuthConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final LdapSecurityConfigurationProperties ldapProperties;
+        private final LdapSecurityProperties ldapProperties;
 
         @Autowired
-        public LdapAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityConfigurationProperties ldapProperties) {
+        public LdapAuthConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityProperties ldapProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.ldapProperties = ldapProperties;
-        }
-
-        @Bean
-        public LdapContextSource ldapContextSource() {
-            final LdapContextSource source = new LdapContextSource();
-            source.setUserDn(ldapProperties.getManagerDn());
-            source.setPassword(ldapProperties.getManagerPassword());
-            source.setBase(ldapProperties.getBase());
-            source.setUrl(ldapProperties.getUrl());
-
-            return source;
         }
 
         @Bean
@@ -72,7 +61,6 @@ public class LdapSecurityConfiguration {
             return ldapAuthenticationProvider;
         }
 
-
         @Bean
         public LdapUserMapper ldapUserMapper() {
             return new LdapUserMapper(directoryServiceSecurityProperties);
@@ -83,6 +71,16 @@ public class LdapSecurityConfiguration {
             return new LdapPersonContextMapper(personService, ldapUserMapper);
         }
 
+        @Bean
+        public LdapContextSource ldapContextSource() {
+            final LdapContextSource ldapContextSource = new LdapContextSource();
+            ldapContextSource.setUserDn(ldapProperties.getManagerDn());
+            ldapContextSource.setPassword(ldapProperties.getManagerPassword());
+            ldapContextSource.setBase(ldapProperties.getBase());
+            ldapContextSource.setUrl(ldapProperties.getUrl());
+
+            return ldapContextSource;
+        }
     }
 
     @Configuration
@@ -90,17 +88,12 @@ public class LdapSecurityConfiguration {
     public static class LdapAuthSyncConfiguration {
 
         private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
-        private final LdapSecurityConfigurationProperties ldapProperties;
+        private final LdapSecurityProperties ldapProperties;
 
         @Autowired
-        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityConfigurationProperties ldapProperties) {
+        public LdapAuthSyncConfiguration(DirectoryServiceSecurityProperties directoryServiceSecurityProperties, LdapSecurityProperties ldapProperties) {
             this.directoryServiceSecurityProperties = directoryServiceSecurityProperties;
             this.ldapProperties = ldapProperties;
-        }
-
-        @Bean
-        public LdapContextSourceSync ldapContextSourceSync() {
-            return new LdapContextSourceSync(ldapProperties);
         }
 
         @Bean
@@ -114,13 +107,29 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapUserServiceImpl ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
+        public LdapUserService ldapUserService(LdapTemplate ldapTemplate, LdapUserMapper ldapUserMapper) {
             return new LdapUserServiceImpl(ldapTemplate, ldapUserMapper, directoryServiceSecurityProperties);
         }
 
         @Bean
         public LdapTemplate ldapTemplate() {
-            return new UVLdapTemplate(ldapContextSourceSync());
+            final LdapTemplate ldapTemplate = new LdapTemplate(ldapContextSourceSync());
+            ldapTemplate.setIgnorePartialResultException(true);
+            ldapTemplate.setIgnoreNameNotFoundException(true);
+
+            return ldapTemplate;
+        }
+
+        @Bean
+        public LdapContextSource ldapContextSourceSync() {
+
+            final LdapContextSource ldapContextSource = new LdapContextSource();
+            ldapContextSource.setUrl(ldapProperties.getUrl());
+            ldapContextSource.setBase(ldapProperties.getSync().getUserSearchBase() + "," + ldapProperties.getBase());
+            ldapContextSource.setUserDn(ldapProperties.getSync().getUserDn());
+            ldapContextSource.setPassword(ldapProperties.getSync().getPassword());
+
+            return ldapContextSource;
         }
     }
 }

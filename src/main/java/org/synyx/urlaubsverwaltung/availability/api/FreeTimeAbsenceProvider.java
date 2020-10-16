@@ -12,16 +12,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.FREETIME;
-
-
 @Service
 class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private final WorkingTimeService workingTimeService;
 
     @Autowired
-    FreeTimeAbsenceProvider(HolidayAbsenceProvider nextPriorityProvider, WorkingTimeService workingTimeService) {
+    FreeTimeAbsenceProvider(PublicHolidayAbsenceProvider nextPriorityProvider, WorkingTimeService workingTimeService) {
 
         super(nextPriorityProvider);
 
@@ -59,7 +56,7 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
         boolean expectedWorkTimeIsLessThanFullDay = expectedWorkTimeDuration.compareTo(BigDecimal.ONE) < 0;
 
         if (expectedWorkTimeIsLessThanFullDay) {
-            return Optional.of(new TimedAbsence(expectedWorkTime.getInverse(), FREETIME));
+            return Optional.of(new TimedAbsence(expectedWorkTime.getInverse()));
         }
 
         return Optional.empty();

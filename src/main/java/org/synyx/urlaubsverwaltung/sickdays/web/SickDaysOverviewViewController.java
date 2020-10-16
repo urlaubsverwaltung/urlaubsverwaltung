@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,10 +43,10 @@ public class SickDaysOverviewViewController {
 
     private final SickNoteService sickNoteService;
     private final PersonService personService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
 
     @Autowired
-    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysService calendarService) {
+    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysCountService calendarService) {
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.calendarService = calendarService;
@@ -103,14 +103,14 @@ public class SickDaysOverviewViewController {
 
         for (SickNote sickNote : sickNotesOfActivePersons) {
             Person person = sickNote.getPerson();
-            BigDecimal workDays = calendarService.getWorkDays(sickNote.getDayLength(), sickNote.getStartDate(),
+            BigDecimal workDays = calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(),
                 sickNote.getEndDate(), person);
 
             if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
                 childSickDays.get(person).addDays(TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDaysWithAUB = calendarService.getWorkDays(sickNote.getDayLength(),
+                    BigDecimal workDaysWithAUB = calendarService.getWorkDaysCount(sickNote.getDayLength(),
                         sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
                     childSickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);
@@ -119,7 +119,7 @@ public class SickDaysOverviewViewController {
                 sickDays.get(person).addDays(TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDaysWithAUB = calendarService.getWorkDays(sickNote.getDayLength(),
+                    BigDecimal workDaysWithAUB = calendarService.getWorkDaysCount(sickNote.getDayLength(),
                         sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
                     sickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);

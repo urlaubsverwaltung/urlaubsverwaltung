@@ -1,15 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,67 +22,67 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteServiceImplTest {
 
     private SickNoteServiceImpl sut;
 
     @Mock
-    private SickNoteDAO sickNoteDAO;
+    private SickNoteRepository sickNoteRepository;
     @Mock
     private SettingsService settingsService;
 
-    @Before
-    public void setUp() {
-        sut = new SickNoteServiceImpl(sickNoteDAO, settingsService);
+    @BeforeEach
+    void setUp() {
+        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService);
     }
 
     @Test
-    public void save() {
+    void save() {
         final SickNote sickNote = new SickNote();
         sut.save(sickNote);
-        verify(sickNoteDAO).save(sickNote);
+        verify(sickNoteRepository).save(sickNote);
     }
 
     @Test
-    public void getById() {
+    void getById() {
         final Optional<SickNote> sickNote = Optional.of(new SickNote());
-        when(sickNoteDAO.findById(1)).thenReturn(sickNote);
+        when(sickNoteRepository.findById(1)).thenReturn(sickNote);
 
         final Optional<SickNote> actualSickNote = sut.getById(1);
         assertThat(actualSickNote).isEqualTo(sickNote);
     }
 
     @Test
-    public void findByPeriod() {
+    void findByPeriod() {
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2016, 1, 1);
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotes = sut.getByPeriod(from, to);
         assertThat(sickNotes).contains(sickNote);
     }
 
     @Test
-    public void getAllActiveByYear() {
+    void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findAllActiveByYear(2017)).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findAllActiveByYear(2017)).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotes = sut.getAllActiveByYear(2017);
         assertThat(sickNotes).contains(sickNote);
     }
 
     @Test
-    public void getNumberOfPersonsWithMinimumOneSickNote() {
-        when(sickNoteDAO.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
+    void getNumberOfPersonsWithMinimumOneSickNote() {
+        when(sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
 
         final Long numberOfPersonsWithMinimumOneSickNote = sut.getNumberOfPersonsWithMinimumOneSickNote(2017);
         assertThat(numberOfPersonsWithMinimumOneSickNote).isSameAs(5L);
     }
 
     @Test
-    public void getSickNotesReachingEndOfSickPay() {
+    void getSickNotesReachingEndOfSickPay() {
 
         final AbsenceSettings absenceSettings = new AbsenceSettings();
         absenceSettings.setMaximumSickPayDays(5);
@@ -93,36 +92,38 @@ public class SickNoteServiceImplTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findSickNotesByMinimumLengthAndEndDate(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));
 
         final List<SickNote> sickNotesReachingEndOfSickPay = sut.getSickNotesReachingEndOfSickPay();
         assertThat(sickNotesReachingEndOfSickPay).contains(sickNote);
     }
 
     @Test
-    public void getForStates() {
+    void getForStates() {
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
+        when(sickNoteRepository.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStates(openSickNoteStatuses);
-        assertThat(sickNotes).hasSize(1);
-        assertThat(sickNotes).contains(sickNote);
+        assertThat(sickNotes)
+            .hasSize(1)
+            .contains(sickNote);
     }
 
 
     @Test
-    public void getForStatesAndPerson() {
+    void getForStatesAndPerson() {
         final Person person = new Person();
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteDAO.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
+        when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
-        assertThat(sickNotes).hasSize(1);
-        assertThat(sickNotes).contains(sickNote);
+        assertThat(sickNotes)
+            .hasSize(1)
+            .contains(sickNote);
     }
 }

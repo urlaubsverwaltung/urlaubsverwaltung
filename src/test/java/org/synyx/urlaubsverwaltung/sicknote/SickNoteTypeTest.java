@@ -1,34 +1,35 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 
-public class SickNoteTypeTest {
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfCheckingCategoryWithNull() {
-
-        new SickNoteType().isOfCategory(null);
-    }
-
+class SickNoteTypeTest {
 
     @Test
-    public void ensureReturnsTrueIfTypeIsOfGivenCategory() {
-
-        SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
-
-        Assert.assertTrue("Categories should match", sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE));
+    void ensureThrowsIfCheckingCategoryWithNull() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new SickNoteType().isOfCategory(null));
     }
 
+    @Test
+    void ensureReturnsTrueIfTypeIsOfGivenCategory() {
+
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
+
+        assertThat(sickNoteType.isOfCategory(SICK_NOTE)).isTrue();
+    }
 
     @Test
-    public void ensureReturnsFalseIfTypeIsNotOfGivenCategory() {
+    void ensureReturnsFalseIfTypeIsNotOfGivenCategory() {
 
-        SickNoteType sickNoteType = new SickNoteType();
-        sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
+        final SickNoteType sickNoteType = new SickNoteType();
+        sickNoteType.setCategory(SICK_NOTE);
 
-        Assert.assertFalse("Categories should not match", sickNoteType.isOfCategory(SickNoteCategory.SICK_NOTE_CHILD));
+        assertThat(sickNoteType.isOfCategory(SICK_NOTE_CHILD)).isFalse();
     }
 }

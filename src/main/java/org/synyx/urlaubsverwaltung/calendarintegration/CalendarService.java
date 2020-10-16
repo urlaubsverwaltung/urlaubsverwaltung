@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(since = "4.0.0", forRemoval = true)
 @Service
 public class CalendarService {
 

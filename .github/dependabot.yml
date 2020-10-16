@@ -1,0 +1,29 @@
+version: 2
+updates:
+- package-ecosystem: "npm"
+  directory: "/"
+  schedule:
+    interval: "monthly"
+  labels:
+  - dependencies
+  - javascript
+  ignore:
+  - dependency-name: bootstrap
+    versions:
+    - ">= 4.a"
+  - dependency-name: timepicker
+    versions:
+    - "> 1.11.14"
+
+- package-ecosystem: "maven"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  labels:
+  - dependencies
+  - java
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"

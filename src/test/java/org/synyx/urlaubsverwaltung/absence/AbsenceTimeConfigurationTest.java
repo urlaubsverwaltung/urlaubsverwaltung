@@ -1,64 +1,47 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
  * Unit test for {@link AbsenceTimeConfiguration}.
  */
-public class AbsenceTimeConfigurationTest {
+class AbsenceTimeConfigurationTest {
 
     private CalendarSettings calendarSettings;
 
-    @Before
-    public void setUp() {
-
+    @BeforeEach
+    void setUp() {
         calendarSettings = new CalendarSettings();
         calendarSettings.setWorkDayBeginHour(8);
         calendarSettings.setWorkDayEndHour(16);
     }
 
-
     @Test
-    public void ensureCorrectMorningStart() {
-
+    void ensureCorrectMorningStart() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-
-        Assert.assertNotNull("Morning start should not be null", timeConfiguration.getMorningStart());
-        Assert.assertEquals("Wrong morning start", (Integer) 8, timeConfiguration.getMorningStart());
+        assertThat(timeConfiguration.getMorningStart()).isEqualTo(8);
     }
 
-
     @Test
-    public void ensureCorrectMorningEnd() {
-
+    void ensureCorrectMorningEnd() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-
-        Assert.assertNotNull("Morning end should not be null", timeConfiguration.getMorningEnd());
-        Assert.assertEquals("Wrong morning end", (Integer) 12, timeConfiguration.getMorningEnd());
+        assertThat(timeConfiguration.getMorningEnd()).isEqualTo(12);
     }
 
-
     @Test
-    public void ensureCorrectNoonStart() {
-
+    void ensureCorrectNoonStart() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-
-        Assert.assertNotNull("Noon start should not be null", timeConfiguration.getNoonStart());
-        Assert.assertEquals("Wrong noon start", (Integer) 12, timeConfiguration.getNoonStart());
+        assertThat(timeConfiguration.getNoonStart()).isEqualTo(12);
     }
 
-
     @Test
-    public void ensureCorrectNoonEnd() {
-
+    void ensureCorrectNoonEnd() {
         AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
-
-        Assert.assertNotNull("Noon end should not be null", timeConfiguration.getNoonEnd());
-        Assert.assertEquals("Wrong noon end", (Integer) 16, timeConfiguration.getNoonEnd());
+        assertThat(timeConfiguration.getNoonEnd()).isEqualTo(16);
     }
 }

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -11,20 +11,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-public class LoginControllerTest {
+class LoginControllerTest {
 
     private LoginController sut;
 
     private static final String APPLICATION_VERSION = "1.1.1";
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new LoginController(APPLICATION_VERSION);
     }
 
     @Test
-    public void ensureLoginHasCorrectVersionAndView() throws Exception {
+    void ensureLoginHasCorrectVersionAndView() throws Exception {
 
         perform(get("/login"))
             .andExpect(model().attribute("version", equalTo(APPLICATION_VERSION)))

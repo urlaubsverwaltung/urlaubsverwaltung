@@ -1,14 +1,16 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ldap.core.DirContextOperations;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -16,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class LdapUserMapperTest {
+class LdapUserMapperTest {
 
     private static final String IDENTIFIER_ATTRIBUTE = "uid";
     private static final String FIRST_NAME_ATTRIBUTE = "givenName";
@@ -28,8 +30,8 @@ public class LdapUserMapperTest {
 
     private LdapUserMapper ldapUserMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
@@ -41,11 +43,9 @@ public class LdapUserMapperTest {
         ldapUserMapper = new LdapUserMapper(directoryServiceSecurityProperties);
     }
 
-
     // Map user from attributes ----------------------------------------------------------------------------------------
-
     @Test
-    public void ensureThrowsIfTryingToCreateLdapUserFromAttributesWithInvalidIdentifierAttribute()
+    void ensureThrowsIfTryingToCreateLdapUserFromAttributesWithInvalidIdentifierAttribute()
         throws NamingException {
 
         Attributes attributes = mock(Attributes.class);
@@ -64,62 +64,41 @@ public class LdapUserMapperTest {
         verify(attributes, never()).get(MAIL_ADDRESS_ATTRIBUTE);
     }
 
-
     @Test
-    public void ensureCreatesLdapUserFromAttributesWithOnlyUsernameGiven() throws NamingException {
+    void ensureCreatesLdapUserFromAttributesWithOnlyUsernameGiven() throws NamingException {
 
         Attributes attributes = mock(Attributes.class);
-        when(attributes.get(IDENTIFIER_ATTRIBUTE))
-            .thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "username"));
+        when(attributes.get(IDENTIFIER_ATTRIBUTE)).thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "username"));
         when(attributes.get(FIRST_NAME_ATTRIBUTE)).thenReturn(null);
         when(attributes.get(LAST_NAME_ATTRIBUTE)).thenReturn(null);
         when(attributes.get(MAIL_ADDRESS_ATTRIBUTE)).thenReturn(null);
 
-        LdapUser ldapUser = ldapUserMapper.mapFromAttributes(attributes);
-
-        verify(attributes).get(IDENTIFIER_ATTRIBUTE);
-        verify(attributes).get(FIRST_NAME_ATTRIBUTE);
-        verify(attributes).get(LAST_NAME_ATTRIBUTE);
-        verify(attributes).get(MAIL_ADDRESS_ATTRIBUTE);
-
-        Assert.assertEquals("Wrong username", "username", ldapUser.getUsername());
-        Assert.assertFalse("First name should be empty", ldapUser.getFirstName().isPresent());
-        Assert.assertFalse("Last name should be empty", ldapUser.getLastName().isPresent());
-        Assert.assertFalse("Email should be empty", ldapUser.getEmail().isPresent());
+        final LdapUser ldapUser = ldapUserMapper.mapFromAttributes(attributes);
+        assertThat(ldapUser.getUsername()).isEqualTo("username");
+        assertThat(ldapUser.getFirstName()).isEmpty();
+        assertThat(ldapUser.getLastName()).isEmpty();
+        assertThat(ldapUser.getEmail()).isEmpty();
     }
-
 
     @Test
-    public void ensureCreatesLdapUserFromAttributes() throws NamingException {
+    void ensureCreatesLdapUserFromAttributes() throws NamingException {
 
-        Attributes attributes = mock(Attributes.class);
-        when(attributes.get(IDENTIFIER_ATTRIBUTE))
-            .thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "geralt"));
-        when(attributes.get(FIRST_NAME_ATTRIBUTE))
-            .thenReturn(new BasicAttribute(FIRST_NAME_ATTRIBUTE, "Geralt"));
-        when(attributes.get(LAST_NAME_ATTRIBUTE))
-            .thenReturn(new BasicAttribute(LAST_NAME_ATTRIBUTE, "von Riva"));
-        when(attributes.get(MAIL_ADDRESS_ATTRIBUTE))
-            .thenReturn(new BasicAttribute(MAIL_ADDRESS_ATTRIBUTE, "geralt@riva.de"));
+        final Attributes attributes = mock(Attributes.class);
+        when(attributes.get(IDENTIFIER_ATTRIBUTE)).thenReturn(new BasicAttribute(IDENTIFIER_ATTRIBUTE, "geralt"));
+        when(attributes.get(FIRST_NAME_ATTRIBUTE)).thenReturn(new BasicAttribute(FIRST_NAME_ATTRIBUTE, "Geralt"));
+        when(attributes.get(LAST_NAME_ATTRIBUTE)).thenReturn(new BasicAttribute(LAST_NAME_ATTRIBUTE, "von Riva"));
+        when(attributes.get(MAIL_ADDRESS_ATTRIBUTE)).thenReturn(new BasicAttribute(MAIL_ADDRESS_ATTRIBUTE, "geralt@riva.de"));
 
-        LdapUser ldapUser = ldapUserMapper.mapFromAttributes(attributes);
-
-        verify(attributes).get(IDENTIFIER_ATTRIBUTE);
-        verify(attributes).get(FIRST_NAME_ATTRIBUTE);
-        verify(attributes).get(LAST_NAME_ATTRIBUTE);
-        verify(attributes).get(MAIL_ADDRESS_ATTRIBUTE);
-
-        Assert.assertEquals("Wrong username", "geralt", ldapUser.getUsername());
-        Assert.assertEquals("Wrong first name", "Geralt", ldapUser.getFirstName().get());
-        Assert.assertEquals("Wrong last name", "von Riva", ldapUser.getLastName().get());
-        Assert.assertEquals("Wrong email", "geralt@riva.de", ldapUser.getEmail().get());
+        final LdapUser ldapUser = ldapUserMapper.mapFromAttributes(attributes);
+        assertThat(ldapUser.getUsername()).isEqualTo("geralt");
+        assertThat(ldapUser.getFirstName()).isPresent().hasValue("Geralt");
+        assertThat(ldapUser.getLastName()).isPresent().hasValue("von Riva");
+        assertThat(ldapUser.getEmail()).isPresent().hasValue("geralt@riva.de");
     }
-
 
     // Map user from context -------------------------------------------------------------------------------------------
-
     @Test
-    public void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws UnsupportedMemberAffiliationException {
+    void ensureThrowsIfTryingToCreateLdapUserFromContextWithInvalidIdentifierAttribute() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn(null);
@@ -137,9 +116,8 @@ public class LdapUserMapperTest {
         verify(ctx, never()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
     }
 
-
     @Test
-    public void ensureCreatesLdapUserFromContext() throws UnsupportedMemberAffiliationException {
+    void ensureCreatesLdapUserFromContext() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
@@ -148,38 +126,29 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
         when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[]{MEMBER_OF_FILTER});
 
-        LdapUser ldapUser = ldapUserMapper.mapFromContext(ctx);
-
-        verify(ctx, atLeastOnce()).getStringAttribute(IDENTIFIER_ATTRIBUTE);
-        verify(ctx, atLeastOnce()).getStringAttribute(LAST_NAME_ATTRIBUTE);
-        verify(ctx, atLeastOnce()).getStringAttribute(FIRST_NAME_ATTRIBUTE);
-        verify(ctx, atLeastOnce()).getStringAttribute(MAIL_ADDRESS_ATTRIBUTE);
-
-        Assert.assertEquals("Wrong username", "rick", ldapUser.getUsername());
-        Assert.assertEquals("Wrong first name", "Rick", ldapUser.getFirstName().get());
-        Assert.assertEquals("Wrong last name", "Grimes", ldapUser.getLastName().get());
-        Assert.assertEquals("Wrong email", "rick@grimes.com", ldapUser.getEmail().get());
+        final LdapUser ldapUser = ldapUserMapper.mapFromContext(ctx);
+        assertThat(ldapUser.getUsername()).isEqualTo("rick");
+        assertThat(ldapUser.getFirstName()).isPresent().hasValue("Rick");
+        assertThat(ldapUser.getLastName()).isPresent().hasValue("Grimes");
+        assertThat(ldapUser.getEmail()).isPresent().hasValue("rick@grimes.com");
     }
 
-
-    @Test(expected = UnsupportedMemberAffiliationException.class)
-    public void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws UnsupportedMemberAffiliationException {
+    @Test
+    void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws UnsupportedMemberAffiliationException {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
-        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
-            .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
-
-        ldapUserMapper.mapFromContext(ctx);
+        assertThatThrownBy(() -> ldapUserMapper.mapFromContext(ctx))
+            .isInstanceOf(UnsupportedMemberAffiliationException.class);
     }
 
-
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsNull() {
+    void ensureNoMemberOfCheckIfMemberOfFilterIsNull() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
@@ -195,9 +164,7 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
-
-        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
-            .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
         try {
             ldapUserMapper.mapFromContext(ctx);
@@ -208,9 +175,8 @@ public class LdapUserMapperTest {
         verify(ctx, never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
     }
 
-
     @Test
-    public void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
+    void ensureNoMemberOfCheckIfMemberOfFilterIsEmpty() {
 
         final DirectoryServiceSecurityProperties directoryServiceSecurityProperties = new DirectoryServiceSecurityProperties();
         directoryServiceSecurityProperties.setIdentifier(IDENTIFIER_ATTRIBUTE);
@@ -226,9 +192,7 @@ public class LdapUserMapperTest {
         when(ctx.getStringAttribute(FIRST_NAME_ATTRIBUTE)).thenReturn("Rick");
         when(ctx.getStringAttribute(LAST_NAME_ATTRIBUTE)).thenReturn("Grimes");
         when(ctx.getStringAttribute(MAIL_ADDRESS_ATTRIBUTE)).thenReturn("rick@grimes.com");
-
-        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE))
-            .thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
+        when(ctx.getStringAttributes(MEMBER_OF_ATTRIBUTE)).thenReturn(new String[]{"CN=foo, DC=mydomain, DC=com"});
 
         try {
             ldapUserMapper.mapFromContext(ctx);

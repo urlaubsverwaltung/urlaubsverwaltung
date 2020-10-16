@@ -2,6 +2,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -36,13 +38,12 @@
     <meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png' />"/>
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.font-awesome.css' />"/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<asset:url value='login.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />"/>
 </head>
 
-<body>
+<body class="md:tw-bg-gray-100">
 
 <nav class="navbar navbar-default" role="navigation">
     <div class="container">
@@ -55,12 +56,9 @@
     </div><!-- /.container-fluid -->
 </nav>
 
-<div class="row">
-
-    <div class="col-xs-12">
-
+<div class="col-xs-12">
+    <div class="row">
         <div class="content">
-
             <div class="login">
 
                 <spring:url var="LOGIN" value="/login"/>
@@ -83,23 +81,28 @@
 
                     <div class="form-group">
                         <button class="btn btn-primary btn-block" type="submit">
-                            <i class="fa fa-sign-in" aria-hidden="true"></i> <spring:message code="login.form.submit"/>
+                            <span class="tw-flex tw-items-center tw-justify-center">
+                                <icon:login className="tw-w-5 tw-h-5" />
+                                &nbsp;<spring:message code="login.form.submit"/>
+                            </span>
                         </button>
                     </div>
 
                 </form>
 
             </div>
-
         </div>
-
     </div>
 </div>
 
 <footer>
-    <div class="row">
-        <div class="col-xs-12">
-            <p><spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a></p>
+    <div class="col-xs-12">
+        <div class="row">
+            <p>
+                <small>
+                    <spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a>
+                </small>
+            </p>
         </div>
     </div>
 </footer>

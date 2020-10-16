@@ -1,18 +1,17 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationDAO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -23,31 +22,31 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 /**
  * Unit test for {@link ApplicationServiceImpl}.
  */
-public class ApplicationServiceImplTest {
+class ApplicationServiceImplTest {
 
     private ApplicationService applicationService;
-    private ApplicationDAO applicationDAO;
+    private ApplicationRepository applicationRepository;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
-        applicationDAO = mock(ApplicationDAO.class);
-        applicationService = new ApplicationServiceImpl(applicationDAO);
+        applicationRepository = mock(ApplicationRepository.class);
+        applicationService = new ApplicationServiceImpl(applicationRepository);
     }
 
 
     // Get application by ID -------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureGetApplicationByIdCallsCorrectDaoMethod() {
+    void ensureGetApplicationByIdCallsCorrectDaoMethod() {
 
         applicationService.getApplicationById(1234);
-        verify(applicationDAO).findById(1234);
+        verify(applicationRepository).findById(1234);
     }
 
 
     @Test
-    public void ensureGetApplicationByIdReturnsAbsentOptionalIfNoOneExists() {
+    void ensureGetApplicationByIdReturnsAbsentOptionalIfNoOneExists() {
 
         Optional<Application> optional = applicationService.getApplicationById(1234);
 
@@ -59,60 +58,60 @@ public class ApplicationServiceImplTest {
     // Save application ------------------------------------------------------------------------------------------------
 
     @Test
-    public void ensureSaveCallsCorrectDaoMethod() {
+    void ensureSaveCallsCorrectDaoMethod() {
 
         Application application = new Application();
 
         applicationService.save(application);
-        verify(applicationDAO).save(application);
+        verify(applicationRepository).save(application);
     }
 
 
     // Get total overtime reduction ------------------------------------------------------------------------------------
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThrowsIfTryingToGetTotalOvertimeReductionForNullPerson() {
+    @Test
+    void ensureThrowsIfTryingToGetTotalOvertimeReductionForNullPerson() {
 
-        applicationService.getTotalOvertimeReductionOfPerson(null);
+        assertThatIllegalArgumentException().isThrownBy(() -> applicationService.getTotalOvertimeReductionOfPerson(null));
     }
 
 
     @Test
-    public void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
+    void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
+        when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
 
         BigDecimal totalHours = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
+        verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
     }
 
     @Test
-    public void getForStates() {
+    void getForStates() {
 
         final Application application = new Application();
         final List<Application> applications = List.of(application);
 
-        when(applicationDAO.findByStatusIn(List.of(WAITING))).thenReturn(applications);
+        when(applicationRepository.findByStatusIn(List.of(WAITING))).thenReturn(applications);
 
         final List<Application> result = applicationService.getForStates(List.of(WAITING));
         assertEquals(applications, result);
     }
 
     @Test
-    public void getForStatesAndPerson() {
+    void getForStatesAndPerson() {
 
         final Application application = new Application();
         final List<Application> applications = List.of(application);
 
-        final Person person = TestDataCreator.createPerson();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(applicationDAO.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
+        when(applicationRepository.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
 
         final List<Application> result = applicationService.getForStatesAndPerson(List.of(WAITING), List.of(person));
         assertEquals(applications, result);
@@ -120,15 +119,15 @@ public class ApplicationServiceImplTest {
 
 
     @Test
-    public void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
+    void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
 
-        Person person = TestDataCreator.createPerson();
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(applicationDAO.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
+        when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         BigDecimal totalHours = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-        verify(applicationDAO).calculateTotalOvertimeOfPerson(person);
+        verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
 
         Assert.assertNotNull("Should not be null", totalHours);
         assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);

@@ -4,14 +4,12 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -236,9 +234,5 @@ public class SickNote extends AbstractPersistable<Integer> {
             ", lastEdited=" + lastEdited +
             ", status=" + status +
             '}';
-    }
-
-    private Object formatNullable(LocalDate date) {
-        return date != null ? date.format(DateTimeFormatter.ofPattern(DateFormat.PATTERN)) : null;
     }
 }

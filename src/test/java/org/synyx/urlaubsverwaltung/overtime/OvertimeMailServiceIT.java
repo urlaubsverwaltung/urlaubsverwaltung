@@ -1,64 +1,49 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.jvnet.mock_javamail.Mailbox;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
-import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
+@SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-public class OvertimeMailServiceIT {
+class OvertimeMailServiceIT extends TestContainersBase {
+
+    @RegisterExtension
+    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private OvertimeMailService sut;
 
     @Autowired
-    private SettingsService settingsService;
-    @Autowired
     private PersonService personService;
-    @Autowired
-    private SettingsDAO settingsDAO;
-
-    @After
-    public void tearDown() {
-        Mailbox.clearAll();
-    }
 
     @Test
-    public void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
+    void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
-        activateMailSettings();
-
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen12@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         final Overtime overtimeRecord = createOvertimeRecord(person);
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
 
-        final Person office = createPerson("office", "Marlene", "Muster", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
         personService.save(office);
@@ -66,26 +51,17 @@ public class OvertimeMailServiceIT {
         sut.sendOvertimeNotification(overtimeRecord, overtimeComment);
 
         // was email sent to office?
-        List<Message> inboxOffice = Mailbox.get(office.getEmail());
-        assertThat(inboxOffice.size()).isOne();
+        assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail()).length).isOne();
 
         // check attributes
-        Message msg = inboxOffice.get(0);
+        final Message msg = greenMail.getReceivedMessagesForDomain(office.getEmail())[0];
         assertThat(msg.getSubject()).contains("Es wurden Überstunden eingetragen");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String text = (String) msg.getContent();
-        assertThat(text).contains("Hallo Office");
+        final String text = (String) msg.getContent();
+        assertThat(text).contains("Hallo Marlene Muster");
         assertThat(text).contains("es wurden Überstunden erfasst");
         assertThat(text).contains("/web/overtime/1234");
-    }
-
-    private void activateMailSettings() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        mailSettings.setActive(true);
-        settings.setMailSettings(mailSettings);
-        settingsDAO.save(settings);
     }
 }

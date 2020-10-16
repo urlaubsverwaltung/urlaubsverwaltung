@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
@@ -50,31 +51,30 @@
 
     <div class="container">
 
-        <div class="row">
-
-            <div class="col-xs-12">
-
-                <legend>
-
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.vacation"/>">
+                    <icon:plus-circle className="tw-w-5 tw-h-5" />
+                </a>
+                </sec:authorize>
+                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
+                    <icon:calendar className="tw-w-5 tw-h-5" />
+                </a>
+                <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.statistics"/>">
+                    <icon:presentation-chart-bar className="tw-w-5 tw-h-5" />
+                </a>
+                <uv:print />
+            </jsp:attribute>
+            <jsp:body>
+                <h1>
                     <spring:message code="applications.waiting"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
 
-                    <a href="${URL_PREFIX}/application/statistics" class="fa-action pull-right"
-                       data-title="<spring:message code="action.applications.statistics"/>">
-                        <i class="fa fa-fw fa-bar-chart" aria-hidden="true"></i>
-                    </a>
-                    <a href="${URL_PREFIX}/application/vacationoverview" class="fa-action pull-right"
-                       data-title="<spring:message code="action.applications.vacation_overview"/>">
-                        <i class="fa fa-fw fa-calendar" aria-hidden="true"></i>
-                    </a>
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                        <a href="${URL_PREFIX}/application/new" class="fa-action pull-right"
-                           data-title="<spring:message code="action.apply.vacation"/>">
-                            <i class="fa fa-fw fa-plus-circle" aria-hidden="true"></i>
-                        </a>
-                    </sec:authorize>
-
-                </legend>
-
+        <div class="row">
+            <div class="col-xs-12">
                 <div class="feedback">
                     <c:choose>
                         <c:when test="${allowSuccess}">
@@ -94,48 +94,56 @@
                         </c:when>
                     </c:choose>
                 </div>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-xs-12">
                 <c:choose>
-
                     <c:when test="${empty applications}">
-
-                        <spring:message code="applications.none"/>
-
+                        <p>
+                            <spring:message code="applications.none"/>
+                        </p>
                     </c:when>
-
                     <c:otherwise>
-
-                        <table class="list-table selectable-table">
+                        <table class="list-table selectable-table list-table-bt-0 tw-text-sm">
                             <tbody>
                             <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="hidden-print is-centered">
-                                        <div class="gravatar img-circle"
-                                             data-gravatar="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"></div>
+                                        <img
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            class="gravatar tw-rounded-full"
+                                            width="60px"
+                                            height="60px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
                                     </td>
                                     <td class="hidden-xs">
-                                        <h5><c:out value="${application.person.niceName}"/></h5>
-                                        <p><spring:message code="application.applier.applied"/></p>
+                                        <span class="tw-block tw-text-lg tw-mb-1">
+                                            <c:out value="${application.person.niceName}"/>
+                                        </span>
+                                        <span>
+                                            <spring:message code="application.applier.applied"/>
+                                        </span>
                                     </td>
                                     <td class="halves">
-                                        <a class="vacation ${application.vacationType.category} hidden-print"
-                                           href="${URL_PREFIX}/application/${application.id}">
-                                            <h4>
-                                                <c:choose>
-                                                    <c:when test="${application.hours != null}">
-                                                        <uv:number number="${application.hours}"/>
-                                                        <spring:message code="duration.hours"/>
-                                                        <spring:message code="${application.vacationType.messageKey}"/>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <uv:number number="${application.workDays}"/>
-                                                        <spring:message code="duration.days"/>
-                                                        <spring:message code="${application.vacationType.messageKey}"/>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </h4>
+                                        <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}" href="${URL_PREFIX}/application/${application.id}">
+                                            <c:choose>
+                                                <c:when test="${application.hours != null}">
+                                                    <uv:number number="${application.hours}"/>
+                                                    <spring:message code="duration.hours"/>
+                                                    <spring:message code="${application.vacationType.messageKey}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <uv:number number="${application.workDays}"/>
+                                                    <spring:message code="duration.days"/>
+                                                    <spring:message code="${application.vacationType.messageKey}"/>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </a>
-                                        <p>
+                                        <div>
                                             <c:choose>
                                                 <c:when test="${application.startDate == application.endDate}">
                                                     <c:set var="APPLICATION_DATE">
@@ -184,25 +192,23 @@
                                                                     argumentSeparator=";"/>
                                                 </c:otherwise>
                                             </c:choose>
-                                        </p>
+                                        </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right">
-                                        <c:if
-                                            test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="fa-action positive"
-                                               href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
-                                               data-title="<spring:message code='action.allow'/>">
-                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                        <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                                        <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
+                                                <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true" />
+                                                <spring:message code='action.allow'/>
                                             </a>
                                         </c:if>
-                                        <c:if
-                                            test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
-                                            <a class="fa-action negative"
-                                               href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
-                                               data-title="<spring:message code='action.reject'/>">
-                                                <i class="fa fa-ban" aria-hidden="true"></i>
+                                        <c:if test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
+                                                <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true" />
+                                                <spring:message code='action.reject'/>
                                             </a>
                                         </c:if>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -210,10 +216,9 @@
                         </table>
                     </c:otherwise>
                 </c:choose>
-
             </div>
-
         </div>
+
     </div>
 </div>
 

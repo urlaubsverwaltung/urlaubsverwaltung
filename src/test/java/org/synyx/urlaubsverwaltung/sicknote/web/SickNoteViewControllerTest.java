@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,13 +41,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteViewControllerTest {
 
     private SickNoteViewController sut;
 
@@ -67,23 +68,23 @@ public class SickNoteViewControllerTest {
     @Mock
     private PersonService personServiceMock;
     @Mock
-    private WorkDaysService calendarServiceMock;
+    private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteValidator validatorMock;
     @Mock
     private SickNoteConvertFormValidator sickNoteConvertFormValidatorMock;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new SickNoteViewController(sickNoteServiceMock,
             sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
-            vacationTypeServiceMock, personServiceMock, calendarServiceMock, validatorMock,
+            vacationTypeServiceMock, personServiceMock, workDaysCountService, validatorMock,
             sickNoteConvertFormValidatorMock);
     }
 
     @Test
-    public void ensureGetNewSickNoteProvidesCorrectModelAttributesAndView() throws Exception {
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndView() throws Exception {
 
         when(personServiceMock.getActivePersons()).thenReturn(Collections.singletonList(somePerson()));
         when(sickNoteTypeServiceMock.getSickNoteTypes()).thenReturn(Collections.singletonList(someSickNoteType()));
@@ -97,7 +98,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensureGetEditHasCorrectModelAttributes() throws Exception {
+    void ensureGetEditHasCorrectModelAttributes() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
@@ -109,39 +110,33 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensureGetEditSickNoteForUnknownSickNoteIdThrowsUnknownSickNoteException() {
+    void ensureGetEditSickNoteForUnknownSickNoteIdThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
-
             perform(get("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/edit"))
-
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @Test
-    public void ensureGetEditSickNoteForInactiveThrowsSickNoteAlreadyInactiveException() {
+    void ensureGetEditSickNoteForInactiveThrowsSickNoteAlreadyInactiveException() {
 
         when(sickNoteServiceMock.getById(UNKNOWN_SICK_NOTE_ID)).thenReturn(Optional.of(someInactiveSickNote()));
 
         assertThatThrownBy(() ->
-
             perform(get("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/edit"))
-
         ).hasCauseInstanceOf(SickNoteAlreadyInactiveException.class);
     }
 
     @Test
-    public void ensureGetSickNoteDetailsForUnknownSickNoteIdThrowsUnknownSickNoteException() {
+    void ensureGetSickNoteDetailsForUnknownSickNoteIdThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
-
             perform(get("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID))
-
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @Test
-    public void ensureGetSickNoteDetailsAccessableForPersonWithRoleOfficeOrSickNoteOwner() throws Exception {
+    void ensureGetSickNoteDetailsAccessableForPersonWithRoleOfficeOrSickNoteOwner() throws Exception {
 
         when(personServiceMock.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
@@ -165,7 +160,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensureGetSickNoteDetailsNotAccessableForOtherPersonIfNotRoleOffice() {
+    void ensureGetSickNoteDetailsNotAccessableForOtherPersonIfNotRoleOffice() {
 
         final int somePersonId = 1;
         when(personServiceMock.getSignedInUser()).thenReturn(personWithId(somePersonId));
@@ -175,13 +170,12 @@ public class SickNoteViewControllerTest {
             .thenReturn(Optional.of(sickNoteOfPerson(personWithId(anotherPersonId))));
 
         assertThatThrownBy(() ->
-
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
-    public void ensureGetSickNoteDetailsProvidesCorrectModelAttributesAndView() throws Exception {
+    void ensureGetSickNoteDetailsProvidesCorrectModelAttributesAndView() throws Exception {
 
         when(personServiceMock.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
@@ -195,7 +189,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostNewSickNoteShowsFormIfValidationFails() throws Exception {
+    void ensurePostNewSickNoteShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
 
@@ -209,7 +203,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostNewSickNoteCreatesSickNoteIfValidationSuccessful() throws Exception {
+    void ensurePostNewSickNoteCreatesSickNoteIfValidationSuccessful() throws Exception {
 
         final Person signedInPerson = somePerson();
         when(personServiceMock.getSignedInUser()).thenReturn(signedInPerson);
@@ -220,7 +214,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostNewSickNoteRedirectsToCreatedSickNote() throws Exception {
+    void ensurePostNewSickNoteRedirectsToCreatedSickNote() throws Exception {
 
         when(personServiceMock.getSignedInUser()).thenReturn(somePerson());
 
@@ -234,11 +228,11 @@ public class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
-    public void editPostSickNoteShowsFormIfValidationFails() throws Exception {
+    void editPostSickNoteShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
 
@@ -252,7 +246,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void editPostSickNoteUpdatesSickNoteIfValidationSuccessful() throws Exception {
+    void editPostSickNoteUpdatesSickNoteIfValidationSuccessful() throws Exception {
 
         final Person signedInPerson = somePerson();
         when(personServiceMock.getSignedInUser()).thenReturn(signedInPerson);
@@ -263,25 +257,23 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void editPostSickNoteRedirectsToCreatedSickNote() throws Exception {
+    void editPostSickNoteRedirectsToCreatedSickNote() throws Exception {
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
-    public void ensurePostAddCommentThrowsUnknownSickNoteException() {
+    void ensurePostAddCommentThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
-
             perform(post("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/comment"))
-
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @Test
-    public void ensurePostAddCommentAddsFlashAttributeAndRedirectsToSickNoteIfValidationFails() throws Exception {
+    void ensurePostAddCommentAddsFlashAttributeAndRedirectsToSickNoteIfValidationFails() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
@@ -296,11 +288,11 @@ public class SickNoteViewControllerTest {
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(flash().attribute(ERRORS_ATTRIBUTE, instanceOf(Errors.class)))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
-    public void ensurePostAddCommentCreatesSickNoteCommentIfValidationSuccessful() throws Exception {
+    void ensurePostAddCommentCreatesSickNoteCommentIfValidationSuccessful() throws Exception {
 
         final Person signedInPerson = somePerson();
         when(personServiceMock.getSignedInUser()).thenReturn(signedInPerson);
@@ -313,39 +305,35 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostAddCommentRedirectsToSickNoteOfComment() throws Exception {
+    void ensurePostAddCommentRedirectsToSickNoteOfComment() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
-    public void ensureGetConvertSickNoteToVacationForUnknownSickNoteIdThrowsUnknownSickNoteException() {
+    void ensureGetConvertSickNoteToVacationForUnknownSickNoteIdThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
-
             perform(get("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/convert"))
-
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @Test
-    public void ensureGetConvertSickNoteToVacationThrowsSickNoteAlreadyInactiveException() {
+    void ensureGetConvertSickNoteToVacationThrowsSickNoteAlreadyInactiveException() {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someInactiveSickNote()));
 
         assertThatThrownBy(() ->
-
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-
         ).hasCauseInstanceOf(SickNoteAlreadyInactiveException.class);
     }
 
     @Test
-    public void ensureGetConvertSickNoteToVacationAddModel() throws Exception {
+    void ensureGetConvertSickNoteToVacationAddModel() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
         when(vacationTypeServiceMock.getVacationTypes()).thenReturn(Collections.emptyList());
@@ -357,7 +345,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensureGetConvertSickNoteToVacationUsesCorrectView() throws Exception {
+    void ensureGetConvertSickNoteToVacationUsesCorrectView() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
@@ -366,17 +354,15 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostConvertSickNoteToVacationForUnknownSickNoteIdThrowsUnknownSickNoteException() {
+    void ensurePostConvertSickNoteToVacationForUnknownSickNoteIdThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
-
             perform(post("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/convert"))
-
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @Test
-    public void ensurePostConvertSickNoteToVacationShowsFormIfValidationFails() throws Exception {
+    void ensurePostConvertSickNoteToVacationShowsFormIfValidationFails() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
@@ -392,7 +378,7 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostConvertSickNoteToVacationConvertsSickNoteIfValidationSuccessful() throws Exception {
+    void ensurePostConvertSickNoteToVacationConvertsSickNoteIfValidationSuccessful() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
@@ -405,27 +391,25 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensurePostConvertSickNoteToVacationRedirectsToSickNoteOfConvert() throws Exception {
+    void ensurePostConvertSickNoteToVacationRedirectsToSickNoteOfConvert() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
-    public void ensureCancelSickNoteThrowsUnknownSickNoteException() {
+    void ensureCancelSickNoteThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
-
             perform(post("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/cancel"))
-
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
     }
 
     @Test
-    public void ensureCancelSickNoteCancelsSickNoteCorrectly() throws Exception {
+    void ensureCancelSickNoteCancelsSickNoteCorrectly() throws Exception {
 
         final SickNote sickNote = someActiveSickNote();
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
@@ -439,24 +423,22 @@ public class SickNoteViewControllerTest {
     }
 
     @Test
-    public void ensureCancelSickNoteRedirectsToCanceledSickNote() throws Exception {
+    void ensureCancelSickNoteRedirectsToCanceledSickNote() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", "/web/sicknote/" + SOME_SICK_NOTE_ID));
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     private SickNote sickNoteOfPerson(Person somePerson) {
-
         SickNote sickNote = new SickNote();
         sickNote.setPerson(somePerson);
         return sickNote;
     }
 
     private Person personWithRole(Role role) {
-
         Person person = new Person();
         person.setId(1);
         person.setPermissions(singletonList(role));
@@ -464,26 +446,22 @@ public class SickNoteViewControllerTest {
     }
 
     private SickNote someInactiveSickNote() {
-
         SickNote sickNote = new SickNote();
         sickNote.setStatus(SickNoteStatus.CANCELLED);
         return sickNote;
     }
 
     private SickNote someActiveSickNote() {
-
         SickNote sickNote = new SickNote();
         sickNote.setStatus(SickNoteStatus.ACTIVE);
         return sickNote;
     }
 
     private Person somePerson() {
-
         return new Person();
     }
 
     private Person personWithId(int personId) {
-
         Person person = new Person();
         person.setId(personId);
 
@@ -491,12 +469,10 @@ public class SickNoteViewControllerTest {
     }
 
     private SickNoteType someSickNoteType() {
-
         return new SickNoteType();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
 }

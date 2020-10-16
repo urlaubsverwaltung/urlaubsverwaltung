@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -16,24 +18,27 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CalendarMailServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CalendarMailServiceTest {
 
     private CalendarMailService sut;
 
     @Mock
     private MailService mailService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new CalendarMailService(mailService);
     }
 
     @Test
-    public void sendRejectedNotification() {
+    void sendRejectedNotification() {
 
         final String calendarName = "calendar name";
         final String exception = "Some exception";
@@ -54,12 +59,18 @@ public class CalendarMailServiceTest {
 
         sut.sendCalendarSyncErrorNotification(calendarName, absence, exception);
 
-        verify(mailService).sendTechnicalMail("subject.error.calendar.sync", "error_calendar_sync", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mails = argument.getValue();
+        assertThat(mails.isSendToTechnicalMail()).isTrue();
+        assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.sync");
+        assertThat(mails.getTemplateName()).isEqualTo("error_calendar_sync");
+        assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 
 
     @Test
-    public void sendCalendarUpdateErrorNotification() {
+    void sendCalendarUpdateErrorNotification() {
 
         final String calendarName = "calendar name";
         final String exception = "Some exception";
@@ -82,11 +93,17 @@ public class CalendarMailServiceTest {
 
         sut.sendCalendarUpdateErrorNotification(calendarName, absence, eventId, exception);
 
-        verify(mailService).sendTechnicalMail("subject.error.calendar.update", "error_calendar_update", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mails = argument.getValue();
+        assertThat(mails.isSendToTechnicalMail()).isTrue();
+        assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.update");
+        assertThat(mails.getTemplateName()).isEqualTo("error_calendar_update");
+        assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 
     @Test
-    public void sendCalendarDeleteErrorNotification() {
+    void sendCalendarDeleteErrorNotification() {
 
         final String calendarName = "calendar name";
         final String exception = "Some exception";
@@ -99,6 +116,12 @@ public class CalendarMailServiceTest {
 
         sut.sendCalendarDeleteErrorNotification(calendarName, eventId, exception);
 
-        verify(mailService).sendTechnicalMail("subject.error.calendar.delete", "error_calendar_delete", model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mails = argument.getValue();
+        assertThat(mails.isSendToTechnicalMail()).isTrue();
+        assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.delete");
+        assertThat(mails.getTemplateName()).isEqualTo("error_calendar_delete");
+        assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 }

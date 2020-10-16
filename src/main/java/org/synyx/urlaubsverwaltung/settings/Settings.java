@@ -13,7 +13,8 @@ public class Settings extends AbstractPersistable<Integer> {
 
     private AbsenceSettings absenceSettings;
     private WorkingTimeSettings workingTimeSettings;
-    private MailSettings mailSettings;
+
+    @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
 
     public AbsenceSettings getAbsenceSettings() {
@@ -48,22 +49,6 @@ public class Settings extends AbstractPersistable<Integer> {
     }
 
 
-    public MailSettings getMailSettings() {
-
-        if (mailSettings == null) {
-            mailSettings = new MailSettings();
-        }
-
-        return mailSettings;
-    }
-
-
-    public void setMailSettings(MailSettings mailSettings) {
-
-        this.mailSettings = mailSettings;
-    }
-
-
     public CalendarSettings getCalendarSettings() {
 
         if (calendarSettings == null) {
@@ -74,6 +59,7 @@ public class Settings extends AbstractPersistable<Integer> {
     }
 
 
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public void setCalendarSettings(CalendarSettings calendarSettings) {
 
         this.calendarSettings = calendarSettings;

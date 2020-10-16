@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
 import liquibase.util.csv.CSVWriter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -27,12 +27,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ApplicationForLeaveStatisticsViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class ApplicationForLeaveStatisticsViewControllerTest {
 
     private ApplicationForLeaveStatisticsViewController sut;
 
@@ -45,14 +46,14 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
         sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService, applicationForLeaveStatisticsCsvExportService, vacationTypeService);
     }
 
     @Test
-    public void applicationForLeaveStatisticsRedirectsToStatistics() throws Exception {
+    void applicationForLeaveStatisticsRedirectsToStatistics() throws Exception {
 
         final FilterPeriod filterPeriod = new FilterPeriod();
         final String expectedRedirect = "/web/application/statistics?from=" + filterPeriod.getStartDateAsString() +
@@ -60,11 +61,11 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
 
         perform(post("/web/application/statistics"))
             .andExpect(status().isFound())
-            .andExpect(header().string("Location", expectedRedirect));
+            .andExpect(redirectedUrl(expectedRedirect));
     }
 
     @Test
-    public void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
+    void applicationForLeaveStatisticsAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
         final String startDate = "01.01.2000";
         final String endDate = "01.01.2019";
@@ -77,7 +78,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    public void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
+    void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
 
         final String startDate = "01.01.2019";
         final String endDate = "01.08.2019";
@@ -102,7 +103,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    public void downloadCSVAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
+    void downloadCSVAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
 
         perform(get("/web/application/statistics/download")
             .param("from", "01.01.2000")
@@ -112,7 +113,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    public void downloadCSVSetsDownloadHeaders() throws Exception {
+    void downloadCSVSetsDownloadHeaders() throws Exception {
 
         final String expectedFilename = "filename.csv";
         when(applicationForLeaveStatisticsCsvExportService.getFileName(any(FilterPeriod.class))).thenReturn(expectedFilename);
@@ -124,7 +125,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    public void downloadCSVWritesCSV() throws Exception {
+    void downloadCSVWritesCSV() throws Exception {
 
         final String startDate = "01.01.2019";
         final String endDate = "01.08.2019";
@@ -142,7 +143,7 @@ public class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    public void downloadCSVSetsModelAndView() throws Exception {
+    void downloadCSVSetsModelAndView() throws Exception {
 
         final String startDate = "01.01.2019";
         final String endDate = "01.08.2019";

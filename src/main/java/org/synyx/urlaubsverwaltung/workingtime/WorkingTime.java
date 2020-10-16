@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,35 @@ public class WorkingTime extends AbstractPersistable<Integer> {
                 setDayLengthForWeekDay(dayOfWeek, dayLength);
             }
         }
+    }
+
+
+    public List<WeekDay> getWorkingDays() {
+        List<WeekDay> workingDays = new ArrayList<>();
+
+        if (monday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.MONDAY);
+        }
+        if (tuesday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.TUESDAY);
+        }
+        if (wednesday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.WEDNESDAY);
+        }
+        if (thursday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.THURSDAY);
+        }
+        if (friday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.FRIDAY);
+        }
+        if (saturday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.SATURDAY);
+        }
+        if (sunday.equals(DayLength.FULL)) {
+            workingDays.add(WeekDay.SUNDAY);
+        }
+
+        return workingDays;
     }
 
 

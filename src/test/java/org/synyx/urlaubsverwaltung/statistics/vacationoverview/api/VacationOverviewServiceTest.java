@@ -2,15 +2,15 @@ package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
 
-public class VacationOverviewServiceTest {
+class VacationOverviewServiceTest {
 
     private VacationOverviewService sut;
 
@@ -30,8 +30,8 @@ public class VacationOverviewServiceTest {
     private WorkingTimeService workingTimeService;
     private PublicHolidaysService publicHolidayService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         this.departmentService = mock(DepartmentService.class);
         this.workingTimeService = mock(WorkingTimeService.class);
         this.publicHolidayService = mock(PublicHolidaysService.class);
@@ -39,7 +39,7 @@ public class VacationOverviewServiceTest {
     }
 
     @Test
-    public void assertVacationOverviewsForExistingDepartment() {
+    void assertVacationOverviewsForExistingDepartment() {
         Department department = new Department();
         String departmentName = "Admins";
         department.setName(departmentName);
@@ -53,11 +53,11 @@ public class VacationOverviewServiceTest {
         when(workingTimeService.getFederalStateForPerson(ArgumentMatchers.eq(person), ArgumentMatchers.any(LocalDate.class))).thenReturn(federalState);
         when(publicHolidayService.getWorkingDurationOfDate(ArgumentMatchers.any(LocalDate.class), ArgumentMatchers.any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
-        List<VacationOverview> vacationOverviews =
+        List<VacationOverviewDto> vacationOverviewDtos =
             sut.getVacationOverviews(departmentName, testDate.getYear(), testDate.getMonthValue());
 
-        assertThat(vacationOverviews, Matchers.hasSize(1));
-        assertThat(vacationOverviews.get(0).getPerson().getEmail(), Is.is(email));
-        assertThat(vacationOverviews.get(0).getDays().get(0).getTypeOfDay(), Is.is(WORKDAY));
+        assertThat(vacationOverviewDtos, Matchers.hasSize(1));
+        assertThat(vacationOverviewDtos.get(0).getPerson().getEmail(), Is.is(email));
+        assertThat(vacationOverviewDtos.get(0).getDays().get(0).getTypeOfDay(), Is.is(WORKDAY));
     }
 }

@@ -9,17 +9,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.domain.VacationDaysLeft;
-import org.synyx.urlaubsverwaltung.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
+import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonConfigurationProperties;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
@@ -36,10 +34,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
-
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Controller for management of {@link Person} entities.
@@ -58,19 +61,17 @@ public class PersonViewController {
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
-    private final PersonConfigurationProperties personConfigurationProperties;
 
     @Autowired
     public PersonViewController(PersonService personService, AccountService accountService,
                                 VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                WorkingTimeService workingTimeService, SettingsService settingsService, PersonConfigurationProperties personConfigurationProperties) {
+                                WorkingTimeService workingTimeService, SettingsService settingsService) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
-        this.personConfigurationProperties = personConfigurationProperties;
     }
 
     @GetMapping("/person/{personId}")
@@ -78,24 +79,21 @@ public class PersonViewController {
                                         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                                         Model model) throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Person signedInUser = personService.getSignedInUser();
+        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
-                "User '%s' has not the correct permissions to access data of user '%s'",
-                signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to access data of user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
-
+        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        model.addAttribute("departments",
-            departmentService.getAssignedDepartmentsOfMember(person));
+        model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
+        model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
 
-        Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
+        final Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
         Optional<FederalState> optionalFederalState = Optional.empty();
 
         if (workingTime.isPresent()) {
@@ -106,21 +104,18 @@ public class PersonViewController {
         if (optionalFederalState.isPresent()) {
             model.addAttribute("federalState", optionalFederalState.get());
         } else {
-            model.addAttribute("federalState",
-                settingsService.getSettings().getWorkingTimeSettings().getFederalState());
+            model.addAttribute("federalState", settingsService.getSettings().getWorkingTimeSettings().getFederalState());
         }
 
-        Optional<Account> account = accountService.getHolidaysAccount(year, person);
-        account.ifPresent(account1 -> model.addAttribute("account", account1));
+        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
+        maybeAccount.ifPresent(account -> model.addAttribute("account", account));
 
         return "person/person_detail";
     }
 
-
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping("/person")
     public String showPerson() {
-
         return "redirect:/web/person?active=true";
     }
 
@@ -132,9 +127,9 @@ public class PersonViewController {
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              Model model) throws UnknownDepartmentException {
 
-        Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
+        final Integer year = requestedYear.orElseGet(() -> ZonedDateTime.now(UTC).getYear());
 
-        Person signedInUser = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser)
             : getRelevantInactivePersons(signedInUser);
 
@@ -151,32 +146,29 @@ public class PersonViewController {
 
         preparePersonView(signedInUser, persons, year, model);
 
-        model.addAttribute("userCanBeManipulated", personConfigurationProperties.isCanBeManipulated());
-
         return "person/person_view";
     }
 
-
     private List<Person> getRelevantActivePersons(Person signedInUser) {
 
-        if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getActivePersons();
         }
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(signedInUser);
-
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // NOTE: Only persons without inactive role are relevant
-            return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+            return departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+                .filter(person -> !person.hasRole(INACTIVE))
+                .collect(toList());
         }
 
         // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(signedInUser);
-
+        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // NOTE: Only persons without inactive role are relevant
-            return members.stream().filter(person -> !person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+            return departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+                .filter(person -> !person.hasRole(INACTIVE))
+                .collect(toList());
         }
 
         return Collections.emptyList();
@@ -185,24 +177,24 @@ public class PersonViewController {
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
 
-        if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getInactivePersons();
         }
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
-            List<Person> members = departmentService.getManagedMembersOfDepartmentHead(signedInUser);
-
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // NOTE: Only persons with inactive role are relevant
-            return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+            return departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+                .filter(person -> person.hasRole(INACTIVE))
+                .collect(toList());
         }
 
         // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
-            List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(signedInUser);
-
+        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // NOTE: Only persons with inactive role are relevant
-            return members.stream().filter(person -> person.hasRole(Role.INACTIVE)).collect(Collectors.toList());
+            return departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+                .filter(person -> person.hasRole(INACTIVE))
+                .collect(toList());
         }
 
         return Collections.emptyList();
@@ -211,17 +203,17 @@ public class PersonViewController {
 
     private List<Department> getRelevantDepartments(Person signedInUser) {
 
-        if (signedInUser.hasRole(Role.BOSS) || signedInUser.hasRole(Role.OFFICE)) {
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return departmentService.getAllDepartments();
         }
 
         // NOTE: If the signed in user is only department head, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             return departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser);
         }
 
         // NOTE: If the signed in user is second stage authority, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(Role.SECOND_STAGE_AUTHORITY)) {
+        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             return departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser);
         }
 
@@ -229,18 +221,17 @@ public class PersonViewController {
         return departmentService.getAssignedDepartmentsOfMember(signedInUser);
     }
 
-
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
 
-        Map<Person, Account> accounts = new HashMap<>();
-        Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
+        final Map<Person, Account> accounts = new HashMap<>();
+        final Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
 
         for (Person person : persons) {
             // get person's account
-            Optional<Account> account = accountService.getHolidaysAccount(year, person);
+            final Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
             if (account.isPresent()) {
-                Account holidaysAccount = account.get();
+                final Account holidaysAccount = account.get();
                 accounts.put(person, holidaysAccount);
                 vacationDaysLeftMap.put(person, vacationDaysService.getVacationDaysLeft(holidaysAccount, accountService.getHolidaysAccount(year + 1, person)));
             }
@@ -253,7 +244,7 @@ public class PersonViewController {
         model.addAttribute("year", year);
         model.addAttribute("now", LocalDate.now(UTC));
 
-        List<Department> departments = getRelevantDepartments(signedInUser);
+        final List<Department> departments = getRelevantDepartments(signedInUser);
         departments.sort(Comparator.comparing(Department::getName));
         model.addAttribute("departments", departments);
     }

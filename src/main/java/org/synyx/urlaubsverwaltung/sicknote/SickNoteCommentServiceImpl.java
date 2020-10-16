@@ -13,12 +13,11 @@ import java.util.List;
 @Service
 class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
-    private final SickNoteCommentDAO commentDAO;
+    private final SickNoteCommentRepository sickNoteCommentRepository;
 
     @Autowired
-    public SickNoteCommentServiceImpl(SickNoteCommentDAO commentDAO) {
-
-        this.commentDAO = commentDAO;
+    public SickNoteCommentServiceImpl(SickNoteCommentRepository sickNoteCommentRepository) {
+        this.sickNoteCommentRepository = sickNoteCommentRepository;
     }
 
     @Override
@@ -41,13 +40,12 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
             comment.setText(text);
         }
 
-        return commentDAO.save(comment);
+        return sickNoteCommentRepository.save(comment);
     }
 
 
     @Override
     public List<SickNoteComment> getCommentsBySickNote(SickNote sickNote) {
-
-        return commentDAO.getCommentsBySickNote(sickNote);
+        return sickNoteCommentRepository.getCommentsBySickNote(sickNote);
     }
 }

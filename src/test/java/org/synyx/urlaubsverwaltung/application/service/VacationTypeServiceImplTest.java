@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.synyx.urlaubsverwaltung.application.dao.VacationTypeDAO;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.application.dao.VacationTypeRepository;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 
@@ -14,16 +14,16 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class VacationTypeServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class VacationTypeServiceImplTest {
 
     @Mock
-    private VacationTypeDAO vacationTypeDAO;
+    private VacationTypeRepository vacationTypeRepository;
 
     @Test
-    public void getVacationTypesFilteredBy() {
+    void getVacationTypesFilteredBy() {
 
-        VacationTypeServiceImpl sut = new VacationTypeServiceImpl(vacationTypeDAO);
+        VacationTypeServiceImpl sut = new VacationTypeServiceImpl(vacationTypeRepository);
 
         final VacationType holiday = new VacationType();
         holiday.setCategory(VacationCategory.HOLIDAY);
@@ -34,7 +34,7 @@ public class VacationTypeServiceImplTest {
         final VacationType specialLeave = new VacationType();
         specialLeave.setCategory(VacationCategory.SPECIALLEAVE);
 
-        when(vacationTypeDAO.findAll()).thenReturn(asList(holiday, overtime, specialLeave));
+        when(vacationTypeRepository.findAll()).thenReturn(asList(holiday, overtime, specialLeave));
 
         final List<VacationType> noOvertimeType = sut.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
 

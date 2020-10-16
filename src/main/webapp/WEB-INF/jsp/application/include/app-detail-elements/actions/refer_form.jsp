@@ -9,9 +9,7 @@
            action="${URL_PREFIX}/application/${application.id}/refer" modelAttribute="referredPerson">
 
     <div class="form-group">
-        <div class="control-label">
-            <strong><spring:message code='action.refer.confirm'/></strong>
-        </div>
+        <strong class="tw-font-medium"><spring:message code='action.refer.confirm'/></strong>
     </div>
 
     <div class="form-group">

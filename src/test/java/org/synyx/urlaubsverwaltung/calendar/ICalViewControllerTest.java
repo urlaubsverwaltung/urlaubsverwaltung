@@ -1,16 +1,24 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -19,8 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class ICalViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class ICalViewControllerTest {
 
     private ICalViewController sut;
 
@@ -31,15 +39,15 @@ public class ICalViewControllerTest {
     @Mock
     private CompanyCalendarService companyCalendarService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new ICalViewController(personCalendarService, departmentCalendarService, companyCalendarService);
     }
 
     @Test
-    public void getCalendarForPerson() throws Exception {
+    void getCalendarForPerson() throws Exception {
 
-        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn("iCal string");
+        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn(generateFile("iCal string"));
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN)
@@ -47,11 +55,11 @@ public class ICalViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
-            .andExpect(content().string("iCal string"));
+            .andExpect(content().string(containsString("iCal string")));
     }
 
     @Test
-    public void getCalendarForPersonWithBadRequest() throws Exception {
+    void getCalendarForPersonWithBadRequest() throws Exception {
 
         when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
 
@@ -62,7 +70,7 @@ public class ICalViewControllerTest {
     }
 
     @Test
-    public void getCalendarForPersonWithNoContent() throws Exception {
+    void getCalendarForPersonWithNoContent() throws Exception {
 
         when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenThrow(CalendarException.class);
 
@@ -73,9 +81,9 @@ public class ICalViewControllerTest {
     }
 
     @Test
-    public void getCalendarForDepartment() throws Exception {
+    void getCalendarForDepartment() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn("calendar department");
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(generateFile("calendar department"));
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -83,11 +91,11 @@ public class ICalViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
-            .andExpect(content().string("calendar department"));
+            .andExpect(content().string(containsString("calendar department")));
     }
 
     @Test
-    public void getCalendarForDepartmentWithBadRequest() throws Exception {
+    void getCalendarForDepartmentWithBadRequest() throws Exception {
 
         when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
 
@@ -98,7 +106,7 @@ public class ICalViewControllerTest {
     }
 
     @Test
-    public void getCalendarForDepartmentWithNoContent() throws Exception {
+    void getCalendarForDepartmentWithNoContent() throws Exception {
 
         when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(CalendarException.class);
 
@@ -110,9 +118,9 @@ public class ICalViewControllerTest {
 
 
     @Test
-    public void getCalendarForAll() throws Exception {
+    void getCalendarForAll() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn("calendar all");
+        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn(generateFile("calendar all"));
 
         perform(get("/web/company/persons/2/calendar")
             .locale(GERMAN)
@@ -120,11 +128,11 @@ public class ICalViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", "text/calendar;charset=UTF-8"))
             .andExpect(header().string("Content-Disposition", "attachment; filename=calendar.ics"))
-            .andExpect(content().string("calendar all"));
+            .andExpect(content().string(containsString("calendar all")));
     }
 
     @Test
-    public void getCalendarForAllWithNoContent() throws Exception {
+    void getCalendarForAllWithNoContent() throws Exception {
 
         when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenThrow(CalendarException.class);
 
@@ -135,6 +143,16 @@ public class ICalViewControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).setControllerAdvice(new ApiExceptionHandlerControllerAdvice()).build().perform(builder);
+        return standaloneSetup(sut).build().perform(builder);
+    }
+
+    private File generateFile(String... content) throws IOException {
+        final Path file = Paths.get("calendar.ics");
+        Files.write(file, asList(content.clone()), UTF_8);
+
+        final File iCal = file.toFile();
+        iCal.deleteOnExit();
+
+        return iCal;
     }
 }

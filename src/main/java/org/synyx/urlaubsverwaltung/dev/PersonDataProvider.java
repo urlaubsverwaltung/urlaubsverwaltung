@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.synyx.urlaubsverwaltung.account.service.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -36,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
- * Provides person test data.
+ * Provides person demo data.
  */
 class PersonDataProvider {
 
@@ -60,17 +60,16 @@ class PersonDataProvider {
         return personByUsername.isPresent();
     }
 
-    Person createTestPerson(TestUser testUser, String firstName, String lastName, String email) {
+    Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
 
-        final String username = testUser.getUsername();
-        final String password = testUser.getPassword();
-        final Role[] roles = testUser.getRoles();
+        final String username = demoUser.getUsername();
+        final String password = demoUser.getPassword();
+        final Role[] roles = demoUser.getRoles();
 
         return createTestPerson(username, password, firstName, lastName, email, roles);
     }
 
     Person createTestPerson(String username, String password, String firstName, String lastName, String email, Role... roles) {
-
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {

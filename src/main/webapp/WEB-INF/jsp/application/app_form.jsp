@@ -5,6 +5,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -81,19 +82,20 @@
                     </div>
                 </c:if>
 
-                <div class="row">
 
-                    <div class="form-section">
-                        <div class="col-xs-12">
-                            <legend><spring:message code="application.data.title"/></legend>
-                        </div>
-
+                <div class="form-section tw-mb-8">
+                    <uv:section-heading>
+                        <h1>
+                            <spring:message code="application.data.title"/>
+                        </h1>
+                    </uv:section-heading>
+                    <div class="row">
                         <div class="col-md-4 col-md-push-8">
-                            <span class="help-block">
-                                <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                            <span class="help-block tw-text-sm">
+                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                 <spring:message code="application.data.description"/>
                             </span>
-                            <span id="departmentVacations" class="help-block info"></span>
+                            <span id="departmentVacations" class="help-block info tw-text-sm"></span>
                         </div>
 
                         <div class="col-md-8 col-md-pull-4">
@@ -255,10 +257,11 @@
                                 </div>
                             </div>
                         </div>
+
                         <c:if test="${overtimeActive}">
                             <div class="col-md-4 col-md-push-8">
-                                <span class="help-block">
-                                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                                <span class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                     <spring:message code="application.data.hours.description"/>
                                 </span>
                             </div>
@@ -277,17 +280,21 @@
                                 </div>
                             </div>
                         </c:if>
-
                     </div>
-                    <div class="form-section">
-                        <div class="col-xs-12">
-                            <legend><spring:message code="application.data.furtherInformation.title"/></legend>
-                        </div>
+                </div>
+
+                <div class="form-section tw-mb-16">
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code="application.data.furtherInformation.title"/>
+                        </h2>
+                    </uv:section-heading>
+                    <div class="row">
                         <div class="col-md-4 col-md-push-8">
-                    <span class="help-block">
-                        <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                        <spring:message code="application.data.furtherInformation.description"/>
-                    </span>
+                            <span class="help-block tw-text-sm">
+                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                <spring:message code="application.data.furtherInformation.description"/>
+                            </span>
                         </div>
                         <div class="col-md-8 col-md-pull-4">
                             <c:set var="REASON_IS_REQUIRED"
@@ -298,7 +305,9 @@
                                     <spring:message code="application.data.reason"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
+                                    <small>
+                                        <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
                                     <form:textarea id="reason" rows="1" path="reason" class="form-control"
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-reason');"
@@ -311,7 +320,9 @@
                                     <spring:message code="application.data.furtherInformation.address"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
+                                    <small>
+                                        <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
                                     <form:textarea id="address" rows="1" path="address" class="form-control"
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-address');"
@@ -324,7 +335,9 @@
                                     <spring:message code="application.data.furtherInformation.comment"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                    <small>
+                                        <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
                                     <form:textarea id="comment" rows="1" path="comment" class="form-control"
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-comment');"
@@ -334,10 +347,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-section">
+                <div class="form-section">
+                    <div class="row">
                         <div class="col-xs-12">
-                            <hr/>
+                            <hr />
                             <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
                                 <spring:message code="action.apply.vacation"/>
                             </button>

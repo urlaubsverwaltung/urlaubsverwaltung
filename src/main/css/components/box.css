@@ -1,0 +1,19 @@
+.box {
+  border: 1px solid #d5d5d5;
+}
+
+.box-text {
+  /* Fallback for browsers not supporting flex */
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.box-text ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.box-text ul > li:last-child > p {
+  margin-bottom: 0;
+}

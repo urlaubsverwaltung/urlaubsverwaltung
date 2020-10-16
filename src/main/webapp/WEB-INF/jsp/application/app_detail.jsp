@@ -5,6 +5,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <fmt:parseDate value="${application.startDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date"/>
@@ -49,10 +50,16 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6">
 
-                <legend>
-                    <spring:message code="application.data.title"/>
-                    <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
-                </legend>
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <jsp:include page="include/app-detail-elements/action-buttons.jsp"/>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h1>
+                            <spring:message code="application.data.title"/>
+                        </h1>
+                    </jsp:body>
+                </uv:section-heading>
 
                 <div class="feedback">
                     <c:choose>
@@ -115,13 +122,15 @@
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
 
-                <legend>
-                    <spring:message code="person.account.vacation.title"/>
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.account.vacation.title"/>
+                    </h2>
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
-                </legend>
+                </uv:section-heading>
 
-                <uv:person person="${application.person}"/>
-                <uv:account-entitlement account="${account}"/>
+                <uv:person person="${application.person}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:account-entitlement account="${account}" className="tw-mb-4" />
                 <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
                                  beforeApril="${beforeApril}"/>
 
@@ -136,10 +145,12 @@
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
-                <legend>
-                    <spring:message code="application.department.title"/>
-                </legend>
-                <table class="list-table striped-table bordered-table">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="application.department.title"/>
+                    </h2>
+                </uv:section-heading>
+                <table class="list-table striped-table bordered-table tw-text-sm">
                     <tbody>
                     <c:choose>
                         <c:when test="${empty departmentApplications}">
@@ -149,13 +160,20 @@
                             <c:forEach items="${departmentApplications}" var="application">
                                 <tr>
                                     <td>
-                                        <div class="gravatar gravatar--medium img-circle hidden-print center-block"
-                                             data-gravatar="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"></div>
+                                        <img
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            class="gravatar tw-rounded-full ${cssClass}"
+                                            width="40px"
+                                            height="40px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
                                     </td>
                                     <td>
                                         <c:out value="${application.person.niceName}"/>
                                     </td>
                                     <td>
+                                        <span class="tw-flex tw-items-center">
                                         <c:choose>
                                             <c:when test="${application.startDate == application.endDate}">
                                                 <c:set var="APPLICATION_DATE">
@@ -181,8 +199,11 @@
                                             </c:otherwise>
                                         </c:choose>
                                         <c:if test="${application.status == 'ALLOWED'}">
-                                            <i class="fa fa-check positive" aria-hidden="true"></i>
+                                            <span class="tw-text-green-500">
+                                                <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                            </span>
                                         </c:if>
+                                        </span>
                                     </td>
                                 </tr>
                             </c:forEach>

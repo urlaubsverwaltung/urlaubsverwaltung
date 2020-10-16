@@ -2,83 +2,80 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
-<div class="box">
-    <span class="box-icon bg-yellow hidden-print">
-        <c:choose>
-            <c:when test="${application.vacationType.category == 'HOLIDAY'}">
-                <i class="fa fa-sun-o" aria-hidden="true"></i>
-            </c:when>
-            <c:otherwise>
-                <i class="fa fa-flag-o" aria-hidden="true"></i>
-            </c:otherwise>
-        </c:choose>
-    </span>
-    <span class="box-text">
-        <h5 class="is-inline-block is-sticky"><c:out value="${application.person.niceName}"/></h5> <spring:message
-        code="application.applier.applied"/>
-        <h4>
-            <spring:message code="${application.vacationType.messageKey}"/>
-            <span class="state ${application.status} pull-right hidden-print hidden-xs"
-                  title="<spring:message code='${application.status}' />">
+<uv:box className="tw-h-32 tw-mb-4">
+    <jsp:attribute name="icon">
+        <uv:box-icon className="tw-bg-yellow-500 tw-text-white">
             <c:choose>
-                <c:when test="${application.status == 'WAITING'}">
-                    <i class="fa fa-question" aria-hidden="true"></i>
-                </c:when>
-                <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                </c:when>
-                <c:when test="${application.status == 'ALLOWED'}">
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                </c:when>
-                <c:when test="${application.status == 'REJECTED'}">
-                    <i class="fa fa-ban" aria-hidden="true"></i>
-                </c:when>
-                <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
+                <c:when test="${application.vacationType.category == 'HOLIDAY'}">
+                    <icon:sun className="tw-w-8 tw-h-8" />
                 </c:when>
                 <c:otherwise>
-                    &nbsp;
+                    <icon:flag className="tw-w-8 tw-h-8" />
+                </c:otherwise>
+            </c:choose>
+        </uv:box-icon>
+    </jsp:attribute>
+    <jsp:body>
+        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+            <c:out value="${application.person.niceName}"/> <spring:message code="application.applier.applied"/>
+        </span>
+        <span class="tw-my-1 tw-text-lg tw-font-medium">
+            <spring:message code="${application.vacationType.messageKey}"/>
+            <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
+                <c:choose>
+                    <c:when test="${application.status == 'WAITING'}">
+                        <icon:question-mark-circle className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
+                        <icon:check className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'ALLOWED'}">
+                        <icon:check className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'REJECTED'}">
+                        <icon:ban className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
+                        <icon:trash className="tw-w-5 tw-h-5" />
+                    </c:when>
+                    <c:otherwise>
+                        &nbsp;
+                    </c:otherwise>
+                </c:choose>
+            </span>
+        </span>
+        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+            <c:choose>
+                <c:when test="${application.startDate == application.endDate}">
+                    <c:set var="APPLICATION_DATE">
+                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${application.startDate}"/>
+                    </c:set>
+                    <c:set var="APPLICATION_DAY_LENGTH">
+                        <spring:message code="${application.dayLength}"/>
+                    </c:set>
+                    <spring:message code="absence.period.singleDay" arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
+                </c:when>
+                <c:otherwise>
+                    <c:set var="APPLICATION_START_DATE">
+                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                        <uv:date date="${application.startDate}"/>
+                    </c:set>
+                    <c:set var="APPLICATION_END_DATE">
+                        <spring:message code="${application.weekDayOfEndDate}.short"/>,
+                        <uv:date date="${application.endDate}"/>
+                    </c:set>
+                    <spring:message code="absence.period.multipleDays" arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
                 </c:otherwise>
             </c:choose>
         </span>
-        </h4>
+    </jsp:body>
+</uv:box>
 
-        <c:choose>
-            <c:when test="${application.startDate == application.endDate}">
-                <c:set var="APPLICATION_DATE">
-                    <h5 class="is-inline-block is-sticky">
-                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                        <uv:date date="${application.startDate}"/>
-                    </h5>
-                </c:set>
-                <c:set var="APPLICATION_DAY_LENGTH">
-                    <spring:message code="${application.dayLength}"/>
-                </c:set>
-                <spring:message code="absence.period.singleDay"
-                                arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}" argumentSeparator=";"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="APPLICATION_START_DATE">
-                    <h5 class="is-inline-block is-sticky">
-                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                        <uv:date date="${application.startDate}"/>
-                    </h5>
-                </c:set>
-                <c:set var="APPLICATION_END_DATE">
-                    <h5 class="is-inline-block is-sticky">
-                        <spring:message code="${application.weekDayOfEndDate}.short"/>,
-                        <uv:date date="${application.endDate}"/>
-                    </h5>
-                </c:set>
-                <spring:message code="absence.period.multipleDays"
-                                arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}" argumentSeparator=";"/>
-            </c:otherwise>
-        </c:choose>
-    </span>
-</div>
-
-<table class="list-table striped-table bordered-table">
+<table class="list-table striped-table bordered-table tw-text-sm">
 
     <tr>
         <td><spring:message code="absence.period.duration"/></td>
@@ -182,16 +179,18 @@
             <spring:message code='application.data.teamInformed'/>
         </td>
         <td>
+            <div class="tw-flex tw-items-center">
             <c:choose>
                 <c:when test="${application.teamInformed == true}">
-                    <i class="fa fa-check positive hidden-print" aria-hidden="true"></i>
-                    <spring:message code='application.data.teamInformed.true'/>
+                    <icon:emoji-happy className="tw-w-4 tw-h-4" />
+                    &nbsp;<spring:message code='application.data.teamInformed.true'/>
                 </c:when>
                 <c:otherwise>
-                    <i class="fa fa-remove hidden-print" aria-hidden="true"></i>
-                    <spring:message code='application.data.teamInformed.false'/>
+                    <icon:emoji-sad className="tw-w-4 tw-h-4" />
+                    &nbsp;<spring:message code='application.data.teamInformed.false'/>
                 </c:otherwise>
             </c:choose>
+            </div>
         </td>
     </tr>
     <tr>

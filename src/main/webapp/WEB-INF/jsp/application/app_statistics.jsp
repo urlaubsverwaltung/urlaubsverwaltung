@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -32,17 +33,23 @@
 
     <div class="container">
 
+        <uv:section-heading>
+            <jsp:attribute name="actions">
+                <uv:export />
+                <uv:print />
+            </jsp:attribute>
+            <jsp:body>
+                <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
+                    <spring:message code="applications.statistics"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
         <div class="row">
 
             <div class="col-xs-12">
 
-                <legend class="is-sticky">
-                    <spring:message code="applications.statistics"/>
-                    <uv:print/>
-                    <uv:export/>
-                </legend>
-
-                <p class="is-inline-block">
+                <p class="tw-text-sm tw-mb-8">
                     <c:choose>
                         <c:when test="${not empty errors}">
                             <a href="#filterModal" data-toggle="modal">
@@ -67,7 +74,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter">
+                        <table class="list-table sortable tablesorter tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>
@@ -87,20 +94,37 @@
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
                                     <td class="hidden-print is-centered">
-                                        <div class="gravatar img-circle hidden-print"
-                                             data-gravatar="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"></div>
+                                        <img
+                                            src="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${statistic.person.niceName}"/>"
+                                            class="gravatar tw-rounded-full"
+                                            width="60px"
+                                            height="60px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
                                     </td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>
                                     <td class="visible-xs hidden-print">
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
-                                    <td class="visible-xs hidden-print">
-                                        <i class="fa fa-fw fa-check" aria-hidden="true"></i>
-                                        <uv:number number="${statistic.totalAllowedVacationDays}"/>
-                                        <br/>
-                                        <i class="fa fa-fw fa-question hidden-print" aria-hidden="true"></i>
-                                        <uv:number number="${statistic.totalWaitingVacationDays}"/>
+                                    <td class="visible-xs">
+                                        <div class="tw-flex tw-items-center">
+                                            <span class="tw-w-6">
+                                                <icon:check className="tw-w-5 tw-h-5" />
+                                            </span>
+                                            <span>
+                                                <uv:number number="${statistic.totalAllowedVacationDays}"/>
+                                            </span>
+                                        </div>
+                                        <div class="tw-flex tw-items-center">
+                                            <span class="tw-w-6">
+                                                <icon:question-mark-circle className="tw-w-4 tw-h-4" />
+                                            </span>
+                                            <span>
+                                                <uv:number number="${statistic.totalWaitingVacationDays}"/>
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm">
                                         <spring:message code="applications.statistics.total"/>:

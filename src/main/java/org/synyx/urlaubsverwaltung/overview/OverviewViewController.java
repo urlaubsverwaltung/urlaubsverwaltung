@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.account.domain.Account;
-import org.synyx.urlaubsverwaltung.account.service.AccountService;
-import org.synyx.urlaubsverwaltung.account.service.VacationDaysService;
+import org.synyx.urlaubsverwaltung.account.Account;
+import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -27,7 +27,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.statistics.web.UsedDaysOverview;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toList;
  * overtime, applications for leave and sick notes.
  */
 @Controller
-@RequestMapping("/web")
+@RequestMapping("/")
 public class OverviewViewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
@@ -53,7 +53,7 @@ public class OverviewViewController {
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final ApplicationService applicationService;
-    private final WorkDaysService calendarService;
+    private final WorkDaysCountService calendarService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -62,7 +62,7 @@ public class OverviewViewController {
     @Autowired
     public OverviewViewController(PersonService personService, AccountService accountService,
                                   VacationDaysService vacationDaysService,
-                                  ApplicationService applicationService, WorkDaysService calendarService,
+                                  ApplicationService applicationService, WorkDaysCountService calendarService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
                                   SettingsService settingsService, DepartmentService departmentService) {
         this.personService = personService;
@@ -76,7 +76,13 @@ public class OverviewViewController {
         this.departmentService = departmentService;
     }
 
-    @GetMapping("/overview")
+    @GetMapping
+    public String index() {
+
+        return "redirect:/web/overview";
+    }
+
+    @GetMapping("/web/overview")
     public String showOverview(@RequestParam(value = "year", required = false) String year) {
 
         Person user = personService.getSignedInUser();
@@ -88,7 +94,7 @@ public class OverviewViewController {
         return "redirect:/web/person/" + user.getId() + "/overview";
     }
 
-    @GetMapping("/person/{personId}/overview")
+    @GetMapping("/web/person/{personId}/overview")
     public String showOverview(@PathVariable("personId") Integer personId,
                                @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
@@ -104,7 +110,7 @@ public class OverviewViewController {
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        Integer yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
+        int yearToShow = year == null ? ZonedDateTime.now(UTC).getYear() : year;
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);

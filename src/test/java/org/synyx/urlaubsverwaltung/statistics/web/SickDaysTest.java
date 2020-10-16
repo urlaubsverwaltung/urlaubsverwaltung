@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
@@ -13,24 +12,24 @@ import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTA
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
 
 
-public class SickDaysTest {
+class SickDaysTest {
 
     @Test
-    public void ensureDaysMapIsInitialized() {
+    void ensureDaysMapIsInitialized() {
 
-        SickDays sickDays = new SickDays();
-        Map<String, BigDecimal> daysMap = sickDays.getDays();
+        final SickDays sickDays = new SickDays();
 
-        assertThat(daysMap).hasSize(2);
-        assertThat(daysMap.get("WITH_AUB")).isEqualTo(ZERO);
-        assertThat(daysMap.get("TOTAL")).isEqualTo(ZERO);
+        assertThat(sickDays.getDays())
+            .hasSize(2)
+            .containsEntry("WITH_AUB", ZERO)
+            .containsEntry("TOTAL", ZERO);
     }
 
 
     @Test
-    public void ensureCanAddDays() {
+    void ensureCanAddDays() {
 
-        SickDays sickDays = new SickDays();
+        final SickDays sickDays = new SickDays();
 
         sickDays.addDays(TOTAL, ONE);
         sickDays.addDays(TOTAL, ONE);
@@ -39,7 +38,10 @@ public class SickDaysTest {
         sickDays.addDays(WITH_AUB, ONE);
         sickDays.addDays(WITH_AUB, ONE);
 
-        assertThat(sickDays.getDays().get("WITH_AUB")).isEqualTo(BigDecimal.valueOf(3));
-        assertThat(sickDays.getDays().get("TOTAL")).isEqualTo(BigDecimal.valueOf(2));
+
+        assertThat(sickDays.getDays())
+            .hasSize(2)
+            .containsEntry("WITH_AUB", BigDecimal.valueOf(3))
+            .containsEntry("TOTAL", BigDecimal.valueOf(2));
     }
 }

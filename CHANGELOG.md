@@ -1,3 +1,35 @@
+### [urlaubsverwaltung-3.4.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.5)
+* ❗Security-Fix: Fill department description with jstl out tag (for v3.x branch), Issue: [#1399](https://github.com/synyx/urlaubsverwaltung/issues/1399) PR:[#1407](https://github.com/synyx/urlaubsverwaltung/pull/1407)
+
+### [urlaubsverwaltung-3.4.4](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.4)
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/76?closed=1)
+
+### [urlaubsverwaltung-3.4.3](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.3)
+* Downgrade spring boot parent to 2.1.14, because of mapping problems in the controller layer.
+
+### [urlaubsverwaltung-3.4.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.2)
+* Documentation adjustments
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/71?closed=1)
+
+### [urlaubsverwaltung-3.4.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.1)
+* Use comment date for application cancel requested state of application [#1089](https://github.com/synyx/urlaubsverwaltung/pull/1089)
+* Log login attempts/errors for oidc provider [#1076](https://github.com/synyx/urlaubsverwaltung/pull/1076) 
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/69?closed=1)
+
+### [urlaubsverwaltung-3.4.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.0)
+* Add application forwards into comments [#1065](https://github.com/synyx/urlaubsverwaltung/pull/1065)
+* Dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/68?closed=1)
+
+### [urlaubsverwaltung-3.3.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.3.0)
+* Enable calendar interaction for past days [#1017](https://github.com/synyx/urlaubsverwaltung/pull/1017)
+* Improve height of datepicker months container to show last row [#1054](https://github.com/synyx/urlaubsverwaltung/pull/1054)
+* Consider 'de-XX' locales for date-fns translations additionally to 'de' [#1018](https://github.com/synyx/urlaubsverwaltung/pull/1018) 
+* Lot of dependency upgrades see [milestone](https://github.com/synyx/urlaubsverwaltung/milestone/67?closed=1)
+
+### [urlaubsverwaltung-3.2.1](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.1)
+* Add navigate dependency to overtime overview [#1014](https://github.com/synyx/urlaubsverwaltung/pull/1014)
+* Long term caching [#1013](https://github.com/synyx/urlaubsverwaltung/pull/1013)
+
 ### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
 * Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)

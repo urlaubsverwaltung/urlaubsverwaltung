@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
@@ -10,8 +11,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,19 +23,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class SickDaysOverviewTest {
+class SickDaysOverviewTest {
 
-    private WorkDaysService calendarService;
+    private WorkDaysCountService workDaysCountService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
 
-        calendarService = mock(WorkDaysService.class);
+        workDaysCountService = mock(WorkDaysCountService.class);
     }
 
 
     @Test
-    public void ensureGeneratesCorrectSickDaysOverview() {
+    void ensureGeneratesCorrectSickDaysOverview() {
 
         SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
@@ -89,11 +89,11 @@ public class SickDaysOverviewTest {
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
 
         // just return 1 day for each sick note
-        when(calendarService.getWorkDays(any(DayLength.class), any(LocalDate.class),
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
-        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
+        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
 
         SickDays sickDays = sickDaysOverview.getSickDays();
         Assert.assertNotNull("Should not be null", sickDays.getDays());

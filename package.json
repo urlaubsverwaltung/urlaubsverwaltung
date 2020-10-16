@@ -1,18 +1,24 @@
 {
   "name": "urlaubsverwaltung",
   "version": "1.0.0",
-  "description": "[![Build Status](https://travis-ci.org/synyx/urlaubsverwaltung.png)](https://travis-ci.org/synyx/urlaubsverwaltung) [![Coverage Status](https://coveralls.io/repos/github/synyx/urlaubsverwaltung/badge.svg?branch=master)](https://coveralls.io/github/synyx/urlaubsverwaltung?branch=master)",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "description": "Paperless absence management",
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src/main/webapp",
-    "build": "NODE_ENV=production webpack --mode production",
-    "build:dev": "NODE_ENV=development webpack --mode development",
-    "build:watch": "NODE_ENV=development webpack --mode development --watch"
+    "lint": "eslint src/main/javascript",
+    "lint:report": "eslint src/main/javascript -f json -o target/js-eslint/report.json",
+    "build": "concurrently 'npm:js' 'npm:css'",
+    "build:dev": "concurrently 'npm:js:dev' 'npm:css:dev'",
+    "build:watch": "concurrently 'npm:js:watch' 'npm:css:watch'",
+    "js": "NODE_ENV=production webpack --mode production",
+    "js:dev": "NODE_ENV=development webpack --mode development",
+    "js:watch": "NODE_ENV=development webpack --mode development --watch",
+    "css": "NODE_ENV=production postcss src/main/css/{style,login}.css --dir target/classes/static/css",
+    "css:dev": "NODE_ENV=development postcss src/main/css/{style,login}.css --dir target/classes/static/css",
+    "css:watch": "onchange -i src/main/css -- npm run css:dev",
+    "format": "concurrently 'npm:format:*'",
+    "format:js": "prettier --write src/main/javascript",
+    "format:css": "prettier --write src/main/css src/main/resources/static/css"
   },
   "repository": {
     "type": "git",
@@ -26,93 +32,56 @@
   },
   "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
   "dependencies": {
-    "@babel/polyfill": "7.4.4",
+    "@babel/polyfill": "7.11.5",
     "bootstrap": "3.4.1",
-    "chosen-js": "1.8.7",
-    "font-awesome": "4.5.0",
-    "jquery": "3.4.1",
+    "datalist-polyfill": "1.24.4",
+    "font-awesome": "4.7.0",
+    "jquery": "3.5.1",
     "jquery-ui": "1.12.1",
     "jquery-ui-themes": "1.12.0",
-    "list.js": "1.3.0",
-    "tablesorter": "2.29.4",
+    "list.js": "1.5.0",
+    "tablesorter": "2.31.3",
     "timepicker": "1.11.14",
-    "underscore": "1.8.3"
+    "underscore": "1.11.0"
   },
   "devDependencies": {
-    "@babel/core": "7.5.5",
-    "@babel/plugin-syntax-dynamic-import": "7.2.0",
-    "@babel/preset-env": "7.5.5",
+    "@babel/core": "7.11.6",
+    "@babel/plugin-syntax-dynamic-import": "7.8.3",
+    "@babel/preset-env": "7.11.5",
+    "@types/jest": "26.0.14",
     "@urlaubsverwaltung/eslint-plugin": "1.1.0",
-    "babel-eslint": "10.0.3",
-    "babel-jest": "24.9.0",
-    "babel-loader": "8.0.6",
-    "css-loader": "3.2.0",
-    "date-fns": "2.0.1",
-    "eslint": "6.2.2",
-    "eslint-config-prettier": "6.1.0",
-    "eslint-plugin-unicorn": "10.0.0",
-    "fetch-mock": "7.3.1",
-    "file-loader": "4.2.0",
-    "imports-loader": "0.8.0",
-    "jest": "24.9.0",
-    "less": "3.10.3",
-    "less-loader": "5.0.0",
+    "autoprefixer": "9.8.6",
+    "babel-eslint": "10.1.0",
+    "babel-jest": "26.5.2",
+    "babel-loader": "8.1.0",
+    "concurrently": "5.3.0",
+    "css-loader": "4.3.0",
+    "cssnano": "4.1.10",
+    "date-fns": "2.16.1",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.12.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-unicorn": "19.0.1",
+    "fetch-mock": "9.10.7",
+    "file-loader": "6.1.0",
+    "imports-loader": "1.2.0",
+    "jest": "26.5.2",
+    "less": "3.12.2",
+    "less-loader": "7.0.1",
     "merge": "1.2.1",
-    "mini-css-extract-plugin": "0.8.0",
-    "node-fetch": "2.6.0",
-    "optimize-css-assets-webpack-plugin": "5.0.3",
-    "terser-webpack-plugin": "2.3.5",
-    "url-loader": "2.1.0",
-    "webpack": "4.39.3",
+    "mini-css-extract-plugin": "0.12.0",
+    "node-fetch": "2.6.1",
+    "onchange": "7.0.2",
+    "optimize-css-assets-webpack-plugin": "5.0.4",
+    "postcss-cli": "7.1.2",
+    "postcss-import": "12.0.1",
+    "postcss-url": "8.0.0",
+    "prettier": "2.1.2",
+    "tailwindcss": "1.8.12",
+    "terser-webpack-plugin": "4.2.3",
+    "url-loader": "4.1.0",
+    "webpack": "4.44.2",
     "webpack-assets-manifest": "3.1.1",
-    "webpack-cli": "3.3.7"
-  },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "modules": false,
-          "useBuiltIns": "entry",
-          "corejs": "2",
-          "targets": "> 0.25%, not dead"
-        }
-      ]
-    ],
-    "plugins": [
-      "@babel/plugin-syntax-dynamic-import"
-    ],
-    "env": {
-      "test": {
-        "presets": [
-          [
-            "@babel/preset-env",
-            {
-              "targets": {
-                "node": "current"
-              }
-            }
-          ]
-        ]
-      }
-    }
-  },
-  "jest": {
-    "roots": [
-      "<rootDir>/src/main/webapp"
-    ],
-    "collectCoverage": false,
-    "collectCoverageFrom": [
-      "**/*.js",
-      "!**/__tests__/**",
-      "!**/WEB-INF/**"
-    ],
-    "coverageDirectory": "<rootDir>/target/js-coverage",
-    "testURL": "http://localhost",
-    "testEnvironment": "jsdom",
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
-    }
+    "webpack-cli": "3.3.12"
   }
 }

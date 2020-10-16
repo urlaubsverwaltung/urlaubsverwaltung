@@ -1,16 +1,15 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -24,11 +23,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class AvailabilityApiControllerSecurityIT {
+class AvailabilityApiControllerSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;
@@ -38,17 +35,17 @@ public class AvailabilityApiControllerSecurityIT {
     @MockBean
     private AvailabilityService availabilityService;
 
-    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Test
-    public void getAvailabilitiesIsUnauthorized() throws Exception {
+    void getAvailabilitiesIsUnauthorized() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities"));
         resultActions.andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser
-    public void getAvailabilityAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
+    void getAvailabilityAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
@@ -60,7 +57,7 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    public void getAvailabilityAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    void getAvailabilityAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
@@ -72,7 +69,7 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    public void getAvailabilityAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    void getAvailabilityAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
@@ -84,7 +81,7 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "BOSS")
-    public void getAvailabilityAsBossUserForOtherUserIsForbidden() throws Exception {
+    void getAvailabilityAsBossUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
@@ -96,7 +93,7 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    public void getAvailabilityAsAdminUserForOtherUserIsForbidden() throws Exception {
+    void getAvailabilityAsAdminUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
@@ -108,7 +105,7 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "INACTIVE")
-    public void getAvailabilityAsInactiveUserForOtherUserIsForbidden() throws Exception {
+    void getAvailabilityAsInactiveUserForOtherUserIsForbidden() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/5/availabilities")
             .param("from", dtf.format(now))
@@ -120,9 +117,9 @@ public class AvailabilityApiControllerSecurityIT {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    public void getAvailabilitiesHasOfficeRole() throws Exception {
+    void getAvailabilitiesHasOfficeRole() throws Exception {
 
-        final Person testPerson = createPerson("testPerson");
+        final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(5)).thenReturn(Optional.of(testPerson));
         when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 

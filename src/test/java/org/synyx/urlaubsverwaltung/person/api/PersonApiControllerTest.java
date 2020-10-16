@@ -1,22 +1,22 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.api.ApiExceptionHandlerControllerAdvice;
+import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -24,67 +24,59 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+@ExtendWith(MockitoExtension.class)
+class PersonApiControllerTest {
 
-public class PersonApiControllerTest {
-
-    private PersonService personServiceMock;
-
-    @Before
-    public void setUp() {
-
-        personServiceMock = mock(PersonService.class);
-    }
-
+    @Mock
+    private PersonService personService;
 
     @Test
-    public void ensureReturnsAllActivePersons() throws Exception {
+    void ensureReturnsAllActivePersons() throws Exception {
 
-        Person person1 = TestDataCreator.createPerson("foo");
-        person1.setId(1);
-        Person person2 = TestDataCreator.createPerson("bar");
-        person2.setId(2);
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setId(1);
+        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        carl.setId(2);
 
-        when(personServiceMock.getActivePersons()).thenReturn(Arrays.asList(person1, person2));
+        when(personService.getActivePersons()).thenReturn(List.of(shane, carl));
 
         perform(get("/api/persons"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
+            .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$.[0].firstName", is("Foo")))
+            .andExpect(jsonPath("$.[0].firstName", is("shane")))
             .andExpect(jsonPath("$.[0].links..rel", hasItem("self")))
             .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1"))))
             .andExpect(jsonPath("$.[0].links..rel", hasItem("availabilities")))
             .andExpect(jsonPath("$.[0].links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))))
-            .andExpect(jsonPath("$.[0].email", is("foo@test.de")))
-            .andExpect(jsonPath("$.[1].lastName", is("Bar")))
+            .andExpect(jsonPath("$.[0].email", is("shane@example.org")))
+            .andExpect(jsonPath("$.[1].lastName", is("carl")))
             .andReturn();
-
     }
 
     @Test
-    public void ensureReturnSpecificPerson() throws Exception {
+    void ensureReturnSpecificPerson() throws Exception {
 
-        Person person1 = TestDataCreator.createPerson("foo");
-        person1.setId(42);
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setId(1);
 
-        when(personServiceMock.getPersonByID(person1.getId())).thenReturn(Optional.of(person1));
+        when(personService.getPersonByID(shane.getId())).thenReturn(Optional.of(shane));
 
-        perform(get("/api/persons/42"))
+        perform(get("/api/persons/1"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andExpect(jsonPath("$.firstName", is("Foo")))
-            .andExpect(jsonPath("$.lastName", is("Foo")))
-            .andExpect(jsonPath("$.email", is("foo@test.de")))
+            .andExpect(content().contentType("application/json"))
+            .andExpect(jsonPath("$.firstName", is("shane")))
+            .andExpect(jsonPath("$.lastName", is("shane")))
+            .andExpect(jsonPath("$.email", is("shane@example.org")))
             .andExpect(jsonPath("$.links..rel", hasItem("self")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42"))))
+            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1"))))
             .andExpect(jsonPath("$.links..rel", hasItem("availabilities")))
-            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/42/availabilities?from={from}&to={to}"))));
+            .andExpect(jsonPath("$.links..href", hasItem(endsWith("/api/persons/1/availabilities?from={from}&to={to}"))));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
-        return standaloneSetup(new PersonApiController(personServiceMock))
-            .setControllerAdvice(new ApiExceptionHandlerControllerAdvice())
+        return standaloneSetup(new PersonApiController(personService))
+            .setControllerAdvice(new RestControllerAdviceExceptionHandler())
             .build().perform(builder);
     }
 }

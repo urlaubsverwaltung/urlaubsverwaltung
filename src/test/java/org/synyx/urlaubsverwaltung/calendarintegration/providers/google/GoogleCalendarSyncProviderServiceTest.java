@@ -13,12 +13,12 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GoogleCalendarSyncProviderServiceTest {
+class GoogleCalendarSyncProviderServiceTest {
 
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
     private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
@@ -54,7 +54,7 @@ public class GoogleCalendarSyncProviderServiceTest {
     private CalendarMailService calendarMailService;
     private GoogleCalendarSyncProvider googleCalendarSyncProvider;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpProperties() throws IOException {
         Properties prop = new Properties();
         File file = new File("src/test/resources/google_oauth.properties");
@@ -73,8 +73,8 @@ public class GoogleCalendarSyncProviderServiceTest {
         Assume.assumeTrue("refreshToken for testing should be defined", REFRESH_TOKEN != null);
     }
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         settingsService = prepareSettingsServiceMock();
         calendarMailService = mock(CalendarMailService.class);
         googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
@@ -112,19 +112,19 @@ public class GoogleCalendarSyncProviderServiceTest {
     }
 
     @Test
-    public void testCalendarEventCount() throws GeneralSecurityException, IOException {
+    void testCalendarEventCount() throws GeneralSecurityException, IOException {
         Integer eventCount = getCalendarEventCount();
         Assert.assertTrue(eventCount >= 0);
     }
 
 
     @Test
-    public void init() {
+    void init() {
         googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
     }
 
     @Test
-    public void addUpdateDeleteAbsence() throws GeneralSecurityException, IOException {
+    void addUpdateDeleteAbsence() throws GeneralSecurityException, IOException {
 
         CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
 

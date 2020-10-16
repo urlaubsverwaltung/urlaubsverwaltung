@@ -1,58 +1,46 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.jvnet.mock_javamail.Mailbox;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsDAO;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator.createPerson;
 
-@SpringBootTest
-@RunWith(SpringRunner.class)
+@SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
-public class CalendarMailServiceIT {
+class CalendarMailServiceIT extends TestContainersBase {
+
+    @RegisterExtension
+    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private CalendarMailService sut;
 
     @Autowired
-    private SettingsService settingsService;
-    @Autowired
-    private SettingsDAO settingsDAO;
-
-    @After
-    public void tearDown() {
-        Mailbox.clearAll();
-    }
+    private MailProperties mailProperties;
 
     @Test
-    public void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
+    void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
 
-        activateMailSettings();
-
-        final Person person = createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
@@ -61,10 +49,10 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
-        List<Message> inbox = Mailbox.get(getAdminMail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Synchronisieren des Kalenders");
 
@@ -75,10 +63,8 @@ public class CalendarMailServiceIT {
     }
 
     @Test
-    public void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
+    void ensureAdministratorGetsANotificationIfAEventUpdateErrorOccurred() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         final Person person = new Person();
         person.setFirstName("Henry");
@@ -90,10 +76,10 @@ public class CalendarMailServiceIT {
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
-        List<Message> inbox = Mailbox.get(getAdminMail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Aktualisieren eines Kalendereintrags");
 
@@ -105,17 +91,15 @@ public class CalendarMailServiceIT {
     }
 
     @Test
-    public void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
+    void ensureAdministratorGetsANotificationIfAnErrorOccurredDuringEventDeletion() throws MessagingException,
         IOException {
-
-        activateMailSettings();
 
         sut.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
 
-        List<Message> inbox = Mailbox.get(getAdminMail());
-        assertThat(inbox.size()).isOne();
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(mailProperties.getAdministrator());
+        assertThat(inbox.length).isOne();
 
-        Message msg = inbox.get(0);
+        Message msg = inbox[0];
 
         assertThat(msg.getSubject()).isEqualTo("Fehler beim Löschen eines Kalendereintrags");
 
@@ -123,19 +107,5 @@ public class CalendarMailServiceIT {
         assertThat(content).contains("Kalendername");
         assertThat(content).contains("ID-123456");
         assertThat(content).contains("event delete failed");
-    }
-
-    private String getAdminMail() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        return mailSettings.getAdministrator();
-    }
-
-    private void activateMailSettings() {
-        final Settings settings = settingsService.getSettings();
-        final MailSettings mailSettings = settings.getMailSettings();
-        mailSettings.setActive(true);
-        settings.setMailSettings(mailSettings);
-        settingsDAO.save(settings);
     }
 }

@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.availability.api.TimedAbsence.Type.SICK_NOTE;
-
-
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
@@ -59,7 +56,7 @@ class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
         final List<Optional<TimedAbsence>> sickNoteTimeAbsence = new ArrayList<>();
         for (SickNote sickNote : sickNotes) {
             if (sickNote != null && sickNote.isActive()) {
-                sickNoteTimeAbsence.add(Optional.of(new TimedAbsence(sickNote.getDayLength(), SICK_NOTE)));
+                sickNoteTimeAbsence.add(Optional.of(new TimedAbsence(sickNote.getDayLength())));
             }
         }
 

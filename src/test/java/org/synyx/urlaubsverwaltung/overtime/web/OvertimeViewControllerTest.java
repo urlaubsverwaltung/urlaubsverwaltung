@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,8 +42,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OvertimeViewControllerTest {
+@ExtendWith(MockitoExtension.class)
+class OvertimeViewControllerTest {
 
     private OvertimeViewController sut;
 
@@ -55,13 +56,13 @@ public class OvertimeViewControllerTest {
     @Mock
     private DepartmentService departmentService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new OvertimeViewController(overtimeService, personService, validator, departmentService);
     }
 
     @Test
-    public void postRecordOvertimeShowsFormIfValidationFails() throws Exception {
+    void postRecordOvertimeShowsFormIfValidationFails() throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(Collections.singletonList(OFFICE));
@@ -82,7 +83,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
+    void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
 
         final Overtime overtime = new Overtime(new Person(), LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(overtime));
@@ -104,7 +105,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void showPersonalOvertime() throws Exception {
+    void showPersonalOvertime() throws Exception {
 
         final Person person = new Person();
         person.setId(5);
@@ -116,7 +117,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void showOvertimeIsAllowed() throws Exception {
+    void showOvertimeIsAllowed() throws Exception {
 
         final int year = ZonedDateTime.now(UTC).getYear();
 
@@ -147,7 +148,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void showOvertimeIsAllowedWithYear() throws Exception {
+    void showOvertimeIsAllowedWithYear() throws Exception {
 
         final int year = 2012;
 
@@ -181,8 +182,8 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
     }
 
-    @Test(expected = NestedServletException.class)
-    public void showOvertimeIsNotAllowed() throws Exception {
+    @Test
+    void showOvertimeIsNotAllowed() throws Exception {
 
         final int personId = 5;
         final Person person = new Person();
@@ -194,11 +195,11 @@ public class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(false);
 
-        perform(get("/web/overtime").param("person", "5"));
+        assertThatThrownBy(() -> perform(get("/web/overtime").param("person", "5"))).isInstanceOf(NestedServletException.class);
     }
 
     @Test
-    public void showOvertimeDetails() throws Exception {
+    void showOvertimeDetails() throws Exception {
 
         final Person overtimePerson = new Person();
 
@@ -228,8 +229,8 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
     }
 
-    @Test(expected = NestedServletException.class)
-    public void showOvertimeDetailsIsNotAllowed() throws Exception {
+    @Test
+    void showOvertimeDetailsIsNotAllowed() {
 
         final Person overtimePerson = new Person();
 
@@ -243,11 +244,11 @@ public class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(false);
 
-        perform(get("/web/overtime/2"));
+        assertThatThrownBy(() -> perform(get("/web/overtime/2"))).isInstanceOf(NestedServletException.class);
     }
 
     @Test
-    public void recordOvertimeSignedInUserSame() throws Exception {
+    void recordOvertimeSignedInUserSame() throws Exception {
 
         final int personId = 5;
         final Person person = new Person();
@@ -263,7 +264,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void recordOvertimePersonIdIsNull() throws Exception {
+    void recordOvertimePersonIdIsNull() throws Exception {
 
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
@@ -275,8 +276,8 @@ public class OvertimeViewControllerTest {
     }
 
 
-    @Test(expected = NestedServletException.class)
-    public void recordOvertimeSignedInUserIsNotSame() throws Exception {
+    @Test
+    void recordOvertimeSignedInUserIsNotSame() throws Exception {
 
         final int personId = 5;
         final Person person = new Person();
@@ -286,11 +287,12 @@ public class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        perform(get("/web/overtime/new").param("person", "5"));
+        assertThatThrownBy(() -> perform(get("/web/overtime/new").param("person", "5")))
+            .isInstanceOf(NestedServletException.class);
     }
 
     @Test
-    public void recordOvertimeSignedInUserIsNotSameButOffice() throws Exception {
+    void recordOvertimeSignedInUserIsNotSameButOffice() throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(OFFICE));
@@ -303,7 +305,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void editOvertime() throws Exception {
+    void editOvertime() throws Exception {
 
         final Person overtimePerson = new Person();
 
@@ -321,8 +323,8 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("person", is(overtimePerson)));
     }
 
-    @Test(expected = NestedServletException.class)
-    public void editOvertimeDifferentPersons() throws Exception {
+    @Test
+    void editOvertimeDifferentPersons() throws Exception {
 
         final Person overtimePerson = new Person();
 
@@ -335,11 +337,12 @@ public class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        perform(get("/web/overtime/2/edit"));
+        assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
+            .isInstanceOf(NestedServletException.class);
     }
 
     @Test
-    public void editOvertimeDifferentPersonsButOffice() throws Exception {
+    void editOvertimeDifferentPersonsButOffice() throws Exception {
 
         final Person overtimePerson = new Person();
 
@@ -359,7 +362,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void createOvertimeRecord() throws Exception {
+    void createOvertimeRecord() throws Exception {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
@@ -383,8 +386,8 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
-    @Test(expected = NestedServletException.class)
-    public void createOvertimeRecordNotSamePerson() throws Exception {
+    @Test
+    void createOvertimeRecordNotSamePerson() throws Exception {
 
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
@@ -392,18 +395,18 @@ public class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
 
-        perform(
+        assertThatThrownBy(() -> perform(
             post("/web/overtime")
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
                 .param("numberOfHours", "8")
                 .param("comment", "To much work")
-        );
+        )).isInstanceOf(NestedServletException.class);
     }
 
     @Test
-    public void createOvertimeRecordNotSamePersonButOffice() throws Exception {
+    void createOvertimeRecordNotSamePersonButOffice() throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(OFFICE));
@@ -432,7 +435,7 @@ public class OvertimeViewControllerTest {
     }
 
     @Test
-    public void updateOvertime() throws Exception {
+    void updateOvertime() throws Exception {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
@@ -459,8 +462,8 @@ public class OvertimeViewControllerTest {
         resultActions.andExpect(flash().attribute("overtimeRecord", "EDITED"));
     }
 
-    @Test(expected = NestedServletException.class)
-    public void updateOvertimeIsNotSamePerson() throws Exception {
+    @Test
+    void updateOvertimeIsNotSamePerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(new Person());
 
@@ -470,7 +473,7 @@ public class OvertimeViewControllerTest {
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
-        perform(
+        assertThatThrownBy(() -> perform(
             post("/web/overtime/2")
                 .param("id", "2")
                 .param("person.id", "4")
@@ -478,11 +481,11 @@ public class OvertimeViewControllerTest {
                 .param("endDate", "02.07.2019")
                 .param("numberOfHours", "8")
                 .param("comment", "To much work")
-        );
+        )).isInstanceOf(NestedServletException.class);
     }
 
     @Test
-    public void updateOvertimeIsNotSamePersonButOffice() throws Exception {
+    void updateOvertimeIsNotSamePersonButOffice() throws Exception {
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(OFFICE));

@@ -3,6 +3,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -51,25 +52,31 @@
 </c:set>
 
 <div class="content">
-
     <div class="container">
 
-        <div class="row">
+        <c:choose>
+            <c:when test="${sickNote.id == null}">
+                <c:set var="ACTION" value="${URL_PREFIX}/sicknote"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/edit"/>
+            </c:otherwise>
+        </c:choose>
 
-            <c:choose>
-                <c:when test="${sickNote.id == null}">
-                    <c:set var="ACTION" value="${URL_PREFIX}/sicknote"/>
-                </c:when>
-                <c:otherwise>
-                    <c:set var="ACTION" value="${URL_PREFIX}/sicknote/${sickNote.id}/edit"/>
-                </c:otherwise>
-            </c:choose>
+        <form:form method="POST" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
 
-            <form:form method="POST" action="${ACTION}" modelAttribute="sickNote" class="form-horizontal">
-                <div class="form-section">
+            <c:if test="${not empty errors}">
+                <div class="row">
+                    <div class="col-xs-12 alert alert-danger">
+                        <form:errors/>
+                    </div>
+                </div>
+            </c:if>
 
-                    <div class="col-xs-12">
-                        <legend>
+            <div class="form-section tw-mb-4 lg:tw-mb-6">
+                <div class="row">
+                    <uv:section-heading>
+                        <h1>
                             <c:choose>
                                 <c:when test="${sickNote.id == null}">
                                     <spring:message code="sicknote.create.title"/>
@@ -78,27 +85,17 @@
                                     <spring:message code="sicknote.edit.title"/>
                                 </c:otherwise>
                             </c:choose>
-                        </legend>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <c:set var="formErrors"><form:errors/></c:set>
-                        <c:if test="${not empty errors && not empty formErrors}">
-                            <div class="alert alert-danger">
-                                <form:errors/>
-                            </div>
-                        </c:if>
-                    </div>
+                        </h1>
+                    </uv:section-heading>
 
                     <div class="col-md-4 col-md-push-8">
-                <span class="help-block">
-                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                    <spring:message code="sicknote.data.description"/>
-                </span>
+                        <span class="help-block help-block tw-text-sm">
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <spring:message code="sicknote.data.description"/>
+                        </span>
                     </div>
 
                     <div class="col-md-8 col-md-pull-4">
-
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="employee">
                                 <spring:message code='sicknote.data.person'/>:
@@ -205,22 +202,22 @@
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
+            </div>
 
-                <div class="form-section">
-                    <div class="col-xs-12">
-                        <legend>
+            <div class="form-section tw-mb-4 lg:tw-mb-6">
+                <div class="row">
+                    <uv:section-heading>
+                        <h2>
                             <spring:message code="sicknote.data.aub.short"/>
-                        </legend>
-                    </div>
+                        </h2>
+                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
-                <span class="help-block">
-                    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-                    <spring:message code="sicknote.data.person"/>
-                </span>
+                        <span class="help-block help-block tw-text-sm">
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <spring:message code="sicknote.data.person"/>
+                        </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group AU">
@@ -249,16 +246,18 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-section">
-                    <div class="col-xs-12">
-                        <legend>
+            <div class="form-section tw-mb-16">
+                <div class="row">
+                    <uv:section-heading>
+                        <h2>
                             <spring:message code="sicknote.data.furtherInformation.title"/>
-                        </legend>
-                    </div>
+                        </h2>
+                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
-                        <span class="help-block">
-                            <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+                        <span class="help-block help-block tw-text-sm">
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="sicknote.data.furtherInformation.description"/>
                         </span>
                     </div>
@@ -268,7 +267,9 @@
                                 <spring:message code="sicknote.data.furtherInformation.comment"/>:
                             </label>
                             <div class="col-md-9">
-                                <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                <small>
+                                    <span id="text-comment"></span><spring:message code="action.comment.maxChars"/>
+                                </small>
                                 <form:textarea id="comment" rows="1" path="comment" class="form-control"
                                                cssErrorClass="form-control error"
                                                onkeyup="count(this.value, 'text-comment');"
@@ -277,27 +278,24 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
+            </div>
 
-                <div class="form-section">
-                    <div class="col-xs-12">
-                        <hr/>
-                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
-                            <spring:message code="action.save"/>
-                        </button>
-                        <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
-                            <spring:message code="action.cancel"/>
-                        </button>
-                    </div>
+            <div class="form-section">
+                <div class="col-xs-12">
+                    <hr />
+                    <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
+                        <spring:message code="action.save"/>
+                    </button>
+                    <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
+                        <spring:message code="action.cancel"/>
+                    </button>
                 </div>
+            </div>
 
-            </form:form>
-
-        </div>
+        </form:form>
 
     </div>
-
 </div>
 
 </body>

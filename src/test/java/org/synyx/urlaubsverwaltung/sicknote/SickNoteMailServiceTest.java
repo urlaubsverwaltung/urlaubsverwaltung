@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
@@ -12,16 +14,19 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SickNoteMailServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SickNoteMailServiceTest {
 
     private SickNoteMailService sut;
 
@@ -32,13 +37,13 @@ public class SickNoteMailServiceTest {
     @Mock
     private MailService mailService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         sut = new SickNoteMailService(settingsService, sickNoteService, mailService);
     }
 
     @Test
-    public void ensureSendEndOfSickPayNotification() {
+    void ensureSendEndOfSickPayNotification() {
 
         final Person person = new Person();
         person.setUsername("Hulk");
@@ -65,21 +70,35 @@ public class SickNoteMailServiceTest {
 
         sut.sendEndOfSickPayNotification();
 
-        verify(mailService).sendMailTo(sickNoteA.getPerson(), "subject.sicknote.endOfSickPay", "sicknote_end_of_sick_pay", modelA);
-        verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.sicknote.endOfSickPay", "sicknote_end_of_sick_pay", modelA);
-
-        verify(mailService).sendMailTo(sickNoteB.getPerson(), "subject.sicknote.endOfSickPay", "sicknote_end_of_sick_pay", modelB);
-        verify(mailService).sendMailTo(NOTIFICATION_OFFICE, "subject.sicknote.endOfSickPay", "sicknote_end_of_sick_pay", modelB);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(4)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(sickNoteA.getPerson()));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(modelA);
+        assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelA);
+        assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(sickNoteB.getPerson()));
+        assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
+        assertThat(mails.get(2).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
+        assertThat(mails.get(2).getTemplateModel()).isEqualTo(modelB);
+        assertThat(mails.get(3).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(3).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
+        assertThat(mails.get(3).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
+        assertThat(mails.get(3).getTemplateModel()).isEqualTo(modelB);
     }
 
     @Test
-    public void ensureNoSendWhenDeactivated() {
+    void ensureNoSendWhenDeactivated() {
 
         boolean isInactive = false;
         prepareSettingsWithRemindForWaitingApplications(isInactive);
 
         sut.sendEndOfSickPayNotification();
-        verifyZeroInteractions(mailService);
+        verifyNoInteractions(mailService);
     }
 
 

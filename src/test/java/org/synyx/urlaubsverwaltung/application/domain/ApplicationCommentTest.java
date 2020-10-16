@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.time.LocalDate;
 import java.util.function.Consumer;
@@ -14,10 +13,10 @@ import static java.time.ZoneOffset.UTC;
 /**
  * Unit test for {@link ApplicationComment}.
  */
-public class ApplicationCommentTest {
+class ApplicationCommentTest {
 
     @Test
-    public void ensureDateIsSetOnInitialization() {
+    void ensureDateIsSetOnInitialization() {
 
         Consumer<ApplicationComment> assertDateIsSetToToday = (comment) -> {
             Assert.assertNotNull("Date should be set", comment.getDate());
@@ -25,14 +24,14 @@ public class ApplicationCommentTest {
         };
 
         assertDateIsSetToToday.accept(new ApplicationComment());
-        assertDateIsSetToToday.accept(new ApplicationComment(TestDataCreator.createPerson()));
+        assertDateIsSetToToday.accept(new ApplicationComment(new Person("muster", "Muster", "Marlene", "muster@example.org")));
     }
 
 
     @Test
-    public void ensureCanBeInitializedWithPerson() {
+    void ensureCanBeInitializedWithPerson() {
 
-        Person commentingPerson = TestDataCreator.createPerson();
+        Person commentingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         ApplicationComment comment = new ApplicationComment(commentingPerson);
 
