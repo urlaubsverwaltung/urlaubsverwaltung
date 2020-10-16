@@ -135,7 +135,7 @@ public class DepartmentViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @DeleteMapping("/department/{departmentId}")
+    @PostMapping("/department/{departmentId}/delete")
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
                                    RedirectAttributes redirectAttributes) {
 

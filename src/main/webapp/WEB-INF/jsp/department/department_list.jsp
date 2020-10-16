@@ -122,7 +122,7 @@
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">
                                         <td>
-                                            <form:form method="DELETE" action="${URL_PREFIX}/department/${department.id}">
+                                            <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
                                                 <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"
                                                      role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">

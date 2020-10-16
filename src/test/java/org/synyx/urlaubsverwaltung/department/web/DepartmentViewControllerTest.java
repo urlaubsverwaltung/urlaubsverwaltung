@@ -210,7 +210,7 @@ class DepartmentViewControllerTest {
     @Test
     void deleteDepartmentCallsServiceToDeleteDepartment() throws Exception {
 
-        perform(delete("/web/department/" + SOME_DEPARTMENT_ID));
+        perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"));
 
         verify(departmentService).delete(SOME_DEPARTMENT_ID);
     }
@@ -221,7 +221,7 @@ class DepartmentViewControllerTest {
         final Department department = someDepartment();
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
-        perform(delete("/web/department/" + SOME_DEPARTMENT_ID))
+        perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
             .andExpect(flash().attribute("deletedDepartment", department));
     }
 
@@ -230,14 +230,14 @@ class DepartmentViewControllerTest {
 
         when(departmentService.getDepartmentById(UNKNOWN_DEPARTMENT_ID)).thenReturn(Optional.empty());
 
-        perform(delete("/web/department/" + UNKNOWN_DEPARTMENT_ID))
+        perform(post("/web/department/" + UNKNOWN_DEPARTMENT_ID+  "/delete"))
             .andExpect(flash().attribute("deletedDepartment", nullValue()));
     }
 
     @Test
     void deleteDepartmentRedirectsToDepartment() throws Exception {
 
-        perform(delete("/web/department/" + SOME_DEPARTMENT_ID))
+        perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/department/"));
     }
