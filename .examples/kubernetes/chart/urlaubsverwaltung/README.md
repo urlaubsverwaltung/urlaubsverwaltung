@@ -245,14 +245,14 @@ serviceMonitor:
 ```
 
 
-### From chart versions < 1.0.0
+### From chart versions < 2.0.0
 
-Version 1.0.0 is a major update.
+Version 2.0.0 is a major update.
 
 * Several changes to the Deployment render makes an out-of-the-box upgrade impossible.
 * The chart uses a flexible way to configure the Urlaubsverwaltung application.
 
-However, with the following manual steps an you can migrate to the 1.0.0 version:
+However, with the following manual steps an you can migrate to the 2.0.0 version:
 
 1. Adjust chart configuration as necessary
 2. Make a database backup

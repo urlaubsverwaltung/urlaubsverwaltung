@@ -2,7 +2,7 @@ apiVersion: v2
 name: urlaubsverwaltung
 description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht, Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
 type: application
-version: 1.0.0
+version: 2.0.0
 appVersion: 3.4.5
 keywords:
   - urlaub
