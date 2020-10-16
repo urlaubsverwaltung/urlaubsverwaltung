@@ -139,10 +139,11 @@ public class DepartmentViewController {
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
                                    RedirectAttributes redirectAttributes) {
 
-        final Optional<Department> department = departmentService.getDepartmentById(departmentId);
-
-        departmentService.delete(departmentId);
-        department.ifPresent(department1 -> redirectAttributes.addFlashAttribute("deletedDepartment", department1));
+        final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);
+        maybeDepartment.ifPresent(department -> {
+            departmentService.delete(department.getId());
+            redirectAttributes.addFlashAttribute("deletedDepartment", department);
+        });
 
         return REDIRECT_WEB_DEPARTMENT;
     }
