@@ -10,7 +10,7 @@ import static org.testcontainers.containers.MariaDBContainer.IMAGE;
 @DirtiesContext
 public abstract class TestContainersBase {
 
-    static MariaDBContainer<?> mariaDB = new MariaDBContainer<>(IMAGE + ":10.4");
+    static MariaDBContainer<?> mariaDB = new MariaDBContainer<>(IMAGE + ":10.5");
 
     @DynamicPropertySource
     static void mariaDBProperties(DynamicPropertyRegistry registry) {
