@@ -92,7 +92,14 @@
                             <c:otherwise>
                                 <ul>
                                 <c:forEach items="${departments}" var="department">
-                                    <li><c:out value="${department.name}"/></li>
+                                    <c:choose>
+                                        <c:when test="${departmentHeadOfDepartments.contains( department )}">
+                                            <li><c:out value="${department.name}"/> <spring:message code="person.details.departments.departmentHead"/></li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <li><c:out value="${department.name}"/></li>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </c:forEach>
                                 </ul>
                             </c:otherwise>
