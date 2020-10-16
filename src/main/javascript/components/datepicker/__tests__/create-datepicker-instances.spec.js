@@ -2,6 +2,14 @@ import createDatepickerInstances from "../create-datepicker-instances";
 import fetchMock from "fetch-mock";
 
 describe("create-datepicker-instances", () => {
+  beforeEach(() => {
+    window.uv = {
+      datepicker: {
+        localisation: datepickerLocalisation(),
+      },
+    };
+  });
+
   afterEach(async () => {
     // cleanup DOM
     while (document.body.firstElementChild) {
@@ -632,6 +640,50 @@ describe("create-datepicker-instances", () => {
     expect(document.querySelector("input").value).toBe("24.12.2020");
   });
 });
+
+function datepickerLocalisation() {
+  return {
+    buttonLabel: "buttonLabel-message",
+    placeholder: "placeholder-message",
+    selectedDateMessage: "selectedDateMessage-message",
+    prevMonthLabel: "prevMonthLabel-message",
+    nextMonthLabel: "nextMonthLabel-message",
+    monthSelectLabel: "monthSelectLabel-message",
+    yearSelectLabel: "yearSelectLabel-message",
+    closeLabel: "closeLabel-message",
+    keyboardInstruction: "keyboardInstruction-message",
+    calendarHeading: "calendarHeading-message",
+    dayNames: ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
+    monthNames: [
+      "january",
+      "february",
+      "march",
+      "april",
+      "may",
+      "june",
+      "july",
+      "august",
+      "september",
+      "october",
+      "november",
+      "december",
+    ],
+    monthNamesShort: [
+      "january.short",
+      "february.short",
+      "march.short",
+      "april.short",
+      "may.short",
+      "june.short",
+      "july.short",
+      "august.short",
+      "september.short",
+      "october.short",
+      "november.short",
+      "december.short",
+    ],
+  };
+}
 
 function renderCurrentDatepickerMonth() {
   // fetch public holidays and update view

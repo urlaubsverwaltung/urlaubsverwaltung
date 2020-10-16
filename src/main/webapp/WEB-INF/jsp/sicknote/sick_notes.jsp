@@ -24,6 +24,7 @@
         window.uv.sickNote.person = {};
         window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
+    <uv:datepicker-localisation />
     <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />" />
     <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />" />
     <script defer src="<asset:url value='npm.duetds.js' />"></script>

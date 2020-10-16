@@ -11,20 +11,17 @@ import "../calendar/calendar.css";
 defineCustomElements(window);
 
 export default async function createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect) {
-  return Promise.allSettled(
-    selectors.map((selector) => instantiate({ selector, urlPrefix, getPerson, onSelect })),
-  );
+  return Promise.allSettled(selectors.map((selector) => instantiate({ selector, urlPrefix, getPerson, onSelect })));
 }
 
 async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
-
   const dateFormat = DE.dateFormat;
 
   const dateElement = document.querySelector(selector);
   const duetDateElement = document.createElement("duet-date-picker");
 
   duetDateElement.dateAdapter = DE.dateAdapter;
-  duetDateElement.localization = DE.localization;
+  duetDateElement.localization = window.uv.datepicker.localisation;
 
   const parsedDate = parse(dateElement.value, dateFormat, new Date());
   const isoDateString = dateElement.value ? formatISO(parsedDate, { representation: "date" }) : "";

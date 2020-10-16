@@ -17,33 +17,4 @@ export const dateAdapter = {
   },
 };
 
-export const localization = {
-  buttonLabel: "Wähle einen Tag aus",
-  placeholder: "TT.MM.JJJJ",
-  selectedDateMessage: "ausgewählt ist",
-  prevMonthLabel: "voriger Monat",
-  nextMonthLabel: "nächster Monat",
-  monthSelectLabel: "Monat",
-  yearSelectLabel: "Jahr",
-  closeLabel: "Schließen",
-  keyboardInstruction: "Du kannst die Pfeiltasten nutzen um ein Datum auszuwählen.",
-  calendarHeading: "Wähle einen Tag",
-  dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
-  monthNames: [
-    "Januar",
-    "Februar",
-    "März",
-    "April",
-    "Mai",
-    "Juni",
-    "Juli",
-    "August",
-    "September",
-    "Oktober",
-    "November",
-    "Dezember",
-  ],
-  monthNamesShort: ["Jan", "Feb", "März", "Apr", "Mai", "Juni", "Juli", "Aug", "Sep", "Okt", "Nov", "Dez"],
-};
-
-export default { dateFormat, dateAdapter, localization };
+export default { dateFormat, dateAdapter };
