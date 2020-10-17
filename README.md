@@ -127,6 +127,7 @@ uv.development.demodata.create
 
 # mail
 uv.mail.administrator
+uv.mail.application-url
 uv.mail.sender
 
 # security
@@ -233,6 +234,7 @@ Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenomm
 ```properties
 uv.mail.sender=absender@example.org         # Absender der E-Mails
 uv.mail.administrator=admin@example.org     # E-Mail-Adresse des Administrators
+uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link-Generierung verwendet
 
 spring.mail.host=$HOST
 spring.mail.port=$PORT
