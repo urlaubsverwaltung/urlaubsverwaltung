@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -18,6 +19,9 @@ public class MailProperties {
     @NotEmpty
     private String administrator;
 
+    @URL
+    private String applicationUrl;
+
     public String getSender() {
         return sender;
     }
@@ -32,5 +36,13 @@ public class MailProperties {
 
     public void setAdministrator(String administrator) {
         this.administrator = administrator;
+    }
+
+    public String getApplicationUrl() {
+        return applicationUrl;
+    }
+
+    public void setApplicationUrl(String applicationUrl) {
+        this.applicationUrl = applicationUrl;
     }
 }

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -75,6 +74,7 @@ class MailServiceImpl implements MailService {
     }
 
     private String getApplicationUrl() {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath("/").build().toString();
+        final String applicationUrl = mailProperties.getApplicationUrl();
+        return applicationUrl.endsWith("/") ? applicationUrl : applicationUrl + "/";
     }
 }

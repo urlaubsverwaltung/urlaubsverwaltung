@@ -48,6 +48,7 @@ class MailServiceImplTest {
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
         when(mailContentBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
         when(mailProperties.getSender()).thenReturn("no-reply@firma.test");
+        when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
 
         sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties, personService);
     }
