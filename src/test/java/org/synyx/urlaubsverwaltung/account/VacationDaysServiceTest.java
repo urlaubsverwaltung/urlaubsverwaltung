@@ -75,10 +75,6 @@ class VacationDaysServiceTest {
     void setUp() {
 
         // create working time object (MON-FRI)
-
-//
-//        when(settingsService.getSettings()).thenReturn(new Settings());
-
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URL url = cl.getResource("Holidays_de.xml");
         ManagerParameter managerParameter = ManagerParameters.create(url);
