@@ -2,18 +2,16 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
-
 import java.time.LocalDate;
 import java.util.List;
 

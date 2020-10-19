@@ -22,10 +22,10 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationCronMailServiceTest {

@@ -16,12 +16,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;

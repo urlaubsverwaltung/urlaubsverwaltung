@@ -4,7 +4,6 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 

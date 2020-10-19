@@ -18,9 +18,9 @@ import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsTest {

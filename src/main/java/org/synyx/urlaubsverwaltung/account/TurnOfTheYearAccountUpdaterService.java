@@ -95,7 +95,7 @@ public class TurnOfTheYearAccountUpdaterService {
         final String templateName = "updated_accounts";
 
         // send email to office for printing statistic
-        final Mail mailToOffice= Mail.builder()
+        final Mail mailToOffice = Mail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)

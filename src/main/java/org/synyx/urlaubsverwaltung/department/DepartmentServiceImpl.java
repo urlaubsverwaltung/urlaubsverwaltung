@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;

@@ -191,8 +191,6 @@ public class OverlapService {
 
 
     /**
-<<<<<<< HEAD:src/main/java/org/synyx/urlaubsverwaltung/overlap/OverlapService.java
-=======
      * Get a list of intervals that overlap with the period of the given {@link Application} for leave.
      *
      * @param startDate            defines the start of the period
@@ -245,7 +243,6 @@ public class OverlapService {
 
 
     /**
->>>>>>> replace static UTC config with clock in OverlapService:src/main/java/org/synyx/urlaubsverwaltung/workingtime/OverlapService.java
      * Get a list of gaps within the given intervals.
      *
      * @param startDate      defines the start of the period

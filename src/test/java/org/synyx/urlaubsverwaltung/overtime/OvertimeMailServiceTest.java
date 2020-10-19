@@ -11,13 +11,10 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.time.Clock;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)

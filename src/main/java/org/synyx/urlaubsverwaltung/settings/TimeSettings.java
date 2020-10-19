@@ -2,8 +2,6 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.util.Optional;
-import java.util.TimeZone;
 
 import static java.util.Optional.ofNullable;
 

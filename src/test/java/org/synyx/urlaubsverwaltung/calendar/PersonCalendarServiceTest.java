@@ -13,11 +13,9 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.io.File;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

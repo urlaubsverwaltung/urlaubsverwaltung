@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
+import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;

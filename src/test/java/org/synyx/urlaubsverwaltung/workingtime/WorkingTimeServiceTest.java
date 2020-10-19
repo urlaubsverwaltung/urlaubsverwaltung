@@ -19,11 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.ZoneId.from;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -45,7 +43,7 @@ class WorkingTimeServiceTest {
     @Mock
     private SettingsService settingsServiceMock;
 
-    private Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), Clock.systemUTC().getZone());;
+    private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), Clock.systemUTC().getZone());
 
     @BeforeEach
     void setUp() {

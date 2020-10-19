@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import com.nimbusds.jose.crypto.ECDSAVerifier;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
@@ -27,8 +26,6 @@ import java.net.URI;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,7 +102,7 @@ public class ICalService {
                     event = new VEvent(new Date(startDate), new Date(endDate), absence.getEventSubject());
                 }
             } catch (ParseException e) {
-                    //todo: log
+                // TODO: log
                 return Optional.empty();
             }
 

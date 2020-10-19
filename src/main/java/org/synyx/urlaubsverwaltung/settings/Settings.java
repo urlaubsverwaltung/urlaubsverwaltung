@@ -68,7 +68,7 @@ public class Settings extends AbstractPersistable<Integer> {
 
     public TimeSettings getTimeSettings() {
 
-        if(timeSettings == null) {
+        if (timeSettings == null) {
             timeSettings = new TimeSettings();
         }
 

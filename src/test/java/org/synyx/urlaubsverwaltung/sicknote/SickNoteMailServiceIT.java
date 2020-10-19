@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.LocalDate;

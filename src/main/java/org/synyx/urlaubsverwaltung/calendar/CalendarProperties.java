@@ -36,6 +36,7 @@ public class CalendarProperties {
      * </ul><p>
      * Default refresh interval is one day (P1D).
      * <p>
+     *
      * @see <a href="https://icalendar.org/New-Properties-for-iCalendar-RFC-7986/5-7-refresh-interval-property.html">ICal Spec: RefreshInterval</a>
      */
     @DurationUnit(ChronoUnit.MINUTES)

@@ -1,11 +1,8 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.util.concurrent.TimeUnit;
-
-import static java.util.Optional.ofNullable;
 
 
 /**

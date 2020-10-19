@@ -19,10 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class CalendarMailServiceTest {

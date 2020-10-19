@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -16,8 +16,6 @@ import java.time.LocalTime;
 import java.util.function.Consumer;
 
 import static java.math.BigDecimal.ONE;
-import static java.time.ZoneOffset.UTC;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApplicationForLeaveFormTest {

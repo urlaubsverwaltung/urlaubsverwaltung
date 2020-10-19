@@ -8,11 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.account.AccountInteractionServiceImpl;
-import org.synyx.urlaubsverwaltung.account.AccountService;
-import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.account.AccountProperties;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;

@@ -44,7 +44,7 @@ class AbsenceServiceImplTest {
 
     @BeforeEach
     void setUp() {
-    sut = new AbsenceServiceImpl(applicationService, sickNoteService, settingsService, Clock.systemUTC());
+        sut = new AbsenceServiceImpl(applicationService, sickNoteService, settingsService, Clock.systemUTC());
     }
 
     @Test

@@ -12,9 +12,9 @@ import java.time.Clock;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 

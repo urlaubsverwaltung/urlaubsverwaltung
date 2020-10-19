@@ -9,8 +9,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 
 
 /**

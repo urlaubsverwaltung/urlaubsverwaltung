@@ -13,7 +13,6 @@ import java.time.format.DateTimeParseException;
 import static org.springframework.util.StringUtils.isEmpty;
 
 
-
 /**
  * Represents a period of time to filter requests by.
  */

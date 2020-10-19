@@ -7,11 +7,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Clock;
 import java.time.Instant;
 
-import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
-import static java.time.temporal.ChronoUnit.DAYS;
 
 
 class OvertimeCommentTest {
