@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
@@ -14,8 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class InstantPropertyEditor extends PropertyEditorSupport {
-
-    private static final Logger log = LoggerFactory.getLogger(InstantPropertyEditor.class);
 
     private final SettingsService settingsService;
     private final Clock clock;
@@ -38,7 +34,6 @@ public class InstantPropertyEditor extends PropertyEditorSupport {
 
         Instant instant = (Instant) this.getValue();
         ZoneId zoneId = ZoneId.of(settingsService.getSettings().getTimeSettings().getTimeZoneId());
-        log.warn("Write Instant: " + instant + " with zoneId: " + zoneId);
         return formatter.format(instant.atZone(zoneId));
     }
 
