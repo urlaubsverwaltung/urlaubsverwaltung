@@ -21,7 +21,7 @@ public class SickNoteComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private SickNoteAction action;
 
-    private SickNoteComment() {
+    protected SickNoteComment() {
         super();
     }
 

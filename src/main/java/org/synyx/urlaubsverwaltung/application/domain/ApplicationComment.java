@@ -24,8 +24,8 @@ public class ApplicationComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private ApplicationAction action;
 
-    public ApplicationComment() {
-        // needed for Hibernate
+    protected ApplicationComment() {
+        super();
     }
 
     public ApplicationComment(Clock clock) {

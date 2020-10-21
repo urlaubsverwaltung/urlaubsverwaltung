@@ -30,7 +30,8 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     // What is the content of the comment?
     private String text;
 
-    public AbstractComment() {
+    protected AbstractComment() {
+        // needed for hibernate
     }
 
     public AbstractComment(Clock clock) {

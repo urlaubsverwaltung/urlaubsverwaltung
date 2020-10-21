@@ -28,10 +28,10 @@ public class OvertimeComment extends AbstractComment {
     private OvertimeAction action;
 
     protected OvertimeComment() {
-        // needed for hibernate
+        super();
     }
 
-    OvertimeComment(Clock clock) {
+    public OvertimeComment(Clock clock) {
         super(clock);
     }
 
