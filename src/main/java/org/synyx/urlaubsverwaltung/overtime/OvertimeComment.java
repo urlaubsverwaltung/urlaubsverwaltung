@@ -27,6 +27,10 @@ public class OvertimeComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private OvertimeAction action;
 
+    protected OvertimeComment() {
+        // needed for hibernate
+    }
+
     OvertimeComment(Clock clock) {
         super(clock);
     }
