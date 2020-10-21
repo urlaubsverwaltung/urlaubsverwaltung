@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
-import no.api.freemarker.java8.time.LocalDateAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
