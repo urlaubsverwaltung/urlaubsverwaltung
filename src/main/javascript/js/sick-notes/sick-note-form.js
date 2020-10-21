@@ -1,13 +1,33 @@
 import $ from "jquery";
 import { createDatepickerInstances } from "../../components/datepicker";
 
-$(document).ready(async function () {
-  var person = window.uv.params.person;
-  $("#employee").val(person);
+function onSelect(event) {
+  const toElement = document.querySelector("#to");
 
-  var datepickerLocale = window.navigator.language;
-  var urlPrefix = window.uv.apiPrefix;
-  var sickNotePersonId = window.uv.sickNote.person.id;
+  if (event.target.matches("#from") && !toElement.value) {
+    toElement.value = event.target.value;
+  }
+}
+
+function onSelectAUB(event) {
+  const aubToElement = document.querySelector("#aubTo");
+
+  if (event.target.matches("aubFrom") && !aubToElement.value) {
+    aubToElement.value = event.target.value;
+  }
+}
+
+$(document).ready(async function () {
+  const person = window.uv.params.person;
+  if (person) {
+    const employeeElement = document.querySelector("#employee");
+    if (employeeElement) {
+      employeeElement.value = person;
+    }
+  }
+
+  const urlPrefix = window.uv.apiPrefix;
+  const sickNotePersonId = window.uv.sickNote.person.id;
 
   function getPersonId() {
     if (!sickNotePersonId) {
@@ -16,22 +36,6 @@ $(document).ready(async function () {
     return sickNotePersonId;
   }
 
-  var onSelect = function (selectedDate) {
-    var $to = $("#to");
-
-    if (this.id === "from" && $to.val() === "") {
-      $to.datepicker("setDate", selectedDate);
-    }
-  };
-
-  var onSelectAUB = function (selectedDate) {
-    var $aubTo = $("#aubTo");
-
-    if (this.id === "aubFrom" && $aubTo.val() === "") {
-      $aubTo.datepicker("setDate", selectedDate);
-    }
-  };
-
-  await createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
-  await createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
+  await createDatepickerInstances(["#from", "#to"], urlPrefix, getPersonId, onSelect);
+  await createDatepickerInstances(["#aubFrom", "#aubTo"], urlPrefix, getPersonId, onSelectAUB);
 });

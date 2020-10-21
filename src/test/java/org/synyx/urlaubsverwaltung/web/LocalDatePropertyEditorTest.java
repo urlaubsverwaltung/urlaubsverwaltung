@@ -1,11 +1,14 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
@@ -19,12 +22,11 @@ class LocalDatePropertyEditorTest {
     }
 
     @Test
-    void ensureCorrectFormatting() {
+    void ensureCorrectFormattingWithDefaultPattern() {
 
         editor.setValue(LocalDate.of(2015, 12, 21));
 
-        Assert.assertNotNull("Should not be null", editor.getAsText());
-        Assert.assertEquals("Wrong text representation", "21.12.2015", editor.getAsText());
+        assertThat(editor.getAsText()).isEqualTo("21.12.2015");
     }
 
     @Test
@@ -32,7 +34,7 @@ class LocalDatePropertyEditorTest {
 
         editor.setValue(null);
 
-        Assert.assertEquals("Wrong text representation", "", editor.getAsText());
+        assertThat(editor.getAsText()).isEmpty();
     }
 
     @Test
@@ -40,24 +42,17 @@ class LocalDatePropertyEditorTest {
 
         editor.setAsText("13.12.2016");
 
-        Assert.assertNotNull("Should not be null", editor.getValue());
-        Assert.assertEquals("Wrong date", LocalDate.of(2016, 12, 13), editor.getValue());
+        assertThat(editor.getValue()).isEqualTo(LocalDate.of(2016, 12, 13));
     }
 
-    @Test
-    void ensureNullDateForEmptyText() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", " "})
+    void ensureNullDateForEmptyText(String givenDateTextValue) {
 
-        editor.setAsText("");
+        editor.setAsText(givenDateTextValue);
 
-        Assert.assertNull("Should be null", editor.getValue());
-    }
-
-    @Test
-    void ensureNullDateForNullText() {
-
-        editor.setAsText(null);
-
-        Assert.assertNull("Should be null", editor.getValue());
+        assertThat(editor.getValue()).isNull();
     }
 
     @Test

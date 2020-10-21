@@ -36,7 +36,7 @@ describe("send-get-department-vacations-request", () => {
   it("does nothing when startDate end endDate are not defined", async () => {
     await sendGetDepartmentVacationsRequest("", undefined, undefined, "", "");
 
-    expect(fetchMock.calls).toHaveLength(0);
+    expect(fetchMock.calls()).toHaveLength(0);
   });
 
   it("does nothing when startDate is after endDate", async () => {
@@ -45,7 +45,7 @@ describe("send-get-department-vacations-request", () => {
 
     await sendGetDepartmentVacationsRequest("", startDate, endDate, "", "");
 
-    expect(fetchMock.calls).toHaveLength(0);
+    expect(fetchMock.calls()).toHaveLength(0);
   });
 
   it("renders response", async () => {

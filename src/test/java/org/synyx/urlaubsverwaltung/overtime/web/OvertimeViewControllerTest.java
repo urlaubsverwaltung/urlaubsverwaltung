@@ -67,7 +67,10 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(Collections.singletonList(OFFICE));
 
+        final Person overtimePerson = new Person();
+
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(1337)).thenReturn(Optional.of(overtimePerson));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -75,8 +78,9 @@ class OvertimeViewControllerTest {
             return null;
         }).when(validator).validate(any(), any());
 
-        perform(post("/web/overtime"))
+        perform(post("/web/overtime").param("person", "1337"))
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
+            .andExpect(model().attribute("person", overtimePerson))
             .andExpect(view().name("overtime/overtime_form"));
 
         verify(validator).validate(any(OvertimeForm.class), any(Errors.class));

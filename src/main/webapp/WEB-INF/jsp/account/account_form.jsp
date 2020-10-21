@@ -14,6 +14,20 @@
         <spring:message code="person.form.annualVacation.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
+    <link rel="stylesheet" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />" />
+    <link rel="stylesheet" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />" />
+    <script>
+        window.uv = {};
+        window.uv.personId = '<c:out value="${person.id}" />';
+        window.uv.webPrefix = "<spring:url value='/web' />";
+        window.uv.apiPrefix = "<spring:url value='/api' />";
+    </script>
+    <uv:datepicker-localisation />
+    <script defer src="<asset:url value='npm.duetds.js' />"></script>
+    <script defer src="<asset:url value='npm.date-fns.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~95889e93.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js' />"></script>
     <script defer src="<asset:url value='account_form.js' />"></script>
 </head>
 

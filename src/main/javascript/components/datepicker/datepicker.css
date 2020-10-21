@@ -1,59 +1,41 @@
-/**************************************************************************
-
-  JQUERY UI DATEPICKER
-
-**************************************************************************/
-
-/* HEADER */
-.ui-datepicker-header {
-  background-color: #7b7b7b !important;
-  border-color: #7b7b7b !important;
-  color: #fafafa;
-  font-weight: normal;
+duet-date-picker.form-control {
+  padding: 0;
 }
 
-/* CONTENT */
-.ui-widget-content {
-  background: #e5e5e5;
+.duet-date {
+  height: 100%;
 }
 
-.ui-datepicker-header .ui-state-hover,
-.ui-datepicker-header .ui-state-focus {
-  background: none;
-  background-color: #fafafa !important;
-  border: none !important;
+.duet-date__input-wrapper {
+  height: 100%;
 }
 
-.ui-datepicker table {
-  border-collapse: separate !important;
-  border-spacing: 1px !important;
+duet-date-picker.error {
+  border-color: #b94a48;
 }
 
-.ui-datepicker-calendar thead th {
-  font-weight: normal;
+.duet-date__input {
+  border: none;
+  /* padding of bootstrap form-control */
+  padding: 6px 12px;
+  height: 100%;
 }
 
-.ui-datepicker-calendar td span,
-.ui-datepicker-calendar td a {
-  padding: 6px !important;
+.duet-date__day.datepicker-day {
+  /* override padding of .datepicker-day */
+  padding: 0;
 }
 
-.ui-datepicker-calendar td a.ui-state-default,
-.ui-datepicker-calendar td span {
-  color: var(--font-color) !important;
-  font-weight: normal !important;
-  background: transparent !important;
-  border: none !important;
+.duet-date__table-header {
+  text-align: center;
 }
 
-.datepicker-day {
-  --background-color-left: #f6f6f6;
-  --background-color-right: #f6f6f6;
+.duet-date__day {
+  border-radius: 0;
+  width: 100%;
 }
 
-/* TODAY */
-.ui-datepicker-calendar td.ui-datepicker-today a.ui-state-highlight {
-  --background-color-left: #cfcfcf;
-  --background-color-right: #cfcfcf;
-  --font-color: #5f5f5f;
+.duet-date__day:hover::before,
+.duet-date__day.is-today::before {
+  border-radius: 0;
 }

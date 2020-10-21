@@ -169,6 +169,7 @@ public class OvertimeViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute(OVERTIME, overtimeForm);
+            model.addAttribute(PERSON_ATTRIBUTE, person);
             return OVERTIME_OVERTIME_FORM;
         }
 
