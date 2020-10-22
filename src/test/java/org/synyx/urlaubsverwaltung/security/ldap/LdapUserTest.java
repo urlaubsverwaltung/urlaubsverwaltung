@@ -23,22 +23,22 @@ class LdapUserTest {
 
     @Test
     void ensureCanBeInitializedWithAttributes() {
-        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@firma.test", List.of());
+        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@example.org", List.of());
         assertThat(ldapUser.getUsername()).isEqualTo("username");
         assertThat(ldapUser.getFirstName()).isEqualTo(Optional.of("Max"));
         assertThat(ldapUser.getLastName()).isEqualTo(Optional.of("Mustermann"));
-        assertThat(ldapUser.getEmail()).isEqualTo(Optional.of("max@firma.test"));
+        assertThat(ldapUser.getEmail()).isEqualTo(Optional.of("max@example.org"));
     }
 
     @Test
     void ensureMemberOfInformationIsOptional() {
-        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@firma.test", List.of());
+        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@example.org", List.of());
         assertThat(ldapUser.getMemberOf()).isEmpty();
     }
 
     @Test
     void ensureCanBeInitializedWithAttributesAndMemberOfInformation() {
-        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@firma.test", List.of("GroupA", "GroupB"));
+        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@example.org", List.of("GroupA", "GroupB"));
         assertThat(ldapUser.getMemberOf())
             .hasSize(2)
             .contains("GroupA", "GroupB");
@@ -47,7 +47,7 @@ class LdapUserTest {
     @Test
     void ensureMemberOfListIsUnmodifiable() {
 
-        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@firma.test", List.of("GroupA", "GroupB"));
+        final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@example.org", List.of("GroupA", "GroupB"));
 
         final List<String> memberOf = ldapUser.getMemberOf();
         try {

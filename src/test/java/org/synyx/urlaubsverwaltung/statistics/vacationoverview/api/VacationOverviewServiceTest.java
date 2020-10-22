@@ -44,7 +44,7 @@ class VacationOverviewServiceTest {
         Department department = new Department();
         String departmentName = "Admins";
         department.setName(departmentName);
-        String email = "muster@firma.test";
+        String email = "muster@example.org";
         Person person = new Person("test", "Muster", "Max", email);
         department.setMembers(singletonList(person));
         LocalDate testDate = LocalDate.parse("2017-09-01");
