@@ -23,11 +23,11 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 
@@ -77,11 +77,12 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private final CalculationService calculationService;
     private final SettingsService settingsService;
     private final OvertimeService overtimeService;
+    private final Clock clock;
 
     @Autowired
     public ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysCountService calendarService,
                                             OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                            OvertimeService overtimeService) {
+                                            OvertimeService overtimeService, Clock clock) {
 
         this.workingTimeService = workingTimeService;
         this.calendarService = calendarService;
@@ -89,6 +90,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         this.calculationService = calculationService;
         this.settingsService = settingsService;
         this.overtimeService = overtimeService;
+        this.clock = clock;
     }
 
     @Override
@@ -249,7 +251,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private void validateNotTooFarInTheFuture(LocalDate date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        LocalDate future = ZonedDateTime.now(UTC).plusMonths(maximumMonths).toLocalDate();
+        LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
 
         if (date.isAfter(future)) {
             errors.reject(ERROR_TOO_LONG, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
@@ -260,7 +262,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private void validateNotTooFarInThePast(LocalDate date, AbsenceSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        LocalDate past = ZonedDateTime.now(UTC).minusMonths(maximumMonths).toLocalDate();
+        LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();
 
         if (date.isBefore(past)) {
             errors.reject(ERROR_PAST);

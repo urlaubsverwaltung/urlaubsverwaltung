@@ -13,14 +13,14 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
 
@@ -40,11 +40,12 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
                                           ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                          AbsenceMappingService absenceMappingService, SettingsService settingsService) {
+                                          AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
@@ -52,6 +53,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @Override
@@ -112,10 +114,10 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         if (absenceMapping.isPresent()) {
             String eventId = absenceMapping.get().getEventId();
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+            TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
 
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                new AbsenceTimeConfiguration(calendarSettings)), eventId);
+                new AbsenceTimeConfiguration(timeSettings)), eventId);
             absenceMappingService.delete(absenceMapping.get());
             absenceMappingService.create(application.getId(), AbsenceType.VACATION, eventId);
         }
@@ -151,8 +153,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             AbsenceType.SICKNOTE);
 
         if (absenceMapping.isPresent()) {
-            CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+            TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+            AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
             calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
                 timeConfiguration), absenceMapping.get().getEventId());
         }
@@ -160,8 +162,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private void updateCalendar(SickNote sickNote) {
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+        AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(timeSettings);
 
         Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote.getPerson(),
             sickNote.getPeriod(), timeConfiguration));
@@ -171,7 +173,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private void saveSickNote(SickNote sickNote) {
 
-        sickNote.setLastEdited(LocalDate.now(UTC));
+        sickNote.setLastEdited(LocalDate.now(clock));
 
         sickNoteService.save(sickNote);
     }

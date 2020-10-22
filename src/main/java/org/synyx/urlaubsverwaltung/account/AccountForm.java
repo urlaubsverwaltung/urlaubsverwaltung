@@ -4,9 +4,6 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-
-import static java.time.ZoneOffset.UTC;
 
 public class AccountForm {
 
@@ -19,8 +16,7 @@ public class AccountForm {
     private BigDecimal remainingVacationDaysNotExpiring;
     private String comment;
 
-    AccountForm() {
-        this(ZonedDateTime.now(UTC).getYear());
+    private AccountForm() {
     }
 
     AccountForm(int year) {

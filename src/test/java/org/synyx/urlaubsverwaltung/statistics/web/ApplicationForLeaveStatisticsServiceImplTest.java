@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -41,7 +40,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
     @Test
     void getStatisticsForDepartmentHead() {
 
-        FilterPeriod filterPeriod = new FilterPeriod(ofNullable("01.01.2018"), ofNullable("31.12.2018"));
+        FilterPeriod filterPeriod = new FilterPeriod("01.01.2018", "31.12.2018");
 
         Person person = new Person();
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
@@ -57,7 +56,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
     @Test
     void getStatisticsForOtherThanDepartmentHead() {
 
-        FilterPeriod filterPeriod = new FilterPeriod(ofNullable("01.01.2018"), ofNullable("31.12.2018"));
+        FilterPeriod filterPeriod = new FilterPeriod("01.01.2018", "31.12.2018");
 
         Person person = new Person();
         person.setPermissions(singletonList(BOSS));

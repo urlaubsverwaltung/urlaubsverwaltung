@@ -1,0 +1,28 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="add_timezoneid">
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
+
+    <addColumn tableName="Settings">
+      <column name="timezoneid" type="VARCHAR(255)" defaultValue="Europe/Berlin"/>
+      <column name="workDayBeginHour" type="INT(2)"/>
+      <column name="workDayEndHour" type="INT(2)"/>
+    </addColumn>
+
+    <sql>
+      UPDATE Settings SET workDayBeginHour = (SELECT calendar_workDayBeginHour FROM Settings WHERE id = "1") WHERE id = "1";
+      UPDATE Settings SET workDayBeginHour = "8" WHERE id = "1" AND workDayBeginHour is NULL;
+      UPDATE Settings SET workDayEndHour = (SELECT calendar_workDayEndHour FROM Settings WHERE id = "1") WHERE id = "1";
+      UPDATE Settings SET workDayEndHour = "16" WHERE id = "1" AND workDayEndHour is NULL;
+    </sql>
+
+    <dropColumn tableName="Settings" columnName="calendar_workDayBeginHour"/>
+    <dropColumn tableName="Settings" columnName="calendar_workDayEndHour"/>
+  </changeSet>
+
+</databaseChangeLog>

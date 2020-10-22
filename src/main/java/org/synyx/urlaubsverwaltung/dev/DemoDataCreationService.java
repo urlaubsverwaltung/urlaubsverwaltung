@@ -5,13 +5,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -44,16 +44,18 @@ public class DemoDataCreationService {
     private final OvertimeRecordDataProvider overtimeRecordDataProvider;
     private final DepartmentDataProvider departmentDataProvider;
     private final DemoDataProperties demoDataProperties;
+    private final Clock clock;
 
     public DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                    SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                   DepartmentDataProvider departmentDataProvider, DemoDataProperties demoDataProperties) {
+                                   DepartmentDataProvider departmentDataProvider, DemoDataProperties demoDataProperties, Clock clock) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
         this.overtimeRecordDataProvider = overtimeRecordDataProvider;
         this.departmentDataProvider = departmentDataProvider;
         this.demoDataProperties = demoDataProperties;
+        this.clock = clock;
     }
 
     @PostConstruct
@@ -121,7 +123,7 @@ public class DemoDataCreationService {
 
     private void createApplicationsForLeave(Person person, Person boss, Person office) {
 
-        final LocalDate now = LocalDate.now(UTC);
+        final LocalDate now = LocalDate.now(clock);
 
         // FUTURE APPLICATIONS FOR LEAVE
         applicationForLeaveDataProvider.createWaitingApplication(person, HOLIDAY, FULL, now.plusDays(10), now.plusDays(16));
@@ -143,7 +145,7 @@ public class DemoDataCreationService {
 
     private void createSickNotes(Person person, Person office) {
 
-        final LocalDate now = LocalDate.now(UTC);
+        final LocalDate now = LocalDate.now(clock);
 
         // SICK NOTES
         sickNoteDataProvider.createSickNote(person, office, NOON, now.minusDays(10), now.minusDays(10), SICK_NOTE, false);
@@ -157,7 +159,7 @@ public class DemoDataCreationService {
 
     private void createOvertimeRecords(Person person) {
 
-        final LocalDate now = LocalDate.now(UTC);
+        final LocalDate now = LocalDate.now(clock);
 
         final LocalDate lastWeek = now.minusWeeks(1);
         final LocalDate weekBeforeLast = now.minusWeeks(2);

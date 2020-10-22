@@ -207,6 +207,7 @@
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+
                                     <spring:message code="settings.sickDays.description"/>
                                 </span>
                             </div>
@@ -245,7 +246,68 @@
                 </div>
 
                 <div class="tab-pane" id="publicHolidays">
-                    <div class="form-section">
+
+                    <div class="form-section tw-mb-8">
+
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.time.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
+
+                            <div class="col-md-4 col-md-push-8">
+                                <span class="help-block tw-text-sm">
+                                </span>
+                            </div>
+                            <div class="col-md-8 col-md-pull-4">
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-4"
+                                           for="calendarSettings.exchangeCalendarSettings.timeZoneId">
+                                        <spring:message code="settings.time.timezone"/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:select id="timeSettings.timeZoneId"
+                                                     path="timeSettings.timeZoneId"
+                                                     class="form-control chosenCombo"
+                                                     cssErrorClass="form-control error">
+                                            <c:forEach items="${availableTimezones}" var="timeZoneId">
+                                                <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                            </c:forEach>
+                                        </form:select>
+                                    </div>
+                                </div>
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="timeSettings.workDayBeginHour">
+                                        <spring:message code='settings.time.workDay.begin'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="timeSettings.workDayBeginHour"
+                                                    path="timeSettings.workDayBeginHour" class="form-control"
+                                                    cssErrorClass="form-control error"
+                                                    type="number" step="1"/>
+                                        <span class="help-inline"><form:errors path="timeSettings.workDayBeginHour"
+                                                                               cssClass="error"/></span>
+                                    </div>
+                                </div>
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="timeSettings.workDayEndHour">
+                                        <spring:message code='settings.time.workDay.end'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="timeSettings.workDayEndHour"
+                                                    path="timeSettings.workDayEndHour" class="form-control"
+                                                    cssErrorClass="form-control error"
+                                                    type="number" step="1"/>
+                                        <span class="help-inline"><form:errors path="timeSettings.workDayEndHour"
+                                                                               cssClass="error"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section tw-mb-8">
                         <uv:section-heading>
                             <h2>
                                 <spring:message code="settings.publicHolidays.title"/>
@@ -312,7 +374,7 @@
                         </div>
                     </div>
 
-                    <div class="form-section">
+                    <div class="form-section tw-mb-8">
                         <uv:section-heading>
                             <h2>
                                 <spring:message code="settings.overtime.title"/>
@@ -397,32 +459,6 @@
                                 </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
-                                <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="calendarSettings.workDayBeginHour">
-                                        <spring:message code='settings.calendar.workDay.begin'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="calendarSettings.workDayBeginHour"
-                                                    path="calendarSettings.workDayBeginHour" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <span class="help-inline"><form:errors path="calendarSettings.workDayBeginHour"
-                                                                               cssClass="error"/></span>
-                                    </div>
-                                </div>
-                                <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="calendarSettings.workDayEndHour">
-                                        <spring:message code='settings.calendar.workDay.end'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="calendarSettings.workDayEndHour"
-                                                    path="calendarSettings.workDayEndHour" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <span class="help-inline"><form:errors path="calendarSettings.workDayEndHour"
-                                                                               cssClass="error"/></span>
-                                    </div>
-                                </div>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4" for="calendarSettingsProvider">
                                         <spring:message code='settings.calendar.provider'/>:

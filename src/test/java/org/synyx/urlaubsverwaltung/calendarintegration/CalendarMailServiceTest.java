@@ -12,17 +12,15 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class CalendarMailServiceTest {
@@ -43,8 +41,7 @@ class CalendarMailServiceTest {
         final String calendarName = "calendar name";
         final String exception = "Some exception";
 
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettings());
 
         final LocalDate startDate = LocalDate.of(2019, 5, 5);
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
@@ -76,8 +73,7 @@ class CalendarMailServiceTest {
         final String exception = "Some exception";
         final String eventId = "eventId";
 
-        final CalendarSettings calendarSettings = new CalendarSettings();
-        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(calendarSettings);
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettings());
 
         final LocalDate startDate = LocalDate.of(2019, 5, 5);
         final LocalDate endDate = LocalDate.of(2019, 5, 10);

@@ -17,13 +17,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -56,9 +56,11 @@ class OvertimeViewControllerTest {
     @Mock
     private DepartmentService departmentService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
-        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService);
+        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, clock);
     }
 
     @Test
@@ -123,7 +125,7 @@ class OvertimeViewControllerTest {
     @Test
     void showOvertimeIsAllowed() throws Exception {
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
 
         final int personId = 5;
         final Person person = new Person();
@@ -218,7 +220,7 @@ class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(true);
 
-        final List<OvertimeComment> overtimeComments = List.of(new OvertimeComment(overtimePerson, overtime, CREATED));
+        final List<OvertimeComment> overtimeComments = List.of(new OvertimeComment(overtimePerson, overtime, CREATED, Clock.systemUTC()));
         when(overtimeService.getCommentsForOvertime(overtime)).thenReturn(overtimeComments);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(BigDecimal.ONE);

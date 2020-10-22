@@ -23,12 +23,12 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Collections;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -43,7 +43,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,10 +70,11 @@ class ApplicationForLeaveFormViewControllerTest {
     private SettingsService settingsService;
 
     private static final int PERSON_ID = 1;
+    private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService);
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService, clock);
     }
 
     @Test
@@ -83,7 +83,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
@@ -108,7 +108,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(new Account()));
 
         final VacationType vacationType = new VacationType();
@@ -250,6 +250,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final int applicationId = 11;
         final Person person = personWithRole(OFFICE);
+
         when(personService.getSignedInUser()).thenReturn(person);
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(applicationWithId(applicationId));
 

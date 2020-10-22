@@ -2,13 +2,12 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,6 @@ import java.util.List;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -86,8 +84,8 @@ class ICalServiceTest {
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190426T080000Z")
-            .contains("DTEND:20190426T120000Z")
+            .contains("DTSTART:20190426T060000Z")
+            .contains("DTEND:20190426T100000Z")
 
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
             .contains("ORGANIZER:mailto:no-reply@example.org");
@@ -132,8 +130,8 @@ class ICalServiceTest {
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
+            .contains("DTSTART:20190526T100000Z")
+            .contains("DTEND:20190526T140000Z")
 
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
             .contains("ORGANIZER:mailto:no-reply@example.org");
@@ -152,7 +150,9 @@ class ICalServiceTest {
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
+        TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Europe/Berlin");
+        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
 
         return new Absence(person, period, timeConfig);
     }

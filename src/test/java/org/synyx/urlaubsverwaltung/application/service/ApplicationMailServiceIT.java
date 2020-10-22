@@ -24,6 +24,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,11 +51,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
     @Autowired
     private ApplicationMailService sut;
-
     @Autowired
     private PersonService personService;
     @Autowired
     private MailProperties mailProperties;
+    @Autowired
+    private Clock clock;
 
     @MockBean
     private ApplicationRecipientService applicationRecipientService;
@@ -77,7 +79,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
         application.setBoss(boss);
 
-        final ApplicationComment comment = new ApplicationComment(boss);
+        final ApplicationComment comment = new ApplicationComment(boss, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
         sut.sendAllowedNotification(application, comment);
@@ -129,7 +131,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@firma.test");
         boss.setPermissions(singletonList(BOSS));
 
-        final ApplicationComment comment = new ApplicationComment(boss);
+        final ApplicationComment comment = new ApplicationComment(boss, clock);
         comment.setText("Geht leider nicht zu dem Zeitraum");
 
         final Application application = createApplication(person);
@@ -192,7 +194,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.save(office);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Bitte stornieren!");
 
         final Application application = createApplication(person);
@@ -298,7 +300,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Hätte gerne Urlaub");
 
         sut.sendConfirmation(application, comment);
@@ -328,7 +330,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Habe das mal für dich beantragt");
 
         final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
@@ -365,7 +367,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
         application.setCanceller(office);
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Geht leider nicht");
 
         sut.sendCancelledByOfficeNotification(application, comment);
@@ -399,7 +401,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Hätte gerne Urlaub");
 
         final Application application = createApplication(person);
@@ -438,7 +440,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@firma.test");
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
 
-        final ApplicationComment comment = new ApplicationComment(secondStage);
+        final ApplicationComment comment = new ApplicationComment(secondStage, clock);
         comment.setText("Hätte gerne Urlaub");
 
         final Application application = createApplication(secondStage);
@@ -473,7 +475,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@firma.test");
         departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
 
-        final ApplicationComment comment = new ApplicationComment(departmentHead);
+        final ApplicationComment comment = new ApplicationComment(departmentHead, clock);
         comment.setText("Hätte gerne Urlaub");
 
         final Application application = createApplication(departmentHead);
@@ -509,7 +511,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@firma.test");
         secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
 
-        final ApplicationComment comment = new ApplicationComment(secondStage);
+        final ApplicationComment comment = new ApplicationComment(secondStage, clock);
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
 
         final Application application = createApplication(person);
@@ -567,7 +569,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
 
-        final ApplicationComment comment = new ApplicationComment(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
 
         final Application application = createApplication(person);

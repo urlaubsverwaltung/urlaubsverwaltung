@@ -16,9 +16,9 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.ZonedDateTime;
 
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,6 +36,9 @@ class CalendarMailServiceIT extends TestContainersBase {
     @Autowired
     private MailProperties mailProperties;
 
+    @Autowired
+    private Clock clock;
+
     @Test
     void ensureAdministratorGetsANotificationIfACalendarSyncErrorOccurred() throws MessagingException,
         IOException {
@@ -44,8 +47,8 @@ class CalendarMailServiceIT extends TestContainersBase {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
 
         sut.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
@@ -71,8 +74,8 @@ class CalendarMailServiceIT extends TestContainersBase {
 
         Absence absence = mock(Absence.class);
         when(absence.getPerson()).thenReturn(person);
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
+        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(clock));
+        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(clock));
 
         sut.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 

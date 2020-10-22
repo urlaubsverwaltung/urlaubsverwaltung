@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
@@ -12,7 +13,6 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -33,11 +33,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
 
 
 @ExtendWith(MockitoExtension.class)

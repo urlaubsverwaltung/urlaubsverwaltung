@@ -10,9 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -79,9 +80,11 @@ class CalculationServiceTest {
         List<Integer> workingDays = asList(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
         workingTime.setWorkingDays(workingDays, FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+            .thenReturn(Optional.of(workingTime));
 
-        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService, new OverlapService(null, null));
+        sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,
+            new OverlapService(null, null, Clock.systemUTC()));
     }
 
 

@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,10 +22,10 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationCronMailServiceTest {
@@ -40,7 +41,7 @@ class ApplicationCronMailServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService);
+        sut = new ApplicationCronMailService(applicationService, settingsService, applicationMailService, Clock.systemUTC());
     }
 
     @Test

@@ -12,8 +12,8 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.io.File;
 import java.util.AbstractMap;
@@ -403,7 +403,7 @@ class ApplicationMailService {
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        final CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
-        return new AbsenceTimeConfiguration(calendarSettings);
+        final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+        return new AbsenceTimeConfiguration(timeSettings);
     }
 }

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import java.time.Clock;
 
 
 /**
@@ -26,13 +27,16 @@ public class OvertimeComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private OvertimeAction action;
 
-    OvertimeComment() {
-
-        // OK
+    protected OvertimeComment() {
+        super();
     }
 
+    public OvertimeComment(Clock clock) {
+        super(clock);
+    }
 
-    public OvertimeComment(Person author, Overtime overtime, OvertimeAction action) {
+    public OvertimeComment(Person author, Overtime overtime, OvertimeAction action, Clock clock) {
+        super(clock);
 
         Assert.notNull(author, "Author must be given.");
         Assert.notNull(overtime, "Overtime record must be given.");
@@ -43,6 +47,7 @@ public class OvertimeComment extends AbstractComment {
         this.overtime = overtime;
         this.action = action;
     }
+
 
     public Overtime getOvertime() {
 

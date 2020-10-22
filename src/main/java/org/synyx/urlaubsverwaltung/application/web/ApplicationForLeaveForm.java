@@ -213,8 +213,9 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setPerson(person);
 
         applicationForLeave.setStartDate(startDate);
-        applicationForLeave.setEndDate(endDate);
         applicationForLeave.setStartTime(startTime);
+
+        applicationForLeave.setEndDate(endDate);
         applicationForLeave.setEndTime(endTime);
 
         applicationForLeave.setVacationType(vacationType);

@@ -50,12 +50,10 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
 
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
     private static final String GOOGLEAPIS_OAUTH2_V4_TOKEN = "https://www.googleapis.com/oauth2/v4/token";
-
-    private Calendar googleCalendarClient;
-    private int refreshTokenHashCode;
-
     private final CalendarMailService calendarMailService;
     private final SettingsService settingsService;
+    private Calendar googleCalendarClient;
+    private int refreshTokenHashCode;
 
     @Autowired
     public GoogleCalendarSyncProvider(CalendarMailService calendarMailService, SettingsService settingsService) {
@@ -103,7 +101,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         return null;
     }
 
-
     @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
@@ -133,7 +130,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         return Optional.empty();
     }
 
-
     @Override
     public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
 
@@ -162,7 +158,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
         }
     }
 
-
     @Override
     public void delete(String eventId, CalendarSettings calendarSettings) {
 
@@ -183,7 +178,6 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
             }
         }
     }
-
 
     @Override
     public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {

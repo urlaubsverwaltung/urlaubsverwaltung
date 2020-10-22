@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import java.time.Clock;
 
 
 /**
@@ -23,14 +24,16 @@ public class ApplicationComment extends AbstractComment {
     @Enumerated(EnumType.STRING)
     private ApplicationAction action;
 
-    ApplicationComment() {
-
-        // needed for Hibernate
+    protected ApplicationComment() {
+        super();
     }
 
+    public ApplicationComment(Clock clock) {
+        super(clock);
+    }
 
-    public ApplicationComment(Person person) {
-
+    public ApplicationComment(Person person, Clock clock) {
+        super(clock);
         super.setPerson(person);
     }
 

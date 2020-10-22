@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -259,21 +260,21 @@ class SettingsValidatorTest {
     }
 
 
-    // Calendar settings -----------------------------------------------------------------------------------------------
+    // Time settings -----------------------------------------------------------------------------------------------
 
     @Test
     void ensureCalendarSettingsAreMandatory() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(null);
-        calendarSettings.setWorkDayEndHour(null);
+        timeSettings.setWorkDayBeginHour(null);
+        timeSettings.setWorkDayEndHour(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.mandatory");
-        verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.mandatory");
+        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.mandatory");
+        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.mandatory");
     }
 
 
@@ -281,15 +282,15 @@ class SettingsValidatorTest {
     void ensureCalendarSettingsAreInvalidIfWorkDayBeginAndEndHoursAreSame() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(8);
-        calendarSettings.setWorkDayEndHour(8);
+        timeSettings.setWorkDayBeginHour(8);
+        timeSettings.setWorkDayEndHour(8);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
     }
 
 
@@ -297,15 +298,15 @@ class SettingsValidatorTest {
     void ensureCalendarSettingsAreInvalidIfWorkDayBeginHourIsGreaterThanEndHour() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(17);
-        calendarSettings.setWorkDayEndHour(8);
+        timeSettings.setWorkDayBeginHour(17);
+        timeSettings.setWorkDayEndHour(8);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
     }
 
 
@@ -313,15 +314,15 @@ class SettingsValidatorTest {
     void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreNegative() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(-1);
-        calendarSettings.setWorkDayEndHour(-2);
+        timeSettings.setWorkDayBeginHour(-1);
+        timeSettings.setWorkDayEndHour(-2);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
     }
 
 
@@ -329,15 +330,15 @@ class SettingsValidatorTest {
     void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreZero() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(0);
-        calendarSettings.setWorkDayEndHour(0);
+        timeSettings.setWorkDayBeginHour(0);
+        timeSettings.setWorkDayEndHour(0);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
     }
 
 
@@ -345,26 +346,25 @@ class SettingsValidatorTest {
     void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreGreaterThan24() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(25);
-        calendarSettings.setWorkDayEndHour(42);
+        timeSettings.setWorkDayBeginHour(25);
+        timeSettings.setWorkDayEndHour(42);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("calendarSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("calendarSettings.workDayEndHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
+        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
     }
-
 
     @Test
     void ensureCalendarSettingsAreValidIfValidWorkDayBeginAndEndHours() {
 
         Settings settings = new Settings();
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
+        TimeSettings timeSettings = settings.getTimeSettings();
 
-        calendarSettings.setWorkDayBeginHour(10);
-        calendarSettings.setWorkDayEndHour(18);
+        timeSettings.setWorkDayBeginHour(10);
+        timeSettings.setWorkDayEndHour(18);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);

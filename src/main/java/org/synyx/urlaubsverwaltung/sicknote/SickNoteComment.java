@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import java.time.Clock;
 
 
 /**
@@ -19,6 +20,14 @@ public class SickNoteComment extends AbstractComment {
 
     @Enumerated(EnumType.STRING)
     private SickNoteAction action;
+
+    protected SickNoteComment() {
+        super();
+    }
+
+    public SickNoteComment(Clock clock) {
+        super(clock);
+    }
 
     public SickNote getSickNote() {
 

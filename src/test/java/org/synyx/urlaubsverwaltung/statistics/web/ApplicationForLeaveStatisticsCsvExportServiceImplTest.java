@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Locale.GERMAN;
@@ -40,7 +39,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
     @Test
     void writeStatisticsForOnePersonFor2018() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
+        FilterPeriod period = new FilterPeriod("01.01.2018", "31.12.2018");
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
         Person person = mock(Person.class);
@@ -81,7 +80,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
     @Test
     void writeStatisticsForTwoPersonsFor2019() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
+        FilterPeriod period = new FilterPeriod("01.01.2019", "31.12.2019");
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
         Person personOne = mock(Person.class);
@@ -129,7 +128,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
     @Test
     void getFileNameForComplete2018() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2018"), Optional.of("31.12.2018"));
+        FilterPeriod period = new FilterPeriod("01.01.2018", "31.12.2018");
 
         when(messageSource.getMessage("applications.statistics", new String[]{"Statistik"}, GERMAN)).thenReturn("test");
 
@@ -139,7 +138,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
     @Test
     void getFileNameForComplete2019() {
-        FilterPeriod period = new FilterPeriod(Optional.of("01.01.2019"), Optional.of("31.12.2019"));
+        FilterPeriod period = new FilterPeriod("01.01.2019", "31.12.2019");
 
         when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
 

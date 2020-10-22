@@ -15,6 +15,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
+import java.time.Clock;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -32,16 +33,17 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
     @Autowired
     private OvertimeMailService sut;
-
     @Autowired
     private PersonService personService;
+    @Autowired
+    private Clock clock;
 
     @Test
     void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         final Overtime overtimeRecord = createOvertimeRecord(person);
-        final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED);
+        final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED, clock);
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));

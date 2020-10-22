@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -34,14 +35,17 @@ public class SettingsViewController {
     private final SettingsService settingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
+    private final Clock clock;
 
     @Autowired
     public SettingsViewController(SettingsService settingsService,
                                   List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator) {
+                                  SettingsValidator settingsValidator, Clock clock) {
+
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
+        this.clock = clock;
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
@@ -80,11 +84,10 @@ public class SettingsViewController {
             .collect(Collectors.toList());
         model.addAttribute("providers", providers);
 
-        List<String> availableTimezones = Arrays.asList(TimeZone.getAvailableIDs());
-        model.addAttribute("availableTimezones", availableTimezones);
+        model.addAttribute("availableTimezones", Arrays.asList(TimeZone.getAvailableIDs()));
 
         if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
-            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(TimeZone.getDefault().getID());
+            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(clock.getZone().getId());
         }
 
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);

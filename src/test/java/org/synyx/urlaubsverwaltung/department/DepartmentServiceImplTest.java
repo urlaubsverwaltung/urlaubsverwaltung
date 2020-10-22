@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,7 @@ class DepartmentServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentServiceImpl(departmentRepository, applicationService);
+        sut = new DepartmentServiceImpl(departmentRepository, applicationService, Clock.systemUTC());
     }
 
     @Test

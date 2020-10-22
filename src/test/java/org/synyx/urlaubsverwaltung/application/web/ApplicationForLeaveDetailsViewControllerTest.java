@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -41,7 +42,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,10 +85,12 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Mock
     private WorkingTimeService workingTimeService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, accountService, applicationService,
-            applicationInteractionService, commentService, workDaysCountService, commentValidator, departmentService, workingTimeService);
+            applicationInteractionService, commentService, workDaysCountService, commentValidator, departmentService, workingTimeService, clock);
     }
 
     @Test
@@ -117,7 +119,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailUsesProvidedYear() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
@@ -132,7 +134,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailDefaultsToApplicationEndDateYearIfNoYearProvided() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
         when(personService.getSignedInUser()).thenReturn(somePerson());
 
         Application application = someApplication();
@@ -148,7 +150,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void showApplicationDetailUsesCorrectView() throws Exception {
 
-        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson())));
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
         when(personService.getSignedInUser()).thenReturn(somePerson());
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);

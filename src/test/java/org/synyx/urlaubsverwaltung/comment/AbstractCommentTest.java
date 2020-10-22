@@ -4,9 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Instant;
 
-import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
@@ -16,14 +17,15 @@ class AbstractCommentTest {
     @Test
     void ensureHasDateSetAfterInitialization() {
 
-        final TestComment comment = new TestComment();
-        assertThat(comment.getDate()).isEqualTo(LocalDate.now(UTC));
+        Clock clock = Clock.systemUTC();
+        final TestComment comment = new TestComment(clock);
+        assertThat(comment.getDate()).isEqualTo(Instant.now(clock).truncatedTo(DAYS));
     }
 
     @Test
     void ensureThrowsIfGettingDateOnACorruptedComment() throws IllegalAccessException {
 
-        TestComment comment = new TestComment();
+        TestComment comment = new TestComment(Clock.systemUTC());
 
         Field dateField = ReflectionUtils.findField(AbstractComment.class, "date");
         dateField.setAccessible(true);
@@ -33,9 +35,12 @@ class AbstractCommentTest {
             .isThrownBy(comment::getDate);
     }
 
-    private static class TestComment extends AbstractComment {
-        private TestComment() {
-            super();
+
+    private class TestComment extends AbstractComment {
+
+        private TestComment(Clock clock) {
+
+            super(clock);
         }
     }
 }

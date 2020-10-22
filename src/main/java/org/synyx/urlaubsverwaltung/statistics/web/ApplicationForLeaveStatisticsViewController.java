@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Controller to generate applications for leave statistics.
@@ -62,11 +61,10 @@ public class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping
-    public String applicationForLeaveStatistics(@RequestParam(value = "from", required = false) String from,
-                                                @RequestParam(value = "to", required = false) String to,
+    public String applicationForLeaveStatistics(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to,
                                                 Model model) {
 
-        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
+        FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -95,7 +93,7 @@ public class ApplicationForLeaveStatisticsViewController {
                               Model model)
         throws IOException {
 
-        FilterPeriod period = new FilterPeriod(Optional.ofNullable(from), Optional.ofNullable(to));
+        FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {

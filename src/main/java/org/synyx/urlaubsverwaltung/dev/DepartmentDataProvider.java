@@ -4,10 +4,9 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
-
-import static java.time.ZoneOffset.UTC;
 
 
 /**
@@ -16,10 +15,12 @@ import static java.time.ZoneOffset.UTC;
 class DepartmentDataProvider {
 
     private final DepartmentService departmentService;
+    private final Clock clock;
 
-    DepartmentDataProvider(DepartmentService departmentService) {
+    DepartmentDataProvider(DepartmentService departmentService, Clock clock) {
 
         this.departmentService = departmentService;
+        this.clock = clock;
     }
 
     void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads,
@@ -28,7 +29,7 @@ class DepartmentDataProvider {
         final Department department = new Department();
         department.setName(name);
         department.setDescription(description);
-        department.setLastModification(LocalDate.now(UTC));
+        department.setLastModification(LocalDate.now(clock));
         department.setMembers(members);
         department.setDepartmentHeads(departmentHeads);
         department.setSecondStageAuthorities(secondStageAuthorities);

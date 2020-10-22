@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,7 +36,7 @@ class VacationOverviewServiceTest {
         this.departmentService = mock(DepartmentService.class);
         this.workingTimeService = mock(WorkingTimeService.class);
         this.publicHolidayService = mock(PublicHolidaysService.class);
-        this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService);
+        this.sut = new VacationOverviewService(departmentService, workingTimeService, publicHolidayService, Clock.systemUTC());
     }
 
     @Test

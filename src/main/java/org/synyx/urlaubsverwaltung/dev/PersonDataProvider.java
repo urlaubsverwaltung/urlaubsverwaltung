@@ -10,14 +10,14 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
@@ -44,14 +44,16 @@ class PersonDataProvider {
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
     private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                       AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
+                       AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder, Clock clock) {
 
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountInteractionService = accountInteractionService;
         this.passwordEncoder = passwordEncoder;
+        this.clock = clock;
     }
 
     boolean isPersonAlreadyCreated(String username) {
@@ -84,7 +86,7 @@ class PersonDataProvider {
 
         final Person savedPerson = personService.save(person);
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
         workingTimeService.touch(
             asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
             Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);

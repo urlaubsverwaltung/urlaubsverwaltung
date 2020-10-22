@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -131,7 +132,7 @@ class GoogleCalendarSyncProviderServiceTest {
         Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.MORNING);
 
-        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(CalendarSettings.class));
+        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(TimeSettings.class));
         Absence absence = new Absence(person, period, config);
 
         int eventsBeforeAdd = getCalendarEventCount();

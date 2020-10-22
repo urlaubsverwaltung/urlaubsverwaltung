@@ -19,6 +19,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
@@ -26,7 +27,6 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.R
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;

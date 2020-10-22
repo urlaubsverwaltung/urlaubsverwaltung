@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -39,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 class SickNoteValidatorTest {
 
     private SickNoteValidator sut;
+    private final Clock clock = Clock.systemUTC();
 
     @Mock
     private OverlapService overlapService;
@@ -47,7 +49,7 @@ class SickNoteValidatorTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteValidator(overlapService, workingTimeService);
+        sut = new SickNoteValidator(overlapService, workingTimeService, Clock.systemUTC());
     }
 
     @Test
@@ -166,7 +168,7 @@ class SickNoteValidatorTest {
 
     @Test
     void ensureCommentMayNotBeNull() {
-        final SickNoteComment sickNoteComment = new SickNoteComment();
+        final SickNoteComment sickNoteComment = new SickNoteComment(clock);
 
         final Errors errors = new BeanPropertyBindingResult(sickNoteComment, "sickNote");
         sut.validateComment(sickNoteComment, errors);
@@ -176,7 +178,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureTooLongCommentIsNotValid() {
 
-        final SickNoteComment sickNoteComment = new SickNoteComment();
+        final SickNoteComment sickNoteComment = new SickNoteComment(clock);
         sickNoteComment.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
             + "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
             + "sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
@@ -188,7 +190,7 @@ class SickNoteValidatorTest {
 
     @Test
     void ensureValidCommentHasNoErrors() {
-        final SickNoteComment sickNoteComment = new SickNoteComment();
+        final SickNoteComment sickNoteComment = new SickNoteComment(clock);
         sickNoteComment.setText("I am a fluffy little comment");
 
         final Errors errors = new BeanPropertyBindingResult(sickNoteComment, "sickNote");

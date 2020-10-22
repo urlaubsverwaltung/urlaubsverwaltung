@@ -26,12 +26,12 @@ import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 
@@ -50,14 +50,16 @@ public class OvertimeViewController {
     private final PersonService personService;
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
+    private final Clock clock;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
-                                  OvertimeFormValidator validator, DepartmentService departmentService) {
+                                  OvertimeFormValidator validator, DepartmentService departmentService, Clock clock) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;
         this.departmentService = departmentService;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -83,7 +85,7 @@ public class OvertimeViewController {
         @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
-        final int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
+        final int year = requestedYear == null ? Year.now(clock).getValue() : requestedYear;
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 

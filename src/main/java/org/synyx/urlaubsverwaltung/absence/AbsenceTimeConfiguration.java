@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,24 +10,24 @@ import java.util.concurrent.TimeUnit;
  */
 public class AbsenceTimeConfiguration {
 
-    private final CalendarSettings calendarSettings;
+    private final TimeSettings timeSettings;
 
-    public AbsenceTimeConfiguration(CalendarSettings calendarSettings) {
+    public AbsenceTimeConfiguration(TimeSettings timeSettings) {
 
-        this.calendarSettings = calendarSettings;
+        this.timeSettings = timeSettings;
     }
 
     public Integer getMorningStart() {
 
-        return calendarSettings.getWorkDayBeginHour();
+        return timeSettings.getWorkDayBeginHour();
     }
 
 
     public Integer getMorningEnd() {
 
-        int halfWorkDay = (calendarSettings.getWorkDayEndHour() - calendarSettings.getWorkDayBeginHour()) / 2;
+        int halfWorkDay = (timeSettings.getWorkDayEndHour() - timeSettings.getWorkDayBeginHour()) / 2;
 
-        return calendarSettings.getWorkDayBeginHour() + halfWorkDay;
+        return timeSettings.getWorkDayBeginHour() + halfWorkDay;
     }
 
 
@@ -39,7 +39,7 @@ public class AbsenceTimeConfiguration {
 
     public Integer getNoonEnd() {
 
-        return calendarSettings.getWorkDayEndHour();
+        return timeSettings.getWorkDayEndHour();
     }
 
 
@@ -64,5 +64,14 @@ public class AbsenceTimeConfiguration {
     public long getNoonEndAsMillis() {
 
         return TimeUnit.HOURS.toMillis(getNoonEnd());
+    }
+
+    public String getTimeZoneId() {
+
+        return timeSettings.getTimeZoneId();
+    }
+
+    public void setTimeZoneId(String timeZoneId) {
+        timeSettings.setTimeZoneId(timeZoneId);
     }
 }

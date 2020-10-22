@@ -15,12 +15,6 @@ public class CalendarSettings {
 
     private ExchangeCalendarSettings exchangeCalendarSettings;
 
-    @Column(name = "calendar_workDayBeginHour")
-    private Integer workDayBeginHour = 8; // NOSONAR
-
-    @Column(name = "calendar_workDayEndHour")
-    private Integer workDayEndHour = 16; // NOSONAR
-
     @Column(name = "calendar_provider")
     private String provider = "NoopCalendarSyncProvider";
 
@@ -55,29 +49,6 @@ public class CalendarSettings {
         this.googleCalendarSettings = googleCalendarSettings;
     }
 
-
-    public Integer getWorkDayBeginHour() {
-
-        return workDayBeginHour;
-    }
-
-
-    public void setWorkDayBeginHour(Integer workDayBeginHour) {
-
-        this.workDayBeginHour = workDayBeginHour;
-    }
-
-
-    public Integer getWorkDayEndHour() {
-
-        return workDayEndHour;
-    }
-
-
-    public void setWorkDayEndHour(Integer workDayEndHour) {
-
-        this.workDayEndHour = workDayEndHour;
-    }
 
     public String getProvider() {
         return provider;

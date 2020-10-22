@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.Clock;
 import java.util.List;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 /**
@@ -14,10 +17,12 @@ import java.util.List;
 class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
     private final SickNoteCommentRepository sickNoteCommentRepository;
+    private final Clock clock;
 
     @Autowired
-    public SickNoteCommentServiceImpl(SickNoteCommentRepository sickNoteCommentRepository) {
+    public SickNoteCommentServiceImpl(SickNoteCommentRepository sickNoteCommentRepository, Clock clock) {
         this.sickNoteCommentRepository = sickNoteCommentRepository;
+        this.clock = clock;
     }
 
     @Override
@@ -28,17 +33,12 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     @Override
     public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text) {
 
-        final SickNoteComment comment = new SickNoteComment();
+        final SickNoteComment comment = new SickNoteComment(clock);
 
         comment.setSickNote(sickNote);
         comment.setAction(action);
         comment.setPerson(author);
-
-        if (text == null) {
-            comment.setText("");
-        } else {
-            comment.setText(text);
-        }
+        comment.setText(requireNonNullElse(text, ""));
 
         return sickNoteCommentRepository.save(comment);
     }

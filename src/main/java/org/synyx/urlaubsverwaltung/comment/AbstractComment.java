@@ -6,9 +6,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Instant;
 
-import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Optional.ofNullable;
 
 
 /**
@@ -23,13 +25,19 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
 
     // When has the comment be written?
     @Column(nullable = false)
-    private final LocalDate date;
+    private Instant date;
 
     // What is the content of the comment?
     private String text;
 
-    public AbstractComment() {
-        this.date = LocalDate.now(UTC);
+    protected AbstractComment() {
+        // needed for hibernate
+    }
+
+    public AbstractComment(Clock clock) {
+
+        Clock c = ofNullable(clock).orElse(Clock.systemUTC());
+        this.date = Instant.now(c).truncatedTo(DAYS);
     }
 
     public Person getPerson() {
@@ -44,7 +52,7 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     }
 
 
-    public LocalDate getDate() {
+    public Instant getDate() {
 
         if (date == null) {
             throw new IllegalStateException("Date of comment can never be null!");

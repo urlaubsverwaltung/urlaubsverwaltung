@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentService;
@@ -24,6 +25,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.time.Clock;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +41,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -73,6 +74,8 @@ class SickNoteViewControllerTest {
     private SickNoteValidator validatorMock;
     @Mock
     private SickNoteConvertFormValidator sickNoteConvertFormValidatorMock;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -80,7 +83,7 @@ class SickNoteViewControllerTest {
         sut = new SickNoteViewController(sickNoteServiceMock,
             sickNoteInteractionServiceMock, sickNoteCommentServiceMock, sickNoteTypeServiceMock,
             vacationTypeServiceMock, personServiceMock, workDaysCountService, validatorMock,
-            sickNoteConvertFormValidatorMock);
+            sickNoteConvertFormValidatorMock, settingsService, Clock.systemUTC());
     }
 
     @Test

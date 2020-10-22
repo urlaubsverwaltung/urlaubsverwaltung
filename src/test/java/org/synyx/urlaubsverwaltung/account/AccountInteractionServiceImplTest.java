@@ -8,15 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.account.AccountInteractionServiceImpl;
-import org.synyx.urlaubsverwaltung.account.AccountService;
-import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.account.AccountProperties;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
@@ -41,7 +37,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AccountInteractionServiceImplTest {
 
-    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 8, 13);
 
     private AccountInteractionServiceImpl sut;
 
@@ -62,7 +57,7 @@ class AccountInteractionServiceImplTest {
     @Test
     void testDefaultAccountCreation() {
 
-        final Clock fixedClock = Clock.fixed(LOCAL_DATE.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), ZoneId.of("UTC"));
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
 

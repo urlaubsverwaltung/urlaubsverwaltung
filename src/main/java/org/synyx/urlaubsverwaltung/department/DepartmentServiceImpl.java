@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -40,11 +39,14 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final ApplicationService applicationService;
+    private final Clock clock;
 
     @Autowired
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService) {
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock) {
+
         this.departmentRepository = departmentRepository;
         this.applicationService = applicationService;
+        this.clock = clock;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void update(Department department) {
 
-        department.setLastModification(LocalDate.now(UTC));
+        department.setLastModification(LocalDate.now(clock));
 
         departmentRepository.save(department);
 

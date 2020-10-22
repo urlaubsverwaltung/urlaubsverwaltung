@@ -1,29 +1,31 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.function.Consumer;
 
 import static java.math.BigDecimal.ONE;
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApplicationForLeaveFormTest {
 
+    private final Clock clock = Clock.systemUTC();
+
     @Test
     void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
 
-        final LocalDate startDate = LocalDate.now(UTC);
+        final LocalDate startDate = LocalDate.now(clock);
         final LocalDate endDate = startDate.plusDays(3);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
@@ -43,7 +45,7 @@ class ApplicationForLeaveFormTest {
     @Test
     void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
 
-        final LocalDate now = LocalDate.now(UTC);
+        final LocalDate now = LocalDate.now(clock);
 
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));

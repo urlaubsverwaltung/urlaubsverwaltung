@@ -5,16 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ class OverlapServiceTest {
 
     @BeforeEach
     void setup() {
-        sut = new OverlapService(applicationRepository, sickNoteService);
+        sut = new OverlapService(applicationRepository, sickNoteService, Clock.systemUTC());
     }
 
     @Test
