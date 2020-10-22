@@ -3,13 +3,11 @@ package org.synyx.urlaubsverwaltung.settings;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import static java.util.Optional.ofNullable;
-
 @Embeddable
 public class TimeSettings {
 
     @Column(name = "timezoneid")
-    private String timeZoneId;
+    private String timeZoneId = "Europe/Berlin";
 
     @Column(name = "workDayBeginHour")
     private Integer workDayBeginHour = 8; // NOSONAR
@@ -18,8 +16,7 @@ public class TimeSettings {
     private Integer workDayEndHour = 16; // NOSONAR
 
     public String getTimeZoneId() {
-
-        return ofNullable(timeZoneId).orElse("Europe/Berlin");
+        return timeZoneId;
     }
 
     public void setTimeZoneId(String timeZoneId) {

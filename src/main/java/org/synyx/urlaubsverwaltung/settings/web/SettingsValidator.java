@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
@@ -41,23 +42,19 @@ public class SettingsValidator implements Validator {
 
         Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
 
-        Settings settings = (Settings) o;
+        final Settings settings = (Settings) o;
 
         validatePublicHolidaysSettings(settings, errors);
-
         validateOvertimeSettings(settings, errors);
-
         validateVacationSettings(settings, errors);
-
         validateSickNoteSettings(settings, errors);
-
         validateCalendarSettings(settings, errors);
+        validateTimeSettings(settings, errors);
     }
-
 
     private void validatePublicHolidaysSettings(Settings settings, Errors errors) {
 
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
         if (workingTimeSettings.getFederalState() == null) {
             errors.rejectValue("workingTimeSettings.federalState", ERROR_MANDATORY_FIELD);
@@ -72,10 +69,9 @@ public class SettingsValidator implements Validator {
         }
     }
 
-
     private void validateOvertimeSettings(Settings settings, Errors errors) {
 
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
         if (!workingTimeSettings.isOvertimeActive()) {
             return;
@@ -84,7 +80,6 @@ public class SettingsValidator implements Validator {
         validateOvertimeLimit(workingTimeSettings.getMaximumOvertime(), "workingTimeSettings.maximumOvertime", errors);
         validateOvertimeLimit(workingTimeSettings.getMinimumOvertime(), "workingTimeSettings.minimumOvertime", errors);
     }
-
 
     private void validateOvertimeLimit(Integer limit, String field, Errors errors) {
 
@@ -99,12 +94,11 @@ public class SettingsValidator implements Validator {
         }
     }
 
-
     private void validateVacationSettings(Settings settings, Errors errors) {
 
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        Integer maximumAnnualVacationDays = absenceSettings.getMaximumAnnualVacationDays();
+        final Integer maximumAnnualVacationDays = absenceSettings.getMaximumAnnualVacationDays();
 
         if (maximumAnnualVacationDays == null) {
             errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
@@ -112,7 +106,7 @@ public class SettingsValidator implements Validator {
             errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
         }
 
-        Integer maximumMonthsToApplyForLeaveInAdvance = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
+        final Integer maximumMonthsToApplyForLeaveInAdvance = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
 
         if (maximumMonthsToApplyForLeaveInAdvance == null) {
             errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
@@ -120,7 +114,7 @@ public class SettingsValidator implements Validator {
             errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
         }
 
-        Integer daysBeforeRemindForWaitingApplications = absenceSettings.getDaysBeforeRemindForWaitingApplications();
+        final Integer daysBeforeRemindForWaitingApplications = absenceSettings.getDaysBeforeRemindForWaitingApplications();
 
         if (daysBeforeRemindForWaitingApplications == null) {
             errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);
@@ -129,13 +123,12 @@ public class SettingsValidator implements Validator {
         }
     }
 
-
     private void validateSickNoteSettings(Settings settings, Errors errors) {
 
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        Integer maximumSickPayDays = absenceSettings.getMaximumSickPayDays();
-        Integer daysBeforeEndOfSickPayNotification = absenceSettings.getDaysBeforeEndOfSickPayNotification();
+        final Integer maximumSickPayDays = absenceSettings.getMaximumSickPayDays();
+        final Integer daysBeforeEndOfSickPayNotification = absenceSettings.getDaysBeforeEndOfSickPayNotification();
 
         if (maximumSickPayDays == null) {
             errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);
@@ -156,9 +149,7 @@ public class SettingsValidator implements Validator {
         }
     }
 
-
     private void validateMandatoryTextField(String input, String attributeName, Errors errors) {
-
         if (!StringUtils.hasText(input)) {
             errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
         } else {
@@ -168,9 +159,7 @@ public class SettingsValidator implements Validator {
         }
     }
 
-
     private boolean validStringLength(String string) {
-
         return string.length() <= MAX_CHARS;
     }
 
@@ -191,9 +180,7 @@ public class SettingsValidator implements Validator {
 
     private void validateCalendarSettings(Settings settings, Errors errors) {
 
-        CalendarSettings calendarSettings = settings.getCalendarSettings();
-
-        validateCalendarSettings(calendarSettings, errors);
+        final CalendarSettings calendarSettings = settings.getCalendarSettings();
 
         if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getSimpleName())) {
             validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
@@ -203,20 +190,21 @@ public class SettingsValidator implements Validator {
         }
     }
 
+    private void validateTimeSettings(Settings settings, Errors errors) {
 
-    private void validateCalendarSettings(CalendarSettings calendarSettings, Errors errors) {
+        final TimeSettings timeSettings = settings.getTimeSettings();
 
-        String workDayBeginHourAttribute = "calendarSettings.workDayBeginHour";
-        Integer workDayBeginHour = calendarSettings.getWorkDayBeginHour();
+        final String workDayBeginHourAttribute = "timeSettings.workDayBeginHour";
+        final Integer workDayBeginHour = timeSettings.getWorkDayBeginHour();
         validateWorkDayHour(workDayBeginHour, workDayBeginHourAttribute, errors);
 
-        Integer workDayEndHour = calendarSettings.getWorkDayEndHour();
-        String workDayEndHourAttribute = "calendarSettings.workDayEndHour";
+        final Integer workDayEndHour = timeSettings.getWorkDayEndHour();
+        final String workDayEndHourAttribute = "timeSettings.workDayEndHour";
         validateWorkDayHour(workDayEndHour, workDayEndHourAttribute, errors);
 
-        boolean beginHourValid = workDayBeginHour != null && isValidWorkDayHour(workDayBeginHour);
-        boolean endHourValid = workDayEndHour != null && isValidWorkDayHour(workDayEndHour);
-        boolean beginAndEndValid = beginHourValid && endHourValid;
+        final boolean beginHourValid = workDayBeginHour != null && isValidWorkDayHour(workDayBeginHour);
+        final boolean endHourValid = workDayEndHour != null && isValidWorkDayHour(workDayEndHour);
+        final boolean beginAndEndValid = beginHourValid && endHourValid;
 
         if (beginAndEndValid && workDayBeginHour >= workDayEndHour) {
             errors.rejectValue(workDayBeginHourAttribute, ERROR_INVALID_ENTRY);
@@ -224,12 +212,9 @@ public class SettingsValidator implements Validator {
         }
     }
 
-
     private boolean isValidWorkDayHour(int workDayHour) {
-
         return workDayHour > 0 && workDayHour <= HOURS_PER_DAY;
     }
-
 
     private void validateWorkDayHour(Integer workDayHour, String attribute, Errors errors) {
 
@@ -241,7 +226,6 @@ public class SettingsValidator implements Validator {
             }
         }
     }
-
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
         validateExchangeEmail(exchangeCalendarSettings, errors);
@@ -259,7 +243,6 @@ public class SettingsValidator implements Validator {
         validateMandatoryTextField(clientSecret, "calendarSettings.googleCalendarSettings.clientSecret", errors);
     }
 
-
     private void validateExchangeEmail(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String emailAttribute = "calendarSettings.exchangeCalendarSettings.email";
@@ -268,7 +251,6 @@ public class SettingsValidator implements Validator {
         validateMandatoryMailAddress(email, emailAttribute, errors);
     }
 
-
     private void validateExchangePassword(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
         String passwordAttribute = "calendarSettings.exchangeCalendarSettings.password";
@@ -276,7 +258,6 @@ public class SettingsValidator implements Validator {
 
         validateMandatoryTextField(password, passwordAttribute, errors);
     }
-
 
     private void validateExchangeCalendarName(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
 
