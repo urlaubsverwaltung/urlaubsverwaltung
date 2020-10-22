@@ -15,6 +15,7 @@ import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -29,17 +30,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Date.from;
 import static java.util.stream.Collectors.toList;
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 @Service
 public class ICalService {
 
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
     private final CalendarProperties calendarProperties;
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Autowired
@@ -102,7 +108,7 @@ public class ICalService {
                     event = new VEvent(new Date(startDate), new Date(endDate), absence.getEventSubject());
                 }
             } catch (ParseException e) {
-                // TODO: log
+                LOG.warn("Could not generate all day ical event for absence {}", absence, e);
                 return Optional.empty();
             }
 
