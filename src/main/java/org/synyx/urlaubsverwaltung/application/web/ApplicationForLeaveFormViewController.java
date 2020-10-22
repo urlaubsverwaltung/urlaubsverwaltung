@@ -135,10 +135,7 @@ public class ApplicationForLeaveFormViewController {
             return "application/app_form";
         }
 
-        String zoneId = settingsService.getSettings().getTimeSettings().getTimeZoneId();
-        TimeZone timeZone = TimeZone.getTimeZone(zoneId);
-        Application app = mapToApplication(appForm, timeZone);
-
+        final Application app = mapToApplication(appForm);
         final Person applier = personService.getSignedInUser();
         final Application savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
 

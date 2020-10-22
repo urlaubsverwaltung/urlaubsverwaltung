@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -70,8 +69,6 @@ public class Application extends AbstractPersistable<Integer> {
      */
     private Time startTime;
 
-    private Instant startDateTime;
-
     /**
      * End date of the application for leave.
      */
@@ -83,8 +80,6 @@ public class Application extends AbstractPersistable<Integer> {
      * @since 2.15.0
      */
     private Time endTime;
-
-    private Instant endDateTime;
 
     /**
      * Type of vacation, e.g. holiday, special leave etc.
@@ -522,21 +517,5 @@ public class Application extends AbstractPersistable<Integer> {
         }
 
         return null;
-    }
-
-    public Instant getEndDateTime() {
-        return endDateTime;
-    }
-
-    public void setEndDateTime(Instant endDateTime) {
-        this.endDateTime = endDateTime;
-    }
-
-    public Instant getStartDateTime() {
-        return startDateTime;
-    }
-
-    public void setStartDateTime(Instant startDateTime) {
-        this.startDateTime = startDateTime;
     }
 }

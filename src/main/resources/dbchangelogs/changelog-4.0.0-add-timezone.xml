@@ -13,10 +13,6 @@
       <column name="workDayBeginHour" type="INT(2)"/>
       <column name="workDayEndHour" type="INT(2)"/>
     </addColumn>
-    <addColumn tableName="Application">
-      <column name="startDateTime" type="timestamp"/>
-      <column name="endDateTime" type="timestamp"/>
-    </addColumn>
   </changeSet>
 
 </databaseChangeLog>

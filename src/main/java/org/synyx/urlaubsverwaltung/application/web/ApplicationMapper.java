@@ -5,8 +5,6 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 
 import java.sql.Time;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.util.TimeZone;
 
 final class ApplicationMapper {
 
@@ -14,7 +12,7 @@ final class ApplicationMapper {
         // prevents init
     }
 
-    static Application mapToApplication(ApplicationForLeaveForm applicationForLeaveForm, TimeZone timeZone) {
+    static Application mapToApplication(ApplicationForLeaveForm applicationForLeaveForm) {
 
         Application applicationForLeave = new Application();
 
@@ -22,12 +20,6 @@ final class ApplicationMapper {
 
         applicationForLeave.setStartDate(applicationForLeaveForm.getStartDate());
         applicationForLeave.setStartTime(applicationForLeaveForm.getStartTime());
-
-        applicationForLeave.setStartDateTime(ZonedDateTime.of(applicationForLeaveForm.getStartDate(),
-            toLocalTime(applicationForLeaveForm.getStartTime()), timeZone.toZoneId()).toInstant());
-
-        applicationForLeave.setEndDateTime(ZonedDateTime.of(applicationForLeaveForm.getEndDate(),
-            toLocalTime(applicationForLeaveForm.getEndTime()), timeZone.toZoneId()).toInstant());
 
         applicationForLeave.setEndDate(applicationForLeaveForm.getEndDate());
         applicationForLeave.setEndTime(applicationForLeaveForm.getEndTime());
@@ -44,9 +36,5 @@ final class ApplicationMapper {
         }
 
         return applicationForLeave;
-    }
-
-    private static LocalTime toLocalTime(Time time) {
-        return time == null ? LocalTime.MIN : time.toLocalTime();
     }
 }
