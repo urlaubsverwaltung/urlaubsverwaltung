@@ -100,11 +100,11 @@ public class ICalService {
         final VEvent event;
         if (absence.isAllDay()) {
             try {
-                Date startDate = new Date(startDateTime.format(formatter));
+                final Date startDate = new Date(startDateTime.format(formatter));
                 if (isSameDay(startDateTime, endDateTime)) {
                     event = new VEvent(startDate, absence.getEventSubject());
                 } else {
-                    Date endDate = new Date(endDateTime.format(formatter));
+                    final Date endDate = new Date(endDateTime.format(formatter));
                     event = new VEvent(new Date(startDate), new Date(endDate), absence.getEventSubject());
                 }
             } catch (ParseException e) {
@@ -118,6 +118,7 @@ public class ICalService {
             start.setUtc(true);
             final DateTime end = new DateTime(from(endDateTime.toInstant()));
             end.setUtc(true);
+
             event = new VEvent(start, end, absence.getEventSubject());
         }
 
