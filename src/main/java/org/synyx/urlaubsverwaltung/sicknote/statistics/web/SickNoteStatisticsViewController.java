@@ -44,7 +44,7 @@ public class SickNoteStatisticsViewController {
         return "sicknote/sick_notes_statistics";
     }
 
-    private Clock getClockOfRequestedYear(@RequestParam(value = "year", required = false) Integer requestedYear) {
+    private Clock getClockOfRequestedYear(Integer requestedYear) {
         return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
     }
 }
