@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 
-import java.sql.Time;
-import java.time.LocalTime;
-
 final class ApplicationMapper {
 
     private ApplicationMapper() {

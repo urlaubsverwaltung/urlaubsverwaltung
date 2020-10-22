@@ -38,7 +38,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
     }
 
     @Test
-    public void writeStatisticsForOnePersonFor2018() {
+    void writeStatisticsForOnePersonFor2018() {
         FilterPeriod period = new FilterPeriod("01.01.2018", "31.12.2018");
 
         List<ApplicationForLeaveStatistics> statistics = new ArrayList<>();
