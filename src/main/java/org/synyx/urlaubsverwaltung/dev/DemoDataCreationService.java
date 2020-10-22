@@ -70,21 +70,21 @@ public class DemoDataCreationService {
 
         LOG.info("-> Starting demo data creation...");
         // Users to be able to SIGN-IN with
-        final Person user = personDataProvider.createTestPerson(DemoUser.USER, "Klaus", "Müller", "user@firma.test");
-        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@firma.test");
-        final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@firma.test");
-        final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@firma.test");
-        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@firma.test");
-        personDataProvider.createTestPerson(DemoUser.ADMIN, "Senor", "Operation", "admin@firma.test");
+        final Person user = personDataProvider.createTestPerson(DemoUser.USER, "Klaus", "Müller", "user@example.org");
+        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@example.org");
+        final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@example.org");
+        final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@example.org");
+        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@example.org");
+        personDataProvider.createTestPerson(DemoUser.ADMIN, "Senor", "Operation", "admin@example.org");
 
         // Users
-        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@firma.test", USER);
-        final Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier", "baier@firma.test", USER);
-        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider", "schneider@firma.test", USER);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel", "haendel@firma.test", USER);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt", "schmidt@firma.test", USER);
+        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@example.org", USER);
+        final Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier", "baier@example.org", USER);
+        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider", "schneider@example.org", USER);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel", "haendel@example.org", USER);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt", "schmidt@example.org", USER);
 
-        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@firma.test", INACTIVE);
+        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@example.org", INACTIVE);
 
         // Departments
         final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);

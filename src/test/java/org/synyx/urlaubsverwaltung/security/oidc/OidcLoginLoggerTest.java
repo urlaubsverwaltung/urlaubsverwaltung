@@ -71,7 +71,7 @@ class OidcLoginLoggerTest {
     @Test
     void ensureLoggingUserIdForExistingUser() {
 
-        Person person = new Person("username", "lastname", "firstname", "firstname.lastname@firma.test");
+        Person person = new Person("username", "lastname", "firstname", "firstname.lastname@example.org");
         person.setId(UNIQUE_ID);
         when(personService.getPersonByUsername(UNIQUE_ID.toString())).thenReturn(Optional.of(person));
 

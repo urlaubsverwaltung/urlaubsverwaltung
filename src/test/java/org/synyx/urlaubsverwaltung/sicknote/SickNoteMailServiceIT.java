@@ -43,12 +43,12 @@ class SickNoteMailServiceIT extends TestContainersBase {
     @Test
     void sendEndOfSickPayNotification() throws MessagingException, IOException {
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@firma.test");
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.save(office);
 
-        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final SickNote sickNote = new SickNote();
         sickNote.setPerson(person);
