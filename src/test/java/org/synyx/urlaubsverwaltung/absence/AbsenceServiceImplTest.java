@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
@@ -51,7 +52,9 @@ class AbsenceServiceImplTest {
     void getOpenAbsencesForPersons() {
 
         final Settings settings = new Settings();
-        settings.setCalendarSettings(new CalendarSettings());
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
+        settings.setTimeSettings(timeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -69,18 +72,20 @@ class AbsenceServiceImplTest {
         final List<Absence> openAbsences = sut.getOpenAbsences(List.of(person));
         assertThat(openAbsences).hasSize(2);
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-12-10T00:00+01:00[Europe/Berlin]"));
-        assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-12-24T00:00+01:00[Europe/Berlin]"));
+        assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-12-10T00:00Z[Etc/UTC]"));
+        assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-12-24T00:00Z[Etc/UTC]"));
         assertThat(openAbsences.get(1).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(1).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-10-10T00:00+02:00[Europe/Berlin]"));
-        assertThat(openAbsences.get(1).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-10-24T00:00+02:00[Europe/Berlin]"));
+        assertThat(openAbsences.get(1).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-10-10T00:00Z[Etc/UTC]"));
+        assertThat(openAbsences.get(1).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-10-24T00:00Z[Etc/UTC]"));
     }
 
     @Test
     void getOpenAbsences() {
 
         final Settings settings = new Settings();
-        settings.setCalendarSettings(new CalendarSettings());
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
+        settings.setTimeSettings(timeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -98,10 +103,10 @@ class AbsenceServiceImplTest {
         final List<Absence> openAbsences = sut.getOpenAbsences();
         assertThat(openAbsences).hasSize(2);
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-11-10T00:00+01:00[Europe/Berlin]"));
-        assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-11-24T00:00+01:00[Europe/Berlin]"));
+        assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-11-10T00:00Z[Etc/UTC]"));
+        assertThat(openAbsences.get(0).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-11-24T00:00Z[Etc/UTC]"));
         assertThat(openAbsences.get(1).getPerson()).isEqualTo(person);
-        assertThat(openAbsences.get(1).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-10-10T00:00+02:00[Europe/Berlin]"));
-        assertThat(openAbsences.get(1).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-10-24T00:00+02:00[Europe/Berlin]"));
+        assertThat(openAbsences.get(1).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-10-10T00:00Z[Etc/UTC]"));
+        assertThat(openAbsences.get(1).getEndDate()).isEqualTo(ZonedDateTime.parse("2019-10-24T00:00Z[Etc/UTC]"));
     }
 }

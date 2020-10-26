@@ -84,8 +84,8 @@ class ICalServiceTest {
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190426T060000Z")
-            .contains("DTEND:20190426T100000Z")
+            .contains("DTSTART:20190426T080000Z")
+            .contains("DTEND:20190426T120000Z")
 
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
             .contains("ORGANIZER:mailto:no-reply@example.org");
@@ -130,8 +130,8 @@ class ICalServiceTest {
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T100000Z")
-            .contains("DTEND:20190526T140000Z")
+            .contains("DTSTART:20190526T120000Z")
+            .contains("DTEND:20190526T160000Z")
 
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
             .contains("ORGANIZER:mailto:no-reply@example.org");
@@ -149,11 +149,11 @@ class ICalServiceTest {
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
-        final Period period = new Period(start, end, length);
-        TimeSettings timeSettings = new TimeSettings();
-        timeSettings.setTimeZoneId("Europe/Berlin");
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
 
+        final Period period = new Period(start, end, length);
         return new Absence(person, period, timeConfig);
     }
 
