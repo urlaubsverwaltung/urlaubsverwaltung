@@ -35,7 +35,7 @@ class AbsenceTest {
 
         person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        timeSettings.setTimeZoneId("Europe/Berlin");
+        timeSettings.setTimeZoneId("Etc/UTC");
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
 
@@ -173,10 +173,12 @@ class AbsenceTest {
         // Date where daylight saving time is relevant
         LocalDate start = LocalDate.of(2015, 10, 23);
         LocalDate end = LocalDate.of(2015, 10, 25);
-        final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(new TimeSettings()));
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
+        final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(timeSettings));
 
         final String absenceToString = absence.toString();
-        assertThat(absenceToString).isEqualTo("Absence{startDate=2015-10-23T00:00+02:00[Europe/Berlin]," +
-            " endDate=2015-10-26T00:00+01:00[Europe/Berlin], person=Person{id='10'}, isAllDay=true}");
+        assertThat(absenceToString).isEqualTo("Absence{startDate=2015-10-23T00:00Z[Etc/UTC]," +
+            " endDate=2015-10-26T00:00Z[Etc/UTC], person=Person{id='10'}, isAllDay=true}");
     }
 }

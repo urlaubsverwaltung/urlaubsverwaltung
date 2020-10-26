@@ -17,6 +17,7 @@ class AbsenceTimeConfigurationTest {
     @BeforeEach
     void setUp() {
         timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);
     }
