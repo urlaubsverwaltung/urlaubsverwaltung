@@ -40,9 +40,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class GoogleCalendarOAuthHandshakeViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
-
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static HttpTransport httpTransport;

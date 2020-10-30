@@ -45,10 +45,8 @@ public class Settings extends AbstractPersistable<Integer> {
 
 
     public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
-
         this.workingTimeSettings = workingTimeSettings;
     }
-
 
     public CalendarSettings getCalendarSettings() {
 

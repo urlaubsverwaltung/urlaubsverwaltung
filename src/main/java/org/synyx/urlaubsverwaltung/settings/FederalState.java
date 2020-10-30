@@ -35,7 +35,6 @@ public enum FederalState {
     private final String[] codes;
 
     FederalState(String... codes) {
-
         this.codes = codes;
     }
 

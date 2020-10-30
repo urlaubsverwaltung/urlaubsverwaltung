@@ -32,10 +32,8 @@ public class SettingsValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-
         return clazz.equals(Settings.class);
     }
-
 
     @Override
     public void validate(Object o, Errors errors) {
