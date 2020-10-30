@@ -12,7 +12,7 @@ function onSelect(event) {
 function onSelectAUB(event) {
   const aubToElement = document.querySelector("#aubTo");
 
-  if (event.target.matches("aubFrom") && !aubToElement.value) {
+  if (event.target.matches("#aubFrom") && !aubToElement.value) {
     aubToElement.value = event.target.value;
   }
 }
