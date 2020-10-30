@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings.web;
+package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,13 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
-import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
-import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;

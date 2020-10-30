@@ -7,7 +7,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-
 /**
  * Settings concerning working time of persons, like settings for public holidays.
  */
@@ -59,73 +58,50 @@ public class WorkingTimeSettings {
     private Integer minimumOvertime = 5; // NOSONAR
 
     public DayLength getWorkingDurationForChristmasEve() {
-
         return workingDurationForChristmasEve;
     }
 
-
     public DayLength getWorkingDurationForNewYearsEve() {
-
         return workingDurationForNewYearsEve;
     }
 
-
     public FederalState getFederalState() {
-
         return federalState;
     }
 
-
     public void setWorkingDurationForChristmasEve(DayLength workingDurationForChristmasEve) {
-
         this.workingDurationForChristmasEve = workingDurationForChristmasEve;
     }
 
-
     public void setWorkingDurationForNewYearsEve(DayLength workingDurationForNewYearsEve) {
-
         this.workingDurationForNewYearsEve = workingDurationForNewYearsEve;
     }
 
-
     public void setFederalState(FederalState federalState) {
-
         this.federalState = federalState;
     }
 
-
     public boolean isOvertimeActive() {
-
         return overtimeActive;
     }
 
-
     public void setOvertimeActive(boolean overtimeActive) {
-
         this.overtimeActive = overtimeActive;
     }
 
-
     public Integer getMaximumOvertime() {
-
         return maximumOvertime;
     }
 
-
     public void setMaximumOvertime(Integer maximumOvertime) {
-
         this.maximumOvertime = maximumOvertime;
     }
 
-
     public Integer getMinimumOvertime() {
-
         return minimumOvertime;
     }
 
-
     public void setMinimumOvertime(Integer minimumOvertime) {
-
         this.minimumOvertime = minimumOvertime;
     }
 }

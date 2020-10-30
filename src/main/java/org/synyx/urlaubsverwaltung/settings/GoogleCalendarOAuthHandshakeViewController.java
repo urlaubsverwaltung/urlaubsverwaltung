@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings.web;
+package org.synyx.urlaubsverwaltung.settings;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
@@ -23,9 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -40,9 +37,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class GoogleCalendarOAuthHandshakeViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
-
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static HttpTransport httpTransport;

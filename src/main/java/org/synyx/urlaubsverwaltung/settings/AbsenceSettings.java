@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import javax.persistence.Embeddable;
 
-
 /**
  * Settings concerning absence of persons because of vacation or sick days.
  */
@@ -42,54 +41,38 @@ public class AbsenceSettings {
     private Integer daysBeforeRemindForWaitingApplications = 2;
 
     public Integer getMaximumAnnualVacationDays() {
-
         return maximumAnnualVacationDays;
     }
 
-
     public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
-
         return maximumMonthsToApplyForLeaveInAdvance;
     }
 
-
     public Integer getMaximumSickPayDays() {
-
         return maximumSickPayDays;
     }
 
-
     public Integer getDaysBeforeEndOfSickPayNotification() {
-
         return daysBeforeEndOfSickPayNotification;
     }
 
-
     public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
-
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
     }
 
-
     public void setMaximumMonthsToApplyForLeaveInAdvance(Integer maximumMonthsToApplyForLeaveInAdvance) {
-
         this.maximumMonthsToApplyForLeaveInAdvance = maximumMonthsToApplyForLeaveInAdvance;
     }
 
-
     public void setMaximumSickPayDays(Integer maximumSickPayDays) {
-
         this.maximumSickPayDays = maximumSickPayDays;
     }
 
-
     public void setDaysBeforeEndOfSickPayNotification(Integer daysBeforeEndOfSickPayNotification) {
-
         this.daysBeforeEndOfSickPayNotification = daysBeforeEndOfSickPayNotification;
     }
 
     public boolean getRemindForWaitingApplications() {
-
         return remindForWaitingApplications;
     }
 

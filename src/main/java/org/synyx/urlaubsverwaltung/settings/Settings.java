@@ -19,7 +19,6 @@ public class Settings extends AbstractPersistable<Integer> {
     private TimeSettings timeSettings;
 
     public AbsenceSettings getAbsenceSettings() {
-
         if (absenceSettings == null) {
             absenceSettings = new AbsenceSettings();
         }
@@ -27,15 +26,11 @@ public class Settings extends AbstractPersistable<Integer> {
         return absenceSettings;
     }
 
-
     public void setAbsenceSettings(AbsenceSettings absenceSettings) {
-
         this.absenceSettings = absenceSettings;
     }
 
-
     public WorkingTimeSettings getWorkingTimeSettings() {
-
         if (workingTimeSettings == null) {
             workingTimeSettings = new WorkingTimeSettings();
         }
@@ -43,12 +38,9 @@ public class Settings extends AbstractPersistable<Integer> {
         return workingTimeSettings;
     }
 
-
     public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
-
         this.workingTimeSettings = workingTimeSettings;
     }
-
 
     public CalendarSettings getCalendarSettings() {
 
@@ -58,7 +50,6 @@ public class Settings extends AbstractPersistable<Integer> {
 
         return calendarSettings;
     }
-
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     public void setCalendarSettings(CalendarSettings calendarSettings) {
@@ -81,7 +72,6 @@ public class Settings extends AbstractPersistable<Integer> {
 
     @Override
     public void setId(Integer id) { // NOSONAR - make it public instead of protected
-
         super.setId(id);
     }
 }
