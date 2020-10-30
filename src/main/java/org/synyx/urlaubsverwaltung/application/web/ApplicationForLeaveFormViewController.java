@@ -62,6 +62,7 @@ public class ApplicationForLeaveFormViewController {
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
+    private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -160,7 +161,7 @@ public class ApplicationForLeaveFormViewController {
         }
 
         final Application application = maybeApplication.get();
-        if (application.getStatus().compareTo(WAITING) != 0) {
+        if (WAITING.compareTo(application.getStatus()) != 0) {
             return "application/app_notwaiting";
         }
 
@@ -190,7 +191,8 @@ public class ApplicationForLeaveFormViewController {
 
         final Application application = maybeApplication.get();
         if (application.getStatus().compareTo(WAITING) != 0) {
-            return "application/app_notwaiting";
+            redirectAttributes.addFlashAttribute("editError", true);
+            return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
         appForm.setId(application.getId());

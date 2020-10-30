@@ -379,8 +379,9 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("vacationType.category", "HOLIDAY")
             .param("dayLength", "FULL")
             .param("comment", "comment"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("application/app_notwaiting"));
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"))
+            .andExpect(flash().attribute("editError", true));
     }
 
     @Test
