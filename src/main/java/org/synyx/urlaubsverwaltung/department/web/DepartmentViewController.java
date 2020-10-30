@@ -54,7 +54,7 @@ public class DepartmentViewController {
     @GetMapping("/department")
     public String showAllDepartments(Model model) {
 
-        List<Department> departments = departmentService.getAllDepartments();
+        final List<Department> departments = departmentService.getAllDepartments();
 
         model.addAttribute("departments", departments);
 
@@ -65,7 +65,7 @@ public class DepartmentViewController {
     @GetMapping("/department/new")
     public String newDepartmentForm(Model model) {
 
-        List<Person> persons = getPersons();
+        final List<Person> persons = getPersons();
 
         model.addAttribute(DEPARTMENT, new Department());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
@@ -96,8 +96,8 @@ public class DepartmentViewController {
     public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model)
         throws UnknownDepartmentException {
 
-        final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
-            new UnknownDepartmentException(departmentId));
+        final Department department = departmentService.getDepartmentById(departmentId)
+            .orElseThrow(() -> new UnknownDepartmentException(departmentId));
         model.addAttribute(DEPARTMENT, department);
 
         final List<Person> persons = getPersons();

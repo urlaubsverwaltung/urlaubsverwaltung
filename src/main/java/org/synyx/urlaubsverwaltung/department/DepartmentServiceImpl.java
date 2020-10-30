@@ -43,7 +43,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     public DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock) {
-
         this.departmentRepository = departmentRepository;
         this.applicationService = applicationService;
         this.clock = clock;
