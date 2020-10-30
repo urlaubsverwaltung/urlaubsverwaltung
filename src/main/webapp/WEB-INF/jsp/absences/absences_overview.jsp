@@ -160,7 +160,7 @@
                                         <th scope="col" class="sortable-field">&nbsp;</th>
                                         <c:forEach items="${month.days}" var="day">
                                             <th scope="col"
-                                                class="non-sortable text-gray-700 ${day.weekend ? 'vacationOverview-day-weekend' : ''}">
+                                                class="non-sortable text-gray-700 ${day.weekend || day.holiday ? 'vacationOverview-day-weekend' : ''}">
                                                 <c:out value="${day.dayOfMonth}"/>
                                             </th>
                                         </c:forEach>
@@ -182,7 +182,7 @@
                                                     ${(absence.type eq 'activeSickNoteFull') ? ' vacationOverview-day-sick-note' : ''}
                                                     ${(absence.type eq 'activeSickNoteMorning') ? ' vacationOverview-day-sick-note-half-day-morning' : ''}
                                                     ${(absence.type eq 'activeSickNoteNoon') ? ' vacationOverview-day-sick-note-half-day-noon' : ''}
-                                                    ${(absence.weekend) ? ' vacationOverview-day-weekend' : ''}"
+                                                    ${(absence.weekend || absence.holiday) ? ' vacationOverview-day-weekend' : ''}"
                                             >
                                                 <span class="tw-hidden print:tw-inline print:tw-font-mono">
                                                     <c:if

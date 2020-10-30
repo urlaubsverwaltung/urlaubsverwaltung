@@ -67,7 +67,7 @@ public class PublicHolidaysService {
         return List.copyOf(manager.getHolidays(from, to, federalState.getCodes()));
     }
 
-    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+    public boolean isPublicHoliday(LocalDate date, FederalState federalState) {
         return manager.isHoliday(date, federalState.getCodes());
     }
 }

@@ -16,6 +16,9 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 
@@ -54,17 +57,21 @@ public class AbsenceOverviewViewController {
     private final SickNoteService sickNoteService;
     private final MessageSource messageSource;
     private final Clock clock;
+    private final PublicHolidaysService publicHolidayService;
+    private final SettingsService settingsService;
 
     @Autowired
     public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
                                          ApplicationService applicationService, SickNoteService sickNoteService,
-                                         MessageSource messageSource, Clock clock) {
+                                         MessageSource messageSource, Clock clock, PublicHolidaysService publicHolidayService, SettingsService settingsService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.messageSource = messageSource;
         this.clock = clock;
+        this.publicHolidayService = publicHolidayService;
+        this.settingsService = settingsService;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -126,7 +133,7 @@ public class AbsenceOverviewViewController {
 
                 personView
                     .getDays()
-                    .add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
+                    .add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date), isPublicHoliday(date)));
             }
         }
 
@@ -184,6 +191,11 @@ public class AbsenceOverviewViewController {
         return getAbsenceOverviewDayType(sickNote);
     }
 
+    private boolean isPublicHoliday(LocalDate date) {
+        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        return publicHolidayService.isPublicHoliday(date, federalState);
+    }
+
     private String getSelectedMonth(String month, LocalDate startDate) {
         if (month == null) {
             return String.valueOf(startDate.getMonthValue());
@@ -208,11 +220,11 @@ public class AbsenceOverviewViewController {
             .collect(toList());
     }
 
-    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate localDate) {
-        String tableHeadDayText = String.format("%02d", localDate.getDayOfMonth());
-        boolean weekend = isWeekend(localDate);
+    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date) {
+        String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
+        boolean weekend = isWeekend(date);
 
-        return new AbsenceOverviewMonthDayDto(tableHeadDayText, weekend);
+        return new AbsenceOverviewMonthDayDto(tableHeadDayText, weekend, isPublicHoliday(date));
     }
 
     private String getMonthText(LocalDate date, Locale locale) {

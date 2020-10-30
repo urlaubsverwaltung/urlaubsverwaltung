@@ -4,10 +4,12 @@ public class AbsenceOverviewMonthDayDto {
 
     private final String dayOfMonth;
     private final boolean weekend;
+    private final boolean holiday;
 
-    AbsenceOverviewMonthDayDto(String dayOfMonth, boolean weekend) {
+    AbsenceOverviewMonthDayDto(String dayOfMonth, boolean weekend, boolean holiday) {
         this.dayOfMonth = dayOfMonth;
         this.weekend = weekend;
+        this.holiday = holiday;
     }
 
     public String getDayOfMonth() {
@@ -16,5 +18,9 @@ public class AbsenceOverviewMonthDayDto {
 
     public boolean isWeekend() {
         return weekend;
+    }
+
+    public boolean isHoliday() {
+        return holiday;
     }
 }
