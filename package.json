@@ -1,7 +1,7 @@
 {
   "name": "urlaubsverwaltung",
-  "version": "1.0.0",
   "description": "Paperless absence management",
+  "private": true,
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
