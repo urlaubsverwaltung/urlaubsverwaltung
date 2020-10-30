@@ -10,7 +10,7 @@ import java.time.format.DateTimeParseException;
 import static java.time.LocalDate.parse;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.springframework.util.StringUtils.isEmpty;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -26,8 +26,8 @@ public class FilterPeriod {
 
         int currentYear = Year.now(Clock.systemUTC()).getValue();
         try {
-            startDate = isEmpty(startDateAsString) ? getFirstDayOfYear(currentYear) : parse(startDateAsString, ofPattern(PATTERN));
-            endDate = isEmpty(endDateAsString) ? getLastDayOfYear(currentYear) : parse(endDateAsString, ofPattern(PATTERN));
+            startDate = isEmpty(startDateAsString) ? getFirstDayOfYear(currentYear) : parse(startDateAsString, ofPattern(DD_MM_YYYY));
+            endDate = isEmpty(endDateAsString) ? getLastDayOfYear(currentYear) : parse(endDateAsString, ofPattern(DD_MM_YYYY));
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }
@@ -52,11 +52,11 @@ public class FilterPeriod {
     }
 
     public String getStartDateAsString() {
-        return getStartDate().format(ofPattern(PATTERN));
+        return getStartDate().format(ofPattern(DD_MM_YYYY));
     }
 
     public String getEndDateAsString() {
-        return getEndDate().format(ofPattern(PATTERN));
+        return getEndDate().format(ofPattern(DD_MM_YYYY));
     }
 
     @Override
