@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
@@ -27,42 +26,36 @@ class OvertimeFormTest {
     @Test
     void ensureCanBeInitializedWithPerson() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        OvertimeForm overtimeForm = new OvertimeForm(person);
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
 
-        Assert.assertNotNull("Person should be set", overtimeForm.getPerson());
-        Assert.assertEquals("Wrong person", person, overtimeForm.getPerson());
-
-        // assert other attributes are null
-        Assert.assertNull("Should be not set", overtimeForm.getId());
-        Assert.assertNull("Should be not set", overtimeForm.getStartDate());
-        Assert.assertNull("Should be not set", overtimeForm.getEndDate());
-        Assert.assertNull("Should be not set", overtimeForm.getNumberOfHours());
-        Assert.assertNull("Should be not set", overtimeForm.getComment());
+        assertThat(overtimeForm.getPerson()).isEqualTo(person);
+        assertThat(overtimeForm.getId()).isNull();
+        assertThat(overtimeForm.getStartDate()).isNull();
+        assertThat(overtimeForm.getEndDate()).isNull();
+        assertThat(overtimeForm.getNumberOfHours()).isNull();
+        assertThat(overtimeForm.getComment()).isNull();
     }
 
     @Test
     void ensureCanConstructAnOvertimeObject() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        OvertimeForm overtimeForm = new OvertimeForm(person);
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
         overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 
-        Overtime overtime = overtimeForm.generateOvertime();
+        final Overtime overtime = overtimeForm.generateOvertime();
 
-        Assert.assertNotNull("Object should have been constructed successfully", overtime);
-
-        Assert.assertEquals("Wrong person", overtimeForm.getPerson(), overtime.getPerson());
-        Assert.assertEquals("Wrong start date", overtimeForm.getStartDate(), overtime.getStartDate());
-        Assert.assertEquals("Wrong end date", overtimeForm.getEndDate(), overtime.getEndDate());
-        Assert.assertEquals("Wrong number of hours", overtimeForm.getNumberOfHours(), overtime.getHours());
-
-        Assert.assertNull("ID should be not set", overtimeForm.getId());
+        assertThat(overtime.getPerson()).isEqualTo(overtimeForm.getPerson());
+        assertThat(overtime.getStartDate()).isEqualTo(overtimeForm.getStartDate());
+        assertThat(overtime.getEndDate()).isEqualTo(overtimeForm.getEndDate());
+        assertThat(overtime.getHours()).isEqualTo(overtimeForm.getNumberOfHours());
+        assertThat(overtimeForm.getId()).isNull();
     }
 
     @Test
@@ -124,44 +117,41 @@ class OvertimeFormTest {
     void ensureCanBeInitializedWithExistentOvertime() throws IllegalAccessException {
 
         // Simulate existing overtime record
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
-        Field idField = ReflectionUtils.findField(Overtime.class, "id");
+        final Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final Field idField = ReflectionUtils.findField(Overtime.class, "id");
         idField.setAccessible(true);
         idField.set(overtime, 42);
 
-        OvertimeForm overtimeForm = new OvertimeForm(overtime);
+        final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
-        Assert.assertEquals("Wrong ID", overtime.getId(), overtimeForm.getId());
-        Assert.assertEquals("Wrong person", overtime.getPerson(), overtimeForm.getPerson());
-        Assert.assertEquals("Wrong start date", overtime.getStartDate(), overtimeForm.getStartDate());
-        Assert.assertEquals("Wrong end date", overtime.getEndDate(), overtimeForm.getEndDate());
-        Assert.assertEquals("Wrong hours", overtime.getHours(), overtimeForm.getNumberOfHours());
-
-        // assert other attributes are null
-        Assert.assertNull("Comment should be empty", overtimeForm.getComment());
+        assertThat(overtimeForm.getId()).isEqualTo(overtime.getId());
+        assertThat(overtimeForm.getPerson()).isEqualTo(overtime.getPerson());
+        assertThat(overtimeForm.getStartDate()).isEqualTo(overtime.getStartDate());
+        assertThat(overtimeForm.getEndDate()).isEqualTo(overtime.getEndDate());
+        assertThat(overtimeForm.getNumberOfHours()).isEqualTo(overtime.getHours());
+        assertThat(overtimeForm.getComment()).isNull();
     }
 
 
     @Test
     void ensureCanUpdateOvertime() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        OvertimeForm overtimeForm = new OvertimeForm(person);
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
         overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
         overtimeForm.setNumberOfHours(BigDecimal.ONE);
         overtimeForm.setComment("Lorem ipsum");
 
-        Overtime overtime = TestDataCreator.createOvertimeRecord();
+        final Overtime overtime = TestDataCreator.createOvertimeRecord();
 
         overtimeForm.updateOvertime(overtime);
 
-        Assert.assertEquals("Wrong person", overtimeForm.getPerson(), overtime.getPerson());
-        Assert.assertEquals("Wrong start date", overtimeForm.getStartDate(), overtime.getStartDate());
-        Assert.assertEquals("Wrong end date", overtimeForm.getEndDate(), overtime.getEndDate());
-        Assert.assertEquals("Wrong number of hours", overtimeForm.getNumberOfHours(), overtime.getHours());
-
-        Assert.assertNull("ID should be not set", overtimeForm.getId());
+        assertThat(overtime.getPerson()).isEqualTo(overtimeForm.getPerson());
+        assertThat(overtime.getStartDate()).isEqualTo(overtimeForm.getStartDate());
+        assertThat(overtime.getEndDate()).isEqualTo(overtimeForm.getEndDate());
+        assertThat(overtime.getHours()).isEqualTo(overtimeForm.getNumberOfHours());
+        assertThat(overtimeForm.getId()).isNull();
     }
 }
