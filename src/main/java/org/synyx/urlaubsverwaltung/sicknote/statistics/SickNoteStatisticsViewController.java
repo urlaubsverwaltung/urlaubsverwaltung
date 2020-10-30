@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Clock;
+import java.time.Year;
 import java.time.ZonedDateTime;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -44,6 +45,9 @@ public class SickNoteStatisticsViewController {
     }
 
     private Clock getClockOfRequestedYear(Integer requestedYear) {
+        if (requestedYear == null) {
+            requestedYear = Year.now(clock).getValue();
+        }
         return Clock.fixed(ZonedDateTime.now(clock).withYear(requestedYear).toInstant(), clock.getZone());
     }
 }
