@@ -17,7 +17,7 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 @Service
 @Transactional
@@ -84,7 +84,7 @@ public class WorkingTimeService {
 
         if (optionalWorkingTime.isEmpty()) {
             LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                person.getId(), date.format(ofPattern(PATTERN)));
+                person.getId(), date.format(ofPattern(DD_MM_YYYY)));
 
             return getSystemDefaultFederalState();
         }

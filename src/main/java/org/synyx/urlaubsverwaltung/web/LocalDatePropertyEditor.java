@@ -19,7 +19,7 @@ public class LocalDatePropertyEditor extends PropertyEditorSupport {
 
     public LocalDatePropertyEditor() {
 
-        this.formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
+        this.formatter = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
     }
 
     // Date to String

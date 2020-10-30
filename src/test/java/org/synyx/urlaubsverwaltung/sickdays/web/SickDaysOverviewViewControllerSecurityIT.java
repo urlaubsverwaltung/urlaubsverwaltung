@@ -31,7 +31,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
 
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
 
     @Test
     @WithMockUser(authorities = "USER")

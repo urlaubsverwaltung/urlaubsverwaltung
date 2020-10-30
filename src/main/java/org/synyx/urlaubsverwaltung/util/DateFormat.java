@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.util;
 
 public final class DateFormat {
 
-    public static final String PATTERN = "dd.MM.yyyy";
+    public static final String DD_MM_YYYY = "dd.MM.yyyy";
 
     private DateFormat() {
 

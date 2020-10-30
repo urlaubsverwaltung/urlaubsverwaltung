@@ -21,7 +21,7 @@ public class InstantPropertyEditor extends PropertyEditorSupport {
 
         this.clock = clock;
         this.settingsService = settingsService;
-        this.formatter = DateTimeFormatter.ofPattern(DateFormat.PATTERN);
+        this.formatter = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
     }
 
     // Instant to String

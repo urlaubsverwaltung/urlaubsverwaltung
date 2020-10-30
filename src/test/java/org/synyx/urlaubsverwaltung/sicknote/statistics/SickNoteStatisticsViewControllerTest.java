@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.statistics.web;
+package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,8 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
-import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;

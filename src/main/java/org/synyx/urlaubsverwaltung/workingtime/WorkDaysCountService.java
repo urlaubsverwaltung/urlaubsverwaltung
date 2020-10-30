@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 
 /**
@@ -90,7 +90,7 @@ public class WorkDaysCountService {
 
         if (optionalWorkingTime.isEmpty()) {
             throw new WorkDaysCountException("No working time found for User '" + person.getId()
-                + "' in period " + startDate.format(ofPattern(PATTERN)) + " - " + endDate.format(ofPattern(PATTERN)));
+                + "' in period " + startDate.format(ofPattern(DD_MM_YYYY)) + " - " + endDate.format(ofPattern(DD_MM_YYYY)));
         }
 
         final WorkingTime workingTime = optionalWorkingTime.get();

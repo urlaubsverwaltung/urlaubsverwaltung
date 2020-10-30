@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.statistics.web;
+package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,12 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatistics;
-import org.synyx.urlaubsverwaltung.sicknote.statistics.SickNoteStatisticsService;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 
 /**
@@ -31,13 +30,13 @@ public class SickNoteStatisticsViewController {
         this.clock = clock;
     }
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote/statistics")
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
                                       Model model) {
 
-        Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
-        SickNoteStatistics statistics = statisticsService.createStatistics(clockOfRequestedYear);
+        final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
+        final SickNoteStatistics statistics = statisticsService.createStatistics(clockOfRequestedYear);
 
         model.addAttribute("statistics", statistics);
 
