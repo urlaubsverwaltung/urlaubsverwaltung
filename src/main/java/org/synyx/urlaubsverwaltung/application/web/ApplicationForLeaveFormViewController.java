@@ -63,6 +63,7 @@ public class ApplicationForLeaveFormViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
+    private static final String APP_FORM = "application/app_form";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -122,7 +123,7 @@ public class ApplicationForLeaveFormViewController {
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
 
-        return "application/app_form";
+        return APP_FORM;
     }
 
     @PostMapping("/application")
@@ -138,7 +139,7 @@ public class ApplicationForLeaveFormViewController {
                 model.addAttribute("errors", errors);
             }
             LOG.info("new application ({}) has errors: {}", appForm, errors);
-            return "application/app_form";
+            return APP_FORM;
         }
 
         final Application app = mapToApplication(appForm);
@@ -149,7 +150,7 @@ public class ApplicationForLeaveFormViewController {
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 
-        return "redirect:/web/application/" + savedApplicationForLeave.getId();
+        return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
     }
 
     @GetMapping("/application/{applicationId}/edit")
@@ -176,7 +177,7 @@ public class ApplicationForLeaveFormViewController {
 
         model.addAttribute("application", applicationForLeaveForm);
 
-        return "application/app_form";
+        return APP_FORM;
     }
 
     @PostMapping("/application/{applicationId}")
@@ -204,7 +205,7 @@ public class ApplicationForLeaveFormViewController {
                 model.addAttribute("errors", errors);
             }
             LOG.info("edit application ({}) has errors: {}", appForm, errors);
-            return "application/app_form";
+            return APP_FORM;
         }
 
         final Application editedApplication = merge(application, appForm);
@@ -220,7 +221,7 @@ public class ApplicationForLeaveFormViewController {
 
         redirectAttributes.addFlashAttribute("editSuccess", true);
 
-        return "redirect:/web/application/" + savedApplicationForLeave.getId();
+        return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
     }
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
