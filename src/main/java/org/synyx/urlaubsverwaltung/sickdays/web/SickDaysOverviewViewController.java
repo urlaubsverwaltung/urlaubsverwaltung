@@ -32,7 +32,6 @@ import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTA
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
-
 /**
  * Controller for overview about the sick days of all users.
  */
@@ -67,10 +66,12 @@ public class SickDaysOverviewViewController {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote")
-    public String periodsSickNotes(@RequestParam(value = "from", defaultValue = ) String from, @RequestParam(value = "to") String to, Model model) {
+    public String periodsSickNotes(@RequestParam(value = "from", defaultValue = "") String from,
+                                   @RequestParam(value = "to", defaultValue = "") String to,
+                                   Model model) {
 
         final FilterPeriod period = new FilterPeriod(from, to);
-        final List <SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
+        final List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
         fillModel(model, sickNoteList, period);
 
         return "sicknote/sick_notes";

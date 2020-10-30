@@ -61,7 +61,8 @@ public class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping
-    public String applicationForLeaveStatistics(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to,
+    public String applicationForLeaveStatistics(@RequestParam(value = "from", defaultValue = "") String from,
+                                                @RequestParam(value = "to", defaultValue = "") String to,
                                                 Model model) {
 
         FilterPeriod period = new FilterPeriod(from, to);
@@ -87,8 +88,8 @@ public class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
-    public String downloadCSV(@RequestParam(value = "from", required = false) String from,
-                              @RequestParam(value = "to", required = false) String to,
+    public String downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
+                              @RequestParam(value = "to", defaultValue = "") String to,
                               HttpServletResponse response,
                               Model model)
         throws IOException {
