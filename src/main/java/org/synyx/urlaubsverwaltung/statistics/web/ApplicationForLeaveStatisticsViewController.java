@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -36,12 +37,18 @@ public class ApplicationForLeaveStatisticsViewController {
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;
+    private final DateFormatAware dateFormatAware;
 
     @Autowired
-    public ApplicationForLeaveStatisticsViewController(ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService, ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService, VacationTypeService vacationTypeService) {
+    public ApplicationForLeaveStatisticsViewController(
+        ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
+        ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
+        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
+
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
         this.applicationForLeaveStatisticsCsvExportService = applicationForLeaveStatisticsCsvExportService;
         this.vacationTypeService = vacationTypeService;
+        this.dateFormatAware = dateFormatAware;
     }
 
     @InitBinder
@@ -53,10 +60,13 @@ public class ApplicationForLeaveStatisticsViewController {
     @PostMapping
     public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period) {
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("redirect:" + STATISTICS_REL)
-            .queryParam("from", period.getStartDateAsString())
-            .queryParam("to", period.getEndDateAsString());
-        return builder.toUriString();
+        final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
+        final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());
+
+        return UriComponentsBuilder.fromUriString("redirect:" + STATISTICS_REL)
+            .queryParam("from", startDateIsoString)
+            .queryParam("to", endDateIsoString)
+            .toUriString();
     }
 
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
@@ -65,7 +75,7 @@ public class ApplicationForLeaveStatisticsViewController {
                                                 @RequestParam(value = "to", defaultValue = "") String to,
                                                 Model model) {
 
-        final FilterPeriod period = new FilterPeriod(from, to);
+        final FilterPeriod period = toFilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -94,7 +104,7 @@ public class ApplicationForLeaveStatisticsViewController {
                               Model model)
         throws IOException {
 
-        FilterPeriod period = new FilterPeriod(from, to);
+        final FilterPeriod period = toFilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -118,5 +128,13 @@ public class ApplicationForLeaveStatisticsViewController {
         model.addAttribute("period", period);
 
         return "application/app_statistics";
+    }
+
+    private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {
+
+        final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
+        final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(null);
+
+        return new FilterPeriod(startDate, endDate);
     }
 }

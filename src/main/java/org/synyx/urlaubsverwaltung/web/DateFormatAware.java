@@ -35,12 +35,32 @@ public class DateFormatAware {
         return parseIso(dateString).or(() -> parseUserFormat(dateString));
     }
 
+    /**
+     *
+     * @param localDate the {@link LocalDate} to format.
+     * @return the formatted date with the user specified locale (e.g. <code>"yyyy-MM-dd"</code>, <code>"dd.MM.yyyy"</code>)
+     */
+    public String format(LocalDate localDate) {
+
+        return localDate.format(getUserSpecifiedDateFormat());
+    }
+
+    /**
+     *
+     * @param localDate the {@link LocalDate} to format.
+     * @return the formatted date in {@link DateTimeFormatter#ISO_DATE} format.
+     */
+    public String formatISO(LocalDate localDate) {
+
+        return localDate.format(DateTimeFormatter.ISO_DATE);
+    }
+
     private static Optional<LocalDate> parseIso(String dateIsoString) {
         return parseDateString(dateIsoString, DateTimeFormatter.ISO_DATE);
     }
 
     private static Optional<LocalDate> parseUserFormat(String dateString) {
-        return parseDateString(dateString, DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY));
+        return parseDateString(dateString, getUserSpecifiedDateFormat());
     }
 
     private static Optional<LocalDate> parseDateString(String dateString, DateTimeFormatter formatter) {
@@ -49,5 +69,9 @@ public class DateFormatAware {
         } catch(DateTimeParseException e) {
             return Optional.empty();
         }
+    }
+
+    private static DateTimeFormatter getUserSpecifiedDateFormat() {
+        return DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
     }
 }

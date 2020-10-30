@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -63,17 +64,26 @@ class SickDaysOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService, clock);
+
+        final DateFormatAware dateFormatAware = new DateFormatAware();
+
+        sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService,
+            dateFormatAware, clock);
     }
 
     @Test
     void filterSickNotes() throws Exception {
-        final int year = Year.now(clock).getValue();
 
-        final ResultActions resultActions = perform(post("/web/sicknote/filter")
-            .flashAttr("period", new FilterPeriod("01.01." + year, "31.12." + year)));
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/sicknote?from=01.01." + year + "&to=31.12." + year));
+        final int year = Year.now(clock).getValue();
+        final LocalDate startDate = LocalDate.parse(year + "-01-01");
+        final LocalDate endDate = LocalDate.parse(year + "-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final ResultActions resultActions = perform(post("/web/sicknote/filter").flashAttr("period", filterPeriod));
+
+        resultActions
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/sicknote?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
     @Test

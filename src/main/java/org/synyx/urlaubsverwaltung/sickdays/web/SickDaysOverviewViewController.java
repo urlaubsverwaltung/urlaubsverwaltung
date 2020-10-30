@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -42,13 +43,15 @@ public class SickDaysOverviewViewController {
     private final SickNoteService sickNoteService;
     private final PersonService personService;
     private final WorkDaysCountService calendarService;
+    private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
-    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysCountService calendarService, Clock clock) {
+    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService, WorkDaysCountService calendarService, DateFormatAware dateFormatAware, Clock clock) {
         this.sickNoteService = sickNoteService;
         this.personService = personService;
         this.calendarService = calendarService;
+        this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
 
@@ -61,7 +64,10 @@ public class SickDaysOverviewViewController {
     @PostMapping("/sicknote/filter")
     public String filterSickNotes(@ModelAttribute("period") FilterPeriod period) {
 
-        return "redirect:/web/sicknote?from=" + period.getStartDateAsString() + "&to=" + period.getEndDateAsString();
+        final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
+        final String endDateISoString = dateFormatAware.formatISO(period.getEndDate());
+
+        return "redirect:/web/sicknote?from=" + startDateIsoString + "&to=" + endDateISoString;
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -70,7 +76,10 @@ public class SickDaysOverviewViewController {
                                    @RequestParam(value = "to", defaultValue = "") String to,
                                    Model model) {
 
-        final FilterPeriod period = new FilterPeriod(from, to);
+        final LocalDate startDate = dateFormatAware.parse(from).orElse(null);
+        final LocalDate endDate = dateFormatAware.parse(to).orElse(null);
+        final FilterPeriod period = new FilterPeriod(startDate, endDate);
+
         final List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
         fillModel(model, sickNoteList, period);
 

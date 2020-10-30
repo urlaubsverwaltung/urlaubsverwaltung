@@ -80,8 +80,7 @@ public class ApplicationForLeaveFormViewController {
                                                  VacationTypeService vacationTypeService,
                                                  ApplicationInteractionService applicationInteractionService,
                                                  ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
-                                                 SettingsService settingsService,
-                                                 DateFormatAware dateFormatAware,
+                                                 SettingsService settingsService, DateFormatAware dateFormatAware,
                                                  Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
@@ -130,10 +129,10 @@ public class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
-            final ApplicationForLeaveForm appForm = new ApplicationForLeaveForm();
-
             final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
             final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
+
+            final ApplicationForLeaveForm appForm = new ApplicationForLeaveForm();
             appForm.setStartDate(startDate);
             appForm.setEndDate(endDate);
 

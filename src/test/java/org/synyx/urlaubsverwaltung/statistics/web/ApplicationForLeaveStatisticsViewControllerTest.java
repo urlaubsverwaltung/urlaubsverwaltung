@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
@@ -50,23 +51,23 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @BeforeEach
     void setUp() {
 
-        sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService, applicationForLeaveStatisticsCsvExportService, vacationTypeService);
+        final DateFormatAware dateFormatAware = new DateFormatAware();
+
+        sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService,
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware);
     }
 
     @Test
     void applicationForLeaveStatisticsRedirectsToStatistics() throws Exception {
 
-        final String startDateString = "01.01.2019";
-        final String endDateString = "01.08.2019";
-        final FilterPeriod filterPeriod = new FilterPeriod(startDateString, endDateString);
-
-        final String expectedRedirect = "/web/application/statistics?from=" + filterPeriod.getStartDateAsString() +
-            "&to=" + filterPeriod.getEndDateAsString();
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         perform(post("/web/application/statistics")
             .flashAttr("period", filterPeriod))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl(expectedRedirect));
+            .andExpect(redirectedUrl("/web/application/statistics?from=2019-01-01&to=2019-08-01"));
     }
 
     @Test
@@ -82,9 +83,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
 
-        final String startDateString = "01.01.2019";
-        final String endDateString = "01.08.2019";
-        final FilterPeriod filterPeriod = new FilterPeriod(startDateString, endDateString);
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
@@ -93,12 +94,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
-            .param("from", startDateString)
-            .param("to", endDateString));
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"));
 
         resultActions
-            .andExpect(model().attribute("from", LocalDate.parse("2019-01-01")))
-            .andExpect(model().attribute("to", LocalDate.parse("2019-08-01")))
+            .andExpect(model().attribute("from", startDate))
+            .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statistics", statistics))
             .andExpect(model().attribute("period", samePropertyValuesAs(filterPeriod)))
             .andExpect(model().attribute("vacationTypes", vacationType))
@@ -130,16 +131,16 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void downloadCSVWritesCSV() throws Exception {
 
-        final String startDateString = "01.01.2019";
-        final String endDateString = "01.08.2019";
-        final FilterPeriod filterPeriod = new FilterPeriod(startDateString, endDateString);
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
 
         perform(get("/web/application/statistics/download")
-            .param("from", filterPeriod.getStartDateAsString())
-            .param("to", filterPeriod.getEndDateAsString()));
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"));
 
         verify(applicationForLeaveStatisticsCsvExportService)
             .writeStatistics(refEq(filterPeriod), eq(statistics), any(CSVWriter.class));
@@ -148,15 +149,15 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void downloadCSVSetsModelAndView() throws Exception {
 
-        final String startDateString = "01.01.2019";
-        final String endDateString = "01.08.2019";
-        final FilterPeriod filterPeriod = new FilterPeriod(startDateString, endDateString);
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(emptyList());
 
         perform(get("/web/application/statistics/download")
-            .param("from", filterPeriod.getStartDateAsString())
-            .param("to", filterPeriod.getEndDateAsString()))
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"))
             .andExpect(model().attribute("period", samePropertyValuesAs(filterPeriod)))
             .andExpect(view().name("application/app_statistics"));
     }
