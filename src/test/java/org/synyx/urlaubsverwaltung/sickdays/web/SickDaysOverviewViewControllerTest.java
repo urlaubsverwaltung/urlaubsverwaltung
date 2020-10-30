@@ -125,17 +125,19 @@ class SickDaysOverviewViewControllerTest {
         final ResultActions resultActions = perform(get("/web/sicknote")
             .param("from", requestStartDateString)
             .param("to", requestEndDateString));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))));
-        resultActions.andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))));
-        resultActions.andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))));
-        resultActions.andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))));
-        resultActions.andExpect(model().attribute("persons", persons));
-        resultActions.andExpect(model().attribute("from", requestStartDate));
-        resultActions.andExpect(model().attribute("to", requestEndDate));
-        resultActions.andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))));
-        resultActions.andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))));
-        resultActions.andExpect(view().name("sicknote/sick_notes"));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
+            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("from", requestStartDate))
+            .andExpect(model().attribute("to", requestEndDate))
+            .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
+            .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
+            .andExpect(view().name("sicknote/sick_notes"));
     }
 
     @Test

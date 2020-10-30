@@ -3,7 +3,9 @@ package org.synyx.urlaubsverwaltung.web;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.time.LocalDate.parse;
@@ -36,8 +38,20 @@ public class FilterPeriod {
         return startDate;
     }
 
+    public String getStartDateIsoValue() {
+        return Optional.ofNullable(startDate)
+            .map(date -> date.format(DateTimeFormatter.ISO_DATE))
+            .orElse("");
+    }
+
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public String getEndDateIsoValue() {
+        return Optional.ofNullable(endDate)
+            .map(date -> date.format(DateTimeFormatter.ISO_DATE))
+            .orElse("");
     }
 
     public void setStartDate(LocalDate startDate) {
@@ -66,5 +80,26 @@ public class FilterPeriod {
             "startDate=" + startDate +
             ", endDate=" + endDate +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final FilterPeriod period = (FilterPeriod) o;
+
+        return Objects.equals(getStartDate(), period.getStartDate()) &&
+            Objects.equals(getEndDate(), period.getEndDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getStartDate(), getEndDate());
     }
 }

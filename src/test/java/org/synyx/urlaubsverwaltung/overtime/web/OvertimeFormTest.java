@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
@@ -64,6 +65,49 @@ class OvertimeFormTest {
         Assert.assertNull("ID should be not set", overtimeForm.getId());
     }
 
+    @Test
+    void ensureEmptyStartDateValidFromIsoValue() {
+
+        final Person person = new Person();
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
+
+        overtimeForm.setStartDate(null);
+
+        assertThat(overtimeForm.getStartDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureStartDateValidFromIsoValue() {
+
+        final Person person = new Person();
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
+
+        overtimeForm.setStartDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(overtimeForm.getStartDateIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
+    void ensureEmptyEndDateValidFromIsoValue() {
+
+        final Person person = new Person();
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
+
+        overtimeForm.setEndDate(null);
+
+        assertThat(overtimeForm.getEndDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureEndDateValidFromIsoValue() {
+
+        final Person person = new Person();
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
+
+        overtimeForm.setEndDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(overtimeForm.getEndDateIsoValue()).isEqualTo("2020-10-30");
+    }
 
     @Test
     void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {

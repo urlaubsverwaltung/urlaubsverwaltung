@@ -85,9 +85,8 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom"
-                                            class="form-control"
-                                            cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
+                                <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" data-iso-value="${account.holidaysAccountValidFromIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline">
                                     <form:errors path="holidaysAccountValidFrom" cssClass="error"/>
                                 </span>
@@ -100,9 +99,8 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo"
-                                            class="form-control"
-                                            cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
+                                <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" data-iso-value="${account.holidaysAccountValidToIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline">
                                     <form:errors path="holidaysAccountValidTo" cssClass="error"/>
                                 </span>

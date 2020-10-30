@@ -20,10 +20,12 @@ async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
   const dateElement = document.querySelector(selector);
   const duetDateElement = document.createElement("duet-date-picker");
 
+  const { isoValue } = dateElement.dataset;
+
   duetDateElement.dateAdapter = DE.dateAdapter;
   duetDateElement.localization = window.uv.datepicker.localisation;
 
-  const parsedDate = parse(dateElement.value, dateFormat, new Date());
+  const parsedDate = parse(isoValue, "yyyy-MM-dd", new Date());
   const isoDateString = dateElement.value ? formatISO(parsedDate, { representation: "date" }) : "";
 
   duetDateElement.setAttribute("style", "--duet-radius=0");

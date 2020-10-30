@@ -101,9 +101,24 @@ describe("create-datepicker-instances", () => {
     expect(document.querySelector("duet-date-picker").getAttribute("name")).toBe("start-date");
   });
 
-  test("assigns original 'value' attribute", async () => {
+  test("fails to render with preset date value but missing iso-value", async () => {
     document.body.innerHTML = `
       <input value="24.12.2020" />
+    `;
+
+    const selectors = ["input"];
+    const urlPrefix = "";
+    const getPerson = () => 42;
+    const onSelect = jest.fn();
+
+    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+
+    expect(document.querySelector("duet-date-picker")).toBeNull();
+  });
+
+  test("assigns original 'value' attribute", async () => {
+    document.body.innerHTML = `
+      <input value="24.12.2020" data-iso-value="2020-12-24" />
     `;
 
     const selectors = ["input"];
@@ -118,7 +133,7 @@ describe("create-datepicker-instances", () => {
 
   test('invokes "onSelect" when date value has been changed', async () => {
     document.body.innerHTML = `
-      <input value="24.12.2020" />
+      <input value="24.12.2020" data-iso-value="2020-12-24" />
     `;
 
     const selectors = ["input"];
@@ -152,7 +167,7 @@ describe("create-datepicker-instances", () => {
         });
 
         document.body.innerHTML = `
-          <input value="24.12.2020" />
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
         `;
 
         const selectors = ["input"];
@@ -261,7 +276,7 @@ describe("create-datepicker-instances", () => {
         });
 
         document.body.innerHTML = `
-          <input value="24.12.2020" />
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
         `;
 
         const selectors = ["input"];
@@ -315,7 +330,7 @@ describe("create-datepicker-instances", () => {
           });
 
           document.body.innerHTML = `
-            <input value="24.12.2020" />
+            <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
           const selectors = ["input"];
@@ -391,7 +406,7 @@ describe("create-datepicker-instances", () => {
           });
 
           document.body.innerHTML = `
-            <input value="24.12.2020" />
+            <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
           const selectors = ["input"];
@@ -473,7 +488,7 @@ describe("create-datepicker-instances", () => {
           });
 
           document.body.innerHTML = `
-            <input value="24.12.2020" />
+            <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
           const selectors = ["input"];
@@ -555,7 +570,7 @@ describe("create-datepicker-instances", () => {
           });
 
           document.body.innerHTML = `
-            <input value="24.12.2020" />
+            <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
           const selectors = ["input"];
@@ -627,7 +642,7 @@ describe("create-datepicker-instances", () => {
     jest.spyOn(window.navigator, "language", "get").mockReturnValue(givenLanguage);
 
     document.body.innerHTML = `
-      <input value="24.12.2020" />
+      <input value="24.12.2020" data-iso-value="2020-12-24" />
     `;
 
     const selectors = ["input"];

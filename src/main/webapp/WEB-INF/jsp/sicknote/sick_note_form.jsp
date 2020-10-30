@@ -183,8 +183,8 @@
                                 <spring:message code="absence.period.startDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input id="from" path="startDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"
+                                <form:input id="from" path="startDate" data-iso-value="${sickNote.startDateIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
@@ -195,8 +195,8 @@
                                 <spring:message code="absence.period.endDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input id="to" path="endDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"
+                                <form:input id="to" path="endDate" data-iso-value="${sickNote.endDateIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>

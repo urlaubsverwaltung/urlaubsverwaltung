@@ -32,9 +32,11 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -206,6 +208,57 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/new")
             .param("person", Integer.toString(PERSON_ID)))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void getNewApplicationFormWithGivenDateFrom() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        final Person person = new Person();
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+
+        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(new Account()));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions resultActions = perform(get("/web/application/new")
+            .param("person", Integer.toString(PERSON_ID))
+            .param("from", "2020-10-30"));
+
+        resultActions
+            .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("startDate", is(LocalDate.parse("2020-10-30"))),
+                hasProperty("startDateIsoValue", is("2020-10-30")),
+                hasProperty("endDate", is(LocalDate.parse("2020-10-30"))),
+                hasProperty("endDateIsoValue", is("2020-10-30"))
+            )));
+    }
+
+    @Test
+    void getNewApplicationFormWithGivenDateFromAndDateTo() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        final Person person = new Person();
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+
+        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(new Account()));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions resultActions = perform(get("/web/application/new")
+            .param("person", Integer.toString(PERSON_ID))
+            .param("from", "2020-10-27")
+            .param("to", "2020-10-30"));
+
+        resultActions
+            .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("startDate", is(LocalDate.parse("2020-10-27"))),
+                hasProperty("startDateIsoValue", is("2020-10-27")),
+                hasProperty("endDate", is(LocalDate.parse("2020-10-30"))),
+                hasProperty("endDateIsoValue", is("2020-10-30"))
+            )));
     }
 
     @Test

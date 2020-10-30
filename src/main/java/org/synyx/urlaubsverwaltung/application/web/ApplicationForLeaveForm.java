@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -75,6 +76,13 @@ public class ApplicationForLeaveForm {
         this.address = address;
     }
 
+    public String getEndDateIsoValue() {
+        if (endDate == null) {
+            return "";
+        }
+
+        return endDate.format(DateTimeFormatter.ISO_DATE);
+    }
 
     public LocalDate getEndDate() {
 
@@ -135,6 +143,13 @@ public class ApplicationForLeaveForm {
         this.holidayReplacement = holidayReplacement;
     }
 
+    public String getStartDateIsoValue() {
+        if (startDate == null) {
+            return "";
+        }
+
+        return startDate.format(DateTimeFormatter.ISO_DATE);
+    }
 
     public LocalDate getStartDate() {
 

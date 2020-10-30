@@ -65,7 +65,7 @@ public class ApplicationForLeaveStatisticsViewController {
                                                 @RequestParam(value = "to", defaultValue = "") String to,
                                                 Model model) {
 
-        FilterPeriod period = new FilterPeriod(from, to);
+        final FilterPeriod period = new FilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {

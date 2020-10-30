@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -73,6 +74,13 @@ public class OvertimeForm {
         this.person = person;
     }
 
+    public String getStartDateIsoValue() {
+        if (startDate == null) {
+            return "";
+        }
+
+        return startDate.format(DateTimeFormatter.ISO_DATE);
+    }
 
     public LocalDate getStartDate() {
 
@@ -83,6 +91,14 @@ public class OvertimeForm {
     public void setStartDate(LocalDate startDate) {
 
         this.startDate = startDate;
+    }
+
+    public String getEndDateIsoValue() {
+        if (endDate == null) {
+            return "";
+        }
+
+        return endDate.format(DateTimeFormatter.ISO_DATE);
     }
 
 

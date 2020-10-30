@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -18,12 +17,46 @@ class SickNoteFormTest {
     private final Person person = new Person();
     private final SickNoteType type = new SickNoteType();
 
-    private SickNoteForm sut;
+    @Test
+    void ensureEmptyStartDateValidFromIsoValue() {
 
-    @BeforeEach
-    void setUp() {
-        sut = new SickNoteForm();
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setStartDate(null);
 
+        assertThat(sut.getStartDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureStartDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setStartDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(sut.getStartDateIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
+    void ensureEmptyEndDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setEndDate(null);
+
+        assertThat(sut.getEndDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureEndDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setEndDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(sut.getEndDateIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
+    void checkGeneratedSickNote() {
+
+        final SickNoteForm sut = new SickNoteForm();
         sut.setId(id);
         sut.setPerson(person);
         sut.setSickNoteType(type);
@@ -33,10 +66,6 @@ class SickNoteFormTest {
         sut.setAubStartDate(day2019_04_16);
         sut.setAubEndDate(day2019_04_16);
         sut.setComment("my comment");
-    }
-
-    @Test
-    void checkGeneratedSickNote() {
 
         SickNote sickNote = sut.generateSickNote();
 
@@ -53,6 +82,18 @@ class SickNoteFormTest {
 
     @Test
     void checkCopyConstructur() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setId(id);
+        sut.setPerson(person);
+        sut.setSickNoteType(type);
+        sut.setStartDate(day2019_04_16);
+        sut.setEndDate(day2019_04_16);
+        sut.setDayLength(DayLength.FULL);
+        sut.setAubStartDate(day2019_04_16);
+        sut.setAubEndDate(day2019_04_16);
+        sut.setComment("my comment");
+
         SickNote sickNote = sut.generateSickNote();
 
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
@@ -69,6 +110,18 @@ class SickNoteFormTest {
 
     @Test
     void toStringTest() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setId(id);
+        sut.setPerson(person);
+        sut.setSickNoteType(type);
+        sut.setStartDate(day2019_04_16);
+        sut.setEndDate(day2019_04_16);
+        sut.setDayLength(DayLength.FULL);
+        sut.setAubStartDate(day2019_04_16);
+        sut.setAubEndDate(day2019_04_16);
+        sut.setComment("my comment");
+
         SickNote sickNote = sut.generateSickNote();
         SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
 

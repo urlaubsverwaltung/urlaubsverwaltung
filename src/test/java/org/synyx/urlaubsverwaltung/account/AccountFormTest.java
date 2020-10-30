@@ -42,4 +42,44 @@ class AccountFormTest {
         assertThat(form.getRemainingVacationDays()).isEqualTo(BigDecimal.ONE);
         assertThat(form.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
+
+    @Test
+    void ensureEmptyHolidaysAccountValidFromIsoValue() {
+
+        final AccountForm accountForm = new AccountForm(2020);
+
+        accountForm.setHolidaysAccountValidFrom(null);
+
+        assertThat(accountForm.getHolidaysAccountValidFromIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureHolidaysAccountValidFromIsoValue() {
+
+        final AccountForm accountForm = new AccountForm(2020);
+
+        accountForm.setHolidaysAccountValidFrom(LocalDate.parse("2020-10-30"));
+
+        assertThat(accountForm.getHolidaysAccountValidFromIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
+    void ensureEmptyHolidaysAccountValidToIsoValue() {
+
+        final AccountForm accountForm = new AccountForm(2020);
+
+        accountForm.setHolidaysAccountValidTo(null);
+
+        assertThat(accountForm.getHolidaysAccountValidToIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureHolidaysAccountValidToIsoValue() {
+
+        final AccountForm accountForm = new AccountForm(2020);
+
+        accountForm.setHolidaysAccountValidTo(LocalDate.parse("2020-10-30"));
+
+        assertThat(accountForm.getHolidaysAccountValidTo()).isEqualTo("2020-10-30");
+    }
 }

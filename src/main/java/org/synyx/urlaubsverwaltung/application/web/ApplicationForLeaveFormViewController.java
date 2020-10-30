@@ -32,6 +32,7 @@ import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
 
+import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
@@ -97,7 +98,10 @@ public class ApplicationForLeaveFormViewController {
 
     @GetMapping("/application/new")
     public String newApplicationForm(
-        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
+        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
+        @RequestParam(value = "from", required = false) String startDateString,
+        @RequestParam(value = "to", required = false) String endDateString,
+        Model model)
         throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -118,7 +122,20 @@ public class ApplicationForLeaveFormViewController {
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
-            prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
+
+            final ApplicationForLeaveForm appForm = new ApplicationForLeaveForm();
+            // TODO we have to parse the dateString with the matching date format (e.g. 'dd.MM.yyyy' or 'yyyy-MM-dd')
+            //      (when the client has JavaScript the dateString will be in ISO format. without JavaScript the dateString format is the user localized format)
+            Optional.ofNullable(startDateString)
+                .map(LocalDate::parse)
+                .ifPresent(appForm::setStartDate);
+
+            Optional.ofNullable(endDateString)
+                .or(() -> Optional.ofNullable(startDateString))
+                .map(LocalDate::parse)
+                .ifPresent(appForm::setEndDate);
+
+            prepareApplicationForLeaveForm(person, appForm, model);
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
