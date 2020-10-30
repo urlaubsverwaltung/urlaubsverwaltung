@@ -35,25 +35,19 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
     }
 
     public AbstractComment(Clock clock) {
-
-        Clock c = ofNullable(clock).orElse(Clock.systemUTC());
+        final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
         this.date = Instant.now(c).truncatedTo(DAYS);
     }
 
     public Person getPerson() {
-
         return person;
     }
 
-
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
-
     public Instant getDate() {
-
         if (date == null) {
             throw new IllegalStateException("Date of comment can never be null!");
         }
@@ -61,15 +55,11 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
         return date;
     }
 
-
     public String getText() {
-
         return text;
     }
 
-
     public void setText(String text) {
-
         this.text = text;
     }
 }
