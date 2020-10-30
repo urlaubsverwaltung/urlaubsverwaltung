@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.department;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
@@ -73,7 +72,6 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
     public void setLastModification(LocalDate lastModification) {
-        Assert.notNull(lastModification, "Last modification date must be set.");
         this.lastModification = lastModification;
     }
 

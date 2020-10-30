@@ -13,13 +13,13 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartmentForm;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentViewControllerTest {
@@ -61,11 +62,11 @@ class DepartmentViewControllerTest {
     @Test
     void showAllDepartmentsAddsDepartmentsToModel() throws Exception {
 
-        final List<Department> departments = Collections.singletonList(new Department());
+        final List<Department> departments = List.of(new Department());
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
         perform(get("/web/department"))
-            .andExpect(model().attribute("departments", departments));
+            .andExpect(model().attribute("departments", mapToDepartmentForm(departments)));
     }
 
     @Test
@@ -78,11 +79,11 @@ class DepartmentViewControllerTest {
     @Test
     void getNewDepartmentFormAddsNewDepartmentAndActivePersonsToModel() throws Exception {
 
-        final List<Person> persons = Collections.singletonList(new Person());
+        final List<Person> persons = List.of(new Person());
         when(personService.getActivePersons()).thenReturn(persons);
 
         perform(get("/web/department/new"))
-            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, hasProperty("new", equalTo(Boolean.TRUE))))
+            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, hasProperty("id", is(nullValue()))))
             .andExpect(model().attribute(PERSONS_ATTRIBUTE, persons));
     }
 
@@ -121,8 +122,8 @@ class DepartmentViewControllerTest {
     void postNewDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
         perform(post("/web/department"))
-            .andExpect(flash().attribute("createdDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
+            .andExpect(flash().attribute("createdDepartment", instanceOf(DepartmentForm.class)))
             .andExpect(redirectedUrl("/web/department/"));
     }
 
@@ -140,11 +141,11 @@ class DepartmentViewControllerTest {
         final Department department = new Department();
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
-        List<Person> persons = Collections.singletonList(new Person());
+        List<Person> persons = List.of(new Person());
         when(personService.getActivePersons()).thenReturn(persons);
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
-            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, department))
+            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, mapToDepartmentForm(department)))
             .andExpect(model().attribute(PERSONS_ATTRIBUTE, persons));
     }
 
@@ -200,8 +201,8 @@ class DepartmentViewControllerTest {
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
-            .andExpect(flash().attribute("updatedDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
+            .andExpect(flash().attribute("updatedDepartment", instanceOf(DepartmentForm.class)))
             .andExpect(redirectedUrl("/web/department/"));
     }
 

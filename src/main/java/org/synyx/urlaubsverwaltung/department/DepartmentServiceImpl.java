@@ -56,6 +56,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void create(Department department) {
 
+        department.setLastModification(LocalDate.now(clock));
+
         departmentRepository.save(department);
 
         LOG.info("Created department: {}", department);
