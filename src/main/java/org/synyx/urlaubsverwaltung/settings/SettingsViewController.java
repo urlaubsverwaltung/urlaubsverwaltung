@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web/settings")
@@ -44,17 +47,15 @@ public class SettingsViewController {
         this.clock = clock;
     }
 
-    @PreAuthorize(SecurityRules.IS_OFFICE)
     @GetMapping
-    public String settingsDetails(Model model,
-                                  @RequestParam(value = "oautherrors", required = false) String googleOAuthError,
-                                  HttpServletRequest request) {
+    @PreAuthorize(IS_OFFICE)
+    public String settingsDetails(@RequestParam(value = "oautherrors", required = false) String googleOAuthError,
+                                  HttpServletRequest request, Model model) {
 
-        String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-            request.getRequestURL().toString(), "/google-api-handshake");
+        final String requestURL = request.getRequestURL().toString();
+        final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
 
-        Settings settings = settingsService.getSettings();
-
+        final Settings settings = settingsService.getSettings();
         fillModel(model, settings, authorizedRedirectUrl);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
@@ -65,45 +66,16 @@ public class SettingsViewController {
         return "settings/settings_form";
     }
 
-    String getAuthorizedRedirectUrl(String requestURL, String redirectPath) {
-        return requestURL.replace("/settings", redirectPath);
-    }
-
-    private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
-        model.addAttribute("settings", settings);
-        model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("dayLengthTypes", DayLength.values());
-
-        List<String> providers = calendarProviders.stream()
-            .map(provider -> provider.getClass().getSimpleName())
-            .sorted(Comparator.reverseOrder())
-            .collect(Collectors.toList());
-        model.addAttribute("providers", providers);
-
-        model.addAttribute("availableTimezones", Arrays.asList(TimeZone.getAvailableIDs()));
-
-        if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
-            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(clock.getZone().getId());
-        }
-
-        model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
-    }
-
-
-    @PreAuthorize(SecurityRules.IS_OFFICE)
     @PostMapping
+    @PreAuthorize(IS_OFFICE)
     public String settingsSaved(@ModelAttribute("settings") Settings settings,
-                                Errors errors,
-                                Model model,
-                                RedirectAttributes redirectAttributes,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
-                                HttpServletRequest request) {
+                                Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
-        String authorizedRedirectUrl = getAuthorizedRedirectUrl(
-            request.getRequestURL().toString(), "oautherrors");
+        final StringBuffer requestURL = request.getRequestURL();
+        final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
 
         settingsValidator.validate(settings, errors);
-
         if (errors.hasErrors()) {
             fillModel(model, settings, authorizedRedirectUrl);
 
@@ -123,12 +95,35 @@ public class SettingsViewController {
         return "redirect:/web/settings";
     }
 
+    String getAuthorizedRedirectUrl(String requestURL, String redirectPath) {
+        return requestURL.replace("/settings", redirectPath);
+    }
+
+    private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
+        model.addAttribute("settings", settings);
+        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("dayLengthTypes", DayLength.values());
+
+        final List<String> providers = calendarProviders.stream()
+            .map(provider -> provider.getClass().getSimpleName())
+            .sorted(reverseOrder())
+            .collect(toList());
+        model.addAttribute("providers", providers);
+
+        model.addAttribute("availableTimezones", List.of(TimeZone.getAvailableIDs()));
+
+        if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
+            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(clock.getZone().getId());
+        }
+
+        model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
+    }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {
-        Settings storedSettings = settingsService.getSettings();
+        final Settings storedSettings = settingsService.getSettings();
 
-        GoogleCalendarSettings storedGoogleSettings = storedSettings.getCalendarSettings().getGoogleCalendarSettings();
-        GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getCalendarSettings().getGoogleCalendarSettings();
+        final GoogleCalendarSettings storedGoogleSettings = storedSettings.getCalendarSettings().getGoogleCalendarSettings();
+        final GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getCalendarSettings().getGoogleCalendarSettings();
 
         updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
 
