@@ -10,7 +10,7 @@
 
 <head>
     <title>
-        TODO
+        <spring:message code="application.error.notWaiting.title"/>
     </title>
     <uv:custom-head/>
 </head>
@@ -21,8 +21,8 @@
     <h1 class="tw-text-6xl md:tw-text-10rem tw-leading-normal" style="background-color: #b2c900;">
         <icon:emoji-sad className="tw-w-40 tw-h-40"/>
     </h1>
-    <p class="md:tw-text-2xl ">
-        Dieser Urlaub kann nicht mehr angepasst werden
+    <p class="md:tw-text-2xl">
+        <spring:message code="application.error.notWaiting.body"/>
     </p>
 </div>
 </body>
