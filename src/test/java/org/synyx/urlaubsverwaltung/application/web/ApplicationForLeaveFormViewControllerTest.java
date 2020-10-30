@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
@@ -23,12 +26,14 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -74,12 +79,15 @@ class ApplicationForLeaveFormViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
+    private final DateFormatAware dateFormatAware = new DateFormatAware();
+
     private static final int PERSON_ID = 1;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService, applicationInteractionService, applicationForLeaveFormValidator, settingsService, clock);
+        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService,
+            applicationInteractionService, applicationForLeaveFormValidator, settingsService, dateFormatAware, clock);
     }
 
     @Test
@@ -235,8 +243,17 @@ class ApplicationForLeaveFormViewControllerTest {
             )));
     }
 
-    @Test
-    void getNewApplicationFormWithGivenDateFromAndDateTo() throws Exception {
+    private static Stream<Arguments> datePeriodParams() {
+        return Stream.of(
+            Arguments.of("27.10.2020", "2020-10-27", "30.10.2020", "2020-10-30"),
+            Arguments.of("2020-10-27", "2020-10-27", "2020-10-30", "2020-10-30")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("datePeriodParams")
+    void getNewApplicationFormWithGivenDateFromAndDateTo(
+        String givenFromString, String expectedFromString, String givenToString, String expectedToString) throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
@@ -248,16 +265,16 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final ResultActions resultActions = perform(get("/web/application/new")
             .param("person", Integer.toString(PERSON_ID))
-            .param("from", "2020-10-27")
-            .param("to", "2020-10-30"));
+            .param("from", givenFromString)
+            .param("to", givenToString));
 
         resultActions
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("application", allOf(
-                hasProperty("startDate", is(LocalDate.parse("2020-10-27"))),
-                hasProperty("startDateIsoValue", is("2020-10-27")),
-                hasProperty("endDate", is(LocalDate.parse("2020-10-30"))),
-                hasProperty("endDateIsoValue", is("2020-10-30"))
+                hasProperty("startDate", is(LocalDate.parse(expectedFromString))),
+                hasProperty("startDateIsoValue", is(expectedFromString)),
+                hasProperty("endDate", is(LocalDate.parse(expectedToString))),
+                hasProperty("endDateIsoValue", is(expectedToString))
             )));
     }
 

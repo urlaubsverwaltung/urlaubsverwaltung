@@ -28,11 +28,11 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
@@ -72,17 +72,24 @@ public class ApplicationForLeaveFormViewController {
     private final ApplicationInteractionService applicationInteractionService;
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
+    private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
-                                                 ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService, Clock clock) {
+    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService,
+                                                 VacationTypeService vacationTypeService,
+                                                 ApplicationInteractionService applicationInteractionService,
+                                                 ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
+                                                 SettingsService settingsService,
+                                                 DateFormatAware dateFormatAware,
+                                                 Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
+        this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
 
@@ -124,16 +131,11 @@ public class ApplicationForLeaveFormViewController {
         if (holidaysAccount.isPresent()) {
 
             final ApplicationForLeaveForm appForm = new ApplicationForLeaveForm();
-            // TODO we have to parse the dateString with the matching date format (e.g. 'dd.MM.yyyy' or 'yyyy-MM-dd')
-            //      (when the client has JavaScript the dateString will be in ISO format. without JavaScript the dateString format is the user localized format)
-            Optional.ofNullable(startDateString)
-                .map(LocalDate::parse)
-                .ifPresent(appForm::setStartDate);
 
-            Optional.ofNullable(endDateString)
-                .or(() -> Optional.ofNullable(startDateString))
-                .map(LocalDate::parse)
-                .ifPresent(appForm::setEndDate);
+            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
+            final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
+            appForm.setStartDate(startDate);
+            appForm.setEndDate(endDate);
 
             prepareApplicationForLeaveForm(person, appForm, model);
         }
