@@ -390,9 +390,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     public Application edit(Application applicationForLeave, Person person, Optional<String> comment) {
 
         if (applicationForLeave.getStatus().compareTo(WAITING) != 0) {
-            throw new EditApplicationForLeaveNotAllowedException("Cannot edit application for leave " +
-                "with id " + applicationForLeave.getId() + " because the status is " + applicationForLeave.getStatus() +
-                " and not waiting.");
+            throw new EditApplicationForLeaveNotAllowedException(String.format("Cannot edit application for leave " +
+                "with id %d because the status is %s and not waiting.", applicationForLeave.getId(), applicationForLeave.getStatus()));
         }
 
         applicationForLeave.setStatus(ApplicationStatus.WAITING);
