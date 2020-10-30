@@ -45,7 +45,9 @@ class ApplicationMailService {
     private final SettingsService settingsService;
 
     @Autowired
-    ApplicationMailService(MailService mailService, DepartmentService departmentService, ApplicationRecipientService applicationRecipientService, ICalService iCalService, MessageSource messageSource, SettingsService settingsService) {
+    ApplicationMailService(MailService mailService, DepartmentService departmentService,
+                           ApplicationRecipientService applicationRecipientService, ICalService iCalService,
+                           MessageSource messageSource, SettingsService settingsService) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
@@ -129,6 +131,29 @@ class ApplicationMailService {
 
         mailService.send(mailToApplicant);
     }
+
+    /**
+     * If a applicant edited the application for leave before it was accepted/declined by a boss/department head
+     * a edited notification will be send to himself and the boss/department head
+     *
+     * @param application that has been edited
+     * @param recipient   that edited the application for leave
+     */
+    void sendEditedApplicationNotification(Application application, Person recipient) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put("recipient", recipient);
+
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(recipient)
+            .withSubject("subject.application.edited", application.getPerson().getNiceName())
+            .withTemplate("edited", model)
+            .build();
+
+        mailService.send(mailToApplicant);
+    }
+
 
     /**
      * Sends mail to office and informs about

@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -316,6 +317,31 @@ class ApplicationForLeaveViewControllerTest {
 
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
+    }
+
+    @Test
+    void getApplicationForUser() throws Exception {
+
+        final Person userPerson = new Person();
+        userPerson.setFirstName("person");
+        userPerson.setPermissions(singletonList(USER));
+        final Application applicationOfUser = new Application();
+        applicationOfUser.setId(3);
+        applicationOfUser.setPerson(userPerson);
+        applicationOfUser.setStatus(WAITING);
+        applicationOfUser.setStartDate(LocalDate.MAX);
+        applicationOfUser.setEndDate(LocalDate.MAX);
+
+        when(personService.getSignedInUser()).thenReturn(userPerson);
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(userPerson))).thenReturn(asList(applicationOfUser));
+
+        final ResultActions resultActions = perform(get("/web/application"));
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(model().attribute("applications", hasSize(1)));
+        resultActions.andExpect(model().attribute("applications", hasItem(hasProperty("person",
+            hasProperty("firstName", equalTo("person"))))));
+        resultActions.andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))));
+        resultActions.andExpect(view().name("application/app_list"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

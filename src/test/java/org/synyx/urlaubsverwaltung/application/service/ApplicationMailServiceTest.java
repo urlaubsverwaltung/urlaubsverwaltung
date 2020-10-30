@@ -46,7 +46,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 class ApplicationMailServiceTest {
 
     private ApplicationMailService sut;
-    private final Clock clock = Clock.systemUTC();
 
     @Mock
     private MailService mailService;
@@ -60,6 +59,8 @@ class ApplicationMailServiceTest {
     private ICalService iCalService;
     @Mock
     private SettingsService settingsService;
+
+    private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
@@ -184,6 +185,37 @@ class ApplicationMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.refer");
         assertThat(mail.getTemplateName()).isEqualTo("refer");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
+    void sendEditedApplicationNotification() {
+
+        final Person recipient = new Person();
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setDayLength(FULL);
+        application.setPerson(recipient);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(ALLOWED);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("recipient", recipient);
+
+        sut.sendEditedApplicationNotification(application, recipient);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.edited");
+        assertThat(mail.getTemplateName()).isEqualTo("edited");
         assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 

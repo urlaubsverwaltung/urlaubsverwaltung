@@ -629,6 +629,31 @@ class ApplicationMailServiceIT extends TestContainersBase {
         verifyInbox(departmentHeadB, singletonList(applicationB));
     }
 
+    @Test
+    void sendEditedApplicationNotification() throws Exception {
+
+        final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
+        final Application application = createApplication(recipient);
+        application.setPerson(recipient);
+
+        sut.sendEditedApplicationNotification(application, recipient);
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
+        assertThat(inbox.length).isOne();
+
+        // check content of user email
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Urlaubsantrag von Max Muster wurde erfolgreich editiert");
+        assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Max Muster");
+        assertThat(content).contains("der Urlaubsantrag von Max Muster wurde angepasst.");
+        assertThat(content).contains("/web/application/1234");
+    }
+
     private void verifyInbox(Person inboxOwner, List<Application> applications) throws MessagingException, IOException {
 
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(inboxOwner.getEmail());

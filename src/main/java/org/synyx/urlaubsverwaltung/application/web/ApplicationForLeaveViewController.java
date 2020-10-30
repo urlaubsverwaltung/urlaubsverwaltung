@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Controller for showing applications for leave in a certain state.
@@ -57,40 +55,38 @@ public class ApplicationForLeaveViewController {
     /*
      * Show waiting applications for leave.
      */
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     @GetMapping("/application")
     public String showWaiting(Model model) {
 
-        List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
+        final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
         model.addAttribute("applications", applicationsForLeave);
 
         return "application/app_list";
     }
 
-
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
 
-        Person user = personService.getSignedInUser();
+        final Person user = personService.getSignedInUser();
 
-        boolean isHeadOf = user.hasRole(DEPARTMENT_HEAD);
-        boolean isSecondStage = user.hasRole(SECOND_STAGE_AUTHORITY);
-        boolean isBoss = user.hasRole(BOSS);
-        boolean isOffice = user.hasRole(OFFICE);
-
-        if (isBoss || isOffice) {
+        if (user.hasRole(BOSS) || user.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
             return getApplicationsForLeaveForBossOrOffice();
         }
 
-        List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
-        if (isSecondStage) {
+        final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
+        if (user.hasRole(SECOND_STAGE_AUTHORITY)) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
         }
 
-        if (isHeadOf) {
+        if (user.hasRole(DEPARTMENT_HEAD)) {
             // Department head can see only waiting applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
+        }
+
+        if (user.hasRole(USER)) {
+            // Department head can see only waiting applications for leave of certain department(s)
+            applicationsForLeave.addAll(getApplicationsForLeaveForUser(user));
         }
 
         return applicationsForLeave.stream().filter(distinctByKey(ApplicationForLeave::getId)).collect(toList());
@@ -98,16 +94,21 @@ public class ApplicationForLeaveViewController {
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
 
-        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
-
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
 
-        List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
+        return getApplicationsByStates(WAITING, TEMPORARY_ALLOWED).stream()
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(dateComparator())
+            .collect(toList());
+    }
 
-        return applications.stream()
+    private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
+
+        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
             .sorted(dateComparator())
             .collect(toList());
@@ -115,10 +116,8 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
 
-        List<Application> waitingApplications = getApplicationsByStates(WAITING);
-        List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
-
-        return waitingApplications.stream()
+        final List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
+        return getApplicationsByStates(WAITING).stream()
             .filter(includeApplicationsOf(members))
             .filter(withoutOwnApplications(head))
             .filter(withoutSecondStageAuthorityApplications())
@@ -129,10 +128,8 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
 
-        List<Application> applications = getApplicationsByStates(WAITING, TEMPORARY_ALLOWED);
-        List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
-
-        return applications.stream()
+        final List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
+        return getApplicationsByStates(WAITING, TEMPORARY_ALLOWED).stream()
             .filter(includeApplicationsOf(members))
             .filter(withoutOwnApplications(secondStage))
             .map(application -> new ApplicationForLeave(application, calendarService))

@@ -18,6 +18,7 @@
     test="${application.status == 'WAITING' || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' }">
 
     <c:if test="${application.status == 'WAITING'}">
+
         <sec:authorize access="hasAuthority('USER')">
             <jsp:include page="actions/remind_form.jsp"/>
         </sec:authorize>
