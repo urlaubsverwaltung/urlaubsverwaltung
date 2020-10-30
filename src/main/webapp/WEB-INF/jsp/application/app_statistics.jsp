@@ -53,6 +53,23 @@
                 <uv:export />
                 <uv:print />
             </jsp:attribute>
+            <jsp:attribute name="below">
+                <p class="tw-text-sm">
+                    <c:choose>
+                        <c:when test="${not empty errors}">
+                            <a href="#filterModal" data-toggle="modal">
+                                <spring:message code="applications.statistics.error.period"/>
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="#filterModal" data-toggle="modal">
+                                <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
+                </p>
+                <uv:filter-modal id="filterModal" actionUrl="${linkPrefix}/statistics"/>
+            </jsp:attribute>
             <jsp:body>
                 <h1 class="tw-flex-1 tw-text-2xl tw-font-normal tw-m-0">
                     <spring:message code="applications.statistics"/>
@@ -63,25 +80,6 @@
         <div class="row">
 
             <div class="col-xs-12">
-
-                <p class="tw-text-sm tw-mb-8">
-                    <c:choose>
-                        <c:when test="${not empty errors}">
-                            <a href="#filterModal" data-toggle="modal">
-                                <spring:message code="applications.statistics.error.period"/>
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="#filterModal" data-toggle="modal">
-                                <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date
-                                date="${to}"/>
-                            </a>
-                        </c:otherwise>
-                    </c:choose>
-                </p>
-
-                <uv:filter-modal id="filterModal" actionUrl="${linkPrefix}/statistics"/>
-
                 <c:choose>
                     <c:when test="${not empty errors}">
                         <div class="alert alert-danger">
