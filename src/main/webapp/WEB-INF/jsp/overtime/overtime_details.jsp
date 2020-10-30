@@ -104,7 +104,7 @@
                             </td>
                             <td>
                                 <spring:message code="overtime.progress.${comment.action}"/>
-                                <uv:date date="${comment.date}"/>
+                                <uv:instant date="${comment.date}"/>
                                 <c:if test="${comment.text != null && not empty comment.text}">
                                     <spring:message code="overtime.progress.comment"/>
                                     <br/>
