@@ -132,7 +132,7 @@
                     </c:if>
                 </div>
 
-                <div class="row tw-mb-16">
+                <div class="row">
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
