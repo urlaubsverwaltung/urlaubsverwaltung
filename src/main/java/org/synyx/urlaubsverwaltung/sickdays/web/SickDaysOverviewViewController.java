@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
@@ -55,30 +55,26 @@ public class SickDaysOverviewViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
     }
 
-
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/filter")
     public String filterSickNotes(@ModelAttribute("period") FilterPeriod period) {
 
         return "redirect:/web/sicknote?from=" + period.getStartDateAsString() + "&to=" + period.getEndDateAsString();
     }
 
-
-    @PreAuthorize(SecurityRules.IS_OFFICE)
+    @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote")
-    public String periodsSickNotes(@RequestParam(value = "from") String from, @RequestParam(value = "to") String to, Model model) {
+    public String periodsSickNotes(@RequestParam(value = "from", defaultValue = ) String from, @RequestParam(value = "to") String to, Model model) {
 
-        FilterPeriod period = new FilterPeriod(from, to);
-        List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
+        final FilterPeriod period = new FilterPeriod(from, to);
+        final List <SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
         fillModel(model, sickNoteList, period);
 
         return "sicknote/sick_notes";
     }
-
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period) {
 
@@ -87,9 +83,9 @@ public class SickDaysOverviewViewController {
         model.addAttribute("to", period.getEndDate());
         model.addAttribute("period", period);
 
-        List<Person> persons = personService.getActivePersons();
+        final List<Person> persons = personService.getActivePersons();
 
-        List<SickNote> sickNotesOfActivePersons = sickNotes.stream()
+        final List<SickNote> sickNotesOfActivePersons = sickNotes.stream()
             .filter(sickNote -> persons.contains(sickNote.getPerson()) && sickNote.isActive())
             .collect(toList());
 
@@ -102,15 +98,15 @@ public class SickDaysOverviewViewController {
         }
 
         for (SickNote sickNote : sickNotesOfActivePersons) {
-            Person person = sickNote.getPerson();
-            BigDecimal workDays = calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(),
+            final Person person = sickNote.getPerson();
+            final BigDecimal workDays = calendarService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(),
                 sickNote.getEndDate(), person);
 
             if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
                 childSickDays.get(person).addDays(TOTAL, workDays);
 
                 if (sickNote.isAubPresent()) {
-                    BigDecimal workDaysWithAUB = calendarService.getWorkDaysCount(sickNote.getDayLength(),
+                    final BigDecimal workDaysWithAUB = calendarService.getWorkDaysCount(sickNote.getDayLength(),
                         sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
 
                     childSickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);

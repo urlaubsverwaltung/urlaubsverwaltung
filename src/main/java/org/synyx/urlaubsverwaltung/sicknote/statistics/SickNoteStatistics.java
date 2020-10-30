@@ -14,7 +14,6 @@ import java.util.List;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
-
 /**
  * A statistic containing information about sick notes of a year.
  */
@@ -39,24 +38,44 @@ public class SickNoteStatistics {
     }
 
     public int getTotalNumberOfSickNotes() {
-
         return this.totalNumberOfSickNotes;
     }
 
-
     public BigDecimal getTotalNumberOfSickDays() {
-
         return this.totalNumberOfSickDays;
     }
 
+    public LocalDate getCreated() {
+        return this.created;
+    }
+
+    public int getYear() {
+        return this.year;
+    }
+
+    public Long getNumberOfPersonsWithMinimumOneSickNote() {
+        return this.numberOfPersonsWithMinimumOneSickNote;
+    }
+
+    public BigDecimal getAverageDurationOfDiseasePerPerson() {
+
+        Long numberOfPersons = getNumberOfPersonsWithMinimumOneSickNote();
+
+        if (numberOfPersons == 0) {
+            return BigDecimal.ZERO;
+        } else {
+            double averageDuration = getTotalNumberOfSickDays().doubleValue() / numberOfPersons;
+
+            return BigDecimal.valueOf(averageDuration);
+        }
+    }
 
     private BigDecimal calculateTotalNumberOfSickDays(WorkDaysCountService calendarService, List<SickNote> sickNotes) {
 
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
-
         for (SickNote sickNote : sickNotes) {
-            LocalDate sickNoteStartDate = sickNote.getStartDate();
-            LocalDate sickNoteEndDate = sickNote.getEndDate();
+            final LocalDate sickNoteStartDate = sickNote.getStartDate();
+            final LocalDate sickNoteEndDate = sickNote.getEndDate();
 
             LocalDate startDate;
             LocalDate endDate;
@@ -83,38 +102,6 @@ public class SickNoteStatistics {
         }
 
         return numberOfSickDays;
-    }
-
-
-    public LocalDate getCreated() {
-
-        return this.created;
-    }
-
-
-    public int getYear() {
-
-        return this.year;
-    }
-
-
-    public Long getNumberOfPersonsWithMinimumOneSickNote() {
-
-        return this.numberOfPersonsWithMinimumOneSickNote;
-    }
-
-
-    public BigDecimal getAverageDurationOfDiseasePerPerson() {
-
-        Long numberOfPersons = getNumberOfPersonsWithMinimumOneSickNote();
-
-        if (numberOfPersons == 0) {
-            return BigDecimal.ZERO;
-        } else {
-            double averageDuration = getTotalNumberOfSickDays().doubleValue() / numberOfPersons;
-
-            return BigDecimal.valueOf(averageDuration);
-        }
     }
 
     @Override
