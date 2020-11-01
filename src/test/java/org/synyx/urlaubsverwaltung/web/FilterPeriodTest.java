@@ -75,6 +75,26 @@ class FilterPeriodTest {
     }
 
     @Test
+    void ensureStartDateSetterIsOk() {
+
+        final FilterPeriod filterPeriod = new FilterPeriod("", "19.05.2199");
+        filterPeriod.setStartDate(null);
+
+        assertThat(filterPeriod.getStartDateAsString()).isEmpty();
+        assertThat(filterPeriod.getEndDateAsString()).isEqualTo("19.05.2199");
+    }
+
+    @Test
+    void ensureEndDateSetterIsOk() {
+
+        final FilterPeriod filterPeriod = new FilterPeriod("19.05.1899", "");
+        filterPeriod.setEndDate(null);
+
+        assertThat(filterPeriod.getStartDateAsString()).isEqualTo("19.05.1899");
+        assertThat(filterPeriod.getEndDateAsString()).isEmpty();
+    }
+
+    @Test
     void ensureThrowsIfTryingToParseDatesWithUnsupportedFormat() {
 
         Consumer<String> assertDateFormatNotSupported = (dateString) -> {
