@@ -15,8 +15,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -66,7 +71,9 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
     @Autowired
     private WorkingTimeService workingTimeService;
     @Autowired
-    private HolidayManager holidayManager;
+    private PublicHolidaysService publicHolidaysService;
+    @Autowired
+    private SettingsService settingsService;
 
     @Test
     void checkIfItIsPossibleToRequestAnApplicationForLeave() {
@@ -116,8 +123,11 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
     }
 
     private LocalDate getNextWorkday() {
+
+        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+
         LocalDate nextWorkDay = now();
-        while (holidayManager.isHoliday(nextWorkDay)) {
+        while (DayLength.ZERO.compareTo(publicHolidaysService.getAbsenceTypeOfDate(nextWorkDay, federalState)) != 0) {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
