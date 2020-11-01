@@ -25,7 +25,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.EDITED;
 @ExtendWith(MockitoExtension.class)
 class SickNoteCommentServiceImplTest {
 
-    private SickNoteCommentService sut;
+    private SickNoteCommentServiceImpl sut;
 
     @Mock
     private SickNoteCommentRepository sickNoteCommentRepository;

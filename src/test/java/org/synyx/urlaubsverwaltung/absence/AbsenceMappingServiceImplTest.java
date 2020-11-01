@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 
 class AbsenceMappingServiceImplTest {
 
-    private AbsenceMappingService sut;
+    private AbsenceMappingServiceImpl sut;
     private AbsenceMappingRepository absenceMappingRepository;
 
     @BeforeEach

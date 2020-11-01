@@ -64,7 +64,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ExtendWith(MockitoExtension.class)
 class ApplicationInteractionServiceImplTest {
 
-    private ApplicationInteractionService sut;
+    private ApplicationInteractionServiceImpl sut;
 
     @Mock
     private ApplicationService applicationService;

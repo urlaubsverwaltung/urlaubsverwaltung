@@ -24,7 +24,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
  */
 class ApplicationServiceImplTest {
 
-    private ApplicationService applicationService;
+    private ApplicationServiceImpl applicationService;
     private ApplicationRepository applicationRepository;
 
     @BeforeEach

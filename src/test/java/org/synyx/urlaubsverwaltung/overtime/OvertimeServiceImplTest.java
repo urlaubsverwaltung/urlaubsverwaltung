@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 class OvertimeServiceImplTest {
 
-    private OvertimeService sut;
+    private OvertimeServiceImpl sut;
 
     private OvertimeRepository overtimeRepository;
     private OvertimeCommentRepository commentDAO;

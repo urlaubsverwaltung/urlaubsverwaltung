@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
  */
 class SickNoteInteractionServiceImplTest {
 
-    private SickNoteInteractionService sickNoteInteractionService;
+    private SickNoteInteractionServiceImpl sickNoteInteractionService;
 
     private SickNoteService sickNoteService;
     private SickNoteCommentService commentService;

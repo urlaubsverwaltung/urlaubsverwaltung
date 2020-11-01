@@ -33,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 @ExtendWith(MockitoExtension.class)
 class ApplicationCommentServiceImplTest {
 
-    private ApplicationCommentService commentService;
+    private ApplicationCommentServiceImpl commentService;
 
     @Mock
     private ApplicationCommentRepository commentRepository;

@@ -44,7 +44,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
 
-    private PersonService sut;
+    private PersonServiceImpl sut;
 
     @Mock
     private PersonRepository personRepository;
