@@ -58,12 +58,6 @@ class FilterPeriodTest {
     }
 
     @Test
-    void ensureThrowsIfInitializedWithEndDateStringThatIsBeforeStartDateString() {
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new FilterPeriod("21.12.2015", "19.05.2015"));
-    }
-
-    @Test
     void ensureDatesCanBeParsedFromString() {
 
         final LocalDate startDate = LocalDate.of(2015, MAY, 19);
