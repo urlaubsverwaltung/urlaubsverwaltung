@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class UnknownDepartmentExceptionTest {
@@ -11,6 +12,6 @@ class UnknownDepartmentExceptionTest {
 
         UnknownDepartmentException exception = new UnknownDepartmentException(42);
 
-        Assert.assertEquals("Wrong exception message", "No department found for ID = 42", exception.getMessage());
+        assertThat(exception.getMessage()).isEqualTo("No department found for ID = 42");
     }
 }

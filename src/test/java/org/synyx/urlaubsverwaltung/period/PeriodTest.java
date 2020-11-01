@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
@@ -66,9 +66,9 @@ class PeriodTest {
 
         Period period = new Period(startDate, endDate, DayLength.FULL);
 
-        Assert.assertEquals("Wrong start date", startDate, period.getStartDate());
-        Assert.assertEquals("Wrong end date", endDate, period.getEndDate());
-        Assert.assertEquals("Wrong day length", DayLength.FULL, period.getDayLength());
+        assertThat(period.getStartDate()).isEqualTo(startDate);
+        assertThat(period.getEndDate()).isEqualTo(endDate);
+        assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
     }
 
 
@@ -79,8 +79,8 @@ class PeriodTest {
 
         Period period = new Period(date, date, DayLength.MORNING);
 
-        Assert.assertEquals("Wrong start date", date, period.getStartDate());
-        Assert.assertEquals("Wrong end date", date, period.getEndDate());
-        Assert.assertEquals("Wrong day length", DayLength.MORNING, period.getDayLength());
+        assertThat(period.getStartDate()).isEqualTo(date);
+        assertThat(period.getEndDate()).isEqualTo(date);
+        assertThat(period.getDayLength()).isEqualTo(DayLength.MORNING);
     }
 }

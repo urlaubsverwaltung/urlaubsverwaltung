@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 
@@ -8,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import static java.math.BigDecimal.ONE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
@@ -24,10 +24,9 @@ class UsedDaysTest {
 
         Map<String, BigDecimal> daysMap = usedDays.getDays();
 
-        Assert.assertEquals("Number of map elements should match the number of the given application states", 1,
-            daysMap.size());
-
-        Assert.assertEquals("Days should be initialized with 0", BigDecimal.ZERO, daysMap.get("ALLOWED"));
+        assertThat(daysMap)
+            .hasSize(1)
+            .containsEntry("ALLOWED", BigDecimal.ZERO);
     }
 
     @Test
@@ -48,9 +47,8 @@ class UsedDaysTest {
         usedDays.addDays(WAITING, ONE);
         usedDays.addDays(WAITING, ONE);
 
-        Assert.assertEquals("Allowed state should have correct number of days", BigDecimal.valueOf(2),
-            usedDays.getDays().get("ALLOWED"));
-        Assert.assertEquals("Waiting state should have correct number of days", BigDecimal.valueOf(3),
-            usedDays.getDays().get("WAITING"));
+        assertThat(usedDays.getDays())
+            .containsEntry("ALLOWED", BigDecimal.valueOf(2))
+            .containsEntry("WAITING", BigDecimal.valueOf(3));
     }
 }

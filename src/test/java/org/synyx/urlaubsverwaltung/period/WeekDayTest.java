@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.period;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
 class WeekDayTest {
@@ -13,12 +15,8 @@ class WeekDayTest {
     void ensureGetByDayOfWeekThrowsForInvalidNumber() {
 
         Consumer<Integer> assertValidDayOfWeek = (dayOfWeek) -> {
-            try {
-                WeekDay.getByDayOfWeek(dayOfWeek);
-                Assert.fail("Should throw for: " + dayOfWeek);
-            } catch (IllegalArgumentException ex) {
-                // Expected
-            }
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> WeekDay.getByDayOfWeek(dayOfWeek));
         };
 
         assertValidDayOfWeek.accept(-1);
@@ -32,7 +30,6 @@ class WeekDayTest {
 
         WeekDay weekDay = WeekDay.getByDayOfWeek(DayOfWeek.MONDAY.getValue());
 
-        Assert.assertNotNull("Missing week day", weekDay);
-        Assert.assertEquals("Wrong week day", WeekDay.MONDAY, weekDay);
+        assertThat(weekDay).isEqualTo(WeekDay.MONDAY);
     }
 }

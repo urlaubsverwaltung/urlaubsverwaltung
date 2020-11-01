@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -24,9 +23,7 @@ class SickNoteTest {
 
         SickNote sickNote = new SickNote();
 
-        Assert.assertNotNull("Last modification date should be set", sickNote.getLastEdited());
-        Assert.assertEquals("Wrong last modification date", LocalDate.now(UTC),
-            sickNote.getLastEdited());
+        assertThat(sickNote.getLastEdited()).isEqualTo(LocalDate.now(UTC));
     }
 
 
@@ -37,7 +34,7 @@ class SickNoteTest {
         sickNote.setAubStartDate(LocalDate.now(UTC));
         sickNote.setAubEndDate(LocalDate.now(UTC));
 
-        Assert.assertTrue("AUB should be present", sickNote.isAubPresent());
+        assertThat(sickNote.isAubPresent()).isTrue();
     }
 
 
@@ -47,7 +44,7 @@ class SickNoteTest {
         SickNote sickNote = new SickNote();
         sickNote.setAubStartDate(LocalDate.now(UTC));
 
-        Assert.assertFalse("AUB should not be present", sickNote.isAubPresent());
+        assertThat(sickNote.isAubPresent()).isFalse();
     }
 
 
@@ -57,14 +54,14 @@ class SickNoteTest {
         SickNote sickNote = new SickNote();
         sickNote.setAubEndDate(LocalDate.now(UTC));
 
-        Assert.assertFalse("AUB should not be present", sickNote.isAubPresent());
+        assertThat(sickNote.isAubPresent()).isFalse();
     }
 
 
     @Test
     void ensureAUBIsNotPresentIfNoAUBPeriodIsSet() {
 
-        Assert.assertFalse("AUB should not be present", new SickNote().isAubPresent());
+        assertThat(new SickNote().isAubPresent()).isFalse();
     }
 
 
@@ -75,7 +72,7 @@ class SickNoteTest {
             SickNote sickNote = new SickNote();
             sickNote.setStatus(status);
 
-            Assert.assertFalse("Should be inactive for status " + status, sickNote.isActive());
+            assertThat(sickNote.isActive()).isFalse();
         };
 
         assertNotActive.accept(SickNoteStatus.CANCELLED);
@@ -90,7 +87,7 @@ class SickNoteTest {
             SickNote sickNote = new SickNote();
             sickNote.setStatus(status);
 
-            Assert.assertTrue("Should be active for status " + status, sickNote.isActive());
+            assertThat(sickNote.isActive()).isTrue();
         };
 
         assertActive.accept(SickNoteStatus.ACTIVE);
@@ -146,10 +143,10 @@ class SickNoteTest {
 
         Period period = sickNote.getPeriod();
 
-        Assert.assertNotNull("Period should not be null", period);
-        Assert.assertEquals("Wrong period start date", startDate, period.getStartDate());
-        Assert.assertEquals("Wrong period end date", endDate, period.getEndDate());
-        Assert.assertEquals("Wrong period day length", DayLength.FULL, period.getDayLength());
+        assertThat(period).isNotNull();
+        assertThat(period.getStartDate()).isEqualTo(startDate);
+        assertThat(period.getEndDate()).isEqualTo(endDate);
+        assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
     }
 
     @Test

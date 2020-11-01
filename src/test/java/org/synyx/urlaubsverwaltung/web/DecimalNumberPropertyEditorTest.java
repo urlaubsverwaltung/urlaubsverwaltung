@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Locale;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
@@ -20,22 +20,22 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
         propertyEditor.setValue(new BigDecimal("3"));
-        Assert.assertEquals("Wrong text representation", "3", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3");
 
         propertyEditor.setValue(new BigDecimal("3.5"));
-        Assert.assertEquals("Wrong text representation", "3,5", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3,5");
 
         propertyEditor.setValue(new BigDecimal("3.50"));
-        Assert.assertEquals("Wrong text representation", "3,5", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3,5");
 
         propertyEditor.setValue(new BigDecimal("3.75"));
-        Assert.assertEquals("Wrong text representation", "3,75", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3,75");
 
         propertyEditor.setValue(BigDecimal.valueOf(3.001));
-        Assert.assertEquals("Wrong text representation", "3", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3");
 
         propertyEditor.setValue(BigDecimal.valueOf(3.2342));
-        Assert.assertEquals("Wrong text representation", "3,23", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3,23");
     }
 
 
@@ -45,22 +45,22 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
         propertyEditor.setValue(new BigDecimal("3"));
-        Assert.assertEquals("Wrong text representation", "3", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3");
 
         propertyEditor.setValue(new BigDecimal("3.5"));
-        Assert.assertEquals("Wrong text representation", "3.5", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3.5");
 
         propertyEditor.setValue(new BigDecimal("3.50"));
-        Assert.assertEquals("Wrong text representation", "3.5", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3.5");
 
         propertyEditor.setValue(new BigDecimal("3.75"));
-        Assert.assertEquals("Wrong text representation", "3.75", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3.75");
 
         propertyEditor.setValue(BigDecimal.valueOf(3.001));
-        Assert.assertEquals("Wrong text representation", "3", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3");
 
         propertyEditor.setValue(BigDecimal.valueOf(3.2342));
-        Assert.assertEquals("Wrong text representation", "3.23", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEqualTo("3.23");
     }
 
 
@@ -70,16 +70,16 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
         propertyEditor.setAsText("6");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.00"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.00"));
 
         propertyEditor.setAsText("6,5");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.50"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.50"));
 
         propertyEditor.setAsText("6,75");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
 
         propertyEditor.setAsText("6,4223");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.42"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.42"));
     }
 
 
@@ -89,16 +89,16 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
         propertyEditor.setAsText("6");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.00"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.00"));
 
         propertyEditor.setAsText("6.5");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.50"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.50"));
 
         propertyEditor.setAsText("6.75");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
 
         propertyEditor.setAsText("6.4223");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.42"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.42"));
     }
 
 
@@ -108,7 +108,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
         propertyEditor.setAsText("6,75");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
     }
 
 
@@ -118,7 +118,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
         propertyEditor.setAsText("6.75");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
     }
 
 
@@ -128,7 +128,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
         propertyEditor.setAsText("6,75");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
     }
 
 
@@ -138,7 +138,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
         propertyEditor.setAsText("6.75");
-        Assert.assertEquals("Wrong number", new BigDecimal("6.75"), propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isEqualTo(new BigDecimal("6.75"));
     }
 
 
@@ -148,7 +148,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.GERMAN);
 
         propertyEditor.setValue(null);
-        Assert.assertEquals("Wrong text representation", "", propertyEditor.getAsText());
+        assertThat(propertyEditor.getAsText()).isEmpty();
     }
 
 
@@ -168,7 +168,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
         propertyEditor.setAsText("");
-        Assert.assertNull("Should be null", propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isNull();
     }
 
 
@@ -178,7 +178,7 @@ class DecimalNumberPropertyEditorTest {
         DecimalNumberPropertyEditor propertyEditor = new DecimalNumberPropertyEditor(Locale.ENGLISH);
 
         propertyEditor.setAsText(null);
-        Assert.assertNull("Should be null", propertyEditor.getValue());
+        assertThat(propertyEditor.getValue()).isNull();
     }
 
 

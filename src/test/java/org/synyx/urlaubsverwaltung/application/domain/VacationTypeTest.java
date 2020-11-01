@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +20,7 @@ class VacationTypeTest {
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.OVERTIME);
 
-        Assert.assertTrue("Categories should match", vacationType.isOfCategory(VacationCategory.OVERTIME));
+        assertThat(vacationType.isOfCategory(VacationCategory.OVERTIME)).isTrue();
     }
 
 
@@ -31,7 +30,7 @@ class VacationTypeTest {
         VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
 
-        Assert.assertFalse("Categories should not match", vacationType.isOfCategory(VacationCategory.OVERTIME));
+        assertThat(vacationType.isOfCategory(VacationCategory.OVERTIME)).isFalse();
     }
 
     @Test

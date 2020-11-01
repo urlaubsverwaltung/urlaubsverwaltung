@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.statistics.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -42,27 +41,20 @@ class ApplicationForLeaveStatisticsTest {
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
 
         // Total
-        Assert.assertEquals("Total waiting vacation days should have default value", ZERO,
-            statistics.getTotalWaitingVacationDays());
-        Assert.assertEquals("Total allowed vacation days should have default value", ZERO,
-            statistics.getTotalAllowedVacationDays());
+        assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(ZERO);
+        assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(ZERO);
 
         // Left
-        Assert.assertEquals("Left vacation days should have default value", ZERO,
-            statistics.getLeftVacationDays());
-        Assert.assertEquals("Left overtime should have default value", ZERO, statistics.getLeftOvertime());
+        assertThat(statistics.getLeftVacationDays()).isEqualTo(ZERO);
+        assertThat(statistics.getLeftOvertime()).isEqualTo(ZERO);
 
         // Per vacation type
-        Assert.assertEquals("Wrong number of elements", createVacationTypes().size(),
-            statistics.getWaitingVacationDays().size());
-        Assert.assertEquals("Wrong number of elements", createVacationTypes().size(),
-            statistics.getAllowedVacationDays().size());
+        assertThat(statistics.getWaitingVacationDays()).hasSize(createVacationTypes().size());
+        assertThat(statistics.getAllowedVacationDays()).hasSize(createVacationTypes().size());
 
         for (VacationType type : createVacationTypes()) {
-            Assert.assertEquals("Waiting vacation days for " + type.getCategory() + " should be zero", ZERO,
-                statistics.getWaitingVacationDays().get(type));
-            Assert.assertEquals("Allowed vacation days for " + type.getCategory() + " should be zero", ZERO,
-                statistics.getAllowedVacationDays().get(type));
+            assertThat(statistics.getWaitingVacationDays()).containsEntry(type, ZERO);
+            assertThat(statistics.getAllowedVacationDays()).containsEntry(type, ZERO);
         }
     }
 
@@ -125,10 +117,11 @@ class ApplicationForLeaveStatisticsTest {
         statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
 
-        Assert.assertEquals("Wrong number of days", new BigDecimal("2"), statistics.getWaitingVacationDays().get(vacationTypes.get(0)));
-        Assert.assertEquals("Wrong number of days", ONE, statistics.getWaitingVacationDays().get(vacationTypes.get(1)));
-        Assert.assertEquals("Wrong number of days", ZERO, statistics.getWaitingVacationDays().get(vacationTypes.get(2)));
-        Assert.assertEquals("Wrong number of days", ZERO, statistics.getWaitingVacationDays().get(vacationTypes.get(3)));
+        assertThat(statistics.getWaitingVacationDays())
+            .containsEntry(vacationTypes.get(0), new BigDecimal("2"))
+            .containsEntry(vacationTypes.get(1), ONE)
+            .containsEntry(vacationTypes.get(2), ZERO)
+            .containsEntry(vacationTypes.get(3), ZERO);
     }
 
     @Test
@@ -141,10 +134,11 @@ class ApplicationForLeaveStatisticsTest {
         statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(3), ONE);
 
-        Assert.assertEquals("Wrong number of days", ZERO, statistics.getAllowedVacationDays().get(vacationTypes.get(0)));
-        Assert.assertEquals("Wrong number of days", ZERO, statistics.getAllowedVacationDays().get(vacationTypes.get(1)));
-        Assert.assertEquals("Wrong number of days", new BigDecimal("2"), statistics.getAllowedVacationDays().get(vacationTypes.get(2)));
-        Assert.assertEquals("Wrong number of days", ONE, statistics.getAllowedVacationDays().get(vacationTypes.get(3)));
+        assertThat(statistics.getAllowedVacationDays())
+            .containsEntry(vacationTypes.get(0), ZERO)
+            .containsEntry(vacationTypes.get(1), ZERO)
+            .containsEntry(vacationTypes.get(2), new BigDecimal("2"))
+            .containsEntry(vacationTypes.get(3), ONE);
     }
 
     // Total waiting vacation days -------------------------------------------------------------------------------------

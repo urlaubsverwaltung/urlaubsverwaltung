@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -173,19 +172,14 @@ class AccountInteractionServiceImplTest {
 
         Account createdHolidaysAccount = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceHolidaysAccount);
 
-        Assert.assertNotNull("Should not be null", createdHolidaysAccount);
+        assertThat(createdHolidaysAccount).isNotNull();
 
-        Assert.assertEquals("Wrong person", person, createdHolidaysAccount.getPerson());
-        Assert.assertEquals("Wrong number of annual vacation days", referenceHolidaysAccount.getAnnualVacationDays(),
-            createdHolidaysAccount.getAnnualVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days", leftDays,
-            createdHolidaysAccount.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of not expiring remaining vacation days", ZERO,
-            createdHolidaysAccount.getRemainingVacationDaysNotExpiring());
-        Assert.assertEquals("Wrong validity start date", LocalDate.of(nextYear, 1, 1),
-            createdHolidaysAccount.getValidFrom());
-        Assert.assertEquals("Wrong validity end date", LocalDate.of(nextYear, 12, 31),
-            createdHolidaysAccount.getValidTo());
+        assertThat(createdHolidaysAccount.getPerson()).isEqualTo(person);
+        assertThat(createdHolidaysAccount.getAnnualVacationDays()).isEqualTo(referenceHolidaysAccount.getAnnualVacationDays());
+        assertThat(createdHolidaysAccount.getRemainingVacationDays()).isEqualTo(leftDays);
+        assertThat(createdHolidaysAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+        assertThat(createdHolidaysAccount.getValidFrom()).isEqualTo(LocalDate.of(nextYear, 1, 1));
+        assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, 12, 31));
 
         verify(accountService).save(createdHolidaysAccount);
 
@@ -216,16 +210,13 @@ class AccountInteractionServiceImplTest {
 
         Account account = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceAccount);
 
-        Assert.assertNotNull("Should not be null", account);
-
-        Assert.assertEquals("Wrong person", person, account.getPerson());
-        Assert.assertEquals("Wrong number of annual vacation days", nextYearAccount.getAnnualVacationDays(),
-            account.getAnnualVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days", leftDays, account.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of not expiring remaining vacation days", ZERO,
-            account.getRemainingVacationDaysNotExpiring());
-        Assert.assertEquals("Wrong validity start date", nextYearAccount.getValidFrom(), account.getValidFrom());
-        Assert.assertEquals("Wrong validity end date", nextYearAccount.getValidTo(), account.getValidTo());
+        assertThat(account).isNotNull();
+        assertThat(account.getPerson()).isEqualTo(person);
+        assertThat(account.getAnnualVacationDays()).isEqualTo(nextYearAccount.getAnnualVacationDays());
+        assertThat(account.getRemainingVacationDays()).isEqualTo(leftDays);
+        assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+        assertThat(account.getValidFrom()).isEqualTo(nextYearAccount.getValidFrom());
+        assertThat(account.getValidTo()).isEqualTo(nextYearAccount.getValidTo());
 
         verify(accountService).save(account);
 

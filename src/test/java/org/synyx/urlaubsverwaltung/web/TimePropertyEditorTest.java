@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Time;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 
@@ -23,8 +23,7 @@ class TimePropertyEditorTest {
 
         editor.setValue(Time.valueOf("11:23:30"));
 
-        Assert.assertNotNull("Should not be null", editor.getAsText());
-        Assert.assertEquals("Wrong text representation", "11:23", editor.getAsText());
+        assertThat(editor.getAsText()).isEqualTo("11:23");
     }
 
     @Test
@@ -32,7 +31,7 @@ class TimePropertyEditorTest {
 
         editor.setValue(null);
 
-        Assert.assertEquals("Wrong text representation", "", editor.getAsText());
+        assertThat(editor.getAsText()).isEmpty();
     }
 
     @Test
@@ -42,8 +41,7 @@ class TimePropertyEditorTest {
 
         editor.setAsText("11:23");
 
-        Assert.assertNotNull("Should not be null", editor.getValue());
-        Assert.assertEquals("Wrong time", time, editor.getValue());
+        assertThat(editor.getValue()).isEqualTo(time);
     }
 
     @Test
@@ -51,7 +49,7 @@ class TimePropertyEditorTest {
 
         editor.setAsText("");
 
-        Assert.assertNull("Should be null", editor.getValue());
+        assertThat(editor.getValue()).isNull();
     }
 
     @Test
@@ -59,7 +57,7 @@ class TimePropertyEditorTest {
 
         editor.setAsText(null);
 
-        Assert.assertNull("Should be null", editor.getValue());
+        assertThat(editor.getValue()).isNull();
     }
 
     @Test

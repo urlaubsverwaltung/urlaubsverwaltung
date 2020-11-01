@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -31,11 +30,9 @@ class ApplicationTest {
     void ensureReturnsTrueIfItHasTheGivenStatus() {
 
         Application application = new Application();
-
         application.setStatus(ApplicationStatus.ALLOWED);
 
-        Assert.assertTrue("Should return true if it has the given status",
-            application.hasStatus(ApplicationStatus.ALLOWED));
+        assertThat(application.hasStatus(ApplicationStatus.ALLOWED)).isTrue();
     }
 
 
@@ -43,11 +40,9 @@ class ApplicationTest {
     void ensureReturnsFalseIfItHasNotTheGivenStatus() {
 
         Application application = new Application();
-
         application.setStatus(ApplicationStatus.CANCELLED);
 
-        Assert.assertFalse("Should return false if it has the given status",
-            application.hasStatus(ApplicationStatus.ALLOWED));
+        assertThat(application.hasStatus(ApplicationStatus.ALLOWED)).isFalse();
     }
 
 
@@ -57,10 +52,9 @@ class ApplicationTest {
     void ensureIsFormerlyAllowedReturnsFalseIfIsRevoked() {
 
         Application application = new Application();
-
         application.setStatus(ApplicationStatus.REVOKED);
 
-        Assert.assertFalse("Should not be formerly allowed", application.isFormerlyAllowed());
+        assertThat(application.isFormerlyAllowed()).isFalse();
     }
 
 
@@ -68,10 +62,9 @@ class ApplicationTest {
     void ensureIsFormerlyAllowedReturnsTrueIfIsCancelled() {
 
         Application application = new Application();
-
         application.setStatus(ApplicationStatus.CANCELLED);
 
-        Assert.assertTrue("Should be formerly allowed", application.isFormerlyAllowed());
+        assertThat(application.isFormerlyAllowed()).isTrue();
     }
 
 
@@ -126,10 +119,9 @@ class ApplicationTest {
 
         Period period = application.getPeriod();
 
-        Assert.assertNotNull("Period should not be null", period);
-        Assert.assertEquals("Wrong period start date", startDate, period.getStartDate());
-        Assert.assertEquals("Wrong period end date", endDate, period.getEndDate());
-        Assert.assertEquals("Wrong period day length", DayLength.FULL, period.getDayLength());
+        assertThat(period.getStartDate()).isEqualTo(startDate);
+        assertThat(period.getEndDate()).isEqualTo(endDate);
+        assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
     }
 
 
@@ -146,8 +138,8 @@ class ApplicationTest {
 
         ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
-        Assert.assertNotNull("Should not be null", startDateWithTime);
-        Assert.assertEquals("Wrong start date with time", ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, startDateWithTime.getZone()), startDateWithTime);
+        final ZonedDateTime expected= ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, startDateWithTime.getZone());
+        assertThat(startDateWithTime).isEqualTo(expected);
     }
 
 
@@ -160,7 +152,7 @@ class ApplicationTest {
 
         ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
-        Assert.assertNull("Should be null", startDateWithTime);
+        assertThat(startDateWithTime).isNull();
     }
 
 
@@ -173,7 +165,7 @@ class ApplicationTest {
 
         ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
-        Assert.assertNull("Should be null", startDateWithTime);
+        assertThat(startDateWithTime).isNull();
     }
 
 
@@ -188,8 +180,8 @@ class ApplicationTest {
 
         ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
-        Assert.assertNotNull("Should not be null", endDateWithTime);
-        Assert.assertEquals("Wrong end date with time", ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone()), endDateWithTime);
+        final ZonedDateTime expected= ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone());
+        assertThat(endDateWithTime).isEqualTo(expected);
     }
 
 
@@ -202,7 +194,7 @@ class ApplicationTest {
 
         ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
-        Assert.assertNull("Should be null", endDateWithTime);
+        assertThat(endDateWithTime).isNull();
     }
 
 
@@ -215,7 +207,7 @@ class ApplicationTest {
 
         ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
-        Assert.assertNull("Should be null", endDateWithTime);
+        assertThat(endDateWithTime).isNull();
     }
 
     @Test

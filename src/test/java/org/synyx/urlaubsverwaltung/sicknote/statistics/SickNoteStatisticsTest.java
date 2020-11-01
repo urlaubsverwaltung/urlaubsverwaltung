@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,12 +80,12 @@ class SickNoteStatisticsTest {
 
     @Test
     void testGetTotalNumberOfSickNotes() {
-        Assert.assertEquals(2, sut.getTotalNumberOfSickNotes());
+        assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(2);
     }
 
     @Test
     void testGetTotalNumberOfSickDays() {
-        Assert.assertEquals(new BigDecimal("14"), sut.getTotalNumberOfSickDays());
+        assertThat(sut.getTotalNumberOfSickDays()).isEqualTo(new BigDecimal("14"));
     }
 
     @Test

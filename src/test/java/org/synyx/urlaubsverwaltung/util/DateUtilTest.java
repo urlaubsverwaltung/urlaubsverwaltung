@@ -1,9 +1,10 @@
 package org.synyx.urlaubsverwaltung.util;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -19,7 +20,7 @@ class DateUtilTest {
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
-        Assert.assertTrue("Should return true for a work day", returnValue);
+        assertThat(returnValue).isTrue();
     }
 
 
@@ -31,7 +32,7 @@ class DateUtilTest {
 
         boolean returnValue = DateUtil.isWorkDay(date);
 
-        Assert.assertFalse("Should return false for not a work day", returnValue);
+        assertThat(returnValue).isFalse();
     }
 
 
@@ -43,8 +44,7 @@ class DateUtilTest {
 
         LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
 
-        Assert.assertEquals("Not the correct first day of month", firstDayOfMonth,
-            DateUtil.getFirstDayOfMonth(year, month));
+        assertThat(DateUtil.getFirstDayOfMonth(year, month)).isEqualTo(firstDayOfMonth);
     }
 
 
@@ -56,8 +56,7 @@ class DateUtilTest {
 
         LocalDate lastDayOfMonth = LocalDate.of(year, month, 30);
 
-        Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
-            DateUtil.getLastDayOfMonth(year, month));
+        assertThat(DateUtil.getLastDayOfMonth(year, month)).isEqualTo(lastDayOfMonth);
     }
 
 
@@ -69,8 +68,7 @@ class DateUtilTest {
 
         LocalDate lastDayOfMonth = LocalDate.of(year, month, 28);
 
-        Assert.assertEquals("Not the correct last day of month", lastDayOfMonth,
-            DateUtil.getLastDayOfMonth(year, month));
+        assertThat(DateUtil.getLastDayOfMonth(year, month)).isEqualTo(lastDayOfMonth);
     }
 
 
@@ -81,7 +79,7 @@ class DateUtilTest {
 
         LocalDate firstDayOfYear = LocalDate.of(year, 1, 1);
 
-        Assert.assertEquals("Not the correct first day of year", firstDayOfYear, DateUtil.getFirstDayOfYear(year));
+        assertThat(DateUtil.getFirstDayOfYear(year)).isEqualTo(firstDayOfYear);
     }
 
 
@@ -92,7 +90,7 @@ class DateUtilTest {
 
         LocalDate lastDayOfYear = LocalDate.of(year, 12, 31);
 
-        Assert.assertEquals("Not the correct last day of year", lastDayOfYear, DateUtil.getLastDayOfYear(year));
+        assertThat(DateUtil.getLastDayOfYear(year)).isEqualTo(lastDayOfYear);
     }
 
 
@@ -103,7 +101,7 @@ class DateUtilTest {
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
-        Assert.assertTrue("Should return true for 24th December", returnValue);
+        assertThat(returnValue).isTrue();
     }
 
 
@@ -114,7 +112,7 @@ class DateUtilTest {
 
         boolean returnValue = DateUtil.isChristmasEve(date);
 
-        Assert.assertFalse("Should return false for 25th December", returnValue);
+        assertThat(returnValue).isFalse();
     }
 
 
@@ -125,7 +123,7 @@ class DateUtilTest {
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 
-        Assert.assertTrue("Should return true for 31st December", returnValue);
+        assertThat(returnValue).isTrue();
     }
 
 
@@ -136,6 +134,6 @@ class DateUtilTest {
 
         boolean returnValue = DateUtil.isNewYearsEve(date);
 
-        Assert.assertFalse("Should return false for 25th December", returnValue);
+        assertThat(returnValue).isFalse();
     }
 }

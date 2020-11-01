@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -29,15 +29,14 @@ class SettingsValidatorTest {
     @Test
     void ensureSettingsClassIsSupported() {
 
-        Assert.assertTrue("Should return true for Settings class.", settingsValidator.supports(Settings.class));
+        assertThat(settingsValidator.supports(Settings.class)).isTrue();
     }
 
 
     @Test
     void ensureOtherClassThanSettingsIsNotSupported() {
 
-        Assert.assertFalse("Should return false for other classes than Settings.",
-            settingsValidator.supports(Object.class));
+        assertThat(settingsValidator.supports(Object.class)).isFalse();
     }
 
 
