@@ -4,12 +4,10 @@ public class AbsenceOverviewPersonDayDto {
 
     private final AbsenceOverviewDayType type;
     private final boolean weekend;
-    private final boolean holiday;
 
-    AbsenceOverviewPersonDayDto(AbsenceOverviewDayType type, boolean weekend, boolean holiday) {
+    AbsenceOverviewPersonDayDto(AbsenceOverviewDayType type, boolean weekend) {
         this.type = type;
         this.weekend = weekend;
-        this.holiday = holiday;
     }
 
     public String getType() {
@@ -18,9 +16,5 @@ public class AbsenceOverviewPersonDayDto {
 
     public boolean isWeekend() {
         return weekend;
-    }
-
-    public boolean isHoliday() {
-        return holiday;
     }
 }

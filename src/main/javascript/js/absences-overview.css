@@ -9,6 +9,27 @@
   background: #b5d0df;
 }
 
+.vacationOverview-day-public-holiday-half-day-noon-headline {
+  color: #fff;
+  background: linear-gradient(90deg, #ffffff 50%, #b5d0df 50%);
+}
+
+.vacationOverview-day-public-holiday-half-day-morning-headline {
+  color: #fff;
+  background: linear-gradient(90deg, #b5d0df 50%, #ffffff 50%);
+}
+
+.vacationOverview-day-public-holiday-half-day-noon {
+  color: #fff;
+  background: linear-gradient(90deg, #e5e5e5 50%, #b5d0df 50%);
+}
+
+.vacationOverview-day-public-holiday-half-day-morning {
+  color: #fff;
+  background: linear-gradient(90deg, #b5d0df 50%, #e5e5e5 50%);
+
+}
+
 .vacationOverview-legend-colorbox {
   width: 15px;
 }

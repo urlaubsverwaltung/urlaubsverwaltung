@@ -2,14 +2,18 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 public class AbsenceOverviewMonthDayDto {
 
+    private final AbsenceOverviewDayType type;
     private final String dayOfMonth;
     private final boolean weekend;
-    private final boolean holiday;
 
-    AbsenceOverviewMonthDayDto(String dayOfMonth, boolean weekend, boolean holiday) {
+    AbsenceOverviewMonthDayDto(AbsenceOverviewDayType type, String dayOfMonth, boolean weekend) {
+        this.type = type;
         this.dayOfMonth = dayOfMonth;
         this.weekend = weekend;
-        this.holiday = holiday;
+    }
+
+    public String getType() {
+        return type == null ? "" : type.getIdentifier();
     }
 
     public String getDayOfMonth() {
@@ -18,9 +22,5 @@ public class AbsenceOverviewMonthDayDto {
 
     public boolean isWeekend() {
         return weekend;
-    }
-
-    public boolean isHoliday() {
-        return holiday;
     }
 }

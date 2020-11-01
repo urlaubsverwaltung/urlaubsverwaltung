@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -43,6 +44,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_FULL;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_MORNING;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
@@ -133,7 +137,7 @@ public class AbsenceOverviewViewController {
 
                 personView
                     .getDays()
-                    .add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date), isPublicHoliday(date)));
+                    .add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
             }
         }
 
@@ -180,20 +184,34 @@ public class AbsenceOverviewViewController {
 
     private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications) {
 
-        if (sickNote == null) {
+        if (DayLength.ZERO.compareTo(getPublicHolidayDayLength(date)) != 0) {
+            return getPublicHolidayType(getPublicHolidayDayLength(date));
+        } else if (sickNote == null) {
             return applications.stream()
                 .filter(application -> isDateInPeriod(date, application.getPeriod()))
                 .findFirst()
                 .map(this::getAbsenceOverviewDayType)
                 .orElse(null);
+        } else {
+            return getAbsenceOverviewDayType(sickNote);
         }
-
-        return getAbsenceOverviewDayType(sickNote);
     }
 
-    private boolean isPublicHoliday(LocalDate date) {
+    private AbsenceOverviewDayType getPublicHolidayType(DayLength dayLength) {
+        switch (dayLength) {
+            case MORNING:
+                return PUBLIC_HOLIDAY_MORNING;
+            case NOON:
+                return PUBLIC_HOLIDAY_NOON;
+            case FULL:
+            default:
+                return PUBLIC_HOLIDAY_FULL;
+        }
+    }
+
+    private DayLength getPublicHolidayDayLength(LocalDate date) {
         final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-        return publicHolidayService.isPublicHoliday(date, federalState);
+        return publicHolidayService.getAbsenceTypeOfDate(date, federalState);
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
@@ -205,8 +223,7 @@ public class AbsenceOverviewViewController {
         return "";
     }
 
-    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments,
-                                                   String selectedDepartmentName) {
+    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
 
         if (departments.isEmpty() && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE))) {
             return personService.getActivePersons();
@@ -224,7 +241,13 @@ public class AbsenceOverviewViewController {
         String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
         boolean weekend = isWeekend(date);
 
-        return new AbsenceOverviewMonthDayDto(tableHeadDayText, weekend, isPublicHoliday(date));
+        AbsenceOverviewDayType publicHolidayType = null;
+        final DayLength publicHolidayDayLength = getPublicHolidayDayLength(date);
+        if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
+            publicHolidayType = getPublicHolidayType(publicHolidayDayLength);
+        }
+
+        return new AbsenceOverviewMonthDayDto(publicHolidayType, tableHeadDayText, weekend);
     }
 
     private String getMonthText(LocalDate date, Locale locale) {
@@ -261,7 +284,6 @@ public class AbsenceOverviewViewController {
                 throw new IllegalStateException("month value not in range of 1 to 12 cannot be mapped to a message key.");
         }
     }
-
 
     private AbsenceOverviewDayType getAbsenceOverviewDayType(SickNote sickNote) {
         switch (sickNote.getDayLength()) {

@@ -92,12 +92,15 @@ class AbsenceOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        Settings settings = new Settings();
+         Settings settings = new Settings();
         WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, clock, publicHolidayService, settingsService);
+
+        when(publicHolidayService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+
+        sut = new AbsenceOverviewViewController(personService, departmentService, applicationService, sickNoteService,
+            messageSource, clock, publicHolidayService, settingsService);
     }
 
     @Test
@@ -730,11 +733,6 @@ class AbsenceOverviewViewControllerTest {
         final var person = new Person();
         person.setFirstName("boss");
         when(personService.getSignedInUser()).thenReturn(person);
-        when(publicHolidayService.isPublicHoliday(any(), eq(BADEN_WUERTTEMBERG))).thenReturn(false);
-        when(publicHolidayService.isPublicHoliday(LocalDate.now(fixedClock).withDayOfMonth(24), BADEN_WUERTTEMBERG)).thenReturn(true);
-        when(publicHolidayService.isPublicHoliday(LocalDate.now(fixedClock).withDayOfMonth(25), BADEN_WUERTTEMBERG)).thenReturn(true);
-        when(publicHolidayService.isPublicHoliday(LocalDate.now(fixedClock).withDayOfMonth(26), BADEN_WUERTTEMBERG)).thenReturn(true);
-        when(publicHolidayService.isPublicHoliday(LocalDate.now(fixedClock).withDayOfMonth(31), BADEN_WUERTTEMBERG)).thenReturn(true);
 
         final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
 
@@ -743,37 +741,37 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
                     hasProperty("days", contains(
-                        allOf(hasProperty("dayOfMonth", is("01")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("02")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("03")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("04")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("05")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("06")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("07")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("08")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("09")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("10")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("11")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("12")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("13")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("14")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("15")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("16")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("17")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("18")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("19")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("20")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("21")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("22")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("23")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("24")), hasProperty("weekend", is(false)), hasProperty("holiday", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("25")), hasProperty("weekend", is(false)), hasProperty("holiday", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("26")), hasProperty("weekend", is(true)), hasProperty("holiday", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("27")), hasProperty("weekend", is(true)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("28")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("29")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("30")), hasProperty("weekend", is(false)), hasProperty("holiday", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("31")), hasProperty("weekend", is(false)), hasProperty("holiday", is(true)))
+                        allOf(hasProperty("dayOfMonth", is("01")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("02")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("03")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("04")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("05")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("06")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("07")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("08")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("09")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("10")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("11")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("12")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("13")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("14")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("15")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("16")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("17")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("18")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("19")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("20")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("21")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("22")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("23")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("24")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("25")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("26")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("27")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("28")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("29")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("30")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("31")), hasProperty("weekend", is(false)))
                     ))
                 ))
             ));
