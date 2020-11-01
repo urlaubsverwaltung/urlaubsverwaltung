@@ -1,11 +1,10 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.springframework.util.Assert;
-
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 import static java.time.LocalDate.parse;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -31,8 +30,6 @@ public class FilterPeriod {
         } catch (DateTimeParseException exception) {
             throw new IllegalArgumentException(exception.getMessage());
         }
-
-        Assert.isTrue(endDate.isAfter(startDate) || endDate.isEqual(startDate), "Start date must be before end date");
     }
 
     public LocalDate getStartDate() {
@@ -52,11 +49,15 @@ public class FilterPeriod {
     }
 
     public String getStartDateAsString() {
-        return getStartDate().format(ofPattern(DD_MM_YYYY));
+        return Optional.ofNullable(getStartDate())
+            .map(localDate -> localDate.format(ofPattern(DD_MM_YYYY)))
+            .orElse("");
     }
 
     public String getEndDateAsString() {
-        return getEndDate().format(ofPattern(DD_MM_YYYY));
+        return Optional.ofNullable(getEndDate())
+            .map(localDate -> localDate.format(ofPattern(DD_MM_YYYY)))
+            .orElse("");
     }
 
     @Override
