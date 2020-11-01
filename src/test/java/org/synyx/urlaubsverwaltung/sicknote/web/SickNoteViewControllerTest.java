@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.sicknote.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
@@ -307,12 +309,13 @@ class SickNoteViewControllerTest {
         verify(sickNoteCommentServiceMock).create(any(SickNote.class), any(), eq(signedInPerson), any());
     }
 
-    @Test
-    void ensurePostAddCommentRedirectsToSickNoteOfComment() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "comment", "convert", "cancel" })
+    void ensureRedirectToSickNote(String path) throws Exception{
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/" + path))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
@@ -394,16 +397,6 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensurePostConvertSickNoteToVacationRedirectsToSickNoteOfConvert() throws Exception {
-
-        when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
-    }
-
-    @Test
     void ensureCancelSickNoteThrowsUnknownSickNoteException() {
 
         assertThatThrownBy(() ->
@@ -423,16 +416,6 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"));
 
         verify(sickNoteInteractionServiceMock).cancel(sickNote, signedInPerson);
-    }
-
-    @Test
-    void ensureCancelSickNoteRedirectsToCanceledSickNote() throws Exception {
-
-        when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     private SickNote sickNoteOfPerson(Person somePerson) {
