@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
@@ -94,14 +93,9 @@ public class AbsenceOverviewViewController {
 
         final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
         final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
+        final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(startDate, endDate, overviewPersons);
 
-        final HashMap<String, List<Application>> vacationsByEmail = new HashMap<>();
-        for (Person person : overviewPersons) {
-            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
-            vacationsByEmail.put(person.getEmail(), apps);
-        }
-
-        HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
+        final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
         new DateRange(startDate, endDate).iterator().forEachRemaining(date -> {
 
@@ -118,7 +112,7 @@ public class AbsenceOverviewViewController {
             for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
 
                 final SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
-                final List<Application> applications = vacationsByEmail.get(personView.getEmail());
+                final List<Application> applications = applicationsForLeaveByEmail.get(personView.getEmail());
                 final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications);
 
                 personView
@@ -131,6 +125,18 @@ public class AbsenceOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "absences/absences_overview";
+    }
+
+    private HashMap<String, List<Application>> getApplicationForLeavesByEmail(LocalDate startDate, LocalDate endDate, List<Person> personList) {
+
+        final HashMap<String, List<Application>> byEmail = new HashMap<>();
+
+        for (Person person : personList) {
+            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
+            byEmail.put(person.getEmail(), apps);
+        }
+
+        return byEmail;
     }
 
     private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {
