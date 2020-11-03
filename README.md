@@ -278,8 +278,8 @@ geschrieben wird.
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
 funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
 
-* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
-* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
+* [Linux Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-service)
+* [Windows Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-windows)
 
 
 ---
