@@ -92,17 +92,24 @@ public class AbsenceOverviewViewController {
         model.addAttribute("selectedMonth", selectedMonth);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-
         final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
-        final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
-        final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(dateRange, overviewPersons);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(year, dateRange, overviewPersons, locale);
+        final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
+        model.addAttribute("absenceOverview", absenceOverview);
+
+        return "absences/absences_overview";
+    }
+
+    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(Integer year, DateRange dateRange, List<Person> personList, Locale locale) {
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
+        final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(dateRange, personList);
+        final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
 
         for (LocalDate date : dateRange) {
 
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
-                monthValue -> this.initializeAbsenceOverviewMonthDto(date, overviewPersons, locale));
+                monthValue -> this.initializeAbsenceOverviewMonthDto(date, personList, locale));
 
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date);
             monthView.getDays().add(tableHeadDay);
@@ -123,10 +130,7 @@ public class AbsenceOverviewViewController {
             }
         }
 
-        AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
-        model.addAttribute("absenceOverview", absenceOverview);
-
-        return "absences/absences_overview";
+        return new ArrayList<>(monthsByNr.values());
     }
 
     private HashMap<String, List<Application>> getApplicationForLeavesByEmail(DateRange dateRange, List<Person> personList) {
