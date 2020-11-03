@@ -9,14 +9,16 @@
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
-    <c:choose>
-        <c:when test="${sickNote.id == null}">
-            <spring:message code="sicknote.create.header.title"/>
-        </c:when>
-        <c:otherwise>
-            <spring:message code="sicknote.edit.header.title"/>
-        </c:otherwise>
-    </c:choose>
+    <title>
+        <c:choose>
+            <c:when test="${sickNote.id == null}">
+                <spring:message code="sicknote.create.header.title"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="sicknote.edit.header.title"/>
+            </c:otherwise>
+        </c:choose>
+    </title>
     <uv:custom-head/>
     <script>
         window.uv = {};
