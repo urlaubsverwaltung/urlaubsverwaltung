@@ -75,20 +75,19 @@
             </c:if>
 
             <div class="form-section tw-mb-4 lg:tw-mb-6">
+                <uv:section-heading>
+                    <h1>
+                        <c:choose>
+                            <c:when test="${sickNote.id == null}">
+                                <spring:message code="sicknote.create.title"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="sicknote.edit.title"/>
+                            </c:otherwise>
+                        </c:choose>
+                    </h1>
+                </uv:section-heading>
                 <div class="row">
-                    <uv:section-heading>
-                        <h1>
-                            <c:choose>
-                                <c:when test="${sickNote.id == null}">
-                                    <spring:message code="sicknote.create.title"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="sicknote.edit.title"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </h1>
-                    </uv:section-heading>
-
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
@@ -208,12 +207,12 @@
             </div>
 
             <div class="form-section tw-mb-4 lg:tw-mb-6">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="sicknote.data.aub.short"/>
+                    </h2>
+                </uv:section-heading>
                 <div class="row">
-                    <uv:section-heading>
-                        <h2>
-                            <spring:message code="sicknote.data.aub.short"/>
-                        </h2>
-                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
@@ -250,12 +249,12 @@
             </div>
 
             <div class="form-section tw-mb-16">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="sicknote.data.furtherInformation.title"/>
+                    </h2>
+                </uv:section-heading>
                 <div class="row">
-                    <uv:section-heading>
-                        <h2>
-                            <spring:message code="sicknote.data.furtherInformation.title"/>
-                        </h2>
-                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
