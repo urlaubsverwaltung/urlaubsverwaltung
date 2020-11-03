@@ -632,9 +632,8 @@ $(function () {
         }
 
         const isPast = assert.isPast(date);
-        const isWeekend = assert.isWeekend(date);
 
-        if (isPast || isWeekend) {
+        if (isPast) {
           return false;
         }
 
