@@ -124,9 +124,8 @@ public class AbsenceOverviewViewController {
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date);
             monthView.getDays().add(tableHeadDay);
 
-            final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotes.stream()
-                .filter(sickNote -> isDateInPeriod(date, sickNote.getPeriod()))
-                .collect(toMap(sickNote -> sickNote.getPerson().getEmail(), Function.identity()));
+            final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotesForDate(date, sickNotes,
+                sickNote -> sickNote.getPerson().getEmail());
 
             // create an absence day dto for every person of the department
             for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
@@ -151,6 +150,12 @@ public class AbsenceOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "absences/absences_overview";
+    }
+
+    private static Map<String, SickNote> sickNotesForDate(LocalDate date, List<SickNote> sickNotes, Function<SickNote, String> keySupplier) {
+        return sickNotes.stream()
+            .filter(sickNote -> isDateInPeriod(date, sickNote.getPeriod()))
+            .collect(toMap(keySupplier, Function.identity()));
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
