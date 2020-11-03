@@ -104,24 +104,10 @@ public class AbsenceOverviewViewController {
         HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
         new DateRange(startDate, endDate).iterator().forEachRemaining(date -> {
-            // since `monthDate` is increased by one day at the end of the loop we have to check
-            // if we have to create the month view dto in the current loop iteration.
-            if (!monthsByNr.containsKey(date.getMonthValue())) {
-                ArrayList<AbsenceOverviewMonthPersonDto> monthViewPersons = new ArrayList<>(overviewPersons.size());
-                for (Person person : overviewPersons) {
-                    AbsenceOverviewMonthPersonDto p = new AbsenceOverviewMonthPersonDto(
-                        person.getFirstName(), person.getLastName(), person.getEmail(), new ArrayList<>());
 
-                    monthViewPersons.add(p);
-                }
+            final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
+                monthValue -> this.initializeAbsenceOverviewMonthDto(date, overviewPersons, locale));
 
-                AbsenceOverviewMonthDto monthView = new AbsenceOverviewMonthDto(
-                    getMonthText(date, locale), new ArrayList<>(), monthViewPersons);
-
-                monthsByNr.put(date.getMonthValue(), monthView);
-            }
-
-            final AbsenceOverviewMonthDto monthView = monthsByNr.get(date.getMonthValue());
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date);
             monthView.getDays().add(tableHeadDay);
 
@@ -145,6 +131,24 @@ public class AbsenceOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "absences/absences_overview";
+    }
+
+    private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {
+
+        final List<AbsenceOverviewMonthPersonDto> monthViewPersons = personList.stream()
+            .map(AbsenceOverviewViewController::initializeAbsenceOverviewMonthPersonDto)
+            .collect(toList());
+
+        return new AbsenceOverviewMonthDto(getMonthText(date, locale), new ArrayList<>(), monthViewPersons);
+    }
+
+    private static AbsenceOverviewMonthPersonDto initializeAbsenceOverviewMonthPersonDto(Person person) {
+
+        final String firstName = person.getFirstName();
+        final String lastName = person.getLastName();
+        final String email = person.getEmail();
+
+        return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, new ArrayList<>());
     }
 
     private static Map<String, SickNote> sickNotesForDate(LocalDate date, List<SickNote> sickNotes, Function<SickNote, String> keySupplier) {
