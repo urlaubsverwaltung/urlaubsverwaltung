@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -32,9 +32,9 @@
         window.uv.params = {};
         window.uv.params.person = "${param.person}";
     </script>
-    <uv:datepicker-localisation />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />" />
+    <uv:datepicker-localisation/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />"/>
     <script defer src="<asset:url value='npm.duetds.js' />"></script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js' />"></script>
@@ -91,7 +91,7 @@
 
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                             <spring:message code="sicknote.data.description"/>
                         </span>
                     </div>
@@ -216,7 +216,7 @@
                     </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                             <spring:message code="sicknote.data.person"/>
                         </span>
                     </div>
@@ -258,7 +258,7 @@
                     </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                             <spring:message code="sicknote.data.furtherInformation.description"/>
                         </span>
                     </div>
