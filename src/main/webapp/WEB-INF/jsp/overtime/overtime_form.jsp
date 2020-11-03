@@ -105,7 +105,8 @@
                                 <spring:message code="overtime.data.startDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="startDate" cssClass="form-control" cssErrorClass="form-control error"
+                                <form:input path="startDate" data-iso-value="${overtime.startDateIsoValue}"
+                                            cssClass="form-control" cssErrorClass="form-control error"
                                             autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
                             </div>
@@ -116,7 +117,8 @@
                                 <spring:message code="overtime.data.endDate"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="endDate" cssClass="form-control" cssErrorClass="form-control error"
+                                <form:input path="endDate" data-iso-value="${overtime.endDateIsoValue}"
+                                            cssClass="form-control" cssErrorClass="form-control error"
                                             autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
                             </div>

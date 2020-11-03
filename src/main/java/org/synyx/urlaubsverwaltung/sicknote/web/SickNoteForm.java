@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * View class representing an sick note.
@@ -69,12 +70,28 @@ public class SickNoteForm {
         this.sickNoteType = sickNoteType;
     }
 
+    public String getStartDateIsoValue() {
+        if (startDate == null) {
+            return "";
+        }
+
+        return startDate.format(DateTimeFormatter.ISO_DATE);
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public String getEndDateIsoValue() {
+        if (endDate == null) {
+            return "";
+        }
+
+        return endDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getEndDate() {

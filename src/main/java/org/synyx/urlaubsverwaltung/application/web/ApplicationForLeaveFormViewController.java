@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
@@ -71,17 +72,23 @@ public class ApplicationForLeaveFormViewController {
     private final ApplicationInteractionService applicationInteractionService;
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
+    private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService, VacationTypeService vacationTypeService,
-                                                 ApplicationInteractionService applicationInteractionService, ApplicationForLeaveFormValidator applicationForLeaveFormValidator, SettingsService settingsService, Clock clock) {
+    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService,
+                                                 VacationTypeService vacationTypeService,
+                                                 ApplicationInteractionService applicationInteractionService,
+                                                 ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
+                                                 SettingsService settingsService, DateFormatAware dateFormatAware,
+                                                 Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
+        this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
 
@@ -97,7 +104,10 @@ public class ApplicationForLeaveFormViewController {
 
     @GetMapping("/application/new")
     public String newApplicationForm(
-        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
+        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
+        @RequestParam(value = "from", required = false) String startDateString,
+        @RequestParam(value = "to", required = false) String endDateString,
+        Model model)
         throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -118,7 +128,15 @@ public class ApplicationForLeaveFormViewController {
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
-            prepareApplicationForLeaveForm(person, new ApplicationForLeaveForm(), model);
+
+            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
+            final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
+
+            final ApplicationForLeaveForm appForm = new ApplicationForLeaveForm();
+            appForm.setStartDate(startDate);
+            appForm.setEndDate(endDate);
+
+            prepareApplicationForLeaveForm(person, appForm, model);
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());

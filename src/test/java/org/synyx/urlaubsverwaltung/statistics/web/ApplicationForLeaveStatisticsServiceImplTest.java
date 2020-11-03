@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -40,32 +41,36 @@ class ApplicationForLeaveStatisticsServiceImplTest {
     @Test
     void getStatisticsForDepartmentHead() {
 
-        FilterPeriod filterPeriod = new FilterPeriod("01.01.2018", "31.12.2018");
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        Person person = new Person();
+        final Person person = new Person();
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        Person departmentMember = new Person();
+        final Person departmentMember = new Person();
         when(departmentService.getManagedMembersOfDepartmentHead(person)).thenReturn(singletonList(departmentMember));
 
-        List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
+        final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
     }
 
     @Test
     void getStatisticsForOtherThanDepartmentHead() {
 
-        FilterPeriod filterPeriod = new FilterPeriod("01.01.2018", "31.12.2018");
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        Person person = new Person();
+        final Person person = new Person();
         person.setPermissions(singletonList(BOSS));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        Person anyPerson = new Person();
+        final Person anyPerson = new Person();
         when(personService.getActivePersons()).thenReturn(singletonList(anyPerson));
 
-        List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
+        final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
     }
 }

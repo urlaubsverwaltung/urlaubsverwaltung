@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class AccountForm {
 
@@ -44,12 +45,28 @@ public class AccountForm {
         this.holidaysAccountYear = holidaysAccountYear;
     }
 
+    public String getHolidaysAccountValidFromIsoValue() {
+        if (holidaysAccountValidFrom == null) {
+            return "";
+        }
+
+        return holidaysAccountValidFrom.format(DateTimeFormatter.ISO_DATE);
+    }
+
     public LocalDate getHolidaysAccountValidFrom() {
         return holidaysAccountValidFrom;
     }
 
     public void setHolidaysAccountValidFrom(LocalDate holidaysAccountValidFrom) {
         this.holidaysAccountValidFrom = holidaysAccountValidFrom;
+    }
+
+    public String getHolidaysAccountValidToIsoValue() {
+        if (holidaysAccountValidTo == null) {
+            return "";
+        }
+
+        return holidaysAccountValidTo.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getHolidaysAccountValidTo() {

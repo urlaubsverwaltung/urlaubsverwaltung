@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +34,14 @@ class WorkingTimeForm {
 
         this.validFrom = workingTime.getValidFrom();
         this.federalState = workingTime.getFederalStateOverride().orElse(null);
+    }
+
+    public String getValidFromIsoValue() {
+        if (validFrom == null) {
+            return "";
+        }
+
+        return validFrom.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getValidFrom() {

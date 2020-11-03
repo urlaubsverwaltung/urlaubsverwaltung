@@ -11,11 +11,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,29 +48,26 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
 
-    private FilterPeriod period;
-
     @BeforeEach
     void setUp() {
 
-        final String startDate = "01.01.2019";
-        final String endDate = "01.08.2019";
+        final DateFormatAware dateFormatAware = new DateFormatAware();
 
-        period = new FilterPeriod(startDate, endDate);
-
-        sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService, applicationForLeaveStatisticsCsvExportService, vacationTypeService);
+        sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService,
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware);
     }
 
     @Test
     void applicationForLeaveStatisticsRedirectsToStatistics() throws Exception {
 
-        final String expectedRedirect = "/web/application/statistics?from=" + period.getStartDateAsString() +
-            "&to=" + period.getEndDateAsString();
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         perform(post("/web/application/statistics")
-            .flashAttr("period", period))
+            .flashAttr("period", filterPeriod))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl(expectedRedirect));
+            .andExpect(redirectedUrl("/web/application/statistics?from=2019-01-01&to=2019-08-01"));
     }
 
     @Test
@@ -83,19 +83,25 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
 
-        final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
-        when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final List<ApplicationForLeaveStatistics> statistics = emptyList();
+        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
         final List<VacationType> vacationType = Collections.singletonList(new VacationType());
         when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
 
-        perform(get("/web/application/statistics")
-            .param("from", period.getStartDateAsString())
-            .param("to", period.getEndDateAsString()))
-            .andExpect(model().attribute("from", period.getStartDate()))
-            .andExpect(model().attribute("to", period.getEndDate()))
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"));
+
+        resultActions
+            .andExpect(model().attribute("from", startDate))
+            .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statistics", statistics))
-            .andExpect(model().attribute("period", samePropertyValuesAs(period)))
+            .andExpect(model().attribute("period", samePropertyValuesAs(filterPeriod)))
             .andExpect(model().attribute("vacationTypes", vacationType))
             .andExpect(view().name("application/app_statistics"));
     }
@@ -125,25 +131,34 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void downloadCSVWritesCSV() throws Exception {
 
-        final List<ApplicationForLeaveStatistics> statistics = Collections.emptyList();
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
 
         perform(get("/web/application/statistics/download")
-            .param("from", period.getStartDateAsString())
-            .param("to", period.getEndDateAsString()));
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"));
 
-        verify(applicationForLeaveStatisticsCsvExportService).writeStatistics(refEq(period), eq(statistics), any(CSVWriter.class));
+        verify(applicationForLeaveStatisticsCsvExportService)
+            .writeStatistics(refEq(filterPeriod), eq(statistics), any(CSVWriter.class));
     }
 
     @Test
     void downloadCSVSetsModelAndView() throws Exception {
 
-        when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(Collections.emptyList());
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(emptyList());
 
         perform(get("/web/application/statistics/download")
-            .param("from", period.getStartDateAsString())
-            .param("to", period.getEndDateAsString()))
-            .andExpect(model().attribute("period", samePropertyValuesAs(period)))
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"))
+            .andExpect(model().attribute("period", samePropertyValuesAs(filterPeriod)))
             .andExpect(view().name("application/app_statistics"));
     }
 

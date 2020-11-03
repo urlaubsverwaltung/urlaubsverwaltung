@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.overtime.web.OvertimeForm;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import java.time.LocalDate;
@@ -79,5 +81,23 @@ class WorkingTimeFormTest {
         form2.setFederalState(BADEN_WUERTTEMBERG);
         assertThat(form1.hashCode()).isNotEqualTo(form2.hashCode());
         form2.setFederalState(FEDERAL_STATE);
+    }
+
+    @Test
+    void ensureEmptyValidFromIsoValue() {
+
+        final WorkingTimeForm workingTimeForm = new WorkingTimeForm();
+        workingTimeForm.setValidFrom(null);
+
+        assertThat(workingTimeForm.getValidFromIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureValidFromIsoValue() {
+
+        final WorkingTimeForm workingTimeForm = new WorkingTimeForm();
+        workingTimeForm.setValidFrom(LocalDate.parse("2020-10-30"));
+
+        assertThat(workingTimeForm.getValidFromIsoValue()).isEqualTo("2020-10-30");
     }
 }

@@ -128,8 +128,8 @@
                                 <c:set var="DATE_PATTERN">
                                     <spring:message code="pattern.date"/>
                                 </c:set>
-                                <form:input id="validFrom" path="validFrom" class="form-control"
-                                            cssErrorClass="form-control error"
+                                <form:input id="validFrom" path="validFrom" data-iso-value="${sickNote.validFromIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error"
                                             placeholder="${DATE_PATTERN}"/>
                                 <span class="help-inline"><form:errors path="validFrom" cssClass="error"/></span>
                             </div>

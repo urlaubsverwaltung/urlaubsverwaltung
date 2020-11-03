@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.overtime.web.OvertimeForm;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -153,6 +154,46 @@ class ApplicationForLeaveFormTest {
         assertThat(form.getAddress()).isEqualTo("Gartenstrasse 67");
         assertThat(form.isTeamInformed()).isTrue();
         assertThat(form.getComment()).isEqualTo("Welcome!");
+    }
+
+    @Test
+    void ensureEmptyStartDateIsoValue() {
+
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
+
+        applicationForLeaveForm.setStartDate(null);
+
+        assertThat(applicationForLeaveForm.getStartDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureStartDateIsoValue() {
+
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
+
+        applicationForLeaveForm.setStartDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(applicationForLeaveForm.getStartDateIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
+    void ensureEmptyEndDateIsoValue() {
+
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
+
+        applicationForLeaveForm.setEndDate(null);
+
+        assertThat(applicationForLeaveForm.getEndDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureEndDateIsoValue() {
+
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
+
+        applicationForLeaveForm.setEndDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(applicationForLeaveForm.getEndDateIsoValue()).isEqualTo("2020-10-30");
     }
 
     @Test

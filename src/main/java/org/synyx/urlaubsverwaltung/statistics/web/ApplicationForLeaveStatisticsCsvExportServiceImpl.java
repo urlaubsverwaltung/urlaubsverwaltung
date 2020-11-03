@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.text.DecimalFormat;
@@ -24,11 +25,13 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
 
     private final MessageSource messageSource;
     private final VacationTypeService vacationTypeService;
+    private final DateFormatAware dateFormatAware;
 
     @Autowired
-    public ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService) {
+    public ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
         this.messageSource = messageSource;
         this.vacationTypeService = vacationTypeService;
+        this.dateFormatAware = dateFormatAware;
     }
 
     @Override
@@ -42,24 +45,28 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
         final String[] csvSubHeader = {"", "", "", "", "", getTranslation("duration.vacationDays", "Urlaubstage"),
             getTranslation("duration.overtime", "Überstunden")};
 
-        String headerNote = getTranslation("absence.period", "Zeitraum") + ": " + period.getStartDateAsString() + " - "
-            + period.getEndDateAsString();
+        final String startDateString = dateFormatAware.format(period.getStartDate());
+        final String endDateString = dateFormatAware.format(period.getEndDate());
 
-        DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(LOCALE);
-        DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
+        final String headerNote = getTranslation("absence.period", "Zeitraum") + ": " + startDateString + " - "
+            + endDateString;
+
+        final DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
         newSymbols.setDecimalSeparator(',');
         newSymbols.setGroupingSeparator('.');
+
+        final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(LOCALE);
         decimalFormat.setDecimalFormatSymbols(newSymbols);
 
         csvWriter.writeNext(new String[]{headerNote});
         csvWriter.writeNext(csvHeader);
         csvWriter.writeNext(csvSubHeader);
 
-        String translatedTextTotal = getTranslation("applications.statistics.total", "gesamt");
+        final String translatedTextTotal = getTranslation("applications.statistics.total", "gesamt");
 
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
 
-            String[] csvRow = new String[csvHeader.length];
+            final String[] csvRow = new String[csvHeader.length];
 
             csvRow[0] = applicationForLeaveStatistics.getPerson().getFirstName();
             csvRow[1] = applicationForLeaveStatistics.getPerson().getLastName();
@@ -73,7 +80,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
 
             for (VacationType type : vacationTypeService.getVacationTypes()) {
 
-                String[] csvRowVacationTypes = new String[csvHeader.length];
+                final String[] csvRowVacationTypes = new String[csvHeader.length];
 
                 csvRowVacationTypes[2] = getTranslation(type.getMessageKey());
                 csvRowVacationTypes[3] = decimalFormat

@@ -28,7 +28,10 @@
                             <spring:message code="filter.period.startDate" />:
                         </label>
                         <div class="col-md-9">
-                            <form:input id="startDate" path="startDate" class="form-control" cssErrorClass="form-control error" placeholder="${FILTER_DATE_PATTERN}" />
+                            <form:input id="startDate" path="startDate" data-iso-value="${period.startDateIsoValue}"
+                                        class="form-control" cssErrorClass="form-control error"
+                                        placeholder="${FILTER_DATE_PATTERN}"
+                            />
                             <span class="help-block"></span>
                         </div>
                     </div>
@@ -37,7 +40,10 @@
                             <spring:message code="filter.period.endDate" />:
                         </label>
                         <div class="col-md-9">
-                            <form:input id="endDate" path="endDate" class="form-control" cssErrorClass="form-control error" placeholder="${FILTER_DATE_PATTERN}" />
+                            <form:input id="endDate" path="endDate" data-iso-value="${period.endDateIsoValue}"
+                                        class="form-control" cssErrorClass="form-control error"
+                                        placeholder="${FILTER_DATE_PATTERN}"
+                            />
                             <span class="help-block"></span>
                         </div>
                     </div>
