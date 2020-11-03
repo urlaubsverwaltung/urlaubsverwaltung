@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
@@ -129,20 +130,14 @@ public class AbsenceOverviewViewController {
 
             // create an absence day dto for every person of the department
             for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
-                AbsenceOverviewDayType personViewDayType;
 
-                SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
-                if (sickNote != null) {
-                    personViewDayType = getAbsenceOverviewDayType(sickNote);
-                } else {
-                    personViewDayType = vacationsByEmail.get(personView.getEmail()).stream()
-                        .filter(application -> isDateInPeriod(date, application.getPeriod()))
-                        .findFirst()
-                        .map(this::getAbsenceOverviewDayType).orElse(null);
-                }
+                final SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
+                final List<Application> applications = vacationsByEmail.get(personView.getEmail());
+                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications);
 
-                final AbsenceOverviewPersonDayDto personDay = new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date));
-                personView.getDays().add(personDay);
+                personView
+                    .getDays()
+                    .add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
             }
         });
 
@@ -156,6 +151,19 @@ public class AbsenceOverviewViewController {
         return sickNotes.stream()
             .filter(sickNote -> isDateInPeriod(date, sickNote.getPeriod()))
             .collect(toMap(keySupplier, Function.identity()));
+    }
+
+    private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications) {
+
+        if (sickNote == null) {
+            return applications.stream()
+                .filter(application -> isDateInPeriod(date, application.getPeriod()))
+                .findFirst()
+                .map(this::getAbsenceOverviewDayType)
+                .orElse(null);
+        }
+
+        return getAbsenceOverviewDayType(sickNote);
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
