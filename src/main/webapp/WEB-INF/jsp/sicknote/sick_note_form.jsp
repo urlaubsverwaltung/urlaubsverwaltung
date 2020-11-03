@@ -4,19 +4,21 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
 <head>
-    <c:choose>
-        <c:when test="${sickNote.id == null}">
-            <spring:message code="sicknote.create.header.title"/>
-        </c:when>
-        <c:otherwise>
-            <spring:message code="sicknote.edit.header.title"/>
-        </c:otherwise>
-    </c:choose>
+    <title>
+        <c:choose>
+            <c:when test="${sickNote.id == null}">
+                <spring:message code="sicknote.create.header.title"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="sicknote.edit.header.title"/>
+            </c:otherwise>
+        </c:choose>
+    </title>
     <uv:custom-head/>
     <script>
         window.uv = {};
@@ -30,9 +32,9 @@
         window.uv.params = {};
         window.uv.params.person = "${param.person}";
     </script>
-    <uv:datepicker-localisation />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />" />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />" />
+    <uv:datepicker-localisation/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />"/>
     <script defer src="<asset:url value='npm.duetds.js' />"></script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js' />"></script>
@@ -73,23 +75,22 @@
             </c:if>
 
             <div class="form-section tw-mb-4 lg:tw-mb-6">
+                <uv:section-heading>
+                    <h1>
+                        <c:choose>
+                            <c:when test="${sickNote.id == null}">
+                                <spring:message code="sicknote.create.title"/>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code="sicknote.edit.title"/>
+                            </c:otherwise>
+                        </c:choose>
+                    </h1>
+                </uv:section-heading>
                 <div class="row">
-                    <uv:section-heading>
-                        <h1>
-                            <c:choose>
-                                <c:when test="${sickNote.id == null}">
-                                    <spring:message code="sicknote.create.title"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code="sicknote.edit.title"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </h1>
-                    </uv:section-heading>
-
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                             <spring:message code="sicknote.data.description"/>
                         </span>
                     </div>
@@ -206,15 +207,15 @@
             </div>
 
             <div class="form-section tw-mb-4 lg:tw-mb-6">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="sicknote.data.aub.short"/>
+                    </h2>
+                </uv:section-heading>
                 <div class="row">
-                    <uv:section-heading>
-                        <h2>
-                            <spring:message code="sicknote.data.aub.short"/>
-                        </h2>
-                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                             <spring:message code="sicknote.data.person"/>
                         </span>
                     </div>
@@ -248,15 +249,15 @@
             </div>
 
             <div class="form-section tw-mb-16">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="sicknote.data.furtherInformation.title"/>
+                    </h2>
+                </uv:section-heading>
                 <div class="row">
-                    <uv:section-heading>
-                        <h2>
-                            <spring:message code="sicknote.data.furtherInformation.title"/>
-                        </h2>
-                    </uv:section-heading>
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                             <spring:message code="sicknote.data.furtherInformation.description"/>
                         </span>
                     </div>
@@ -281,14 +282,16 @@
             </div>
 
             <div class="form-section">
-                <div class="col-xs-12">
-                    <hr />
-                    <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
-                        <spring:message code="action.save"/>
-                    </button>
-                    <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
-                        <spring:message code="action.cancel"/>
-                    </button>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <hr/>
+                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
+                            <spring:message code="action.save"/>
+                        </button>
+                        <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
+                            <spring:message code="action.cancel"/>
+                        </button>
+                    </div>
                 </div>
             </div>
 
