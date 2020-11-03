@@ -283,14 +283,16 @@
             </div>
 
             <div class="form-section">
-                <div class="col-xs-12">
-                    <hr />
-                    <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
-                        <spring:message code="action.save"/>
-                    </button>
-                    <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
-                        <spring:message code="action.cancel"/>
-                    </button>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <hr/>
+                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
+                            <spring:message code="action.save"/>
+                        </button>
+                        <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
+                            <spring:message code="action.cancel"/>
+                        </button>
+                    </div>
                 </div>
             </div>
 
