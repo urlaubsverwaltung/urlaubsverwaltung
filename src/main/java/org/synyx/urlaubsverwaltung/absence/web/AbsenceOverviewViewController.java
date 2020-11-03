@@ -102,65 +102,50 @@ public class AbsenceOverviewViewController {
 
         HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
-        // `date` is increased by one month at the end of this outer loop
-        // the outer loop builds the absence overview view model for every user desired month (specific one or all 12 🐵)
-        LocalDate date = startDate;
-        while (date.isBefore(endDate) || date.isEqual(endDate)) {
+        new DateRange(startDate, endDate).iterator().forEachRemaining(date -> {
+            // since `monthDate` is increased by one day at the end of the loop we have to check
+            // if we have to create the month view dto in the current loop iteration.
+            if (!monthsByNr.containsKey(date.getMonthValue())) {
+                ArrayList<AbsenceOverviewMonthPersonDto> monthViewPersons = new ArrayList<>(overviewPersons.size());
+                for (Person person : overviewPersons) {
+                    AbsenceOverviewMonthPersonDto p = new AbsenceOverviewMonthPersonDto(
+                        person.getFirstName(), person.getLastName(), person.getEmail(), new ArrayList<>());
 
-            // `monthDate` is increased by one day at the end of this inner loop
-            // this inner loop builds the monthly absence items for every person of the given department
-            LocalDate monthDate = date;
-            while (monthDate.getMonthValue() == date.getMonthValue()) {
-
-                // since `monthDate` is increased by one day at the end of the loop we have to check
-                // if we have to create the month view dto in the current loop iteration.
-                if (!monthsByNr.containsKey(date.getMonthValue())) {
-                    ArrayList<AbsenceOverviewMonthPersonDto> monthViewPersons = new ArrayList<>(overviewPersons.size());
-                    for (Person person : overviewPersons) {
-                        AbsenceOverviewMonthPersonDto p = new AbsenceOverviewMonthPersonDto(
-                            person.getFirstName(), person.getLastName(), person.getEmail(), new ArrayList<>());
-
-                        monthViewPersons.add(p);
-                    }
-
-                    AbsenceOverviewMonthDto monthView = new AbsenceOverviewMonthDto(
-                        getMonthText(monthDate, locale), new ArrayList<>(), monthViewPersons);
-
-                    monthsByNr.put(date.getMonthValue(), monthView);
+                    monthViewPersons.add(p);
                 }
 
-                final AbsenceOverviewMonthDto monthView = monthsByNr.get(date.getMonthValue());
-                final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(monthDate);
-                monthView.getDays().add(tableHeadDay);
+                AbsenceOverviewMonthDto monthView = new AbsenceOverviewMonthDto(
+                    getMonthText(date, locale), new ArrayList<>(), monthViewPersons);
 
-                final LocalDate thisDate = monthDate;
-                final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotes.stream()
-                    .filter(sickNote -> isDateInPeriod(thisDate, sickNote.getPeriod()))
-                    .collect(toMap(sickNote -> sickNote.getPerson().getEmail(), Function.identity()));
-
-                // create an absence day dto for every person of the department
-                for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
-                    AbsenceOverviewDayType personViewDayType;
-
-                    SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
-                    if (sickNote != null) {
-                        personViewDayType = getAbsenceOverviewDayType(sickNote);
-                    } else {
-                        personViewDayType = vacationsByEmail.get(personView.getEmail()).stream()
-                            .filter(application -> isDateInPeriod(thisDate, application.getPeriod()))
-                            .findFirst()
-                            .map(this::getAbsenceOverviewDayType).orElse(null);
-                    }
-
-                    final AbsenceOverviewPersonDayDto personDay = new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(monthDate));
-                    personView.getDays().add(personDay);
-                }
-
-                monthDate = monthDate.plusDays(1);
+                monthsByNr.put(date.getMonthValue(), monthView);
             }
 
-            date = monthDate;
-        }
+            final AbsenceOverviewMonthDto monthView = monthsByNr.get(date.getMonthValue());
+            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date);
+            monthView.getDays().add(tableHeadDay);
+
+            final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotes.stream()
+                .filter(sickNote -> isDateInPeriod(date, sickNote.getPeriod()))
+                .collect(toMap(sickNote -> sickNote.getPerson().getEmail(), Function.identity()));
+
+            // create an absence day dto for every person of the department
+            for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
+                AbsenceOverviewDayType personViewDayType;
+
+                SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
+                if (sickNote != null) {
+                    personViewDayType = getAbsenceOverviewDayType(sickNote);
+                } else {
+                    personViewDayType = vacationsByEmail.get(personView.getEmail()).stream()
+                        .filter(application -> isDateInPeriod(date, application.getPeriod()))
+                        .findFirst()
+                        .map(this::getAbsenceOverviewDayType).orElse(null);
+                }
+
+                final AbsenceOverviewPersonDayDto personDay = new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date));
+                personView.getDays().add(personDay);
+            }
+        });
 
         AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
         model.addAttribute("absenceOverview", absenceOverview);
