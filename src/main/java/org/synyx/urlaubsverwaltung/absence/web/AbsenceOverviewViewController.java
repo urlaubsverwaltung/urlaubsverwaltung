@@ -91,13 +91,15 @@ public class AbsenceOverviewViewController {
         final String selectedMonth = getSelectedMonth(month, startDate);
         model.addAttribute("selectedMonth", selectedMonth);
 
+        final DateRange dateRange = new DateRange(startDate, endDate);
+
         final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
         final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
-        final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(startDate, endDate, overviewPersons);
+        final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(dateRange, overviewPersons);
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
 
-        new DateRange(startDate, endDate).iterator().forEachRemaining(date -> {
+        for (LocalDate date : dateRange) {
 
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 monthValue -> this.initializeAbsenceOverviewMonthDto(date, overviewPersons, locale));
@@ -119,7 +121,7 @@ public class AbsenceOverviewViewController {
                     .getDays()
                     .add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
             }
-        });
+        }
 
         AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(new ArrayList<>(monthsByNr.values()));
         model.addAttribute("absenceOverview", absenceOverview);
@@ -127,8 +129,10 @@ public class AbsenceOverviewViewController {
         return "absences/absences_overview";
     }
 
-    private HashMap<String, List<Application>> getApplicationForLeavesByEmail(LocalDate startDate, LocalDate endDate, List<Person> personList) {
+    private HashMap<String, List<Application>> getApplicationForLeavesByEmail(DateRange dateRange, List<Person> personList) {
 
+        final LocalDate endDate = dateRange.getEndDate();
+        final LocalDate startDate = dateRange.getStartDate();
         final HashMap<String, List<Application>> byEmail = new HashMap<>();
 
         for (Person person : personList) {
