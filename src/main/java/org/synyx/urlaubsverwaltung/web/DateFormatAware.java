@@ -22,7 +22,6 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class DateFormatAware {
 
     /**
-     *
      * @param dateString valid date string in random date format
      * @return the {@link LocalDate} of the given dateString or an empty {@link Optional} when the string cannot be parsed.
      */
@@ -36,7 +35,6 @@ public class DateFormatAware {
     }
 
     /**
-     *
      * @param localDate the {@link LocalDate} to format.
      * @return the formatted date with the user specified locale (e.g. <code>"yyyy-MM-dd"</code>, <code>"dd.MM.yyyy"</code>)
      */
@@ -46,7 +44,6 @@ public class DateFormatAware {
     }
 
     /**
-     *
      * @param localDate the {@link LocalDate} to format.
      * @return the formatted date in {@link DateTimeFormatter#ISO_DATE} format.
      */
@@ -66,7 +63,7 @@ public class DateFormatAware {
     private static Optional<LocalDate> parseDateString(String dateString, DateTimeFormatter formatter) {
         try {
             return Optional.of(LocalDate.parse(dateString, formatter));
-        } catch(DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             return Optional.empty();
         }
     }
