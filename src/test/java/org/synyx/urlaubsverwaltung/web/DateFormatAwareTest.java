@@ -30,7 +30,7 @@ class DateFormatAwareTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = { "", "  "})
+    @ValueSource(strings = {"", "  "})
     void ensureParseReturnsEmptyOptionalForEmptyString(String givenDateString) {
         assertThat(parser.parse(givenDateString)).isEmpty();
     }
