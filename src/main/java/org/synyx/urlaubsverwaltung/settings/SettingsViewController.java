@@ -13,15 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;

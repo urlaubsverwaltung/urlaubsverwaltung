@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import javax.swing.text.html.Option;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
