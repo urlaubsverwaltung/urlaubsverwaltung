@@ -316,7 +316,7 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-jspc-maven-plugin</artifactId>
-        <version>9.4.33.v20201020</version>
+        <version>9.4.34.v20201102</version>
         <executions>
           <execution>
             <id>jspc</id>
