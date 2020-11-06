@@ -138,7 +138,7 @@ class ApplicationTest {
 
         ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
-        final ZonedDateTime expected= ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, startDateWithTime.getZone());
+        final ZonedDateTime expected = ZonedDateTime.of(2016, 2, 1, 11, 15, 0, 0, startDateWithTime.getZone());
         assertThat(startDateWithTime).isEqualTo(expected);
     }
 
@@ -180,7 +180,7 @@ class ApplicationTest {
 
         ZonedDateTime endDateWithTime = application.getEndDateWithTime();
 
-        final ZonedDateTime expected= ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone());
+        final ZonedDateTime expected = ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone());
         assertThat(endDateWithTime).isEqualTo(expected);
     }
 

@@ -310,8 +310,8 @@ class SickNoteViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "comment", "convert", "cancel" })
-    void ensureRedirectToSickNote(String path) throws Exception{
+    @ValueSource(strings = {"comment", "convert", "cancel"})
+    void ensureRedirectToSickNote(String path) throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 

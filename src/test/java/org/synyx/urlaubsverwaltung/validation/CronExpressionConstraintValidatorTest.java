@@ -11,7 +11,7 @@ class CronExpressionConstraintValidatorTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = { "", " ", "random"})
+    @ValueSource(strings = {"", " ", "random"})
     void ensureFalse(String givenString) {
         final CronExpressionConstraintValidator validator = new CronExpressionConstraintValidator();
 
