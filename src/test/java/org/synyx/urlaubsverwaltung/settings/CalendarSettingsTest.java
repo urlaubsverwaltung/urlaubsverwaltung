@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -12,8 +13,8 @@ class CalendarSettingsTest {
     @Test
     void ensureHasDefaultValues() {
 
-        CalendarSettings calendarSettings = new CalendarSettings();
+        final CalendarSettings calendarSettings = new CalendarSettings();
 
-        Assert.assertNotNull("Should not be null", calendarSettings.getExchangeCalendarSettings());
+        assertThat(calendarSettings.getExchangeCalendarSettings()).isNotNull();
     }
 }
