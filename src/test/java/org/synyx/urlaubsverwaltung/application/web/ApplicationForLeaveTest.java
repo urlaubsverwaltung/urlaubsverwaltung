@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -47,16 +47,10 @@ class ApplicationForLeaveTest {
         verify(workDaysCountService)
             .getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
 
-        Assert.assertNotNull("Should not be null", applicationForLeave.getStartDate());
-        Assert.assertNotNull("Should not be null", applicationForLeave.getEndDate());
-        Assert.assertNotNull("Should not be null", applicationForLeave.getDayLength());
-
-        Assert.assertEquals("Wrong start date", application.getStartDate(), applicationForLeave.getStartDate());
-        Assert.assertEquals("Wrong end date", application.getEndDate(), applicationForLeave.getEndDate());
-        Assert.assertEquals("Wrong day length", application.getDayLength(), applicationForLeave.getDayLength());
-
-        Assert.assertNotNull("Should not be null", applicationForLeave.getWorkDays());
-        Assert.assertEquals("Wrong number of work days", BigDecimal.TEN, applicationForLeave.getWorkDays());
+        assertThat(applicationForLeave.getStartDate()).isEqualTo(application.getStartDate());
+        assertThat(applicationForLeave.getEndDate()).isEqualTo(application.getEndDate());
+        assertThat(applicationForLeave.getDayLength()).isEqualTo(application.getDayLength());
+        assertThat(applicationForLeave.getWorkDays()).isEqualTo(BigDecimal.TEN);
     }
 
 
@@ -74,12 +68,7 @@ class ApplicationForLeaveTest {
 
         ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
 
-        Assert.assertNotNull("Missing day of week for start date", applicationForLeave.getWeekDayOfStartDate());
-        Assert.assertEquals("Wrong day of week for start date", WeekDay.TUESDAY,
-            applicationForLeave.getWeekDayOfStartDate());
-
-        Assert.assertNotNull("Missing day of week for end date", applicationForLeave.getWeekDayOfEndDate());
-        Assert.assertEquals("Wrong day of week for end date", WeekDay.FRIDAY,
-            applicationForLeave.getWeekDayOfEndDate());
+        assertThat(applicationForLeave.getWeekDayOfStartDate()).isEqualTo(WeekDay.TUESDAY);
+        assertThat(applicationForLeave.getWeekDayOfEndDate()).isEqualTo(WeekDay.FRIDAY);
     }
 }

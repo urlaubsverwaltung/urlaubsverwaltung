@@ -1,11 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 
 import java.math.BigDecimal;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -31,7 +32,7 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("10"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft);
+        assertThat(vacationDaysLeft).isNotNull();
     }
 
 
@@ -42,16 +43,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("10"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("18"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("18"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -62,16 +56,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("10"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("20"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", new BigDecimal("3"),
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("20"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(new BigDecimal("3"));
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -82,16 +69,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("5"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("18"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("18"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -102,16 +82,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("2"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("28"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ONE,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ONE);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -122,16 +95,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(BigDecimal.ZERO)
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("28"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", new BigDecimal("2"),
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", new BigDecimal("2"),
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(new BigDecimal("2"));
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(new BigDecimal("2"));
     }
 
 
@@ -142,16 +108,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(BigDecimal.ZERO)
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("28"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ONE,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ONE,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ONE);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ONE);
     }
 
 
@@ -162,16 +121,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("2"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("27"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("27"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -182,16 +134,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("2"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("26"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("26"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -202,16 +147,9 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(BigDecimal.ZERO)
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("28"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -222,15 +160,8 @@ class VacationDaysLeftTest {
             .forUsedDaysAfterApril(new BigDecimal("1"))
             .build();
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of left vacation days", new BigDecimal("28"),
-            vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of left remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 }

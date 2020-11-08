@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -8,6 +7,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class LdapUserTest {
@@ -50,24 +51,17 @@ class LdapUserTest {
         final LdapUser ldapUser = new LdapUser("username", "Max", "Mustermann", "max@example.org", List.of("GroupA", "GroupB"));
 
         final List<String> memberOf = ldapUser.getMemberOf();
-        try {
-            memberOf.add("Foo");
-            Assert.fail("List should be unmodifiable!");
-        } catch (UnsupportedOperationException ex) {
-            // Expected
-        }
+        assertThatThrownBy(() -> memberOf.add("Foo")).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
     void ensureThrowsIfInitializedWithEmptyUsername() {
 
+        final List<String> emptyList = List.of();
+
         Consumer<String> assertThrowsOnEmptyUsername = (username) -> {
-            try {
-                new LdapUser(username, null, null, null, List.of());
-                Assert.fail("Should throw on empty username!");
-            } catch (IllegalArgumentException ex) {
-                // Expected
-            }
+            assertThatIllegalArgumentException()
+                .isThrownBy(() -> new LdapUser(username, null, null, null, emptyList));
         };
 
         assertThrowsOnEmptyUsername.accept(null);

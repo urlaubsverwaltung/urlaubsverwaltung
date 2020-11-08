@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class AbstractNoResultFoundExceptionTest {
@@ -11,7 +12,7 @@ class AbstractNoResultFoundExceptionTest {
 
         TestException exception = new TestException(42, "person");
 
-        Assert.assertEquals("Wrong exception message", "No person found for ID = 42", exception.getMessage());
+        assertThat(exception.getMessage()).isEqualTo("No person found for ID = 42");
     }
 
 
@@ -20,8 +21,8 @@ class AbstractNoResultFoundExceptionTest {
 
         TestException exception = new TestException("username", "person");
 
-        Assert.assertEquals("Wrong exception message", "No person found for identifier = username",
-            exception.getMessage());
+        assertThat(exception.getMessage())
+            .isEqualTo("No person found for identifier = username");
     }
 
     private class TestException extends AbstractNoResultFoundException {

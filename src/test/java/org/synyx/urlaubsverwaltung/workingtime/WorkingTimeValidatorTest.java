@@ -11,8 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -45,13 +44,13 @@ class WorkingTimeValidatorTest {
         boolean returnValue;
 
         returnValue = validator.supports(null);
-        assertFalse(returnValue);
+        assertThat(returnValue).isFalse();
 
         returnValue = validator.supports(Application.class);
-        assertFalse(returnValue);
+        assertThat(returnValue).isFalse();
 
         returnValue = validator.supports(WorkingTimeForm.class);
-        assertTrue(returnValue);
+        assertThat(returnValue).isTrue();
     }
 
 

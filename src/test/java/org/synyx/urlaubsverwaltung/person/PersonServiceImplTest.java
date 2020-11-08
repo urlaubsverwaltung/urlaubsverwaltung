@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
 
-    private PersonService sut;
+    private PersonServiceImpl sut;
 
     @Mock
     private PersonRepository personRepository;
@@ -128,19 +127,20 @@ class PersonServiceImplTest {
             asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL),
             asList(USER, BOSS));
 
-        Assert.assertEquals("Wrong username", "rick", updatedPerson.getUsername());
-        Assert.assertEquals("Wrong first name", "Rick", updatedPerson.getFirstName());
-        Assert.assertEquals("Wrong last name", "Grimes", updatedPerson.getLastName());
-        Assert.assertEquals("Wrong email", "rick@grimes.de", updatedPerson.getEmail());
+        assertThat(updatedPerson.getUsername()).isEqualTo("rick");
+        assertThat(updatedPerson.getFirstName()).isEqualTo("Rick");
+        assertThat(updatedPerson.getLastName()).isEqualTo("Grimes");
+        assertThat(updatedPerson.getEmail()).isEqualTo("rick@grimes.de");
 
-        Assert.assertEquals("Wrong number of notifications", 2, updatedPerson.getNotifications().size());
-        Assert.assertTrue("Missing notification", updatedPerson.getNotifications().contains(NOTIFICATION_USER));
-        Assert.assertTrue("Missing notification", updatedPerson.getNotifications().contains(NOTIFICATION_BOSS_ALL));
+        assertThat(updatedPerson.getNotifications())
+            .hasSize(2)
+            .contains(NOTIFICATION_USER)
+            .contains(NOTIFICATION_BOSS_ALL);
 
-        Assert.assertEquals("Wrong number of permissions", 2, updatedPerson.getPermissions().size());
-        Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(USER));
-        Assert.assertTrue("Missing permission", updatedPerson.getPermissions().contains(BOSS));
-
+        assertThat(updatedPerson.getPermissions())
+            .hasSize(2)
+            .contains(USER)
+            .contains(BOSS);
     }
 
 
@@ -216,11 +216,11 @@ class PersonServiceImplTest {
 
         List<Person> activePersons = sut.getActivePersons();
 
-        Assert.assertEquals("Wrong number of persons", 3, activePersons.size());
+        assertThat(activePersons.size()).isEqualTo(3);
 
-        Assert.assertTrue("Missing person", activePersons.contains(user));
-        Assert.assertTrue("Missing person", activePersons.contains(boss));
-        Assert.assertTrue("Missing person", activePersons.contains(office));
+        assertThat(activePersons.contains(user)).isTrue();
+        assertThat(activePersons.contains(boss)).isTrue();
+        assertThat(activePersons.contains(office)).isTrue();
     }
 
 
@@ -245,9 +245,9 @@ class PersonServiceImplTest {
 
         List<Person> inactivePersons = sut.getInactivePersons();
 
-        Assert.assertEquals("Wrong number of persons", 1, inactivePersons.size());
+        assertThat(inactivePersons.size()).isEqualTo(1);
 
-        Assert.assertTrue("Missing person", inactivePersons.contains(inactive));
+        assertThat(inactivePersons.contains(inactive)).isTrue();
     }
 
 
@@ -269,10 +269,10 @@ class PersonServiceImplTest {
 
         List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
 
-        Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
+        assertThat(filteredList.size()).isEqualTo(2);
 
-        Assert.assertTrue("Missing person", filteredList.contains(boss));
-        Assert.assertTrue("Missing person", filteredList.contains(office));
+        assertThat(filteredList.contains(boss)).isTrue();
+        assertThat(filteredList.contains(office)).isTrue();
     }
 
 
@@ -298,10 +298,10 @@ class PersonServiceImplTest {
 
         List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
 
-        Assert.assertEquals("Wrong number of persons", 2, filteredList.size());
-
-        Assert.assertTrue("Missing person", filteredList.contains(boss));
-        Assert.assertTrue("Missing person", filteredList.contains(office));
+        assertThat(filteredList)
+            .hasSize(2)
+            .contains(boss)
+            .contains(office);
     }
 
 
@@ -318,10 +318,7 @@ class PersonServiceImplTest {
 
         List<Person> sortedList = sut.getActivePersons();
 
-        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
-        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
-        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
-        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+        assertThat(sortedList).containsExactly(carl, rick, shane);
     }
 
 
@@ -339,10 +336,7 @@ class PersonServiceImplTest {
 
         List<Person> sortedList = sut.getInactivePersons();
 
-        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
-        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
-        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
-        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+        assertThat(sortedList).containsExactly(carl, rick, shane);
     }
 
 
@@ -360,10 +354,7 @@ class PersonServiceImplTest {
 
         List<Person> sortedList = sut.getActivePersonsByRole(USER);
 
-        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
-        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
-        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
-        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+        assertThat(sortedList).containsExactly(carl, rick, shane);
     }
 
 
@@ -381,10 +372,7 @@ class PersonServiceImplTest {
 
         List<Person> sortedList = sut.getPersonsWithNotificationType(NOTIFICATION_USER);
 
-        Assert.assertEquals("Wrong number of persons", 3, sortedList.size());
-        Assert.assertEquals("Wrong first person", carl, sortedList.get(0));
-        Assert.assertEquals("Wrong second person", rick, sortedList.get(1));
-        Assert.assertEquals("Wrong third person", shane, sortedList.get(2));
+        assertThat(sortedList).containsExactly(carl, rick, shane);
     }
 
     @Test
@@ -406,7 +394,7 @@ class PersonServiceImplTest {
 
         Person signedInUser = sut.getSignedInUser();
 
-        Assert.assertEquals("Wrong person", person, signedInUser);
+        assertThat(signedInUser).isEqualTo(person);
     }
 
     @Test
@@ -446,9 +434,7 @@ class PersonServiceImplTest {
         final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
 
         final Collection<Role> permissions = personWithOfficeRole.getPermissions();
-        assertThat(permissions)
-            .hasSize(1)
-            .containsOnly(USER);
+        assertThat(permissions).containsOnly(USER);
     }
 
     @Test

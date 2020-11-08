@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -138,8 +137,7 @@ class WorkingTimeServiceTest {
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
         Optional<FederalState> optionalFederalState = workingTime.getFederalStateOverride();
-        Assert.assertTrue("Missing federal state", optionalFederalState.isPresent());
-        Assert.assertEquals("Wrong federal state", BAYERN, optionalFederalState.get());
+        assertThat(optionalFederalState).hasValue(BAYERN);
     }
 
 
@@ -161,7 +159,6 @@ class WorkingTimeServiceTest {
         verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
-
-        Assert.assertFalse("Federal state should be missing", workingTime.getFederalStateOverride().isPresent());
+        assertThat(workingTime.getFederalStateOverride()).isEmpty();
     }
 }

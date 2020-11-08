@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -31,21 +30,21 @@ class ApplicationCommentValidatorTest {
     @Test
     void ensureSupportsCommentClass() {
 
-        assertTrue(validator.supports(ApplicationCommentForm.class));
+        assertThat(validator.supports(ApplicationCommentForm.class)).isTrue();
     }
 
 
     @Test
     void ensureDoesNotSupportNull() {
 
-        assertFalse(validator.supports(null));
+        assertThat(validator.supports(null)).isFalse();
     }
 
 
     @Test
     void ensureDoesNotSupportOtherClass() {
 
-        assertFalse(validator.supports(SickNoteComment.class));
+        assertThat(validator.supports(SickNoteComment.class)).isFalse();
     }
 
 

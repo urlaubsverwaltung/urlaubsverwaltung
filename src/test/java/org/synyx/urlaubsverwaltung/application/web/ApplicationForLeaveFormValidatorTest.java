@@ -27,8 +27,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -101,21 +100,21 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureSupportsAppFormClass() {
 
-        assertTrue(validator.supports(ApplicationForLeaveForm.class));
+        assertThat(validator.supports(ApplicationForLeaveForm.class)).isTrue();
     }
 
 
     @Test
     void ensureDoesNotSupportNull() {
 
-        assertFalse(validator.supports(null));
+        assertThat(validator.supports(null)).isFalse();
     }
 
 
     @Test
     void ensureDoesNotSupportOtherClass() {
 
-        assertFalse(validator.supports(Person.class));
+        assertThat(validator.supports(Person.class)).isFalse();
     }
 
 
@@ -680,8 +679,10 @@ class ApplicationForLeaveFormValidatorTest {
 
         BigDecimal overtimeReductionHours = new BigDecimal("5");
         overtimeMinimumTest(overtimeReductionHours);
+
+        assertThat(errors.hasErrors()).isFalse();
+
         verify(overtimeService).getLeftOvertimeForPerson(appForm.getPerson());
-        assertFalse(errors.hasErrors());
     }
 
     @Test

@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.account;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +41,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.SEPTEMBER;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -149,8 +149,7 @@ class VacationDaysServiceTest {
         BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2 + 5 + 4 + 2 = 13
 
-        Assert.assertNotNull(days);
-        Assert.assertEquals(new BigDecimal("13.0"), days);
+        assertThat(days).isEqualTo(new BigDecimal("13.0"));
     }
 
     @Test
@@ -207,8 +206,7 @@ class VacationDaysServiceTest {
         BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         // must be: 2.5 + 5 + 4 = 11.5
 
-        Assert.assertNotNull(days);
-        Assert.assertEquals(new BigDecimal("11.5"), days);
+        assertThat(days).isEqualTo(new BigDecimal("11.5"));
     }
 
     @Test
@@ -258,8 +256,7 @@ class VacationDaysServiceTest {
 
         BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
 
-        Assert.assertNotNull(days);
-        Assert.assertEquals(BigDecimal.ZERO, days);
+        assertThat(days).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -275,19 +272,10 @@ class VacationDaysServiceTest {
 
         VacationDaysLeft vacationDaysLeft = sut.getVacationDaysLeft(account, Optional.empty());
 
-        Assert.assertNotNull("Should not be null", vacationDaysLeft);
-
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertNotNull("Should not be null", vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-        Assert.assertEquals("Wrong number of vacation days", new BigDecimal("12"), vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-        Assert.assertEquals("Wrong number of vacation days already used for next year", BigDecimal.ZERO,
-            vacationDaysLeft.getVacationDaysUsedNextYear());
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("12"));
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualTo(BigDecimal.ZERO);
 
     }
 
@@ -313,28 +301,25 @@ class VacationDaysServiceTest {
 
         VacationDaysLeft vacationDaysLeft = sut.getVacationDaysLeft(account, Optional.of(nextYear));
 
-        Assert.assertEquals("Wrong number of vacation days already used for next year", new BigDecimal("12"), vacationDaysLeft.getVacationDaysUsedNextYear());
-
-        Assert.assertEquals("Wrong number of vacation days", BigDecimal.ZERO, vacationDaysLeft.getVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDays());
-        Assert.assertEquals("Wrong number of remaining vacation days that do not expire", BigDecimal.ZERO,
-            vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualTo(new BigDecimal("12"));
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(BigDecimal.ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
     void testGetVacationDaysUsedOfEmptyAccount() {
 
-        Assert.assertEquals(BigDecimal.ZERO, sut.getRemainingVacationDaysAlreadyUsed(Optional.empty()));
+        assertThat(sut.getRemainingVacationDaysAlreadyUsed(Optional.empty())).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
     void testGetVacationDaysUsedOfZeroRemainingVacationDays() {
 
-        Optional<Account> account = Optional.of(new Account());
-        account.get().setRemainingVacationDays(BigDecimal.ZERO);
+        final Account account = new Account();
+        account.setRemainingVacationDays(BigDecimal.ZERO);
 
-        Assert.assertEquals(BigDecimal.ZERO, sut.getRemainingVacationDaysAlreadyUsed(account));
+        assertThat(sut.getRemainingVacationDaysAlreadyUsed(Optional.of(account))).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -348,7 +333,7 @@ class VacationDaysServiceTest {
         account.get().setRemainingVacationDays(new BigDecimal("10"));
         account.get().setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
 
-        Assert.assertEquals(BigDecimal.TEN, sut.getRemainingVacationDaysAlreadyUsed(account));
+        assertThat(sut.getRemainingVacationDaysAlreadyUsed(account)).isEqualTo(BigDecimal.TEN);
     }
 
     @Test
@@ -368,11 +353,9 @@ class VacationDaysServiceTest {
 
         BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
 
-        Assert.assertNotNull("Should not be null", leftDays);
-
         // total number = left vacation days + left not expiring remaining vacation days
         // 31 = 30 + 1
-        Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("31"), leftDays);
+        assertThat(leftDays).isEqualTo(new BigDecimal("31"));
     }
 
     @Test
@@ -392,11 +375,9 @@ class VacationDaysServiceTest {
 
         BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
 
-        Assert.assertNotNull("Should not be null", leftDays);
-
         // total number = left vacation days + left remaining vacation days
         // 32 = 30 + 2
-        Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("32"), leftDays);
+        assertThat(leftDays).isEqualTo(new BigDecimal("32"));
     }
 
     @Test
@@ -416,11 +397,9 @@ class VacationDaysServiceTest {
 
         BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
 
-        Assert.assertNotNull("Should not be null", leftDays);
-
         // total number = left vacation days + left not expiring remaining vacation days
         // 30 = 30 + 0
-        Assert.assertEquals("Wrong number of total vacation days", new BigDecimal("30"), leftDays);
+        assertThat(leftDays).isEqualTo(new BigDecimal("30"));
     }
 
     @Test
@@ -445,7 +424,7 @@ class VacationDaysServiceTest {
 
         BigDecimal usedDaysBeforeApril = vacationDaysService.getUsedDaysBeforeApril(account);
 
-        Assert.assertEquals("Wrong number of used vacation days before april", new BigDecimal(expectedUsedDays), usedDaysBeforeApril);
+        assertThat(usedDaysBeforeApril).isEqualTo(new BigDecimal(expectedUsedDays));
     }
 
     @Test
@@ -470,7 +449,7 @@ class VacationDaysServiceTest {
 
         BigDecimal usedDaysAfterApril = vacationDaysService.getUsedDaysAfterApril(account);
 
-        Assert.assertEquals("Wrong number of used vacation days after april", new BigDecimal(expectedUsedDays), usedDaysAfterApril);
+        assertThat(usedDaysAfterApril).isEqualTo(new BigDecimal(expectedUsedDays));
     }
 
     private Application getSomeApplication(Person person) {

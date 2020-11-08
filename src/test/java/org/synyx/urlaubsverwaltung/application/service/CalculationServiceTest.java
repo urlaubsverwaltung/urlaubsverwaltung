@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.application.service;
 import de.jollyday.HolidayManager;
 import de.jollyday.ManagerParameter;
 import de.jollyday.ManagerParameters;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -212,8 +211,7 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
 
-        Assert.assertFalse("Person is not allowed to leave",
-            sut.checkApplication(applicationForLeaveToCheck));
+        assertThat(sut.checkApplication(applicationForLeaveToCheck)).isFalse();
     }
 
     @Test

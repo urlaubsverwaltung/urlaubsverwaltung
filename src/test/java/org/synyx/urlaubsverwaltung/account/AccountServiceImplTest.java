@@ -23,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
 
-    private AccountService accountService;
+    private AccountServiceImpl accountService;
 
     @Mock
     private AccountRepository accountRepository;

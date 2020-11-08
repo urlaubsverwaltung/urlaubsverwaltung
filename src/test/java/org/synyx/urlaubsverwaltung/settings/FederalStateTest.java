@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -14,7 +15,8 @@ class FederalStateTest {
 
         String[] codes = FederalState.BERLIN.getCodes();
 
-        Assert.assertEquals("Wrong number of codes", 1, codes.length);
+        assertThat(codes).hasSize(1);
+        assertThat(codes[0]).isEqualTo("b");
     }
 
 
@@ -23,8 +25,8 @@ class FederalStateTest {
 
         String[] codes = FederalState.BADEN_WUERTTEMBERG.getCodes();
 
-        Assert.assertEquals("Wrong number of codes", 1, codes.length);
-        Assert.assertEquals("Wrong code", "bw", codes[0]);
+        assertThat(codes).hasSize(1);
+        assertThat(codes[0]).isEqualTo("bw");
     }
 
 
@@ -33,8 +35,8 @@ class FederalStateTest {
 
         String[] codes = FederalState.BAYERN_MUENCHEN.getCodes();
 
-        Assert.assertEquals("Wrong number of codes", 2, codes.length);
-        Assert.assertEquals("Wrong code", "by", codes[0]);
-        Assert.assertEquals("Wrong code", "mu", codes[1]);
+        assertThat(codes).hasSize(2);
+        assertThat(codes[0]).isEqualTo("by");
+        assertThat(codes[1]).isEqualTo("mu");
     }
 }

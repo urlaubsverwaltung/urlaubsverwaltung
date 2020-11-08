@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
@@ -18,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -96,17 +96,16 @@ class SickDaysOverviewTest {
         SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
 
         SickDays sickDays = sickDaysOverview.getSickDays();
-        Assert.assertNotNull("Should not be null", sickDays.getDays());
-        Assert.assertEquals("Wrong number of sick days without AUB", new BigDecimal("2"),
-            sickDays.getDays().get("TOTAL"));
-        Assert.assertEquals("Wrong number of sick days with AUB", BigDecimal.ONE, sickDays.getDays().get("WITH_AUB"));
+        assertThat(sickDays.getDays())
+            .isNotNull()
+            .containsEntry("TOTAL", new BigDecimal("2"))
+            .containsEntry("WITH_AUB", BigDecimal.ONE);
 
         SickDays childSickDays = sickDaysOverview.getChildSickDays();
-        Assert.assertNotNull("Should not be null", childSickDays.getDays());
-        Assert.assertEquals("Wrong number of child sick days without AUB", new BigDecimal("2"),
-            childSickDays.getDays().get("TOTAL"));
-        Assert.assertEquals("Wrong number of child sick days with AUB", BigDecimal.ONE,
-            childSickDays.getDays().get("WITH_AUB"));
+        assertThat(childSickDays.getDays())
+            .isNotNull()
+            .containsEntry("TOTAL", new BigDecimal("2"))
+            .containsEntry("WITH_AUB", BigDecimal.ONE);
     }
 
 }

@@ -118,12 +118,6 @@ class GoogleCalendarSyncProviderServiceTest {
         Assert.assertTrue(eventCount >= 0);
     }
 
-
-    @Test
-    void init() {
-        googleCalendarSyncProvider = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
-    }
-
     @Test
     void addUpdateDeleteAbsence() throws GeneralSecurityException, IOException {
 

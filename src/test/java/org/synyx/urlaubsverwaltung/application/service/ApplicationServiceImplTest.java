@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
@@ -11,8 +10,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
  */
 class ApplicationServiceImplTest {
 
-    private ApplicationService applicationService;
+    private ApplicationServiceImpl applicationService;
     private ApplicationRepository applicationRepository;
 
     @BeforeEach
@@ -50,8 +49,7 @@ class ApplicationServiceImplTest {
 
         Optional<Application> optional = applicationService.getApplicationById(1234);
 
-        Assert.assertNotNull("Optional must not be null", optional);
-        Assert.assertFalse("No application for leave should exist", optional.isPresent());
+        assertThat(optional).isEmpty();
     }
 
 
@@ -87,8 +85,7 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
 
-        Assert.assertNotNull("Should not be null", totalHours);
-        assertEquals("Wrong total overtime reduction", BigDecimal.ZERO, totalHours);
+        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -100,7 +97,7 @@ class ApplicationServiceImplTest {
         when(applicationRepository.findByStatusIn(List.of(WAITING))).thenReturn(applications);
 
         final List<Application> result = applicationService.getForStates(List.of(WAITING));
-        assertEquals(applications, result);
+        assertThat(result).isEqualTo(applications);
     }
 
     @Test
@@ -114,7 +111,7 @@ class ApplicationServiceImplTest {
         when(applicationRepository.findByStatusInAndPersonIn(List.of(WAITING), List.of(person))).thenReturn(applications);
 
         final List<Application> result = applicationService.getForStatesAndPerson(List.of(WAITING), List.of(person));
-        assertEquals(applications, result);
+        assertThat(result).isEqualTo(applications);
     }
 
 
@@ -129,7 +126,6 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
 
-        Assert.assertNotNull("Should not be null", totalHours);
-        assertEquals("Wrong total overtime reduction", BigDecimal.ONE, totalHours);
+        assertThat(totalHours).isEqualTo(BigDecimal.ONE);
     }
 }

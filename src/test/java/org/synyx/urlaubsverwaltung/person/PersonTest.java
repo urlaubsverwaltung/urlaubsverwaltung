@@ -1,14 +1,15 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -122,12 +123,8 @@ class PersonTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(modifiableList);
 
-        try {
-            person.getPermissions().add(BOSS);
-            Assert.fail("Permissions should be unmodifiable!");
-        } catch (UnsupportedOperationException ex) {
-            // Expected
-        }
+        final Collection<Role> permissions = person.getPermissions();
+        assertThatThrownBy(() -> permissions.add(BOSS)).isInstanceOf(UnsupportedOperationException.class);
     }
 
 
@@ -140,12 +137,8 @@ class PersonTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(modifiableList);
 
-        try {
-            person.getNotifications().add(NOTIFICATION_BOSS_ALL);
-            Assert.fail("Notifications should be unmodifiable!");
-        } catch (UnsupportedOperationException ex) {
-            // Expected
-        }
+        final Collection<MailNotification> notifications = person.getNotifications();
+        assertThatThrownBy(() -> notifications.add(NOTIFICATION_BOSS_ALL)).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test

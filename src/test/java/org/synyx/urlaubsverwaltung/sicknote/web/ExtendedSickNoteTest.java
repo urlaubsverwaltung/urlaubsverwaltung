@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
@@ -13,6 +12,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -47,18 +47,18 @@ class ExtendedSickNoteTest {
         verify(workDaysCountService)
             .getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person);
 
-        Assert.assertNotNull("Should not be null", extendedSickNote.getDayLength());
-        Assert.assertNotNull("Should not be null", extendedSickNote.getStartDate());
-        Assert.assertNotNull("Should not be null", extendedSickNote.getEndDate());
-        Assert.assertNotNull("Should not be null", extendedSickNote.getSickNoteType());
+        assertThat(extendedSickNote.getDayLength()).isNotNull();
+        assertThat(extendedSickNote.getStartDate()).isNotNull();
+        assertThat(extendedSickNote.getEndDate()).isNotNull();
+        assertThat(extendedSickNote.getSickNoteType()).isNotNull();
 
-        Assert.assertEquals("Wrong day length", sickNote.getDayLength(), extendedSickNote.getDayLength());
-        Assert.assertEquals("Wrong start date", sickNote.getStartDate(), extendedSickNote.getStartDate());
-        Assert.assertEquals("Wrong end date", sickNote.getEndDate(), extendedSickNote.getEndDate());
-        Assert.assertEquals("Wrong type", sickNote.getSickNoteType(), extendedSickNote.getSickNoteType());
+        assertThat(extendedSickNote.getDayLength()).isEqualTo(sickNote.getDayLength());
+        assertThat(extendedSickNote.getStartDate()).isEqualTo(sickNote.getStartDate());
+        assertThat(extendedSickNote.getEndDate()).isEqualTo(sickNote.getEndDate());
+        assertThat(extendedSickNote.getSickNoteType()).isEqualTo(sickNote.getSickNoteType());
 
-        Assert.assertNotNull("Should not be null", extendedSickNote.getWorkDays());
-        Assert.assertEquals("Wrong number of work days", BigDecimal.TEN, extendedSickNote.getWorkDays());
+        assertThat(extendedSickNote.getWorkDays()).isNotNull();
+        assertThat(extendedSickNote.getWorkDays()).isEqualTo(BigDecimal.TEN);
     }
 
 
@@ -76,11 +76,7 @@ class ExtendedSickNoteTest {
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, workDaysCountService);
 
-        Assert.assertNotNull("Missing day of week for start date", extendedSickNote.getWeekDayOfStartDate());
-        Assert.assertEquals("Wrong day of week for start date", WeekDay.TUESDAY,
-            extendedSickNote.getWeekDayOfStartDate());
-
-        Assert.assertNotNull("Missing day of week for end date", extendedSickNote.getWeekDayOfEndDate());
-        Assert.assertEquals("Wrong day of week for end date", WeekDay.FRIDAY, extendedSickNote.getWeekDayOfEndDate());
+        assertThat(extendedSickNote.getWeekDayOfStartDate()).isEqualTo(WeekDay.TUESDAY);
+        assertThat(extendedSickNote.getWeekDayOfEndDate()).isEqualTo(WeekDay.FRIDAY);
     }
 }

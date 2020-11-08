@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Clock;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 @ExtendWith(MockitoExtension.class)
 class ApplicationCommentServiceImplTest {
 
-    private ApplicationCommentService commentService;
+    private ApplicationCommentServiceImpl commentService;
 
     @Mock
     private ApplicationCommentRepository commentRepository;
@@ -56,17 +56,14 @@ class ApplicationCommentServiceImplTest {
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationComment comment = commentService.create(application, ALLOWED, Optional.empty(), author);
 
-        Assert.assertNotNull("Should not be null", comment);
-
-        Assert.assertNotNull("Date should be set", comment.getDate());
-        Assert.assertNotNull("Action should be set", comment.getAction());
-        Assert.assertNotNull("Author should be set", comment.getPerson());
-        Assert.assertNotNull("Application for leave should be set", comment.getApplication());
-
-        Assert.assertEquals("Wrong action", ALLOWED, comment.getAction());
-        Assert.assertEquals("Wrong author", author, comment.getPerson());
-
-        Assert.assertNull("Text should not be set", comment.getText());
+        assertThat(comment).isNotNull();
+        assertThat(comment.getDate()).isNotNull();
+        assertThat(comment.getAction()).isNotNull();
+        assertThat(comment.getPerson()).isNotNull();
+        assertThat(comment.getApplication()).isNotNull();
+        assertThat(comment.getAction()).isEqualTo(ALLOWED);
+        assertThat(comment.getPerson()).isEqualTo(author);
+        assertThat(comment.getText()).isNull();
 
         verify(commentRepository).save(eq(comment));
     }
@@ -84,16 +81,14 @@ class ApplicationCommentServiceImplTest {
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationComment savedComment = commentService.create(application, REJECTED, Optional.of("Foo"), author);
 
-        Assert.assertNotNull("Should not be null", savedComment);
-
-        Assert.assertNotNull("Date should be set", savedComment.getDate());
-        Assert.assertNotNull("Action should be set", savedComment.getAction());
-        Assert.assertNotNull("Author should be set", savedComment.getPerson());
-        Assert.assertNotNull("Text should be set", savedComment.getText());
-
-        Assert.assertEquals("Wrong action", REJECTED, savedComment.getAction());
-        Assert.assertEquals("Wrong author", author, savedComment.getPerson());
-        Assert.assertEquals("Wrong text", "Foo", savedComment.getText());
+        assertThat(savedComment).isNotNull();
+        assertThat(savedComment.getDate()).isNotNull();
+        assertThat(savedComment.getAction()).isNotNull();
+        assertThat(savedComment.getPerson()).isNotNull();
+        assertThat(savedComment.getText()).isNotNull();
+        assertThat(savedComment.getAction()).isEqualTo(REJECTED);
+        assertThat(savedComment.getPerson()).isEqualTo(author);
+        assertThat(savedComment.getText()).isEqualTo("Foo");
 
         verify(commentRepository).save(eq(savedComment));
     }

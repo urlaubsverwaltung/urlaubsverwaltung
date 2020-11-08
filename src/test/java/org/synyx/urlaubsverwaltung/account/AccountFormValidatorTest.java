@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
@@ -11,8 +14,9 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.stream.Stream;
 
-import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -197,31 +201,20 @@ class AccountFormValidatorTest {
         verify(errors).rejectValue("holidaysAccountValidTo", "error.entry.mandatory");
     }
 
-    @Test
-    void ensureFromOfPeriodMustBeBeforeTo() {
-        final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(of(2013, 1, 1));
-
-        sut.validatePeriod(form, errors);
-        verify(errors).reject("error.entry.invalidPeriod");
+    private static Stream<Arguments> fromDateBeforeToDate() {
+        return Stream.of(
+            Arguments.of(2013, LocalDate.of(2013, 5, 1), LocalDate.of(2013, 1, 1)),
+            Arguments.of(2013, LocalDate.of(2013, 5, 1), LocalDate.of(2013, 5, 1)),
+            Arguments.of(2014, LocalDate.of(2013, 1, 1), LocalDate.of(2013, 5, 1))
+        );
     }
 
-    @Test
-    void ensurePeriodMustBeGreaterThanOnlyOneDay() {
-        final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(of(2013, 5, 1));
-
-        sut.validatePeriod(form, errors);
-        verify(errors).reject("error.entry.invalidPeriod");
-    }
-
-    @Test
-    void ensurePeriodMustBeWithinTheProvidedYear() {
-        final AccountForm form = new AccountForm(2014);
-        form.setHolidaysAccountValidFrom(of(2013, 1, 1));
-        form.setHolidaysAccountValidTo(of(2013, 5, 1));
+    @ParameterizedTest
+    @MethodSource("fromDateBeforeToDate")
+    void ensureInvalidPeriod(int year, LocalDate validFrom, LocalDate validTo) {
+        final AccountForm form = new AccountForm(year);
+        form.setHolidaysAccountValidFrom(validFrom);
+        form.setHolidaysAccountValidTo(validTo);
 
         sut.validatePeriod(form, errors);
         verify(errors).reject("error.entry.invalidPeriod");
@@ -230,8 +223,8 @@ class AccountFormValidatorTest {
     @Test
     void ensureValidPeriodHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
-        form.setHolidaysAccountValidFrom(of(2013, 5, 1));
-        form.setHolidaysAccountValidTo(of(2013, 5, 5));
+        form.setHolidaysAccountValidFrom(LocalDate.of(2013, 5, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 5));
 
         sut.validatePeriod(form, errors);
         verifyNoInteractions(errors);

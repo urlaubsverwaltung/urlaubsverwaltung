@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 class OvertimeServiceImplTest {
 
-    private OvertimeService sut;
+    private OvertimeServiceImpl sut;
 
     private OvertimeRepository overtimeRepository;
     private OvertimeCommentRepository commentDAO;
@@ -95,8 +95,8 @@ class OvertimeServiceImplTest {
 
         OvertimeComment comment = commentCaptor.getValue();
 
-        Assert.assertNotNull("Should not be null", comment);
-        Assert.assertEquals("Wrong action", OvertimeAction.CREATED, comment.getAction());
+        assertThat(comment).isNotNull();
+        assertThat(comment.getAction()).isEqualTo(OvertimeAction.CREATED);
     }
 
 
@@ -114,8 +114,8 @@ class OvertimeServiceImplTest {
 
         OvertimeComment comment = commentCaptor.getValue();
 
-        Assert.assertNotNull("Should not be null", comment);
-        Assert.assertEquals("Wrong action", OvertimeAction.EDITED, comment.getAction());
+        assertThat(comment).isNotNull();
+        assertThat(comment.getAction()).isEqualTo(OvertimeAction.EDITED);
     }
 
 
@@ -130,12 +130,10 @@ class OvertimeServiceImplTest {
 
         OvertimeComment comment = commentCaptor.getValue();
 
-        Assert.assertNotNull("Should not be null", comment);
-
-        Assert.assertEquals("Wrong author", authorMock, comment.getPerson());
-        Assert.assertEquals("Wrong overtime", overtimeMock, comment.getOvertime());
-
-        Assert.assertNull("Text should not be set", comment.getText());
+        assertThat(comment).isNotNull();
+        assertThat(comment.getPerson()).isEqualTo(authorMock);
+        assertThat(comment.getOvertime()).isEqualTo(overtimeMock);
+        assertThat(comment.getText()).isNull();
     }
 
 
@@ -150,11 +148,10 @@ class OvertimeServiceImplTest {
 
         OvertimeComment comment = commentCaptor.getValue();
 
-        Assert.assertNotNull("Should not be null", comment);
-
-        Assert.assertEquals("Wrong author", authorMock, comment.getPerson());
-        Assert.assertEquals("Wrong overtime", overtimeMock, comment.getOvertime());
-        Assert.assertEquals("Wrong text", "Foo", comment.getText());
+        assertThat(comment).isNotNull();
+        assertThat(comment.getPerson()).isEqualTo(authorMock);
+        assertThat(comment.getOvertime()).isEqualTo(overtimeMock);
+        assertThat(comment.getText()).isEqualTo("Foo");
     }
 
 
@@ -200,8 +197,7 @@ class OvertimeServiceImplTest {
 
         Optional<Overtime> overtimeOptional = sut.getOvertimeById(42);
 
-        Assert.assertNotNull("Should not be null", overtimeOptional);
-        Assert.assertEquals("Should be empty", Optional.empty(), overtimeOptional);
+        assertThat(overtimeOptional).isEmpty();
     }
 
 
@@ -275,8 +271,7 @@ class OvertimeServiceImplTest {
 
         verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
-        Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
+        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -301,8 +296,7 @@ class OvertimeServiceImplTest {
 
         verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
 
-        Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime", new BigDecimal("11"), totalHours);
+        assertThat(totalHours).isEqualTo(new BigDecimal("11"));
     }
 
 
@@ -325,8 +319,7 @@ class OvertimeServiceImplTest {
         verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
 
-        Assert.assertNotNull("Should not be null", totalHours);
-        Assert.assertEquals("Wrong total overtime", BigDecimal.ZERO, totalHours);
+        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -343,8 +336,7 @@ class OvertimeServiceImplTest {
         verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
 
-        Assert.assertNotNull("Should not be null", leftOvertime);
-        Assert.assertEquals("Wrong left overtime", new BigDecimal("9"), leftOvertime);
+        assertThat(leftOvertime).isEqualTo(new BigDecimal("9"));
     }
 
 
@@ -358,7 +350,6 @@ class OvertimeServiceImplTest {
 
         BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
 
-        Assert.assertNotNull("Should not be null", leftOvertime);
-        Assert.assertEquals("Wrong left overtime", BigDecimal.ZERO, leftOvertime);
+        assertThat(leftOvertime).isEqualTo(BigDecimal.ZERO);
     }
 }

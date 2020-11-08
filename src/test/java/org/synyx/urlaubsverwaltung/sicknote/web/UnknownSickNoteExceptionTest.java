@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class UnknownSickNoteExceptionTest {
@@ -11,6 +12,6 @@ class UnknownSickNoteExceptionTest {
 
         UnknownSickNoteException exception = new UnknownSickNoteException(42);
 
-        Assert.assertEquals("Wrong exception message", "No sick note found for ID = 42", exception.getMessage());
+        assertThat(exception.getMessage()).isEqualTo("No sick note found for ID = 42");
     }
 }

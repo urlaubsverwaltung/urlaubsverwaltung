@@ -1,17 +1,21 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-
 
 class SettingsValidatorTest {
 
@@ -19,36 +23,25 @@ class SettingsValidatorTest {
 
     @BeforeEach
     void setUp() {
-
         settingsValidator = new SettingsValidator();
     }
 
-
-    // Supported class -------------------------------------------------------------------------------------------------
-
     @Test
     void ensureSettingsClassIsSupported() {
-
-        Assert.assertTrue("Should return true for Settings class.", settingsValidator.supports(Settings.class));
+        assertThat(settingsValidator.supports(Settings.class)).isTrue();
     }
-
 
     @Test
     void ensureOtherClassThanSettingsIsNotSupported() {
-
-        Assert.assertFalse("Should return false for other classes than Settings.",
-            settingsValidator.supports(Object.class));
+        assertThat(settingsValidator.supports(Object.class)).isFalse();
     }
-
 
     @Test
     void ensureThatValidateFailsWithOtherClassThanSettings() {
         assertThatIllegalArgumentException().isThrownBy(() -> settingsValidator.validate(new Object(), mock(Errors.class)));
     }
 
-
     // Working time settings: Public holidays --------------------------------------------------------------------------
-
     @Test
     void ensureWorkingTimeSettingsCanNotBeNull() {
 
@@ -68,9 +61,7 @@ class SettingsValidatorTest {
             .rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
     }
 
-
     // Working time settings: Overtime settings ------------------------------------------------------------------------
-
     @Test
     void ensureOvertimeSettingsAreMandatoryIfOvertimeManagementIsActive() {
 
@@ -88,7 +79,6 @@ class SettingsValidatorTest {
         verify(mockError).rejectValue("workingTimeSettings.minimumOvertime", "error.entry.mandatory");
     }
 
-
     @Test
     void ensureOvertimeSettingsAreNotMandatoryIfOvertimeManagementIsInactive() {
 
@@ -105,7 +95,6 @@ class SettingsValidatorTest {
         verifyNoInteractions(mockError);
     }
 
-
     @Test
     void ensureMaximumOvertimeCanNotBeNegative() {
 
@@ -120,7 +109,6 @@ class SettingsValidatorTest {
 
         verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.invalid");
     }
-
 
     @Test
     void ensureMinimumOvertimeCanNotBeNegative() {
@@ -137,9 +125,7 @@ class SettingsValidatorTest {
         verify(mockError).rejectValue("workingTimeSettings.minimumOvertime", "error.entry.invalid");
     }
 
-
     // Absence settings ------------------------------------------------------------------------------------------------
-
     @Test
     void ensureAbsenceSettingsCanNotBeNull() {
 
@@ -163,7 +149,6 @@ class SettingsValidatorTest {
         verify(mockError)
             .rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
     }
-
 
     @Test
     void ensureAbsenceSettingsCanNotBeNegative() {
@@ -189,7 +174,6 @@ class SettingsValidatorTest {
             .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
     }
 
-
     @Test
     void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() {
 
@@ -202,7 +186,6 @@ class SettingsValidatorTest {
             .rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
     }
 
-
     @Test
     void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
 
@@ -213,7 +196,6 @@ class SettingsValidatorTest {
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
     }
-
 
     @Test
     void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() {
@@ -236,7 +218,6 @@ class SettingsValidatorTest {
         verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
     }
 
-
     @Test
     void ensureThatDaysBeforeEndOfSickPayNotificationIsSmallerThanMaximumSickPayDays() {
 
@@ -252,9 +233,7 @@ class SettingsValidatorTest {
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
     }
 
-
     // Time settings -----------------------------------------------------------------------------------------------
-
     @Test
     void ensureCalendarSettingsAreMandatory() {
 
@@ -270,79 +249,24 @@ class SettingsValidatorTest {
         verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.mandatory");
     }
 
-
-    @Test
-    void ensureCalendarSettingsAreInvalidIfWorkDayBeginAndEndHoursAreSame() {
-
-        Settings settings = new Settings();
-        TimeSettings timeSettings = settings.getTimeSettings();
-
-        timeSettings.setWorkDayBeginHour(8);
-        timeSettings.setWorkDayEndHour(8);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
+    private static Stream<Arguments> invalidWorkingHours() {
+        return Stream.of(
+            Arguments.of(8, 8), // same hours
+            Arguments.of(17, 8), // begin is later than end
+            Arguments.of(-1, -2), // negative values
+            Arguments.of(25, 42) // more than 24 hours
+        );
     }
 
-
-    @Test
-    void ensureCalendarSettingsAreInvalidIfWorkDayBeginHourIsGreaterThanEndHour() {
-
-        Settings settings = new Settings();
-        TimeSettings timeSettings = settings.getTimeSettings();
-
-        timeSettings.setWorkDayBeginHour(17);
-        timeSettings.setWorkDayEndHour(8);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
-    }
-
-
-    @Test
-    void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreNegative() {
+    @ParameterizedTest
+    @MethodSource("invalidWorkingHours")
+    void ensureCalendarSettingsAreInvalid(int beginHour, int endHour) {
 
         Settings settings = new Settings();
         TimeSettings timeSettings = settings.getTimeSettings();
 
-        timeSettings.setWorkDayBeginHour(-1);
-        timeSettings.setWorkDayEndHour(-2);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
-    }
-
-
-    @Test
-    void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreZero() {
-
-        Settings settings = new Settings();
-        TimeSettings timeSettings = settings.getTimeSettings();
-
-        timeSettings.setWorkDayBeginHour(0);
-        timeSettings.setWorkDayEndHour(0);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("timeSettings.workDayBeginHour", "error.entry.invalid");
-        verify(mockError).rejectValue("timeSettings.workDayEndHour", "error.entry.invalid");
-    }
-
-
-    @Test
-    void ensureCalendarSettingsAreInvalidIfWorkDayBeginOrEndHoursAreGreaterThan24() {
-
-        Settings settings = new Settings();
-        TimeSettings timeSettings = settings.getTimeSettings();
-
-        timeSettings.setWorkDayBeginHour(25);
-        timeSettings.setWorkDayEndHour(42);
+        timeSettings.setWorkDayBeginHour(beginHour);
+        timeSettings.setWorkDayEndHour(endHour);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
@@ -365,9 +289,7 @@ class SettingsValidatorTest {
         verifyNoInteractions(mockError);
     }
 
-
     // Exchange calendar settings --------------------------------------------------------------------------------------
-
     @Test
     void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
 
@@ -384,7 +306,6 @@ class SettingsValidatorTest {
 
         verifyNoInteractions(mockError);
     }
-
 
     @Test
     void ensureExchangeCalendarSettingsAreMandatory() {

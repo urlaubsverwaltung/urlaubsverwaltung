@@ -3,15 +3,14 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 
 class AbsenceMappingServiceImplTest {
 
-    private AbsenceMappingService sut;
+    private AbsenceMappingServiceImpl sut;
     private AbsenceMappingRepository absenceMappingRepository;
 
     @BeforeEach
@@ -29,9 +28,10 @@ class AbsenceMappingServiceImplTest {
 
         AbsenceMapping result = sut.create(42, AbsenceType.VACATION, eventId);
 
-        assertThat(result.getAbsenceId(), is(42));
-        assertThat(result.getAbsenceType(), is(AbsenceType.VACATION));
-        assertThat(result.getEventId(), is(eventId));
+        assertThat(result.getAbsenceId()).isEqualTo(42);
+        assertThat(result.getAbsenceType()).isEqualTo(AbsenceType.VACATION);
+        assertThat(result.getEventId()).isEqualTo(eventId);
+
         verify(absenceMappingRepository).save(result);
     }
 
@@ -43,9 +43,10 @@ class AbsenceMappingServiceImplTest {
 
         AbsenceMapping result = sut.create(21, AbsenceType.SICKNOTE, eventId);
 
-        assertThat(result.getAbsenceId(), is(21));
-        assertThat(result.getAbsenceType(), is(AbsenceType.SICKNOTE));
-        assertThat(result.getEventId(), is(eventId));
+        assertThat(result.getAbsenceId()).isEqualTo(21);
+        assertThat(result.getAbsenceType()).isEqualTo(AbsenceType.SICKNOTE);
+        assertThat(result.getEventId()).isEqualTo(eventId);
+
         verify(absenceMappingRepository).save(result);
     }
 
