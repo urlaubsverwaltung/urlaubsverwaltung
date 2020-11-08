@@ -11,7 +11,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
-import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,8 +35,7 @@ import java.time.LocalDate;
 import java.util.Properties;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -115,7 +113,7 @@ class GoogleCalendarSyncProviderServiceTest {
     @Test
     void testCalendarEventCount() throws GeneralSecurityException, IOException {
         Integer eventCount = getCalendarEventCount();
-        Assert.assertTrue(eventCount >= 0);
+        assertThat(eventCount >= 0).isTrue();
     }
 
     @Test
@@ -140,10 +138,10 @@ class GoogleCalendarSyncProviderServiceTest {
         googleCalendarSyncProvider.delete(eventId, calendarSettings);
         int eventsAfterDelete = getCalendarEventCount();
 
-        assertTrue(!eventId.isEmpty());
-        assertEquals(eventsBeforeAdd + 1, eventsAfterAdd);
-        assertEquals(eventsAfterAdd, eventsAfterUpdate);
-        assertEquals(eventsAfterDelete, eventsBeforeAdd);
+        assertThat(eventId).isNotEmpty();
+        assertThat(eventsBeforeAdd + 1).isEqualTo(eventsAfterAdd);
+        assertThat(eventsAfterAdd).isEqualTo(eventsAfterUpdate);
+        assertThat(eventsAfterDelete).isEqualTo(eventsBeforeAdd);
     }
 
     private SettingsService prepareSettingsServiceMock() {

@@ -22,11 +22,10 @@ import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -109,11 +108,10 @@ class ExchangeCalendarProviderTest {
         when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
         when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
 
-        CalendarSettings calendarSettings = getMockedCalendarSettings();
+        final CalendarSettings calendarSettings = getMockedCalendarSettings();
 
-        assertEquals("item-id", cut.add(absence, calendarSettings).orElse("bad-id"));
-
-        verify(appointment, times(1)).setStartTimeZone(any(TimeZoneDefinition.class));
-        verify(appointment, times(1)).setEndTimeZone(any(TimeZoneDefinition.class));
+        assertThat(cut.add(absence, calendarSettings)).hasValue("item-id");
+        verify(appointment).setStartTimeZone(any(TimeZoneDefinition.class));
+        verify(appointment).setEndTimeZone(any(TimeZoneDefinition.class));
     }
 }

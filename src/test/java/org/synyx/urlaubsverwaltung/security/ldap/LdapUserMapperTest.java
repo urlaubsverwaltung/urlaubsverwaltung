@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ldap.core.DirContextOperations;
@@ -11,6 +10,7 @@ import javax.naming.directory.BasicAttribute;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -53,7 +53,7 @@ class LdapUserMapperTest {
 
         try {
             ldapUserMapper.mapFromAttributes(attributes);
-            Assert.fail("Should throw on empty username!");
+            fail("Should throw on empty username!");
         } catch (InvalidSecurityConfigurationException ex) {
             // Expected
         }
@@ -105,7 +105,7 @@ class LdapUserMapperTest {
 
         try {
             ldapUserMapper.mapFromContext(ctx);
-            Assert.fail("Should throw on empty username!");
+            fail("Should throw on empty username!");
         } catch (InvalidSecurityConfigurationException ex) {
             // Expected
         }
@@ -169,7 +169,7 @@ class LdapUserMapperTest {
         try {
             ldapUserMapper.mapFromContext(ctx);
         } catch (UnsupportedMemberAffiliationException e) {
-            Assert.fail("Should not throw on empty memberOf filter!");
+            fail("Should not throw on empty memberOf filter!");
         }
 
         verify(ctx, never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);
@@ -197,7 +197,7 @@ class LdapUserMapperTest {
         try {
             ldapUserMapper.mapFromContext(ctx);
         } catch (UnsupportedMemberAffiliationException e) {
-            Assert.fail("Should not throw on empty memberOf filter!");
+            fail("Should not throw on empty memberOf filter!");
         }
 
         verify(ctx, never()).getStringAttributes(MEMBER_OF_ATTRIBUTE);

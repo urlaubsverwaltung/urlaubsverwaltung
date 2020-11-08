@@ -19,7 +19,7 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -83,12 +83,11 @@ class ApplicationCronMailServiceTest {
 
         verify(applicationMailService).sendRemindForWaitingApplicationsReminderNotification(asList(longWaitingApplicationA, longWaitingApplicationB, longWaitingApplicationAlreadyRemindedEarlier));
 
-        assertTrue(longWaitingApplicationA.getRemindDate().isAfter(longWaitingApplicationA.getApplicationDate()));
-        assertTrue(longWaitingApplicationB.getRemindDate().isAfter(longWaitingApplicationB.getApplicationDate()));
-        assertTrue(longWaitingApplicationAlreadyRemindedEarlier.getRemindDate().isAfter(oldRemindDateEarlier));
-        assertTrue(longWaitingApplicationAlreadyRemindedToday.getRemindDate().isEqual(today));
+        assertThat(longWaitingApplicationA.getRemindDate()).isAfter(longWaitingApplicationA.getApplicationDate());
+        assertThat(longWaitingApplicationB.getRemindDate()).isAfter(longWaitingApplicationB.getApplicationDate());
+        assertThat(longWaitingApplicationAlreadyRemindedEarlier.getRemindDate()).isAfter(oldRemindDateEarlier);
+        assertThat(longWaitingApplicationAlreadyRemindedToday.getRemindDate()).isEqualTo(today);
     }
-
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();

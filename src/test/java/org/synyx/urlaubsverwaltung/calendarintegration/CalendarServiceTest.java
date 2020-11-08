@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,7 +39,7 @@ class CalendarServiceTest {
         List<CalendarProvider> calendarProviders = getTypicalProviderList();
         CalendarService cut = new CalendarService(calendarProviders, settingsService);
 
-        assertEquals(expected.getName(), cut.getCalendarProvider().getClass().getName());
+        assertThat(cut.getCalendarProvider().getClass().getName()).isEqualTo(expected.getName());
     }
 
     private SettingsService getPreparedSettingsServiceForProvider(Class provider) {
