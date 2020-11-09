@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+import static freemarker.template.Configuration.VERSION_2_3_30;
+
 @Configuration
 public class FreemarkerConfig extends FreeMarkerAutoConfiguration {
 
@@ -20,6 +22,6 @@ public class FreemarkerConfig extends FreeMarkerAutoConfiguration {
 
     @PostConstruct
     public void postConstruct() {
-        configuration.setObjectWrapper(new Java8ObjectWrapper(freemarker.template.Configuration.getVersion()));
+        configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION_2_3_30));
     }
 }
