@@ -14,7 +14,7 @@
     "Urlaubsverwaltung": true
   },
   "rules": {
-    "unicorn/no-fn-reference-in-iterator": "warn",
+    "unicorn/no-fn-reference-in-iterator": "off",
     "unicorn/prefer-reflect-apply": "off"
   },
   "overrides": [
