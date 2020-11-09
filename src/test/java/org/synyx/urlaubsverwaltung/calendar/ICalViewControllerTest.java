@@ -142,6 +142,17 @@ class ICalViewControllerTest {
             .andExpect(status().isNoContent());
     }
 
+    @Test
+    void getCalendarForAllWithIllegalArgumentException() throws Exception {
+
+        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenThrow(IllegalArgumentException.class);
+
+        perform(get("/web/company/persons/2/calendar")
+            .locale(GERMAN)
+            .param("secret", "secret"))
+            .andExpect(status().isBadRequest());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
     }
