@@ -78,6 +78,8 @@ public class ICalViewController {
         final File iCal;
         try {
             iCal = companyCalendarService.getCalendarForAll(personId, secret, locale);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(BAD_REQUEST, "No company calender found.");
         } catch (CalendarException e) {
             throw new ResponseStatusException(NO_CONTENT);
         }
