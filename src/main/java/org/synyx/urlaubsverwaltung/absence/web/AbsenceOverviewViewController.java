@@ -218,7 +218,7 @@ public class AbsenceOverviewViewController {
             case 6:
                 return "month.june";
             case 7:
-                return "month.juli";
+                return "month.july";
             case 8:
                 return "month.august";
             case 9:
