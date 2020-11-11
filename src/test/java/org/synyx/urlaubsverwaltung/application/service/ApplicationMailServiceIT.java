@@ -103,7 +103,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentUser).contains(comment.getText());
         assertThat(contentUser).contains(comment.getPerson().getNiceName());
         assertThat(contentUser).contains("/web/application/1234");
-        assertThat(contentUser).contains("filename=calendar.ical");
+        assertThat(contentUser).contains("filename=calendar.ics");
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
@@ -120,7 +120,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentOfficeMail).contains(comment.getPerson().getNiceName());
         assertThat(contentOfficeMail).contains("es liegt ein neuer genehmigter Antrag vor:");
         assertThat(contentOfficeMail).contains("/web/application/1234");
-        assertThat(contentOfficeMail).doesNotContain("filename=calendar.ical");
+        assertThat(contentOfficeMail).doesNotContain("filename=calendar.ics");
     }
 
     @Test

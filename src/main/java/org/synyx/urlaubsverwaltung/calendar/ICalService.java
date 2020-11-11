@@ -58,7 +58,7 @@ public class ICalService {
 
         final File file;
         try {
-            file = File.createTempFile("calendar-", ".ical");
+            file = File.createTempFile("calendar-", ".ics");
         } catch (IOException e) {
             throw new CalendarException("Could not generate temp file for " + title + " calendar", e);
         }

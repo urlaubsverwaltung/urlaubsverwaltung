@@ -110,7 +110,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateName()).isEqualTo("allowed_user");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getFile()).isEqualTo(file);
-        assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ical");
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.office");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("allowed_office");

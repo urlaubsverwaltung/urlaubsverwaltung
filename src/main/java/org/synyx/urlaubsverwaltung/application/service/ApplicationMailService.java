@@ -72,7 +72,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson())
             .withSubject("subject.application.allowed.user")
             .withTemplate("allowed_user", model)
-            .withAttachment("calendar.ical", calendarFile)
+            .withAttachment("calendar.ics", calendarFile)
             .build();
         mailService.send(mailToApplicant);
 
