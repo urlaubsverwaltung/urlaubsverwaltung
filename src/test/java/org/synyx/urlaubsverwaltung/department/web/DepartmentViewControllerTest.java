@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartmentForm;
 
 @ExtendWith(MockitoExtension.class)
@@ -215,7 +216,7 @@ class DepartmentViewControllerTest {
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("deletedDepartment", department))
+            .andExpect(flash().attribute("deletedDepartment", mapToDepartmentForm(department)))
             .andExpect(redirectedUrl("/web/department/"));
 
         verify(departmentService).delete(SOME_DEPARTMENT_ID);

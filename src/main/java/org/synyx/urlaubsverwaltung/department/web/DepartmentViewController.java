@@ -143,7 +143,7 @@ public class DepartmentViewController {
         final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);
         maybeDepartment.ifPresent(department -> {
             departmentService.delete(department.getId());
-            redirectAttributes.addFlashAttribute("deletedDepartment", department);
+            redirectAttributes.addFlashAttribute("deletedDepartment", mapToDepartmentForm(department));
         });
 
         return REDIRECT_WEB_DEPARTMENT;
