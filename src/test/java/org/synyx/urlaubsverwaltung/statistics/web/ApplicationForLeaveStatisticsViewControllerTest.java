@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -101,7 +100,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statistics", statistics))
-            .andExpect(model().attribute("period", samePropertyValuesAs(filterPeriod)))
+            .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
             .andExpect(view().name("application/app_statistics"));
     }
@@ -158,13 +157,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         perform(get("/web/application/statistics/download")
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
-            .andExpect(model().attribute("period", samePropertyValuesAs(filterPeriod)))
+            .andExpect(model().attribute("period", filterPeriod))
             .andExpect(view().name("application/app_statistics"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
-
 }
