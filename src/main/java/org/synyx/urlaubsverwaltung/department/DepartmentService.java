@@ -21,14 +21,12 @@ public interface DepartmentService {
      */
     Optional<Department> getDepartmentById(Integer departmentId);
 
-
     /**
      * adds the given department to repository.
      *
      * @param department the {@link Department} to create
      */
     void create(Department department);
-
 
     /**
      * Updates a given department in repository.
@@ -37,7 +35,6 @@ public interface DepartmentService {
      */
     void update(Department department);
 
-
     /**
      * Deletes department with given id.
      *
@@ -45,12 +42,10 @@ public interface DepartmentService {
      */
     void delete(Integer departmentId);
 
-
     /**
      * @return all departments of the application.
      */
     List<Department> getAllDepartments();
-
 
     /**
      * Finds all departments the given person is member of.
@@ -60,7 +55,6 @@ public interface DepartmentService {
      */
     List<Department> getAssignedDepartmentsOfMember(Person member);
 
-
     /**
      * Finds all departments the given person is set as department head.
      *
@@ -69,7 +63,6 @@ public interface DepartmentService {
      */
     List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead);
 
-
     /**
      * Finds all departments the given person is set as second stage authority.
      *
@@ -77,7 +70,6 @@ public interface DepartmentService {
      * @return list of departments the second stage authority manages
      */
     List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority);
-
 
     /**
      * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
@@ -88,9 +80,7 @@ public interface DepartmentService {
      * @param endDate   of the period
      * @return list of waiting or allowed applications for leave of departments members
      */
-    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate,
-                                                                            LocalDate endDate);
-
+    List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate);
 
     /**
      * Get all members (including the given person) of the departments where the given person is the department head.
@@ -100,7 +90,6 @@ public interface DepartmentService {
      */
     List<Person> getManagedMembersOfDepartmentHead(Person departmentHead);
 
-
     /**
      * Get all members of the departments where the given person is the secondStageAuthority.
      *
@@ -108,7 +97,6 @@ public interface DepartmentService {
      * @return all unique members of the departments where the given person is the secondStageAuthority
      */
     List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority);
-
 
     /**
      * Check if the given department head manages a department that the given person is assigned to.
@@ -120,7 +108,6 @@ public interface DepartmentService {
      * else {@code false}
      */
     boolean isDepartmentHeadOfPerson(Person departmentHead, Person person);
-
 
     /**
      * Check if the given secondStageAuthority is responsible for the department that the given person is assigned to.

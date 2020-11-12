@@ -10,7 +10,6 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
@@ -25,13 +24,6 @@ class DepartmentTest {
         assertThat(department.getLastModification()).isEqualTo(LocalDate.now(UTC));
     }
 
-
-    @Test
-    void ensureCanNotSetLastModificationDateToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Department().setLastModification(null));
-    }
-
-
     @Test
     void ensureReturnsCorrectLastModificationDate() {
 
@@ -42,7 +34,6 @@ class DepartmentTest {
 
         assertThat(department.getLastModification()).isEqualTo(lastModification);
     }
-
 
     @Test
     void ensureMembersListIsUnmodifiable() {
@@ -58,7 +49,6 @@ class DepartmentTest {
 
         assertThatThrownBy(() -> departmentMembers.add(nextPerson)).isInstanceOf(UnsupportedOperationException.class);
     }
-
 
     @Test
     void ensureDepartmentHeadsListIsUnmodifiable() {

@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -13,7 +12,7 @@ import java.util.List;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
- * Validates the content of {@link Department}s.
+ * Validates the content of {@link DepartmentForm}s.
  */
 @Component
 public class DepartmentViewValidator implements Validator {
@@ -38,17 +37,17 @@ public class DepartmentViewValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Department.class.equals(clazz);
+        return DepartmentForm.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        final Department department = (Department) target;
+        final DepartmentForm departmentForm = (DepartmentForm) target;
 
-        validateName(errors, department.getName());
-        validateDescription(errors, department.getDescription());
-        validateDepartmentHeads(errors, department.getMembers(), department.getDepartmentHeads());
-        validateSecondStageAuthorities(errors, department.isTwoStageApproval(), department.getSecondStageAuthorities());
+        validateName(errors, departmentForm.getName());
+        validateDescription(errors, departmentForm.getDescription());
+        validateDepartmentHeads(errors, departmentForm.getMembers(), departmentForm.getDepartmentHeads());
+        validateSecondStageAuthorities(errors, departmentForm.isTwoStageApproval(), departmentForm.getSecondStageAuthorities());
     }
 
     private void validateName(Errors errors, String text) {

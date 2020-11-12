@@ -6,17 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentViewValidatorTest {
@@ -34,42 +32,45 @@ class DepartmentViewValidatorTest {
     @Test
     void ensureSupportsOnlyDepartmentClass() {
         assertThat(sut.supports(null)).isFalse();
-        assertThat(sut.supports(Application.class)).isFalse();
-        assertThat(sut.supports(Department.class)).isTrue();
+        assertThat(sut.supports(DepartmentForm.class)).isTrue();
     }
 
     @Test
     void ensureNameMustNotBeNull() {
-        final Department department = createDepartment(null);
-        sut.validate(department, errors);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
     @Test
     void ensureNameMustNotBeEmpty() {
-        Department department = createDepartment("");
-        sut.validate(department, errors);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("");
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("name", "error.entry.mandatory");
     }
 
     @Test
     void ensureNameMustNotBeTooLong() {
-        Department department = createDepartment("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        sut.validate(department, errors);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("AAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("name", "error.entry.tooManyChars");
     }
 
     @Test
     void ensureValidNameHasNoValidationError() {
-        Department department = createDepartment("Foobar Department");
-        sut.validate(department, errors);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        sut.validate(departmentForm, errors);
         verifyNoInteractions(errors);
     }
 
     @Test
     void ensureDescriptionMustNotBeTooLong() {
-        Department department = createDepartment("Foobar Department");
-        department.setDescription(
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setDescription(
             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut "
                 + "labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo"
                 + " dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor"
@@ -81,77 +82,82 @@ class DepartmentViewValidatorTest {
                 + " At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea"
                 + " takimata sanctus est Lorem ipsum dolor sit amet igir.");
 
-        sut.validate(department, errors);
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("description", "error.entry.tooManyChars");
     }
 
     @Test
     void ensureValidDescriptionHasNoValidationError() {
-        Department department = createDepartment("Foobar Department",
-            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut");
-
-        sut.validate(department, errors);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setDescription("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut");
+        sut.validate(departmentForm, errors);
         verifyNoInteractions(errors);
     }
 
     @Test
     void ensureSettingNeitherMembersNorDepartmentHeadsHasNoValidationError() {
-        Department department = createDepartment("Admins");
-        department.setMembers(null);
-        department.setDepartmentHeads(null);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setMembers(null);
+        departmentForm.setDepartmentHeads(null);
 
-        sut.validate(department, errors);
+        sut.validate(departmentForm, errors);
         verifyNoInteractions(errors);
     }
 
     @Test
     void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingAnyMember() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
-        Department department = createDepartment("Admins");
-        department.setDepartmentHeads(Collections.singletonList(person));
-        department.setMembers(null);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setDepartmentHeads(List.of(person));
+        departmentForm.setMembers(null);
 
-        sut.validate(department, errors);
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
     }
 
     @Test
     void ensureCanNotSetAPersonAsDepartmentHeadWithoutSettingThePersonAsMember() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(Collections.singletonList(Role.DEPARTMENT_HEAD));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
 
-        Department department = createDepartment("Admins");
-        department.setDepartmentHeads(Collections.singletonList(person));
-        department.setMembers(Collections.singletonList(new Person("muster", "Muster", "Marlene", "muster@example.org")));
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setDepartmentHeads(List.of(person));
+        departmentForm.setMembers(List.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
-        sut.validate(department, errors);
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadNotAssigned");
     }
 
     @Test
     void ensureCanNotSetAPersonWithoutDepartmentHeadRoleAsDepartmentHead() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(Role.USER));
 
-        Department department = createDepartment("Admins");
-        department.setDepartmentHeads(Collections.singletonList(person));
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setDepartmentHeads(List.of(person));
 
-        sut.validate(department, errors);
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("departmentHeads", "department.members.error.departmentHeadHasNoAccess");
     }
 
     @Test
     void ensureCanNotSetAPersonWithoutSecondStageAuthorityRoleAsSecondStageAutority() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(Collections.singletonList(Role.USER));
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(Role.USER));
 
-        Department department = createDepartment("Admins");
-        department.setSecondStageAuthorities(Collections.singletonList(person));
-        department.setTwoStageApproval(true);
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department");
+        departmentForm.setSecondStageAuthorities(List.of(person));
+        departmentForm.setTwoStageApproval(true);
 
-        sut.validate(department, errors);
+        sut.validate(departmentForm, errors);
         verify(errors).rejectValue("secondStageAuthorities", "department.members.error.secondStageHasNoAccess");
     }
 }

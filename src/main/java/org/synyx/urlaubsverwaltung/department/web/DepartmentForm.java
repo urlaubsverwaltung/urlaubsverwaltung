@@ -1,54 +1,29 @@
-package org.synyx.urlaubsverwaltung.department;
+package org.synyx.urlaubsverwaltung.department.web;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import static java.time.ZoneOffset.UTC;
+public class DepartmentForm {
 
-/**
- * Department represents an organisation unit of a company.
- */
-@Entity
-public class Department extends AbstractPersistable<Integer> {
-
-    @Column(nullable = false)
+    private Integer id;
     private String name;
-
     private String description;
-
     private LocalDate lastModification;
-
-    // flag for two stage approval process
     private boolean twoStageApproval;
-
-    @CollectionTable(name = "Department_Member")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> members = new ArrayList<>();
-
-    @CollectionTable(name = "Department_DepartmentHead")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> departmentHeads = new ArrayList<>();
-
-    @CollectionTable(name = "Department_SecondStageAuthority")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
-    public Department() {
-        this.lastModification = LocalDate.now(UTC);
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -68,16 +43,11 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getLastModification() {
-        return this.lastModification;
+        return lastModification;
     }
 
     public void setLastModification(LocalDate lastModification) {
         this.lastModification = lastModification;
-    }
-
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
     }
 
     public boolean isTwoStageApproval() {
@@ -89,11 +59,7 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
     public List<Person> getMembers() {
-        if (members == null) {
-            members = Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(members);
+        return members;
     }
 
     public void setMembers(List<Person> members) {
@@ -101,11 +67,7 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
     public List<Person> getDepartmentHeads() {
-        if (departmentHeads == null) {
-            departmentHeads = Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(departmentHeads);
+        return departmentHeads;
     }
 
     public void setDepartmentHeads(List<Person> departmentHeads) {
@@ -113,11 +75,7 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
     public List<Person> getSecondStageAuthorities() {
-        if (secondStageAuthorities == null) {
-            secondStageAuthorities = Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(secondStageAuthorities);
+        return secondStageAuthorities;
     }
 
     public void setSecondStageAuthorities(List<Person> secondStageAuthorities) {
@@ -125,8 +83,31 @@ public class Department extends AbstractPersistable<Integer> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final DepartmentForm that = (DepartmentForm) o;
+        return twoStageApproval == that.twoStageApproval &&
+            Objects.equals(name, that.name) &&
+            Objects.equals(description, that.description) &&
+            Objects.equals(lastModification, that.lastModification) &&
+            Objects.equals(members, that.members) &&
+            Objects.equals(departmentHeads, that.departmentHeads) &&
+            Objects.equals(secondStageAuthorities, that.secondStageAuthorities);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, lastModification, twoStageApproval, members, departmentHeads, secondStageAuthorities);
+    }
+
+    @Override
     public String toString() {
-        return "Department{" +
+        return "DepartmentForm{" +
             "name='" + name + '\'' +
             ", description='" + description + '\'' +
             ", lastModification=" + lastModification +
