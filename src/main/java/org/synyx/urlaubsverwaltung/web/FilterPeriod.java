@@ -13,10 +13,10 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 /**
  * Represents a period of time to filter requests by.
  */
-public class FilterPeriod {
+public final class FilterPeriod {
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
     public FilterPeriod(LocalDate startDate, LocalDate endDate) {
 
@@ -44,14 +44,6 @@ public class FilterPeriod {
         return Optional.ofNullable(endDate)
             .map(date -> date.format(DateTimeFormatter.ISO_DATE))
             .orElse("");
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     @Override
