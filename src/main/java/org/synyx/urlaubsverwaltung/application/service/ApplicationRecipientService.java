@@ -47,7 +47,17 @@ class ApplicationRecipientService {
     /**
      * Depending on application issuer role the recipients for allow/remind mail are generated.
      *
-     * <p>USER -> DEPARTMENT_HEAD DEPARTMENT_HEAD -> SECOND_STAGE_AUTHORITY, BOSS SECOND_STAGE_AUTHORITY -> BOSS</p>
+     * without DEPARTMENTS:
+     * USER -> BOSS with NOTIFICATION_BOSS_ALL
+     *
+     * with DEPARTMENTS (no SECOND_STAGE_AUTHORITY):
+     * USER -> DEPARTMENT_HEAD and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
+     * DEPARTMENT_HEAD -> OTHER DEPARTMENT_HEADs and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
+     *
+     * with DEPARTMENTS (with SECOND_STAGE_AUTHORITY):
+     * USER -> DEPARTMENT_HEAD and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
+     * DEPARTMENT_HEAD -> OTHER DEPARTMENT_HEADs and SECOND_STAGE_AUTHORITY and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
+     * SECOND_STAGE_AUTHORITY -> (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
      *
      * @param application to find out recipients for
      * @return list of recipients for the given application allow/remind request
@@ -81,7 +91,7 @@ class ApplicationRecipientService {
             return concat(bosses, relevantBosses, secondStageAuthorities, responsibleDepartmentHeads);
         }
 
-        //boss and user
+        // boss and user
         List<Person> responsibleDepartmentHeads = getResponsibleDepartmentHeads(applicationPerson);
         return concat(bosses, relevantBosses, responsibleDepartmentHeads);
     }

@@ -114,7 +114,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             applicationMailService.sendAppliedForLeaveByOfficeNotification(savedApplication, createdComment);
         }
 
-        // bosses gets email that a new application for leave has been created
+        // relevant management person gets email that a new application for leave has been created
         applicationMailService.sendNewApplicationNotification(savedApplication, createdComment);
 
         // update remaining vacation days (if there is already a holidays account for next year)
