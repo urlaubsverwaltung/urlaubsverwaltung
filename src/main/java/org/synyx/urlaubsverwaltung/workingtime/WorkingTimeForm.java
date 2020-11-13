@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-class WorkingTimeForm {
+public class WorkingTimeForm {
 
     private LocalDate validFrom;
     private List<Integer> workingDays = new ArrayList<>();
