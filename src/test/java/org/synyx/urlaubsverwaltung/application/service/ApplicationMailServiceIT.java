@@ -420,7 +420,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong date - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -469,7 +469,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 

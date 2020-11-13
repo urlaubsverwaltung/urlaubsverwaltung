@@ -319,7 +319,7 @@ class ApplicationMailService {
         }
 
         // send reject information to all other relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsForAllowAndRemind(application);
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.revoked.management")
