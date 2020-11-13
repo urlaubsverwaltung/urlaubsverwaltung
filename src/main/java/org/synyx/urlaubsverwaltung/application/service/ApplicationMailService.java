@@ -187,8 +187,8 @@ class ApplicationMailService {
             .build();
         mailService.send(mailToApplicant);
 
-        // send reject information to all other relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        // send reject information to the office
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsWithOfficeNotifications();
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest")

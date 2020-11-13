@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -99,32 +98,6 @@ class ApplicationRecipientService {
     List<Person> getRecipientsWithOfficeNotifications() {
         return personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE);
     }
-
-    /**
-     * Returns the relevant recipients for a given person.
-     * <p>
-     * If the person is in a department than return
-     * - the persons with the role department head for this user
-     * else return
-     * - all persons with the notification type {@code NOTIFICATION_OFFICE}
-     *
-     * @param application that has been rejected
-     * @return all relevant recipients to inform
-     */
-    List<Person> getRelevantRecipients(Application application) {
-        final List<Person> recipients = new ArrayList<>();
-
-        final List<Person> responsibleDepartmentHeads = getResponsibleDepartmentHeads(application.getPerson());
-        if (!responsibleDepartmentHeads.isEmpty()) {
-            recipients.addAll(responsibleDepartmentHeads);
-        } else {
-            final List<Person> officePersons = personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE);
-            recipients.addAll(officePersons);
-        }
-
-        return recipients;
-    }
-
 
     private Predicate<Person> bossesForDepartmentOf(Person applicationPerson) {
         return boss ->

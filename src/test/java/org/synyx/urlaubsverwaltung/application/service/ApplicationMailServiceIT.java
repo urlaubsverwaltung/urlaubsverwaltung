@@ -233,8 +233,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setStartDate(LocalDate.of(2020, 5, 29));
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
-        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         sut.sendCancellationRequest(application, comment);
 
@@ -253,15 +252,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentPerson).contains("/web/application/1234");
 
         // send mail to all relevant persons?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
         assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
-        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Relevant Person");
+        assertThat(content).contains("Hallo Marlene Muster");
         assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
         assertThat(content).contains("/web/application/1234");
     }

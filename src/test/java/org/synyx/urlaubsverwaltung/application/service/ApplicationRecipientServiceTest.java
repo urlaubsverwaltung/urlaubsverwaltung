@@ -26,11 +26,9 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_DEPARTMENTS;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -241,33 +239,6 @@ class ApplicationRecipientServiceTest {
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
         assertThat(recipientsForAllowAndRemind).contains(boss);
-    }
-
-    @Test
-    void getRelevantRecipientsAndPersonIsInDepartment() {
-        final Person normalUser = createPerson("normalUser", USER);
-        final Application application = getHolidayApplication(normalUser);
-
-        final Person departmentHead = createPerson("departmentHead", DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
-
-        final List<Person> relevantRecipients = sut.getRelevantRecipients(application);
-        assertThat(relevantRecipients).containsOnly(departmentHead);
-    }
-
-    @Test
-    void getRelevantRecipientsAndPersonIsNotInDepartment() {
-        final Person normalUser = createPerson("normalUser", USER);
-        final Application application = getHolidayApplication(normalUser);
-
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(emptyList());
-
-        final Person office = createPerson("office", OFFICE);
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE)).thenReturn(List.of(office));
-
-        final List<Person> relevantRecipients = sut.getRelevantRecipients(application);
-        assertThat(relevantRecipients).containsOnly(office);
     }
 
     private Application getHolidayApplication(Person normalUser) {

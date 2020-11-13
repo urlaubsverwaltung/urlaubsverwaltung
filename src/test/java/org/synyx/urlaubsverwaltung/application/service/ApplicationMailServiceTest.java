@@ -241,7 +241,7 @@ class ApplicationMailServiceTest {
         model.put("comment", applicationComment);
 
         final List<Person> relevantPersons = List.of(new Person());
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(relevantPersons);
 
         sut.sendCancellationRequest(application, applicationComment);
 
