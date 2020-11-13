@@ -29,13 +29,15 @@ async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
   const isoDateString = dateElement.value ? formatISO(parsedDate, { representation: "date" }) : "";
 
   duetDateElement.setAttribute("style", "--duet-radius=0");
-  duetDateElement.setAttribute("id", dateElement.getAttribute("id"));
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
-  duetDateElement.setAttribute("name", dateElement.getAttribute("name"));
   duetDateElement.setAttribute("value", isoDateString);
   dateElement.replaceWith(duetDateElement);
 
   await waitForDatePickerHydration(duetDateElement);
+
+  const duetDateInputElement = duetDateElement.querySelector("input");
+  duetDateInputElement.setAttribute("id", dateElement.getAttribute("id"));
+  duetDateInputElement.setAttribute("name", dateElement.getAttribute("name"));
 
   const monthElement = duetDateElement.querySelector(".duet-date__select--month");
   const yearElement = duetDateElement.querySelector(".duet-date__select--year");
@@ -83,6 +85,8 @@ async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
 
   monthElement.addEventListener("change", showAbsences);
   yearElement.addEventListener("change", showAbsences);
+
+  return duetDateElement;
 }
 
 function waitForDatePickerHydration(rootElement) {

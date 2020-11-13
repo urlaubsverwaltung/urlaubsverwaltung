@@ -34,9 +34,9 @@ describe("create-datepicker-instances", () => {
 
     await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
 
-    expect(document.querySelector("#just-a-date-picker").tagName).toBe("INPUT");
-    expect(document.querySelector("#awesome-date-picker-1").tagName).toBe("DUET-DATE-PICKER");
-    expect(document.querySelector("#awesome-date-picker-2").tagName).toBe("DUET-DATE-PICKER");
+    expect(document.querySelector("#just-a-date-picker").closest("duet-date-picker")).toBeNull();
+    expect(document.querySelector("#awesome-date-picker-1").closest("duet-date-picker")).toBeTruthy();
+    expect(document.querySelector("#awesome-date-picker-2").closest("duet-date-picker")).toBeTruthy();
   });
 
   test("sets 'duet-radius' to 0", async () => {
@@ -66,7 +66,7 @@ describe("create-datepicker-instances", () => {
 
     await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
 
-    expect(document.querySelector("duet-date-picker").getAttribute("id")).toBe("awesome-date");
+    expect(document.querySelector("duet-date-picker input").getAttribute("id")).toBe("awesome-date");
   });
 
   test("assigns original 'class' attribute", async () => {
@@ -98,7 +98,7 @@ describe("create-datepicker-instances", () => {
 
     await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
 
-    expect(document.querySelector("duet-date-picker").getAttribute("name")).toBe("start-date");
+    expect(document.querySelector("duet-date-picker input").getAttribute("name")).toBe("start-date");
   });
 
   test("fails to render with preset date value but missing iso-value", async () => {

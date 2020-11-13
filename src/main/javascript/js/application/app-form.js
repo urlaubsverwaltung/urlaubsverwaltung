@@ -1,41 +1,47 @@
 import $ from "jquery";
 import { parseISO } from "date-fns";
 import parseQueryString from "../parse-query-string";
-import { createDatepickerInstances } from "../../components/datepicker";
+import { createDatepicker } from "../../components/datepicker";
 import "../../components/timepicker";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 $(document).ready(async function () {
   const { apiPrefix: urlPrefix, personId } = window.uv;
+  let fromDateElement;
+  let toDateElement;
+
+  function updateSelectionHints() {
+    const dayLength = $("input:radio[name=dayLength]:checked").val();
+    const startDate = parseISO(fromDateElement.value);
+    const toDate = parseISO(toDateElement.value);
+
+    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
+    sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
+  }
 
   function getPersonId() {
     return personId;
   }
 
-  function onSelect(event) {
-    const target = event.target;
-    const fromDateElement = document.querySelector("#from");
-    const toDateElement = document.querySelector("#to");
-
-    if (target === fromDateElement && !toDateElement.value) {
+  function setDefaultToDateValue() {
+    if (!toDateElement.value) {
       toDateElement.value = fromDateElement.value;
     }
-
-    const dayLength = $("input:radio[name=dayLength]:checked").val();
-    const startDate = parseISO(fromDateElement.value);
-    const toDate = parseISO(toDateElement.value);
-
-    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
-    sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
   }
 
-  const selectors = ["#from", "#to", "#at"];
+  const [fromDateResult, toDateResult] = await Promise.allSettled([
+    createDatepicker("#from", {
+      urlPrefix,
+      getPersonId,
+      onSelect: compose(updateSelectionHints, setDefaultToDateValue),
+    }),
+    createDatepicker("#to", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
+    createDatepicker("#at", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
+  ]);
 
-  // createDatepickerInstances also initialises the jquery-ui datepicker
-  // with the correct locale (en or de or ...)
-  // if we don't wait here the datepicker instances below will always be english (default)
-  await createDatepickerInstances(selectors, urlPrefix, getPersonId, onSelect);
+  fromDateElement = fromDateResult.value;
+  toDateElement = toDateResult.value;
 
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
   const { from, to } = parseQueryString(window.location.search);
@@ -70,3 +76,7 @@ $(document).ready(async function () {
     scrollDefault: "now",
   });
 });
+
+function compose(...functions) {
+  return functions.reduce((a, b) => (...arguments_) => a(b(...arguments_)));
+}
