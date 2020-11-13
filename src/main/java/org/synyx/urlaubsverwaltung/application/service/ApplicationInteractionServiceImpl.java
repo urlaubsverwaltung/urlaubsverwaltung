@@ -260,7 +260,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         if (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED)) {
             cancelApplication(application, canceller, comment);
-        } else {
+        } else if (application.hasStatus(WAITING)) {
             revokeApplication(application, canceller, comment);
         }
 
