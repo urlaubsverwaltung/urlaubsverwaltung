@@ -351,7 +351,8 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send cancelled by office information to all other relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        relevantRecipientsToInform.addAll(applicationRecipientService.getRecipientsWithOfficeNotifications());
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancelled.management")

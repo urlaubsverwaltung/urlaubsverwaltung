@@ -26,6 +26,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -519,7 +520,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Geht leider nicht");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(relevantPerson));
+        final List<Person> relevantPersons = new ArrayList<>();
+        relevantPersons.add(relevantPerson);
+
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         sut.sendCancelledByOfficeNotification(application, comment);
 

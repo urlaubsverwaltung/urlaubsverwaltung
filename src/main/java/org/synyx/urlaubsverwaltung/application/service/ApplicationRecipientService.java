@@ -46,14 +46,14 @@ class ApplicationRecipientService {
 
     /**
      * Depending on application issuer role the recipients for allow/remind mail are generated.
-     *
+     * <p>
      * without DEPARTMENTS:
      * USER -> BOSS with NOTIFICATION_BOSS_ALL
-     *
+     * <p>
      * with DEPARTMENTS (no SECOND_STAGE_AUTHORITY):
      * USER -> DEPARTMENT_HEAD and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
      * DEPARTMENT_HEAD -> OTHER DEPARTMENT_HEADs and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
-     *
+     * <p>
      * with DEPARTMENTS (with SECOND_STAGE_AUTHORITY):
      * USER -> DEPARTMENT_HEAD and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
      * DEPARTMENT_HEAD -> OTHER DEPARTMENT_HEADs and SECOND_STAGE_AUTHORITY and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
@@ -94,6 +94,10 @@ class ApplicationRecipientService {
         // boss and user
         List<Person> responsibleDepartmentHeads = getResponsibleDepartmentHeads(applicationPerson);
         return concat(bosses, relevantBosses, responsibleDepartmentHeads);
+    }
+
+    List<Person> getRecipientsWithOfficeNotifications() {
+        return personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE);
     }
 
     /**

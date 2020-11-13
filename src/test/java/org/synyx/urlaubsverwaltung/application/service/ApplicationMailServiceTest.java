@@ -25,6 +25,9 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -387,6 +390,7 @@ class ApplicationMailServiceTest {
     void sendCancelledByOfficeNotification() {
 
         final Person person = new Person();
+        final Person office = new Person();
 
         final Application application = new Application();
         application.setPerson(person);
@@ -397,7 +401,11 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("comment", comment);
 
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(person));
+        final List<Person> relevantPersons = new ArrayList<>();
+        relevantPersons.add(person);
+
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         sut.sendCancelledByOfficeNotification(application, comment);
 
@@ -408,7 +416,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("cancelled_by_office");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
-        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person, office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("cancelled_by_office_management");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
