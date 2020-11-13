@@ -26,8 +26,6 @@ import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,7 +145,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "something");
         model.put("comment", applicationComment);
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(person));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(person));
 
         sut.sendRejectedNotification(application, applicationComment);
 
@@ -404,7 +402,7 @@ class ApplicationMailServiceTest {
         final List<Person> relevantPersons = new ArrayList<>();
         relevantPersons.add(person);
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
         when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         sut.sendCancelledByOfficeNotification(application, comment);
@@ -448,7 +446,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(recipients);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 

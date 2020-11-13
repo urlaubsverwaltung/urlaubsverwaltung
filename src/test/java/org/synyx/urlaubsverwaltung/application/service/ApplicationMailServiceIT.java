@@ -139,7 +139,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setBoss(boss);
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@firma.test");
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, departmentHead));
 
         sut.sendRejectedNotification(application, comment);
 
@@ -419,7 +419,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong date - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -468,7 +468,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -522,7 +522,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final List<Person> relevantPersons = new ArrayList<>();
         relevantPersons.add(relevantPerson);
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
         when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         sut.sendCancelledByOfficeNotification(application, comment);
@@ -576,7 +576,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
         sut.sendNewApplicationNotification(application, comment);
 
@@ -615,7 +615,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(secondStage);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
         sut.sendNewApplicationNotification(application, comment);
 
@@ -650,7 +650,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(departmentHead);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, secondStage));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, secondStage));
 
         sut.sendNewApplicationNotification(application, comment);
 
@@ -743,7 +743,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
         sut.sendRemindBossNotification(application);
 
@@ -787,9 +787,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@example.org");
         final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@example.org");
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationA)).thenReturn(asList(boss, departmentHeadA));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationB)).thenReturn(asList(boss, departmentHeadB));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationC)).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationA)).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationB)).thenReturn(asList(boss, departmentHeadB));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationC)).thenReturn(asList(boss, departmentHeadA));
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
 

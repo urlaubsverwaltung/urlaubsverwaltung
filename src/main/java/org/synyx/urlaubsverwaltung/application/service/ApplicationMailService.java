@@ -109,7 +109,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send reject information to all other relevant
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.rejected_information")
@@ -319,7 +319,7 @@ class ApplicationMailService {
         }
 
         // send reject information to all other relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.revoked.management")
@@ -351,7 +351,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send cancelled by office information to all other relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         relevantRecipientsToInform.addAll(applicationRecipientService.getRecipientsWithOfficeNotifications());
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
@@ -383,7 +383,7 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
@@ -448,7 +448,7 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.remind")
@@ -475,7 +475,7 @@ class ApplicationMailService {
          * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
          */
         Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
-            .flatMap(application -> applicationRecipientService.getRecipientsForAllowAndRemind(application).stream()
+            .flatMap(application -> applicationRecipientService.getRecipientsOfInterest(application).stream()
                 .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
             .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toList())));
 

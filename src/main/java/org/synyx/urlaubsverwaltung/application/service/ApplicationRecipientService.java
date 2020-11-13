@@ -44,7 +44,8 @@ class ApplicationRecipientService {
 
 
     /**
-     * Depending on application issuer role the recipients for allow/remind mail are generated.
+     * Depending on application issuer role the recipients for allowed/remind/rejected/revoked/cancelled mail are
+     * generated.
      * <p>
      * without DEPARTMENTS:
      * USER -> BOSS with NOTIFICATION_BOSS_ALL
@@ -61,7 +62,7 @@ class ApplicationRecipientService {
      * @param application to find out recipients for
      * @return list of recipients for the given application allow/remind request
      */
-    List<Person> getRecipientsForAllowAndRemind(Application application) {
+    List<Person> getRecipientsOfInterest(Application application) {
 
         /*
          * NOTE:
