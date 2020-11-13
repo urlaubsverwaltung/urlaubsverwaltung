@@ -99,6 +99,7 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
+        // send reject information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.rejected")
@@ -106,6 +107,16 @@ class ApplicationMailService {
             .build();
 
         mailService.send(mailToApplicant);
+
+        // send reject information to all other relevant
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
+        final Mail mailToRelevantRecipients = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.rejected_information")
+            .withTemplate("rejected_information", model)
+            .build();
+        mailService.send(mailToRelevantRecipients);
+
     }
 
     /**
@@ -168,12 +179,21 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, createdComment);
 
+        // send mail to applicant
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.cancellationRequest.applicant")
+            .withTemplate("application_cancellation_request_applicant", model)
+            .build();
+        mailService.send(mailToApplicant);
+
+        // send reject information to the office
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsWithOfficeNotifications();
         final Mail mailToOffice = Mail.builder()
-            .withRecipient(NOTIFICATION_OFFICE)
+            .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest")
             .withTemplate("application_cancellation_request", model)
             .build();
-
         mailService.send(mailToOffice);
     }
 
@@ -267,6 +287,49 @@ class ApplicationMailService {
     }
 
     /**
+     * Send emails to the applicant and to all relevant persons if an application for leave got revoked.
+     *
+     * @param application the application which got cancelled
+     * @param comment     describes the reason of the revocation
+     */
+    void sendRevokedNotifications(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(COMMENT, comment);
+
+        if (application.getPerson().equals(application.getCanceller())) {
+
+            final Mail mailToApplicant = Mail.builder()
+                .withRecipient(application.getPerson())
+                .withSubject("subject.application.revoked.applicant")
+                .withTemplate("revoked_applicant", model)
+                .build();
+
+            mailService.send(mailToApplicant);
+        } else {
+
+            final Mail mailToNotApplicant = Mail.builder()
+                .withRecipient(application.getPerson())
+                .withSubject("subject.application.revoked.notApplicant")
+                .withTemplate("revoked_not_applicant", model)
+                .build();
+
+            mailService.send(mailToNotApplicant);
+        }
+
+        // send reject information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
+        final Mail mailToRelevantPersons = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.revoked.management")
+            .withTemplate("revoked_management", model)
+            .build();
+
+        mailService.send(mailToRelevantPersons);
+    }
+
+    /**
      * Send an email to the applicant if an application for leave got cancelled by office.
      *
      * @param application the application which got cancelled
@@ -278,6 +341,7 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(COMMENT, comment);
 
+        // send cancelled by office information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelled.user")
@@ -285,6 +349,17 @@ class ApplicationMailService {
             .build();
 
         mailService.send(mailToApplicant);
+
+        // send cancelled by office information to all other relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
+        relevantRecipientsToInform.addAll(applicationRecipientService.getRecipientsWithOfficeNotifications());
+        final Mail mailToRelevantPersons = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.cancelled.management")
+            .withTemplate("cancelled_by_office_management", model)
+            .build();
+
+        mailService.send(mailToRelevantPersons);
     }
 
 
@@ -308,7 +383,7 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
@@ -373,7 +448,7 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.remind")
@@ -400,7 +475,7 @@ class ApplicationMailService {
          * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
          */
         Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
-            .flatMap(application -> applicationRecipientService.getRecipientsForAllowAndRemind(application).stream()
+            .flatMap(application -> applicationRecipientService.getRecipientsOfInterest(application).stream()
                 .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
             .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toList())));
 

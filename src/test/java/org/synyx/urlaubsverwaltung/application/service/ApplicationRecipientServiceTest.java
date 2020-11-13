@@ -64,7 +64,7 @@ class ApplicationRecipientServiceTest {
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(emptyList());
 
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).contains(departmentHead, boss);
     }
 
@@ -83,7 +83,7 @@ class ApplicationRecipientServiceTest {
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(emptyList());
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).doesNotContain(departmentHead).contains(boss);
     }
 
@@ -103,7 +103,7 @@ class ApplicationRecipientServiceTest {
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(emptyList());
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).hasSize(2).contains(departmentHead, boss);
     }
 
@@ -125,7 +125,7 @@ class ApplicationRecipientServiceTest {
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(emptyList());
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).doesNotContain(departmentHead).contains(secondStage, boss);
     }
 
@@ -139,7 +139,7 @@ class ApplicationRecipientServiceTest {
         final Person boss = createPerson("boss", BOSS);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(singletonList(boss));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).hasSize(1).contains(boss);
     }
 
@@ -178,7 +178,7 @@ class ApplicationRecipientServiceTest {
         when(departmentService.isDepartmentHeadOfPerson(head2, head1)).thenReturn(true);
         when(departmentService.isSecondStageAuthorityOfPerson(secondStage, head1)).thenReturn(true);
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).contains(head2, secondStage);
     }
 
@@ -215,7 +215,7 @@ class ApplicationRecipientServiceTest {
         when(departmentService.getAssignedDepartmentsOfMember(bossOfDepartment)).thenReturn(singletonList(department));
         when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(singletonList(department));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).contains(boss, bossOfDepartment);
     }
 
@@ -237,7 +237,7 @@ class ApplicationRecipientServiceTest {
         when(departmentService.getAssignedDepartmentsOfMember(bossOfDepartment)).thenReturn(emptyList());
         when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(singletonList(department));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsForAllowAndRemind(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).contains(boss);
     }
 

@@ -26,6 +26,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
@@ -124,7 +125,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureNotificationAboutRejectedApplicationIsSentToPerson() throws MessagingException, IOException {
+    void ensureNotificationAboutRejectedApplicationIsSentToApplierAndRelevantPersons() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
@@ -136,6 +137,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
         application.setBoss(boss);
+
+        final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@firma.test");
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, departmentHead));
 
         sut.sendRejectedNotification(application, comment);
 
@@ -155,6 +159,34 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("/web/application/1234");
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
+
+        // was email sent to boss
+        MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(inboxBoss.length).isOne();
+
+        Message msgBoss = inboxBoss[0];
+        assertThat(msgBoss.getSubject()).isEqualTo("Ein Urlaubsantrag wurde abgelehnt");
+
+        String contentBoss = (String) msgBoss.getContent();
+        assertThat(contentBoss).contains("Hallo Hugo Boss");
+        assertThat(contentBoss).contains("der von Lieschen Müller am");
+        assertThat(contentBoss).contains("gestellte Antrag wurde von Hugo Boss abgelehnt");
+        assertThat(contentBoss).contains(comment.getText());
+        assertThat(contentBoss).contains(comment.getPerson().getNiceName());
+
+        // was email sent to departmentHead
+        MimeMessage[] inboxDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        assertThat(inboxDepartmentHead.length).isOne();
+
+        Message msgDepartmentHead = inboxDepartmentHead[0];
+        assertThat(msgDepartmentHead.getSubject()).isEqualTo("Ein Urlaubsantrag wurde abgelehnt");
+
+        String contentDepartmentHead = (String) msgDepartmentHead.getContent();
+        assertThat(contentDepartmentHead).contains("Hallo Department Head");
+        assertThat(contentDepartmentHead).contains("der von Lieschen Müller am");
+        assertThat(contentDepartmentHead).contains("gestellte Antrag wurde von Hugo Boss abgelehnt");
+        assertThat(contentDepartmentHead).contains(comment.getText());
+        assertThat(contentDepartmentHead).contains(comment.getPerson().getNiceName());
     }
 
     @Test
@@ -185,7 +217,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
     @Test
-    void ensureOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
+    void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
@@ -198,9 +230,28 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Bitte stornieren!");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2020, 5, 29));
+        application.setEndDate(LocalDate.of(2020, 5, 29));
+
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         sut.sendCancellationRequest(application, comment);
 
+        // send mail to applicant?
+        MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxPerson.length).isOne();
+
+        Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).contains("Anfrage zur Stornierung wurde eingereicht");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
+
+        String contentPerson = (String) msgPerson.getContent();
+        assertThat(contentPerson).contains("Hallo Lieschen Müller");
+        assertThat(contentPerson).contains("deine Anfrage zum Stornieren deines bereits genehmigten Antrags ");
+        assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde eingereicht.");
+        assertThat(contentPerson).contains("/web/application/1234");
+
+        // send mail to all relevant persons?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inbox.length).isOne();
 
@@ -208,7 +259,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Marlene Muster");
         assertThat(content).contains("hat beantragt den bereits genehmigten Urlaub");
@@ -357,6 +407,103 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
+    void ensurePersonAndRelevantPersonsGetsANotificationIfPersonCancelledOneOfHisApplications() throws MessagingException,
+        IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
+
+        final Application application = createApplication(person);
+        application.setCanceller(person);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+        comment.setText("Wrong date - revoked");
+
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
+
+        sut.sendRevokedNotifications(application, comment);
+
+        // was email sent to applicant
+        MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxApplicant.length).isOne();
+
+        Message msg = inboxApplicant[0];
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde erfolgreich storniert");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("nicht genehmigter Antrag wurde von dir erfolgreich");
+        assertThat(content).contains(comment.getText());
+        assertThat(content).contains(comment.getPerson().getNiceName());
+        assertThat(content).contains("/web/application/1234");
+
+        // was email sent to relevant person
+        MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+
+        Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein nicht genehmigter Urlaubsantrag wurde erfolgreich storniert");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+
+        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
+        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
+        assertThat(contentRelevantPerson).contains("nicht genehmigter Antrag wurde von Lieschen Müller wurde durch Lieschen Müller storniert.");
+        assertThat(contentRelevantPerson).contains(comment.getText());
+        assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
+        assertThat(contentRelevantPerson).contains("/web/application/1234");
+    }
+
+    @Test
+    void ensurePersonAndRelevantPersonsGetsANotificationIfNotApplicantCancelledThisApplication() throws MessagingException,
+        IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
+        final Application application = createApplication(person);
+
+        final Person office = new Person("office", "Person", "Office", "office@firma.test");
+        application.setCanceller(office);
+
+        final ApplicationComment comment = new ApplicationComment(office, clock);
+        comment.setText("Wrong information - revoked");
+
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
+
+        sut.sendRevokedNotifications(application, comment);
+
+        // was email sent to applicant
+        MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxApplicant.length).isOne();
+
+        Message msg = inboxApplicant[0];
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde storniert");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Lieschen Müller");
+        assertThat(content).contains("gestellter, nicht genehmigter Antrag wurde von Office Person storniert.");
+        assertThat(content).contains(comment.getText());
+        assertThat(content).contains(comment.getPerson().getNiceName());
+        assertThat(content).contains("/web/application/1234");
+
+        // was email sent to relevant person
+        MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+
+        Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein nicht genehmigter Urlaubsantrag wurde erfolgreich storniert");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+
+        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
+        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
+        assertThat(contentRelevantPerson).contains("nicht genehmigter Antrag wurde von Lieschen Müller wurde durch Office Person storniert.");
+        assertThat(contentRelevantPerson).contains(comment.getText());
+        assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
+        assertThat(contentRelevantPerson).contains("/web/application/1234");
+    }
+
+    @Test
     void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
@@ -365,14 +512,22 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2020, 5, 29));
         application.setCanceller(office);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Geht leider nicht");
 
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        final List<Person> relevantPersons = new ArrayList<>();
+        relevantPersons.add(relevantPerson);
+
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
+
         sut.sendCancelledByOfficeNotification(application, comment);
 
-        // was email sent?
+        // was email sent to applicant?
         MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxApplicant.length).isOne();
 
@@ -380,13 +535,27 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).isEqualTo("Dein Antrag wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("Marlene Muster hat einen deiner Urlaubsanträge storniert.");
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
         assertThat(content).contains("/web/application/1234");
+
+        // was email sent to relevant person?
+        MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+
+        Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein Antrag wurde vom Office storniert");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+
+        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
+        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
+        assertThat(contentRelevantPerson).contains("Marlene Muster hat den Urlaubsantrag von Lieschen Müller vom 29.05.2020 storniert.");
+        assertThat(contentRelevantPerson).contains(comment.getText());
+        assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
+        assertThat(contentRelevantPerson).contains("/web/application/1234");
     }
 
     @Test
@@ -407,7 +576,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
         sut.sendNewApplicationNotification(application, comment);
 
@@ -446,7 +615,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(secondStage);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
         sut.sendNewApplicationNotification(application, comment);
 
@@ -481,7 +650,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(departmentHead);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, secondStage));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, secondStage));
 
         sut.sendNewApplicationNotification(application, comment);
 
@@ -574,7 +743,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
         sut.sendRemindBossNotification(application);
 
@@ -618,9 +787,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@example.org");
         final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@example.org");
 
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationA)).thenReturn(asList(boss, departmentHeadA));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationB)).thenReturn(asList(boss, departmentHeadB));
-        when(applicationRecipientService.getRecipientsForAllowAndRemind(applicationC)).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationA)).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationB)).thenReturn(asList(boss, departmentHeadB));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationC)).thenReturn(asList(boss, departmentHeadA));
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
 

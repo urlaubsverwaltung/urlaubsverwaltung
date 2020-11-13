@@ -48,12 +48,12 @@
 <uv:menu/>
 
 <div class="content">
-
     <div class="container">
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
+                    <sec:authorize
+                        access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
                     <sec:authorize access="hasAuthority('OFFICE')">
                     <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1"
                        data-title="<spring:message code="action.apply.vacation"/>">
@@ -68,8 +68,8 @@
                        data-title="<spring:message code="action.applications.statistics"/>">
                         <icon:presentation-chart-bar className="tw-w-5 tw-h-5"/>
                     </a>
-                </sec:authorize>
-                <uv:print/>
+                    </sec:authorize>
+    <uv:print/>
             </jsp:attribute>
             <jsp:body>
                 <h1>
@@ -106,9 +106,7 @@
             <div class="col-xs-12">
                 <c:choose>
                     <c:when test="${empty applications}">
-                        <p>
-                            <spring:message code="applications.none"/>
-                        </p>
+                        <p><spring:message code="applications.none"/></p>
                     </c:when>
                     <c:otherwise>
                         <table class="list-table selectable-table list-table-bt-0 tw-text-sm">
@@ -238,7 +236,5 @@
 
     </div>
 </div>
-
 </body>
-
 </html>

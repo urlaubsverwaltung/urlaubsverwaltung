@@ -74,6 +74,7 @@ public class ApplicationForLeaveViewController {
         }
 
         final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
+
         if (user.hasRole(SECOND_STAGE_AUTHORITY)) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));

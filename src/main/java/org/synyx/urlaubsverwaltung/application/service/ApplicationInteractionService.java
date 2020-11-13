@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
-import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Optional;
@@ -40,7 +38,7 @@ public interface ApplicationInteractionService {
 
     /**
      * Sets the application's state to rejected (only by privileged user) and informs the person of the application for
-     * leave that his vacation has been rejected.
+     * leave and all privileged persons that his vacation has been rejected.
      *
      * @param application    for leave
      * @param privilegedUser that rejected the application for leave

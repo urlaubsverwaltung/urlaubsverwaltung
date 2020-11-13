@@ -21,12 +21,11 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
-import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
+import org.synyx.urlaubsverwaltung.application.service.ImpatientAboutApplicationForLeaveProcessException;
+import org.synyx.urlaubsverwaltung.application.service.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -44,6 +43,13 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.T
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
@@ -105,12 +111,11 @@ public class ApplicationForLeaveDetailsViewController {
         final Person person = application.getPerson();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to see application for leave of user '%s'",
-                signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to see application for " +
+                "leave of user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
+        final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
         prepareDetailView(application, year, action, shortcut, model);
 
         return "application/app_detail";
@@ -187,8 +192,8 @@ public class ApplicationForLeaveDetailsViewController {
             .orElseThrow(() -> new UnknownPersonException(referUsername));
 
         final Person sender = personService.getSignedInUser();
-        boolean isBoss = sender.hasRole(BOSS);
-        boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
+        final boolean isBoss = sender.hasRole(BOSS);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
 
         if (isBoss || isDepartmentHead) {
             applicationInteractionService.refer(application, recipient, sender);
@@ -196,9 +201,8 @@ public class ApplicationForLeaveDetailsViewController {
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
-        throw new AccessDeniedException(format(
-            "User '%s' has not the correct permissions to refer application for leave to user '%s'",
-            sender.getId(), referUsername));
+        throw new AccessDeniedException(format("User '%s' has not the correct permissions to refer application for " +
+            "leave to user '%s'", sender.getId(), referUsername));
     }
 
 
@@ -243,29 +247,30 @@ public class ApplicationForLeaveDetailsViewController {
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
-        throw new AccessDeniedException(format(
-            "User '%s' has not the correct permissions to reject application for leave of user '%s'",
-            signedInUser.getId(), person.getId()));
+        throw new AccessDeniedException(format("User '%s' has not the correct permissions to reject application for " +
+            "leave of user '%s'", signedInUser.getId(), person.getId()));
     }
 
 
     /*
-     * Cancel an application for leave. Cancelling an application for leave on behalf for someone is allowed only for
-     * Office.
+     * Cancel an application for leave.
+     *
+     * Cancelling an application for leave on behalf for someone is allowed only for Office.
      */
     @PostMapping("/{applicationId}/cancel")
     public String cancelApplication(@PathVariable("applicationId") Integer applicationId,
-                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
+                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+                                    RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException {
 
-        final Application application = applicationService.getApplicationById(applicationId).orElseThrow(() ->
-            new UnknownApplicationForLeaveException(applicationId));
+        final Application application = applicationService.getApplicationById(applicationId)
+            .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
-        Person signedInUser = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
         final boolean isWaiting = application.hasStatus(WAITING);
         final boolean isAllowed = application.hasStatus(ALLOWED);
-        final boolean isTemporaryAllowed = application.hasStatus((TEMPORARY_ALLOWED));
+        final boolean isTemporaryAllowed = application.hasStatus(TEMPORARY_ALLOWED);
 
         // security check: only two cases where cancelling is possible
         // 1: user can cancel her own applications for leave if it has not been allowed yet
@@ -274,25 +279,21 @@ public class ApplicationForLeaveDetailsViewController {
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(Role.OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
+        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to cancel application for leave of user '%s'",
-                signedInUser.getId(), application.getPerson().getId()));
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel application " +
+                "for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
         }
 
         commentValidator.validate(comment, errors);
-
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
-
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=cancel";
         }
 
         applicationInteractionService.cancel(application, signedInUser, Optional.ofNullable(comment.getText()));
-
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 

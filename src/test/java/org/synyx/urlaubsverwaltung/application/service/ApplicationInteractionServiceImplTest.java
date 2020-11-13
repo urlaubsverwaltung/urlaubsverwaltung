@@ -14,8 +14,6 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.service.exception.ImpatientAboutApplicationForLeaveProcessException;
-import org.synyx.urlaubsverwaltung.application.service.exception.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -28,6 +26,7 @@ import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -49,9 +48,12 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.anyAbsenceMapping;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CONVERTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
@@ -162,8 +164,9 @@ class ApplicationInteractionServiceImplTest {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        applier.setPermissions(List.of(OFFICE));
 
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
@@ -667,7 +670,7 @@ class ApplicationInteractionServiceImplTest {
 
     // CANCEL APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
     @Test
-    void ensureCancellingNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesButSendsNoEmail() {
+    void ensureCancelledNotYetAllowedApplicationForLeaveChangesStateAndOtherAttributesAndSendsEmail() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
@@ -676,17 +679,17 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        sut.cancel(applicationForLeave, person, comment);
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        when(commentService.create(applicationForLeave, REVOKED, comment, person)).thenReturn(applicationComment);
 
+        sut.cancel(applicationForLeave, person, comment);
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.REVOKED);
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getCanceller()).isEqualTo(person);
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
-        verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(person));
-        verifyNoInteractions(applicationMailService);
+        verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -725,7 +728,7 @@ class ApplicationInteractionServiceImplTest {
         sut.cancel(applicationForLeave, person, comment);
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.CANCEL_REQUESTED), eq(comment), eq(person));
+        verify(commentService).create(eq(applicationForLeave), eq(CANCEL_REQUESTED), eq(comment), eq(person));
         verify(applicationMailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
@@ -741,6 +744,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        when(commentService.create(applicationForLeave, CANCELLED, comment, person)).thenReturn(applicationComment);
+
         sut.cancel(applicationForLeave, person, comment);
 
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
@@ -749,9 +755,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
-        verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(person));
-        verifyNoInteractions(applicationMailService);
+        verify(applicationMailService).sendCancelledByOfficeNotification(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -779,12 +783,12 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.CANCELLED), eq(comment), eq(canceller));
+        verify(commentService).create(eq(applicationForLeave), eq(CANCELLED), eq(comment), eq(canceller));
         verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
     @Test
-    void ensureCancellingNotYetAllowedApplicationForLeaveOnBehalfForSomeOneChangesStateAndOtherAttributesAndSendsAnEmail() {
+    void cancellingNotYetAllowedApplicationAsOffice() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -809,7 +813,36 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
-        verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendRevokedNotifications(eq(applicationForLeave), any(ApplicationComment.class));
+    }
+
+    @Test
+    void cancellingNotYetAllowedApplicationAsUser() {
+
+        final Person person = createPerson("muster");
+        final Person canceller = createPerson("canceller");
+
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
+            .thenReturn(applicationComment);
+
+        sut.cancel(applicationForLeave, canceller, comment);
+
+        assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.REVOKED);
+        assertThat(applicationForLeave.getPerson()).isEqualTo(person);
+        assertThat(applicationForLeave.getCanceller()).isEqualTo(canceller);
+        assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
+        assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
+
+        verify(applicationService).save(applicationForLeave);
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
+        verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
     }
 
     @Test

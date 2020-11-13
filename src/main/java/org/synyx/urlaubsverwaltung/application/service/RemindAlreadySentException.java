@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.application.service.exception;
+package org.synyx.urlaubsverwaltung.application.service;
 
 /**
  * Thrown in case the person of an application for leave tries to remind multiple times the privileged users to decide
@@ -6,7 +6,7 @@ package org.synyx.urlaubsverwaltung.application.service.exception;
  */
 public class RemindAlreadySentException extends Exception {
 
-    public RemindAlreadySentException(String message) {
+    RemindAlreadySentException(String message) {
 
         super(message);
     }

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.application.service.exception;
+package org.synyx.urlaubsverwaltung.application.service;
 
 /**
  * Thrown in case the person of an application for leave is too impatient and tries too early to remind the privileged
@@ -6,7 +6,7 @@ package org.synyx.urlaubsverwaltung.application.service.exception;
  */
 public class ImpatientAboutApplicationForLeaveProcessException extends Exception {
 
-    public ImpatientAboutApplicationForLeaveProcessException(String message) {
+    ImpatientAboutApplicationForLeaveProcessException(String message) {
 
         super(message);
     }
