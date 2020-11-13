@@ -87,7 +87,9 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
 
         // check if a two stage approval is set for the Department
-        departments.stream().filter(Department::isTwoStageApproval).forEach(department -> application.setTwoStageApproval(true));
+        departments.stream()
+            .filter(Department::isTwoStageApproval)
+            .forEach(department -> application.setTwoStageApproval(true));
 
         application.setStatus(ApplicationStatus.WAITING);
         application.setApplier(applier);
