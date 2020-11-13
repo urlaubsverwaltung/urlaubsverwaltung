@@ -144,7 +144,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "something");
         model.put("comment", applicationComment);
 
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(person));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(person));
 
         sut.sendRejectedNotification(application, applicationComment);
 

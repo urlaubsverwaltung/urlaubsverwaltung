@@ -38,7 +38,7 @@ public interface ApplicationInteractionService {
 
     /**
      * Sets the application's state to rejected (only by privileged user) and informs the person of the application for
-     * leave that his vacation has been rejected.
+     * leave and all privileged persons that his vacation has been rejected.
      *
      * @param application    for leave
      * @param privilegedUser that rejected the application for leave

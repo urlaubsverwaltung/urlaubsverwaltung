@@ -138,7 +138,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setBoss(boss);
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@firma.test");
-        when(applicationRecipientService.getRelevantRecipients(application)).thenReturn(List.of(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsForAllowAndRemind(application)).thenReturn(List.of(boss, departmentHead));
 
         sut.sendRejectedNotification(application, comment);
 

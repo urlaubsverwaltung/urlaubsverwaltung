@@ -109,7 +109,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send reject information to all other relevant
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRelevantRecipients(application);
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsForAllowAndRemind(application);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.rejected_information")
