@@ -290,7 +290,7 @@ class ApplicationMailService {
      * Send emails to the applicant and to all relevant persons if an application for leave got revoked.
      *
      * @param application the application which got cancelled
-     * @param comment     describes the reason of the cancellation
+     * @param comment     describes the reason of the revocation
      */
     void sendRevokedNotifications(Application application, ApplicationComment comment) {
 
