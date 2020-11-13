@@ -18,7 +18,6 @@ public enum ApplicationAction {
     CONVERTED,
     TEMPORARY_ALLOWED,
     ALLOWED,
-    RELEASED,
     REJECTED,
     CANCELLED,
     CANCEL_REQUESTED,
