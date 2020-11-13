@@ -81,17 +81,17 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:select path="federalState" id="federalStateType" class="form-control"
-                                             cssErrorClass="form-control error">
-                                    <form:option value=""><spring:message
-                                        code="person.form.workingTime.federalState.default"
-                                        arguments="${defaultFederalStateName}"/></form:option>
-                                    <option disabled='true'>---------------</option>
+                                <uv:select id="federalStateType" name="federalState">
+                                    <option value="">
+                                        <spring:message code="person.form.workingTime.federalState.default" arguments="${defaultFederalStateName}" />
+                                    </option>
+                                    <option disabled="disabled">---------------</option>
                                     <c:forEach items="${federalStateTypes}" var="federalStateType">
-                                        <form:option value="${federalStateType}"><spring:message
-                                            code="federalState.${federalStateType}"/></form:option>
+                                        <option value="${federalStateType}" ${workingTime.federalState == federalStateType ? 'selected="selected"' : ''}>
+                                            <spring:message code="federalState.${federalStateType}" />
+                                        </option>
                                     </c:forEach>
-                                </form:select>
+                                </uv:select>
                             </div>
                         </div>
 

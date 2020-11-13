@@ -104,22 +104,13 @@
                             <div class="col-md-9">
                                 <c:choose>
                                     <c:when test="${sickNote.id == null}">
-                                        <form:select path="person" id="employee" class="form-control"
-                                                     cssErrorClass="form-control error">
+                                        <uv:select id="employee" name="person">
                                             <c:forEach items="${persons}" var="person">
-                                                <c:choose>
-                                                    <c:when test="${sickNote.person.id == person.id}">
-                                                        <form:option value="${person.id}"
-                                                                     selected="selected">${person.niceName}</form:option>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <form:option
-                                                            value="${person.id}">${person.niceName}</form:option>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <option value="${person.id}" ${sickNote.person.id == person.id ? 'selected="selected"' : ''}>
+                                                    ${person.niceName}
+                                                </option>
                                             </c:forEach>
-                                        </form:select>
-                                        <span class="help-inline"><form:errors path="person" cssClass="error"/></span>
+                                        </uv:select>
                                     </c:when>
                                     <c:otherwise>
                                         <form:hidden path="id"/>
@@ -136,23 +127,13 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:select path="sickNoteType" id="sickNoteType" class="form-control"
-                                             cssErrorClass="form-control error">
+                                <uv:select id="sickNoteType" name="sickNoteType">
                                     <c:forEach items="${sickNoteTypes}" var="sickNoteType">
-                                        <c:choose>
-                                            <c:when test="${sickNoteType == sickNote.sickNoteType}">
-                                                <form:option value="${sickNoteType.id}" selected="selected">
-                                                    <spring:message code="${sickNoteType.messageKey}"/>
-                                                </form:option>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <form:option value="${sickNoteType.id}">
-                                                    <spring:message code="${sickNoteType.messageKey}"/>
-                                                </form:option>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <option value="${sickNoteType.id}" ${sickNoteType == sickNote.sickNoteType ? 'selected="selected"' : ''}>
+                                            <spring:message code="${sickNoteType.messageKey}"/>
+                                        </option>
                                     </c:forEach>
-                                </form:select>
+                                </uv:select>
                             </div>
                         </div>
 
