@@ -14,7 +14,9 @@ import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,6 +69,19 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .flashAttr("period", filterPeriod))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/statistics?from=2019-01-01&to=2019-08-01"));
+    }
+
+    @Test
+    void applicationForLeaveStatisticsRedirectsToStatisticsWithNullDates() throws Exception {
+
+        final int year = Year.now(Clock.systemUTC()).getValue();
+
+        final FilterPeriod filterPeriod = new FilterPeriod(null, null);
+
+        perform(post("/web/application/statistics")
+            .flashAttr("period", filterPeriod))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/statistics?from="+ year +"-01-01&to="+ year +"-12-31"));
     }
 
     @Test

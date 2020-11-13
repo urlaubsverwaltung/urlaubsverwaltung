@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 class FilterPeriodTest {
 
@@ -46,20 +48,24 @@ class FilterPeriodTest {
     @Test
     void ensureStartDateSetterIsOk() {
 
-        final FilterPeriod filterPeriod = new FilterPeriod(null, LocalDate.of(2199, MAY, 19));
-        filterPeriod.setStartDate(null);
+        final LocalDate now = LocalDate.now(Clock.systemUTC());
+        final LocalDate firstDayOfYear = getFirstDayOfYear(now.getYear());
 
-        assertThat(filterPeriod.getStartDateIsoValue()).isEmpty();
+        final FilterPeriod filterPeriod = new FilterPeriod(null, LocalDate.of(2199, MAY, 19));
+
+        assertThat(filterPeriod.getStartDateIsoValue()).isEqualTo(firstDayOfYear.toString());
         assertThat(filterPeriod.getEndDateIsoValue()).isEqualTo("2199-05-19");
     }
 
     @Test
     void ensureEndDateSetterIsOk() {
 
+        final LocalDate now = LocalDate.now(Clock.systemUTC());
+        final LocalDate lastDayOfYear = getLastDayOfYear(now.getYear());
+
         final FilterPeriod filterPeriod = new FilterPeriod(LocalDate.of(1899, MAY, 19), null);
-        filterPeriod.setEndDate(null);
 
         assertThat(filterPeriod.getStartDateIsoValue()).isEqualTo("1899-05-19");
-        assertThat(filterPeriod.getEndDateIsoValue()).isEmpty();
+        assertThat(filterPeriod.getEndDateIsoValue()).isEqualTo(lastDayOfYear.toString());
     }
 }

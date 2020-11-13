@@ -87,6 +87,19 @@ class SickDaysOverviewViewControllerTest {
     }
 
     @Test
+    void filterSickNotesWithNullDates() throws Exception {
+
+        final int year = Year.now(clock).getValue();
+
+        final FilterPeriod filterPeriod = new FilterPeriod(null, null);
+
+        perform(post("/web/sicknote/filter")
+            .flashAttr("period", filterPeriod))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/sicknote?from=" + year + "-01-01&to=" + year + "-12-31"));
+    }
+
+    @Test
     void periodsSickNotesWithDateRange() throws Exception {
 
         final Person person = new Person();
