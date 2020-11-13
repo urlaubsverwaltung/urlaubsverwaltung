@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.settings.TimeSettings;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -163,8 +164,9 @@ class ApplicationInteractionServiceImplTest {
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        applier.setPermissions(List.of(OFFICE));
 
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
