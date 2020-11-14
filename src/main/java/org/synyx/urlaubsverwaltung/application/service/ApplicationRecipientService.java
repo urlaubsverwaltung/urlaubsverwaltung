@@ -96,6 +96,11 @@ class ApplicationRecipientService {
         return concat(bosses, relevantBosses, responsibleDepartmentHeads);
     }
 
+    /**
+     * Get all persons with the office notification enabled.
+     *
+     * @return list of recipients with NOTIFICATION_OFFICE
+     */
     List<Person> getRecipientsWithOfficeNotifications() {
         return personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE);
     }
