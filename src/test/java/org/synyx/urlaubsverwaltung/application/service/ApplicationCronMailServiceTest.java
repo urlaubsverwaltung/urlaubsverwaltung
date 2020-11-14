@@ -77,7 +77,7 @@ class ApplicationCronMailServiceTest {
             longWaitingApplicationAlreadyRemindedToday,
             longWaitingApplicationAlreadyRemindedEarlier);
 
-        when(applicationService.getApplicationsForACertainState(WAITING)).thenReturn(waitingApplications);
+        when(applicationService.getForStates(List.of(WAITING))).thenReturn(waitingApplications);
 
         sut.sendWaitingApplicationsReminderNotification();
 
