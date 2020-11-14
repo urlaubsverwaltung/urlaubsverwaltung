@@ -200,7 +200,7 @@
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                            <c:if test="${application.person.id == signedInUser.id}">
+                                            <c:if test="${application.person.id == signedInUser.id && application.status == 'WAITING'}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}/edit">
                                                     <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
