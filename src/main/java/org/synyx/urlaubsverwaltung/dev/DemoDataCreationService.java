@@ -112,14 +112,11 @@ public class DemoDataCreationService {
         LOG.info("-> Demo data was created");
     }
 
-
     private void createDemoData(Person person, Person boss, Person office) {
-
         createApplicationsForLeave(person, boss, office);
         createSickNotes(person, office);
         createOvertimeRecords(person);
     }
-
 
     private void createApplicationsForLeave(Person person, Person boss, Person office) {
 
@@ -142,7 +139,6 @@ public class DemoDataCreationService {
         applicationForLeaveDataProvider.createCancelledApplication(person, office, HOLIDAY, NOON, now.minusDays(12), now.minusDays(12));
     }
 
-
     private void createSickNotes(Person person, Person office) {
 
         final LocalDate now = LocalDate.now(clock);
@@ -156,7 +152,6 @@ public class DemoDataCreationService {
         sickNoteDataProvider.createSickNote(person, office, FULL, now.minusDays(40), now.minusDays(38), SICK_NOTE_CHILD, false);
     }
 
-
     private void createOvertimeRecords(Person person) {
 
         final LocalDate now = LocalDate.now(clock);
@@ -165,6 +160,7 @@ public class DemoDataCreationService {
         final LocalDate weekBeforeLast = now.minusWeeks(2);
         final LocalDate lastYear = now.minusYears(1);
 
+        overtimeRecordDataProvider.activateOvertime();
         overtimeRecordDataProvider.createOvertimeRecord(person, lastWeek.with(MONDAY), lastWeek.with(FRIDAY), new BigDecimal("2.5"));
         overtimeRecordDataProvider.createOvertimeRecord(person, weekBeforeLast.with(MONDAY), weekBeforeLast.with(FRIDAY), new BigDecimal("3"));
         overtimeRecordDataProvider.createOvertimeRecord(person, lastYear.with(MONDAY), lastYear.with(FRIDAY), new BigDecimal("4"));

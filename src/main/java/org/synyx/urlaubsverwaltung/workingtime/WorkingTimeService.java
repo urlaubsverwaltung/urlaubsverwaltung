@@ -64,7 +64,7 @@ public class WorkingTimeService {
         }
 
         workingTimeRepository.save(workingTime);
-        LOG.info("Successfully created working time for person {}", person);
+        LOG.info("Created working time {} for person {}",workingTime,  person);
     }
 
     public List<WorkingTime> getByPerson(Person person) {

@@ -49,43 +49,35 @@ class PersonServiceImpl implements PersonService {
                          List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = new Person(username, lastName, firstName, email);
-
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        LOG.info("Create person: {}", person);
-
-        Person persistedPerson = save(person);
-
-        accountInteractionService.createDefaultAccount(person);
-        workingTimeService.createDefaultWorkingTime(person);
-
-        return persistedPerson;
+        return create(person);
     }
 
     @Override
     public Person create(Person person) {
 
-        LOG.info("Create person: {}", person);
+        final Person createdPerson = save(person);
+        LOG.info("Created person: {}", person);
 
         accountInteractionService.createDefaultAccount(person);
         workingTimeService.createDefaultWorkingTime(person);
 
-        return save(person);
+        return createdPerson;
     }
 
     @Override
     public Person update(Integer id, String username, String lastName, String firstName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
-        Person person = getPersonByID(id).orElseThrow(() ->
-            new IllegalArgumentException("Can not find a person for ID = " + id));
+        final Person person = getPersonByID(id)
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + id));
 
         person.setUsername(username);
         person.setLastName(lastName);
         person.setFirstName(firstName);
         person.setEmail(email);
-
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
@@ -121,20 +113,16 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<Person> getPersonByID(Integer id) {
-
         return personRepository.findById(id);
     }
 
-
     @Override
     public Optional<Person> getPersonByUsername(String username) {
-
         return Optional.ofNullable(personRepository.findByUsername(username));
     }
 
     @Override
     public List<Person> getActivePersons() {
-
         return personRepository.findAll()
             .stream()
             .filter(person -> !person.hasRole(INACTIVE))
@@ -144,7 +132,6 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getInactivePersons() {
-
         return personRepository.findAll()
             .stream()
             .filter(person -> person.hasRole(INACTIVE))
@@ -154,14 +141,13 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
-
-        return getActivePersons().stream().filter(person -> person.hasRole(role)).collect(toList());
+        return getActivePersons().stream()
+            .filter(person -> person.hasRole(role))
+            .collect(toList());
     }
-
 
     @Override
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
-
         return getActivePersons().stream()
             .filter(person -> person.hasNotificationType(notification))
             .collect(toList());
@@ -170,17 +156,14 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person getSignedInUser() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw new IllegalStateException("No authentication found in context.");
         }
 
-        String username = authentication.getName();
-
-        Optional<Person> person = getPersonByUsername(username);
-
-        if (!person.isPresent()) {
+        final String username = authentication.getName();
+        final Optional<Person> person = getPersonByUsername(username);
+        if (person.isEmpty()) {
             throw new IllegalStateException("Can not get the person for the signed in user with username = " + username);
         }
 

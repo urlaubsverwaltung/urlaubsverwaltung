@@ -4,7 +4,6 @@ import org.springframework.util.Assert;
 
 import java.time.DayOfWeek;
 
-
 /**
  * Represents a day of week.
  */
@@ -24,15 +23,12 @@ public enum WeekDay {
     private final Integer dayOfWeek;
 
     WeekDay(Integer dayOfWeek) {
-
         this.dayOfWeek = dayOfWeek;
     }
 
     public Integer getDayOfWeek() {
-
         return dayOfWeek;
     }
-
 
     /**
      * Get the week day for the given day of week representation.

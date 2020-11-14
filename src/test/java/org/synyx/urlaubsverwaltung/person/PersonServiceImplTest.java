@@ -14,26 +14,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -87,7 +85,6 @@ class PersonServiceImplTest {
         when(personRepository.save(person)).thenReturn(person);
 
         final Person createdPerson = sut.create(person);
-
         assertThat(createdPerson.getUsername()).isEqualTo("rick");
         assertThat(createdPerson.getFirstName()).isEqualTo("Rick");
         assertThat(createdPerson.getLastName()).isEqualTo("Grimes");
@@ -105,7 +102,6 @@ class PersonServiceImplTest {
         verify(workingTimeService).createDefaultWorkingTime(person);
     }
 
-
     @Test
     void ensureCreatedPersonIsPersisted() {
 
@@ -119,14 +115,13 @@ class PersonServiceImplTest {
     @Test
     void ensureUpdatedPersonHasCorrectAttributes() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
 
-        Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
+        final Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
             asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL),
             asList(USER, BOSS));
-
         assertThat(updatedPerson.getUsername()).isEqualTo("rick");
         assertThat(updatedPerson.getFirstName()).isEqualTo("Rick");
         assertThat(updatedPerson.getLastName()).isEqualTo("Grimes");
@@ -143,7 +138,6 @@ class PersonServiceImplTest {
             .contains(BOSS);
     }
 
-
     @Test
     void ensureUpdatedPersonIsPersisted() {
 
@@ -152,20 +146,17 @@ class PersonServiceImplTest {
         when(personRepository.save(person)).thenReturn(person);
 
         sut.update(person);
-
         verify(personRepository).save(person);
     }
-
 
     @Test
     void ensureThrowsIfPersonToBeUpdatedHasNoID() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(null);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.update(person));
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> sut.update(person));
     }
-
 
     @Test
     void ensureSaveCallsCorrectDaoMethod() {
@@ -177,7 +168,6 @@ class PersonServiceImplTest {
         assertThat(savedPerson).isEqualTo(person);
     }
 
-
     @Test
     void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
@@ -185,221 +175,195 @@ class PersonServiceImplTest {
         verify(personRepository).findById(123);
     }
 
-
     @Test
     void ensureGetPersonByLoginCallsCorrectDaoMethod() {
-        String username = "foo";
+        final String username = "foo";
         sut.getPersonByUsername(username);
 
         verify(personRepository).findByUsername(username);
     }
 
-
     @Test
     void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        inactive.setPermissions(singletonList(Role.INACTIVE));
+        final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        inactive.setPermissions(List.of(INACTIVE));
 
-        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(singletonList(USER));
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setPermissions(List.of(USER));
 
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
-        List<Person> allPersons = asList(inactive, user, boss, office);
+        when(personRepository.findAll()).thenReturn(asList(inactive, user, boss, office));
 
-        when(personRepository.findAll()).thenReturn(allPersons);
-
-        List<Person> activePersons = sut.getActivePersons();
-
-        assertThat(activePersons.size()).isEqualTo(3);
-
-        assertThat(activePersons.contains(user)).isTrue();
-        assertThat(activePersons.contains(boss)).isTrue();
-        assertThat(activePersons.contains(office)).isTrue();
+        final List<Person> activePersons = sut.getActivePersons();
+        assertThat(activePersons)
+            .hasSize(3)
+            .contains(user)
+            .contains(boss)
+            .contains(office);
     }
-
 
     @Test
     void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
-        Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        inactive.setPermissions(singletonList(Role.INACTIVE));
+        final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        inactive.setPermissions(List.of(INACTIVE));
 
-        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(singletonList(USER));
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setPermissions(List.of(USER));
 
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
-        List<Person> allPersons = asList(inactive, user, boss, office);
-
-        when(personRepository.findAll()).thenReturn(allPersons);
+        when(personRepository.findAll()).thenReturn(asList(inactive, user, boss, office));
 
         List<Person> inactivePersons = sut.getInactivePersons();
-
-        assertThat(inactivePersons.size()).isEqualTo(1);
-
-        assertThat(inactivePersons.contains(inactive)).isTrue();
+        assertThat(inactivePersons)
+            .hasSize(1)
+            .contains(inactive);
     }
-
 
     @Test
     void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
-        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(singletonList(USER));
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setPermissions(List.of(USER));
 
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
-        List<Person> allPersons = asList(user, boss, office);
+        when(personRepository.findAll()).thenReturn(asList(user, boss, office));
 
-        when(personRepository.findAll()).thenReturn(allPersons);
-
-        List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
-
-        assertThat(filteredList.size()).isEqualTo(2);
-
-        assertThat(filteredList.contains(boss)).isTrue();
-        assertThat(filteredList.contains(office)).isTrue();
-    }
-
-
-    @Test
-    void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
-
-        Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(singletonList(USER));
-        user.setNotifications(singletonList(NOTIFICATION_USER));
-
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        boss.setPermissions(asList(USER, BOSS));
-        boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
-
-        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        office.setPermissions(asList(USER, BOSS, OFFICE));
-        office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL,
-            MailNotification.NOTIFICATION_OFFICE));
-
-        List<Person> allPersons = asList(user, boss, office);
-
-        when(personRepository.findAll()).thenReturn(allPersons);
-
-        List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
-
+        final List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
         assertThat(filteredList)
             .hasSize(2)
             .contains(boss)
             .contains(office);
     }
 
+    @Test
+    void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
+
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setPermissions(List.of(USER));
+        user.setNotifications(List.of(NOTIFICATION_USER));
+
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setPermissions(asList(USER, BOSS));
+        boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        office.setPermissions(asList(USER, BOSS, OFFICE));
+        office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
+
+        when(personRepository.findAll()).thenReturn(asList(user, boss, office));
+
+        final List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
+        assertThat(filteredList)
+            .hasSize(2)
+            .contains(boss)
+            .contains(office);
+    }
 
     @Test
     void ensureGetActivePersonsReturnSortedList() {
 
-        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
 
-        List<Person> unsortedPersons = asList(shane, carl, rick);
+        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
 
-        when(personRepository.findAll()).thenReturn(unsortedPersons);
-
-        List<Person> sortedList = sut.getActivePersons();
-
-        assertThat(sortedList).containsExactly(carl, rick, shane);
+        final List<Person> sortedList = sut.getActivePersons();
+        assertThat(sortedList)
+            .containsExactly(carl, rick, shane);
     }
 
 
     @Test
     void ensureGetInactivePersonsReturnSortedList() {
 
-        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setPermissions(List.of(INACTIVE));
+        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        carl.setPermissions(List.of(INACTIVE));
+        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        rick.setPermissions(List.of(INACTIVE));
+        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
 
-        List<Person> unsortedPersons = asList(shane, carl, rick);
-        unsortedPersons.forEach(person -> person.setPermissions(singletonList(Role.INACTIVE)));
-
-        when(personRepository.findAll()).thenReturn(unsortedPersons);
-
-        List<Person> sortedList = sut.getInactivePersons();
-
-        assertThat(sortedList).containsExactly(carl, rick, shane);
+        final List<Person> sortedList = sut.getInactivePersons();
+        assertThat(sortedList)
+            .containsExactly(carl, rick, shane);
     }
-
 
     @Test
     void ensureGetPersonsByRoleReturnSortedList() {
 
-        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setPermissions(List.of(USER));
+        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        carl.setPermissions(List.of(USER));
+        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        rick.setPermissions(List.of(USER));
+        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
 
-        List<Person> unsortedPersons = asList(shane, carl, rick);
-        unsortedPersons.forEach(person -> person.setPermissions(singletonList(USER)));
-
-        when(personRepository.findAll()).thenReturn(unsortedPersons);
-
-        List<Person> sortedList = sut.getActivePersonsByRole(USER);
-
-        assertThat(sortedList).containsExactly(carl, rick, shane);
+        final List<Person> sortedList = sut.getActivePersonsByRole(USER);
+        assertThat(sortedList)
+            .containsExactly(carl, rick, shane);
     }
-
 
     @Test
     void ensureGetPersonsByNotificationTypeReturnSortedList() {
 
-        Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
+        shane.setNotifications(List.of(NOTIFICATION_USER));
+        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
+        carl.setNotifications(List.of(NOTIFICATION_USER));
+        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
+        rick.setNotifications(List.of(NOTIFICATION_USER));
+        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
 
-        List<Person> unsortedPersons = asList(shane, carl, rick);
-        unsortedPersons.forEach(person -> person.setNotifications(singletonList(NOTIFICATION_USER)));
-
-        when(personRepository.findAll()).thenReturn(unsortedPersons);
-
-        List<Person> sortedList = sut.getPersonsWithNotificationType(NOTIFICATION_USER);
-
-        assertThat(sortedList).containsExactly(carl, rick, shane);
+        final List<Person> sortedList = sut.getPersonsWithNotificationType(NOTIFICATION_USER);
+        assertThat(sortedList).
+            containsExactly(carl, rick, shane);
     }
 
     @Test
     void ensureThrowsIfNoPersonCanBeFoundForTheCurrentlySignedInUser() {
-        assertThatIllegalStateException().isThrownBy(() -> sut.getSignedInUser());
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.getSignedInUser());
     }
 
     @Test
     void ensureReturnsPersonForCurrentlySignedInUser() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personRepository.findByUsername("muster")).thenReturn(person);
 
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn(person.getNiceName());
+        final Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(person.getUsername());
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        when(personRepository.findByUsername(anyString())).thenReturn(person);
-
-        Person signedInUser = sut.getSignedInUser();
-
+        final Person signedInUser = sut.getSignedInUser();
         assertThat(signedInUser).isEqualTo(person);
     }
 
     @Test
     void ensureThrowsIllegalOnNullAuthentication() {
-        assertThatIllegalStateException().isThrownBy(() -> sut.getSignedInUser());
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.getSignedInUser());
     }
 
     @Test
@@ -409,13 +373,11 @@ class PersonServiceImplTest {
         when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
         assertThat(person.getPermissions()).containsOnly(USER);
 
         final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
-
-        final Collection<Role> permissions = personWithOfficeRole.getPermissions();
-        assertThat(permissions)
+        assertThat(personWithOfficeRole.getPermissions())
             .hasSize(2)
             .contains(USER, OFFICE);
     }
@@ -423,18 +385,17 @@ class PersonServiceImplTest {
     @Test
     void ensureCanNotAppointPersonAsOfficeUser() {
 
-        Person officePerson = new Person();
-        officePerson.setPermissions(singletonList(OFFICE));
-        when(personRepository.findAll()).thenReturn(singletonList(officePerson));
+        final Person officePerson = new Person();
+        officePerson.setPermissions(List.of(OFFICE));
+        when(personRepository.findAll()).thenReturn(List.of(officePerson));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
         assertThat(person.getPermissions()).containsOnly(USER);
 
         final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
-
-        final Collection<Role> permissions = personWithOfficeRole.getPermissions();
-        assertThat(permissions).containsOnly(USER);
+        assertThat(personWithOfficeRole.getPermissions())
+            .containsOnly(USER);
     }
 
     @Test
@@ -442,15 +403,12 @@ class PersonServiceImplTest {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
         inactivePerson.setId(1);
-
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
         final Person savedInactivePerson = sut.save(inactivePerson);
-
         verify(applicationEventPublisher).publishEvent(personDisabledEventArgumentCaptor.capture());
-
-        final PersonDisabledEvent actualPersonDisabledEvent = personDisabledEventArgumentCaptor.getValue();
-        assertThat(actualPersonDisabledEvent.getPersonId()).isEqualTo(savedInactivePerson.getId());
+        assertThat(personDisabledEventArgumentCaptor.getValue().getPersonId())
+            .isEqualTo(savedInactivePerson.getId());
     }
 
     @Test
@@ -458,11 +416,9 @@ class PersonServiceImplTest {
 
         final Person activePerson = createPerson("active person", USER);
         activePerson.setId(1);
-
         when(personRepository.save(activePerson)).thenReturn(activePerson);
 
         sut.save(activePerson);
-
         verifyNoInteractions(applicationEventPublisher);
     }
 }
