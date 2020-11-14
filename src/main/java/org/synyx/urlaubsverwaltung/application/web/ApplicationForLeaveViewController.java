@@ -102,14 +102,14 @@ public class ApplicationForLeaveViewController {
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
         return applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)).stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
@@ -119,7 +119,7 @@ public class ApplicationForLeaveViewController {
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
@@ -128,7 +128,7 @@ public class ApplicationForLeaveViewController {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
             .filter(withoutApplicationsOf(secondStage))
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
@@ -140,7 +140,7 @@ public class ApplicationForLeaveViewController {
         return application -> !application.getPerson().getPermissions().contains(SECOND_STAGE_AUTHORITY);
     }
 
-    private Comparator<ApplicationForLeave> dateComparator() {
+    private Comparator<ApplicationForLeave> byStartDate() {
         return Comparator.comparing(Application::getStartDate);
     }
 }
