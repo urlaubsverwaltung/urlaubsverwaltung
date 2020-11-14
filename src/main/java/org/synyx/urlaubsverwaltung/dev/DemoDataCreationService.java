@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.DayOfWeek.FRIDAY;
@@ -30,7 +31,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
-
 
 public class DemoDataCreationService {
 
@@ -83,8 +83,13 @@ public class DemoDataCreationService {
         final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD_HASH, "Elena", "Schneider", "schneider@example.org", USER);
         final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD_HASH, "Brigitte", "Händel", "haendel@example.org", USER);
         final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD_HASH, "Niko", "Schmidt", "schmidt@example.org", USER);
-
         personDataProvider.createTestPerson("horst", NO_PASSWORD_HASH, "Horst", "Dieter", "hdieter@example.org", INACTIVE);
+
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
+            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, NO_PASSWORD, "Horst", "Aktiv", "hdieter-active@example.org", USER));
+
+        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
+            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, NO_PASSWORD, "Horst", "Inaktiv", "hdieter-inactive@example.org", INACTIVE));
 
         // Departments
         final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);
