@@ -18,8 +18,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -75,27 +73,24 @@ class ApplicationForLeaveViewControllerTest {
         application.setDayLength(FULL);
 
         final Person headPerson = new Person();
-        headPerson.setPermissions(singletonList(DEPARTMENT_HEAD));
+        headPerson.setPermissions(List.of(DEPARTMENT_HEAD));
         final Application applicationOfHead = new Application();
         applicationOfHead.setId(2);
         applicationOfHead.setPerson(headPerson);
+        when(personService.getSignedInUser()).thenReturn(headPerson);
 
         final Person secondStagePerson = new Person();
-        secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
 
-        when(personService.getSignedInUser()).thenReturn(headPerson);
-        when(departmentService.getManagedMembersOfDepartmentHead(headPerson))
-            .thenReturn(asList(headPerson, person, secondStagePerson));
-        when(applicationService.getApplicationsForACertainState(WAITING))
-            .thenReturn(asList(application, applicationOfHead, applicationOfSecondStage));
+        final List<Person> members = List.of(headPerson, person, secondStagePerson);
+        when(departmentService.getManagedMembersOfDepartmentHead(headPerson)).thenReturn(members);
+        when(applicationService.getForStatesAndPerson(List.of(WAITING), members))
+            .thenReturn(List.of(application, applicationOfHead, applicationOfSecondStage));
 
-        final ResultActions resultActions = perform(get("/web/application"));
-
-        resultActions
-            .andExpect(status().isOk())
+        perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("Atticus"))))))
@@ -115,16 +110,17 @@ class ApplicationForLeaveViewControllerTest {
         application.setDayLength(FULL);
 
         final Person bossPerson = new Person();
-        bossPerson.setPermissions(singletonList(BOSS));
+        bossPerson.setPermissions(List.of(BOSS));
         final Application applicationOfBoss = new Application();
         applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(bossPerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
         applicationOfBoss.setEndDate(LocalDate.MAX);
+        when(personService.getSignedInUser()).thenReturn(bossPerson);
 
         final Person secondStagePerson = new Person();
-        secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
@@ -132,14 +128,10 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
 
-        when(personService.getSignedInUser()).thenReturn(bossPerson);
-        when(applicationService.getApplicationsForACertainState(WAITING))
-            .thenReturn(asList(application, applicationOfBoss, applicationOfSecondStage));
+        when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
+            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
-        final ResultActions resultActions = perform(get("/web/application"));
-
-        resultActions
-            .andExpect(status().isOk())
+        perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
@@ -158,16 +150,17 @@ class ApplicationForLeaveViewControllerTest {
         application.setDayLength(FULL);
 
         final Person officePerson = new Person();
-        officePerson.setPermissions(singletonList(OFFICE));
+        officePerson.setPermissions(List.of(OFFICE));
         final Application applicationOfBoss = new Application();
         applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
         applicationOfBoss.setEndDate(LocalDate.MAX);
+        when(personService.getSignedInUser()).thenReturn(officePerson);
 
         final Person secondStagePerson = new Person();
-        secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
@@ -175,16 +168,10 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
 
-        when(personService.getSignedInUser()).thenReturn(officePerson);
-        when(applicationService.getApplicationsForACertainState(WAITING))
-            .thenReturn(asList(applicationOfBoss, applicationOfSecondStage));
-        when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
-            .thenReturn(singletonList(application));
+        when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
+            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
-        final ResultActions resultActions = perform(get("/web/application"));
-
-        resultActions
-            .andExpect(status().isOk())
+        perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
@@ -205,7 +192,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Person officePerson = new Person();
         officePerson.setFirstName("office");
-        officePerson.setPermissions(singletonList(OFFICE));
+        officePerson.setPermissions(List.of(OFFICE));
         final Application applicationOfBoss = new Application();
         applicationOfBoss.setId(2);
         applicationOfBoss.setPerson(officePerson);
@@ -214,25 +201,22 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfBoss.setEndDate(LocalDate.MAX);
 
         final Person secondStagePerson = new Person();
-        secondStagePerson.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
-
         when(personService.getSignedInUser()).thenReturn(secondStagePerson);
-        when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson))
-            .thenReturn(asList(secondStagePerson, person, officePerson));
-        when(applicationService.getApplicationsForACertainState(WAITING))
-            .thenReturn(asList(applicationOfBoss, applicationOfSecondStage));
-        when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
-            .thenReturn(singletonList(application));
 
-        final ResultActions resultActions = perform(get("/web/application"));
+        final List<Person> members = List.of(secondStagePerson, person, officePerson);
+        when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson)).thenReturn(members);
 
-        resultActions.andExpect(status().isOk())
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members))
+            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
+
+        perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("applications", hasSize(2)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("office"))))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
@@ -245,11 +229,12 @@ class ApplicationForLeaveViewControllerTest {
 
         final Person departmentHeadAndSecondStageAuth = new Person();
         departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
-        departmentHeadAndSecondStageAuth.setPermissions(asList(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        departmentHeadAndSecondStageAuth.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
 
         final Person userOfDepartmentA = new Person();
         userOfDepartmentA.setFirstName("userOfDepartmentA");
-        userOfDepartmentA.setPermissions(singletonList(USER));
+        userOfDepartmentA.setPermissions(List.of(USER));
         final Application applicationOfUserA = new Application();
         applicationOfUserA.setId(1);
         applicationOfUserA.setPerson(userOfDepartmentA);
@@ -259,7 +244,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Person userOfDepartmentB = new Person();
         userOfDepartmentB.setFirstName("userOfDepartmentB");
-        userOfDepartmentB.setPermissions(singletonList(USER));
+        userOfDepartmentB.setPermissions(List.of(USER));
         final Application applicationOfUserB = new Application();
         applicationOfUserB.setId(2);
         applicationOfUserB.setPerson(userOfDepartmentB);
@@ -267,23 +252,19 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfUserB.setStartDate(LocalDate.MAX);
         applicationOfUserB.setEndDate(LocalDate.MAX);
 
-        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
-            .thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentA));
-        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth))
-            .thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartmentB));
-        when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
-            .thenReturn(singletonList(applicationOfUserA));
-        when(applicationService.getApplicationsForACertainState(WAITING))
-            .thenReturn(singletonList(applicationOfUserB));
+        final List<Person> membersSecondStage = List.of(departmentHeadAndSecondStageAuth);
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(membersSecondStage);
+        final List<Person> membersDepartment = List.of(userOfDepartmentA);
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
+
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), membersSecondStage)).thenReturn(List.of(applicationOfUserB));
+        when(applicationService.getForStatesAndPerson(List.of(WAITING), membersDepartment)).thenReturn(List.of(applicationOfUserA));
 
         perform(get("/web/application"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("applications", hasSize(2)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person",
-                hasProperty("firstName", equalTo("userOfDepartmentA"))))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person",
-                hasProperty("firstName", equalTo("userOfDepartmentB"))))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentA"))))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentB"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
     }
@@ -293,11 +274,12 @@ class ApplicationForLeaveViewControllerTest {
 
         final Person departmentHeadAndSecondStageAuth = new Person();
         departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
-        departmentHeadAndSecondStageAuth.setPermissions(asList(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        departmentHeadAndSecondStageAuth.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
 
         final Person userOfDepartment = new Person();
         userOfDepartment.setFirstName("userOfDepartment");
-        userOfDepartment.setPermissions(singletonList(USER));
+        userOfDepartment.setPermissions(List.of(USER));
 
         final Application temporaryAllowedApplication = new Application();
         temporaryAllowedApplication.setId(1);
@@ -313,15 +295,11 @@ class ApplicationForLeaveViewControllerTest {
         waitingApplication.setStartDate(LocalDate.MAX);
         waitingApplication.setEndDate(LocalDate.MAX);
 
-        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
-            .thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
-        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth))
-            .thenReturn(asList(departmentHeadAndSecondStageAuth, userOfDepartment));
-        when(applicationService.getApplicationsForACertainState(TEMPORARY_ALLOWED))
-            .thenReturn(singletonList(temporaryAllowedApplication));
-        when(applicationService.getApplicationsForACertainState(WAITING))
-            .thenReturn(singletonList(waitingApplication));
+        final List<Person> members = List.of(departmentHeadAndSecondStageAuth, userOfDepartment);
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(members);
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(members);
+
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members)).thenReturn(List.of(waitingApplication, temporaryAllowedApplication));
 
         perform(get("/web/application"))
             .andExpect(status().isOk())
@@ -331,7 +309,6 @@ class ApplicationForLeaveViewControllerTest {
                 hasProperty("status", equalTo(WAITING)),
                 hasProperty("person", hasProperty("firstName", equalTo("userOfDepartment"))),
                 hasProperty("status", equalTo(TEMPORARY_ALLOWED)))))
-
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
     }
@@ -341,7 +318,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Person userPerson = new Person();
         userPerson.setFirstName("person");
-        userPerson.setPermissions(singletonList(USER));
+        userPerson.setPermissions(List.of(USER));
         final Application applicationOfUser = new Application();
         applicationOfUser.setId(3);
         applicationOfUser.setPerson(userPerson);
@@ -351,12 +328,9 @@ class ApplicationForLeaveViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(userPerson);
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(userPerson)))
-            .thenReturn(singletonList(applicationOfUser));
+            .thenReturn(List.of(applicationOfUser));
 
-        final ResultActions resultActions = perform(get("/web/application"));
-
-        resultActions
-            .andExpect(status().isOk())
+        perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
