@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 import java.time.DayOfWeek;
@@ -15,6 +14,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static javax.persistence.EnumType.STRING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.SATURDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.SUNDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.values;
 
 
 /**
@@ -26,34 +37,33 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     @OneToOne
     private Person person;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength monday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength monday = ZERO;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength tuesday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength tuesday = ZERO;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength wednesday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength wednesday = ZERO;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength thursday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength thursday = ZERO;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength friday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength friday = ZERO;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength saturday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength saturday = ZERO;
 
-    @Enumerated(EnumType.STRING)
-    private DayLength sunday = DayLength.ZERO;
+    @Enumerated(STRING)
+    private DayLength sunday = ZERO;
 
     private LocalDate validFrom;
 
     /**
-     * If set, override the system-wide FederalState setting for this person. TODO: Maybe we should embed the whole
-     * WorkingTimeSettings to allow overriding all of them?
+     * If set, override the system-wide FederalState setting for this person.
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private FederalState federalStateOverride;
 
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
@@ -67,44 +77,42 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         }
     }
 
-
     public List<WeekDay> getWorkingDays() {
-        List<WeekDay> workingDays = new ArrayList<>();
+        final List<WeekDay> workingDays = new ArrayList<>();
 
-        if (monday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.MONDAY);
+        if (monday.equals(FULL)) {
+            workingDays.add(MONDAY);
         }
-        if (tuesday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.TUESDAY);
+        if (tuesday.equals(FULL)) {
+            workingDays.add(TUESDAY);
         }
-        if (wednesday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.WEDNESDAY);
+        if (wednesday.equals(FULL)) {
+            workingDays.add(WEDNESDAY);
         }
-        if (thursday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.THURSDAY);
+        if (thursday.equals(FULL)) {
+            workingDays.add(THURSDAY);
         }
-        if (friday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.FRIDAY);
+        if (friday.equals(FULL)) {
+            workingDays.add(FRIDAY);
         }
-        if (saturday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.SATURDAY);
+        if (saturday.equals(FULL)) {
+            workingDays.add(SATURDAY);
         }
-        if (sunday.equals(DayLength.FULL)) {
-            workingDays.add(WeekDay.SUNDAY);
+        if (sunday.equals(FULL)) {
+            workingDays.add(SUNDAY);
         }
 
         return workingDays;
     }
-
 
     public boolean hasWorkingDays(List<Integer> workingDays) {
 
         for (WeekDay day : WeekDay.values()) {
             int dayOfWeek = day.getDayOfWeek();
 
-            DayLength dayLength = getDayLengthForWeekDay(dayOfWeek);
+            final DayLength dayLength = getDayLengthForWeekDay(dayOfWeek);
 
-            if (dayLength == DayLength.FULL) {
+            if (dayLength == FULL) {
                 // has to be in the given list
                 if (!workingDays.contains(dayOfWeek)) {
                     return false;
@@ -120,100 +128,74 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         return true;
     }
 
-
     private void setAllDayLengthsToZero() {
-
-        this.monday = DayLength.ZERO;
-        this.tuesday = DayLength.ZERO;
-        this.wednesday = DayLength.ZERO;
-        this.thursday = DayLength.ZERO;
-        this.friday = DayLength.ZERO;
-        this.saturday = DayLength.ZERO;
-        this.sunday = DayLength.ZERO;
+        this.monday = ZERO;
+        this.tuesday = ZERO;
+        this.wednesday = ZERO;
+        this.thursday = ZERO;
+        this.friday = ZERO;
+        this.saturday = ZERO;
+        this.sunday = ZERO;
     }
 
-
     public Person getPerson() {
-
         return person;
     }
 
-
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
-
     public DayLength getDayLengthForWeekDay(int weekDay) {
-
         switch (DayOfWeek.of(weekDay)) {
             case MONDAY:
                 return this.monday;
-
             case TUESDAY:
                 return this.tuesday;
-
             case WEDNESDAY:
                 return this.wednesday;
-
             case THURSDAY:
                 return this.thursday;
-
             case FRIDAY:
                 return this.friday;
-
             case SATURDAY:
                 return this.saturday;
-
             case SUNDAY:
                 return this.sunday;
-
             default:
                 return null;
         }
     }
 
-
     public void setDayLengthForWeekDay(int weekDay, DayLength dayLength) {
-
         switch (DayOfWeek.of(weekDay)) {
             case MONDAY:
                 this.monday = dayLength;
                 break;
-
             case TUESDAY:
                 this.tuesday = dayLength;
                 break;
-
             case WEDNESDAY:
                 this.wednesday = dayLength;
                 break;
-
             case THURSDAY:
                 this.thursday = dayLength;
                 break;
-
             case FRIDAY:
                 this.friday = dayLength;
                 break;
-
             case SATURDAY:
                 this.saturday = dayLength;
                 break;
-
             case SUNDAY:
                 this.sunday = dayLength;
                 break;
-
             default:
                 break;
         }
     }
 
-
     public LocalDate getValidFrom() {
-
         if (this.validFrom == null) {
             return null;
         }
@@ -221,63 +203,43 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         return this.validFrom;
     }
 
-
     public void setValidFrom(LocalDate validFrom) {
-
         this.validFrom = validFrom;
     }
 
-
     public DayLength getMonday() {
-
         return monday;
     }
 
-
     public DayLength getTuesday() {
-
         return tuesday;
     }
 
-
     public DayLength getWednesday() {
-
         return wednesday;
     }
 
-
     public DayLength getThursday() {
-
         return thursday;
     }
 
-
     public DayLength getFriday() {
-
         return friday;
     }
 
-
     public DayLength getSaturday() {
-
         return saturday;
     }
 
-
     public DayLength getSunday() {
-
         return sunday;
     }
 
-
     public Optional<FederalState> getFederalStateOverride() {
-
         return Optional.ofNullable(federalStateOverride);
     }
 
-
     public void setFederalStateOverride(FederalState federalState) {
-
         this.federalStateOverride = federalState;
     }
 }
