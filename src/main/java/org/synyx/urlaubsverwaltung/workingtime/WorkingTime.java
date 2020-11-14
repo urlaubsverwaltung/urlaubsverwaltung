@@ -25,7 +25,6 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.SUNDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.values;
 
 
 /**
