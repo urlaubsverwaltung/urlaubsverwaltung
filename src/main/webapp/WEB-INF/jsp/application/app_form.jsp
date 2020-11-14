@@ -136,7 +136,7 @@
                                     <spring:message code="application.data.vacationType"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <uv:select id="vacationType" name="vacationType" onchange="vacationTypeChanged(value);">
+                                    <uv:select id="vacationType" name="vacationType" onchange="vacationTypeChanged(this.value);">
                                         <c:forEach items="${vacationTypes}" var="vacationType">
                                             <c:choose>
                                                 <c:when test="${vacationType == application.vacationType}">
