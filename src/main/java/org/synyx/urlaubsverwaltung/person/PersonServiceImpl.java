@@ -52,13 +52,7 @@ class PersonServiceImpl implements PersonService {
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        final Person persistedPerson = save(person);
-        LOG.info("Created person: {}", persistedPerson);
-
-        accountInteractionService.createDefaultAccount(person);
-        workingTimeService.createDefaultWorkingTime(person);
-
-        return persistedPerson;
+        return create(person);
     }
 
     @Override
