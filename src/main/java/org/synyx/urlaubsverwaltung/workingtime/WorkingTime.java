@@ -242,4 +242,20 @@ public class WorkingTime extends AbstractPersistable<Integer> {
     public void setFederalStateOverride(FederalState federalState) {
         this.federalStateOverride = federalState;
     }
+
+    @Override
+    public String toString() {
+        return "WorkingTime{" +
+            "person=" + person +
+            ", monday=" + monday +
+            ", tuesday=" + tuesday +
+            ", wednesday=" + wednesday +
+            ", thursday=" + thursday +
+            ", friday=" + friday +
+            ", saturday=" + saturday +
+            ", sunday=" + sunday +
+            ", validFrom=" + validFrom +
+            ", federalStateOverride=" + federalStateOverride +
+            '}';
+    }
 }
