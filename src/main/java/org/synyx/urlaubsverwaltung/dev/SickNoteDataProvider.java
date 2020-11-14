@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
-
 /**
  * Provides sick note demo data.
  */

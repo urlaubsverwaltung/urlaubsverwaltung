@@ -64,12 +64,13 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person create(Person person) {
 
-        LOG.info("Create person: {}", person);
+        final Person createdPerson = save(person);
+        LOG.info("Created person: {}", person);
 
         accountInteractionService.createDefaultAccount(person);
         workingTimeService.createDefaultWorkingTime(person);
 
-        return save(person);
+        return createdPerson;
     }
 
     @Override

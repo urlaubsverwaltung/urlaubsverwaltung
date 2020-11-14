@@ -10,26 +10,26 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-
 /**
  * Provides overtime record demo data.
  */
 class OvertimeRecordDataProvider {
 
     private final OvertimeService overtimeService;
+    private final SettingsService settingsService;
 
     OvertimeRecordDataProvider(OvertimeService overtimeService, SettingsService settingsService) {
-
         this.overtimeService = overtimeService;
+        this.settingsService = settingsService;
+    }
 
-        // Activate overtime management for development purpose
-        Settings settings = settingsService.getSettings();
+    void activateOvertime() {
+        final Settings settings = settingsService.getSettings();
         settings.getWorkingTimeSettings().setOvertimeActive(true);
         settingsService.save(settings);
     }
 
     void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, BigDecimal hours) {
-
         final Overtime overtime = new Overtime(person, startDate, endDate, hours);
         overtimeService.record(overtime, Optional.of("Ich habe ganz viel gearbeitet"), person);
     }

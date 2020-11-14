@@ -8,7 +8,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
-
 /**
  * Provides department demo data.
  */
@@ -18,7 +17,6 @@ class DepartmentDataProvider {
     private final Clock clock;
 
     DepartmentDataProvider(DepartmentService departmentService, Clock clock) {
-
         this.departmentService = departmentService;
         this.clock = clock;
     }

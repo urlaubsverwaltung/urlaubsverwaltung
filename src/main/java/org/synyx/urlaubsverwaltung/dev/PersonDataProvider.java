@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
@@ -19,6 +18,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
@@ -34,6 +34,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * Provides person demo data.
@@ -48,7 +50,6 @@ class PersonDataProvider {
 
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
                        AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder, Clock clock) {
-
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountInteractionService = accountInteractionService;
@@ -85,17 +86,17 @@ class PersonDataProvider {
         person.setPermissions(permissions);
         person.setNotifications(notifications);
         person.setPassword(passwordEncoder.encode(password));
-        final Person savedPerson = personService.save(person);
+        final Person savedPerson = personService.create(person);
 
         final int currentYear = Year.now(clock).getValue();
-        workingTimeService.touch(
-            asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
-            Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
+        final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
 
-        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);
-        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(currentYear);
+        final List<Integer> workingDays = asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek());
+        workingTimeService.touch(workingDays, empty(), firstDayOfYear.minusYears(1), savedPerson);
+
+        final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,
-            lastDayOfYear, new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
+            lastDayOfYear, BigDecimal.valueOf(30), BigDecimal.valueOf(30), BigDecimal.valueOf(5),
             ZERO, null);
 
         return savedPerson;
@@ -103,22 +104,18 @@ class PersonDataProvider {
 
     private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
-        List<MailNotification> notifications = new ArrayList<>();
-
+        final List<MailNotification> notifications = new ArrayList<>();
         notifications.add(NOTIFICATION_USER);
 
         if (roles.contains(DEPARTMENT_HEAD)) {
             notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
         }
-
         if (roles.contains(SECOND_STAGE_AUTHORITY)) {
             notifications.add(NOTIFICATION_SECOND_STAGE_AUTHORITY);
         }
-
         if (roles.contains(BOSS)) {
             notifications.add(NOTIFICATION_BOSS_ALL);
         }
-
         if (roles.contains(OFFICE)) {
             notifications.add(NOTIFICATION_OFFICE);
             notifications.add(OVERTIME_NOTIFICATION_OFFICE);

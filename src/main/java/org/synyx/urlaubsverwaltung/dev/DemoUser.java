@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.person.Role;
 
-
 /**
  * Demo users that can be used to sign in with when demo data is created.
  */
@@ -20,19 +19,16 @@ enum DemoUser {
     private final Role[] roles;
 
     DemoUser(String username, String password, Role... roles) {
-
         this.username = username;
         this.password = password;
         this.roles = roles;
     }
 
     String getUsername() {
-
         return username;
     }
 
     Role[] getRoles() {
-
         return roles;
     }
 
