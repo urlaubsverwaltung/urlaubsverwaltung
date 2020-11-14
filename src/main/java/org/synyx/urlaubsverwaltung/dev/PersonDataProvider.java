@@ -81,9 +81,10 @@ class PersonDataProvider {
         final List<Role> permissions = asList(roles);
         final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
-        final Person person = personService.create(username, lastName, firstName, email, notifications, permissions);
+        final Person person = new Person(username, lastName, firstName, email);
+        person.setPermissions(permissions);
+        person.setNotifications(notifications);
         person.setPassword(passwordEncoder.encode(password));
-
         final Person savedPerson = personService.save(person);
 
         final int currentYear = Year.now(clock).getValue();
