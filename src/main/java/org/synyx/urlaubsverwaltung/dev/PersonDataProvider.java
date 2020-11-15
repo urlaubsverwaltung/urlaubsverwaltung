@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -45,15 +44,13 @@ class PersonDataProvider {
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
-    private final PasswordEncoder passwordEncoder;
     private final Clock clock;
 
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                       AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder, Clock clock) {
+                       AccountInteractionService accountInteractionService, Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountInteractionService = accountInteractionService;
-        this.passwordEncoder = passwordEncoder;
         this.clock = clock;
     }
 
@@ -66,13 +63,13 @@ class PersonDataProvider {
     Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
 
         final String username = demoUser.getUsername();
-        final String password = demoUser.getPassword();
+        final String passwordHash = demoUser.getPasswordHash();
         final Role[] roles = demoUser.getRoles();
 
-        return createTestPerson(username, password, firstName, lastName, email, roles);
+        return createTestPerson(username, passwordHash, firstName, lastName, email, roles);
     }
 
-    Person createTestPerson(String username, String password, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, String passwordHash, String firstName, String lastName, String email, Role... roles) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
@@ -85,7 +82,7 @@ class PersonDataProvider {
         final Person person = new Person(username, lastName, firstName, email);
         person.setPermissions(permissions);
         person.setNotifications(notifications);
-        person.setPassword(passwordEncoder.encode(password));
+        person.setPassword(passwordHash);
         final Person savedPerson = personService.create(person);
 
         final int currentYear = Year.now(clock).getValue();

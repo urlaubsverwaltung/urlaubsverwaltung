@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CH
 
 public class DemoDataCreationService {
 
-    private static final String NO_PASSWORD = "";
+    private static final String NO_PASSWORD_HASH = "{pbkdf2}1705db0e2b2e0f81fa9a0500ee21f16fe3f0b2f8370ba0fbba77bd07c072d292f3d251985686ec49";
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -78,13 +78,13 @@ public class DemoDataCreationService {
         personDataProvider.createTestPerson(DemoUser.ADMIN, "Senor", "Operation", "admin@example.org");
 
         // Users
-        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD, "Hans", "Dampf", "dampf@example.org", USER);
-        final Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD, "Günther", "Baier", "baier@example.org", USER);
-        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD, "Elena", "Schneider", "schneider@example.org", USER);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD, "Brigitte", "Händel", "haendel@example.org", USER);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD, "Niko", "Schmidt", "schmidt@example.org", USER);
+        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD_HASH, "Hans", "Dampf", "dampf@example.org", USER);
+        final Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD_HASH, "Günther", "Baier", "baier@example.org", USER);
+        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD_HASH, "Elena", "Schneider", "schneider@example.org", USER);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD_HASH, "Brigitte", "Händel", "haendel@example.org", USER);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD_HASH, "Niko", "Schmidt", "schmidt@example.org", USER);
 
-        personDataProvider.createTestPerson("horst", NO_PASSWORD, "Horst", "Dieter", "hdieter@example.org", INACTIVE);
+        personDataProvider.createTestPerson("horst", NO_PASSWORD_HASH, "Horst", "Dieter", "hdieter@example.org", INACTIVE);
 
         // Departments
         final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);

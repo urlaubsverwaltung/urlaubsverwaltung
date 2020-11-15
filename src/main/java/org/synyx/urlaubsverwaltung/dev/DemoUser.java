@@ -7,20 +7,20 @@ import org.synyx.urlaubsverwaltung.person.Role;
  */
 enum DemoUser {
 
-    USER("user", "secret", Role.USER),
-    DEPARTMENT_HEAD("departmentHead", "secret", Role.USER, Role.DEPARTMENT_HEAD),
-    SECOND_STAGE_AUTHORITY("secondStageAuthority", "secret", Role.USER, Role.SECOND_STAGE_AUTHORITY),
-    BOSS("boss", "secret", Role.USER, Role.BOSS),
-    OFFICE("office", "secret", Role.USER, Role.BOSS, Role.OFFICE),
-    ADMIN("admin", "secret", Role.USER, Role.ADMIN);
+    USER("user", Role.USER),
+    DEPARTMENT_HEAD("departmentHead", Role.USER, Role.DEPARTMENT_HEAD),
+    SECOND_STAGE_AUTHORITY("secondStageAuthority", Role.USER, Role.SECOND_STAGE_AUTHORITY),
+    BOSS("boss", Role.USER, Role.BOSS),
+    OFFICE("office", Role.USER, Role.BOSS, Role.OFFICE),
+    ADMIN("admin", Role.USER, Role.ADMIN);
+
+    public static final String SECRET = "{pbkdf2}7fa3ad492f74237b2fae54a07d81df1b17e5b3790fa629eb1b3fea19f86d4fccb62cf12bcfbd5913";
 
     private final String username;
-    private final String password;
     private final Role[] roles;
 
-    DemoUser(String username, String password, Role... roles) {
+    DemoUser(String username, Role... roles) {
         this.username = username;
-        this.password = password;
         this.roles = roles;
     }
 
@@ -32,7 +32,7 @@ enum DemoUser {
         return roles;
     }
 
-    String getPassword() {
-        return password;
+    String getPasswordHash() {
+        return SECRET;
     }
 }
