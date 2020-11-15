@@ -4,7 +4,6 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 
-
 /**
  * Represents a period of time.
  */
@@ -39,19 +38,14 @@ public class Period {
     }
 
     public LocalDate getStartDate() {
-
         return startDate;
     }
 
-
     public LocalDate getEndDate() {
-
         return endDate;
     }
 
-
     public DayLength getDayLength() {
-
         return dayLength;
     }
 }
