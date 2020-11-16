@@ -48,17 +48,29 @@
                 </div>
             </div>
 
-            <c:set var="absenceError">
+            <c:set var="applicationError">
                 <form:errors path="applicationSettings.*"/>
             </c:set>
-            <c:if test="${not empty absenceError}">
+            <c:set var="sickNoteError">
+                <form:errors path="sickNoteSettings.*"/>
+            </c:set>
+            <c:set var="accountError">
+                <form:errors path="accountSettings.*"/>
+            </c:set>
+            <c:if test="${not empty applicationError || not empty sickNoteError || not empty accountError}">
                 <c:set var="ABSENCE_ERROR_CSS_CLASS" value="error"/>
             </c:if>
 
             <c:set var="workingTimeError">
                 <form:errors path="workingTimeSettings.*"/>
             </c:set>
-            <c:if test="${not empty workingTimeError}">
+            <c:set var="timeError">
+                <form:errors path="timeSettings.*"/>
+            </c:set>
+            <c:set var="overtimeError">
+                <form:errors path="overtimeSettings.*"/>
+            </c:set>
+            <c:if test="${not empty workingTimeError || not empty timeError || not empty overtimeError}">
                 <c:set var="WORKING_TIME_ERROR_CSS_CLASS" value="error"/>
             </c:if>
 
