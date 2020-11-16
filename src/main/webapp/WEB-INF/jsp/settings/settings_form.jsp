@@ -73,16 +73,19 @@
                 <div class="col-xs-12">
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active ${ABSENCE_ERROR_CSS_CLASS}">
-                            <a href="#absence" aria-controls="absence" role="tab" data-toggle="tab"><spring:message
-                                code="settings.tabs.absence"/></a>
+                            <a href="#absence" aria-controls="absence" role="tab" data-toggle="tab">
+                                <spring:message code="settings.tabs.absence"/>
+                            </a>
                         </li>
                         <li role="presentation" class="${WORKING_TIME_ERROR_CSS_CLASS}">
-                            <a href="#publicHolidays" aria-controls="publicHolidays" role="tab"
-                               data-toggle="tab"><spring:message code="settings.tabs.workingTime"/></a>
+                            <a href="#publicHolidays" aria-controls="publicHolidays" role="tab" data-toggle="tab">
+                                <spring:message code="settings.tabs.workingTime"/>
+                            </a>
                         </li>
                         <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
-                            <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab"><spring:message
-                                code="settings.tabs.calendar"/></a>
+                            <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab">
+                                <spring:message code="settings.tabs.calendar"/>
+                            </a>
                         </li>
                     </ul>
                 </div>
