@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
@@ -130,13 +131,11 @@ class SettingsValidatorTest {
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        absenceSettings.setMaximumAnnualVacationDays(null);
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
         absenceSettings.setDaysBeforeRemindForWaitingApplications(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.mandatory");
         verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
         verify(mockError).rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
     }
@@ -147,13 +146,11 @@ class SettingsValidatorTest {
         Settings settings = new Settings();
         AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        absenceSettings.setMaximumAnnualVacationDays(-1);
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
         absenceSettings.setDaysBeforeRemindForWaitingApplications(-1);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
         verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
         verify(mockError).rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
     }
@@ -166,19 +163,7 @@ class SettingsValidatorTest {
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError)
-            .rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
-    }
-
-    @Test
-    void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
-
-        Settings settings = new Settings();
-        settings.getAbsenceSettings().setMaximumAnnualVacationDays(367);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
+        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
     }
 
     @Test
@@ -186,15 +171,62 @@ class SettingsValidatorTest {
 
         final Settings settings = new Settings();
         final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        absenceSettings.setMaximumAnnualVacationDays(Integer.MAX_VALUE + 1);
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(Integer.MAX_VALUE + 1);
 
-        Errors mockError = mock(Errors.class);
+        final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
         verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
     }
+
+    // Account settings ------------------------------------------------------------------------------------------------
+    @Test
+    void ensureAccountSettingsCanNotBeNull() {
+
+        final Settings settings = new Settings();
+        final AccountSettings accountSettings = settings.getAccountSettings();
+        accountSettings.setMaximumAnnualVacationDays(null);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.mandatory");
+    }
+
+    @Test
+    void ensureAccountSettingsCanNotBeNegative() {
+
+        final Settings settings = new Settings();
+        final AccountSettings accountSettings = settings.getAccountSettings();
+        accountSettings.setMaximumAnnualVacationDays(-1);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.invalid");
+    }
+
+    @Test
+    void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
+
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setMaximumAnnualVacationDays(367);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.invalid");
+    }
+
+    @Test
+    void ensureThatAccountSettingsAreSmallerOrEqualsThanMaxInt() {
+
+        final Settings settings = new Settings();
+        final AccountSettings accountSettings = settings.getAccountSettings();
+
+        accountSettings.setMaximumAnnualVacationDays(Integer.MAX_VALUE + 1);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.invalid");
+    }
+
 
     // SickNote settings ------------------------------------------------------------------------------------------------
     @Test

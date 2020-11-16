@@ -107,16 +107,16 @@
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.maximumAnnualVacationDays">
+                                           for="accountSettings.maximumAnnualVacationDays">
                                         <spring:message code='settings.vacation.maximumAnnualVacationDays'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.maximumAnnualVacationDays"
-                                                    path="absenceSettings.maximumAnnualVacationDays"
+                                        <form:input id="accountSettings.maximumAnnualVacationDays"
+                                                    path="accountSettings.maximumAnnualVacationDays"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.maximumAnnualVacationDays"
+                                            path="accountSettings.maximumAnnualVacationDays"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>

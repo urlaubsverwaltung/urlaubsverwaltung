@@ -11,7 +11,6 @@ class AbsenceSettingsTest {
     void ensureDefaultValues() {
 
         final AbsenceSettings settings = new AbsenceSettings();
-        assertThat(settings.getMaximumAnnualVacationDays()).isEqualTo(40);
         assertThat(settings.getMaximumMonthsToApplyForLeaveInAdvance()).isEqualTo(12);
     }
 }

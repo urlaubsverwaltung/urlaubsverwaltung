@@ -7,6 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
@@ -39,10 +40,10 @@ public class SettingsValidator implements Validator {
         Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
 
         final Settings settings = (Settings) o;
-
         validatePublicHolidaysSettings(settings, errors);
         validateOvertimeSettings(settings, errors);
         validateAbsenceSettings(settings, errors);
+        validateAccountSettings(settings, errors);
         validateSickNoteSettings(settings, errors);
         validateCalendarSettings(settings, errors);
         validateTimeSettings(settings, errors);
@@ -92,16 +93,7 @@ public class SettingsValidator implements Validator {
 
         final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        final Integer maximumAnnualVacationDays = absenceSettings.getMaximumAnnualVacationDays();
-
-        if (maximumAnnualVacationDays == null) {
-            errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
-        } else if (maximumAnnualVacationDays < 0 || maximumAnnualVacationDays > DAYS_PER_YEAR) {
-            errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
-        }
-
         final Integer maximumMonthsToApplyForLeaveInAdvance = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
-
         if (maximumMonthsToApplyForLeaveInAdvance == null) {
             errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
         } else if (maximumMonthsToApplyForLeaveInAdvance <= 0) {
@@ -109,11 +101,22 @@ public class SettingsValidator implements Validator {
         }
 
         final Integer daysBeforeRemindForWaitingApplications = absenceSettings.getDaysBeforeRemindForWaitingApplications();
-
         if (daysBeforeRemindForWaitingApplications == null) {
             errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);
         } else if (daysBeforeRemindForWaitingApplications <= 0) {
             errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_INVALID_ENTRY);
+        }
+    }
+
+    private void validateAccountSettings(Settings settings, Errors errors) {
+
+        final AccountSettings accountSettings = settings.getAccountSettings();
+
+        final Integer maximumAnnualVacationDays = accountSettings.getMaximumAnnualVacationDays();
+        if (maximumAnnualVacationDays == null) {
+            errors.rejectValue("accountSettings.maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
+        } else if (maximumAnnualVacationDays < 0 || maximumAnnualVacationDays > DAYS_PER_YEAR) {
+            errors.rejectValue("accountSettings.maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
         }
     }
 

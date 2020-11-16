@@ -9,11 +9,6 @@ import javax.persistence.Embeddable;
 public class AbsenceSettings {
 
     /**
-     * Specifies the maximal number of annual vacation days a person can have.
-     */
-    private Integer maximumAnnualVacationDays = 40; // NOSONAR
-
-    /**
      * Specifies how many months in advance a person can apply for leave.
      */
     private Integer maximumMonthsToApplyForLeaveInAdvance = 12; // NOSONAR
@@ -28,14 +23,6 @@ public class AbsenceSettings {
      * secondary stage authority
      */
     private Integer daysBeforeRemindForWaitingApplications = 2;
-
-    public Integer getMaximumAnnualVacationDays() {
-        return maximumAnnualVacationDays;
-    }
-
-    public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
-        this.maximumAnnualVacationDays = maximumAnnualVacationDays;
-    }
 
     public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
         return maximumMonthsToApplyForLeaveInAdvance;
