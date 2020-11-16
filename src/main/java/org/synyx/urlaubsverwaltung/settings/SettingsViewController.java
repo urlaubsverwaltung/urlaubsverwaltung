@@ -69,11 +69,12 @@ public class SettingsViewController {
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
-        final StringBuffer requestURL = request.getRequestURL();
-        final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
-
         settingsValidator.validate(settings, errors);
         if (errors.hasErrors()) {
+
+            final StringBuffer requestURL = request.getRequestURL();
+            final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
+
             fillModel(model, settings, authorizedRedirectUrl);
 
             model.addAttribute("errors", errors);
