@@ -33,19 +33,19 @@ public class AbsenceSettings {
         return maximumAnnualVacationDays;
     }
 
-    public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
-        return maximumMonthsToApplyForLeaveInAdvance;
-    }
-
     public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
+    }
+
+    public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
+        return maximumMonthsToApplyForLeaveInAdvance;
     }
 
     public void setMaximumMonthsToApplyForLeaveInAdvance(Integer maximumMonthsToApplyForLeaveInAdvance) {
         this.maximumMonthsToApplyForLeaveInAdvance = maximumMonthsToApplyForLeaveInAdvance;
     }
 
-    public boolean getRemindForWaitingApplications() {
+    public boolean isRemindForWaitingApplications() {
         return remindForWaitingApplications;
     }
 

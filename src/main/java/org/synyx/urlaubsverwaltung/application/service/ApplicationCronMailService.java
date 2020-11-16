@@ -37,7 +37,7 @@ class ApplicationCronMailService {
     void sendWaitingApplicationsReminderNotification() {
 
         boolean isRemindForWaitingApplicationsActive =
-            settingsService.getSettings().getAbsenceSettings().getRemindForWaitingApplications();
+            settingsService.getSettings().getAbsenceSettings().isRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
             List<Application> allWaitingApplications =
