@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 
 import javax.persistence.Entity;
 

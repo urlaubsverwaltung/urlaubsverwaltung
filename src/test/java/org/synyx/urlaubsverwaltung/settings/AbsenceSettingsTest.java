@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
