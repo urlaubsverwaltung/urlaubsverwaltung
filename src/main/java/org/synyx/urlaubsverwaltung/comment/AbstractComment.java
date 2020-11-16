@@ -34,7 +34,7 @@ public abstract class AbstractComment extends AbstractPersistable<Integer> {
         // needed for hibernate
     }
 
-    public AbstractComment(Clock clock) {
+    protected AbstractComment(Clock clock) {
         final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
         this.date = Instant.now(c).truncatedTo(DAYS);
     }
