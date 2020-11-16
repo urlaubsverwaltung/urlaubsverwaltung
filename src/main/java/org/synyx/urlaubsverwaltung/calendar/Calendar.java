@@ -21,7 +21,7 @@ abstract class Calendar {
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
-    public Calendar() {
+    protected Calendar() {
         generateSecret();
     }
 
