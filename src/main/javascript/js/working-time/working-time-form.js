@@ -1,8 +1,7 @@
-import { createDatepickerInstances } from "../../components/datepicker";
+import { createDatepicker } from "../../components/datepicker";
 
-createDatepickerInstances(
-  ["#validFrom"],
-  window.uv.apiPrefix,
-  () => window.uv.personId,
-  () => {},
-);
+function getPersonId() {
+  return window.uv.personId;
+}
+
+createDatepicker("#validFrom", { urlPrefix: window.uv.apiPrefix, getPersonId });

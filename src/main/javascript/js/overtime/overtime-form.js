@@ -1,20 +1,28 @@
 import $ from "jquery";
-import { createDatepickerInstances } from "../../components/datepicker";
-
-function onSelect(event) {
-  const endDateElement = document.querySelector("#endDate");
-
-  if (event.target.matches("#startDate") && !endDateElement.value) {
-    endDateElement.value = event.target.value;
-  }
-}
-
-function getPersonId() {
-  return window.uv.personId;
-}
+import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(async function () {
   const urlPrefix = window.uv.apiPrefix;
+  const personId = window.uv.personId;
 
-  await createDatepickerInstances(["#startDate", "#endDate"], urlPrefix, getPersonId, onSelect);
+  let startDateElement;
+  let endDateElement;
+
+  function getPersonId() {
+    return personId;
+  }
+
+  function handleStartDateSelect() {
+    if (!endDateElement.value) {
+      endDateElement.value = startDateElement.value;
+    }
+  }
+
+  const [startDateResult, endDateResult] = await Promise.allSettled([
+    createDatepicker("#startDate", { urlPrefix, getPersonId, onSelect: handleStartDateSelect }),
+    createDatepicker("#endDate", { urlPrefix, getPersonId }),
+  ]);
+
+  startDateElement = startDateResult.value;
+  endDateElement = endDateResult.value;
 });

@@ -1,7 +1,7 @@
-import createDatepickerInstances from "../create-datepicker-instances";
+import { createDatepicker } from "../create-datepicker";
 import fetchMock from "fetch-mock";
 
-describe("create-datepicker-instances", () => {
+describe("create-datepicker", () => {
   beforeEach(() => {
     window.uv = {
       datepicker: {
@@ -22,21 +22,17 @@ describe("create-datepicker-instances", () => {
 
   test("replaces elements matching the selector with the @duetds/date-picker", async () => {
     document.body.innerHTML = `
-      <input id="just-a-date-picker" />
-      <input id="awesome-date-picker-1" />
-      <input id="awesome-date-picker-2" />
+      <input id="awesome-date-picker" />
     `;
 
-    const selectors = ["#awesome-date-picker-1", "#awesome-date-picker-2"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const result = await createDatepicker("#awesome-date-picker", { urlPrefix, getPersonId });
 
-    expect(document.querySelector("#just-a-date-picker").closest("duet-date-picker")).toBeNull();
-    expect(document.querySelector("#awesome-date-picker-1").closest("duet-date-picker")).toBeTruthy();
-    expect(document.querySelector("#awesome-date-picker-2").closest("duet-date-picker")).toBeTruthy();
+    const duetDatePicker = document.querySelector("#awesome-date-picker").closest("duet-date-picker");
+    expect(duetDatePicker).toBeTruthy();
+    expect(result).toBe(duetDatePicker);
   });
 
   test("sets 'duet-radius' to 0", async () => {
@@ -44,14 +40,12 @@ describe("create-datepicker-instances", () => {
       <input />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    expect(document.querySelector("duet-date-picker").getAttribute("style")).toBe("--duet-radius=0");
+    expect(datepicker.getAttribute("style")).toBe("--duet-radius=0");
   });
 
   test("assigns original 'id' attribute", async () => {
@@ -59,14 +53,12 @@ describe("create-datepicker-instances", () => {
       <input id="awesome-date" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    expect(document.querySelector("duet-date-picker input").getAttribute("id")).toBe("awesome-date");
+    expect(datepicker.querySelector("input").getAttribute("id")).toBe("awesome-date");
   });
 
   test("assigns original 'class' attribute", async () => {
@@ -74,16 +66,13 @@ describe("create-datepicker-instances", () => {
       <input class="foo bar" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    const { classList } = document.querySelector("duet-date-picker");
-    expect(classList).toContain("foo");
-    expect(classList).toContain("bar");
+    expect(datepicker.classList).toContain("foo");
+    expect(datepicker.classList).toContain("bar");
   });
 
   test("assigns original 'name' attribute", async () => {
@@ -91,29 +80,29 @@ describe("create-datepicker-instances", () => {
       <input name="start-date" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    expect(document.querySelector("duet-date-picker input").getAttribute("name")).toBe("start-date");
+    expect(datepicker.querySelector("input").getAttribute("name")).toBe("start-date");
   });
 
   test("fails to render with preset date value but missing iso-value", async () => {
+    expect.hasAssertions();
+
     document.body.innerHTML = `
       <input value="24.12.2020" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
-
-    expect(document.querySelector("duet-date-picker")).toBeNull();
+    try {
+      await createDatepicker("input", { urlPrefix, getPersonId });
+    } catch (error) {
+      expect(error.message).toEqual("Invalid time value");
+    }
   });
 
   test("assigns original 'value' attribute", async () => {
@@ -121,14 +110,12 @@ describe("create-datepicker-instances", () => {
       <input value="24.12.2020" data-iso-value="2020-12-24" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    expect(document.querySelector("duet-date-picker").getAttribute("value")).toBe("2020-12-24");
+    expect(datepicker.getAttribute("value")).toBe("2020-12-24");
   });
 
   test('invokes "onSelect" when date value has been changed', async () => {
@@ -136,17 +123,16 @@ describe("create-datepicker-instances", () => {
       <input value="24.12.2020" data-iso-value="2020-12-24" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "";
-    const getPerson = () => 42;
+    const getPersonId = () => 42;
     const onSelect = jest.fn();
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId, onSelect });
 
     expect(onSelect).not.toHaveBeenCalled();
 
     const event = new CustomEvent("duetChange");
-    fireEvent(document.querySelector("duet-date-picker"), event);
+    fireEvent(datepicker, event);
 
     expect(onSelect).toHaveBeenCalledWith(event);
   });
@@ -170,12 +156,10 @@ describe("create-datepicker-instances", () => {
           <input value="24.12.2020" data-iso-value="2020-12-24" />
         `;
 
-        const selectors = ["input"];
         const urlPrefix = "my-url-prefix";
-        const getPerson = () => 42;
-        const onSelect = jest.fn();
+        const getPersonId = () => 42;
 
-        await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+        await createDatepicker("input", { urlPrefix, getPersonId });
 
         // duet datepicker must to be opened to update month and year select-box values
         document.querySelector("button.duet-date__toggle").click();
@@ -279,12 +263,10 @@ describe("create-datepicker-instances", () => {
           <input value="24.12.2020" data-iso-value="2020-12-24" />
         `;
 
-        const selectors = ["input"];
         const urlPrefix = "my-url-prefix";
-        const getPerson = () => 42;
-        const onSelect = jest.fn();
+        const getPersonId = () => 42;
 
-        await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+        await createDatepicker("input", { urlPrefix, getPersonId });
 
         // fetch public holidays and update view
         document.querySelector("button.duet-date__toggle").click();
@@ -333,12 +315,10 @@ describe("create-datepicker-instances", () => {
             <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
-          const selectors = ["input"];
           const urlPrefix = "my-url-prefix";
-          const getPerson = () => 42;
-          const onSelect = jest.fn();
+          const getPersonId = () => 42;
 
-          await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+          await createDatepicker("input", { urlPrefix, getPersonId });
         });
 
         test("full", async () => {
@@ -409,12 +389,10 @@ describe("create-datepicker-instances", () => {
             <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
-          const selectors = ["input"];
           const urlPrefix = "my-url-prefix";
-          const getPerson = () => 42;
-          const onSelect = jest.fn();
+          const getPersonId = () => 42;
 
-          await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+          await createDatepicker("input", { urlPrefix, getPersonId });
         });
 
         test("full", async () => {
@@ -491,12 +469,10 @@ describe("create-datepicker-instances", () => {
             <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
-          const selectors = ["input"];
           const urlPrefix = "my-url-prefix";
-          const getPerson = () => 42;
-          const onSelect = jest.fn();
+          const getPersonId = () => 42;
 
-          await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+          await createDatepicker("input", { urlPrefix, getPersonId });
         });
 
         test("full", async () => {
@@ -573,12 +549,10 @@ describe("create-datepicker-instances", () => {
             <input value="24.12.2020" data-iso-value="2020-12-24" />
           `;
 
-          const selectors = ["input"];
           const urlPrefix = "my-url-prefix";
-          const getPerson = () => 42;
-          const onSelect = jest.fn();
+          const getPersonId = () => 42;
 
-          await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+          await createDatepicker("input", { urlPrefix, getPersonId });
         });
 
         test("full", async () => {
@@ -645,12 +619,10 @@ describe("create-datepicker-instances", () => {
       <input value="24.12.2020" data-iso-value="2020-12-24" />
     `;
 
-    const selectors = ["input"];
     const urlPrefix = "my-url-prefix";
-    const getPerson = () => 42;
-    const onSelect = jest.fn();
+    const getPersonId = () => 42;
 
-    await createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect);
+    await createDatepicker("input", { urlPrefix, getPersonId });
 
     expect(document.querySelector("input").value).toBe("24.12.2020");
   });

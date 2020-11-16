@@ -1,8 +1,11 @@
-import { createDatepickerInstances } from "../../components/datepicker";
+import { createDatepicker } from "../../components/datepicker";
 
-createDatepickerInstances(
-  ["#holidaysAccountValidFrom", "#holidaysAccountValidTo"],
-  window.uv.apiPrefix,
-  () => window.uv.personId,
-  () => {},
-);
+const urlPrefix = window.uv.apiPrefix;
+const personId = window.uv.personId;
+
+function getPersonId() {
+  return personId;
+}
+
+createDatepicker("#holidaysAccountValidFrom", { urlPrefix, getPersonId });
+createDatepicker("#holidaysAccountValidTo", { urlPrefix, getPersonId });

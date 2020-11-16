@@ -1,21 +1,5 @@
 import $ from "jquery";
-import { createDatepickerInstances } from "../../components/datepicker";
-
-function onSelect(event) {
-  const toElement = document.querySelector("#to");
-
-  if (event.target.matches("#from") && !toElement.value) {
-    toElement.value = event.target.value;
-  }
-}
-
-function onSelectAUB(event) {
-  const aubToElement = document.querySelector("#aubTo");
-
-  if (event.target.matches("#aubFrom") && !aubToElement.value) {
-    aubToElement.value = event.target.value;
-  }
-}
+import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(async function () {
   const person = window.uv.params.person;
@@ -29,6 +13,11 @@ $(document).ready(async function () {
   const urlPrefix = window.uv.apiPrefix;
   const sickNotePersonId = window.uv.sickNote.person.id;
 
+  let fromDateElement;
+  let toDateElement;
+  let aubFromDateElement;
+  let aubToDateElement;
+
   function getPersonId() {
     if (!sickNotePersonId) {
       return $("#employee option:selected").val();
@@ -36,6 +25,27 @@ $(document).ready(async function () {
     return sickNotePersonId;
   }
 
-  await createDatepickerInstances(["#from", "#to"], urlPrefix, getPersonId, onSelect);
-  await createDatepickerInstances(["#aubFrom", "#aubTo"], urlPrefix, getPersonId, onSelectAUB);
+  function handleFromSelect() {
+    if (!toDateElement.value) {
+      toDateElement.value = fromDateElement.value;
+    }
+  }
+
+  function handleAubFromSelect() {
+    if (!aubToDateElement.value) {
+      aubToDateElement.value = aubFromDateElement.value;
+    }
+  }
+
+  const [fromResult, toResult, aubFromResult, aubToResult] = await Promise.allSettled([
+    createDatepicker("#from", { urlPrefix, getPersonId, onSelect: handleFromSelect }),
+    createDatepicker("#to", { urlPrefix, getPersonId }),
+    createDatepicker("#aubFrom", { urlPrefix, getPersonId, onSelect: handleAubFromSelect }),
+    createDatepicker("#aubTo", { urlPrefix, getPersonId }),
+  ]);
+
+  fromDateElement = fromResult.value;
+  toDateElement = toResult.value;
+  aubFromDateElement = aubFromResult.value;
+  aubToDateElement = aubToResult.value;
 });
