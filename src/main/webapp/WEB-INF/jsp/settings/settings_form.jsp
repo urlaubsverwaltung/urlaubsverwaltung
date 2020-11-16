@@ -213,30 +213,30 @@
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="absenceSettings.maximumSickPayDays">
+                                    <label class="control-label col-md-4" for="sickNoteSettings.maximumSickPayDays">
                                         <spring:message code='settings.sickDays.maximumSickPayDays'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.maximumSickPayDays"
-                                                    path="absenceSettings.maximumSickPayDays" class="form-control"
+                                        <form:input id="sickNoteSettings.maximumSickPayDays"
+                                                    path="sickNoteSettings.maximumSickPayDays" class="form-control"
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
-                                        <span class="help-inline"><form:errors path="absenceSettings.maximumSickPayDays"
+                                        <span class="help-inline"><form:errors path="sickNoteSettings.maximumSickPayDays"
                                                                                cssClass="error"/></span>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.daysBeforeEndOfSickPayNotification">
+                                           for="sickNoteSettings.daysBeforeEndOfSickPayNotification">
                                         <spring:message code='settings.sickDays.daysBeforeEndOfSickPayNotification'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.daysBeforeEndOfSickPayNotification"
-                                                    path="absenceSettings.daysBeforeEndOfSickPayNotification"
+                                        <form:input id="sickNoteSettings.daysBeforeEndOfSickPayNotification"
+                                                    path="sickNoteSettings.daysBeforeEndOfSickPayNotification"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.daysBeforeEndOfSickPayNotification"
+                                            path="sickNoteSettings.daysBeforeEndOfSickPayNotification"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>
@@ -387,47 +387,47 @@
                             <div class="col-md-8 col-md-pull-4">
 
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive.true">
+                                    <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
                                         <spring:message code='settings.overtime.overtimeActive'/>:
                                     </label>
                                     <div class="col-md-8 radio">
                                         <label class="halves">
-                                            <form:radiobutton id="workingTimeSettings.overtimeActive.true"
-                                                              path="workingTimeSettings.overtimeActive" value="true"/>
+                                            <form:radiobutton id="overtimeSettings.overtimeActive.true"
+                                                              path="overtimeSettings.overtimeActive" value="true"/>
                                             <spring:message code="settings.overtime.overtimeActive.true"/>
                                         </label>
                                         <label class="halves">
-                                            <form:radiobutton id="workingTimeSettings.overtimeActive.false"
-                                                              path="workingTimeSettings.overtimeActive" value="false"/>
+                                            <form:radiobutton id="overtimeSettings.overtimeActive.false"
+                                                              path="overtimeSettings.overtimeActive" value="false"/>
                                             <spring:message code="settings.overtime.overtimeActive.false"/>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="workingTimeSettings.maximumOvertime">
+                                    <label class="control-label col-md-4" for="overtimeSettings.maximumOvertime">
                                         <spring:message code="settings.overtime.maximum"/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="workingTimeSettings.maximumOvertime"
-                                                    path="workingTimeSettings.maximumOvertime" class="form-control"
+                                        <form:input id="overtimeSettings.maximumOvertime"
+                                                    path="overtimeSettings.maximumOvertime" class="form-control"
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="workingTimeSettings.maximumOvertime" cssClass="error"/></span>
+                                            path="overtimeSettings.maximumOvertime" cssClass="error"/></span>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="workingTimeSettings.minimumOvertime">
+                                    <label class="control-label col-md-4" for="overtimeSettings.minimumOvertime">
                                         <spring:message code="settings.overtime.minimum"/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="workingTimeSettings.minimumOvertime"
-                                                    path="workingTimeSettings.minimumOvertime" class="form-control"
+                                        <form:input id="overtimeSettings.minimumOvertime"
+                                                    path="overtimeSettings.minimumOvertime" class="form-control"
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="workingTimeSettings.minimumOvertime" cssClass="error"/></span>
+                                            path="overtimeSettings.minimumOvertime" cssClass="error"/></span>
                                     </div>
                                 </div>
                             </div>

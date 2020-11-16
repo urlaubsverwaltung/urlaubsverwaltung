@@ -19,13 +19,13 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 
 import java.time.Clock;
@@ -102,11 +102,11 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setOvertimeActive(true);
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        overtimeSettings.setOvertimeActive(true);
 
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setOvertimeSettings(overtimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final ResultActions resultActions = perform(get("/web/application/new"));
@@ -127,11 +127,11 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setOvertimeActive(false);
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        overtimeSettings.setOvertimeActive(false);
 
         final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setOvertimeSettings(overtimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final ResultActions resultActions = perform(get("/web/application/new"));

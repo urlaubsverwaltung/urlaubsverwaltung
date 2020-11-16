@@ -7,8 +7,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;
@@ -58,7 +58,7 @@ public class OvertimeFormValidator implements Validator {
 
         OvertimeForm overtimeForm = (OvertimeForm) target;
 
-        WorkingTimeSettings settings = settingsService.getSettings().getWorkingTimeSettings();
+        OvertimeSettings settings = settingsService.getSettings().getOvertimeSettings();
 
         if (!settings.isOvertimeActive()) {
             errors.reject(ERROR_OVERTIME_DEACTIVATED);
@@ -108,14 +108,13 @@ public class OvertimeFormValidator implements Validator {
     }
 
 
-    private void validateMaximumOvertimeNotReached(WorkingTimeSettings settings, OvertimeForm overtimeForm,
-                                                   Errors errors) {
+    private void validateMaximumOvertimeNotReached(OvertimeSettings settings, OvertimeForm overtimeForm,Errors errors) {
 
-        BigDecimal numberOfHours = overtimeForm.getNumberOfHours();
+        final BigDecimal numberOfHours = overtimeForm.getNumberOfHours();
 
         if (numberOfHours != null) {
-            BigDecimal maximumOvertime = new BigDecimal(settings.getMaximumOvertime());
-            BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
+            final BigDecimal maximumOvertime = new BigDecimal(settings.getMaximumOvertime());
+            final BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
 
             if (CalcUtil.isZero(maximumOvertime)) {
                 errors.reject(ERROR_OVERTIME_DEACTIVATED);

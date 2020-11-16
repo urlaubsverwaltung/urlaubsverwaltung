@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -307,7 +308,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
         BigDecimal hours = applicationForLeave.getHours();
         boolean isOvertime = VacationCategory.OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
-        boolean overtimeFunctionIsActive = settings.getWorkingTimeSettings().isOvertimeActive();
+        boolean overtimeFunctionIsActive = settings.getOvertimeSettings().isOvertimeActive();
         boolean hoursRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && hours == null;
 
         if (hoursRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
@@ -421,24 +422,22 @@ public class ApplicationForLeaveFormValidator implements Validator {
         boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
 
         if (isOvertime) {
-            WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-            boolean overtimeActive = workingTimeSettings.isOvertimeActive();
+            final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+            boolean overtimeActive = overtimeSettings.isOvertimeActive();
 
             if (overtimeActive && application.getHours() != null) {
-                return checkOvertimeHours(application, workingTimeSettings);
+                return checkOvertimeHours(application, overtimeSettings);
             }
         }
 
         return true;
     }
 
+    private boolean checkOvertimeHours(Application application, OvertimeSettings settings) {
 
-    private boolean checkOvertimeHours(Application application, WorkingTimeSettings settings) {
-
-        BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
-        BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
-
-        BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
+        final BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
+        final BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
+        final BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
 
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negate()) >= 0;
     }

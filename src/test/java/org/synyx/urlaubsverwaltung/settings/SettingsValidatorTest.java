@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -54,46 +55,41 @@ class SettingsValidatorTest {
         workingTimeSettings.setFederalState(null);
         workingTimeSettings.setWorkingDurationForChristmasEve(null);
         workingTimeSettings.setWorkingDurationForNewYearsEve(null);
-        workingTimeSettings.setMaximumOvertime(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("workingTimeSettings.federalState", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
+        verify(mockError).rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
+        verify(mockError).rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
     }
 
     // Working time settings: Overtime settings ------------------------------------------------------------------------
     @Test
     void ensureOvertimeSettingsAreMandatoryIfOvertimeManagementIsActive() {
 
-        Settings settings = new Settings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-        workingTimeSettings.setOvertimeActive(true);
-        workingTimeSettings.setMaximumOvertime(null);
-        workingTimeSettings.setMinimumOvertime(null);
+        final Settings settings = new Settings();
+        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+        overtimeSettings.setOvertimeActive(true);
+        overtimeSettings.setMaximumOvertime(null);
+        overtimeSettings.setMinimumOvertime(null);
 
-        Errors mockError = mock(Errors.class);
-
+        final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.mandatory");
-        verify(mockError).rejectValue("workingTimeSettings.minimumOvertime", "error.entry.mandatory");
+        verify(mockError).rejectValue("overtimeSettings.maximumOvertime", "error.entry.mandatory");
+        verify(mockError).rejectValue("overtimeSettings.minimumOvertime", "error.entry.mandatory");
     }
 
     @Test
     void ensureOvertimeSettingsAreNotMandatoryIfOvertimeManagementIsInactive() {
 
-        Settings settings = new Settings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-        workingTimeSettings.setOvertimeActive(false);
-        workingTimeSettings.setMaximumOvertime(null);
-        workingTimeSettings.setMinimumOvertime(null);
+        final Settings settings = new Settings();
+        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+        overtimeSettings.setOvertimeActive(false);
+        overtimeSettings.setMaximumOvertime(null);
+        overtimeSettings.setMinimumOvertime(null);
 
-        Errors mockError = mock(Errors.class);
-
+        final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
         verifyNoInteractions(mockError);
@@ -102,31 +98,29 @@ class SettingsValidatorTest {
     @Test
     void ensureMaximumOvertimeCanNotBeNegative() {
 
-        Settings settings = new Settings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-        workingTimeSettings.setOvertimeActive(true);
-        workingTimeSettings.setMaximumOvertime(-1);
+        final Settings settings = new Settings();
+        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+        overtimeSettings.setOvertimeActive(true);
+        overtimeSettings.setMaximumOvertime(-1);
 
-        Errors mockError = mock(Errors.class);
-
+        final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verify(mockError).rejectValue("workingTimeSettings.maximumOvertime", "error.entry.invalid");
+        verify(mockError).rejectValue("overtimeSettings.maximumOvertime", "error.entry.invalid");
     }
 
     @Test
     void ensureMinimumOvertimeCanNotBeNegative() {
 
-        Settings settings = new Settings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-        workingTimeSettings.setOvertimeActive(true);
-        workingTimeSettings.setMinimumOvertime(-1);
+        final Settings settings = new Settings();
+        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+        overtimeSettings.setOvertimeActive(true);
+        overtimeSettings.setMinimumOvertime(-1);
 
-        Errors mockError = mock(Errors.class);
-
+        final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
 
-        verify(mockError).rejectValue("workingTimeSettings.minimumOvertime", "error.entry.invalid");
+        verify(mockError).rejectValue("overtimeSettings.minimumOvertime", "error.entry.invalid");
     }
 
     // Absence settings ------------------------------------------------------------------------------------------------
@@ -214,8 +208,8 @@ class SettingsValidatorTest {
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
-        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
+        verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+        verify(mockError).rejectValue("sickNoteSettings.maximumSickPayDays", "error.entry.invalid");
     }
 
     @Test
@@ -229,8 +223,8 @@ class SettingsValidatorTest {
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.mandatory");
-        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
+        verify(mockError).rejectValue("sickNoteSettings.maximumSickPayDays", "error.entry.mandatory");
+        verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
     }
 
     @Test
@@ -244,8 +238,8 @@ class SettingsValidatorTest {
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
-        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+        verify(mockError).rejectValue("sickNoteSettings.maximumSickPayDays", "error.entry.invalid");
+        verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
     }
 
     @Test
@@ -258,7 +252,7 @@ class SettingsValidatorTest {
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
+        verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
     }
 
     // Time settings -----------------------------------------------------------------------------------------------

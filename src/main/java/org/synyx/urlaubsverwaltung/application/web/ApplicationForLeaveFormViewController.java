@@ -248,7 +248,7 @@ public class ApplicationForLeaveFormViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
-        final boolean overtimeActive = settingsService.getSettings().getWorkingTimeSettings().isOvertimeActive();
+        final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
 
         List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();

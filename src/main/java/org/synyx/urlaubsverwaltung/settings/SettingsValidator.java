@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -66,14 +67,13 @@ public class SettingsValidator implements Validator {
 
     private void validateOvertimeSettings(Settings settings, Errors errors) {
 
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-
-        if (!workingTimeSettings.isOvertimeActive()) {
+        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+        if (!overtimeSettings.isOvertimeActive()) {
             return;
         }
 
-        validateOvertimeLimit(workingTimeSettings.getMaximumOvertime(), "workingTimeSettings.maximumOvertime", errors);
-        validateOvertimeLimit(workingTimeSettings.getMinimumOvertime(), "workingTimeSettings.minimumOvertime", errors);
+        validateOvertimeLimit(overtimeSettings.getMaximumOvertime(), "overtimeSettings.maximumOvertime", errors);
+        validateOvertimeLimit(overtimeSettings.getMinimumOvertime(), "overtimeSettings.minimumOvertime", errors);
     }
 
     private void validateOvertimeLimit(Integer limit, String field, Errors errors) {
@@ -125,20 +125,20 @@ public class SettingsValidator implements Validator {
         final Integer daysBeforeEndOfSickPayNotification = sickNoteSettings.getDaysBeforeEndOfSickPayNotification();
 
         if (maximumSickPayDays == null) {
-            errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("sickNoteSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);
         } else if (maximumSickPayDays < 0) {
-            errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_INVALID_ENTRY);
+            errors.rejectValue("sickNoteSettings.maximumSickPayDays", ERROR_INVALID_ENTRY);
         }
 
         if (daysBeforeEndOfSickPayNotification == null) {
-            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", ERROR_MANDATORY_FIELD);
         } else if (daysBeforeEndOfSickPayNotification < 0) {
-            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", ERROR_INVALID_ENTRY);
+            errors.rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", ERROR_INVALID_ENTRY);
         }
 
         if (maximumSickPayDays != null && daysBeforeEndOfSickPayNotification != null
             && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
-            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
+            errors.rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification",
                 "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
         }
     }

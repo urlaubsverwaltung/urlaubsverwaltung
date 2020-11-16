@@ -62,7 +62,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         settingsService = mock(SettingsService.class);
         settings = new Settings();
-        settings.getWorkingTimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         workDaysCountService = mock(WorkDaysCountService.class);
@@ -537,7 +537,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureHoursIsNotMandatoryForOvertimeIfOvertimeFunctionIsDeactivated() {
 
-        settings.getWorkingTimeSettings().setOvertimeActive(false);
+        settings.getOvertimeSettings().setOvertimeActive(false);
 
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
@@ -585,7 +585,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
 
-        settings.getWorkingTimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setOvertimeActive(true);
 
         appForm.setVacationType(TestDataCreator.createVacationType(VacationCategory.OVERTIME));
         appForm.setHours(null);
@@ -900,8 +900,8 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setHours(hours);
         appForm.setVacationType(vacationType);
 
-        settings.getWorkingTimeSettings().setOvertimeActive(true);
-        settings.getWorkingTimeSettings().setMinimumOvertime(5);
+        settings.getOvertimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setMinimumOvertime(5);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.ZERO);
 
