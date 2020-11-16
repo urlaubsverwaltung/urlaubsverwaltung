@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * Handles date {@link String}s and {@link LocalDate}s with the user specific date format.
@@ -39,7 +39,6 @@ public class DateFormatAware {
      * @return the formatted date with the user specified locale (e.g. <code>"yyyy-MM-dd"</code>, <code>"dd.MM.yyyy"</code>)
      */
     public String format(LocalDate localDate) {
-
         return localDate.format(getUserSpecifiedDateFormat());
     }
 
@@ -48,7 +47,6 @@ public class DateFormatAware {
      * @return the formatted date in {@link DateTimeFormatter#ISO_DATE} format.
      */
     public String formatISO(LocalDate localDate) {
-
         return localDate.format(DateTimeFormatter.ISO_DATE);
     }
 
