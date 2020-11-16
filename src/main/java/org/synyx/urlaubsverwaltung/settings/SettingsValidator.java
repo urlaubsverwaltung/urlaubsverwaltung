@@ -14,7 +14,7 @@ import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.valid
 import static org.synyx.urlaubsverwaltung.application.ApplicationSettingsValidator.validateApplicationSettings;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteSettingsValidator.validateSickNoteSettings;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validatePublicHolidaysSettings;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;
 
 @Component
 public class SettingsValidator implements Validator {
@@ -35,7 +35,7 @@ public class SettingsValidator implements Validator {
         Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
 
         final Settings settings = (Settings) o;
-        validatePublicHolidaysSettings(settings.getWorkingTimeSettings(), errors);
+        validateWorkingTimeSettings(settings.getWorkingTimeSettings(), errors);
         validateOvertimeSettings(settings.getOvertimeSettings(), errors);
         validateApplicationSettings(settings.getApplicationSettings(), errors);
         validateAccountSettings(settings.getAccountSettings(), errors);

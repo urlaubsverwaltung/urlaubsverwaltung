@@ -10,7 +10,7 @@ public class WorkTimeSettingsValidator {
         // private
     }
 
-    public static void validatePublicHolidaysSettings(WorkingTimeSettings workingTimeSettings, Errors errors) {
+    public static void validateWorkingTimeSettings(WorkingTimeSettings workingTimeSettings, Errors errors) {
 
         if (workingTimeSettings.getFederalState() == null) {
             errors.rejectValue("workingTimeSettings.federalState", ERROR_MANDATORY_FIELD);
