@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import javax.persistence.Entity;

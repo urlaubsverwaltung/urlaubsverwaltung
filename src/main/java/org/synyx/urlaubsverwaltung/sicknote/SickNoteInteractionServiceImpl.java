@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionSer
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;

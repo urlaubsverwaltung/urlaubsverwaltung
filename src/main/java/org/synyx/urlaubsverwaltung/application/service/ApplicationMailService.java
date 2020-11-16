@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.io.File;
 import java.util.AbstractMap;

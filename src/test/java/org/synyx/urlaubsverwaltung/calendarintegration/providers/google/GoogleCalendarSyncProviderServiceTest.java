@@ -25,7 +25,7 @@ import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.io.File;
 import java.io.FileInputStream;

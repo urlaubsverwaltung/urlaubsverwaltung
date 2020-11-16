@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;

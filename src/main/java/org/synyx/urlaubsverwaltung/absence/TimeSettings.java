@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.absence;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
