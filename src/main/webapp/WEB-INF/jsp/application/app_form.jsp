@@ -120,23 +120,13 @@
                                         <spring:message code="application.data.person"/>
                                     </label>
                                     <div class="col-md-9">
-                                        <select id="person-select" class="form-control"
-                                                onchange="window.location.href=this.options[this.selectedIndex].value">
+                                        <uv:select id="person-select" name="" onchange="window.location.href=this.options[this.selectedIndex].value">
                                             <c:forEach items="${persons}" var="p">
-                                                <c:choose>
-                                                    <c:when test="${person.id == p.id}">
-                                                        <c:set var="SELECTED_ATTRIBUTE" value="selected='selected'"/>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <c:set var="SELECTED_ATTRIBUTE" value=""/>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                <option
-                                                    value="${URL_PREFIX}/application/new?person=${p.id}" ${SELECTED_ATTRIBUTE}>
+                                                <option value="${URL_PREFIX}/application/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
                                                     <c:out value="${p.niceName}"/>
                                                 </option>
                                             </c:forEach>
-                                        </select>
+                                        </uv:select>
                                     </div>
                                 </div>
                             </c:if>
@@ -146,8 +136,7 @@
                                     <spring:message code="application.data.vacationType"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <form:select path="vacationType" size="1" id="vacationType" class="form-control"
-                                                 onchange="vacationTypeChanged(value);">
+                                    <uv:select id="vacationType" name="vacationType" onchange="vacationTypeChanged(value);">
                                         <c:forEach items="${vacationTypes}" var="vacationType">
                                             <c:choose>
                                                 <c:when test="${vacationType == application.vacationType}">
@@ -162,7 +151,7 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:forEach>
-                                    </form:select>
+                                    </uv:select>
                                 </div>
                             </div>
 
@@ -230,27 +219,27 @@
                                     <spring:message code="application.data.holidayReplacement"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <form:select path="holidayReplacement" id="holidayReplacement" size="1"
-                                                 class="form-control">
-                                        <option value="-1"><spring:message
-                                            code="application.data.holidayReplacement.none"/></option>
+                                    <uv:select id="holidayReplacement" name="holidayReplacement">
+                                        <option value="-1">
+                                            <spring:message code="application.data.holidayReplacement.none" />
+                                        </option>
                                         <c:forEach items="${persons}" var="holidayReplacement">
                                             <c:choose>
                                                 <c:when test="${application.holidayReplacement.id == holidayReplacement.id}">
-                                                    <form:option value="${holidayReplacement.id}" selected="selected">
+                                                    <option value="${holidayReplacement.id}" selected="selected">
                                                         <c:out value="${holidayReplacement.niceName}"/>
-                                                    </form:option>
+                                                    </option>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <c:if test="${person.id != holidayReplacement.id}">
-                                                        <form:option value="${holidayReplacement.id}">
+                                                        <option value="${holidayReplacement.id}">
                                                             <c:out value="${holidayReplacement.niceName}"/>
-                                                        </form:option>
+                                                        </option>
                                                     </c:if>
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:forEach>
-                                    </form:select>
+                                    </uv:select>
                                     <form:errors path="holidayReplacement" cssClass="error"/>
                                 </div>
                             </div>

@@ -268,14 +268,13 @@
                                         <spring:message code="settings.time.timezone"/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:select id="timeSettings.timeZoneId"
-                                                     path="timeSettings.timeZoneId"
-                                                     class="form-control chosenCombo"
-                                                     cssErrorClass="form-control error">
+                                        <uv:select id="timeSettings.timeZoneId" name="timeSettings.timeZoneId" cssClass="chosenCombo">
                                             <c:forEach items="${availableTimezones}" var="timeZoneId">
-                                                <form:option value="${timeZoneId}">${timeZoneId}</form:option>
+                                                <option value="${timeZoneId}" ${settings.timeSettings.timeZoneId == timeZoneId ? 'selected="selected"' : ''}>
+                                                    ${timeZoneId}
+                                                </option>
                                             </c:forEach>
-                                        </form:select>
+                                        </uv:select>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
@@ -328,14 +327,13 @@
                                     </label>
 
                                     <div class="col-md-8">
-                                        <form:select path="workingTimeSettings.workingDurationForChristmasEve"
-                                                     id="dayLengthTypesChristmasEve" class="form-control"
-                                                     cssErrorClass="form-control error">
+                                        <uv:select id="dayLengthTypesChristmasEve" name="workingTimeSettings.workingDurationForChristmasEve">
                                             <c:forEach items="${dayLengthTypes}" var="dayLengthType">
-                                                <form:option value="${dayLengthType}"><spring:message
-                                                    code="${dayLengthType}"/></form:option>
+                                                <option value="${dayLengthType}" ${settings.workingTimeSettings.workingDurationForChristmasEve == dayLengthType ? 'selected="selected"' : ''}>
+                                                    <spring:message code="${dayLengthType}"/>
+                                                </option>
                                             </c:forEach>
-                                        </form:select>
+                                        </uv:select>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
@@ -345,14 +343,13 @@
                                     </label>
 
                                     <div class="col-md-8">
-                                        <form:select path="workingTimeSettings.workingDurationForNewYearsEve"
-                                                     id="dayLengthTypesNewYearsEve" class="form-control"
-                                                     cssErrorClass="form-control error">
+                                        <uv:select id="dayLengthTypesNewYearsEve" name="workingTimeSettings.workingDurationForNewYearsEve">
                                             <c:forEach items="${dayLengthTypes}" var="dayLengthType">
-                                                <form:option value="${dayLengthType}"><spring:message
-                                                    code="${dayLengthType}"/></form:option>
+                                                <option value="${dayLengthType}" ${settings.workingTimeSettings.workingDurationForNewYearsEve == dayLengthType ? 'selected="selected"' : ''}>
+                                                    <spring:message code="${dayLengthType}"/>
+                                                </option>
                                             </c:forEach>
-                                        </form:select>
+                                        </uv:select>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
@@ -361,13 +358,13 @@
                                     </label>
 
                                     <div class="col-md-8">
-                                        <form:select path="workingTimeSettings.federalState" id="federalStateType"
-                                                     class="form-control" cssErrorClass="form-control error">
+                                        <uv:select id="federalStateType" name="workingTimeSettings.federalState">
                                             <c:forEach items="${federalStateTypes}" var="federalStateType">
-                                                <form:option value="${federalStateType}"><spring:message
-                                                    code="federalState.${federalStateType}"/></form:option>
+                                                <option value="${federalStateType}" ${settings.workingTimeSettings.federalState == federalStateType ? 'selected="selected"' : ''}>
+                                                    <spring:message code="federalState.${federalStateType}"/>
+                                                </option>
                                             </c:forEach>
-                                        </form:select>
+                                        </uv:select>
                                     </div>
                                 </div>
                             </div>
@@ -464,15 +461,13 @@
                                         <spring:message code='settings.calendar.provider'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:select id="calendarSettingsProvider" path="calendarSettings.provider"
-                                                     class="form-control" cssErrorClass="form-control error">
+                                        <uv:select id="calendarSettingsProvider" name="calendarSettings.provider">
                                             <c:forEach items="${providers}" var="provider">
-                                                <form:option value="${provider}"><spring:message
-                                                    code="settings.calendar.provider.${provider}"/></form:option>
+                                                <option value="${provider}" ${settings.calendarSettings.provider == provider ? 'selected="selected"' : ''}>
+                                                    <spring:message code="settings.calendar.provider.${provider}"/>
+                                                </option>
                                             </c:forEach>
-                                        </form:select>
-                                        <span class="help-inline"><form:errors path="calendarSettings.provider"
-                                                                               cssClass="error"/></span>
+                                        </uv:select>
                                     </div>
                                 </div>
                             </div>

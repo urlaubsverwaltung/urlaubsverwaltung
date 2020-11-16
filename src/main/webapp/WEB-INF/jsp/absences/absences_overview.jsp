@@ -4,8 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="sec"
-          uri="http://www.springframework.org/security/tags" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
@@ -71,22 +70,19 @@
                                 <spring:message code="absences.overview.year"/>:
                             </label>
                             <div class="col-md-6">
-                                <select id="yearSelect" name="year" size="1" class="form-control">
+                                <uv:select id="yearSelect" name="year">
                                     <c:forEach var="i" begin="1" end="9">
-                                        <option
-                                            value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}>
+                                        <option value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}>
                                             <c:out value="${currentYear - 10 + i}"/>
                                         </option>
                                     </c:forEach>
-                                    <option
-                                        value="${currentYear}" ${currentYear == selectedYear ? 'selected="selected"' : ''}>
+                                    <option value="${currentYear}" ${currentYear == selectedYear ? 'selected="selected"' : ''}>
                                         <c:out value="${currentYear}"/>
                                     </option>
-                                    <option
-                                        value="${currentYear + 1}" ${(currentYear + 1) == selectedYear ? 'selected="selected"' : ''}>
+                                    <option value="${currentYear + 1}" ${(currentYear + 1) == selectedYear ? 'selected="selected"' : ''}>
                                         <c:out value="${currentYear + 1}"/>
                                     </option>
-                                </select>
+                                </uv:select>
                             </div>
                         </div>
                     </div>
@@ -96,7 +92,7 @@
                                 <spring:message code="absences.overview.month"/>:
                             </label>
                             <div class="col-md-6">
-                                <select id="monthSelect" name="month" size="1" class="form-control">
+                                <uv:select id="monthSelect" name="month">
                                     <option value="" ${selectedMonth == '' ? 'selected="selected"' : ''}>
                                         <spring:message code="month.all"/>
                                     </option>
@@ -119,7 +115,7 @@
                                             </c:choose>
                                         </option>
                                     </c:forEach>
-                                </select>
+                                </uv:select>
                             </div>
                         </div>
                     </div>
@@ -130,14 +126,14 @@
                                     <spring:message code="absences.overview.department"/>:
                                 </label>
                                 <div class="col-md-6">
-                                    <select id="departmentSelect" name="department" size="1" class="form-control">
+                                    <uv:select id="departmentSelect" name="department">
                                         <c:forEach items="${departments}" var="department">
                                             <option
                                                 value="${department.name}" ${department.name == selectedDepartment ? 'selected="selected"' : ''}>
                                                 <c:out value="${department.name}"/>
                                             </option>
                                         </c:forEach>
-                                    </select>
+                                    </uv:select>
                                 </div>
                             </div>
                         </div>

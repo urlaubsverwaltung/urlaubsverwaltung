@@ -52,20 +52,18 @@
                     </div>
 
                     <div class="form-group is-required">
-                        <label class="control-label col-md-4">
+                        <label for="vacationType" class="control-label col-md-4">
                             <spring:message code="application.data.vacationType"/>:
                         </label>
 
                         <div class="col-md-7">
-                            <form:select path="vacationType" size="1" cssClass="form-control"
-                                         cssErrorClass="form-control error">
+                            <uv:select id="vacationType" name="vacationType">
                                 <c:forEach items="${vacationTypes}" var="vacationType">
-                                    <option value="${vacationType.id}">
+                                    <option value="${vacationType.id}" ${sickNoteConvertForm.vacationType == vacationType ? 'selected="selected"' : ''}>
                                         <spring:message code="${vacationType.messageKey}"/>
                                     </option>
                                 </c:forEach>
-                            </form:select>
-                            <span class="help-inline"><form:errors path="vacationType" cssClass="error"/></span>
+                            </uv:select>
                         </div>
                     </div>
 
