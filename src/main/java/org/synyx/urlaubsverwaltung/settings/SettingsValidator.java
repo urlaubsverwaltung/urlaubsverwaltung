@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -40,7 +41,7 @@ public class SettingsValidator implements Validator {
 
         validatePublicHolidaysSettings(settings, errors);
         validateOvertimeSettings(settings, errors);
-        validateVacationSettings(settings, errors);
+        validateAbsenceSettings(settings, errors);
         validateSickNoteSettings(settings, errors);
         validateCalendarSettings(settings, errors);
         validateTimeSettings(settings, errors);
@@ -79,7 +80,6 @@ public class SettingsValidator implements Validator {
 
         if (limit == null) {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-
             return;
         }
 
@@ -88,7 +88,7 @@ public class SettingsValidator implements Validator {
         }
     }
 
-    private void validateVacationSettings(Settings settings, Errors errors) {
+    private void validateAbsenceSettings(Settings settings, Errors errors) {
 
         final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
@@ -119,10 +119,10 @@ public class SettingsValidator implements Validator {
 
     private void validateSickNoteSettings(Settings settings, Errors errors) {
 
-        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
 
-        final Integer maximumSickPayDays = absenceSettings.getMaximumSickPayDays();
-        final Integer daysBeforeEndOfSickPayNotification = absenceSettings.getDaysBeforeEndOfSickPayNotification();
+        final Integer maximumSickPayDays = sickNoteSettings.getMaximumSickPayDays();
+        final Integer daysBeforeEndOfSickPayNotification = sickNoteSettings.getDaysBeforeEndOfSickPayNotification();
 
         if (maximumSickPayDays == null) {
             errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);

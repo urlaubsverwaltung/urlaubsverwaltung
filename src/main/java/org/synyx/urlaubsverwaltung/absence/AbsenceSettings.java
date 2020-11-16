@@ -19,17 +19,6 @@ public class AbsenceSettings {
     private Integer maximumMonthsToApplyForLeaveInAdvance = 12; // NOSONAR
 
     /**
-     * Specifies the maximal period of sick pay in days.
-     */
-    private Integer maximumSickPayDays = 42; // NOSONAR
-
-    /**
-     * Specifies when a notification about the end of sick pay should be sent to the affected person and office. (number
-     * of days before the end of sick pay)
-     */
-    private Integer daysBeforeEndOfSickPayNotification = 7; // NOSONAR
-
-    /**
      * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
      */
     private boolean remindForWaitingApplications = false;
@@ -48,28 +37,12 @@ public class AbsenceSettings {
         return maximumMonthsToApplyForLeaveInAdvance;
     }
 
-    public Integer getMaximumSickPayDays() {
-        return maximumSickPayDays;
-    }
-
-    public Integer getDaysBeforeEndOfSickPayNotification() {
-        return daysBeforeEndOfSickPayNotification;
-    }
-
     public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
     }
 
     public void setMaximumMonthsToApplyForLeaveInAdvance(Integer maximumMonthsToApplyForLeaveInAdvance) {
         this.maximumMonthsToApplyForLeaveInAdvance = maximumMonthsToApplyForLeaveInAdvance;
-    }
-
-    public void setMaximumSickPayDays(Integer maximumSickPayDays) {
-        this.maximumSickPayDays = maximumSickPayDays;
-    }
-
-    public void setDaysBeforeEndOfSickPayNotification(Integer daysBeforeEndOfSickPayNotification) {
-        this.daysBeforeEndOfSickPayNotification = daysBeforeEndOfSickPayNotification;
     }
 
     public boolean getRemindForWaitingApplications() {
@@ -87,5 +60,4 @@ public class AbsenceSettings {
     public void setDaysBeforeRemindForWaitingApplications(Integer daysBeforeRemindForWaitingApplications) {
         this.daysBeforeRemindForWaitingApplications = daysBeforeRemindForWaitingApplications;
     }
-
 }

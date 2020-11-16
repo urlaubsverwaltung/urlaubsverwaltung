@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.util.stream.Stream;
@@ -137,20 +138,13 @@ class SettingsValidatorTest {
 
         absenceSettings.setMaximumAnnualVacationDays(null);
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
-        absenceSettings.setMaximumSickPayDays(null);
-        absenceSettings.setDaysBeforeEndOfSickPayNotification(null);
         absenceSettings.setDaysBeforeRemindForWaitingApplications(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
-        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
+        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
+        verify(mockError).rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
     }
 
     @Test
@@ -161,20 +155,13 @@ class SettingsValidatorTest {
 
         absenceSettings.setMaximumAnnualVacationDays(-1);
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
-        absenceSettings.setMaximumSickPayDays(-1);
-        absenceSettings.setDaysBeforeEndOfSickPayNotification(-1);
         absenceSettings.setDaysBeforeRemindForWaitingApplications(-1);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
-        verify(mockError)
-            .rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
-        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
-        verify(mockError)
-            .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
-        verify(mockError)
-            .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
+        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
     }
 
     @Test
@@ -203,37 +190,75 @@ class SettingsValidatorTest {
     @Test
     void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() {
 
-        Settings settings = new Settings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        final Settings settings = new Settings();
+        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
 
-        absenceSettings.setDaysBeforeEndOfSickPayNotification(Integer.MAX_VALUE + 1);
         absenceSettings.setMaximumAnnualVacationDays(Integer.MAX_VALUE + 1);
         absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(Integer.MAX_VALUE + 1);
-        absenceSettings.setMaximumSickPayDays(Integer.MAX_VALUE + 1);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError)
-            .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
         verify(mockError).rejectValue("absenceSettings.maximumAnnualVacationDays", "error.entry.invalid");
-        verify(mockError)
-            .rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+    }
+
+    // SickNote settings ------------------------------------------------------------------------------------------------
+    @Test
+    void ensureThatSickNoteSettingsAreSmallerOrEqualsThanMaxInt() {
+
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+
+        sickNoteSettings.setDaysBeforeEndOfSickPayNotification(Integer.MAX_VALUE + 1);
+        sickNoteSettings.setMaximumSickPayDays(Integer.MAX_VALUE + 1);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
         verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
+    }
+
+    @Test
+    void ensureSickNoteSettingsCanNotBeNull() {
+
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+
+        sickNoteSettings.setMaximumSickPayDays(null);
+        sickNoteSettings.setDaysBeforeEndOfSickPayNotification(null);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.mandatory");
+        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.mandatory");
+    }
+
+    @Test
+    void ensureSickNoteSettingsCanNotBeNegative() {
+
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+
+        sickNoteSettings.setMaximumSickPayDays(-1);
+        sickNoteSettings.setDaysBeforeEndOfSickPayNotification(-1);
+
+        Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("absenceSettings.maximumSickPayDays", "error.entry.invalid");
+        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
     }
 
     @Test
     void ensureThatDaysBeforeEndOfSickPayNotificationIsSmallerThanMaximumSickPayDays() {
 
-        Settings settings = new Settings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-        absenceSettings.setDaysBeforeEndOfSickPayNotification(11);
-        absenceSettings.setMaximumSickPayDays(10);
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+        sickNoteSettings.setDaysBeforeEndOfSickPayNotification(11);
+        sickNoteSettings.setMaximumSickPayDays(10);
 
-        Errors mockError = mock(Errors.class);
+        final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError)
-            .rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
-                "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
+        verify(mockError).rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
     }
 
     // Time settings -----------------------------------------------------------------------------------------------

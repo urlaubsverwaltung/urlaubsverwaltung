@@ -111,10 +111,10 @@ class SickNoteMailServiceTest {
     }
 
     private void prepareSettingsWithMaximumSickPayDays(Integer sickPayDays) {
-        Settings settings = new Settings();
-        AbsenceSettings absenceSettings = new AbsenceSettings();
-        absenceSettings.setMaximumSickPayDays(sickPayDays);
-        settings.setAbsenceSettings(absenceSettings);
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMaximumSickPayDays(sickPayDays);
+        settings.setSickNoteSettings(sickNoteSettings);
         when(settingsService.getSettings()).thenReturn(settings);
     }
 }

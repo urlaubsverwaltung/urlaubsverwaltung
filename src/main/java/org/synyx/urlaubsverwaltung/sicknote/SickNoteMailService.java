@@ -44,7 +44,7 @@ public class SickNoteMailService {
 
         final String subjectMessageKey = "subject.sicknote.endOfSickPay";
         final String templateName = "sicknote_end_of_sick_pay";
-        final Integer maximumSickPayDays = settingsService.getSettings().getAbsenceSettings().getMaximumSickPayDays();
+        final Integer maximumSickPayDays = settingsService.getSettings().getSickNoteSettings().getMaximumSickPayDays();
 
         for (SickNote sickNote : sickNotes) {
 

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import javax.persistence.Entity;
@@ -16,10 +17,11 @@ public class Settings extends AbstractPersistable<Integer> {
 
     private AbsenceSettings absenceSettings;
     private WorkingTimeSettings workingTimeSettings;
+    private TimeSettings timeSettings;
+    private SickNoteSettings sickNoteSettings;
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
-    private TimeSettings timeSettings;
 
     public AbsenceSettings getAbsenceSettings() {
         if (absenceSettings == null) {
@@ -71,6 +73,19 @@ public class Settings extends AbstractPersistable<Integer> {
 
     public void setTimeSettings(TimeSettings timeSettings) {
         this.timeSettings = timeSettings;
+    }
+
+    public SickNoteSettings getSickNoteSettings() {
+
+        if (sickNoteSettings == null) {
+            sickNoteSettings = new SickNoteSettings();
+        }
+
+        return sickNoteSettings;
+    }
+
+    public void setSickNoteSettings(SickNoteSettings sickNoteSettings) {
+        this.sickNoteSettings = sickNoteSettings;
     }
 
     @Override
