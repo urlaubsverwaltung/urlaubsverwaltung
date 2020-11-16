@@ -35,17 +35,24 @@ public class SettingsValidator implements Validator {
         Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
 
         final Settings settings = (Settings) o;
-        validatePublicHolidaysSettings(settings, errors);
-        validateOvertimeSettings(settings, errors);
-        validateApplicationSettings(settings, errors);
-        validateAccountSettings(settings, errors);
-        validateSickNoteSettings(settings, errors);
-        validateCalendarSettings(settings, errors);
-        validateTimeSettings(settings, errors);
+        validatePublicHolidaysSettings(settings.getWorkingTimeSettings(), errors);
+        validateOvertimeSettings(settings.getOvertimeSettings(), errors);
+        validateApplicationSettings(settings.getApplicationSettings(), errors);
+        validateAccountSettings(settings.getAccountSettings(), errors);
+        validateSickNoteSettings(settings.getSickNoteSettings(), errors);
+        validateCalendarSettings(settings.getCalendarSettings(), errors);
+        validateTimeSettings(settings.getTimeSettings(), errors);
     }
 
-    private boolean validStringLength(String string) {
-        return string.length() <= MAX_CHARS;
+
+    private void validateCalendarSettings(CalendarSettings calendarSettings, Errors errors) {
+
+        if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getSimpleName())) {
+            validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
+        }
+        if (calendarSettings.getProvider().equals(GoogleCalendarSyncProvider.class.getSimpleName())) {
+            validateGoogleCalendarSettings(calendarSettings.getGoogleCalendarSettings(), errors);
+        }
     }
 
     private void validateExchangeCalendarSettings(ExchangeCalendarSettings exchangeCalendarSettings, Errors errors) {
@@ -98,18 +105,6 @@ public class SettingsValidator implements Validator {
         }
     }
 
-    private void validateCalendarSettings(Settings settings, Errors errors) {
-
-        final CalendarSettings calendarSettings = settings.getCalendarSettings();
-
-        if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getSimpleName())) {
-            validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
-        }
-        if (calendarSettings.getProvider().equals(GoogleCalendarSyncProvider.class.getSimpleName())) {
-            validateGoogleCalendarSettings(calendarSettings.getGoogleCalendarSettings(), errors);
-        }
-    }
-
     private void validateMandatoryMailAddress(String mailAddress, String attributeName, Errors errors) {
 
         if (!StringUtils.hasText(mailAddress)) {
@@ -125,4 +120,7 @@ public class SettingsValidator implements Validator {
         }
     }
 
+    private boolean validStringLength(String string) {
+        return string.length() <= MAX_CHARS;
+    }
 }

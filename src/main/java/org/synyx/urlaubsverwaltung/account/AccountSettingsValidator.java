@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 public class AccountSettingsValidator {
 
@@ -14,9 +13,7 @@ public class AccountSettingsValidator {
         // private
     }
 
-    public static void validateAccountSettings(Settings settings, Errors errors) {
-
-        final AccountSettings accountSettings = settings.getAccountSettings();
+    public static void validateAccountSettings(AccountSettings accountSettings, Errors errors) {
 
         final Integer maximumAnnualVacationDays = accountSettings.getMaximumAnnualVacationDays();
         if (maximumAnnualVacationDays == null) {

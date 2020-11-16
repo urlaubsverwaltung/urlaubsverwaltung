@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 public class OvertimeSettingsValidator {
 
@@ -12,9 +11,8 @@ public class OvertimeSettingsValidator {
         // private
     }
 
-    public static void validateOvertimeSettings(Settings settings, Errors errors) {
+    public static void validateOvertimeSettings(OvertimeSettings overtimeSettings, Errors errors) {
 
-        final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
         if (!overtimeSettings.isOvertimeActive()) {
             return;
         }

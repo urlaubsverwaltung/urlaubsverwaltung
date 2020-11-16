@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 public class SickNoteSettingsValidator {
 
@@ -12,9 +11,7 @@ public class SickNoteSettingsValidator {
         // private
     }
 
-    public static void validateSickNoteSettings(Settings settings, Errors errors) {
-
-        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+    public static void validateSickNoteSettings(SickNoteSettings sickNoteSettings, Errors errors) {
 
         final Integer maximumSickPayDays = sickNoteSettings.getMaximumSickPayDays();
         final Integer daysBeforeEndOfSickPayNotification = sickNoteSettings.getDaysBeforeEndOfSickPayNotification();

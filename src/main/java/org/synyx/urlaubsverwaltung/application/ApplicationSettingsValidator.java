@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 public class ApplicationSettingsValidator {
 
@@ -12,9 +11,7 @@ public class ApplicationSettingsValidator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
 
-    public static void validateApplicationSettings(Settings settings, Errors errors) {
-
-        final ApplicationSettings applicationSettings = settings.getApplicationSettings();
+    public static void validateApplicationSettings(ApplicationSettings applicationSettings, Errors errors) {
 
         final Integer maximumMonthsToApplyForLeaveInAdvance = applicationSettings.getMaximumMonthsToApplyForLeaveInAdvance();
         if (maximumMonthsToApplyForLeaveInAdvance == null) {

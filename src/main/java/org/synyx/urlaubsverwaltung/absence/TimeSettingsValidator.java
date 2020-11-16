@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 public class TimeSettingsValidator {
 
@@ -13,9 +12,7 @@ public class TimeSettingsValidator {
         // private
     }
 
-    public static void validateTimeSettings(Settings settings, Errors errors) {
-
-        final TimeSettings timeSettings = settings.getTimeSettings();
+    public static void validateTimeSettings(TimeSettings timeSettings, Errors errors) {
 
         final String workDayBeginHourAttribute = "timeSettings.workDayBeginHour";
         final Integer workDayBeginHour = timeSettings.getWorkDayBeginHour();
