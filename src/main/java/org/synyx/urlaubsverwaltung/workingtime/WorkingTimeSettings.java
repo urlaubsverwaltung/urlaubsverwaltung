@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 

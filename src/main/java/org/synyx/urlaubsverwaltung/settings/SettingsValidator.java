@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 
 @Component

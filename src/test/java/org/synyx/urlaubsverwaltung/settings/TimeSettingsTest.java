@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
- * Unit test for {@link CalendarSettings}.
+ * Unit test for {@link TimeSettings}.
  */
 class TimeSettingsTest {
 

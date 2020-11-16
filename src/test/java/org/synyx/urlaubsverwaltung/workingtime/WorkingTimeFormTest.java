@@ -2,14 +2,13 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 
 class WorkingTimeFormTest {
 

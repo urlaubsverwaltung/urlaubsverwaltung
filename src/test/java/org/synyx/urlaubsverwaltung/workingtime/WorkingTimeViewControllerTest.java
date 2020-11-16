@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
 
 @ExtendWith(MockitoExtension.class)
 class WorkingTimeViewControllerTest {

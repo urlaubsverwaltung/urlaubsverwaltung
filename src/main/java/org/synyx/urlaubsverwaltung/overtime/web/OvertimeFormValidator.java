@@ -8,7 +8,7 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
 import java.math.BigDecimal;

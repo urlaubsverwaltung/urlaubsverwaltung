@@ -1,6 +1,7 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

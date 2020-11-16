@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
 
 @SpringBootTest
 class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
