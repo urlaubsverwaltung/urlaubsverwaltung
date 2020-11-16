@@ -49,7 +49,7 @@
             </div>
 
             <c:set var="absenceError">
-                <form:errors path="absenceSettings.*"/>
+                <form:errors path="applicationSettings.*"/>
             </c:set>
             <c:if test="${not empty absenceError}">
                 <c:set var="ABSENCE_ERROR_CSS_CLASS" value="error"/>
@@ -122,16 +122,16 @@
                                 </div>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.maximumMonthsToApplyForLeaveInAdvance">
+                                           for="applicationSettings.maximumMonthsToApplyForLeaveInAdvance">
                                         <spring:message code='settings.vacation.maximumMonthsToApplyForLeaveInAdvance'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
-                                                    path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
+                                        <form:input id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
+                                                    path="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
+                                            path="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>
@@ -156,19 +156,19 @@
 
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.remindForWaitingApplications.true">
+                                           for="applicationSettings.remindForWaitingApplications.true">
                                         <spring:message code='settings.vacation.remindForWaitingApplications'/>:
                                     </label>
                                     <div class="col-md-8 radio">
                                         <label class="halves">
-                                            <form:radiobutton id="absenceSettings.remindForWaitingApplications.true"
-                                                              path="absenceSettings.remindForWaitingApplications"
+                                            <form:radiobutton id="applicationSettings.remindForWaitingApplications.true"
+                                                              path="applicationSettings.remindForWaitingApplications"
                                                               value="true"/>
                                             <spring:message code="settings.vacation.remindForWaitingApplications.true"/>
                                         </label>
                                         <label class="halves">
-                                            <form:radiobutton id="absenceSettings.remindForWaitingApplications.false"
-                                                              path="absenceSettings.remindForWaitingApplications"
+                                            <form:radiobutton id="applicationSettings.remindForWaitingApplications.false"
+                                                              path="applicationSettings.remindForWaitingApplications"
                                                               value="false"/>
                                             <spring:message
                                                 code="settings.vacation.remindForWaitingApplications.false"/>
@@ -178,17 +178,17 @@
 
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.daysBeforeRemindForWaitingApplications">
+                                           for="applicationSettings.daysBeforeRemindForWaitingApplications">
                                         <spring:message
                                             code='settings.vacation.daysBeforeRemindForWaitingApplications'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.daysBeforeRemindForWaitingApplications"
-                                                    path="absenceSettings.daysBeforeRemindForWaitingApplications"
+                                        <form:input id="applicationSettings.daysBeforeRemindForWaitingApplications"
+                                                    path="applicationSettings.daysBeforeRemindForWaitingApplications"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.daysBeforeRemindForWaitingApplications"
+                                            path="applicationSettings.daysBeforeRemindForWaitingApplications"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>

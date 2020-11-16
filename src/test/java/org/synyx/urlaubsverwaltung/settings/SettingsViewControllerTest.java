@@ -170,9 +170,8 @@ class SettingsViewControllerTest {
     void ensureSettingsSavedShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
-
             Errors errors = invocation.getArgument(1);
-            errors.rejectValue("absenceSettings", "error");
+            errors.rejectValue("applicationSettings", "error");
             return null;
         }).when(settingsValidator).validate(any(), any());
 

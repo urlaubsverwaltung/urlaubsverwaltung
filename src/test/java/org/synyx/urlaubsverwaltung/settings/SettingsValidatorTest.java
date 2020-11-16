@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
@@ -129,53 +129,53 @@ class SettingsValidatorTest {
     void ensureAbsenceSettingsCanNotBeNull() {
 
         Settings settings = new Settings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
-        absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
-        absenceSettings.setDaysBeforeRemindForWaitingApplications(null);
+        applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
+        applicationSettings.setDaysBeforeRemindForWaitingApplications(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
-        verify(mockError).rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
+        verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
     }
 
     @Test
     void ensureAbsenceSettingsCanNotBeNegative() {
 
         Settings settings = new Settings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
-        absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
-        absenceSettings.setDaysBeforeRemindForWaitingApplications(-1);
+        applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
+        applicationSettings.setDaysBeforeRemindForWaitingApplications(-1);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
-        verify(mockError).rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
     }
 
     @Test
     void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() {
 
         Settings settings = new Settings();
-        settings.getAbsenceSettings().setMaximumMonthsToApplyForLeaveInAdvance(0);
+        settings.getApplicationSettings().setMaximumMonthsToApplyForLeaveInAdvance(0);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
     }
 
     @Test
     void ensureThatAbsenceSettingsAreSmallerOrEqualsThanMaxInt() {
 
         final Settings settings = new Settings();
-        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-        absenceSettings.setMaximumMonthsToApplyForLeaveInAdvance(Integer.MAX_VALUE + 1);
+        final ApplicationSettings applicationSettings = settings.getApplicationSettings();
+        applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(Integer.MAX_VALUE + 1);
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
     }
 
     // Account settings ------------------------------------------------------------------------------------------------

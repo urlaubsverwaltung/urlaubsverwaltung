@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
@@ -17,7 +17,7 @@ import javax.persistence.Entity;
 @Entity
 public class Settings extends AbstractPersistable<Integer> {
 
-    private AbsenceSettings absenceSettings;
+    private ApplicationSettings applicationSettings;
     private AccountSettings accountSettings;
     private WorkingTimeSettings workingTimeSettings;
     private OvertimeSettings overtimeSettings;
@@ -27,16 +27,16 @@ public class Settings extends AbstractPersistable<Integer> {
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
 
-    public AbsenceSettings getAbsenceSettings() {
-        if (absenceSettings == null) {
-            absenceSettings = new AbsenceSettings();
+    public ApplicationSettings getApplicationSettings() {
+        if (applicationSettings == null) {
+            applicationSettings = new ApplicationSettings();
         }
 
-        return absenceSettings;
+        return applicationSettings;
     }
 
-    public void setAbsenceSettings(AbsenceSettings absenceSettings) {
-        this.absenceSettings = absenceSettings;
+    public void setApplicationSettings(ApplicationSettings applicationSettings) {
+        this.applicationSettings = applicationSettings;
     }
 
     public AccountSettings getAccountSettings() {

@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -104,9 +104,9 @@ class SickNoteMailServiceTest {
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();
-        AbsenceSettings absenceSettings = new AbsenceSettings();
-        absenceSettings.setRemindForWaitingApplications(isActive);
-        settings.setAbsenceSettings(absenceSettings);
+        ApplicationSettings applicationSettings = new ApplicationSettings();
+        applicationSettings.setRemindForWaitingApplications(isActive);
+        settings.setApplicationSettings(applicationSettings);
         when(settingsService.getSettings()).thenReturn(settings);
     }
 

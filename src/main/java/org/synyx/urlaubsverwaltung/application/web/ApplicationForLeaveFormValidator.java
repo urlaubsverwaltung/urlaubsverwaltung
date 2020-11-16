@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
@@ -240,16 +240,16 @@ public class ApplicationForLeaveFormValidator implements Validator {
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+            ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
-            validateNotTooFarInTheFuture(endDate, absenceSettings, errors);
-            validateNotTooFarInThePast(startDate, absenceSettings, errors);
+            validateNotTooFarInTheFuture(endDate, applicationSettings, errors);
+            validateNotTooFarInThePast(startDate, applicationSettings, errors);
             validateSameDayIfHalfDayPeriod(startDate, endDate, dayLength, errors);
         }
     }
 
 
-    private void validateNotTooFarInTheFuture(LocalDate date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInTheFuture(LocalDate date, ApplicationSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
@@ -260,7 +260,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validateNotTooFarInThePast(LocalDate date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInThePast(LocalDate date, ApplicationSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();

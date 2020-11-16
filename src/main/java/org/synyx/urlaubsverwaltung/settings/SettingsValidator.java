@@ -5,7 +5,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
@@ -91,20 +91,20 @@ public class SettingsValidator implements Validator {
 
     private void validateAbsenceSettings(Settings settings, Errors errors) {
 
-        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        final ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
-        final Integer maximumMonthsToApplyForLeaveInAdvance = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
+        final Integer maximumMonthsToApplyForLeaveInAdvance = applicationSettings.getMaximumMonthsToApplyForLeaveInAdvance();
         if (maximumMonthsToApplyForLeaveInAdvance == null) {
-            errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
         } else if (maximumMonthsToApplyForLeaveInAdvance <= 0) {
-            errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
+            errors.rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
         }
 
-        final Integer daysBeforeRemindForWaitingApplications = absenceSettings.getDaysBeforeRemindForWaitingApplications();
+        final Integer daysBeforeRemindForWaitingApplications = applicationSettings.getDaysBeforeRemindForWaitingApplications();
         if (daysBeforeRemindForWaitingApplications == null) {
-            errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);
         } else if (daysBeforeRemindForWaitingApplications <= 0) {
-            errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_INVALID_ENTRY);
+            errors.rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", ERROR_INVALID_ENTRY);
         }
     }
 

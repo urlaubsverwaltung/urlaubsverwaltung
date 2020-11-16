@@ -187,7 +187,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[]{settings.getAbsenceSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
+                new Object[]{settings.getApplicationSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
     }
 
 

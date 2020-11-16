@@ -37,7 +37,7 @@ class ApplicationCronMailService {
     void sendWaitingApplicationsReminderNotification() {
 
         boolean isRemindForWaitingApplicationsActive =
-            settingsService.getSettings().getAbsenceSettings().isRemindForWaitingApplications();
+            settingsService.getSettings().getApplicationSettings().isRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
             List<Application> allWaitingApplications =
@@ -70,7 +70,7 @@ class ApplicationCronMailService {
             LocalDate remindDate = application.getRemindDate();
             if (remindDate == null) {
                 Integer daysBeforeRemindForWaitingApplications =
-                    settingsService.getSettings().getAbsenceSettings().getDaysBeforeRemindForWaitingApplications();
+                    settingsService.getSettings().getApplicationSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
                 LocalDate minDateForNotification = application.getApplicationDate()

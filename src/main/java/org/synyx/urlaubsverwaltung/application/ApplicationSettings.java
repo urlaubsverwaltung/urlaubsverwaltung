@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.application;
 
 import javax.persistence.Embeddable;
 
@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
  * Settings concerning absence of persons because of vacation or sick days.
  */
 @Embeddable
-public class AbsenceSettings {
+public class ApplicationSettings {
 
     /**
      * Specifies how many months in advance a person can apply for leave.

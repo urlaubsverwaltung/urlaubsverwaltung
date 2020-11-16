@@ -1,16 +1,15 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.application;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AbsenceSettingsTest {
+class ApplicationSettingsTest {
 
     @Test
     void ensureDefaultValues() {
 
-        final AbsenceSettings settings = new AbsenceSettings();
+        final ApplicationSettings settings = new ApplicationSettings();
         assertThat(settings.getMaximumMonthsToApplyForLeaveInAdvance()).isEqualTo(12);
     }
 }
