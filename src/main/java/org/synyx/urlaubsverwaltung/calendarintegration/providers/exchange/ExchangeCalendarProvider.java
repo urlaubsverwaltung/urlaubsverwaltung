@@ -24,8 +24,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

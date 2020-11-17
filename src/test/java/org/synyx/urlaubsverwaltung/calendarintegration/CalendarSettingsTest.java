@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.jupiter.api.Test;
 
