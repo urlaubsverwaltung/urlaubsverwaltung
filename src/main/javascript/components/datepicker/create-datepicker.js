@@ -10,11 +10,9 @@ import "../calendar/calendar.css";
 // register @duet/datepicker
 defineCustomElements(window);
 
-export default async function createDatepickerInstances(selectors, urlPrefix, getPerson, onSelect) {
-  return Promise.allSettled(selectors.map((selector) => instantiate({ selector, urlPrefix, getPerson, onSelect })));
-}
+const noop = () => {};
 
-async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
+export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
   const dateFormat = DE.dateFormat;
 
   const dateElement = document.querySelector(selector);
@@ -29,13 +27,15 @@ async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
   const isoDateString = dateElement.value ? formatISO(parsedDate, { representation: "date" }) : "";
 
   duetDateElement.setAttribute("style", "--duet-radius=0");
-  duetDateElement.setAttribute("id", dateElement.getAttribute("id"));
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
-  duetDateElement.setAttribute("name", dateElement.getAttribute("name"));
   duetDateElement.setAttribute("value", isoDateString);
   dateElement.replaceWith(duetDateElement);
 
   await waitForDatePickerHydration(duetDateElement);
+
+  const duetDateInputElement = duetDateElement.querySelector("input");
+  duetDateInputElement.setAttribute("id", dateElement.getAttribute("id"));
+  duetDateInputElement.setAttribute("name", dateElement.getAttribute("name"));
 
   const monthElement = duetDateElement.querySelector(".duet-date__select--month");
   const yearElement = duetDateElement.querySelector(".duet-date__select--year");
@@ -49,7 +49,7 @@ async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
     const lastDayOfMonth = formatISO(endOfMonth(parseISO(firstDayOfMonth)), { representation: "date" });
 
-    const personId = getPerson();
+    const personId = getPersonId();
     if (!personId) {
       return;
     }
@@ -83,6 +83,8 @@ async function instantiate({ selector, urlPrefix, getPerson, onSelect }) {
 
   monthElement.addEventListener("change", showAbsences);
   yearElement.addEventListener("change", showAbsences);
+
+  return duetDateElement;
 }
 
 function waitForDatePickerHydration(rootElement) {

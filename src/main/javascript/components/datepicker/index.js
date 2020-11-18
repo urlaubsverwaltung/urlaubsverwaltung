@@ -1,1 +1,1 @@
-export { default as createDatepickerInstances } from "./create-datepicker-instances";
+export { createDatepicker } from "./create-datepicker";
