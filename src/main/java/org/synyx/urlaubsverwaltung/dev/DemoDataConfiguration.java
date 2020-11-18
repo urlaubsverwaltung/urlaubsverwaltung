@@ -37,8 +37,8 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder, Clock clock) {
-        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, passwordEncoder, clock);
+    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, Clock clock) {
+        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, clock);
     }
 
     @Bean
