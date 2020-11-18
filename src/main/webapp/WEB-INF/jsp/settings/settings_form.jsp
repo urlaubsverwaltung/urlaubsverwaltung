@@ -57,9 +57,6 @@
             <c:set var="accountError">
                 <form:errors path="accountSettings.*"/>
             </c:set>
-            <c:if test="${not empty applicationError || not empty sickNoteError || not empty accountError}">
-                <c:set var="ABSENCE_ERROR_CSS_CLASS" value="error"/>
-            </c:if>
 
             <c:set var="workingTimeError">
                 <form:errors path="workingTimeSettings.*"/>
@@ -70,33 +67,52 @@
             <c:set var="overtimeError">
                 <form:errors path="overtimeSettings.*"/>
             </c:set>
-            <c:if test="${not empty workingTimeError || not empty timeError || not empty overtimeError}">
-                <c:set var="WORKING_TIME_ERROR_CSS_CLASS" value="error"/>
-            </c:if>
 
             <c:set var="calendarError">
                 <form:errors path="calendarSettings.*"/>
             </c:set>
-            <c:if test="${not empty calendarError}">
-                <c:set var="CALENDAR_ERROR_CSS_CLASS" value="error"/>
-            </c:if>
+
+            <c:set var="hasAbsenceError" value="${not empty applicationError || not empty sickNoteError || not empty accountError}" />
+            <c:set var="hasPublicHolidayError" value="${not empty workingTimeError || not empty timeError || not empty overtimeError}" />
+            <c:set var="hasCalendarError" value="${not empty calendarError}" />
 
             <div class="row">
                 <div class="col-xs-12">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active ${ABSENCE_ERROR_CSS_CLASS}">
-                            <a href="#absence" aria-controls="absence" role="tab" data-toggle="tab">
+                        <li role="presentation" class="active">
+                            <a
+                                href="#absence"
+                                aria-controls="absence"
+                                role="tab"
+                                data-toggle="tab"
+                                class="${hasAbsenceError ? 'tw-text-red-800' : ''}"
+                            >
                                 <spring:message code="settings.tabs.absence"/>
+                                <c:if test="${hasAbsenceError}">*</c:if>
                             </a>
                         </li>
-                        <li role="presentation" class="${WORKING_TIME_ERROR_CSS_CLASS}">
-                            <a href="#publicHolidays" aria-controls="publicHolidays" role="tab" data-toggle="tab">
+                        <li role="presentation">
+                            <a
+                                href="#publicHolidays"
+                                aria-controls="publicHolidays"
+                                role="tab"
+                                data-toggle="tab"
+                                class="${hasPublicHolidayError ? 'tw-text-red-800' : ''}"
+                            >
                                 <spring:message code="settings.tabs.workingTime"/>
+                                <c:if test="${hasPublicHolidayError}">*</c:if>
                             </a>
                         </li>
-                        <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
-                            <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab">
+                        <li role="presentation">
+                            <a
+                                href="#calendar"
+                                aria-controls="calendar"
+                                role="tab"
+                                data-toggle="tab"
+                                class="${hasCalendarError ? 'tw-text-red-800' : ''}"
+                            >
                                 <spring:message code="settings.tabs.calendar"/>
+                                <c:if test="${hasCalendarError}">*</c:if>
                             </a>
                         </li>
                     </ul>
