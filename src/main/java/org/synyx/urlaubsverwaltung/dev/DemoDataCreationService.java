@@ -86,10 +86,10 @@ public class DemoDataCreationService {
         personDataProvider.createTestPerson("horst", NO_PASSWORD_HASH, "Horst", "Dieter", "hdieter@example.org", INACTIVE);
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, NO_PASSWORD, "Horst", "Aktiv", "hdieter-active@example.org", USER));
+            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, NO_PASSWORD_HASH, "Horst", "Aktiv", "hdieter-active@example.org", USER));
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, NO_PASSWORD, "Horst", "Inaktiv", "hdieter-inactive@example.org", INACTIVE));
+            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, NO_PASSWORD_HASH, "Horst", "Inaktiv", "hdieter-inactive@example.org", INACTIVE));
 
         // Departments
         final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);
