@@ -108,7 +108,9 @@
                                 <form:input path="startDate" data-iso-value="${overtime.startDateIsoValue}"
                                             cssClass="form-control" cssErrorClass="form-control error"
                                             autocomplete="off" placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="startDate" />
+                                </uv:error-text>
                             </div>
                         </div>
                             <%-- End of start date form group --%>
@@ -120,7 +122,9 @@
                                 <form:input path="endDate" data-iso-value="${overtime.endDateIsoValue}"
                                             cssClass="form-control" cssErrorClass="form-control error"
                                             autocomplete="off" placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="endDate" />
+                                </uv:error-text>
                             </div>
                         </div>
                             <%-- End of end date form group --%>
@@ -131,7 +135,9 @@
                             <div class="col-md-9">
                                 <form:input path="numberOfHours" cssClass="form-control"
                                             cssErrorClass="form-control error"/>
-                                <span class="help-inline"><form:errors path="numberOfHours" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="numberOfHours" />
+                                </uv:error-text>
                             </div>
                         </div>
                             <%-- End of number of overtime form group --%>
@@ -144,7 +150,9 @@
                                 <form:textarea path="comment" cssClass="form-control" rows="2"
                                                onkeyup="count(this.value, 'char-counter');"
                                                onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
-                                <span class="help-inline"><form:errors path="comment" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="comment" />
+                                </uv:error-text>
                             </div>
                         </div>
                             <%-- End of comment form group --%>

@@ -51,12 +51,12 @@
                 </uv:section-heading>
 
                 <c:set var="workingTimeError">
-                    <form:errors path="workingDays" cssClass="error"/>
+                    <form:errors path="workingDays" />
                 </c:set>
                 <c:if test="${not empty workingTimeError}">
                 <div class="row tw-mb-8">
                     <div class="col-xs-12">
-                        <div class="alert alert-danger">${workingTimeError}</div>
+                        <div class="alert alert-danger tw-text-red-800">${workingTimeError}</div>
                     </div>
                 </div>
                 </c:if>
@@ -131,7 +131,9 @@
                                 <form:input id="validFrom" path="validFrom" class="form-control"
                                             cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
                                             data-iso-value="${workingTime.validFromIsoValue}" />
-                                <span class="help-inline"><form:errors path="validFrom" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="validFrom" />
+                                </uv:error-text>
                             </div>
                         </div>
 

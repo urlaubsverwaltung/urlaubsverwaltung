@@ -96,9 +96,9 @@
                                            cssErrorClass="form-control error" rows="2"
                                            onkeyup="count(this.value, 'count-chars');"
                                            onkeydown="maxChars(this,200); count(this.value, 'count-chars');"/>
-                            <span class="help-inline">
-                                <form:errors path="reason" cssClass="error"/>
-                            </span>
+                            <uv:error-text>
+                                <form:errors path="reason" />
+                            </uv:error-text>
                         </div>
 
                     </div>

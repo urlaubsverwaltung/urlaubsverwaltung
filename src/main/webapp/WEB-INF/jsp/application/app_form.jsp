@@ -240,7 +240,9 @@
                                             </c:choose>
                                         </c:forEach>
                                     </uv:select>
-                                    <form:errors path="holidayReplacement" cssClass="error"/>
+                                    <uv:error-text>
+                                        <form:errors path="holidayReplacement" />
+                                    </uv:error-text>
                                 </div>
                             </div>
 
@@ -257,7 +259,9 @@
                                         <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
                                         <spring:message code="application.data.teamInformed.false"/>
                                     </label>
-                                    <form:errors path="teamInformed" cssClass="error"/>
+                                    <uv:error-text>
+                                        <form:errors path="teamInformed" />
+                                    </uv:error-text>
                                 </div>
                             </div>
                         </div>
@@ -279,7 +283,9 @@
                                     </label>
                                     <div class="col-md-9">
                                         <form:input path="hours" class="form-control" cssErrorClass="form-control error"/>
-                                        <form:errors path="hours" cssClass="error"/>
+                                        <uv:error-text>
+                                            <form:errors path="hours" />
+                                        </uv:error-text>
                                     </div>
                                 </div>
                             </div>
@@ -316,7 +322,9 @@
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-reason');"
                                                    onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
-                                    <form:errors path="reason" cssClass="error"/>
+                                    <uv:error-text>
+                                        <form:errors path="reason" />
+                                    </uv:error-text>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -331,7 +339,9 @@
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-address');"
                                                    onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
-                                    <form:errors path="address" cssClass="error"/>
+                                    <uv:error-text>
+                                        <form:errors path="address" />
+                                    </uv:error-text>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -346,7 +356,9 @@
                                                    cssErrorClass="form-control error"
                                                    onkeyup="count(this.value, 'text-comment');"
                                                    onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
-                                    <form:errors path="comment" cssClass="error"/>
+                                    <uv:error-text>
+                                        <form:errors path="comment" />
+                                    </uv:error-text>
                                 </div>
                             </div>
                         </div>

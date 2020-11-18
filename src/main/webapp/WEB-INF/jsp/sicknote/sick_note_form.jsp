@@ -156,7 +156,9 @@
                                         <spring:message code="NOON"/>
                                     </label>
                                 </div>
-                                <span class="help-inline"><form:errors path="dayLength" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="dayLength" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -168,7 +170,9 @@
                                 <form:input id="from" path="startDate" data-iso-value="${sickNote.startDateIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="startDate" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="startDate" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -180,7 +184,9 @@
                                 <form:input id="to" path="endDate" data-iso-value="${sickNote.endDateIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="endDate" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="endDate" />
+                                </uv:error-text>
                             </div>
                         </div>
                     </div>
@@ -210,7 +216,9 @@
                                 <form:input id="aubFrom" path="aubStartDate" class="form-control"
                                             cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="aubStartDate" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="aubStartDate" />
+                                </uv:error-text>
                             </div>
                         </div>
                         <div class="form-group AU">
@@ -222,7 +230,9 @@
                                 <form:input id="aubTo" path="aubEndDate" class="form-control"
                                             cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline"><form:errors path="aubEndDate" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="aubEndDate" />
+                                </uv:error-text>
                             </div>
                         </div>
                     </div>
@@ -255,7 +265,9 @@
                                                cssErrorClass="form-control error"
                                                onkeyup="count(this.value, 'text-comment');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
-                                <form:errors path="comment" cssClass="error"/>
+                                <uv:error-text>
+                                    <form:errors path="comment" />
+                                </uv:error-text>
                             </div>
                         </div>
                     </div>

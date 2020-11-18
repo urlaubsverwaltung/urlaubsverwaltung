@@ -65,7 +65,9 @@
                 <c:if test="${not empty errors}">
                 <div class="row tw-mb-8">
                     <div class="col-xs-12">
-                        <div class="alert alert-danger"><form:errors cssClass="error"/></div>
+                        <div class="alert alert-danger tw-text-red-800">
+                            <form:errors />
+                        </div>
                     </div>
                 </div>
                 </c:if>
@@ -87,9 +89,9 @@
                             <div class="col-md-9">
                                 <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" data-iso-value="${account.holidaysAccountValidFromIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline">
-                                    <form:errors path="holidaysAccountValidFrom" cssClass="error"/>
-                                </span>
+                                <uv:error-text>
+                                    <form:errors path="holidaysAccountValidFrom" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -101,9 +103,9 @@
                             <div class="col-md-9">
                                 <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" data-iso-value="${account.holidaysAccountValidToIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
-                                <span class="help-inline">
-                                    <form:errors path="holidaysAccountValidTo" cssClass="error"/>
-                                </span>
+                                <uv:error-text>
+                                    <form:errors path="holidaysAccountValidTo" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -117,9 +119,9 @@
                                             path="annualVacationDays" class="form-control"
                                             cssErrorClass="form-control error"
                                             type="number" step="1"/>
-                                <span class="help-inline">
-                                    <form:errors path="annualVacationDays" cssClass="error"/>
-                                </span>
+                                <uv:error-text>
+                                    <form:errors path="annualVacationDays" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -133,9 +135,9 @@
                                                  path="actualVacationDays" cssClass="form-control"
                                                  cssErrorClass="form-control error" step="0.5"
                                                  value="${account.actualVacationDays}"/>
-                                <span class="help-inline">
-                                    <form:errors path="actualVacationDays" cssClass="error"/>
-                                </span>
+                                <uv:error-text>
+                                    <form:errors path="actualVacationDays" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -148,9 +150,9 @@
                                 <uv:input-number id="remainingVacationDays" path="remainingVacationDays" cssClass="form-control"
                                                  cssErrorClass="form-control error" step="0.5"
                                                  value="${account.remainingVacationDays}"/>
-                                <span class="help-inline">
-                                    <form:errors path="remainingVacationDays" cssClass="error"/>
-                                </span>
+                                <uv:error-text>
+                                    <form:errors path="remainingVacationDays" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -163,9 +165,9 @@
                                 <uv:input-number id="remainingVacationDaysNotExpiring" path="remainingVacationDaysNotExpiring" cssClass="form-control"
                                                  cssErrorClass="form-control error" step="0.5"
                                                  value="${account.remainingVacationDaysNotExpiring}"/>
-                                <span class="help-inline">
-                                    <form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/>
-                                </span>
+                                <uv:error-text>
+                                    <form:errors path="remainingVacationDaysNotExpiring" />
+                                </uv:error-text>
                             </div>
                         </div>
 
@@ -182,7 +184,9 @@
                                                onkeyup="count(this.value, 'text-comment');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
                                                placeholder="${COMMENT_PLACEHOLDER}"/>
-                                <form:errors path="comment" cssClass="error"/>
+                                <uv:error-text>
+                                    <form:errors path="comment" />
+                                </uv:error-text>
                             </div>
                         </div>
 

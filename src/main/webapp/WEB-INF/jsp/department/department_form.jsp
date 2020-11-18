@@ -60,7 +60,9 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input id="name" path="name" class="form-control" cssErrorClass="form-control error"/>
-                                <span class="help-inline"><form:errors path="name" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="name" />
+                                </uv:error-text>
                             </div>
                         </div>
                         <div class="form-group">
@@ -75,7 +77,9 @@
                                                cssErrorClass="form-control error"
                                                onkeyup="count(this.value, 'text-description');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-description');"/>
-                                <form:errors path="description" cssClass="error"/>
+                                <uv:error-text>
+                                    <form:errors path="description" />
+                                </uv:error-text>
                             </div>
                         </div>
                     </div>
@@ -94,7 +98,9 @@
                                 <spring:message code="department.data.twoStageApproval"/>:
                             </label>
                             <div class="col-md-9 checkbox">
-                                <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="twoStageApproval" />
+                                </uv:error-text>
                                 <label>
                                     <form:checkbox id="twoStageApproval" path="twoStageApproval" cssErrorClass="error"/>
                                     <spring:message code="department.data.twoStageApproval.activate"/>
@@ -113,21 +119,21 @@
                 </uv:section-heading>
 
                 <c:set var="departmentHeadsError">
-                    <form:errors path="departmentHeads" cssClass="error"/>
+                    <form:errors path="departmentHeads" />
                 </c:set>
                 <c:set var="secondStageAuthoritiesError">
-                    <form:errors path="secondStageAuthorities" cssClass="error"/>
+                    <form:errors path="secondStageAuthorities" />
                 </c:set>
 
                 <div class="row">
                     <c:if test="${not empty departmentHeadsError}">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger">${departmentHeadsError}</div>
+                            <div class="alert alert-danger tw-text-red-800">${departmentHeadsError}</div>
                         </div>
                     </c:if>
                     <c:if test="${not empty secondStageAuthoritiesError}">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger">${secondStageAuthoritiesError}</div>
+                            <div class="alert alert-danger tw-text-red-800">${secondStageAuthoritiesError}</div>
                         </div>
                     </c:if>
                 </div>
