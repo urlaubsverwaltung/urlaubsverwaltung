@@ -9,7 +9,7 @@
 }
 
 .nav-tabs > li.error > a {
-  color: #b94a48;
+  @apply text-red-800;
 }
 
 .nav-tabs > li.error > a:after {
