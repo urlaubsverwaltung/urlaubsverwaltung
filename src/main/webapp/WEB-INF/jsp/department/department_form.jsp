@@ -60,7 +60,9 @@
                             </label>
                             <div class="col-md-9">
                                 <form:input id="name" path="name" class="form-control" cssErrorClass="form-control error"/>
-                                <span class="help-inline"><form:errors path="name" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="name" cssClass="error"/>
+                                </uv:error-text>
                             </div>
                         </div>
                         <div class="form-group">
@@ -94,7 +96,9 @@
                                 <spring:message code="department.data.twoStageApproval"/>:
                             </label>
                             <div class="col-md-9 checkbox">
-                                <span class="help-inline"><form:errors path="twoStageApproval" cssClass="error"/></span>
+                                <uv:error-text>
+                                    <form:errors path="twoStageApproval" cssClass="error"/>
+                                </uv:error-text>
                                 <label>
                                     <form:checkbox id="twoStageApproval" path="twoStageApproval" cssErrorClass="error"/>
                                     <spring:message code="department.data.twoStageApproval.activate"/>
