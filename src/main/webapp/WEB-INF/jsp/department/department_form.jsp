@@ -77,7 +77,9 @@
                                                cssErrorClass="form-control error"
                                                onkeyup="count(this.value, 'text-description');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-description');"/>
-                                <form:errors path="description" cssClass="error"/>
+                                <uv:error-text>
+                                    <form:errors path="description" cssClass="error"/>
+                                </uv:error-text>
                             </div>
                         </div>
                     </div>

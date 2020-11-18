@@ -265,7 +265,9 @@
                                                cssErrorClass="form-control error"
                                                onkeyup="count(this.value, 'text-comment');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
-                                <form:errors path="comment" cssClass="error"/>
+                                <uv:error-text>
+                                    <form:errors path="comment" cssClass="error" />
+                                </uv:error-text>
                             </div>
                         </div>
                     </div>

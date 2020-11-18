@@ -182,7 +182,9 @@
                                                onkeyup="count(this.value, 'text-comment');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
                                                placeholder="${COMMENT_PLACEHOLDER}"/>
-                                <form:errors path="comment" cssClass="error"/>
+                                <uv:error-text>
+                                    <form:errors path="comment" cssClass="error"/>
+                                </uv:error-text>
                             </div>
                         </div>
 
