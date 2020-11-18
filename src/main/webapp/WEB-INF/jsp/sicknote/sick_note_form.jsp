@@ -157,7 +157,7 @@
                                     </label>
                                 </div>
                                 <uv:error-text>
-                                    <form:errors path="dayLength" cssClass="error"/>
+                                    <form:errors path="dayLength" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                                             class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="startDate" cssClass="error"/>
+                                    <form:errors path="startDate" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -185,7 +185,7 @@
                                             class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="endDate" cssClass="error"/>
+                                    <form:errors path="endDate" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -217,7 +217,7 @@
                                             cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="aubStartDate" cssClass="error"/>
+                                    <form:errors path="aubStartDate" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -231,7 +231,7 @@
                                             cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="aubEndDate" cssClass="error"/>
+                                    <form:errors path="aubEndDate" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -266,7 +266,7 @@
                                                onkeyup="count(this.value, 'text-comment');"
                                                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
                                 <uv:error-text>
-                                    <form:errors path="comment" cssClass="error" />
+                                    <form:errors path="comment" />
                                 </uv:error-text>
                             </div>
                         </div>

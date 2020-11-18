@@ -131,7 +131,7 @@
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="accountSettings.maximumAnnualVacationDays" cssClass="error"/>
+                                            <form:errors path="accountSettings.maximumAnnualVacationDays" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="applicationSettings.maximumMonthsToApplyForLeaveInAdvance" cssClass="error"/>
+                                            <form:errors path="applicationSettings.maximumMonthsToApplyForLeaveInAdvance" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -203,7 +203,7 @@
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="applicationSettings.daysBeforeRemindForWaitingApplications" cssClass="error"/>
+                                            <form:errors path="applicationSettings.daysBeforeRemindForWaitingApplications" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -237,7 +237,7 @@
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="sickNoteSettings.maximumSickPayDays" cssClass="error"/>
+                                            <form:errors path="sickNoteSettings.maximumSickPayDays" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -252,7 +252,7 @@
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="sickNoteSettings.daysBeforeEndOfSickPayNotification" cssClass="error"/>
+                                            <form:errors path="sickNoteSettings.daysBeforeEndOfSickPayNotification" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -303,7 +303,7 @@
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="timeSettings.workDayBeginHour" cssClass="error"/>
+                                            <form:errors path="timeSettings.workDayBeginHour" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -317,7 +317,7 @@
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="timeSettings.workDayEndHour" cssClass="error"/>
+                                            <form:errors path="timeSettings.workDayEndHour" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -432,7 +432,7 @@
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="overtimeSettings.maximumOvertime" cssClass="error"/></span>
+                                            <form:errors path="overtimeSettings.maximumOvertime" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -446,7 +446,7 @@
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <uv:error-text>
-                                            <form:errors path="overtimeSettings.minimumOvertime" cssClass="error"/>
+                                            <form:errors path="overtimeSettings.minimumOvertime" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -518,7 +518,7 @@
                                                     path="calendarSettings.exchangeCalendarSettings.email"
                                                     class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.exchangeCalendarSettings.email" cssClass="error"/>
+                                            <form:errors path="calendarSettings.exchangeCalendarSettings.email" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -533,7 +533,7 @@
                                                        path="calendarSettings.exchangeCalendarSettings.password"
                                                        class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.exchangeCalendarSettings.password" cssClass="error"/>
+                                            <form:errors path="calendarSettings.exchangeCalendarSettings.password" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -547,7 +547,7 @@
                                                     path="calendarSettings.exchangeCalendarSettings.ewsUrl"
                                                     class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.exchangeCalendarSettings.ewsUrl" cssClass="error"/>
+                                            <form:errors path="calendarSettings.exchangeCalendarSettings.ewsUrl" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -561,7 +561,7 @@
                                                     path="calendarSettings.exchangeCalendarSettings.calendar"
                                                     class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.exchangeCalendarSettings.calendar" cssClass="error"/>
+                                            <form:errors path="calendarSettings.exchangeCalendarSettings.calendar" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -585,7 +585,7 @@
                                             </c:forEach>
                                         </datalist>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.provider" cssClass="error"/>
+                                            <form:errors path="calendarSettings.provider" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -633,7 +633,7 @@
                                                     path="calendarSettings.googleCalendarSettings.clientId"
                                                     class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.googleCalendarSettings.clientId" cssClass="error"/>
+                                            <form:errors path="calendarSettings.googleCalendarSettings.clientId" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -647,7 +647,7 @@
                                                     path="calendarSettings.googleCalendarSettings.clientSecret"
                                                     class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.googleCalendarSettings.clientSecret" cssClass="error"/>
+                                            <form:errors path="calendarSettings.googleCalendarSettings.clientSecret" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -661,7 +661,7 @@
                                                     path="calendarSettings.googleCalendarSettings.calendarId"
                                                     class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="calendarSettings.googleCalendarSettings.calendarId" cssClass="error"/>
+                                            <form:errors path="calendarSettings.googleCalendarSettings.calendarId" />
                                         </uv:error-text>
                                     </div>
                                 </div>

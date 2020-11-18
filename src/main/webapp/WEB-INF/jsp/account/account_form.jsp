@@ -65,7 +65,9 @@
                 <c:if test="${not empty errors}">
                 <div class="row tw-mb-8">
                     <div class="col-xs-12">
-                        <div class="alert alert-danger"><form:errors cssClass="error"/></div>
+                        <div class="alert alert-danger tw-text-red-800">
+                            <form:errors />
+                        </div>
                     </div>
                 </div>
                 </c:if>
@@ -88,7 +90,7 @@
                                 <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" data-iso-value="${account.holidaysAccountValidFromIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="holidaysAccountValidFrom" cssClass="error"/>
+                                    <form:errors path="holidaysAccountValidFrom" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -102,7 +104,7 @@
                                 <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" data-iso-value="${account.holidaysAccountValidToIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="holidaysAccountValidTo" cssClass="error"/>
+                                    <form:errors path="holidaysAccountValidTo" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -118,7 +120,7 @@
                                             cssErrorClass="form-control error"
                                             type="number" step="1"/>
                                 <uv:error-text>
-                                    <form:errors path="annualVacationDays" cssClass="error"/>
+                                    <form:errors path="annualVacationDays" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -134,7 +136,7 @@
                                                  cssErrorClass="form-control error" step="0.5"
                                                  value="${account.actualVacationDays}"/>
                                 <uv:error-text>
-                                    <form:errors path="actualVacationDays" cssClass="error"/>
+                                    <form:errors path="actualVacationDays" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -149,7 +151,7 @@
                                                  cssErrorClass="form-control error" step="0.5"
                                                  value="${account.remainingVacationDays}"/>
                                 <uv:error-text>
-                                    <form:errors path="remainingVacationDays" cssClass="error"/>
+                                    <form:errors path="remainingVacationDays" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -164,7 +166,7 @@
                                                  cssErrorClass="form-control error" step="0.5"
                                                  value="${account.remainingVacationDaysNotExpiring}"/>
                                 <uv:error-text>
-                                    <form:errors path="remainingVacationDaysNotExpiring" cssClass="error"/>
+                                    <form:errors path="remainingVacationDaysNotExpiring" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -183,7 +185,7 @@
                                                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
                                                placeholder="${COMMENT_PLACEHOLDER}"/>
                                 <uv:error-text>
-                                    <form:errors path="comment" cssClass="error"/>
+                                    <form:errors path="comment" />
                                 </uv:error-text>
                             </div>
                         </div>

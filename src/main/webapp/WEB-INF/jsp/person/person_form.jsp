@@ -97,22 +97,22 @@
 
                 <div class="row">
                     <c:set var="permissionsError">
-                        <form:errors path="permissions" cssClass="error"/>
+                        <form:errors path="permissions" />
                     </c:set>
 
                     <c:set var="notificationsError">
-                        <form:errors path="notifications" cssClass="error"/>
+                        <form:errors path="notifications" />
                     </c:set>
 
                     <c:if test="${not empty permissionsError}">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger">${permissionsError}</div>
+                            <div class="alert alert-danger tw-text-red-800">${permissionsError}</div>
                         </div>
                     </c:if>
 
                     <c:if test="${not empty notificationsError}">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger">${notificationsError}</div>
+                            <div class="alert alert-danger tw-text-red-800">${notificationsError}</div>
                         </div>
                     </c:if>
 

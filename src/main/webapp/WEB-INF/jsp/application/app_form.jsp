@@ -241,7 +241,7 @@
                                         </c:forEach>
                                     </uv:select>
                                     <uv:error-text>
-                                        <form:errors path="holidayReplacement" cssClass="error"/>
+                                        <form:errors path="holidayReplacement" />
                                     </uv:error-text>
                                 </div>
                             </div>
@@ -260,7 +260,7 @@
                                         <spring:message code="application.data.teamInformed.false"/>
                                     </label>
                                     <uv:error-text>
-                                        <form:errors path="teamInformed" cssClass="error"/>
+                                        <form:errors path="teamInformed" />
                                     </uv:error-text>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                                     <div class="col-md-9">
                                         <form:input path="hours" class="form-control" cssErrorClass="form-control error"/>
                                         <uv:error-text>
-                                            <form:errors path="hours" cssClass="error"/>
+                                            <form:errors path="hours" />
                                         </uv:error-text>
                                     </div>
                                 </div>
@@ -323,7 +323,7 @@
                                                    onkeyup="count(this.value, 'text-reason');"
                                                    onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
                                     <uv:error-text>
-                                        <form:errors path="reason" cssClass="error"/>
+                                        <form:errors path="reason" />
                                     </uv:error-text>
                                 </div>
                             </div>
@@ -340,7 +340,7 @@
                                                    onkeyup="count(this.value, 'text-address');"
                                                    onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
                                     <uv:error-text>
-                                        <form:errors path="address" cssClass="error"/>
+                                        <form:errors path="address" />
                                     </uv:error-text>
                                 </div>
                             </div>
@@ -357,7 +357,7 @@
                                                    onkeyup="count(this.value, 'text-comment');"
                                                    onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
                                     <uv:error-text>
-                                        <form:errors path="comment" cssClass="error"/>
+                                        <form:errors path="comment" />
                                     </uv:error-text>
                                 </div>
                             </div>

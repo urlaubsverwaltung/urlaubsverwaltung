@@ -109,7 +109,7 @@
                                             cssClass="form-control" cssErrorClass="form-control error"
                                             autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="startDate" cssClass="error"/>
+                                    <form:errors path="startDate" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -123,7 +123,7 @@
                                             cssClass="form-control" cssErrorClass="form-control error"
                                             autocomplete="off" placeholder="${DATE_PATTERN}"/>
                                 <uv:error-text>
-                                    <form:errors path="endDate" cssClass="error"/>
+                                    <form:errors path="endDate" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                                 <form:input path="numberOfHours" cssClass="form-control"
                                             cssErrorClass="form-control error"/>
                                 <uv:error-text>
-                                    <form:errors path="numberOfHours" cssClass="error"/>
+                                    <form:errors path="numberOfHours" />
                                 </uv:error-text>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
                                                onkeyup="count(this.value, 'char-counter');"
                                                onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
                                 <uv:error-text>
-                                    <form:errors path="comment" cssClass="error"/>
+                                    <form:errors path="comment" />
                                 </uv:error-text>
                             </div>
                         </div>

@@ -97,7 +97,7 @@
                                            onkeyup="count(this.value, 'count-chars');"
                                            onkeydown="maxChars(this,200); count(this.value, 'count-chars');"/>
                             <uv:error-text>
-                                <form:errors path="reason" cssClass="error"/>
+                                <form:errors path="reason" />
                             </uv:error-text>
                         </div>
 
