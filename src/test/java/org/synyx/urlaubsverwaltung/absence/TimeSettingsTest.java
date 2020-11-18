@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.settings;
+package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.jupiter.api.Test;
 
@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
- * Unit test for {@link CalendarSettings}.
+ * Unit test for {@link TimeSettings}.
  */
 class TimeSettingsTest {
 

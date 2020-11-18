@@ -5,23 +5,27 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
+import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validateTimeSettings;
+import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.validateAccountSettings;
+import static org.synyx.urlaubsverwaltung.application.ApplicationSettingsValidator.validateApplicationSettings;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteSettingsValidator.validateSickNoteSettings;
+import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;
 
 @Component
 public class SettingsValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
-    private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
     private static final String ERROR_INVALID_EMAIL = "error.entry.mail";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
-
-    private static final int DAYS_PER_YEAR = 366;
-    private static final int HOURS_PER_DAY = 24;
     private static final int MAX_CHARS = 255;
-
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -34,187 +38,23 @@ public class SettingsValidator implements Validator {
         Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
 
         final Settings settings = (Settings) o;
-
-        validatePublicHolidaysSettings(settings, errors);
-        validateOvertimeSettings(settings, errors);
-        validateVacationSettings(settings, errors);
-        validateSickNoteSettings(settings, errors);
-        validateCalendarSettings(settings, errors);
-        validateTimeSettings(settings, errors);
+        validateWorkingTimeSettings(settings.getWorkingTimeSettings(), errors);
+        validateOvertimeSettings(settings.getOvertimeSettings(), errors);
+        validateApplicationSettings(settings.getApplicationSettings(), errors);
+        validateAccountSettings(settings.getAccountSettings(), errors);
+        validateSickNoteSettings(settings.getSickNoteSettings(), errors);
+        validateCalendarSettings(settings.getCalendarSettings(), errors);
+        validateTimeSettings(settings.getTimeSettings(), errors);
     }
 
-    private void validatePublicHolidaysSettings(Settings settings, Errors errors) {
 
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-
-        if (workingTimeSettings.getFederalState() == null) {
-            errors.rejectValue("workingTimeSettings.federalState", ERROR_MANDATORY_FIELD);
-        }
-
-        if (workingTimeSettings.getWorkingDurationForChristmasEve() == null) {
-            errors.rejectValue("workingTimeSettings.workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
-        }
-
-        if (workingTimeSettings.getWorkingDurationForNewYearsEve() == null) {
-            errors.rejectValue("workingTimeSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
-        }
-    }
-
-    private void validateOvertimeSettings(Settings settings, Errors errors) {
-
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-
-        if (!workingTimeSettings.isOvertimeActive()) {
-            return;
-        }
-
-        validateOvertimeLimit(workingTimeSettings.getMaximumOvertime(), "workingTimeSettings.maximumOvertime", errors);
-        validateOvertimeLimit(workingTimeSettings.getMinimumOvertime(), "workingTimeSettings.minimumOvertime", errors);
-    }
-
-    private void validateOvertimeLimit(Integer limit, String field, Errors errors) {
-
-        if (limit == null) {
-            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-
-            return;
-        }
-
-        if (limit < 0) {
-            errors.rejectValue(field, ERROR_INVALID_ENTRY);
-        }
-    }
-
-    private void validateVacationSettings(Settings settings, Errors errors) {
-
-        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        final Integer maximumAnnualVacationDays = absenceSettings.getMaximumAnnualVacationDays();
-
-        if (maximumAnnualVacationDays == null) {
-            errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_MANDATORY_FIELD);
-        } else if (maximumAnnualVacationDays < 0 || maximumAnnualVacationDays > DAYS_PER_YEAR) {
-            errors.rejectValue("absenceSettings.maximumAnnualVacationDays", ERROR_INVALID_ENTRY);
-        }
-
-        final Integer maximumMonthsToApplyForLeaveInAdvance = absenceSettings.getMaximumMonthsToApplyForLeaveInAdvance();
-
-        if (maximumMonthsToApplyForLeaveInAdvance == null) {
-            errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_MANDATORY_FIELD);
-        } else if (maximumMonthsToApplyForLeaveInAdvance <= 0) {
-            errors.rejectValue("absenceSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
-        }
-
-        final Integer daysBeforeRemindForWaitingApplications = absenceSettings.getDaysBeforeRemindForWaitingApplications();
-
-        if (daysBeforeRemindForWaitingApplications == null) {
-            errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);
-        } else if (daysBeforeRemindForWaitingApplications <= 0) {
-            errors.rejectValue("absenceSettings.daysBeforeRemindForWaitingApplications", ERROR_INVALID_ENTRY);
-        }
-    }
-
-    private void validateSickNoteSettings(Settings settings, Errors errors) {
-
-        final AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-
-        final Integer maximumSickPayDays = absenceSettings.getMaximumSickPayDays();
-        final Integer daysBeforeEndOfSickPayNotification = absenceSettings.getDaysBeforeEndOfSickPayNotification();
-
-        if (maximumSickPayDays == null) {
-            errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);
-        } else if (maximumSickPayDays < 0) {
-            errors.rejectValue("absenceSettings.maximumSickPayDays", ERROR_INVALID_ENTRY);
-        }
-
-        if (daysBeforeEndOfSickPayNotification == null) {
-            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", ERROR_MANDATORY_FIELD);
-        } else if (daysBeforeEndOfSickPayNotification < 0) {
-            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification", ERROR_INVALID_ENTRY);
-        }
-
-        if (maximumSickPayDays != null && daysBeforeEndOfSickPayNotification != null
-            && daysBeforeEndOfSickPayNotification > maximumSickPayDays) {
-            errors.rejectValue("absenceSettings.daysBeforeEndOfSickPayNotification",
-                "settings.sickDays.daysBeforeEndOfSickPayNotification.error");
-        }
-    }
-
-    private void validateMandatoryTextField(String input, String attributeName, Errors errors) {
-        if (!StringUtils.hasText(input)) {
-            errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
-        } else {
-            if (!validStringLength(input)) {
-                errors.rejectValue(attributeName, ERROR_LENGTH);
-            }
-        }
-    }
-
-    private boolean validStringLength(String string) {
-        return string.length() <= MAX_CHARS;
-    }
-
-    private void validateMandatoryMailAddress(String mailAddress, String attributeName, Errors errors) {
-
-        if (!StringUtils.hasText(mailAddress)) {
-            errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
-        } else {
-            if (!validStringLength(mailAddress)) {
-                errors.rejectValue(attributeName, ERROR_LENGTH);
-            }
-
-            if (!MailAddressValidationUtil.hasValidFormat(mailAddress)) {
-                errors.rejectValue(attributeName, ERROR_INVALID_EMAIL);
-            }
-        }
-    }
-
-    private void validateCalendarSettings(Settings settings, Errors errors) {
-
-        final CalendarSettings calendarSettings = settings.getCalendarSettings();
+    private void validateCalendarSettings(CalendarSettings calendarSettings, Errors errors) {
 
         if (calendarSettings.getProvider().equals(ExchangeCalendarProvider.class.getSimpleName())) {
             validateExchangeCalendarSettings(calendarSettings.getExchangeCalendarSettings(), errors);
         }
         if (calendarSettings.getProvider().equals(GoogleCalendarSyncProvider.class.getSimpleName())) {
             validateGoogleCalendarSettings(calendarSettings.getGoogleCalendarSettings(), errors);
-        }
-    }
-
-    private void validateTimeSettings(Settings settings, Errors errors) {
-
-        final TimeSettings timeSettings = settings.getTimeSettings();
-
-        final String workDayBeginHourAttribute = "timeSettings.workDayBeginHour";
-        final Integer workDayBeginHour = timeSettings.getWorkDayBeginHour();
-        validateWorkDayHour(workDayBeginHour, workDayBeginHourAttribute, errors);
-
-        final Integer workDayEndHour = timeSettings.getWorkDayEndHour();
-        final String workDayEndHourAttribute = "timeSettings.workDayEndHour";
-        validateWorkDayHour(workDayEndHour, workDayEndHourAttribute, errors);
-
-        final boolean beginHourValid = workDayBeginHour != null && isValidWorkDayHour(workDayBeginHour);
-        final boolean endHourValid = workDayEndHour != null && isValidWorkDayHour(workDayEndHour);
-        final boolean beginAndEndValid = beginHourValid && endHourValid;
-
-        if (beginAndEndValid && workDayBeginHour >= workDayEndHour) {
-            errors.rejectValue(workDayBeginHourAttribute, ERROR_INVALID_ENTRY);
-            errors.rejectValue(workDayEndHourAttribute, ERROR_INVALID_ENTRY);
-        }
-    }
-
-    private boolean isValidWorkDayHour(int workDayHour) {
-        return workDayHour > 0 && workDayHour <= HOURS_PER_DAY;
-    }
-
-    private void validateWorkDayHour(Integer workDayHour, String attribute, Errors errors) {
-
-        if (workDayHour == null) {
-            errors.rejectValue(attribute, ERROR_MANDATORY_FIELD);
-        } else {
-            if (!isValidWorkDayHour(workDayHour)) {
-                errors.rejectValue(attribute, ERROR_INVALID_ENTRY);
-            }
         }
     }
 
@@ -256,5 +96,34 @@ public class SettingsValidator implements Validator {
         String calendar = exchangeCalendarSettings.getPassword();
 
         validateMandatoryTextField(calendar, calendarAttribute, errors);
+    }
+
+    private void validateMandatoryTextField(String input, String attributeName, Errors errors) {
+        if (!StringUtils.hasText(input)) {
+            errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!validStringLength(input)) {
+                errors.rejectValue(attributeName, ERROR_LENGTH);
+            }
+        }
+    }
+
+    private void validateMandatoryMailAddress(String mailAddress, String attributeName, Errors errors) {
+
+        if (!StringUtils.hasText(mailAddress)) {
+            errors.rejectValue(attributeName, ERROR_MANDATORY_FIELD);
+        } else {
+            if (!validStringLength(mailAddress)) {
+                errors.rejectValue(attributeName, ERROR_LENGTH);
+            }
+
+            if (!MailAddressValidationUtil.hasValidFormat(mailAddress)) {
+                errors.rejectValue(attributeName, ERROR_INVALID_EMAIL);
+            }
+        }
+    }
+
+    private boolean validStringLength(String string) {
+        return string.length() <= MAX_CHARS;
     }
 }

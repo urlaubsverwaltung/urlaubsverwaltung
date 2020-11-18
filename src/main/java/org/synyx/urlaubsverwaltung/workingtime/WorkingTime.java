@@ -4,7 +4,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;

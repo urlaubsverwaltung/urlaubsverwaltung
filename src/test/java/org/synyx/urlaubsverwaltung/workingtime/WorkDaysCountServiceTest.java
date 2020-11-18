@@ -36,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN_AUGSBURG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN_AUGSBURG;
 
 @ExtendWith(MockitoExtension.class)
 class WorkDaysCountServiceTest {

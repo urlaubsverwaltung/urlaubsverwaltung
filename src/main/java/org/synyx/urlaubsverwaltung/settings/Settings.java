@@ -1,6 +1,13 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.account.AccountSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import javax.persistence.Entity;
 
@@ -11,23 +18,38 @@ import javax.persistence.Entity;
 @Entity
 public class Settings extends AbstractPersistable<Integer> {
 
-    private AbsenceSettings absenceSettings;
+    private ApplicationSettings applicationSettings;
+    private AccountSettings accountSettings;
     private WorkingTimeSettings workingTimeSettings;
+    private OvertimeSettings overtimeSettings;
+    private TimeSettings timeSettings;
+    private SickNoteSettings sickNoteSettings;
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
-    private TimeSettings timeSettings;
 
-    public AbsenceSettings getAbsenceSettings() {
-        if (absenceSettings == null) {
-            absenceSettings = new AbsenceSettings();
+    public ApplicationSettings getApplicationSettings() {
+        if (applicationSettings == null) {
+            applicationSettings = new ApplicationSettings();
         }
 
-        return absenceSettings;
+        return applicationSettings;
     }
 
-    public void setAbsenceSettings(AbsenceSettings absenceSettings) {
-        this.absenceSettings = absenceSettings;
+    public void setApplicationSettings(ApplicationSettings applicationSettings) {
+        this.applicationSettings = applicationSettings;
+    }
+
+    public AccountSettings getAccountSettings() {
+        if (accountSettings == null) {
+            accountSettings = new AccountSettings();
+        }
+
+        return accountSettings;
+    }
+
+    public void setAccountSettings(AccountSettings accountSettings) {
+        this.accountSettings = accountSettings;
     }
 
     public WorkingTimeSettings getWorkingTimeSettings() {
@@ -40,6 +62,18 @@ public class Settings extends AbstractPersistable<Integer> {
 
     public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
         this.workingTimeSettings = workingTimeSettings;
+    }
+
+    public OvertimeSettings getOvertimeSettings() {
+        if (overtimeSettings == null) {
+            overtimeSettings = new OvertimeSettings();
+        }
+
+        return overtimeSettings;
+    }
+
+    public void setOvertimeSettings(OvertimeSettings overtimeSettings) {
+        this.overtimeSettings = overtimeSettings;
     }
 
     public CalendarSettings getCalendarSettings() {
@@ -68,6 +102,19 @@ public class Settings extends AbstractPersistable<Integer> {
 
     public void setTimeSettings(TimeSettings timeSettings) {
         this.timeSettings = timeSettings;
+    }
+
+    public SickNoteSettings getSickNoteSettings() {
+
+        if (sickNoteSettings == null) {
+            sickNoteSettings = new SickNoteSettings();
+        }
+
+        return sickNoteSettings;
+    }
+
+    public void setSickNoteSettings(SickNoteSettings sickNoteSettings) {
+        this.sickNoteSettings = sickNoteSettings;
     }
 
     @Override

@@ -25,7 +25,7 @@ class OvertimeRecordDataProvider {
 
     void activateOvertime() {
         final Settings settings = settingsService.getSettings();
-        settings.getWorkingTimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setOvertimeActive(true);
         settingsService.save(settings);
     }
 

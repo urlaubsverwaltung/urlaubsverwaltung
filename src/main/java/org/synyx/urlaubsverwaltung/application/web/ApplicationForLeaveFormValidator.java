@@ -5,17 +5,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -239,16 +240,16 @@ public class ApplicationForLeaveFormValidator implements Validator {
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+            ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
-            validateNotTooFarInTheFuture(endDate, absenceSettings, errors);
-            validateNotTooFarInThePast(startDate, absenceSettings, errors);
+            validateNotTooFarInTheFuture(endDate, applicationSettings, errors);
+            validateNotTooFarInThePast(startDate, applicationSettings, errors);
             validateSameDayIfHalfDayPeriod(startDate, endDate, dayLength, errors);
         }
     }
 
 
-    private void validateNotTooFarInTheFuture(LocalDate date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInTheFuture(LocalDate date, ApplicationSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
@@ -259,7 +260,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     }
 
 
-    private void validateNotTooFarInThePast(LocalDate date, AbsenceSettings settings, Errors errors) {
+    private void validateNotTooFarInThePast(LocalDate date, ApplicationSettings settings, Errors errors) {
 
         Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();
@@ -307,7 +308,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
         BigDecimal hours = applicationForLeave.getHours();
         boolean isOvertime = VacationCategory.OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
-        boolean overtimeFunctionIsActive = settings.getWorkingTimeSettings().isOvertimeActive();
+        boolean overtimeFunctionIsActive = settings.getOvertimeSettings().isOvertimeActive();
         boolean hoursRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && hours == null;
 
         if (hoursRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
@@ -421,24 +422,22 @@ public class ApplicationForLeaveFormValidator implements Validator {
         boolean isOvertime = VacationCategory.OVERTIME.equals(application.getVacationType().getCategory());
 
         if (isOvertime) {
-            WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-            boolean overtimeActive = workingTimeSettings.isOvertimeActive();
+            final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+            boolean overtimeActive = overtimeSettings.isOvertimeActive();
 
             if (overtimeActive && application.getHours() != null) {
-                return checkOvertimeHours(application, workingTimeSettings);
+                return checkOvertimeHours(application, overtimeSettings);
             }
         }
 
         return true;
     }
 
+    private boolean checkOvertimeHours(Application application, OvertimeSettings settings) {
 
-    private boolean checkOvertimeHours(Application application, WorkingTimeSettings settings) {
-
-        BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
-        BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
-
-        BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
+        final BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
+        final BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
+        final BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
 
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negate()) >= 0;
     }

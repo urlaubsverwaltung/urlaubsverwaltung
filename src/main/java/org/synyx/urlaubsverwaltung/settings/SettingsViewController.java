@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
@@ -68,11 +70,12 @@ public class SettingsViewController {
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
-        final StringBuffer requestURL = request.getRequestURL();
-        final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
-
         settingsValidator.validate(settings, errors);
         if (errors.hasErrors()) {
+
+            final StringBuffer requestURL = request.getRequestURL();
+            final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
+
             fillModel(model, settings, authorizedRedirectUrl);
 
             model.addAttribute("errors", errors);

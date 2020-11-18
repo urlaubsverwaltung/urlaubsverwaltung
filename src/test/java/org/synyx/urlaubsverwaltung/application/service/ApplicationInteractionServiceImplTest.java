@@ -21,7 +21,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;

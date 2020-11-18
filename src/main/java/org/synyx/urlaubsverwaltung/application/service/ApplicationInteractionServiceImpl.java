@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.settings.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -108,7 +108,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendConfirmation(savedApplication, createdComment);
-        } else if(applier.hasRole(OFFICE)) {
+        } else if (applier.hasRole(OFFICE)) {
             // if a person with the office role applies for leave on behalf of the person
             // person gets an email that someone else has applied for leave on behalf
             applicationMailService.sendAppliedForLeaveByOfficeNotification(savedApplication, createdComment);

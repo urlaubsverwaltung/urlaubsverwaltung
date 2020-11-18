@@ -15,7 +15,7 @@ class SettingsTest {
 
         Settings settings = new Settings();
 
-        assertThat(settings.getAbsenceSettings()).isNotNull();
+        assertThat(settings.getApplicationSettings()).isNotNull();
         assertThat(settings.getWorkingTimeSettings()).isNotNull();
         assertThat(settings.getCalendarSettings()).isNotNull();
     }

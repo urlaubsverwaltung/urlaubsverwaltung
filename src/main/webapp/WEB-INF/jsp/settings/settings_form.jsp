@@ -48,17 +48,29 @@
                 </div>
             </div>
 
-            <c:set var="absenceError">
-                <form:errors path="absenceSettings.*"/>
+            <c:set var="applicationError">
+                <form:errors path="applicationSettings.*"/>
             </c:set>
-            <c:if test="${not empty absenceError}">
+            <c:set var="sickNoteError">
+                <form:errors path="sickNoteSettings.*"/>
+            </c:set>
+            <c:set var="accountError">
+                <form:errors path="accountSettings.*"/>
+            </c:set>
+            <c:if test="${not empty applicationError || not empty sickNoteError || not empty accountError}">
                 <c:set var="ABSENCE_ERROR_CSS_CLASS" value="error"/>
             </c:if>
 
             <c:set var="workingTimeError">
                 <form:errors path="workingTimeSettings.*"/>
             </c:set>
-            <c:if test="${not empty workingTimeError}">
+            <c:set var="timeError">
+                <form:errors path="timeSettings.*"/>
+            </c:set>
+            <c:set var="overtimeError">
+                <form:errors path="overtimeSettings.*"/>
+            </c:set>
+            <c:if test="${not empty workingTimeError || not empty timeError || not empty overtimeError}">
                 <c:set var="WORKING_TIME_ERROR_CSS_CLASS" value="error"/>
             </c:if>
 
@@ -73,16 +85,19 @@
                 <div class="col-xs-12">
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active ${ABSENCE_ERROR_CSS_CLASS}">
-                            <a href="#absence" aria-controls="absence" role="tab" data-toggle="tab"><spring:message
-                                code="settings.tabs.absence"/></a>
+                            <a href="#absence" aria-controls="absence" role="tab" data-toggle="tab">
+                                <spring:message code="settings.tabs.absence"/>
+                            </a>
                         </li>
                         <li role="presentation" class="${WORKING_TIME_ERROR_CSS_CLASS}">
-                            <a href="#publicHolidays" aria-controls="publicHolidays" role="tab"
-                               data-toggle="tab"><spring:message code="settings.tabs.workingTime"/></a>
+                            <a href="#publicHolidays" aria-controls="publicHolidays" role="tab" data-toggle="tab">
+                                <spring:message code="settings.tabs.workingTime"/>
+                            </a>
                         </li>
                         <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
-                            <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab"><spring:message
-                                code="settings.tabs.calendar"/></a>
+                            <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab">
+                                <spring:message code="settings.tabs.calendar"/>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -107,31 +122,31 @@
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.maximumAnnualVacationDays">
+                                           for="accountSettings.maximumAnnualVacationDays">
                                         <spring:message code='settings.vacation.maximumAnnualVacationDays'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.maximumAnnualVacationDays"
-                                                    path="absenceSettings.maximumAnnualVacationDays"
+                                        <form:input id="accountSettings.maximumAnnualVacationDays"
+                                                    path="accountSettings.maximumAnnualVacationDays"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.maximumAnnualVacationDays"
+                                            path="accountSettings.maximumAnnualVacationDays"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.maximumMonthsToApplyForLeaveInAdvance">
+                                           for="applicationSettings.maximumMonthsToApplyForLeaveInAdvance">
                                         <spring:message code='settings.vacation.maximumMonthsToApplyForLeaveInAdvance'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
-                                                    path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
+                                        <form:input id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
+                                                    path="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.maximumMonthsToApplyForLeaveInAdvance"
+                                            path="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>
@@ -156,19 +171,19 @@
 
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.remindForWaitingApplications.true">
+                                           for="applicationSettings.remindForWaitingApplications.true">
                                         <spring:message code='settings.vacation.remindForWaitingApplications'/>:
                                     </label>
                                     <div class="col-md-8 radio">
                                         <label class="halves">
-                                            <form:radiobutton id="absenceSettings.remindForWaitingApplications.true"
-                                                              path="absenceSettings.remindForWaitingApplications"
+                                            <form:radiobutton id="applicationSettings.remindForWaitingApplications.true"
+                                                              path="applicationSettings.remindForWaitingApplications"
                                                               value="true"/>
                                             <spring:message code="settings.vacation.remindForWaitingApplications.true"/>
                                         </label>
                                         <label class="halves">
-                                            <form:radiobutton id="absenceSettings.remindForWaitingApplications.false"
-                                                              path="absenceSettings.remindForWaitingApplications"
+                                            <form:radiobutton id="applicationSettings.remindForWaitingApplications.false"
+                                                              path="applicationSettings.remindForWaitingApplications"
                                                               value="false"/>
                                             <spring:message
                                                 code="settings.vacation.remindForWaitingApplications.false"/>
@@ -178,17 +193,17 @@
 
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.daysBeforeRemindForWaitingApplications">
+                                           for="applicationSettings.daysBeforeRemindForWaitingApplications">
                                         <spring:message
                                             code='settings.vacation.daysBeforeRemindForWaitingApplications'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.daysBeforeRemindForWaitingApplications"
-                                                    path="absenceSettings.daysBeforeRemindForWaitingApplications"
+                                        <form:input id="applicationSettings.daysBeforeRemindForWaitingApplications"
+                                                    path="applicationSettings.daysBeforeRemindForWaitingApplications"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.daysBeforeRemindForWaitingApplications"
+                                            path="applicationSettings.daysBeforeRemindForWaitingApplications"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>
@@ -213,30 +228,30 @@
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="absenceSettings.maximumSickPayDays">
+                                    <label class="control-label col-md-4" for="sickNoteSettings.maximumSickPayDays">
                                         <spring:message code='settings.sickDays.maximumSickPayDays'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.maximumSickPayDays"
-                                                    path="absenceSettings.maximumSickPayDays" class="form-control"
+                                        <form:input id="sickNoteSettings.maximumSickPayDays"
+                                                    path="sickNoteSettings.maximumSickPayDays" class="form-control"
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
-                                        <span class="help-inline"><form:errors path="absenceSettings.maximumSickPayDays"
+                                        <span class="help-inline"><form:errors path="sickNoteSettings.maximumSickPayDays"
                                                                                cssClass="error"/></span>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
-                                           for="absenceSettings.daysBeforeEndOfSickPayNotification">
+                                           for="sickNoteSettings.daysBeforeEndOfSickPayNotification">
                                         <spring:message code='settings.sickDays.daysBeforeEndOfSickPayNotification'/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="absenceSettings.daysBeforeEndOfSickPayNotification"
-                                                    path="absenceSettings.daysBeforeEndOfSickPayNotification"
+                                        <form:input id="sickNoteSettings.daysBeforeEndOfSickPayNotification"
+                                                    path="sickNoteSettings.daysBeforeEndOfSickPayNotification"
                                                     class="form-control" cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="absenceSettings.daysBeforeEndOfSickPayNotification"
+                                            path="sickNoteSettings.daysBeforeEndOfSickPayNotification"
                                             cssClass="error"/></span>
                                     </div>
                                 </div>
@@ -387,47 +402,47 @@
                             <div class="col-md-8 col-md-pull-4">
 
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="workingTimeSettings.overtimeActive.true">
+                                    <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
                                         <spring:message code='settings.overtime.overtimeActive'/>:
                                     </label>
                                     <div class="col-md-8 radio">
                                         <label class="halves">
-                                            <form:radiobutton id="workingTimeSettings.overtimeActive.true"
-                                                              path="workingTimeSettings.overtimeActive" value="true"/>
+                                            <form:radiobutton id="overtimeSettings.overtimeActive.true"
+                                                              path="overtimeSettings.overtimeActive" value="true"/>
                                             <spring:message code="settings.overtime.overtimeActive.true"/>
                                         </label>
                                         <label class="halves">
-                                            <form:radiobutton id="workingTimeSettings.overtimeActive.false"
-                                                              path="workingTimeSettings.overtimeActive" value="false"/>
+                                            <form:radiobutton id="overtimeSettings.overtimeActive.false"
+                                                              path="overtimeSettings.overtimeActive" value="false"/>
                                             <spring:message code="settings.overtime.overtimeActive.false"/>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="workingTimeSettings.maximumOvertime">
+                                    <label class="control-label col-md-4" for="overtimeSettings.maximumOvertime">
                                         <spring:message code="settings.overtime.maximum"/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="workingTimeSettings.maximumOvertime"
-                                                    path="workingTimeSettings.maximumOvertime" class="form-control"
+                                        <form:input id="overtimeSettings.maximumOvertime"
+                                                    path="overtimeSettings.maximumOvertime" class="form-control"
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="workingTimeSettings.maximumOvertime" cssClass="error"/></span>
+                                            path="overtimeSettings.maximumOvertime" cssClass="error"/></span>
                                     </div>
                                 </div>
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4" for="workingTimeSettings.minimumOvertime">
+                                    <label class="control-label col-md-4" for="overtimeSettings.minimumOvertime">
                                         <spring:message code="settings.overtime.minimum"/>:
                                     </label>
                                     <div class="col-md-8">
-                                        <form:input id="workingTimeSettings.minimumOvertime"
-                                                    path="workingTimeSettings.minimumOvertime" class="form-control"
+                                        <form:input id="overtimeSettings.minimumOvertime"
+                                                    path="overtimeSettings.minimumOvertime" class="form-control"
                                                     cssErrorClass="form-control error"
                                                     type="number" step="1"/>
                                         <span class="help-inline"><form:errors
-                                            path="workingTimeSettings.minimumOvertime" cssClass="error"/></span>
+                                            path="overtimeSettings.minimumOvertime" cssClass="error"/></span>
                                     </div>
                                 </div>
                             </div>

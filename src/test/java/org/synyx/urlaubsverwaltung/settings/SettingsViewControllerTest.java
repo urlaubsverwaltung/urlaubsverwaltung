@@ -9,8 +9,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
 import java.time.Clock;
 import java.util.List;
@@ -169,9 +171,8 @@ class SettingsViewControllerTest {
     void ensureSettingsSavedShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
-
             Errors errors = invocation.getArgument(1);
-            errors.rejectValue("absenceSettings", "error");
+            errors.rejectValue("applicationSettings", "error");
             return null;
         }).when(settingsValidator).validate(any(), any());
 

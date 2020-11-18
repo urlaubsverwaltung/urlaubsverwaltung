@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -62,14 +61,14 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
-        Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
+        final Settings settings = settingsService.getSettings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
 
-        LocalDate endDate = ZonedDateTime.now(clock)
-            .plusDays(absenceSettings.getDaysBeforeEndOfSickPayNotification())
+        final LocalDate endDate = ZonedDateTime.now(clock)
+            .plusDays(sickNoteSettings.getDaysBeforeEndOfSickPayNotification())
             .toLocalDate();
 
-        return sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(absenceSettings.getMaximumSickPayDays(), endDate);
+        return sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(sickNoteSettings.getMaximumSickPayDays(), endDate);
     }
 
     @Override

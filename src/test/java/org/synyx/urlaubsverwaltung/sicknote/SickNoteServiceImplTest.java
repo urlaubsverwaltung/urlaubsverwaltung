@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -85,11 +84,11 @@ class SickNoteServiceImplTest {
     @Test
     void getSickNotesReachingEndOfSickPay() {
 
-        final AbsenceSettings absenceSettings = new AbsenceSettings();
-        absenceSettings.setMaximumSickPayDays(5);
+        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        sickNoteSettings.setMaximumSickPayDays(5);
 
         final Settings settings = new Settings();
-        settings.setAbsenceSettings(absenceSettings);
+        settings.setSickNoteSettings(sickNoteSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final SickNote sickNote = new SickNote();

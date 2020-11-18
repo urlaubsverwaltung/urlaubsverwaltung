@@ -72,7 +72,7 @@ class AccountFormValidatorTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         int maxDays = 40;
-        settings.getAbsenceSettings().setMaximumAnnualVacationDays(maxDays);
+        settings.getAccountSettings().setMaximumAnnualVacationDays(maxDays);
 
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.settings.AbsenceSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -99,8 +98,8 @@ class AccountFormValidator implements Validator {
 
         BigDecimal annualVacationDays = form.getAnnualVacationDays();
         Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(absenceSettings.getMaximumAnnualVacationDays());
+        AccountSettings accountSettings = settings.getAccountSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
 
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
@@ -146,8 +145,8 @@ class AccountFormValidator implements Validator {
     void validateRemainingVacationDays(AccountForm form, Errors errors) {
 
         Settings settings = settingsService.getSettings();
-        AbsenceSettings absenceSettings = settings.getAbsenceSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(absenceSettings.getMaximumAnnualVacationDays());
+        AccountSettings accountSettings = settings.getAccountSettings();
+        BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
 
         BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();

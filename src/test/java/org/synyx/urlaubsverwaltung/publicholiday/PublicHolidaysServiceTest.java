@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -21,9 +21,9 @@ import java.time.Month;
 import static java.time.Month.AUGUST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BADEN_WUERTTEMBERG;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BAYERN_MUENCHEN;
-import static org.synyx.urlaubsverwaltung.settings.FederalState.BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN_MUENCHEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
 
 @ExtendWith(MockitoExtension.class)
 class PublicHolidaysServiceTest {

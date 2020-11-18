@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
-import org.synyx.urlaubsverwaltung.settings.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
 
 import java.time.ZonedDateTime;
 
