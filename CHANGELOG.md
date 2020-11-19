@@ -1,3 +1,6 @@
+Since the Version 4.0.0 of the Urlaubsverwaltung the changelogs are now located at the github releases.
+see https://github.com/synyx/urlaubsverwaltung/releases
+
 ### [urlaubsverwaltung-3.4.5](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.4.5)
 * ❗Security-Fix: Fill department description with jstl out tag (for v3.x branch), Issue: [#1399](https://github.com/synyx/urlaubsverwaltung/issues/1399) PR:[#1407](https://github.com/synyx/urlaubsverwaltung/pull/1407)
 
