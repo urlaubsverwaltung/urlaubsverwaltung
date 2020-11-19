@@ -34,16 +34,6 @@ public interface ApplicationService {
      */
     Application save(Application application);
 
-
-    /**
-     * Gets all {@link Application}s with the given state.
-     *
-     * @param state of the {@link Application}s for leave to be fetched
-     * @return all {@link Application}s for leave with the given state
-     */
-    List<Application> getApplicationsForACertainState(ApplicationStatus state);
-
-
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
      *

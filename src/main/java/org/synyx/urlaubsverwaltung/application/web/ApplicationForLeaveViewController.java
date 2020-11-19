@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -21,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -90,7 +88,9 @@ public class ApplicationForLeaveViewController {
             applicationsForLeave.addAll(getApplicationsForLeaveForUser(user));
         }
 
-        return applicationsForLeave.stream().filter(distinctByKey(ApplicationForLeave::getId)).collect(toList());
+        return applicationsForLeave.stream()
+            .filter(distinctByKey(ApplicationForLeave::getId))
+            .collect(toList());
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -100,45 +100,39 @@ public class ApplicationForLeaveViewController {
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
-
-        return getApplicationsByStates(WAITING, TEMPORARY_ALLOWED).stream()
+        return applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)).stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
-
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
-
         final List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
-        return getApplicationsByStates(WAITING).stream()
-            .filter(includeApplicationsOf(members))
-            .filter(withoutOwnApplications(head))
+        return applicationService.getForStatesAndPerson(List.of(WAITING), members).stream()
+            .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
-
         final List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
-        return getApplicationsByStates(WAITING, TEMPORARY_ALLOWED).stream()
-            .filter(includeApplicationsOf(members))
-            .filter(withoutOwnApplications(secondStage))
+        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
+            .filter(withoutApplicationsOf(secondStage))
             .map(application -> new ApplicationForLeave(application, calendarService))
-            .sorted(dateComparator())
+            .sorted(byStartDate())
             .collect(toList());
     }
 
-    private Predicate<Application> withoutOwnApplications(Person head) {
+    private Predicate<Application> withoutApplicationsOf(Person head) {
         return application -> !application.getPerson().equals(head);
     }
 
@@ -146,17 +140,7 @@ public class ApplicationForLeaveViewController {
         return application -> !application.getPerson().getPermissions().contains(SECOND_STAGE_AUTHORITY);
     }
 
-    private Predicate<Application> includeApplicationsOf(List<Person> members) {
-        return application -> members.contains(application.getPerson());
-    }
-
-    private Comparator<ApplicationForLeave> dateComparator() {
+    private Comparator<ApplicationForLeave> byStartDate() {
         return Comparator.comparing(Application::getStartDate);
-    }
-
-    private List<Application> getApplicationsByStates(ApplicationStatus... state) {
-        return stream(state)
-            .flatMap(applicationStatus -> applicationService.getApplicationsForACertainState(applicationStatus).stream())
-            .collect(toList());
     }
 }

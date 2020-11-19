@@ -27,6 +27,8 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.R
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.UNPAIDLEAVE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -53,6 +55,241 @@ class ApplicationRepositoryIT extends TestContainersBase {
         assertThat(totalHours).isNull();
     }
 
+    @Test
+    void findByStatusIn() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Allowed
+        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayOvertimeReduction.setStatus(ALLOWED);
+        applicationRepository.save(fullDayOvertimeReduction);
+
+        Application fullDayHoliday = createApplication(savedPerson, getVacationType(HOLIDAY), now, now.plusDays(2), FULL);
+        fullDayHoliday.setStatus(ALLOWED);
+        applicationRepository.save(fullDayHoliday);
+
+        // Waiting
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now.plusDays(5), now.plusDays(10), MORNING);
+        halfDayOvertimeReduction.setStatus(WAITING);
+        applicationRepository.save(halfDayOvertimeReduction);
+
+        // Cancelled
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        cancelledOvertimeReduction.setStatus(CANCELLED);
+        applicationRepository.save(cancelledOvertimeReduction);
+
+        // Rejected
+        final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now, now.plusDays(2), FULL);
+        rejectedOvertimeReduction.setStatus(REJECTED);
+        applicationRepository.save(rejectedOvertimeReduction);
+
+        // Revoked
+        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(UNPAIDLEAVE), now, now.plusDays(2), FULL);
+        revokedOvertimeReduction.setStatus(REVOKED);
+        applicationRepository.save(revokedOvertimeReduction);
+
+        final List<Application> allowedApplications = applicationRepository.findByStatusIn(List.of(ALLOWED));
+        assertThat(allowedApplications)
+            .contains(fullDayOvertimeReduction, fullDayHoliday)
+            .hasSize(2);
+    }
+
+    @Test
+    void findByStatusInMultipleStatus() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Allowed
+        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayOvertimeReduction.setStatus(ALLOWED);
+        applicationRepository.save(fullDayOvertimeReduction);
+
+        Application fullDayHoliday = createApplication(savedPerson, getVacationType(HOLIDAY), now, now.plusDays(2), FULL);
+        fullDayHoliday.setStatus(ALLOWED);
+        applicationRepository.save(fullDayHoliday);
+
+        // Waiting
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now.plusDays(5), now.plusDays(10), MORNING);
+        halfDayOvertimeReduction.setStatus(WAITING);
+        applicationRepository.save(halfDayOvertimeReduction);
+
+        // Cancelled
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        cancelledOvertimeReduction.setStatus(CANCELLED);
+        applicationRepository.save(cancelledOvertimeReduction);
+
+        // Rejected
+        final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now, now.plusDays(2), FULL);
+        rejectedOvertimeReduction.setStatus(REJECTED);
+        applicationRepository.save(rejectedOvertimeReduction);
+
+        // Revoked
+        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(UNPAIDLEAVE), now, now.plusDays(2), FULL);
+        revokedOvertimeReduction.setStatus(REVOKED);
+        applicationRepository.save(revokedOvertimeReduction);
+
+        final List<Application> allowedApplications = applicationRepository.findByStatusIn(List.of(ALLOWED, REJECTED));
+        assertThat(allowedApplications)
+            .contains(fullDayOvertimeReduction, fullDayHoliday, rejectedOvertimeReduction)
+            .hasSize(3);
+    }
+
+    @Test
+    void findByStatusInEmptyStatus() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Revoked
+        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(UNPAIDLEAVE), now, now.plusDays(2), FULL);
+        revokedOvertimeReduction.setStatus(REVOKED);
+        applicationRepository.save(revokedOvertimeReduction);
+
+        final List<Application> allowedApplications = applicationRepository.findByStatusIn(List.of());
+        assertThat(allowedApplications)
+            .isEmpty();
+    }
+
+    @Test
+    void findByStatusInAndPersonIn() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final Person otherPerson = new Person("other sam", "smith", "sam", "smith@example.org");
+        final Person savedOtherPerson = personService.save(otherPerson);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Allowed
+        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayOvertimeReduction.setStatus(ALLOWED);
+        applicationRepository.save(fullDayOvertimeReduction);
+
+        // Waiting
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now.plusDays(5), now.plusDays(10), MORNING);
+        halfDayOvertimeReduction.setStatus(WAITING);
+        applicationRepository.save(halfDayOvertimeReduction);
+
+        // Cancelled
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        cancelledOvertimeReduction.setStatus(CANCELLED);
+        applicationRepository.save(cancelledOvertimeReduction);
+
+        // Rejected
+        Application rejectedHoliday = createApplication(savedPerson, getVacationType(HOLIDAY), now, now.plusDays(2), FULL);
+        rejectedHoliday.setStatus(REJECTED);
+        applicationRepository.save(rejectedHoliday);
+
+        final Application rejectedOvertimeReduction = createApplication(savedOtherPerson, getVacationType(SPECIALLEAVE), now, now.plusDays(2), FULL);
+        rejectedOvertimeReduction.setStatus(REJECTED);
+        applicationRepository.save(rejectedOvertimeReduction);
+
+        // Revoked
+        final Application revokedOvertimeReduction = createApplication(savedOtherPerson, getVacationType(UNPAIDLEAVE), now, now.plusDays(2), FULL);
+        revokedOvertimeReduction.setStatus(REVOKED);
+        applicationRepository.save(revokedOvertimeReduction);
+
+        final List<Application> allowedApplications = applicationRepository.findByStatusInAndPersonIn(List.of(ALLOWED, REJECTED), List.of(savedPerson, savedOtherPerson));
+        assertThat(allowedApplications)
+            .contains(rejectedHoliday, rejectedOvertimeReduction, fullDayOvertimeReduction)
+            .hasSize(3);
+    }
+
+    @Test
+    void findByStatusInAndPersonInOfOneUser() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final Person otherPerson = new Person("other sam", "smith", "sam", "smith@example.org");
+        final Person savedOtherPerson = personService.save(otherPerson);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Allowed
+        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayOvertimeReduction.setStatus(ALLOWED);
+        applicationRepository.save(fullDayOvertimeReduction);
+
+        // Waiting
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now.plusDays(5), now.plusDays(10), MORNING);
+        halfDayOvertimeReduction.setStatus(WAITING);
+        applicationRepository.save(halfDayOvertimeReduction);
+
+        // Cancelled
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        cancelledOvertimeReduction.setStatus(CANCELLED);
+        applicationRepository.save(cancelledOvertimeReduction);
+
+        // Rejected
+        Application rejectedHoliday = createApplication(savedPerson, getVacationType(HOLIDAY), now, now.plusDays(2), FULL);
+        rejectedHoliday.setStatus(REJECTED);
+        applicationRepository.save(rejectedHoliday);
+
+        final Application rejectedOvertimeReduction = createApplication(savedOtherPerson, getVacationType(SPECIALLEAVE), now, now.plusDays(2), FULL);
+        rejectedOvertimeReduction.setStatus(REJECTED);
+        applicationRepository.save(rejectedOvertimeReduction);
+
+        // Revoked
+        final Application revokedOvertimeReduction = createApplication(savedOtherPerson, getVacationType(UNPAIDLEAVE), now, now.plusDays(2), FULL);
+        revokedOvertimeReduction.setStatus(REVOKED);
+        applicationRepository.save(revokedOvertimeReduction);
+
+        final List<Application> allowedApplications = applicationRepository.findByStatusInAndPersonIn(List.of(ALLOWED, REJECTED), List.of(savedPerson));
+        assertThat(allowedApplications)
+            .contains(rejectedHoliday, fullDayOvertimeReduction)
+            .hasSize(2);
+    }
+
+    @Test
+    void findByStatusInAndPersonInNoResult() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final Person otherPerson = new Person("other sam", "smith", "sam", "smith@example.org");
+        final Person savedOtherPerson = personService.save(otherPerson);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Allowed
+        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayOvertimeReduction.setStatus(ALLOWED);
+        applicationRepository.save(fullDayOvertimeReduction);
+
+        // Waiting
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(SPECIALLEAVE), now.plusDays(5), now.plusDays(10), MORNING);
+        halfDayOvertimeReduction.setStatus(WAITING);
+        applicationRepository.save(halfDayOvertimeReduction);
+
+        // Cancelled
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        cancelledOvertimeReduction.setStatus(CANCELLED);
+        applicationRepository.save(cancelledOvertimeReduction);
+
+        // Rejected
+        Application rejectedHoliday = createApplication(savedPerson, getVacationType(HOLIDAY), now, now.plusDays(2), FULL);
+        rejectedHoliday.setStatus(REJECTED);
+        applicationRepository.save(rejectedHoliday);
+
+        final Application rejectedOvertimeReduction = createApplication(savedOtherPerson, getVacationType(SPECIALLEAVE), now, now.plusDays(2), FULL);
+        rejectedOvertimeReduction.setStatus(REJECTED);
+        applicationRepository.save(rejectedOvertimeReduction);
+
+        final List<Application> allowedApplications = applicationRepository.findByStatusInAndPersonIn(List.of(REVOKED), List.of(savedPerson, savedOtherPerson));
+        assertThat(allowedApplications)
+            .isEmpty();
+    }
 
     @Test
     void ensureCountsTotalOvertimeReductionCorrectly() {
@@ -72,31 +309,31 @@ class ApplicationRepositoryIT extends TestContainersBase {
         applicationRepository.save(fullDayOvertimeReduction);
 
         // Waiting overtime reduction (2.5 hours) ----------------------------------------------------------------------
-        final Application halfDayOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
         halfDayOvertimeReduction.setHours(new BigDecimal("2.5"));
         halfDayOvertimeReduction.setStatus(WAITING);
         applicationRepository.save(halfDayOvertimeReduction);
 
         // Cancelled overtime reduction (1 hour) ----------------------------------------------------------------------
-        final Application cancelledOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         cancelledOvertimeReduction.setHours(ONE);
         cancelledOvertimeReduction.setStatus(CANCELLED);
         applicationRepository.save(cancelledOvertimeReduction);
 
         // Rejected overtime reduction (1 hour) -----------------------------------------------------------------------
-        final Application rejectedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         rejectedOvertimeReduction.setHours(ONE);
         rejectedOvertimeReduction.setStatus(REJECTED);
         applicationRepository.save(rejectedOvertimeReduction);
 
         // Revoked overtime reduction (1 hour) ------------------------------------------------------------------------
-        final Application revokedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         revokedOvertimeReduction.setHours(ONE);
         revokedOvertimeReduction.setStatus(REVOKED);
         applicationRepository.save(revokedOvertimeReduction);
 
         // Holiday with hours set accidentally (1 hour) ---------------------------------------------------------------
-        final Application holiday = createApplication(person, getVacationType(HOLIDAY), now.minusDays(8), now.minusDays(4), FULL);
+        final Application holiday = createApplication(savedPerson, getVacationType(HOLIDAY), now.minusDays(8), now.minusDays(4), FULL);
 
         // NOTE: Holiday should not have hours set, but who knows....
         // More than once heard: "this should never happen" ;)

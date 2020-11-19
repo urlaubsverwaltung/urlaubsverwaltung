@@ -4,17 +4,17 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 @Component
 class ApplicationCronMailService {
@@ -40,12 +40,9 @@ class ApplicationCronMailService {
             settingsService.getSettings().getApplicationSettings().isRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
-            List<Application> allWaitingApplications =
-                applicationService.getApplicationsForACertainState(ApplicationStatus.WAITING);
-
-            List<Application> longWaitingApplications = allWaitingApplications.stream()
+            final List<Application> longWaitingApplications = applicationService.getForStates(List.of(WAITING)).stream()
                 .filter(isLongWaitingApplications())
-                .collect(Collectors.toList());
+                .collect(toList());
 
             if (!longWaitingApplications.isEmpty()) {
                 LOG.info("{} long waiting applications found. Sending Notification...", longWaitingApplications.size());
