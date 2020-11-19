@@ -123,7 +123,7 @@ uv.calendar.organizer
 uv.calendar.refresh-interval=P1D
 
 # development
-uv.development.demodata.create
+uv.development.demodata.create=false
 uv.development.demodata.additional-active-user=0
 uv.development.demodata.additional-inactive-user=0
 
