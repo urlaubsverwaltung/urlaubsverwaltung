@@ -138,7 +138,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
         application.setBoss(boss);
 
-        final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@firma.test");
+        final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, departmentHead));
 
         sut.sendRejectedNotification(application, comment);
@@ -410,7 +410,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonAndRelevantPersonsGetsANotificationIfPersonCancelledOneOfHisApplications() throws MessagingException,
         IOException {
 
-        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final Application application = createApplication(person);
         application.setCanceller(person);
@@ -418,7 +418,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Wrong date - revoked");
 
-        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
@@ -458,16 +458,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonAndRelevantPersonsGetsANotificationIfNotApplicantCancelledThisApplication() throws MessagingException,
         IOException {
 
-        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@firma.test");
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
 
-        final Person office = new Person("office", "Person", "Office", "office@firma.test");
+        final Person office = new Person("office", "Person", "Office", "office@example.org");
         application.setCanceller(office);
 
         final ApplicationComment comment = new ApplicationComment(office, clock);
         comment.setText("Wrong information - revoked");
 
-        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
@@ -518,7 +518,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Geht leider nicht");
 
-        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@firma.test");
+        final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         final List<Person> relevantPersons = new ArrayList<>();
         relevantPersons.add(relevantPerson);
 
