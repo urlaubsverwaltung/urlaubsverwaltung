@@ -64,4 +64,6 @@
   <include file="dbchangelogs/changelog-3.1.0-add-calendar-accessible-table.xml"/>
   <include file="dbchangelogs/changelog-4.0.0.M1-remove-gui-mail-settings.xml"/>
   <include file="dbchangelogs/changelog-4.0.0-add-timezone.xml"/>
+  <include file="dbchangelogs/changelog-4.0.0-add-workday.xml"/>
+  <include file="dbchangelogs/changelog-4.0.0-migrate-workday.xml"/>
 </databaseChangeLog>

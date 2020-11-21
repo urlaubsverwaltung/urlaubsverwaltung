@@ -3,18 +3,19 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-  <changeSet author="weigel" id="add_timezoneid">
-    <validCheckSum>1:any</validCheckSum>
+  <changeSet author="honnel" id="add_workday">
     <preConditions onFail="MARK_RAN">
       <tableExists tableName="Settings"/>
       <not>
-        <columnExists tableName="Settings" columnName="timezoneid"/>
+        <columnExists tableName="Settings" columnName="workDayBeginHour"/>
+        <columnExists tableName="Settings" columnName="workDayEndHour"/>
       </not>
     </preConditions>
-    <addColumn tableName="Settings">
-      <column name="timezoneid" type="VARCHAR(255)" defaultValue="Europe/Berlin"/>
-    </addColumn>
 
+    <addColumn tableName="Settings">
+      <column name="workDayBeginHour" type="INT(2)"/>
+      <column name="workDayEndHour" type="INT(2)"/>
+    </addColumn>
   </changeSet>
 
 </databaseChangeLog>
