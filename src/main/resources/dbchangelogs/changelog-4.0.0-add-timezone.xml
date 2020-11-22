@@ -3,26 +3,57 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
+  <changeSet id="fix_add_timezoneid_mysql" author="Tobias Schneider">
+    <preConditions onFail="MARK_RAN">
+      <tableExists tableName="Settings"/>
+      <columnExists tableName="Settings" columnName="timezoneid"/>
+      <columnExists tableName="Settings" columnName="workDayBeginHour"/>
+      <columnExists tableName="Settings" columnName="workDayEndHour"/>
+      <columnExists tableName="Settings" columnName="calendar_workDayBeginHour"/>
+      <columnExists tableName="Settings" columnName="calendar_workDayEndHour"/>
+    </preConditions>
+
+    <dropColumn tableName="Settings" columnName="timezoneid"/>
+    <dropColumn tableName="Settings" columnName="workDayBeginHour"/>
+    <dropColumn tableName="Settings" columnName="workDayEndHour"/>
+  </changeSet>
+
   <changeSet author="weigel" id="add_timezoneid">
+
+    <validCheckSum>8:442b780956e7b73fb0075db95ecabc08</validCheckSum>
+
     <preConditions>
       <tableExists tableName="Settings"/>
+      <not>
+        <columnExists tableName="Settings" columnName="timezoneid"/>
+      </not>
+      <columnExists tableName="Settings" columnName="calendar_workDayBeginHour"/>
+      <columnExists tableName="Settings" columnName="calendar_workDayEndHour"/>
     </preConditions>
 
     <addColumn tableName="Settings">
       <column name="timezoneid" type="VARCHAR(255)" defaultValue="Europe/Berlin"/>
-      <column name="workDayBeginHour" type="INT(2)"/>
-      <column name="workDayEndHour" type="INT(2)"/>
     </addColumn>
 
-    <sql>
-      UPDATE Settings SET workDayBeginHour = (SELECT calendar_workDayBeginHour FROM Settings WHERE id = "1") WHERE id = "1";
-      UPDATE Settings SET workDayBeginHour = "8" WHERE id = "1" AND workDayBeginHour is NULL;
-      UPDATE Settings SET workDayEndHour = (SELECT calendar_workDayEndHour FROM Settings WHERE id = "1") WHERE id = "1";
-      UPDATE Settings SET workDayEndHour = "16" WHERE id = "1" AND workDayEndHour is NULL;
-    </sql>
+    <renameColumn tableName="Settings"
+                  oldColumnName="calendar_workDayBeginHour"
+                  newColumnName="workDayBeginHour"
+                  columnDataType="INT(2)"/>
+    <renameColumn tableName="Settings"
+                  oldColumnName="calendar_workDayEndHour"
+                  newColumnName="workDayEndHour"
+                  columnDataType="INT(2)"/>
 
-    <dropColumn tableName="Settings" columnName="calendar_workDayBeginHour"/>
-    <dropColumn tableName="Settings" columnName="calendar_workDayEndHour"/>
+    <update tableName="Settings">
+      <column name="workDayBeginHour" value="8"/>
+      <where>id = "1" AND workDayBeginHour is NULL</where>
+    </update>
+
+    <update tableName="Settings">
+      <column name="workDayEndHour" value="16"/>
+      <where>id = "1" AND workDayEndHour is NULL</where>
+    </update>
+
   </changeSet>
 
 </databaseChangeLog>
