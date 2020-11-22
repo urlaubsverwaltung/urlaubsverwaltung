@@ -20,7 +20,7 @@
 
   <changeSet author="weigel" id="add_timezoneid">
 
-    <validCheckSum>8:442b780956e7b73fb0075db95ecabc08</validCheckSum>
+    <validCheckSum>8:06e40317cd04c7160b8fca0e21cbb460</validCheckSum>
 
     <preConditions>
       <tableExists tableName="Settings"/>
