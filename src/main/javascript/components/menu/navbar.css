@@ -40,6 +40,26 @@
   margin-right: 6px;
 }
 
+.navbar li > form > button {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  border-top: 1px solid #e5e5e5;
+  line-height: 20px;
+}
+
+.navbar li > form > button:hover {
+  color: #1896db;
+}
+
+@media (min-width: 993px) {
+  .navbar li > form > button {
+    border-width: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+
 /* NO PADDING FOR "MY ACCOUNT" FOR LARGER DEVICES */
 @media (min-width: 993px) {
   .navbar-nav:first-of-type > li > a {

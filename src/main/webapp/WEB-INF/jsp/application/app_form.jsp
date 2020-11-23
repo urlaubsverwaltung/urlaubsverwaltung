@@ -369,7 +369,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <hr />
-                            <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                            <button id="apply-application" type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
                                 <spring:message code="action.apply.vacation"/>
                             </button>
                             <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">

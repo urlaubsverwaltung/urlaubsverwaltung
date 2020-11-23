@@ -3,6 +3,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -92,10 +93,13 @@
 
         <sec:authorize access="hasAuthority('USER')">
           <li>
-            <a href="<spring:url value='/logout' />" class="tw-flex tw-items-center">
-                <icon:logout className="tw-w-4 tw-h-4" solid="true" />
-                &nbsp;<spring:message code="nav.signout.title"/>
-            </a>
+              <c:url var="logoutUrl" value="/logout"/>
+              <form:form action="${logoutUrl}" method="POST">
+                  <button type="submit" class="tw-block tw-w-full tw-flex tw-items-center tw-bg-transparent">
+                    <icon:logout className="tw-w-4 tw-h-4" solid="true" />
+                    &nbsp;<spring:message code="nav.signout.title"/>
+                  </button>
+              </form:form>
           </li>
         </sec:authorize>
       </ul>
