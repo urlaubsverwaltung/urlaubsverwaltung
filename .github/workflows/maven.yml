@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: build with jdk 11
+    name: build and analyse
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
