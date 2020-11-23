@@ -10,36 +10,6 @@ on:
   pull_request:
 
 jobs:
-  compile:
-    name: compile with jdk ${{ matrix.java }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '11', '15' ]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - name: Cache npm dependencies
-        uses: actions/cache@v2
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Cache pom dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            node/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Compile
-        run: ./mvnw --batch-mode clean compile
   build:
     name: build with jdk 11
     runs-on: ubuntu-latest
