@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -170,7 +171,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -185,7 +186,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -200,7 +201,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -209,7 +210,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "ADMIN")
     void linkDepartmentCalendarAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -217,7 +218,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "INACTIVE")
     void linkDepartmentCalendarAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -225,7 +226,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void linkDepartmentCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -233,7 +234,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void linkDepartmentCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -245,7 +246,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -262,7 +263,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -277,7 +278,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -292,7 +293,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -301,7 +302,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "ADMIN")
     void unlinkDepartmentCalendarAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -309,7 +310,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "INACTIVE")
     void unlinkDepartmentCalendarAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -317,7 +318,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void unlinkDepartmentCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -325,7 +326,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void unlinkDepartmentCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -337,7 +338,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 

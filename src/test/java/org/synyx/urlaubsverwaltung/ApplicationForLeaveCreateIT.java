@@ -94,7 +94,7 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
         final String date = ofPattern("dd.MM.yyyy").format(getNextWorkday());
         assertThat(webDriver.getTitle()).isEqualTo("New vacation request");
         webDriver.findElement(By.cssSelector("#from")).sendKeys(date);
-        webDriver.findElementByXPath("//button[@type='submit']").click();
+        webDriver.findElement(By.cssSelector("button#apply-application")).click();
 
         new WebDriverWait(webDriver, 20).until(visibilityOfElementLocated(By.className("alert-success")));
         assertThat(webDriver.getTitle()).isEqualTo("Vacation request of Donald Bradley");

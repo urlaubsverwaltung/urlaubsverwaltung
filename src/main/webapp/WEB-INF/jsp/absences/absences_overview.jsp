@@ -62,7 +62,8 @@
                 </jsp:body>
             </uv:section-heading>
 
-            <form method="GET" action="${URL_PREFIX}/absences" id="absenceOverviewForm" class="print:tw-hidden">
+            <form:form method="GET" action="${URL_PREFIX}/absences" id="absenceOverviewForm" class="print:tw-hidden">
+
                 <div class="col-md-8">
                     <div class="form-group">
                         <div class="row">
@@ -139,7 +140,7 @@
                         </div>
                     </c:if>
                 </div>
-            </form>
+            </form:form>
 
             <div class="row">
                 <div class="col-xs-12">
