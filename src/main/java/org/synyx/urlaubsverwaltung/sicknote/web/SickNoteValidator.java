@@ -89,7 +89,10 @@ public class SickNoteValidator implements Validator {
 
         if (dayLength != null && startDate != null && endDate != null) {
             validatePeriod(startDate, endDate, dayLength, ATTRIBUTE_END_DATE, errors);
-            validateNoOverlapping(sickNote, errors);
+
+            if (!errors.hasErrors()) {
+                validateNoOverlapping(sickNote, errors);
+            }
         }
     }
 
