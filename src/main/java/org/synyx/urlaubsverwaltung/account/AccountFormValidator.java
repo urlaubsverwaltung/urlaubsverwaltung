@@ -92,9 +92,9 @@ class AccountFormValidator implements Validator {
 
         BigDecimal annualVacationDays = form.getAnnualVacationDays();
 
-        boolean isNotNull = validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+        validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
-        if (isNotNull && validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors)) {
+        if (annualVacationDays != null && validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors)) {
 
             Settings settings = settingsService.getSettings();
             AccountSettings accountSettings = settings.getAccountSettings();
@@ -107,9 +107,9 @@ class AccountFormValidator implements Validator {
 
         BigDecimal actualVacationDays = form.getActualVacationDays();
 
-        boolean isNotNull = validateNumberNotNull(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
+        validateNumberNotNull(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
 
-        if (isNotNull) {
+        if (actualVacationDays != null) {
 
             validateFullOrHalfAnHour(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
 
@@ -143,12 +143,12 @@ class AccountFormValidator implements Validator {
         if (remainingVacationDays != null) {
 
             validateFullOrHalfAnHour(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
-            validateFullOrHalfAnHour(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
-
             // field entitlement's remaining vacation days
             validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
 
             if (remainingVacationDaysNotExpiring != null) {
+
+                validateFullOrHalfAnHour(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
                 validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING,
                     remainingVacationDays, errors);
             }
