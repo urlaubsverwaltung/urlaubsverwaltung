@@ -64,6 +64,16 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureAnnualVacationMustBeInteger() {
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10.1));
+
+        sut.validateAnnualVacation(form, errors);
+        verify(errors).rejectValue("annualVacationDays", "error.entry.integer");
+    }
+
+    @Test
     void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
 
         final Settings settings = new Settings();
@@ -110,6 +120,17 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureActualVacationMustBeIntegerOrHalf() {
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(11));
+        form.setActualVacationDays(BigDecimal.valueOf(10.1));
+
+        sut.validateActualVacation(form, errors);
+        verify(errors).rejectValue("actualVacationDays", "error.entry.fullOrHalfHour");
+    }
+
+    @Test
     void ensureValidActualVacationHasNoValidationError() {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("30"));
@@ -132,12 +153,39 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureRemainingVacationDaysMustBeFullOrHalf() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDays(new BigDecimal(10.3));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal(11));
+
+        sut.validateRemainingVacationDays(form, errors);
+        verify(errors).rejectValue("remainingVacationDays", "error.entry.fullOrHalfHour");
+    }
+
+    @Test
+    void ensureRemainingVacationDaysNotExpiringMustBeFullOrHalf() {
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDays(new BigDecimal(10));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal(10.3));
+
+        sut.validateRemainingVacationDays(form, errors);
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.fullOrHalfHour");
+    }
+
+    @Test
     void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
 
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("367"));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal(10));
 
         sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
