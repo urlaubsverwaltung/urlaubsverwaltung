@@ -20,7 +20,7 @@ public class OvertimeSettings {
      * @since 2.13.0
      */
     @Column(name = "overtime_maximum")
-    private Integer maximumOvertime = 100; // NOSONAR
+    private Integer maximumOvertime = 100;
 
     /**
      * Defines the minimum number of overtime a person can have. Minimum overtime means missing hours (equates to
@@ -29,7 +29,7 @@ public class OvertimeSettings {
      * @since 2.15.0
      */
     @Column(name = "overtime_minimum")
-    private Integer minimumOvertime = 5; // NOSONAR
+    private Integer minimumOvertime = 5;
 
 
     public boolean isOvertimeActive() {

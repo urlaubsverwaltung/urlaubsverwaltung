@@ -11,13 +11,13 @@ public class SickNoteSettings {
     /**
      * Specifies the maximal period of sick pay in days.
      */
-    private Integer maximumSickPayDays = 42; // NOSONAR
+    private Integer maximumSickPayDays = 42;
 
     /**
      * Specifies when a notification about the end of sick pay should be sent to the affected person and office. (number
      * of days before the end of sick pay)
      */
-    private Integer daysBeforeEndOfSickPayNotification = 7; // NOSONAR
+    private Integer daysBeforeEndOfSickPayNotification = 7;
 
     public Integer getMaximumSickPayDays() {
         return maximumSickPayDays;
