@@ -39,6 +39,13 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: Show files
+        run: |
+          pwd
+          ls -la
+          ls -la ~/
+          ls -la node_modules/
+          du -sh node_modules/
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
       - name: Analyse with SonarCloud
