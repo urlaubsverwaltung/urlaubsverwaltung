@@ -10,75 +10,40 @@ on:
   pull_request:
 
 jobs:
-  compile:
-    name: compile with jdk ${{ matrix.java }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '11', '15' ]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.java }}
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Compile
-        run: ./mvnw --batch-mode clean compile
   build:
-    name: build with jdk 11
+    name: build and analyse
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: actions/cache@v2
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
         with:
-          path: ~/.m2/repository
+          path: node_modules/
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Cache pom dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            node/
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Build with Maven
-        run: ./mvnw --batch-mode clean verify
-      - name: Build docker image and push to GitHub Container Registry
-        if: github.ref == 'refs/heads/master'
-        run: >
-          ./mvnw --batch-mode
-          docker:build
-          docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung
-          -Ddocker.push.registry=ghcr.io
-          -Ddocker.push.username=${{ github.actor }}
-          -Ddocker.push.password=${{ secrets.CR_PAT }}
-          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
-          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
-
-  sonar:
-    name: analyse with sonarqube
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Run SonarCloud analyse
+      - name: Build
+        run: ./mvnw --batch-mode -Pcoverage clean verify
+      - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
           -Pcoverage
-          clean verify
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx
@@ -92,3 +57,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Build docker image and push to GitHub Container Registry
+        if: github.ref == 'refs/heads/master'
+        run: >
+          ./mvnw --batch-mode
+          docker:build
+          docker:push
+          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.push.registry=ghcr.io
+          -Ddocker.push.username=${{ github.actor }}
+          -Ddocker.push.password=${{ secrets.CR_PAT }}
+          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
