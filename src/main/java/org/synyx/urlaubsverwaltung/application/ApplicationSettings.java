@@ -11,7 +11,7 @@ public class ApplicationSettings {
     /**
      * Specifies how many months in advance a person can apply for leave.
      */
-    private Integer maximumMonthsToApplyForLeaveInAdvance = 12; // NOSONAR
+    private Integer maximumMonthsToApplyForLeaveInAdvance = 12;
 
     /**
      * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications

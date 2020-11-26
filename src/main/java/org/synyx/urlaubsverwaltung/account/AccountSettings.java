@@ -11,7 +11,7 @@ public class AccountSettings {
     /**
      * Specifies the maximal number of annual vacation days a person can have.
      */
-    private Integer maximumAnnualVacationDays = 40; // NOSONAR
+    private Integer maximumAnnualVacationDays = 40;
 
     public Integer getMaximumAnnualVacationDays() {
         return maximumAnnualVacationDays;

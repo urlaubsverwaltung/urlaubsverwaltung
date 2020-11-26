@@ -10,10 +10,10 @@ public class TimeSettings {
     private String timeZoneId = "Europe/Berlin";
 
     @Column(name = "workDayBeginHour")
-    private Integer workDayBeginHour = 8; // NOSONAR
+    private Integer workDayBeginHour = 8;
 
     @Column(name = "workDayEndHour")
-    private Integer workDayEndHour = 16; // NOSONAR
+    private Integer workDayEndHour = 16;
 
     public String getTimeZoneId() {
         return timeZoneId;
