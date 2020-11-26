@@ -18,6 +18,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
+import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+
 
 /**
  * Class for validating {@link SickNote} object.
@@ -48,7 +53,6 @@ public class SickNoteValidator implements Validator {
 
     @Autowired
     public SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, Clock clock) {
-
         this.overlapService = overlapService;
         this.workingTimeService = workingTimeService;
         this.clock = clock;
@@ -56,7 +60,6 @@ public class SickNoteValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-
         return SickNote.class.equals(clazz);
     }
 
@@ -86,7 +89,10 @@ public class SickNoteValidator implements Validator {
 
         if (dayLength != null && startDate != null && endDate != null) {
             validatePeriod(startDate, endDate, dayLength, ATTRIBUTE_END_DATE, errors);
-            validateNoOverlapping(sickNote, errors);
+
+            if (!errors.hasErrors()) {
+                validateNoOverlapping(sickNote, errors);
+            }
         }
     }
 
@@ -138,8 +144,7 @@ public class SickNoteValidator implements Validator {
         if (startDate.isAfter(endDate)) {
             errors.rejectValue(field, ERROR_PERIOD);
         } else {
-            final boolean isHalfDay = dayLength == DayLength.MORNING || dayLength == DayLength.NOON;
-
+            final boolean isHalfDay = dayLength == MORNING || dayLength == NOON;
             if (isHalfDay && !startDate.isEqual(endDate)) {
                 errors.rejectValue(field, ERROR_HALF_DAY_PERIOD_SICK_NOTE);
             }
@@ -148,15 +153,12 @@ public class SickNoteValidator implements Validator {
 
     private void validateNoOverlapping(SickNote sickNote, Errors errors) {
 
-        /*
-         * Ensure the person has a working time for the period of the sick note
-         */
+        // Ensure the person has a working time for the period of the sick note
         final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             sickNote.getPerson(), sickNote.getStartDate());
 
         if (workingTime.isEmpty()) {
             errors.reject(ERROR_WORKING_TIME);
-
             return;
         }
 
@@ -164,7 +166,7 @@ public class SickNoteValidator implements Validator {
          * Ensure that there is no application for leave and no sick note in the same period
          */
         final OverlapCase overlap = overlapService.checkOverlap(sickNote);
-        final boolean isOverlapping = overlap == OverlapCase.FULLY_OVERLAPPING || overlap == OverlapCase.PARTLY_OVERLAPPING;
+        final boolean isOverlapping = overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
 
         if (isOverlapping) {
             errors.reject(ERROR_OVERLAP);

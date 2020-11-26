@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -32,6 +31,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.THURSDAY;
@@ -45,6 +46,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 
 /**
@@ -104,12 +107,12 @@ class CalculationServiceTest {
         when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
             VacationDaysLeft.builder()
                 .withAnnualVacation(new BigDecimal("2"))
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.ZERO)
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(ZERO)
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isTrue();
@@ -131,13 +134,13 @@ class CalculationServiceTest {
 
         when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.ZERO)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.ZERO)
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
+                .withAnnualVacation(ZERO)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(ZERO)
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
@@ -160,12 +163,12 @@ class CalculationServiceTest {
         when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
             VacationDaysLeft.builder()
                 .withAnnualVacation(BigDecimal.ONE)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.ZERO)
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(ZERO)
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isTrue();
@@ -191,13 +194,13 @@ class CalculationServiceTest {
         // vacation days would be left after this application for leave
         when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
                 .forUsedDaysBeforeApril(BigDecimal.valueOf(0))
                 .forUsedDaysAfterApril(BigDecimal.valueOf(10))
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
@@ -233,13 +236,13 @@ class CalculationServiceTest {
         // vacation days would be left after this application for leave
         when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
                 .forUsedDaysBeforeApril(BigDecimal.valueOf(4))
                 .forUsedDaysAfterApril(BigDecimal.valueOf(5))
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isTrue();
@@ -264,12 +267,12 @@ class CalculationServiceTest {
         when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
             VacationDaysLeft.builder()
                 .withAnnualVacation(BigDecimal.ONE)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.ZERO)
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(ZERO)
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isTrue();
@@ -306,13 +309,13 @@ class CalculationServiceTest {
         // vacation days would be left after this application for leave
         when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
                 .forUsedDaysBeforeApril(BigDecimal.valueOf(5))
                 .forUsedDaysAfterApril(BigDecimal.valueOf(5))
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(ZERO);
 
         assertThat(sut.checkApplication(applicationForLeaveToCheck)).isFalse();
     }
@@ -331,15 +334,14 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 30));
 
         Optional<Account> account2012 = Optional.of(
-            new Account(person, DateUtil.getFirstDayOfYear(2012), DateUtil.getLastDayOfYear(2012),
-                BigDecimal.TEN, BigDecimal.ZERO, BigDecimal.ZERO, "")
+            new Account(person, getFirstDayOfYear(2012), getLastDayOfYear(2012), TEN, ZERO, ZERO, "")
         );
 
         Optional<Account> account2013 = Optional.of(
-            new Account(person, DateUtil.getFirstDayOfYear(2013), DateUtil.getLastDayOfYear(2013), BigDecimal.TEN,
+            new Account(person, getFirstDayOfYear(2013), getLastDayOfYear(2013), TEN,
                 // here we set up 2013 to have 10 days remaining vacation available from 2012,
                 // if those have already been used up, we cannot spend them in 2012 as well
-                BigDecimal.TEN, BigDecimal.TEN, ""));
+                TEN, TEN, ""));
         account2013.get().setVacationDays(account2013.get().getAnnualVacationDays());
 
 
@@ -349,15 +351,15 @@ class CalculationServiceTest {
         // this year still has all ten days (but 3 of them used up next year, see above)
         when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
-                .forUsedDaysBeforeApril(BigDecimal.ZERO)
-                .forUsedDaysAfterApril(BigDecimal.ZERO)
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(ZERO)
                 .withVacationDaysUsedNextYear(BigDecimal.valueOf(3))
                 .build());
 
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.TEN);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(TEN);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
@@ -382,22 +384,22 @@ class CalculationServiceTest {
         // vacation days would be left after this application for leave
         when(vacationDaysService.getVacationDaysLeft(account2012.get(), account2013)).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
                 .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
                 .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
                 .build());
         when(vacationDaysService.getVacationDaysLeft(account2013.get(), account2014)).thenReturn(
             VacationDaysLeft.builder()
-                .withAnnualVacation(BigDecimal.TEN)
-                .withRemainingVacation(BigDecimal.ZERO)
-                .notExpiring(BigDecimal.ZERO)
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ZERO)
+                .notExpiring(ZERO)
                 .forUsedDaysBeforeApril(BigDecimal.valueOf(usedDaysBeforeApril))
                 .forUsedDaysAfterApril(BigDecimal.valueOf(usedDaysAfterApril))
                 .build());
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(BigDecimal.ZERO);
-        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2014)).thenReturn(BigDecimal.ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(ZERO);
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2014)).thenReturn(ZERO);
     }
 
     private HolidayManager getHolidayManager() {
