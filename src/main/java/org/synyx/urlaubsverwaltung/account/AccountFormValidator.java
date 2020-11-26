@@ -120,8 +120,8 @@ class AccountFormValidator implements Validator {
 
     private void validateFullOrHalfAnHour(BigDecimal days, String field, Errors errors) {
 
-        boolean isFullOrHalfAnHour = days.stripTrailingZeros().scale() == 0 ||
-            days.stripTrailingZeros().scale() == 5;
+        String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
 
         if(!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
@@ -163,9 +163,10 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    private boolean validateIsInteger(BigDecimal annualVacationDays, String field, Errors errors) {
+    private boolean validateIsInteger(BigDecimal days, String field, Errors errors) {
 
-        boolean isValid = annualVacationDays.stripTrailingZeros().scale() == 0;
+        String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
 
         if(!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_INTEGER_FIELD);
