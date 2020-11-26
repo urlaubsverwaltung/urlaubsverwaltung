@@ -17,6 +17,7 @@ import java.time.LocalDate;
 class AccountFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_INTEGER_FIELD = "error.entry.integer";
     private static final String ERROR_ENTRY = "error.entry.invalid";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_COMMENT_TO_LONG = "error.entry.commentTooLong";
@@ -97,23 +98,37 @@ class AccountFormValidator implements Validator {
     void validateAnnualVacation(AccountForm form, Errors errors) {
 
         BigDecimal annualVacationDays = form.getAnnualVacationDays();
-        Settings settings = settingsService.getSettings();
-        AccountSettings accountSettings = settings.getAccountSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
 
-        validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+        boolean isNotNull = validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
-        if (annualVacationDays != null) {
+        if (isNotNull && validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors)) {
+
+            Settings settings = settingsService.getSettings();
+            AccountSettings accountSettings = settings.getAccountSettings();
+            BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
             validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
         }
     }
 
-    private void validateNumberNotNull(BigDecimal number, String field, Errors errors) {
+    private boolean validateIsInteger(BigDecimal annualVacationDays, String field, Errors errors) {
+
+        boolean isValid = annualVacationDays.stripTrailingZeros().scale() <= 0;
+
+        if(!isValid && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_INTEGER_FIELD);
+        }
+        return isValid;
+    }
+
+    private boolean validateNumberNotNull(BigDecimal number, String field, Errors errors) {
 
         // may be that number field is null because of cast exception, than there is already a field error
-        if (number == null && errors.getFieldErrors(field).isEmpty()) {
+        boolean isValid = number != null;
+
+        if (!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
+        return isValid;
     }
 
     private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {

@@ -55,8 +55,6 @@ class AccountFormValidatorTest {
 
     @Test
     void ensureAnnualVacationMustNotBeNull() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
 
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(null);
