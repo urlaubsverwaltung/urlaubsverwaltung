@@ -65,6 +65,9 @@ class AccountFormValidatorTest {
 
     @Test
     void ensureAnnualVacationMustBeInteger() {
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setMaximumAnnualVacationDays(40);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(10.1));
