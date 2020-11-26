@@ -8,6 +8,7 @@ on:
       - master
       - v3.x
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
