@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -41,6 +42,11 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String logoutUri;
 
+    /**
+     * the scopes to use for the authorization request
+     */
+    private List<String> scopes;
+
     public String getIssuerUri() {
         return issuerUri;
     }
@@ -71,5 +77,13 @@ public class OidcSecurityProperties {
 
     public void setLogoutUri(String logoutUri) {
         this.logoutUri = logoutUri;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
     }
 }
