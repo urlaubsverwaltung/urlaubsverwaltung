@@ -208,6 +208,9 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
       Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
       die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
+    * By Default werden für den Authorize Call keine Scopes übergeben. 
+      Wenn der OAuth Provider einen oder mehrere Scopes benötigt, können diese in der
+      Konfiguration z.B. via `uv.security.oidc.scopes=openid,profile,email` angegeben werden. 
 
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.

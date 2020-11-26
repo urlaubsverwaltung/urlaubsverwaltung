@@ -46,6 +46,10 @@ public class OidcSecurityConfiguration {
             builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(BASIC);
         }
 
+        if (properties.getScopes() != null) {
+            builder.scope(properties.getScopes());
+        }
+
         builder.authorizationGrantType(AUTHORIZATION_CODE);
 
         final ClientRegistration clientRegistration = builder.build();
