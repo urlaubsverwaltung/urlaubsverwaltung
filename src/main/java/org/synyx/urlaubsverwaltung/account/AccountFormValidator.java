@@ -94,7 +94,9 @@ class AccountFormValidator implements Validator {
 
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
-        if (annualVacationDays != null && validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors)) {
+        if (annualVacationDays != null) {
+
+            validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
             Settings settings = settingsService.getSettings();
             AccountSettings accountSettings = settings.getAccountSettings();
@@ -115,16 +117,6 @@ class AccountFormValidator implements Validator {
 
             BigDecimal annualVacationDays = form.getAnnualVacationDays();
             validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
-        }
-    }
-
-    private void validateFullOrHalfAnHour(BigDecimal days, String field, Errors errors) {
-
-        String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
-        boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
-
-        if(!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
-            errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
         }
     }
 
@@ -155,6 +147,16 @@ class AccountFormValidator implements Validator {
         }
     }
 
+    private void validateFullOrHalfAnHour(BigDecimal days, String field, Errors errors) {
+
+        String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
+
+        if(!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
+        }
+    }
+
     private void validateDateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
@@ -163,7 +165,7 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    private boolean validateIsInteger(BigDecimal days, String field, Errors errors) {
+    private void validateIsInteger(BigDecimal days, String field, Errors errors) {
 
         String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
         boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
@@ -171,10 +173,9 @@ class AccountFormValidator implements Validator {
         if(!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_INTEGER_FIELD);
         }
-        return isValid;
     }
 
-    private boolean validateNumberNotNull(BigDecimal number, String field, Errors errors) {
+    private void validateNumberNotNull(BigDecimal number, String field, Errors errors) {
 
         // may be that number field is null because of cast exception, than there is already a field error
         boolean isValid = number != null;
@@ -182,7 +183,6 @@ class AccountFormValidator implements Validator {
         if (!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
-        return isValid;
     }
 
     private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
