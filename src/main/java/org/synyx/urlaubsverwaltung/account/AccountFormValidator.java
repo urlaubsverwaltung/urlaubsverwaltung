@@ -87,14 +87,6 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    private void validateDateNotNull(LocalDate date, String field, Errors errors) {
-
-        // may be that date field is null because of cast exception, than there is already a field error
-        if (date == null && errors.getFieldErrors(field).isEmpty()) {
-            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-        }
-    }
-
     void validateAnnualVacation(AccountForm form, Errors errors) {
 
         BigDecimal annualVacationDays = form.getAnnualVacationDays();
@@ -107,40 +99,6 @@ class AccountFormValidator implements Validator {
             AccountSettings accountSettings = settings.getAccountSettings();
             BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
             validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
-        }
-    }
-
-    private boolean validateIsInteger(BigDecimal annualVacationDays, String field, Errors errors) {
-
-        boolean isValid = annualVacationDays.stripTrailingZeros().scale() <= 0;
-
-        if(!isValid && errors.getFieldErrors(field).isEmpty()) {
-            errors.rejectValue(field, ERROR_INTEGER_FIELD);
-        }
-        return isValid;
-    }
-
-    private boolean validateNumberNotNull(BigDecimal number, String field, Errors errors) {
-
-        // may be that number field is null because of cast exception, than there is already a field error
-        boolean isValid = number != null;
-
-        if (!isValid && errors.getFieldErrors(field).isEmpty()) {
-            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
-        }
-        return isValid;
-    }
-
-    private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
-
-        // is number of days < 0 ?
-        if (days.compareTo(BigDecimal.ZERO) < 0) {
-            errors.rejectValue(field, ERROR_ENTRY);
-        }
-
-        // is number of days unrealistic?
-        if (days.compareTo(maximumDays) > 0) {
-            errors.rejectValue(field, ERROR_ENTRY);
         }
     }
 
@@ -179,4 +137,47 @@ class AccountFormValidator implements Validator {
             }
         }
     }
+
+    private void validateDateNotNull(LocalDate date, String field, Errors errors) {
+
+        // may be that date field is null because of cast exception, than there is already a field error
+        if (date == null && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
+        }
+    }
+
+    private boolean validateIsInteger(BigDecimal annualVacationDays, String field, Errors errors) {
+
+        boolean isValid = annualVacationDays.stripTrailingZeros().scale() <= 0;
+
+        if(!isValid && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_INTEGER_FIELD);
+        }
+        return isValid;
+    }
+
+    private boolean validateNumberNotNull(BigDecimal number, String field, Errors errors) {
+
+        // may be that number field is null because of cast exception, than there is already a field error
+        boolean isValid = number != null;
+
+        if (!isValid && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_MANDATORY_FIELD);
+        }
+        return isValid;
+    }
+
+    private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
+
+        // is number of days < 0 ?
+        if (days.compareTo(BigDecimal.ZERO) < 0) {
+            errors.rejectValue(field, ERROR_ENTRY);
+        }
+
+        // is number of days unrealistic?
+        if (days.compareTo(maximumDays) > 0) {
+            errors.rejectValue(field, ERROR_ENTRY);
+        }
+    }
+
 }
