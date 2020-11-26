@@ -10,7 +10,9 @@ describe("calendar", () => {
   function mockDate(isoDate) {
     /* eslint-disable unicorn/prevent-abbreviations */
 
-    window.Date = class extends RealDate {
+    window.Date = class extends (
+      RealDate
+    ) {
       static [Symbol.hasInstance](instance) {
         return instance[dateInstanceIdentifier];
       }
