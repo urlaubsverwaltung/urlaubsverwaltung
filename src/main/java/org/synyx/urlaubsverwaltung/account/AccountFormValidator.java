@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -17,9 +16,11 @@ import java.time.LocalDate;
 class AccountFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_INTEGER_FIELD = "error.entry.integer";
     private static final String ERROR_ENTRY = "error.entry.invalid";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_COMMENT_TO_LONG = "error.entry.commentTooLong";
+    private static final String ERROR_FULL_OR_HALF_AN_HOUR_FIELD = "error.entry.fullOrHalfHour";
 
     private static final String ATTRIBUTE_ANNUAL_VACATION_DAYS = "annualVacationDays";
     private static final String ATTRIBUTE_ACTUAL_VACATION_DAYS = "actualVacationDays";
@@ -31,36 +32,30 @@ class AccountFormValidator implements Validator {
 
     @Autowired
     AccountFormValidator(SettingsService settingsService) {
-
         this.settingsService = settingsService;
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-
         return AccountForm.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        AccountForm form = (AccountForm) target;
+        final BigDecimal maximumAnnualVacationDays = getMaximumAnnualVacationDays();
 
+        final AccountForm form = (AccountForm) target;
         validatePeriod(form, errors);
-
-        validateAnnualVacation(form, errors);
-
+        validateAnnualVacation(form, errors, maximumAnnualVacationDays);
         validateActualVacation(form, errors);
-
-        validateRemainingVacationDays(form, errors);
-
+        validateRemainingVacationDays(form, errors, maximumAnnualVacationDays);
         validateComment(form, errors);
     }
 
     void validateComment(AccountForm form, Errors errors) {
 
-        String comment = form.getComment();
-
+        final String comment = form.getComment();
         if (comment != null && comment.length() > 200) {
             errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_COMMENT_TO_LONG);
         }
@@ -68,8 +63,8 @@ class AccountFormValidator implements Validator {
 
     void validatePeriod(AccountForm form, Errors errors) {
 
-        LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
-        LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
+        final LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
+        final LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
         validateDateNotNull(holidaysAccountValidFrom, "holidaysAccountValidFrom", errors);
         validateDateNotNull(holidaysAccountValidTo, "holidaysAccountValidTo", errors);
@@ -86,6 +81,62 @@ class AccountFormValidator implements Validator {
         }
     }
 
+    void validateAnnualVacation(AccountForm form, Errors errors, BigDecimal maxDays) {
+
+        final BigDecimal annualVacationDays = form.getAnnualVacationDays();
+        validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+
+        if (annualVacationDays != null) {
+
+            validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+            validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
+        }
+    }
+
+    void validateActualVacation(AccountForm form, Errors errors) {
+
+        final BigDecimal actualVacationDays = form.getActualVacationDays();
+        validateNumberNotNull(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
+
+        if (actualVacationDays != null) {
+
+            validateFullOrHalfAnHour(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
+
+            final BigDecimal annualVacationDays = form.getAnnualVacationDays();
+            validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
+        }
+    }
+
+    void validateRemainingVacationDays(AccountForm form, Errors errors, BigDecimal maxDays) {
+
+        final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
+        final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
+
+        validateNumberNotNull(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
+        validateNumberNotNull(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
+
+        if (remainingVacationDays != null) {
+            // field entitlement's remaining vacation days
+            validateFullOrHalfAnHour(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
+            validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
+
+            if (remainingVacationDaysNotExpiring != null) {
+                validateFullOrHalfAnHour(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
+                validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, remainingVacationDays, errors);
+            }
+        }
+    }
+
+    private void validateFullOrHalfAnHour(BigDecimal days, String field, Errors errors) {
+
+        final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        final boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
+
+        if (!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
+        }
+    }
+
     private void validateDateNotNull(LocalDate date, String field, Errors errors) {
 
         // may be that date field is null because of cast exception, than there is already a field error
@@ -94,24 +145,22 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateAnnualVacation(AccountForm form, Errors errors) {
+    private void validateIsInteger(BigDecimal days, String field, Errors errors) {
 
-        BigDecimal annualVacationDays = form.getAnnualVacationDays();
-        Settings settings = settingsService.getSettings();
-        AccountSettings accountSettings = settings.getAccountSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
+        final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        final boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
 
-        validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
-
-        if (annualVacationDays != null) {
-            validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
+        if (!isValid && errors.getFieldErrors(field).isEmpty()) {
+            errors.rejectValue(field, ERROR_INTEGER_FIELD);
         }
     }
 
     private void validateNumberNotNull(BigDecimal number, String field, Errors errors) {
 
         // may be that number field is null because of cast exception, than there is already a field error
-        if (number == null && errors.getFieldErrors(field).isEmpty()) {
+        final boolean isValid = number != null;
+
+        if (!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
         }
     }
@@ -129,39 +178,8 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateActualVacation(AccountForm form, Errors errors) {
-
-        BigDecimal actualVacationDays = form.getActualVacationDays();
-
-        validateNumberNotNull(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
-
-        if (actualVacationDays != null) {
-            BigDecimal annualVacationDays = form.getAnnualVacationDays();
-
-            validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
-        }
-    }
-
-    void validateRemainingVacationDays(AccountForm form, Errors errors) {
-
-        Settings settings = settingsService.getSettings();
-        AccountSettings accountSettings = settings.getAccountSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
-
-        BigDecimal remainingVacationDays = form.getRemainingVacationDays();
-        BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
-
-        validateNumberNotNull(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
-        validateNumberNotNull(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
-
-        if (remainingVacationDays != null) {
-            // field entitlement's remaining vacation days
-            validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
-
-            if (remainingVacationDaysNotExpiring != null) {
-                validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING,
-                    remainingVacationDays, errors);
-            }
-        }
+    private BigDecimal getMaximumAnnualVacationDays() {
+        final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
+        return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
     }
 }
