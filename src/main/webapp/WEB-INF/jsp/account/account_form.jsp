@@ -115,8 +115,12 @@
                             </label>
 
                             <div class="col-md-9">
+                                <c:set var="annualVacationDays_placeholder">
+                                    <spring:message code='person.form.annualVacation.annualVacation.placeholder'/>
+                                </c:set>
+
                                 <uv:input-number id="annualVacationDays"
-                                            placeholder="Ganzzahliger Wert"
+                                            placeholder="${annualVacationDays_placeholder}"
                                             path="annualVacationDays" cssClass="form-control"
                                             cssErrorClass="form-control error"
                                             value="${account.annualVacationDays}"/>
