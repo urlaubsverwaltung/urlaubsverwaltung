@@ -24,8 +24,13 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -77,19 +82,36 @@ class AbsenceOverviewViewControllerTest {
     private SickNoteService sickNoteService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private PublicHolidaysService publicHolidayService;
+    @Mock
+    private SettingsService settingsService;
+    @Mock
+    private WorkingTimeService workingTimeService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, clock);
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        when(publicHolidayService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+
+        sut = new AbsenceOverviewViewController(personService, departmentService, applicationService, sickNoteService, messageSource, clock,
+            publicHolidayService, settingsService, workingTimeService);
     }
 
     @Test
     void applicationForLeaveVacationOverviewNoPermissions() throws Exception {
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -110,6 +132,9 @@ class AbsenceOverviewViewControllerTest {
     void applicationForLeaveVacationOverviewAllDepartments(Role role) throws Exception {
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(role));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -130,6 +155,9 @@ class AbsenceOverviewViewControllerTest {
     void applicationForLeaveVacationOverviewSECONDSTAGE() throws Exception {
 
         final Person ssa = new Person();
+        ssa.setFirstName("firstname");
+        ssa.setLastName("lastname");
+        ssa.setEmail("firstname.lastname@example.org");
         ssa.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
         when(personService.getSignedInUser()).thenReturn(ssa);
 
@@ -172,6 +200,9 @@ class AbsenceOverviewViewControllerTest {
     void ensureDefaultSelectedDepartmentIsTheFirstAvailable(String departmentName) throws Exception {
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -192,6 +223,9 @@ class AbsenceOverviewViewControllerTest {
     void ensureSelectedDepartment() throws Exception {
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -216,6 +250,9 @@ class AbsenceOverviewViewControllerTest {
         final var expectedCurrentYear = LocalDate.now().getYear();
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -238,6 +275,9 @@ class AbsenceOverviewViewControllerTest {
         final var expectedSelectedYear = expectedCurrentYear - 1;
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -259,6 +299,9 @@ class AbsenceOverviewViewControllerTest {
         final var now = LocalDate.now();
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -276,6 +319,9 @@ class AbsenceOverviewViewControllerTest {
     void ensureSelectedMonthIsEmptyStringWhenParamIsDefinedAsEmptyString() throws Exception {
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -294,6 +340,9 @@ class AbsenceOverviewViewControllerTest {
     void ensureSelectedMonthWhenParamIsDefined() throws Exception {
 
         final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         person.setPermissions(singletonList(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -312,6 +361,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureMonthDayTextIsPadded() throws Exception {
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -345,10 +396,12 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -374,6 +427,8 @@ class AbsenceOverviewViewControllerTest {
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -406,6 +461,8 @@ class AbsenceOverviewViewControllerTest {
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -437,12 +494,14 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -473,7 +532,9 @@ class AbsenceOverviewViewControllerTest {
     @Test
     void ensureOverviewForGivenDepartment() throws Exception {
         final var person = new Person();
-        person.setFirstName("batman");
+        person.setFirstName("bruce");
+        person.setLastName("wayne");
+        person.setEmail("batman@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var heroDepartment = department("heroes");
@@ -503,7 +564,9 @@ class AbsenceOverviewViewControllerTest {
     @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureOverviewShowsAllPersonsThereAreNoDepartmentsFor(Role role) throws Exception {
         final var person = new Person();
-        person.setFirstName("batman");
+        person.setFirstName("bruce");
+        person.setLastName("wayne");
+        person.setEmail("batman@example.org");
         person.setPermissions(singletonList(role));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -511,9 +574,13 @@ class AbsenceOverviewViewControllerTest {
 
         final var personTwo = new Person();
         personTwo.setFirstName("aa");
+        personTwo.setLastName("person two lastname");
+        personTwo.setEmail("person2@company.org");
 
         final var personThree = new Person();
         personThree.setFirstName("AA");
+        personThree.setLastName("AA lastname");
+        personThree.setEmail("person3@company.org");
 
         when(personService.getActivePersons()).thenReturn(List.of(person, personTwo, personThree));
 
@@ -553,12 +620,14 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -587,13 +656,19 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewPersonsAreSortedByFirstName() throws Exception {
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var personTwo = new Person();
         personTwo.setFirstName("aa");
+        personTwo.setLastName("aa lastname");
+        personTwo.setEmail("person2@example.org");
 
         final var personThree = new Person();
         personThree.setFirstName("AA");
+        personThree.setLastName("AA lastname");
+        personThree.setEmail("person3@example.org");
 
         final var department = department();
         department.setMembers(List.of(person, personTwo, personThree));
@@ -626,6 +701,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureSickNoteOneDay(DayLength dayLength, String dtoDayTypeText) throws Exception {
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -674,6 +751,8 @@ class AbsenceOverviewViewControllerTest {
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -707,14 +786,16 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @Test
-    void ensureWeekends() throws Exception {
-        final Clock fixedClock = Clock.fixed(Instant.parse("2020-08-01T00:00:00.00Z"), ZoneId.systemDefault());
+    void ensureWeekendsAndHolidays() throws Exception {
+        final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock);
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
 
         final var person = new Person();
         person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
@@ -724,36 +805,36 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
                     hasProperty("days", contains(
-                        allOf(hasProperty("dayOfMonth", is("01")), hasProperty("weekend", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("02")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("01")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("02")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("03")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("04")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("05")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("06")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("05")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("06")), hasProperty("weekend", is(true))),
                         allOf(hasProperty("dayOfMonth", is("07")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("08")), hasProperty("weekend", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("09")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("08")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("09")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("10")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("11")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("12")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("13")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("12")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("13")), hasProperty("weekend", is(true))),
                         allOf(hasProperty("dayOfMonth", is("14")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("15")), hasProperty("weekend", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("16")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("15")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("16")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("17")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("18")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("19")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("20")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("19")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("20")), hasProperty("weekend", is(true))),
                         allOf(hasProperty("dayOfMonth", is("21")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("22")), hasProperty("weekend", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("23")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("22")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("23")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("24")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("25")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("26")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("27")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("26")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("27")), hasProperty("weekend", is(true))),
                         allOf(hasProperty("dayOfMonth", is("28")), hasProperty("weekend", is(false))),
-                        allOf(hasProperty("dayOfMonth", is("29")), hasProperty("weekend", is(true))),
-                        allOf(hasProperty("dayOfMonth", is("30")), hasProperty("weekend", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("29")), hasProperty("weekend", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("30")), hasProperty("weekend", is(false))),
                         allOf(hasProperty("dayOfMonth", is("31")), hasProperty("weekend", is(false)))
                     ))
                 ))
@@ -776,6 +857,8 @@ class AbsenceOverviewViewControllerTest {
         var person = new Person();
 
         person.setFirstName(firstName);
+        person.setLastName(firstName + " lastname");
+        person.setEmail(firstName + "@example.org");
 
         return person;
     }

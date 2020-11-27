@@ -37,15 +37,15 @@ class WorkingTimeServiceTest {
     @Mock
     private WorkingTimeProperties workingTimeProperties;
     @Mock
-    private WorkingTimeRepository workingTimeRepositoryMock;
+    private WorkingTimeRepository repository;
     @Mock
-    private SettingsService settingsServiceMock;
+    private SettingsService settingsService;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), Clock.systemUTC().getZone());
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeService(workingTimeProperties, workingTimeRepositoryMock, settingsServiceMock, fixedClock);
+        sut = new WorkingTimeService(workingTimeProperties, repository, settingsService, fixedClock);
     }
 
     @Test
@@ -62,7 +62,7 @@ class WorkingTimeServiceTest {
         sut.createDefaultWorkingTime(person);
 
         ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
-        verify(workingTimeRepositoryMock).save(argument.capture());
+        verify(repository).save(argument.capture());
         assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedWorkingTime);
     }
 
@@ -74,14 +74,14 @@ class WorkingTimeServiceTest {
 
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(BAYERN);
-        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(repository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(workingTime);
 
         final LocalDate now = LocalDate.now(UTC);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final FederalState federalState = sut.getFederalStateForPerson(person, now);
 
-        verifyNoInteractions(settingsServiceMock);
+        verifyNoInteractions(settingsService);
 
         assertThat(federalState).isEqualTo(BAYERN);
     }
@@ -92,11 +92,11 @@ class WorkingTimeServiceTest {
 
         final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
-        when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(null);
-        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
+        when(repository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
 
         final LocalDate now = LocalDate.now(UTC);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -110,9 +110,9 @@ class WorkingTimeServiceTest {
 
         final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
-        when(settingsServiceMock.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(settings);
 
-        when(workingTimeRepositoryMock.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(repository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(null);
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -131,7 +131,7 @@ class WorkingTimeServiceTest {
 
         sut.touch(Arrays.asList(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
 
-        verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
+        verify(repository).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
 
@@ -146,7 +146,7 @@ class WorkingTimeServiceTest {
         WorkingTime existentWorkingTime = createWorkingTime();
         existentWorkingTime.setFederalStateOverride(BAYERN);
 
-        when(workingTimeRepositoryMock.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
+        when(repository.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(existentWorkingTime);
 
         ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
@@ -155,9 +155,23 @@ class WorkingTimeServiceTest {
 
         sut.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 
-        verify(workingTimeRepositoryMock).save(workingTimeArgumentCaptor.capture());
+        verify(repository).save(workingTimeArgumentCaptor.capture());
 
         WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
         assertThat(workingTime.getFederalStateOverride()).isEmpty();
+    }
+
+    @Test
+    void ensureGetByPersonsAndDateInterval() {
+        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final List<Person> persons = List.of(person);
+
+        final LocalDate start = LocalDate.now();
+        final LocalDate end = start.plusDays(1);
+
+        sut.getByPersonsAndDateInterval(persons, start, end);
+
+        verify(repository).findByPersonInAndValidFromForDateInterval(persons, start, end);
     }
 }

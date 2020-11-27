@@ -13,6 +13,10 @@ public enum AbsenceOverviewDayType {
     ACTIVE_SICKNOTE_FULL("activeSickNoteFull"),
     ACTIVE_SICKNOTE_MORNING("activeSickNoteMorning"),
     ACTIVE_SICKNOTE_NOON("activeSickNoteNoon"),
+
+    PUBLIC_HOLIDAY_MORNING("publicHolidayMorning"),
+    PUBLIC_HOLIDAY_NOON("publicHolidayNoon"),
+    PUBLIC_HOLIDAY_FULL("publicHolidayFull"),
     ;
 
     private final String identifier;

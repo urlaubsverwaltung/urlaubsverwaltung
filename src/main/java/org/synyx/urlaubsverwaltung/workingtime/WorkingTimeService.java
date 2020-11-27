@@ -70,6 +70,10 @@ public class WorkingTimeService {
         return workingTimeRepository.findByPerson(person);
     }
 
+    public List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end) {
+        return workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end);
+    }
+
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
     }
