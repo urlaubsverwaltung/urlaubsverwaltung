@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -43,13 +44,16 @@ public class WorkingTimeViewController {
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
     private final WorkingTimeValidator validator;
+    private final Clock clock;
 
     @Autowired
-    public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService, SettingsService settingsService, WorkingTimeValidator validator) {
+    public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
+                                     SettingsService settingsService, WorkingTimeValidator validator, Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
         this.validator = validator;
+        this.clock = clock;
     }
 
     @InitBinder
@@ -66,7 +70,7 @@ public class WorkingTimeViewController {
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getCurrentOne(person);
+        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
 
         if (optionalWorkingTime.isPresent()) {
             model.addAttribute("workingTime", new WorkingTimeForm(optionalWorkingTime.get()));

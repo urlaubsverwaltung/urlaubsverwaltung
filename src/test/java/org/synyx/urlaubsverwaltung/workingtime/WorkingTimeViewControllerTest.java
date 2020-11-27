@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -54,7 +55,7 @@ class WorkingTimeViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeViewController(personService, workingTimeService, settingsService, validator);
+        sut = new WorkingTimeViewController(personService, workingTimeService, settingsService, validator, Clock.systemUTC());
     }
 
     @Test
@@ -72,7 +73,7 @@ class WorkingTimeViewControllerTest {
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
         final WorkingTime workingTime = someWorkingTimeOfPerson(person);
-        when(workingTimeService.getCurrentOne(person)).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm(workingTime))));
@@ -85,7 +86,7 @@ class WorkingTimeViewControllerTest {
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
         when(settingsService.getSettings()).thenReturn(new Settings());
-        when(workingTimeService.getCurrentOne(person)).thenReturn(Optional.empty());
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.empty());
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm())));

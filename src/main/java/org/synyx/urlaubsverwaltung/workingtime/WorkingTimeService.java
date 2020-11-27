@@ -74,10 +74,6 @@ public class WorkingTimeService {
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
     }
 
-    public Optional<WorkingTime> getCurrentOne(Person person) {
-        return Optional.ofNullable(workingTimeRepository.findLastOneByPerson(person));
-    }
-
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
         Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
 
