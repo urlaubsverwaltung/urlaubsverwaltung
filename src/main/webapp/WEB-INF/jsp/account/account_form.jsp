@@ -162,7 +162,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3 tw-leading-snug">
+                            <label class="control-label col-md-3 tw-leading-snug" for="remainingVacationDaysNotExpiring">
                                 <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>:
                             </label>
 
