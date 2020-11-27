@@ -11,6 +11,7 @@
 
 <spring:bind path="${path}">
     <input type="number"
+           id="${path}"
            name="${path}"
            class="${status.error ? cssErrorClass : cssClass}"
            step="${not empty step ? step : 'any'}"
