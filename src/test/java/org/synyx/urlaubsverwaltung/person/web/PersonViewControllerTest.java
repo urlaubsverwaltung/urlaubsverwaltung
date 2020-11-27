@@ -18,12 +18,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -143,44 +142,6 @@ class PersonViewControllerTest {
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
-    }
-
-    @Test
-    void showPersonInformationUsesPersonsWorkingTimeIfPresent() throws Exception {
-
-        when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
-
-        perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute("workingTime", nullValue()));
-
-        final WorkingTime workingTime = new WorkingTime();
-        when(workingTimeService.getCurrentOne(person)).thenReturn(Optional.of(workingTime));
-
-        perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute("workingTime", workingTime));
-    }
-
-    @Test
-    void showPersonInformationUsesFederalStateOfPersonsWorkingTimeIfPresent() throws Exception {
-
-        when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
-
-        perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute("federalState", BADEN_WUERTTEMBERG));
-
-        WorkingTime workingTime = new WorkingTime();
-        workingTime.setFederalStateOverride(FederalState.BERLIN);
-
-        when(workingTimeService.getCurrentOne(person)).thenReturn(Optional.of(workingTime));
-
-        perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute("federalState", FederalState.BERLIN));
     }
 
     @Test

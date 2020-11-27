@@ -96,7 +96,7 @@ public class PersonViewController {
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
         model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
 
-        final Optional<WorkingTime> workingTime = workingTimeService.getCurrentOne(person);
+        final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
         Optional<FederalState> optionalFederalState = Optional.empty();
 
         if (workingTime.isPresent()) {
