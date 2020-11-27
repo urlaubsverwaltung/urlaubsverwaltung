@@ -67,7 +67,7 @@ public class WorkingTimeService {
     }
 
     public List<WorkingTime> getByPerson(Person person) {
-        return workingTimeRepository.findByPerson(person);
+        return workingTimeRepository.findByPersonOrderByValidFromDesc(person);
     }
 
     public List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end) {

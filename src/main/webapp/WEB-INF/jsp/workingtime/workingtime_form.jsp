@@ -95,34 +95,9 @@
                             </div>
                         </div>
 
-                        <c:if test="${fn:length(workingTimes) > 1}">
-                        <div class="form-group">
-                            <label class="col-md-3">
-                                <spring:message code='person.form.workingTime.existent'/>:
-                            </label>
-
-                            <div class="col-md-9">
-                                <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
-                                    <c:forEach items="${workingTimes}" var="time">
-                                        <li>
-                                            <div>
-                                                <spring:message code="person.form.workingTime.validityPeriod"/>
-                                                <uv:date date="${time.key}"/>
-                                            </div>
-
-                                            <c:forEach items="${time.value}" var="day" varStatus="loop">
-                                                <spring:message code="${day}"/>${loop.last ? '' : ','}
-                                            </c:forEach>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </div>
-                        </div>
-                        </c:if>
-
                         <div class="form-group is-required">
                             <label class="control-label col-md-3">
-                                <spring:message code="person.form.workingTime.validityPeriod"/>:
+                                <spring:message code="person.form.workingTime.valid-from"/>:
                             </label>
                             <div class="col-md-9">
                                 <c:set var="DATE_PATTERN">
@@ -153,6 +128,50 @@
                                 </c:forEach>
                             </div>
                         </div>
+
+                        <c:if test="${fn:length(workingTimeHistories) > 0}">
+                            <div class="form-group">
+                                <label class="col-md-3">
+                                    <spring:message code='person.form.workingTime.existent'/>:
+                                </label>
+
+                                <div class="col-md-9">
+                                    <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
+                                        <c:forEach items="${workingTimeHistories}" var="workingTimeHistory" varStatus="status">
+                                            <li>
+
+                                                <c:choose>
+                                                    <c:when test="${status.first}">
+                                                        <span class="tw-block ${workingTimeHistory.valid ? 'tw-text-green-500' : ''}">
+                                                            <spring:message code="person.form.workingTime.valid-from"/>
+                                                            <uv:date date="${workingTimeHistory.validFrom}"/>
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="tw-block ${workingTimeHistory.valid ? 'tw-text-green-500' : ''}">
+                                                            <c:set var="actualDate">
+                                                                <uv:date date="${workingTimeHistory.validFrom}"/>
+                                                            </c:set>
+                                                            <spring:message code="person.form.workingTime.valid-from-to" arguments="${actualDate}, ${lastDate}"/>
+                                                        </span>
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                                <c:forEach items="${workingTimeHistory.workingDays}" var="workingDay" varStatus="loop">
+                                                    <spring:message code="${workingDay}"/>${loop.last ? '' : ','}
+                                                </c:forEach>
+
+                                                <span class="tw-block">
+                                                    <spring:message code="federalState.${workingTimeHistory.federalState}"/>
+                                                </span>
+
+                                                <c:set var="lastDate"><uv:date date="${workingTimeHistory.validFrom.minusDays(1)}"/></c:set>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>

@@ -24,14 +24,11 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -48,7 +45,8 @@ public class WorkingTimeViewController {
 
     @Autowired
     public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
-                                     SettingsService settingsService, WorkingTimeValidator validator, Clock clock) {
+                                     SettingsService settingsService, WorkingTimeValidator validator,
+                                     Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
@@ -58,15 +56,13 @@ public class WorkingTimeViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
 
-
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/workingtime")
-    public String editWorkingTime(@PathVariable("personId") Integer personId, Model model)
+    public String getWorkingTime(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -87,9 +83,7 @@ public class WorkingTimeViewController {
     @PostMapping("/person/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
-                                    Model model,
-                                    Errors errors,
-                                    RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                    Model model, Errors errors, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
@@ -111,15 +105,25 @@ public class WorkingTimeViewController {
     private void fillModel(Model model, Person person) {
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        // creates a map with key validForm and value list of workdays
-        Map<LocalDate, List<WeekDay>> validWorkingDays = workingTimeService.getByPerson(person).stream()
-            .sorted(Comparator.comparing(WorkingTime::getValidFrom))
-            .collect(toMap(WorkingTime::getValidFrom, WorkingTime::getWorkingDays, (e1, e2) -> e1, LinkedHashMap::new));
+        final List<WorkingTime> workingTimeHistories = workingTimeService.getByPerson(person);
+        final WorkingTime currentWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock)).orElse(null);
+        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
-        model.addAttribute("workingTimes", validWorkingDays);
+        model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories, defaultFederalState));
         model.addAttribute("weekDays", WeekDay.values());
         model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("defaultFederalState",
-            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
+        model.addAttribute("defaultFederalState", defaultFederalState);
+    }
+
+    private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes, FederalState defaultFederalState) {
+        return workingTimes.stream()
+            .map(workingTime -> {
+
+                final boolean isValid = currentWorkingTime.equals(workingTime);
+                final FederalState federalState = workingTime.getFederalStateOverride().orElse(defaultFederalState);
+                final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
+                return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.toString(), isValid);
+            })
+            .collect(toList());
     }
 }
