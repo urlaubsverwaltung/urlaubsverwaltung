@@ -115,10 +115,15 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="annualVacationDays"
-                                            path="annualVacationDays" class="form-control"
+                                <c:set var="annualVacationDays_placeholder">
+                                    <spring:message code='person.form.annualVacation.annualVacation.placeholder'/>
+                                </c:set>
+
+                                <uv:input-number id="annualVacationDays"
+                                            placeholder="${annualVacationDays_placeholder}"
+                                            path="annualVacationDays" cssClass="form-control"
                                             cssErrorClass="form-control error"
-                                            type="number" step="1"/>
+                                            value="${account.annualVacationDays}"/>
                                 <uv:error-text>
                                     <form:errors path="annualVacationDays" />
                                 </uv:error-text>
@@ -157,7 +162,7 @@
                         </div>
 
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3 tw-leading-snug">
+                            <label class="control-label col-md-3 tw-leading-snug" for="remainingVacationDaysNotExpiring">
                                 <spring:message code="person.form.annualVacation.remainingVacation.notExpiring"/>:
                             </label>
 
