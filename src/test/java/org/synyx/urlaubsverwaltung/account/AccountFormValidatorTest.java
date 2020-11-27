@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -20,8 +19,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-
 
 @ExtendWith(MockitoExtension.class)
 class AccountFormValidatorTest {
@@ -55,52 +52,39 @@ class AccountFormValidatorTest {
 
     @Test
     void ensureAnnualVacationMustNotBeNull() {
-
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(null);
 
-        sut.validateAnnualVacation(form, errors);
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("annualVacationDays", "error.entry.mandatory");
     }
 
     @Test
     void ensureAnnualVacationMustBeInteger() {
-        final Settings settings = new Settings();
-        settings.getAccountSettings().setMaximumAnnualVacationDays(40);
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(10.1));
 
-        sut.validateAnnualVacation(form, errors);
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("annualVacationDays", "error.entry.integer");
     }
 
     @Test
     void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
 
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         int maxDays = 40;
-        settings.getAccountSettings().setMaximumAnnualVacationDays(maxDays);
-
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
 
-        sut.validateAnnualVacation(form, errors);
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(maxDays));
         verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
     }
 
     @Test
     void ensureValidAnnualVacationHasNoValidationError() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("28"));
 
-        sut.validateAnnualVacation(form, errors);
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
         verifyNoInteractions(errors);
     }
 
@@ -165,116 +149,89 @@ class AccountFormValidatorTest {
 
     @Test
     void ensureRemainingVacationDaysMustNotBeNull() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(null);
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("remainingVacationDays", "error.entry.mandatory");
     }
 
     @Test
     void ensureRemainingVacationDaysMustBeFullOrHalf() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal(10.3));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(11));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("remainingVacationDays", "error.entry.fullOrHalfHour");
     }
 
     @Test
     void ensureRemainingVacationDaysNotExpiringMustBeFullOrHalf() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal(10));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(10.3));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.fullOrHalfHour");
     }
 
     @Test
     void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("367"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(10));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
     }
 
     @Test
     void ensureValidRemainingVacationDaysHaveNoValidationErrorForFullHour() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5"));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verifyNoInteractions(errors);
     }
 
     @Test
     void ensureValidRemainingVacationDaysWithDecimalHaveNoValidationErrorForFullHour() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5.0"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5.0"));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verifyNoInteractions(errors);
     }
 
     @Test
     void ensureValidRemainingVacationDaysHaveNoValidationErrorForHalfAnHour() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5.5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("5.5"));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verifyNoInteractions(errors);
     }
 
     @Test
     void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDaysNotExpiring(null);
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
     }
 
     @Test
     void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
-        final Settings settings = new Settings();
-        when(settingsService.getSettings()).thenReturn(settings);
-
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal("5"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
 
-        sut.validateRemainingVacationDays(form, errors);
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
         verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.invalid");
     }
 

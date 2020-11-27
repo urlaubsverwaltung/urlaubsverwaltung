@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -44,11 +43,13 @@ class AccountFormValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
 
+        final BigDecimal maximumAnnualVacationDays = getMaximumAnnualVacationDays();
+
         final AccountForm form = (AccountForm) target;
         validatePeriod(form, errors);
-        validateAnnualVacation(form, errors);
+        validateAnnualVacation(form, errors, maximumAnnualVacationDays);
         validateActualVacation(form, errors);
-        validateRemainingVacationDays(form, errors);
+        validateRemainingVacationDays(form, errors, maximumAnnualVacationDays);
         validateComment(form, errors);
     }
 
@@ -80,7 +81,7 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateAnnualVacation(AccountForm form, Errors errors) {
+    void validateAnnualVacation(AccountForm form, Errors errors, BigDecimal maxDays) {
 
         final BigDecimal annualVacationDays = form.getAnnualVacationDays();
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
@@ -88,10 +89,6 @@ class AccountFormValidator implements Validator {
         if (annualVacationDays != null) {
 
             validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
-
-            Settings settings = settingsService.getSettings();
-            AccountSettings accountSettings = settings.getAccountSettings();
-            BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
             validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
         }
     }
@@ -110,11 +107,7 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateRemainingVacationDays(AccountForm form, Errors errors) {
-
-        Settings settings = settingsService.getSettings();
-        AccountSettings accountSettings = settings.getAccountSettings();
-        final BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
+    void validateRemainingVacationDays(AccountForm form, Errors errors, BigDecimal maxDays) {
 
         final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
@@ -123,13 +116,11 @@ class AccountFormValidator implements Validator {
         validateNumberNotNull(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
 
         if (remainingVacationDays != null) {
-
-            validateFullOrHalfAnHour(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
             // field entitlement's remaining vacation days
+            validateFullOrHalfAnHour(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
             validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
 
             if (remainingVacationDaysNotExpiring != null) {
-
                 validateFullOrHalfAnHour(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
                 validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, remainingVacationDays, errors);
             }
@@ -141,7 +132,7 @@ class AccountFormValidator implements Validator {
         final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
         final boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
 
-        if(!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
+        if (!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
         }
     }
@@ -159,7 +150,7 @@ class AccountFormValidator implements Validator {
         final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
         final boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
 
-        if(!isValid && errors.getFieldErrors(field).isEmpty()) {
+        if (!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_INTEGER_FIELD);
         }
     }
@@ -185,5 +176,10 @@ class AccountFormValidator implements Validator {
         if (days.compareTo(maximumDays) > 0) {
             errors.rejectValue(field, ERROR_ENTRY);
         }
+    }
+
+    private BigDecimal getMaximumAnnualVacationDays() {
+        final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
+        return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
     }
 }
