@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -113,13 +112,11 @@ public class WorkingTimeViewController {
 
         // creates a map with key validForm and value list of workdays
         Map<LocalDate, List<WeekDay>> validWorkingDays = workingTimeService.getByPerson(person).stream()
-            .sorted(Comparator.comparing(WorkingTime::getValidFrom))
             .collect(toMap(WorkingTime::getValidFrom, WorkingTime::getWorkingDays, (e1, e2) -> e1, LinkedHashMap::new));
 
         model.addAttribute("workingTimes", validWorkingDays);
         model.addAttribute("weekDays", WeekDay.values());
         model.addAttribute("federalStateTypes", FederalState.values());
-        model.addAttribute("defaultFederalState",
-            settingsService.getSettings().getWorkingTimeSettings().getFederalState());
+        model.addAttribute("defaultFederalState", settingsService.getSettings().getWorkingTimeSettings().getFederalState());
     }
 }

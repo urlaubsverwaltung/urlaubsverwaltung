@@ -14,8 +14,7 @@ import java.util.List;
  */
 interface WorkingTimeRepository extends CrudRepository<WorkingTime, Integer> {
 
-    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 ORDER BY x.validFrom")
-    List<WorkingTime> findByPerson(Person person);
+    List<WorkingTime> findByPersonOrderByValidFromDesc(Person person);
 
     @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = ?2")
     WorkingTime findByPersonAndValidityDate(Person person, LocalDate date);

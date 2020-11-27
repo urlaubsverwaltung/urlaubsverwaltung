@@ -103,16 +103,31 @@
 
                             <div class="col-md-9">
                                 <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2 tw-text-sm">
-                                    <c:forEach items="${workingTimes}" var="time">
+                                    <c:forEach items="${workingTimes}" var="workingTime" varStatus="status">
                                         <li>
-                                            <div>
-                                                <spring:message code="person.form.workingTime.validityPeriod"/>
-                                                <uv:date date="${time.key}"/>
-                                            </div>
+                                            <c:choose>
+                                                <c:when test="${status.first}">
+                                                    <span class="tw-block tw-text-green-500">
+                                                        <spring:message code="person.form.workingTime.active"/>
+                                                        <uv:date date="${workingTime.key}"/>
+                                                    </span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="tw-block">
+                                                        <c:set var="actualDate">
+                                                            <uv:date date="${workingTime.key}"/>
+                                                        </c:set>
+                                                        <spring:message code="person.form.workingTime.inactive"
+                                                                        arguments="${actualDate}, ${lastDate}"/>
+                                                    </span>
+                                                </c:otherwise>
+                                            </c:choose>
 
-                                            <c:forEach items="${time.value}" var="day" varStatus="loop">
+                                            <c:forEach items="${workingTime.value}" var="day" varStatus="loop">
                                                 <spring:message code="${day}"/>${loop.last ? '' : ','}
                                             </c:forEach>
+
+                                            <c:set var="lastDate"><uv:date date="${workingTime.key}"/></c:set>
                                         </li>
                                     </c:forEach>
                                 </ul>
@@ -122,7 +137,7 @@
 
                         <div class="form-group is-required">
                             <label class="control-label col-md-3">
-                                <spring:message code="person.form.workingTime.validityPeriod"/>:
+                                <spring:message code="person.form.workingTime.active"/>:
                             </label>
                             <div class="col-md-9">
                                 <c:set var="DATE_PATTERN">
