@@ -33,36 +33,28 @@ class AccountFormValidator implements Validator {
 
     @Autowired
     AccountFormValidator(SettingsService settingsService) {
-
         this.settingsService = settingsService;
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-
         return AccountForm.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        AccountForm form = (AccountForm) target;
-
+        final AccountForm form = (AccountForm) target;
         validatePeriod(form, errors);
-
         validateAnnualVacation(form, errors);
-
         validateActualVacation(form, errors);
-
         validateRemainingVacationDays(form, errors);
-
         validateComment(form, errors);
     }
 
     void validateComment(AccountForm form, Errors errors) {
 
-        String comment = form.getComment();
-
+        final String comment = form.getComment();
         if (comment != null && comment.length() > 200) {
             errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_COMMENT_TO_LONG);
         }
@@ -70,8 +62,8 @@ class AccountFormValidator implements Validator {
 
     void validatePeriod(AccountForm form, Errors errors) {
 
-        LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
-        LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
+        final LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
+        final LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
         validateDateNotNull(holidaysAccountValidFrom, "holidaysAccountValidFrom", errors);
         validateDateNotNull(holidaysAccountValidTo, "holidaysAccountValidTo", errors);
@@ -90,8 +82,7 @@ class AccountFormValidator implements Validator {
 
     void validateAnnualVacation(AccountForm form, Errors errors) {
 
-        BigDecimal annualVacationDays = form.getAnnualVacationDays();
-
+        final BigDecimal annualVacationDays = form.getAnnualVacationDays();
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
 
         if (annualVacationDays != null) {
@@ -107,15 +98,14 @@ class AccountFormValidator implements Validator {
 
     void validateActualVacation(AccountForm form, Errors errors) {
 
-        BigDecimal actualVacationDays = form.getActualVacationDays();
-
+        final BigDecimal actualVacationDays = form.getActualVacationDays();
         validateNumberNotNull(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
 
         if (actualVacationDays != null) {
 
             validateFullOrHalfAnHour(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
 
-            BigDecimal annualVacationDays = form.getAnnualVacationDays();
+            final BigDecimal annualVacationDays = form.getAnnualVacationDays();
             validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
         }
     }
@@ -124,10 +114,10 @@ class AccountFormValidator implements Validator {
 
         Settings settings = settingsService.getSettings();
         AccountSettings accountSettings = settings.getAccountSettings();
-        BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
+        final BigDecimal maxDays = BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
 
-        BigDecimal remainingVacationDays = form.getRemainingVacationDays();
-        BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
+        final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
+        final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
 
         validateNumberNotNull(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
         validateNumberNotNull(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
@@ -141,16 +131,15 @@ class AccountFormValidator implements Validator {
             if (remainingVacationDaysNotExpiring != null) {
 
                 validateFullOrHalfAnHour(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
-                validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING,
-                    remainingVacationDays, errors);
+                validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, remainingVacationDays, errors);
             }
         }
     }
 
     private void validateFullOrHalfAnHour(BigDecimal days, String field, Errors errors) {
 
-        String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
-        boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
+        final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        final boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
 
         if(!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
@@ -167,8 +156,8 @@ class AccountFormValidator implements Validator {
 
     private void validateIsInteger(BigDecimal days, String field, Errors errors) {
 
-        String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
-        boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
+        final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
+        final boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
 
         if(!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_INTEGER_FIELD);
@@ -178,7 +167,7 @@ class AccountFormValidator implements Validator {
     private void validateNumberNotNull(BigDecimal number, String field, Errors errors) {
 
         // may be that number field is null because of cast exception, than there is already a field error
-        boolean isValid = number != null;
+        final boolean isValid = number != null;
 
         if (!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_MANDATORY_FIELD);
@@ -197,5 +186,4 @@ class AccountFormValidator implements Validator {
             errors.rejectValue(field, ERROR_ENTRY);
         }
     }
-
 }
