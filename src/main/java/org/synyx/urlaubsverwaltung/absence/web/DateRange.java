@@ -4,21 +4,21 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public final class DateRange implements Iterable<LocalDate> {
+final class DateRange implements Iterable<LocalDate> {
 
     private final LocalDate startDate;
     private final LocalDate endDate;
 
-    public DateRange(LocalDate startDate, LocalDate endDate) {
+    DateRange(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public LocalDate getStartDate() {
+    LocalDate getStartDate() {
         return startDate;
     }
 
-    public LocalDate getEndDate() {
+    LocalDate getEndDate() {
         return endDate;
     }
 
@@ -33,7 +33,7 @@ public final class DateRange implements Iterable<LocalDate> {
         private LocalDate cursor;
         private final LocalDate endDate;
 
-        public DateRangeIterator(LocalDate startDate, LocalDate endDate) {
+        DateRangeIterator(LocalDate startDate, LocalDate endDate) {
             this.cursor = startDate;
             this.endDate = endDate;
         }
