@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -119,6 +120,7 @@ public class AbsenceOverviewViewController {
 
         final DateRange dateRange = new DateRange(startDate, endDate);
         final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
+
         final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(year, dateRange, overviewPersons, locale);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
@@ -131,13 +133,15 @@ public class AbsenceOverviewViewController {
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
         final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(dateRange, personList);
         final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
+        final List<WorkingTime> workingTimes = workingTimeService.getByPersonsAndDateInterval(personList, dateRange.getStartDate(), dateRange.getEndDate());
+        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
         for (LocalDate date : dateRange) {
 
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 monthValue -> this.initializeAbsenceOverviewMonthDto(date, personList, locale));
 
-            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date);
+            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState);
             monthView.getDays().add(tableHeadDay);
 
             final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotesForDate(date, sickNotes,
@@ -160,7 +164,14 @@ public class AbsenceOverviewViewController {
                 final SickNote sickNote = sickNotesOnThisDayByEmail.get(personView.getEmail());
                 final List<Application> applications = applicationsForLeaveByEmail.get(personView.getEmail());
                 final Person person = personByView.get(personView);
-                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(person, date, sickNote, applications);
+
+                final FederalState personDateFederalStateOverride = workingTimes.stream()
+                    .filter(workingTime ->
+                        workingTime.getPerson().equals(person) && (workingTime.getValidFrom().isBefore(date) || workingTime.getValidFrom().equals(date)))
+                    .min(comparing(WorkingTime::getValidFrom))
+                    .flatMap(WorkingTime::getFederalStateOverride).orElse(defaultFederalState);
+
+                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications, personDateFederalStateOverride);
 
                 personView
                     .getDays()
@@ -209,9 +220,9 @@ public class AbsenceOverviewViewController {
             .collect(toMap(keySupplier, Function.identity()));
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayType(Person person, LocalDate date, SickNote sickNote, List<Application> applications) {
+    private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications, FederalState personDateFederalStateOverride) {
 
-        final DayLength publicHolidayDayLength = getPublicHolidayDayLength(person, date);
+        final DayLength publicHolidayDayLength = publicHolidayService.getAbsenceTypeOfDate(date, personDateFederalStateOverride);
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
             return getPublicHolidayType(publicHolidayDayLength);
         } else if (sickNote == null) {
@@ -235,16 +246,6 @@ public class AbsenceOverviewViewController {
             default:
                 return PUBLIC_HOLIDAY_FULL;
         }
-    }
-
-    private DayLength getPublicHolidayDayLength(LocalDate date) {
-        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-        return publicHolidayService.getAbsenceTypeOfDate(date, federalState);
-    }
-
-    private DayLength getPublicHolidayDayLength(Person person, LocalDate date) {
-        final FederalState federalStateForPerson = workingTimeService.getFederalStateForPerson(person, date);
-        return publicHolidayService.getAbsenceTypeOfDate(date, federalStateForPerson);
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
@@ -271,9 +272,9 @@ public class AbsenceOverviewViewController {
             .collect(toList());
     }
 
-    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date) {
+    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, FederalState defaultFederalState) {
         final String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
-        final DayLength publicHolidayDayLength = getPublicHolidayDayLength(date);
+        final DayLength publicHolidayDayLength = publicHolidayService.getAbsenceTypeOfDate(date, defaultFederalState);
 
         AbsenceOverviewDayType publicHolidayType = null;
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
