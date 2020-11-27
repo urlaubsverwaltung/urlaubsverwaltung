@@ -45,9 +45,20 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_FULL;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_MORNING;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_NOON;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_MORNING;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_NOON;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_FULL;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_MORNING;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_NOON;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_FULL;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_MORNING;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_NOON;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
@@ -311,33 +322,33 @@ public class AbsenceOverviewViewController {
     private AbsenceOverviewDayType getAbsenceOverviewDayType(SickNote sickNote) {
         switch (sickNote.getDayLength()) {
             case MORNING:
-                return AbsenceOverviewDayType.ACTIVE_SICKNOTE_MORNING;
+                return ACTIVE_SICKNOTE_MORNING;
             case NOON:
-                return AbsenceOverviewDayType.ACTIVE_SICKNOTE_NOON;
+                return ACTIVE_SICKNOTE_NOON;
             default:
-                return AbsenceOverviewDayType.ACTIVE_SICKNOTE_FULL;
+                return ACTIVE_SICKNOTE_FULL;
         }
     }
 
     private AbsenceOverviewDayType getAbsenceOverviewDayType(Application application) {
         ApplicationStatus status = application.getStatus();
-        if (status == ApplicationStatus.WAITING) {
+        if (status == WAITING) {
             switch (application.getDayLength()) {
                 case MORNING:
-                    return AbsenceOverviewDayType.WAITING_VACATION_MORNING;
+                    return WAITING_VACATION_MORNING;
                 case NOON:
-                    return AbsenceOverviewDayType.WAITING_VACATION_NOON;
+                    return WAITING_VACATION_NOON;
                 default:
-                    return AbsenceOverviewDayType.WAITING_VACATION_FULL;
+                    return WAITING_VACATION_FULL;
             }
-        } else if (status == ApplicationStatus.ALLOWED) {
+        } else if (status == ALLOWED) {
             switch (application.getDayLength()) {
                 case MORNING:
-                    return AbsenceOverviewDayType.ALLOWED_VACATION_MORNING;
+                    return ALLOWED_VACATION_MORNING;
                 case NOON:
-                    return AbsenceOverviewDayType.ALLOWED_VACATION_NOON;
+                    return ALLOWED_VACATION_NOON;
                 default:
-                    return AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
+                    return ALLOWED_VACATION_FULL;
             }
         }
         return null;
