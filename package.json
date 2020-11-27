@@ -80,7 +80,7 @@
     "postcss-import": "13.0.0",
     "postcss-url": "10.1.1",
     "prettier": "2.2.1",
-    "tailwindcss": "1.9.6",
+    "tailwindcss": "2.0.1",
     "terser-webpack-plugin": "4.2.3",
     "url-loader": "4.1.1",
     "webpack": "4.44.2",
