@@ -69,7 +69,7 @@ class WorkingTimeViewControllerTest {
     void editWorkingTimePresetsFormWithExistingWorkingTimeForPerson() throws Exception {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Person person = somePerson();
+        final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
         final WorkingTime workingTime = someWorkingTimeOfPerson(person);
@@ -82,7 +82,7 @@ class WorkingTimeViewControllerTest {
     @Test
     void editGetWorkingTimeCreatesEmptyFormIfNoExistingWorkingTimeForPerson() throws Exception {
 
-        final Person person = somePerson();
+        final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -96,7 +96,7 @@ class WorkingTimeViewControllerTest {
     void editGetWorkingTimeUsesCorrectView() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
-        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(view().name("workingtime/workingtime_form"));
@@ -113,7 +113,7 @@ class WorkingTimeViewControllerTest {
     void updatePostWorkingTimeShowsFormIfValidationFails() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
-        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -130,7 +130,7 @@ class WorkingTimeViewControllerTest {
     @Test
     void updatePostWorkingTimeTouchPersonIfValidationSuccessful() throws Exception {
 
-        final Person person = somePerson();
+        final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"));
@@ -141,16 +141,12 @@ class WorkingTimeViewControllerTest {
     @Test
     void updatePostWorkingTimeAddsFlashAttributeAndRedirectsToPerson() throws Exception {
 
-        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(flash().attribute("updateSuccess", true))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/person/" + KNOWN_PERSON_ID));
-    }
-
-    private Person somePerson() {
-        return new Person();
     }
 
     private WorkingTime someWorkingTimeOfPerson(final Person person) {

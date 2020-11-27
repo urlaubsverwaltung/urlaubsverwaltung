@@ -62,7 +62,7 @@ public class WorkingTimeViewController {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/workingtime")
-    public String editWorkingTime(@PathVariable("personId") Integer personId, Model model)
+    public String getWorkingTime(@PathVariable("personId") Integer personId, Model model)
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
