@@ -13,39 +13,41 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
+import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
 
 @ExtendWith(MockitoExtension.class)
 class WorkingTimeServiceTest {
-    private final static LocalDate LOCAL_DATE = LocalDate.of(2019, 9, 13);
 
     private WorkingTimeService sut;
 
     @Mock
     private WorkingTimeProperties workingTimeProperties;
     @Mock
-    private WorkingTimeRepository repository;
+    private WorkingTimeRepository workingTimeRepository;
     @Mock
     private SettingsService settingsService;
 
-    private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), Clock.systemUTC().getZone());
+    private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), UTC);
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeService(workingTimeProperties, repository, settingsService, fixedClock);
+        sut = new WorkingTimeService(workingTimeProperties, workingTimeRepository, settingsService, fixedClock);
     }
 
     @Test
@@ -54,16 +56,14 @@ class WorkingTimeServiceTest {
         when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final WorkingTime expectedWorkingTime = new WorkingTime();
-        expectedWorkingTime.setWorkingDays(List.of(1, 2, 3, 4, 5), FULL);
-        expectedWorkingTime.setPerson(person);
-        expectedWorkingTime.setValidFrom(LocalDate.now(fixedClock));
-
         sut.createDefaultWorkingTime(person);
 
-        ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
-        verify(repository).save(argument.capture());
-        assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedWorkingTime);
+        final ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
+        verify(workingTimeRepository).save(argument.capture());
+        final WorkingTime workingTime = argument.getValue();
+        assertThat(workingTime.getPerson()).isEqualTo(person);
+        assertThat(workingTime.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
+        assertThat(workingTime.getWorkingDays()).isEqualTo(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY));
     }
 
     @Test
@@ -74,7 +74,7 @@ class WorkingTimeServiceTest {
 
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(BAYERN);
-        when(repository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(workingTime);
 
         final LocalDate now = LocalDate.now(UTC);
@@ -86,7 +86,6 @@ class WorkingTimeServiceTest {
         assertThat(federalState).isEqualTo(BAYERN);
     }
 
-
     @Test
     void ensureReturnsSystemFederalStateIfPersonHasNoSpecialFederalState() {
 
@@ -96,14 +95,13 @@ class WorkingTimeServiceTest {
 
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setFederalStateOverride(null);
-        when(repository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
+        when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
 
         final LocalDate now = LocalDate.now(UTC);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final FederalState federalState = sut.getFederalStateForPerson(person, now);
         assertThat(federalState).isEqualTo(BADEN_WUERTTEMBERG);
     }
-
 
     @Test
     void ensureReturnsSystemFederalStateIfPersonHasNoMatchingWorkingTime() {
@@ -112,7 +110,7 @@ class WorkingTimeServiceTest {
         settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        when(repository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(null);
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -121,43 +119,34 @@ class WorkingTimeServiceTest {
         assertThat(federalState).isEqualTo(BADEN_WUERTTEMBERG);
     }
 
-
     @Test
     void ensureSetsFederalStateOverrideIfGiven() {
 
-        ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        sut.touch(List.of(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        sut.touch(Arrays.asList(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
-
-        verify(repository).save(workingTimeArgumentCaptor.capture());
-
-        WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
-
-        Optional<FederalState> optionalFederalState = workingTime.getFederalStateOverride();
-        assertThat(optionalFederalState).hasValue(BAYERN);
+        final ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+        verify(workingTimeRepository).save(workingTimeArgumentCaptor.capture());
+        final WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
+        assertThat(workingTime.getFederalStateOverride()).hasValue(BAYERN);
     }
-
 
     @Test
     void ensureRemovesFederalStateOverrideIfNull() {
 
-        WorkingTime existentWorkingTime = createWorkingTime();
+        final WorkingTime existentWorkingTime = createWorkingTime();
         existentWorkingTime.setFederalStateOverride(BAYERN);
 
-        when(repository.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeRepository.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(existentWorkingTime);
 
-        ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        sut.touch(List.of(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+        verify(workingTimeRepository).save(workingTimeArgumentCaptor.capture());
 
-        sut.touch(Arrays.asList(1, 2), Optional.empty(), LocalDate.now(UTC), person);
-
-        verify(repository).save(workingTimeArgumentCaptor.capture());
-
-        WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
+        final WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
         assertThat(workingTime.getFederalStateOverride()).isEmpty();
     }
 
@@ -172,6 +161,20 @@ class WorkingTimeServiceTest {
 
         sut.getByPersonsAndDateInterval(persons, start, end);
 
-        verify(repository).findByPersonInAndValidFromForDateInterval(persons, start, end);
+        verify(workingTimeRepository).findByPersonInAndValidFromForDateInterval(persons, start, end);
+    }
+
+    @Test
+    void getByPerson() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final WorkingTime workingTime = new WorkingTime();
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTime));
+
+        final List<WorkingTime> workingTimes = sut.getByPerson(person);
+        assertThat(workingTimes)
+            .hasSize(1)
+            .contains(workingTime);
     }
 }
