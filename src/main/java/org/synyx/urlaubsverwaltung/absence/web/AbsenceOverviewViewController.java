@@ -243,18 +243,18 @@ public class AbsenceOverviewViewController {
     }
 
     private DayLength getPublicHolidayDayLength(Person person, LocalDate date) {
-
         final FederalState federalStateForPerson = workingTimeService.getFederalStateForPerson(person, date);
         return publicHolidayService.getAbsenceTypeOfDate(date, federalStateForPerson);
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {
+        String selectedMonth = "";
         if (month == null) {
-            return String.valueOf(startDate.getMonthValue());
+            selectedMonth = String.valueOf(startDate.getMonthValue());
         } else if (hasText(month)) {
-            return month;
+            selectedMonth = month;
         }
-        return "";
+        return selectedMonth;
     }
 
     private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
@@ -276,7 +276,6 @@ public class AbsenceOverviewViewController {
         final DayLength publicHolidayDayLength = getPublicHolidayDayLength(date);
 
         AbsenceOverviewDayType publicHolidayType = null;
-
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
             publicHolidayType = getPublicHolidayType(publicHolidayDayLength);
         }
@@ -331,7 +330,7 @@ public class AbsenceOverviewViewController {
     }
 
     private AbsenceOverviewDayType getAbsenceOverviewDayType(Application application) {
-        ApplicationStatus status = application.getStatus();
+        final ApplicationStatus status = application.getStatus();
         if (status == WAITING) {
             switch (application.getDayLength()) {
                 case MORNING:
@@ -355,12 +354,12 @@ public class AbsenceOverviewViewController {
     }
 
     private static boolean isDateInPeriod(LocalDate date, Period period) {
-        LocalDate startDate = period.getStartDate();
+        final LocalDate startDate = period.getStartDate();
         if (startDate.isEqual(date)) {
             return true;
         }
 
-        LocalDate endDate = period.getEndDate();
+        final LocalDate endDate = period.getEndDate();
         if (endDate.isEqual(date)) {
             return true;
         }
