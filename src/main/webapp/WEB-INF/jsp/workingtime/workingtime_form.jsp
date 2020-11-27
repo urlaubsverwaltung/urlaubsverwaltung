@@ -165,7 +165,7 @@
                                                     <spring:message code="federalState.${workingTimeHistory.federalState}"/>
                                                 </span>
 
-                                                <c:set var="lastDate"><uv:date date="${workingTimeHistory.validFrom}"/></c:set>
+                                                <c:set var="lastDate"><uv:date date="${workingTimeHistory.validFrom.minusDays(1)}"/></c:set>
                                             </li>
                                         </c:forEach>
                                     </ul>
