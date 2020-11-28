@@ -46,7 +46,7 @@ jobs:
         run: |
           git config --local user.name "Tobias Schneider[bot]"
           git config --local user.email schneider@synyx.de
-          git diff-index --quiet HEAD || git commit -am  "Adapt assets-manifest"
+          git diff --quiet --name-only src/main/webapp/WEB-INF/assets-manifest.json || (git add src/main/webapp/WEB-INF/assets-manifest.json; git commit -m  "Adapt assets-manifest")
       - name: Assets-Manifest push
         if: contains(github.event.pull_request.labels.*.name, 'javascript')
         uses: ad-m/github-push-action@master
