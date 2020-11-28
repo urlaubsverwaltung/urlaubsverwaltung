@@ -43,7 +43,7 @@ jobs:
         run: ./mvnw --batch-mode -Pcoverage clean verify
       - name: Adapt assets-manifest
         if: contains(github.event.pull_request.labels.*.name, 'dependencies') && contains(github.event.pull_request.labels.*.name, 'javascript')
-        run: git commit -am  "Adapt assets-manifest"
+        run: git commit -am  "Adapt assets-manifest" && git push
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
