@@ -48,6 +48,7 @@ jobs:
           git config --local user.email schneider@synyx.de
           git diff-index --quiet HEAD || git commit -am  "Adapt assets-manifest"
       - name: Assets-Manifest push
+        if: contains(github.event.pull_request.labels.*.name, 'javascript')
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
