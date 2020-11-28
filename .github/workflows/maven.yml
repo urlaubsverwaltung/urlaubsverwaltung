@@ -46,7 +46,8 @@ jobs:
         run: |
           git config --local user.name "Tobias Schneider[bot]"
           git config --local user.email schneider@synyx.de
-          git commit -am  "Adapt assets-manifest" && git push
+          git diff-index --quiet HEAD || git commit -am  "Adapt assets-manifest"
+          git push
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
