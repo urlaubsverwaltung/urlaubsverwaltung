@@ -52,7 +52,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${GITHUB_REF#refs/heads/}
+          branch: ${{ github.head_ref }}
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
