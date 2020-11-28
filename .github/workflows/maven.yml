@@ -41,13 +41,16 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
-      - name: Adapt assets-manifest
+      - name: Assets-Manifest commit
         if: contains(github.event.pull_request.labels.*.name, 'javascript')
         run: |
           git config --local user.name "Tobias Schneider[bot]"
           git config --local user.email schneider@synyx.de
           git diff-index --quiet HEAD || git commit -am  "Adapt assets-manifest"
-          git push
+      - name: Assets-Manifest push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
