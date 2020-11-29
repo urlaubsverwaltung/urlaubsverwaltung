@@ -42,17 +42,17 @@ jobs:
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
       - name: Assets-Manifest commit
-        if: contains(github.event.pull_request.labels.*.name, 'javascript')
+        if: github.ref == 'refs/heads/master'
         run: |
           git config --local user.name "Tobias Schneider[bot]"
           git config --local user.email schneider@synyx.de
           git diff --quiet --name-only src/main/webapp/WEB-INF/assets-manifest.json || (git add src/main/webapp/WEB-INF/assets-manifest.json; git commit -m  "Adapt assets-manifest")
       - name: Assets-Manifest push
-        if: contains(github.event.pull_request.labels.*.name, 'javascript')
+        if: github.ref == 'refs/heads/master'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.AM_PAT }}
-          branch: ${{ github.head_ref }}
+          branch: ${{ github.ref }}
           repository: synyx/urlaubsverwaltung
       - name: Analyse with SonarCloud
         run: >
