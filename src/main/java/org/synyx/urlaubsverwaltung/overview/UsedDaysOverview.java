@@ -31,7 +31,7 @@ public class UsedDaysOverview {
     // used days for all the other vacation types except HOLIDAY
     private final UsedDays otherDays;
 
-    public UsedDaysOverview(List<Application> applications, int year, WorkDaysCountService calendarService) {
+    UsedDaysOverview(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
         this.holidayDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED);
