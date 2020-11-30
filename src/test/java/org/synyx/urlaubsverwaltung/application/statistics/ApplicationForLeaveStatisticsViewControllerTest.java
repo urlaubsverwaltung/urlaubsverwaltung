@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.application.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -42,10 +41,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @Mock
     private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
-
     @Mock
     private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
-
     @Mock
     private VacationTypeService vacationTypeService;
 
@@ -81,7 +78,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         perform(post("/web/application/statistics")
             .flashAttr("period", filterPeriod))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/statistics?from="+ year +"-01-01&to="+ year +"-12-31"));
+            .andExpect(redirectedUrl("/web/application/statistics?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.application.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationForLeaveStatisticsCsvExportService {
+class ApplicationForLeaveStatisticsCsvExportService {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
@@ -28,14 +27,13 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
     private final DateFormatAware dateFormatAware;
 
     @Autowired
-    public ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
+    ApplicationForLeaveStatisticsCsvExportService(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
         this.messageSource = messageSource;
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
     }
 
-    @Override
-    public void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
+    void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
         final String[] csvHeader = {getTranslation("person.data.firstName", "Vorname"),
             getTranslation("person.data.lastName", "Nachname"), "",
             getTranslation("applications.statistics.allowed", "genehmigt"),
@@ -87,8 +85,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
         }
     }
 
-    @Override
-    public String getFileName(FilterPeriod period) {
+    String getFileName(FilterPeriod period) {
         return String.format("%s_%s_%s.csv",
             getTranslation("applications.statistics", "Statistik"),
             period.getStartDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),

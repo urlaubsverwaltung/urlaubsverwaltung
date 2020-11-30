@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.application.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;

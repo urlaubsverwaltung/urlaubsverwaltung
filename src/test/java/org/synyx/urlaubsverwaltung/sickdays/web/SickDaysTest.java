@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.sickdays.web;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
 
 import java.math.BigDecimal;
 
@@ -10,7 +9,6 @@ import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
-
 
 class SickDaysTest {
 
@@ -25,7 +23,6 @@ class SickDaysTest {
             .containsEntry("TOTAL", ZERO);
     }
 
-
     @Test
     void ensureCanAddDays() {
 
@@ -37,7 +34,6 @@ class SickDaysTest {
         sickDays.addDays(WITH_AUB, ONE);
         sickDays.addDays(WITH_AUB, ONE);
         sickDays.addDays(WITH_AUB, ONE);
-
 
         assertThat(sickDays.getDays())
             .hasSize(2)

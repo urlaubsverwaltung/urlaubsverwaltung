@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.overview;
 
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 
@@ -13,7 +13,7 @@ public class UsedDays {
 
     private final Map<String, BigDecimal> days;
 
-    public UsedDays(ApplicationStatus... status) {
+    UsedDays(ApplicationStatus... status) {
 
         days = new HashMap<>();
 
@@ -26,7 +26,7 @@ public class UsedDays {
         return days;
     }
 
-    public void addDays(ApplicationStatus status, BigDecimal days) {
+    void addDays(ApplicationStatus status, BigDecimal days) {
 
         final String statusAsString = status.name();
 

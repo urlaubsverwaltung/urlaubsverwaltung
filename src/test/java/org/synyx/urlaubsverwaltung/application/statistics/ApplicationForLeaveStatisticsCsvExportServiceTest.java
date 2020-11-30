@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.application.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -24,9 +23,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
+class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
-    private ApplicationForLeaveStatisticsCsvExportServiceImpl sut;
+    private ApplicationForLeaveStatisticsCsvExportService sut;
 
     private MessageSource messageSource;
 
@@ -37,7 +36,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImplTest {
 
         final DateFormatAware dateFormatAware = new DateFormatAware();
 
-        sut = new ApplicationForLeaveStatisticsCsvExportServiceImpl(messageSource, vacationTypeService, dateFormatAware);
+        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService, dateFormatAware);
     }
 
     @Test
