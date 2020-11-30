@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
-
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 
 /**
  * This class describes an application for leave.
@@ -150,24 +150,18 @@ public class Application extends AbstractPersistable<Integer> {
 
     @Override
     public void setId(Integer id) { // NOSONAR - make it public instead of protected
-
         super.setId(id);
     }
 
     public String getAddress() {
-
         return address;
     }
 
-
     public void setAddress(String address) {
-
         this.address = address;
     }
 
-
     public LocalDate getApplicationDate() {
-
         if (this.applicationDate == null) {
             return null;
         }
@@ -175,12 +169,9 @@ public class Application extends AbstractPersistable<Integer> {
         return this.applicationDate;
     }
 
-
     public void setApplicationDate(LocalDate applicationDate) {
-
         this.applicationDate = applicationDate;
     }
-
 
     public LocalDate getCancelDate() {
 
@@ -191,12 +182,9 @@ public class Application extends AbstractPersistable<Integer> {
         return this.cancelDate;
     }
 
-
     public void setCancelDate(LocalDate cancelDate) {
-
         this.cancelDate = cancelDate;
     }
-
 
     public LocalDate getEditedDate() {
 
@@ -207,63 +195,43 @@ public class Application extends AbstractPersistable<Integer> {
         return this.editedDate;
     }
 
-
     public void setEditedDate(LocalDate editedDate) {
-
         this.editedDate = editedDate;
     }
 
-
     public Person getApplier() {
-
         return applier;
     }
 
-
     public void setApplier(Person applier) {
-
         this.applier = applier;
     }
 
-
     public Person getBoss() {
-
         return boss;
     }
 
-
     public void setBoss(Person boss) {
-
         this.boss = boss;
     }
 
-
     public Person getCanceller() {
-
         return canceller;
     }
 
-
     public void setCanceller(Person canceller) {
-
         this.canceller = canceller;
     }
 
-
     public boolean isTwoStageApproval() {
-
         return twoStageApproval;
     }
 
-
     public void setTwoStageApproval(boolean twoStageApproval) {
-
         this.twoStageApproval = twoStageApproval;
     }
 
-
     public LocalDate getEndDate() {
-
         if (this.endDate == null) {
             return null;
         }
@@ -271,87 +239,59 @@ public class Application extends AbstractPersistable<Integer> {
         return this.endDate;
     }
 
-
     public void setEndDate(LocalDate endDate) {
-
         this.endDate = endDate;
     }
 
-
     public Time getStartTime() {
-
         return startTime;
     }
 
-
     public void setStartTime(Time startTime) {
-
         this.startTime = startTime;
     }
 
-
     public Time getEndTime() {
-
         return endTime;
     }
 
-
     public void setEndTime(Time endTime) {
-
         this.endTime = endTime;
     }
 
-
     public DayLength getDayLength() {
-
         return dayLength;
     }
 
-
     public void setDayLength(DayLength dayLength) {
-
         this.dayLength = dayLength;
     }
 
-
     public Person getPerson() {
-
         return person;
     }
 
-
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
-
     public String getReason() {
-
         return reason;
     }
 
-
     public void setReason(String reason) {
-
         this.reason = reason;
     }
 
-
     public Person getHolidayReplacement() {
-
         return holidayReplacement;
     }
 
-
     public void setHolidayReplacement(Person holidayReplacement) {
-
         this.holidayReplacement = holidayReplacement;
     }
 
-
     public LocalDate getStartDate() {
-
         if (this.startDate == null) {
             return null;
         }
@@ -359,45 +299,31 @@ public class Application extends AbstractPersistable<Integer> {
         return this.startDate;
     }
 
-
     public void setStartDate(LocalDate startDate) {
-
         this.startDate = startDate;
     }
 
-
     public ApplicationStatus getStatus() {
-
         return status;
     }
 
-
     public void setStatus(ApplicationStatus status) {
-
         this.status = status;
     }
 
-
     public VacationType getVacationType() {
-
         return vacationType;
     }
 
-
     public void setVacationType(VacationType vacationType) {
-
         this.vacationType = vacationType;
     }
 
-
     public boolean isFormerlyAllowed() {
-
-        return hasStatus(ApplicationStatus.CANCELLED);
+        return hasStatus(CANCELLED);
     }
 
-
     public LocalDate getRemindDate() {
-
         if (this.remindDate == null) {
             return null;
         }
@@ -405,33 +331,23 @@ public class Application extends AbstractPersistable<Integer> {
         return this.remindDate;
     }
 
-
     public void setRemindDate(LocalDate remindDate) {
-
         this.remindDate = remindDate;
     }
 
-
     public boolean isTeamInformed() {
-
         return teamInformed;
     }
 
-
     public void setTeamInformed(boolean teamInformed) {
-
         this.teamInformed = teamInformed;
     }
 
-
     public BigDecimal getHours() {
-
         return hours;
     }
 
-
     public void setHours(BigDecimal hours) {
-
         this.hours = hours;
     }
 
@@ -468,10 +384,8 @@ public class Application extends AbstractPersistable<Integer> {
      * @return {@code true} if the application for leave has the given status, else {@code false}
      */
     public boolean hasStatus(ApplicationStatus status) {
-
         return getStatus() == status;
     }
-
 
     /**
      * Return period of time of the application for leave.
@@ -479,10 +393,8 @@ public class Application extends AbstractPersistable<Integer> {
      * @return period of time, never {@code null}
      */
     public Period getPeriod() {
-
         return new Period(getStartDate(), getEndDate(), getDayLength());
     }
-
 
     /**
      * Get start of application for leave as date with time.
@@ -491,8 +403,8 @@ public class Application extends AbstractPersistable<Integer> {
      */
     public ZonedDateTime getStartDateWithTime() {
 
-        LocalDate date = getStartDate();
-        Time time = getStartTime();
+        final LocalDate date = getStartDate();
+        final Time time = getStartTime();
 
         if (date != null && time != null) {
             return ZonedDateTime.of(date, time.toLocalTime(), UTC);
@@ -501,7 +413,6 @@ public class Application extends AbstractPersistable<Integer> {
         return null;
     }
 
-
     /**
      * Get end of application for leave as date with time.
      *
@@ -509,8 +420,8 @@ public class Application extends AbstractPersistable<Integer> {
      */
     public ZonedDateTime getEndDateWithTime() {
 
-        LocalDate date = getEndDate();
-        Time time = getEndTime();
+        final LocalDate date = getEndDate();
+        final Time time = getEndTime();
 
         if (date != null && time != null) {
             return ZonedDateTime.of(date, time.toLocalTime(), UTC);

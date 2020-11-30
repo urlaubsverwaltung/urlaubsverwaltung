@@ -29,5 +29,4 @@ class CompanyCalendar extends Calendar {
     public void setPerson(Person person) {
         this.person = person;
     }
-
 }

@@ -36,7 +36,6 @@ public class Account extends AbstractPersistable<Integer> {
     private String comment;
 
     public Account() {
-
         /* OK */
     }
 
@@ -53,57 +52,46 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
     public Person getPerson() {
-
         return person;
     }
 
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
     public BigDecimal getAnnualVacationDays() {
-
         return annualVacationDays;
     }
 
     public void setAnnualVacationDays(BigDecimal annualVacationDays) {
-
         this.annualVacationDays = annualVacationDays;
     }
 
     public BigDecimal getRemainingVacationDays() {
-
         return remainingVacationDays;
     }
 
     public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
-
         this.remainingVacationDays = remainingVacationDays;
     }
 
     public BigDecimal getRemainingVacationDaysNotExpiring() {
-
         return remainingVacationDaysNotExpiring;
     }
 
     public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
-
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
     public BigDecimal getVacationDays() {
-
         return vacationDays;
     }
 
     public void setVacationDays(BigDecimal vacationDays) {
-
         this.vacationDays = vacationDays;
     }
 
     public LocalDate getValidFrom() {
-
         if (this.validFrom == null) {
             return null;
         }
@@ -112,12 +100,10 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
     public void setValidFrom(LocalDate validFrom) {
-
         this.validFrom = validFrom;
     }
 
     public LocalDate getValidTo() {
-
         if (this.validTo == null) {
             return null;
         }
@@ -126,12 +112,10 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
     public void setValidTo(LocalDate validTo) {
-
         this.validTo = validTo;
     }
 
     public int getYear() {
-
         return this.validFrom.getYear();
     }
 

@@ -4,11 +4,11 @@ import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.Clock;
 
+import static javax.persistence.EnumType.STRING;
 
 /**
  * This class describes the information that every step of an {@link Application}'s lifecycle contains.
@@ -21,7 +21,7 @@ public class ApplicationComment extends AbstractComment {
     @ManyToOne
     private Application application;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private ApplicationAction action;
 
     protected ApplicationComment() {
@@ -38,25 +38,18 @@ public class ApplicationComment extends AbstractComment {
     }
 
     public Application getApplication() {
-
         return application;
     }
 
-
     public void setApplication(Application application) {
-
         this.application = application;
     }
 
-
     public ApplicationAction getAction() {
-
         return action;
     }
 
-
     public void setAction(ApplicationAction action) {
-
         this.action = action;
     }
 }

@@ -23,39 +23,27 @@ public class VacationType extends AbstractPersistable<Integer> {
 
     @Override
     public void setId(Integer id) { // NOSONAR - make it public instead of protected
-
         super.setId(id);
     }
 
-
     public VacationCategory getCategory() {
-
         return category;
     }
 
-
     public void setCategory(VacationCategory category) {
-
         this.category = category;
     }
 
-
     public boolean isOfCategory(VacationCategory category) {
-
         Assert.notNull(category, "Vacation category must be given");
-
         return getCategory().equals(category);
     }
 
-
     public String getMessageKey() {
-
         return messageKey;
     }
 
-
     public void setMessageKey(String messageKey) {
-
         this.messageKey = messageKey;
     }
 
