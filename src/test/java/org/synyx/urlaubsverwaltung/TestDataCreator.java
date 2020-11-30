@@ -228,9 +228,6 @@ public final class TestDataCreator {
     }
 
     public static AbsenceMapping anyAbsenceMapping() {
-        AbsenceMapping absenceMapping = new AbsenceMapping();
-        absenceMapping.setEventId("eventId");
-        absenceMapping.setAbsenceType(AbsenceType.VACATION);
-        return absenceMapping;
+        return new AbsenceMapping(null, AbsenceType.VACATION, "eventId");
     }
 }

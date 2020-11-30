@@ -34,6 +34,10 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -83,17 +87,12 @@ class OverviewViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
-    private Person person;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
             applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, clock);
-
-        person = new Person();
-        person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
     }
 
     @Test
@@ -276,23 +275,18 @@ class OverviewViewControllerTest {
     }
 
     private Account someAccount() {
-        Account account = new Account();
-        account.setPerson(somePerson());
-        account.setValidFrom(LocalDate.now().minusDays(10));
-        account.setValidTo(LocalDate.now().plusDays(10));
-
-        return account;
+        return new Account(somePerson(), LocalDate.now().minusDays(10), LocalDate.now().plusDays(10), TEN, TEN, TEN, "comment");
     }
 
     private VacationDaysLeft someVacationDaysLeft() {
 
         return VacationDaysLeft.builder()
-            .withAnnualVacation(BigDecimal.TEN)
-            .withRemainingVacation(BigDecimal.TEN)
-            .forUsedDaysBeforeApril(BigDecimal.ZERO)
-            .forUsedDaysAfterApril(BigDecimal.ZERO)
-            .withVacationDaysUsedNextYear(BigDecimal.ZERO)
-            .notExpiring(BigDecimal.ZERO)
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(TEN)
+            .forUsedDaysBeforeApril(ZERO)
+            .forUsedDaysAfterApril(ZERO)
+            .withVacationDaysUsedNextYear(ZERO)
+            .notExpiring(ZERO)
             .build();
     }
 

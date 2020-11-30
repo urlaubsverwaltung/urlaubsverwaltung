@@ -35,7 +35,7 @@ public class Account extends AbstractPersistable<Integer> {
 
     private String comment;
 
-    public Account() {
+    protected Account() {
         /* OK */
     }
 

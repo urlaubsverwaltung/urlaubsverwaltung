@@ -24,7 +24,7 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
     @Column(nullable = false)
     private String eventId;
 
-    public AbsenceMapping() {
+    protected AbsenceMapping() {
         /* OK */
     }
 

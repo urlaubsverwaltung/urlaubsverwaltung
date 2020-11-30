@@ -13,7 +13,7 @@ class CompanyCalendar extends Calendar {
     @OneToOne
     private Person person;
 
-    public CompanyCalendar() {
+    protected CompanyCalendar() {
         // for hibernate - do not use this
     }
 

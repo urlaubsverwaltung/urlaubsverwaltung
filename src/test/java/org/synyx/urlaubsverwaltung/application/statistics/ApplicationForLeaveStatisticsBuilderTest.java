@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.TEN;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
@@ -94,11 +97,13 @@ class ApplicationForLeaveStatisticsBuilderTest {
         LocalDate to = LocalDate.of(2014, 12, 31);
 
         Person person = new Person();
-        Account account = new Account();
+
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
-        when(vacationDaysService.calculateTotalLeftVacationDays(eq(account)))
-            .thenReturn(BigDecimal.TEN);
+        when(vacationDaysService.calculateTotalLeftVacationDays(eq(account))).thenReturn(BigDecimal.TEN);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
 
         Application holidayWaiting = TestDataCreator.anyFullDayApplication(person);
@@ -175,7 +180,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
         LocalDate to = LocalDate.of(2015, 12, 31);
 
         Person person = new Person();
-        Account account = new Account();
+        final LocalDate validFrom = LocalDate.of(2015, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2015, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         when(vacationDaysService.calculateTotalLeftVacationDays(eq(account)))
