@@ -4,8 +4,9 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
+import static javax.persistence.EnumType.STRING;
 
 
 /**
@@ -17,7 +18,7 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
     @Column(nullable = false)
     private Integer absenceId;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(nullable = false)
     private AbsenceType absenceType;
 

@@ -3,10 +3,11 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.Clock;
+
+import static javax.persistence.EnumType.STRING;
 
 /**
  * Comment to a sick note containing detailed information like date of comment or commenting person.
@@ -17,7 +18,7 @@ public class SickNoteComment extends AbstractComment {
     @ManyToOne
     private SickNote sickNote;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private SickNoteAction action;
 
     protected SickNoteComment() {

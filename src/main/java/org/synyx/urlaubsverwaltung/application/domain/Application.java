@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -16,6 +15,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
+import static javax.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 
 /**
@@ -90,7 +90,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Day length of the vacation period, e.g. full day, morning, noon.
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private DayLength dayLength;
 
     /**
@@ -133,7 +133,7 @@ public class Application extends AbstractPersistable<Integer> {
     /**
      * Describes the current status of the application for leave (e.g. allowed, rejected etc.)
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private ApplicationStatus status;
 
     /**

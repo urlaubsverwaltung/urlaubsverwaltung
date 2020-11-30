@@ -4,8 +4,9 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
+import static javax.persistence.EnumType.STRING;
 
 
 /**
@@ -16,7 +17,7 @@ import javax.persistence.Enumerated;
 @Entity
 public class VacationType extends AbstractPersistable<Integer> {
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private VacationCategory category;
 
     private String messageKey;
