@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-class ApplicationForLeaveStatisticsCsvExportServiceImpl {
+class ApplicationForLeaveStatisticsCsvExportService {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
@@ -27,7 +27,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl {
     private final DateFormatAware dateFormatAware;
 
     @Autowired
-    ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
+    ApplicationForLeaveStatisticsCsvExportService(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
         this.messageSource = messageSource;
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;

@@ -8,9 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
-import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsServiceImpl;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
@@ -23,9 +20,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @ExtendWith(MockitoExtension.class)
-class ApplicationForLeaveStatisticsServiceImplTest {
+class ApplicationForLeaveStatisticsServiceTest {
 
-    private ApplicationForLeaveStatisticsServiceImpl sut;
+    private ApplicationForLeaveStatisticsService sut;
 
     @Mock
     private PersonService personService;
@@ -36,7 +33,7 @@ class ApplicationForLeaveStatisticsServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsServiceImpl(personService, departmentService, applicationForLeaveStatisticsBuilder);
+        sut = new ApplicationForLeaveStatisticsService(personService, departmentService, applicationForLeaveStatisticsBuilder);
     }
 
     @Test
