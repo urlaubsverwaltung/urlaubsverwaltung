@@ -162,10 +162,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getApplicationDate() {
-        if (this.applicationDate == null) {
-            return null;
-        }
-
         return this.applicationDate;
     }
 
@@ -174,11 +170,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getCancelDate() {
-
-        if (this.cancelDate == null) {
-            return null;
-        }
-
         return this.cancelDate;
     }
 
@@ -187,11 +178,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getEditedDate() {
-
-        if (this.editedDate == null) {
-            return null;
-        }
-
         return this.editedDate;
     }
 
@@ -232,10 +218,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getEndDate() {
-        if (this.endDate == null) {
-            return null;
-        }
-
         return this.endDate;
     }
 
@@ -292,10 +274,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getStartDate() {
-        if (this.startDate == null) {
-            return null;
-        }
-
         return this.startDate;
     }
 
@@ -324,10 +302,6 @@ public class Application extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getRemindDate() {
-        if (this.remindDate == null) {
-            return null;
-        }
-
         return this.remindDate;
     }
 

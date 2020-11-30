@@ -92,10 +92,6 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getValidFrom() {
-        if (this.validFrom == null) {
-            return null;
-        }
-
         return this.validFrom;
     }
 
@@ -104,10 +100,6 @@ public class Account extends AbstractPersistable<Integer> {
     }
 
     public LocalDate getValidTo() {
-        if (this.validTo == null) {
-            return null;
-        }
-
         return this.validTo;
     }
 
