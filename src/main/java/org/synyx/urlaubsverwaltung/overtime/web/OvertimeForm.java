@@ -15,15 +15,10 @@ import java.time.format.DateTimeFormatter;
 public class OvertimeForm {
 
     private Integer id;
-
     private Person person;
-
     private LocalDate startDate;
-
     private LocalDate endDate;
-
     private BigDecimal numberOfHours;
-
     private String comment;
 
     OvertimeForm() {
@@ -31,14 +26,11 @@ public class OvertimeForm {
         // OK
     }
 
-
     public OvertimeForm(Person person) {
 
         Assert.notNull(person, "Person must be given.");
-
         this.person = person;
     }
-
 
     public OvertimeForm(Overtime overtime) {
 
@@ -52,25 +44,18 @@ public class OvertimeForm {
     }
 
     public Integer getId() {
-
         return id;
     }
 
-
     public void setId(Integer id) {
-
         this.id = id;
     }
 
-
     public Person getPerson() {
-
         return person;
     }
 
-
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
@@ -83,13 +68,10 @@ public class OvertimeForm {
     }
 
     public LocalDate getStartDate() {
-
         return startDate;
     }
 
-
     public void setStartDate(LocalDate startDate) {
-
         this.startDate = startDate;
     }
 
@@ -101,51 +83,35 @@ public class OvertimeForm {
         return endDate.format(DateTimeFormatter.ISO_DATE);
     }
 
-
     public LocalDate getEndDate() {
-
         return endDate;
     }
 
-
     public void setEndDate(LocalDate endDate) {
-
         this.endDate = endDate;
     }
 
-
     public BigDecimal getNumberOfHours() {
-
         return numberOfHours;
     }
 
-
     public void setNumberOfHours(BigDecimal numberOfHours) {
-
         this.numberOfHours = numberOfHours;
     }
 
-
     public String getComment() {
-
         return comment;
     }
 
-
     public void setComment(String comment) {
-
         this.comment = comment;
     }
 
-
     public Overtime generateOvertime() {
-
         return new Overtime(getPerson(), getStartDate(), getEndDate(), getNumberOfHours());
     }
 
-
     public void updateOvertime(Overtime overtime) {
-
         overtime.setPerson(getPerson());
         overtime.setHours(getNumberOfHours());
         overtime.setStartDate(getStartDate());
