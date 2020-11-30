@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.math.BigDecimal.ZERO;
 
 /**
  * Encapsulates information about a person and the corresponding vacation days information (how many applications for
@@ -24,8 +25,8 @@ public class ApplicationForLeaveStatistics {
     private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
-    private BigDecimal leftVacationDays = BigDecimal.ZERO;
-    private BigDecimal leftOvertime = BigDecimal.ZERO;
+    private BigDecimal leftVacationDays = ZERO;
+    private BigDecimal leftOvertime = ZERO;
 
     public ApplicationForLeaveStatistics(Person person, VacationTypeService vacationTypeService) {
 
@@ -34,21 +35,18 @@ public class ApplicationForLeaveStatistics {
         this.person = person;
 
         for (VacationType vacationType : vacationTypeService.getVacationTypes()) {
-            waitingVacationDays.put(vacationType, BigDecimal.ZERO);
-            allowedVacationDays.put(vacationType, BigDecimal.ZERO);
+            waitingVacationDays.put(vacationType, ZERO);
+            allowedVacationDays.put(vacationType, ZERO);
         }
     }
 
     public Person getPerson() {
-
         return person;
     }
 
-
     public BigDecimal getTotalWaitingVacationDays() {
 
-        BigDecimal total = BigDecimal.ZERO;
-
+        BigDecimal total = ZERO;
         for (BigDecimal days : getWaitingVacationDays().values()) {
             total = total.add(days);
         }
@@ -56,11 +54,9 @@ public class ApplicationForLeaveStatistics {
         return total;
     }
 
-
     public BigDecimal getTotalAllowedVacationDays() {
 
-        BigDecimal total = BigDecimal.ZERO;
-
+        BigDecimal total = ZERO;
         for (BigDecimal days : getAllowedVacationDays().values()) {
             total = total.add(days);
         }
@@ -68,24 +64,17 @@ public class ApplicationForLeaveStatistics {
         return total;
     }
 
-
     public BigDecimal getLeftVacationDays() {
-
         return leftVacationDays;
     }
 
-
     public Map<VacationType, BigDecimal> getWaitingVacationDays() {
-
         return waitingVacationDays;
     }
 
-
     public Map<VacationType, BigDecimal> getAllowedVacationDays() {
-
         return allowedVacationDays;
     }
-
 
     public void setLeftVacationDays(BigDecimal leftVacationDays) {
 
@@ -93,7 +82,6 @@ public class ApplicationForLeaveStatistics {
 
         this.leftVacationDays = leftVacationDays;
     }
-
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
 
@@ -105,7 +93,6 @@ public class ApplicationForLeaveStatistics {
         getWaitingVacationDays().put(vacationType, currentWaitingVacationDays.add(waitingVacationDays));
     }
 
-
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
 
         Assert.notNull(vacationType, VACATION_TYPE_MUST_BE_GIVEN);
@@ -116,7 +103,6 @@ public class ApplicationForLeaveStatistics {
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 
-
     public void setLeftOvertime(BigDecimal hours) {
 
         Assert.notNull(hours, "Hours must be given.");
@@ -126,7 +112,6 @@ public class ApplicationForLeaveStatistics {
 
 
     public BigDecimal getLeftOvertime() {
-
         return leftOvertime;
     }
 }

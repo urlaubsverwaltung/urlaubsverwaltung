@@ -5,13 +5,14 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @Service
 class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveStatisticsService {
@@ -30,18 +31,15 @@ class ApplicationForLeaveStatisticsServiceImpl implements ApplicationForLeaveSta
 
     @Override
     public List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
-        List<Person> persons = getRelevantPersons();
-
-        return persons.stream()
+        return getRelevantPersons().stream()
             .map(person -> applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate()))
             .collect(Collectors.toList());
     }
 
     private List<Person> getRelevantPersons() {
 
-        Person signedInUser = personService.getSignedInUser();
-
-        if (signedInUser.hasRole(Role.DEPARTMENT_HEAD)) {
+        final Person signedInUser = personService.getSignedInUser();
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             return departmentService.getManagedMembersOfDepartmentHead(signedInUser);
         }
 

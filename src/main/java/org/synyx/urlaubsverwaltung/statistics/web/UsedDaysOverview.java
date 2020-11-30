@@ -3,16 +3,20 @@ package org.synyx.urlaubsverwaltung.statistics.web;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * Object to abstract how many days have been used in a year.
@@ -30,19 +34,16 @@ public class UsedDaysOverview {
     public UsedDaysOverview(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
-        this.holidayDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED,
-            ApplicationStatus.TEMPORARY_ALLOWED);
-        this.otherDays = new UsedDays(ApplicationStatus.WAITING, ApplicationStatus.ALLOWED,
-            ApplicationStatus.TEMPORARY_ALLOWED);
+        this.holidayDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED);
+        this.otherDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED);
 
         for (Application application : applications) {
-            ApplicationStatus status = application.getStatus();
+            if (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED)) {
 
-            if (application.hasStatus(ApplicationStatus.WAITING) || application.hasStatus(ApplicationStatus.ALLOWED)
-                || application.hasStatus(ApplicationStatus.TEMPORARY_ALLOWED)) {
-                BigDecimal days = getVacationDays(application, calendarService);
+                final BigDecimal days = getVacationDays(application, calendarService);
+                final ApplicationStatus status = application.getStatus();
 
-                if (application.getVacationType().isOfCategory(VacationCategory.HOLIDAY)) {
+                if (application.getVacationType().isOfCategory(HOLIDAY)) {
                     this.holidayDays.addDays(status, days);
                 } else {
                     this.otherDays.addDays(status, days);
@@ -52,31 +53,27 @@ public class UsedDaysOverview {
     }
 
     public UsedDays getHolidayDays() {
-
         return holidayDays;
     }
 
-
     public UsedDays getOtherDays() {
-
         return otherDays;
     }
 
-
     private BigDecimal getVacationDays(Application application, WorkDaysCountService calendarService) {
 
-        int yearOfStartDate = application.getStartDate().getYear();
-        int yearOfEndDate = application.getEndDate().getYear();
+        final int yearOfStartDate = application.getStartDate().getYear();
+        final int yearOfEndDate = application.getEndDate().getYear();
 
         Assert.isTrue(yearOfStartDate == this.year || yearOfEndDate == this.year,
             "Either start date or end date must be in the given year.");
 
-        DayLength dayLength = application.getDayLength();
-        Person person = application.getPerson();
+        final DayLength dayLength = application.getDayLength();
+        final Person person = application.getPerson();
 
         if (yearOfStartDate != yearOfEndDate) {
-            LocalDate startDate = getStartDateForCalculation(application);
-            LocalDate endDate = getEndDateForCalculation(application);
+            final LocalDate startDate = getStartDateForCalculation(application);
+            final LocalDate endDate = getEndDateForCalculation(application);
 
             return calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
         }
@@ -84,21 +81,19 @@ public class UsedDaysOverview {
         return calendarService.getWorkDaysCount(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
-
     private LocalDate getStartDateForCalculation(Application application) {
 
         if (application.getStartDate().getYear() != this.year) {
-            return DateUtil.getFirstDayOfYear(application.getEndDate().getYear());
+            return getFirstDayOfYear(application.getEndDate().getYear());
         }
 
         return application.getStartDate();
     }
 
-
     private LocalDate getEndDateForCalculation(Application application) {
 
         if (application.getEndDate().getYear() != this.year) {
-            return DateUtil.getLastDayOfYear(application.getStartDate().getYear());
+            return getLastDayOfYear(application.getStartDate().getYear());
         }
 
         return application.getEndDate();

@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Represents number of days for specific application states.
  */
@@ -24,21 +23,19 @@ public class UsedDays {
     }
 
     public Map<String, BigDecimal> getDays() {
-
         return days;
     }
 
-
     public void addDays(ApplicationStatus status, BigDecimal days) {
 
-        String statusAsString = status.name();
+        final String statusAsString = status.name();
 
         if (!this.days.containsKey(statusAsString)) {
             // this status has not been used in initialization, so it's not supported here
             throw new UnsupportedOperationException("Application status " + statusAsString + " not allowed here");
         }
 
-        BigDecimal addedDays = this.days.get(statusAsString).add(days);
+        final BigDecimal addedDays = this.days.get(statusAsString).add(days);
         this.days.put(statusAsString, addedDays);
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
-import org.synyx.urlaubsverwaltung.security.SecurityRules;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -23,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
  * Controller to generate applications for leave statistics.
@@ -55,7 +56,7 @@ public class ApplicationForLeaveStatisticsViewController {
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
     }
 
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @PreAuthorize(IS_PRIVILEGED_USER)
     @PostMapping
     public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period) {
 
@@ -65,7 +66,7 @@ public class ApplicationForLeaveStatisticsViewController {
         return "redirect:" + STATISTICS_REL + "?from=" + startDateIsoString + "&to=" + endDateIsoString;
     }
 
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
     public String applicationForLeaveStatistics(@RequestParam(value = "from", defaultValue = "") String from,
                                                 @RequestParam(value = "to", defaultValue = "") String to,
@@ -81,18 +82,19 @@ public class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
-        List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-
+        model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
+
+        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
         model.addAttribute("statistics", statistics);
-        model.addAttribute("period", period);
+
         model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
 
         return "application/app_statistics";
     }
 
-    @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
+    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
     public String downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
                               @RequestParam(value = "to", defaultValue = "") String to,
@@ -110,9 +112,9 @@ public class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
-        List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
+        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
 
-        String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
+        final String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);

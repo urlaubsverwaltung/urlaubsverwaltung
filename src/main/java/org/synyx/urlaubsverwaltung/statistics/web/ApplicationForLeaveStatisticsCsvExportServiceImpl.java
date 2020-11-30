@@ -48,8 +48,8 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
         final String startDateString = dateFormatAware.format(period.getStartDate());
         final String endDateString = dateFormatAware.format(period.getEndDate());
 
-        final String headerNote = getTranslation("absence.period", "Zeitraum") + ": " + startDateString + " - "
-            + endDateString;
+        final String headerNote = getTranslation("absence.period", "Zeitraum")
+            + ": " + startDateString + " - " + endDateString;
 
         final DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
         newSymbols.setDecimalSeparator(',');
@@ -67,7 +67,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
 
             final String[] csvRow = new String[csvHeader.length];
-
             csvRow[0] = applicationForLeaveStatistics.getPerson().getFirstName();
             csvRow[1] = applicationForLeaveStatistics.getPerson().getLastName();
             csvRow[2] = translatedTextTotal;
@@ -75,23 +74,17 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
             csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
             csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
             csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftOvertime());
-
             csvWriter.writeNext(csvRow);
 
             for (VacationType type : vacationTypeService.getVacationTypes()) {
 
                 final String[] csvRowVacationTypes = new String[csvHeader.length];
-
                 csvRowVacationTypes[2] = getTranslation(type.getMessageKey());
-                csvRowVacationTypes[3] = decimalFormat
-                    .format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
-                csvRowVacationTypes[4] = decimalFormat
-                    .format(applicationForLeaveStatistics.getWaitingVacationDays().get(type));
-
+                csvRowVacationTypes[3] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays().get(type));
+                csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays().get(type));
                 csvWriter.writeNext(csvRowVacationTypes);
             }
         }
-
     }
 
     @Override
@@ -103,7 +96,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
     }
 
     private String getTranslation(String key, Object... args) {
-
         return messageSource.getMessage(key, args, LOCALE);
     }
 }
