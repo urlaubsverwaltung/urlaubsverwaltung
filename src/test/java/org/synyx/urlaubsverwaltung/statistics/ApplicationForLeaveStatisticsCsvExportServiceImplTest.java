@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +7,7 @@ import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsCsvExportServiceImpl;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 

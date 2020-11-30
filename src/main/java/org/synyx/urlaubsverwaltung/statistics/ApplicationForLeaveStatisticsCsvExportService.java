@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;

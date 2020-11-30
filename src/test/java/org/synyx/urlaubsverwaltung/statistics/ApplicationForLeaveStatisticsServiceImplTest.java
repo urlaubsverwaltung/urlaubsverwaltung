@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.statistics;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatistics;
 import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsBuilder;
+import org.synyx.urlaubsverwaltung.statistics.ApplicationForLeaveStatisticsServiceImpl;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
