@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics;
+package org.synyx.urlaubsverwaltung.application.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +78,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         perform(post("/web/application/statistics")
             .flashAttr("period", filterPeriod))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/statistics?from="+ year +"-01-01&to="+ year +"-12-31"));
+            .andExpect(redirectedUrl("/web/application/statistics?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
     @Test
