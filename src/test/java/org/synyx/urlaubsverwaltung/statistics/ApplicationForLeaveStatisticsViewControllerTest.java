@@ -40,11 +40,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     private ApplicationForLeaveStatisticsViewController sut;
 
     @Mock
-    private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
-
+    private ApplicationForLeaveStatisticsServiceImpl applicationForLeaveStatisticsService;
     @Mock
-    private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
-
+    private ApplicationForLeaveStatisticsCsvExportServiceImpl applicationForLeaveStatisticsCsvExportService;
     @Mock
     private VacationTypeService vacationTypeService;
 

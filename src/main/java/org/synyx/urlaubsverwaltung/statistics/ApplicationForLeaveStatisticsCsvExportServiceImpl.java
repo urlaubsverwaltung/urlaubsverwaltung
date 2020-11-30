@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationForLeaveStatisticsCsvExportService {
+class ApplicationForLeaveStatisticsCsvExportServiceImpl {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
@@ -27,14 +27,13 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
     private final DateFormatAware dateFormatAware;
 
     @Autowired
-    public ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
+    ApplicationForLeaveStatisticsCsvExportServiceImpl(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
         this.messageSource = messageSource;
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
     }
 
-    @Override
-    public void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
+    void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
         final String[] csvHeader = {getTranslation("person.data.firstName", "Vorname"),
             getTranslation("person.data.lastName", "Nachname"), "",
             getTranslation("applications.statistics.allowed", "genehmigt"),
@@ -86,8 +85,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceImpl implements ApplicationFo
         }
     }
 
-    @Override
-    public String getFileName(FilterPeriod period) {
+    String getFileName(FilterPeriod period) {
         return String.format("%s_%s_%s.csv",
             getTranslation("applications.statistics", "Statistik"),
             period.getStartDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT)),

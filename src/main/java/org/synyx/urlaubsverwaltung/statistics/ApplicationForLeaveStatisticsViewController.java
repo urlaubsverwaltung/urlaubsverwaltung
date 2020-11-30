@@ -33,15 +33,15 @@ public class ApplicationForLeaveStatisticsViewController {
 
     static final String STATISTICS_REL = "/web/application/statistics";
 
-    private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
-    private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
+    private final ApplicationForLeaveStatisticsServiceImpl applicationForLeaveStatisticsService;
+    private final ApplicationForLeaveStatisticsCsvExportServiceImpl applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;
     private final DateFormatAware dateFormatAware;
 
     @Autowired
     public ApplicationForLeaveStatisticsViewController(
-        ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
-        ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
+        ApplicationForLeaveStatisticsServiceImpl applicationForLeaveStatisticsService,
+        ApplicationForLeaveStatisticsCsvExportServiceImpl applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
 
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
