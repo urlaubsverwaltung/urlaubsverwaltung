@@ -4,13 +4,14 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+
+import static javax.persistence.EnumType.STRING;
 
 @Entity
 public class SickNoteType extends AbstractPersistable<Integer> {
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private SickNoteCategory category;
 
     private String messageKey;

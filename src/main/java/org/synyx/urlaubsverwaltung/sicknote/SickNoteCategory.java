@@ -12,12 +12,10 @@ public enum SickNoteCategory {
     private final String messageKey;
 
     SickNoteCategory(String messageKey) {
-
         this.messageKey = messageKey;
     }
 
     public String getMessageKey() {
-
         return messageKey;
     }
 }

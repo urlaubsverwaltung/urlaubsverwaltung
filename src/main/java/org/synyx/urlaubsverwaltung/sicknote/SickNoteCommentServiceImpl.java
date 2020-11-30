@@ -9,7 +9,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
 
-
 /**
  * Implementation for {@link SickNoteCommentService}.
  */
@@ -34,7 +33,6 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text) {
 
         final SickNoteComment comment = new SickNoteComment(clock);
-
         comment.setSickNote(sickNote);
         comment.setAction(action);
         comment.setPerson(author);
@@ -42,7 +40,6 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
         return sickNoteCommentRepository.save(comment);
     }
-
 
     @Override
     public List<SickNoteComment> getCommentsBySickNote(SickNote sickNote) {

@@ -34,31 +34,25 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     @Override
     public Optional<String> addAbsence(Absence absence) {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
-
-        return calendarService.getCalendarProvider().add(absence, calendarSettings);
+        return calendarService.getCalendarProvider().add(absence, getCalendarSettings());
     }
-
 
     @Override
     public void update(Absence absence, String eventId) {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
-
-        calendarService.getCalendarProvider().update(absence, eventId, calendarSettings);
+        calendarService.getCalendarProvider().update(absence, eventId, getCalendarSettings());
     }
-
 
     @Override
     public void deleteAbsence(String eventId) {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
-
-        calendarService.getCalendarProvider().delete(eventId, calendarSettings);
+        calendarService.getCalendarProvider().delete(eventId, getCalendarSettings());
     }
 
     @Override
     public void checkCalendarSyncSettings() {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
+        calendarService.getCalendarProvider().checkCalendarSyncSettings(getCalendarSettings());
+    }
 
-        calendarService.getCalendarProvider().checkCalendarSyncSettings(calendarSettings);
+    private CalendarSettings getCalendarSettings() {
+        return this.settingsService.getSettings().getCalendarSettings();
     }
 }

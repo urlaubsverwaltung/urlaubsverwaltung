@@ -15,7 +15,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
-
 @Service
 public class SickNoteMailService {
 
@@ -27,7 +26,6 @@ public class SickNoteMailService {
 
     @Autowired
     public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
-
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
@@ -38,7 +36,7 @@ public class SickNoteMailService {
      */
     void sendEndOfSickPayNotification() {
 
-        List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
+        final List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
 
         LOG.info("Found {} sick notes reaching end of sick pay", sickNotes.size());
 

@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Service for handling {@link SickNote}s.
  */
@@ -19,7 +18,6 @@ public interface SickNoteService {
      */
     void save(SickNote sickNote);
 
-
     /**
      * Gets the sick note with the given id.
      *
@@ -27,7 +25,6 @@ public interface SickNoteService {
      * @return optional sick note matching the given id
      */
     Optional<SickNote> getById(Integer id);
-
 
     /**
      * Get all the sick notes of the given person that are in the given period.
@@ -39,7 +36,6 @@ public interface SickNoteService {
      */
     List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
 
-
     /**
      * Get all the sick notes that are in the given period.
      *
@@ -48,7 +44,6 @@ public interface SickNoteService {
      * @return all the sick notes matching the given parameters
      */
     List<SickNote> getByPeriod(LocalDate from, LocalDate to);
-
 
     /**
      * Get all the sick notes that are reaching the end of sick pay.

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 class SickNoteTypeServiceImpl implements SickNoteTypeService {
 
@@ -13,13 +12,11 @@ class SickNoteTypeServiceImpl implements SickNoteTypeService {
 
     @Autowired
     public SickNoteTypeServiceImpl(SickNoteTypeRepository sickNoteTypeRepository) {
-
         this.sickNoteTypeRepository = sickNoteTypeRepository;
     }
 
     @Override
     public List<SickNoteType> getSickNoteTypes() {
-
         return this.sickNoteTypeRepository.findAll();
     }
 }

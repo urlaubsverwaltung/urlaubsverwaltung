@@ -7,7 +7,7 @@ public class SickNoteSettingsValidator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
 
-    private SickNoteSettingsValidator(){
+    private SickNoteSettingsValidator() {
         // private
     }
 

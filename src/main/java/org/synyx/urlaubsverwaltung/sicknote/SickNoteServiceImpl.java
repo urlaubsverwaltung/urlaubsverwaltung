@@ -12,7 +12,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Implementation for {@link org.synyx.urlaubsverwaltung.sicknote.SickNoteService}.
  */
@@ -32,31 +31,23 @@ class SickNoteServiceImpl implements SickNoteService {
 
     @Override
     public void save(SickNote sickNote) {
-
         sickNoteRepository.save(sickNote);
     }
 
-
     @Override
     public Optional<SickNote> getById(Integer id) {
-
         return sickNoteRepository.findById(id);
     }
 
-
     @Override
     public List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to) {
-
         return sickNoteRepository.findByPersonAndPeriod(person, from, to);
     }
 
-
     @Override
     public List<SickNote> getByPeriod(LocalDate from, LocalDate to) {
-
         return sickNoteRepository.findByPeriod(from, to);
     }
-
 
     @Override
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
@@ -73,25 +64,21 @@ class SickNoteServiceImpl implements SickNoteService {
 
     @Override
     public List<SickNote> getAllActiveByYear(int year) {
-
         return sickNoteRepository.findAllActiveByYear(year);
     }
 
     @Override
     public Long getNumberOfPersonsWithMinimumOneSickNote(int year) {
-
         return sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(year);
     }
 
     @Override
     public List<SickNote> getForStates(List<SickNoteStatus> sickNoteStatuses) {
-
         return sickNoteRepository.findByStatusIn(sickNoteStatuses);
     }
 
     @Override
     public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
-
         return sickNoteRepository.findByStatusInAndPersonIn(sickNoteStatuses, persons);
     }
 }

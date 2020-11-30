@@ -8,7 +8,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.Clock;
 
-
 /**
  * Comment to a sick note containing detailed information like date of comment or commenting person.
  */
@@ -30,25 +29,18 @@ public class SickNoteComment extends AbstractComment {
     }
 
     public SickNote getSickNote() {
-
         return sickNote;
     }
 
-
     public void setSickNote(SickNote sickNote) {
-
         this.sickNote = sickNote;
     }
 
-
     public SickNoteAction getAction() {
-
         return action;
     }
 
-
     public void setAction(SickNoteAction action) {
-
         this.action = action;
     }
 }
