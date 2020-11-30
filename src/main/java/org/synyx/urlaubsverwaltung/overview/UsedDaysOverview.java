@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.overview;
 
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.domain.Application;

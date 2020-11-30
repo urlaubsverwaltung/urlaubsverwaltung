@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.statistics.web;
+package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -13,7 +13,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 
 
 /**
- * Unit test for {@link org.synyx.urlaubsverwaltung.statistics.web.UsedDays}.
+ * Unit test for {@link UsedDays}.
  */
 class UsedDaysTest {
 
