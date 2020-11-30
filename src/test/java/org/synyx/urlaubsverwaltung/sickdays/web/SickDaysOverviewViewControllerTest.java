@@ -58,8 +58,8 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-
     private WorkDaysCountService workDaysCountService;
+
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
