@@ -8,7 +8,7 @@ public final class MailAttachment {
     private final String name;
     private final File file;
 
-    public MailAttachment(String name, File file) {
+    MailAttachment(String name, File file) {
         this.file = file;
         this.name = name;
     }
