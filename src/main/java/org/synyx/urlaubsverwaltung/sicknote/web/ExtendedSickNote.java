@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 
-
 /**
  * Represents an extended {@link org.synyx.urlaubsverwaltung.sicknote.SickNote} with information about the number
  * of work days. (depending on working time of the person)
@@ -29,19 +28,14 @@ public class ExtendedSickNote extends SickNote {
     }
 
     public BigDecimal getWorkDays() {
-
         return workDays;
     }
 
-
     public WeekDay getWeekDayOfStartDate() {
-
         return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek().getValue());
     }
 
-
     public WeekDay getWeekDayOfEndDate() {
-
         return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek().getValue());
     }
 }

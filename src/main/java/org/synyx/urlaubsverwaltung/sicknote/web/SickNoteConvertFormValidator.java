@@ -5,7 +5,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-
 /**
  * Class for validating {@link org.synyx.urlaubsverwaltung.sicknote.web.SickNoteConvertForm} object.
  */
@@ -19,17 +18,14 @@ public class SickNoteConvertFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-
         return SickNoteConvertForm.class.equals(clazz);
     }
-
 
     @Override
     public void validate(Object target, Errors errors) {
 
-        SickNoteConvertForm convertForm = (SickNoteConvertForm) target;
-
-        String reason = convertForm.getReason();
+        final SickNoteConvertForm convertForm = (SickNoteConvertForm) target;
+        final String reason = convertForm.getReason();
 
         if (!StringUtils.hasText(reason)) {
             errors.rejectValue("reason", ERROR_MANDATORY_FIELD);

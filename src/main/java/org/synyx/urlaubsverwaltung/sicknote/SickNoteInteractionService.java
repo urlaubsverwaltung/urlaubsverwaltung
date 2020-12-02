@@ -46,7 +46,6 @@ public interface SickNoteInteractionService {
      */
     SickNote update(SickNote sickNote, Person editor, String comment);
 
-
     /**
      * Convert a sick note to an allowed application for leave.
      *
@@ -56,7 +55,6 @@ public interface SickNoteInteractionService {
      * @return the converted sick note
      */
     SickNote convert(SickNote sickNote, Application application, Person converter);
-
 
     /**
      * Cancel an existent sick note.

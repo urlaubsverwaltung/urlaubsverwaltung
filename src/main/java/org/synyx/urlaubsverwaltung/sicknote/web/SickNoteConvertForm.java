@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 
-
 /**
  * Represents a form to convert a sick note to vacation.
  */
@@ -29,7 +28,6 @@ public class SickNoteConvertForm {
     }
 
     public SickNoteConvertForm(SickNote sickNote) {
-
         this.person = sickNote.getPerson();
         this.dayLength = sickNote.getDayLength();
         this.startDate = sickNote.getStartDate();
@@ -37,76 +35,52 @@ public class SickNoteConvertForm {
     }
 
     public Person getPerson() {
-
         return person;
     }
 
-
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
-
     public DayLength getDayLength() {
-
         return dayLength;
     }
 
-
     public void setDayLength(DayLength dayLength) {
-
         this.dayLength = dayLength;
     }
 
-
     public LocalDate getStartDate() {
-
         return startDate;
     }
 
-
     public void setStartDate(LocalDate startDate) {
-
         this.startDate = startDate;
     }
 
-
     public LocalDate getEndDate() {
-
         return endDate;
     }
 
-
     public void setEndDate(LocalDate endDate) {
-
         this.endDate = endDate;
     }
 
-
     public VacationType getVacationType() {
-
         return vacationType;
     }
 
-
     public void setVacationType(VacationType vacationType) {
-
         this.vacationType = vacationType;
     }
 
-
     public String getReason() {
-
         return reason;
     }
 
-
     public void setReason(String reason) {
-
         this.reason = reason;
     }
-
 
     public Application generateApplicationForLeave(Clock clock) {
 

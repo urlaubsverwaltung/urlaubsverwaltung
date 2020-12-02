@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Handles exceptions and redirects to error page.
@@ -38,8 +38,7 @@ public class SicknoteExceptionHandlerControllerAdvice {
         return modelAndView;
     }
 
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(SickNoteAlreadyInactiveException.class)
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
 
@@ -47,6 +46,6 @@ public class SicknoteExceptionHandlerControllerAdvice {
             LOG.debug("An exception was thrown: {}", exception.getClass().getName());
             LOG.debug("An error occurred: {}", exception.getMessage());
         }
-        return getErrorPage(exception, HttpStatus.BAD_REQUEST);
+        return getErrorPage(exception, BAD_REQUEST);
     }
 }

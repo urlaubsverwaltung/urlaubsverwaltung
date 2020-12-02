@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.LocalDate;
 import java.util.List;
 
-
 /**
  * Repository for {@link SickNote} entities.
  */

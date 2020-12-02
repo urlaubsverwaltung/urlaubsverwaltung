@@ -14,21 +14,13 @@ import java.time.format.DateTimeFormatter;
 public class SickNoteForm {
 
     private Integer id;
-
     private Person person;
-
     private SickNoteType sickNoteType;
-
     private LocalDate startDate;
-
     private LocalDate endDate;
-
     private DayLength dayLength;
-
     private LocalDate aubStartDate;
-
     private LocalDate aubEndDate;
-
     private String comment;
 
     SickNoteForm() {

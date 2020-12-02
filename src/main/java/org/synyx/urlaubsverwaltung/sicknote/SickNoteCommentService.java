@@ -4,7 +4,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
 
-
 /**
  * Service for handling {@link SickNoteComment}s.
  */
@@ -32,7 +31,6 @@ public interface SickNoteCommentService {
      * @return the created comment
      */
     SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text);
-
 
     /**
      * Gets all comments for the given sick note.
