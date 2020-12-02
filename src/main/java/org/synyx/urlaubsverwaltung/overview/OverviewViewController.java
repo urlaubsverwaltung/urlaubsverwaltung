@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -35,7 +33,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * Controller to display the personal overview page with basic information about
@@ -86,13 +89,13 @@ public class OverviewViewController {
     @GetMapping("/web/overview")
     public String showOverview(@RequestParam(value = "year", required = false) String year) {
 
-        Person user = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
-        if (StringUtils.hasText(year)) {
-            return "redirect:/web/person/" + user.getId() + "/overview?year=" + year;
+        if (hasText(year)) {
+            return "redirect:/web/person/" + signedInUser.getId() + "/overview?year=" + year;
         }
 
-        return "redirect:/web/person/" + user.getId() + "/overview";
+        return "redirect:/web/person/" + signedInUser.getId() + "/overview";
     }
 
     @GetMapping("/web/person/{personId}/overview")
@@ -100,19 +103,18 @@ public class OverviewViewController {
                                @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
 
-        Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        Person signedInUser = personService.getSignedInUser();
+        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(
-                String.format("User '%s' has not the correct permissions to access the overview page of user '%s'",
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to access the overview page of user '%s'",
                     signedInUser.getId(), person.getId()));
         }
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
         final ZonedDateTime now = ZonedDateTime.now(clock);
-        int yearToShow = year == null ? now.getYear() : year;
+        final int yearToShow = year == null ? now.getYear() : year;
 
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
@@ -122,43 +124,41 @@ public class OverviewViewController {
         model.addAttribute("year", now.getYear());
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("currentMonth", now.getMonthValue());
+        model.addAttribute("signedInUser", signedInUser);
 
         return "person/overview";
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {
 
-        List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year),
-            DateUtil.getLastDayOfYear(year));
+        final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, getFirstDayOfYear(year), getLastDayOfYear(year));
 
-        List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
+        final List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
             .map(input -> new ExtendedSickNote(input, calendarService))
             .sorted(Comparator.comparing(ExtendedSickNote::getStartDate).reversed())
             .collect(toList());
-
         model.addAttribute("sickNotes", extendedSickNotes);
 
-        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
+        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
     private void prepareApplications(Person person, int year, Model model) {
 
         // get the person's applications for the given year
-        List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(DateUtil.getFirstDayOfYear(year),
-            DateUtil.getLastDayOfYear(year), person).stream()
-            .filter(input -> !input.hasStatus(ApplicationStatus.REVOKED))
+        final List<Application> applications =
+            applicationService.getApplicationsForACertainPeriodAndPerson(getFirstDayOfYear(year), getLastDayOfYear(year), person).stream()
+            .filter(input -> !input.hasStatus(REVOKED))
             .collect(toList());
 
         if (!applications.isEmpty()) {
-            List<ApplicationForLeave> applicationsForLeave = applications.stream()
+            final List<ApplicationForLeave> applicationsForLeave = applications.stream()
                 .map(application -> new ApplicationForLeave(application, calendarService))
                 .sorted(Comparator.comparing(ApplicationForLeave::getStartDate).reversed())
                 .collect(toList());
-
             model.addAttribute("applications", applicationsForLeave);
 
-            UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
+            final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 
@@ -169,8 +169,7 @@ public class OverviewViewController {
     private void prepareHolidayAccounts(Person person, int year, Model model) {
 
         // get person's holidays account and entitlement for the given year
-        Optional<Account> account = accountService.getHolidaysAccount(year, person);
-
+        final Optional<Account> account = accountService.getHolidaysAccount(year, person);
         if (account.isPresent()) {
             Account acc = account.get();
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
@@ -181,8 +180,6 @@ public class OverviewViewController {
     }
 
     private void prepareSettings(Model model) {
-
         model.addAttribute("settings", settingsService.getSettings());
     }
-
 }

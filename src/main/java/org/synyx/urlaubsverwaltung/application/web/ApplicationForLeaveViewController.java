@@ -56,36 +56,37 @@ public class ApplicationForLeaveViewController {
     @GetMapping("/application")
     public String showWaiting(Model model) {
 
-        final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave();
+        final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("signedInUser", signedInUser);
+
+        final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave(signedInUser);
         model.addAttribute("applications", applicationsForLeave);
 
         return "application/app_list";
     }
 
-    private List<ApplicationForLeave> getAllRelevantApplicationsForLeave() {
+    private List<ApplicationForLeave> getAllRelevantApplicationsForLeave(Person signedInUser) {
 
-        final Person user = personService.getSignedInUser();
-
-        if (user.hasRole(BOSS) || user.hasRole(OFFICE)) {
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
             return getApplicationsForLeaveForBossOrOffice();
         }
 
         final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
 
-        if (user.hasRole(SECOND_STAGE_AUTHORITY)) {
+        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(user));
+            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(signedInUser));
         }
 
-        if (user.hasRole(DEPARTMENT_HEAD)) {
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // Department head can see only waiting applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(user));
+            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(signedInUser));
         }
 
-        if (user.hasRole(USER)) {
+        if (signedInUser.hasRole(USER)) {
             // Department head can see only waiting applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForUser(user));
+            applicationsForLeave.addAll(getApplicationsForLeaveForUser(signedInUser));
         }
 
         return applicationsForLeave.stream()

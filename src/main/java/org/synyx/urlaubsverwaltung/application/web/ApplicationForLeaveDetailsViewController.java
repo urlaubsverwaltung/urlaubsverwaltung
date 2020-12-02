@@ -110,7 +110,7 @@ public class ApplicationForLeaveDetailsViewController {
         }
 
         final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
-        prepareDetailView(application, year, action, shortcut, model);
+        prepareDetailView(application, year, action, shortcut, model, signedInUser);
 
         return "application/app_detail";
     }
@@ -314,18 +314,18 @@ public class ApplicationForLeaveDetailsViewController {
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
-    private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model) {
+    private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model, Person signedInUser) {
+
+        // signed in user
+        model.addAttribute("signedInUser", signedInUser);
 
         // COMMENTS
         final List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
-
         model.addAttribute("comment", new ApplicationCommentForm());
         model.addAttribute("comments", comments);
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
-        final Person signedInUser = personService.getSignedInUser();
-
         boolean isNotYetAllowed = application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED);
         boolean isPrivilegedUser = signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD)
             || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
@@ -351,7 +351,6 @@ public class ApplicationForLeaveDetailsViewController {
 
         // HOLIDAY ACCOUNT
         final Optional<Account> account = accountService.getHolidaysAccount(year, application.getPerson());
-
         if (account.isPresent()) {
             final Account acc = account.get();
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());

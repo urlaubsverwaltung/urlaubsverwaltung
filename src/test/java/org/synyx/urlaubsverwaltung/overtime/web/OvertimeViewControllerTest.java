@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,7 +66,7 @@ class OvertimeViewControllerTest {
     void postRecordOvertimeShowsFormIfValidationFails() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setPermissions(Collections.singletonList(OFFICE));
+        signedInPerson.setPermissions(List.of(OFFICE));
 
         final Person overtimePerson = new Person();
 
@@ -83,6 +82,7 @@ class OvertimeViewControllerTest {
         perform(post("/web/overtime").param("person", "1337"))
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
             .andExpect(model().attribute("person", overtimePerson))
+            .andExpect(model().attribute("signedInUser", signedInPerson))
             .andExpect(view().name("overtime/overtime_form"));
 
         verify(validator).validate(any(OvertimeForm.class), any(Errors.class));
@@ -95,7 +95,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(overtime));
 
         final Person signedInPerson = new Person();
-        signedInPerson.setPermissions(Collections.singletonList(OFFICE));
+        signedInPerson.setPermissions(List.of(OFFICE));
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -148,6 +148,7 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(view().name("overtime/overtime_list"));
         resultActions.andExpect(model().attribute("year", is(year)));
         resultActions.andExpect(model().attribute("person", is(person)));
+        resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         resultActions.andExpect(model().attribute("records", is(records)));
         resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
         resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
@@ -183,13 +184,14 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(view().name("overtime/overtime_list"));
         resultActions.andExpect(model().attribute("year", is(year)));
         resultActions.andExpect(model().attribute("person", is(person)));
+        resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         resultActions.andExpect(model().attribute("records", is(records)));
         resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
         resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
     }
 
     @Test
-    void showOvertimeIsNotAllowed() throws Exception {
+    void showOvertimeIsNotAllowed() {
 
         final int personId = 5;
         final Person person = new Person();
@@ -201,7 +203,8 @@ class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(false);
 
-        assertThatThrownBy(() -> perform(get("/web/overtime").param("person", "5"))).isInstanceOf(NestedServletException.class);
+        assertThatThrownBy(() -> perform(get("/web/overtime").param("person", "5")))
+            .isInstanceOf(NestedServletException.class);
     }
 
     @Test
@@ -231,6 +234,7 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(view().name("overtime/overtime_details"));
         resultActions.andExpect(model().attribute("record", is(overtime)));
         resultActions.andExpect(model().attribute("comments", is(overtimeComments)));
+        resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
         resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
     }
@@ -250,7 +254,8 @@ class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(false);
 
-        assertThatThrownBy(() -> perform(get("/web/overtime/2"))).isInstanceOf(NestedServletException.class);
+        assertThatThrownBy(() -> perform(get("/web/overtime/2")))
+            .isInstanceOf(NestedServletException.class);
     }
 
     @Test
@@ -267,6 +272,7 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(view().name("overtime/overtime_form"));
         resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
         resultActions.andExpect(model().attribute("person", is(person)));
+        resultActions.andExpect(model().attribute("signedInUser", is(person)));
     }
 
     @Test
@@ -283,7 +289,7 @@ class OvertimeViewControllerTest {
 
 
     @Test
-    void recordOvertimeSignedInUserIsNotSame() throws Exception {
+    void recordOvertimeSignedInUserIsNotSame() {
 
         final int personId = 5;
         final Person person = new Person();
@@ -327,10 +333,11 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(view().name("overtime/overtime_form"));
         resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
         resultActions.andExpect(model().attribute("person", is(overtimePerson)));
+        resultActions.andExpect(model().attribute("signedInUser", is(overtimePerson)));
     }
 
     @Test
-    void editOvertimeDifferentPersons() throws Exception {
+    void editOvertimeDifferentPersons() {
 
         final Person overtimePerson = new Person();
 
@@ -393,7 +400,7 @@ class OvertimeViewControllerTest {
     }
 
     @Test
-    void createOvertimeRecordNotSamePerson() throws Exception {
+    void createOvertimeRecordNotSamePerson() {
 
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
@@ -469,7 +476,7 @@ class OvertimeViewControllerTest {
     }
 
     @Test
-    void updateOvertimeIsNotSamePerson() throws Exception {
+    void updateOvertimeIsNotSamePerson() {
 
         when(personService.getSignedInUser()).thenReturn(new Person());
 

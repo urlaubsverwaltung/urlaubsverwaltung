@@ -265,6 +265,7 @@ class OverviewViewControllerTest {
         resultActions.andExpect(view().name("person/overview"));
         resultActions.andExpect(model().attribute("applications", hasSize(2)));
         resultActions.andExpect(model().attribute("sickNotes", hasSize(2)));
+        resultActions.andExpect(model().attribute("signedInUser", person));
     }
 
     private Person somePerson() {

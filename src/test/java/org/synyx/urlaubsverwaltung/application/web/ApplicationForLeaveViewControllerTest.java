@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -91,6 +92,7 @@ class ApplicationForLeaveViewControllerTest {
             .thenReturn(List.of(application, applicationOfHead, applicationOfSecondStage));
 
         perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(headPerson)))
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("Atticus"))))))
@@ -132,6 +134,7 @@ class ApplicationForLeaveViewControllerTest {
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
         perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(bossPerson)))
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
@@ -172,6 +175,7 @@ class ApplicationForLeaveViewControllerTest {
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
         perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(officePerson)))
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(view().name("application/app_list"));
@@ -217,6 +221,7 @@ class ApplicationForLeaveViewControllerTest {
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
         perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
             .andExpect(model().attribute("applications", hasSize(2)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("office"))))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
@@ -262,6 +267,7 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application"))
             .andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
             .andExpect(model().attribute("applications", hasSize(2)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentA"))))))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentB"))))))
@@ -303,6 +309,7 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application"))
             .andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
             .andExpect(model().attribute("applications", hasSize(2)))
             .andExpect(model().attribute("applications", hasItems(
                 hasProperty("person", hasProperty("firstName", equalTo("userOfDepartment"))),
@@ -331,6 +338,7 @@ class ApplicationForLeaveViewControllerTest {
             .thenReturn(List.of(applicationOfUser));
 
         perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(userPerson)))
             .andExpect(model().attribute("applications", hasSize(1)))
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))

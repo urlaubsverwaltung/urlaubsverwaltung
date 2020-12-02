@@ -43,6 +43,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 public class OvertimeViewController {
 
     private static final String PERSON_ATTRIBUTE = "person";
+    private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME = "overtime";
     private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
 
@@ -97,6 +98,7 @@ public class OvertimeViewController {
 
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
         model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
@@ -122,6 +124,7 @@ public class OvertimeViewController {
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         return "overtime/overtime_details";
     }
@@ -149,6 +152,7 @@ public class OvertimeViewController {
 
         model.addAttribute(OVERTIME, new OvertimeForm(person));
         model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         return OVERTIME_OVERTIME_FORM;
     }
@@ -172,6 +176,7 @@ public class OvertimeViewController {
         if (errors.hasErrors()) {
             model.addAttribute(OVERTIME, overtimeForm);
             model.addAttribute(PERSON_ATTRIBUTE, person);
+            model.addAttribute(SIGNED_IN_USER, signedInUser);
             return OVERTIME_OVERTIME_FORM;
         }
 
@@ -182,7 +187,6 @@ public class OvertimeViewController {
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.CREATED.name());
         return "redirect:/web/overtime/" + recordedOvertime.getId();
     }
-
 
     @GetMapping("/overtime/{id}/edit")
     public String editOvertime(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
@@ -199,10 +203,10 @@ public class OvertimeViewController {
 
         model.addAttribute(OVERTIME, new OvertimeForm(overtime));
         model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         return OVERTIME_OVERTIME_FORM;
     }
-
 
     @PostMapping("/overtime/{id}")
     public String updateOvertime(@PathVariable("id") Integer id,
@@ -223,6 +227,7 @@ public class OvertimeViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute(OVERTIME, overtimeForm);
+            model.addAttribute(SIGNED_IN_USER, signedInUser);
             return OVERTIME_OVERTIME_FORM;
         }
 
