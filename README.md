@@ -443,9 +443,9 @@ nichts weiter getan werden. Verwendest du das Profil nicht, kannst du das Cachin
 deaktivieren:
 
 ```properties
-spring.resources.chain.cache=false
-spring.resources.cache.cachecontrol.max-age=0
-spring.resources.chain.strategy.content.enabled=false
+spring.web.resources.chain.cache=false
+spring.web.resources.cache.cachecontrol.max-age=0
+spring.web.resources.chain.strategy.content.enabled=false
 ```
 
 
