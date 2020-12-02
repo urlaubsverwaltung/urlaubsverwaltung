@@ -64,9 +64,9 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
             final Person existentPerson = maybePerson.get();
 
             if (existentPerson.hasRole(INACTIVE)) {
-                LOG.info("User '{}' has been deactivated and can not sign in therefore", username);
+                LOG.info("User '{}' has been deactivated and can not sign in therefore", existentPerson.getId());
 
-                throw new DisabledException("User '" + username + "' has been deactivated");
+                throw new DisabledException("User '" + existentPerson.getId() + "' has been deactivated");
             }
 
             firstName.ifPresent(existentPerson::setFirstName);
@@ -90,7 +90,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         user.setUsername(ldapUsername);
         user.setAuthorities(getGrantedAuthorities(person));
 
-        LOG.info("User '{}' has signed in with roles: {}", username, person.getPermissions());
+        LOG.info("User '{}' has signed in with roles: {}", person.getId(), person.getPermissions());
 
         return user.createUserDetails();
     }
