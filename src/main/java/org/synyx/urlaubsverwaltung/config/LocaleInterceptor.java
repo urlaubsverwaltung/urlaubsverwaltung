@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.security;
+package org.synyx.urlaubsverwaltung.config;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,12 +13,10 @@ import java.util.Locale;
 public class LocaleInterceptor implements HandlerInterceptor {
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                           ModelAndView modelAndView) {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
 
         if (modelAndView != null) {
-
-            Locale locale = LocaleContextHolder.getLocale();
+            final Locale locale = LocaleContextHolder.getLocale();
             modelAndView.addObject("language", locale.toLanguageTag());
         }
     }
