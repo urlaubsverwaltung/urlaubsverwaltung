@@ -15,19 +15,15 @@ import java.util.Locale;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final UserInterceptor userInterceptor;
     private final LocaleInterceptor localeInterceptor;
 
     @Autowired
-    public WebMvcConfig(UserInterceptor userInterceptor, LocaleInterceptor localeInterceptor) {
-        this.userInterceptor = userInterceptor;
+    public WebMvcConfig(LocaleInterceptor localeInterceptor) {
         this.localeInterceptor = localeInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // add signedInUser to modelAndViews
-        registry.addInterceptor(userInterceptor).addPathPatterns("/web/**");
         registry.addInterceptor(localeInterceptor);
     }
 
