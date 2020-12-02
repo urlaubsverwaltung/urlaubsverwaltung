@@ -11,15 +11,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import java.util.List;
-import java.util.Locale;
+
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 
 @Configuration
-public class LocaleConfiguration implements WebMvcConfigurer {
+class LocaleConfiguration implements WebMvcConfigurer {
 
     private final LocaleInterceptor localeInterceptor;
 
     @Autowired
-    public LocaleConfiguration(LocaleInterceptor localeInterceptor) {
+    LocaleConfiguration(LocaleInterceptor localeInterceptor) {
         this.localeInterceptor = localeInterceptor;
     }
 
@@ -29,7 +31,7 @@ public class LocaleConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public MessageSource messageSource() {
+    MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:messages");
         messageSource.setCacheSeconds(10);
@@ -37,12 +39,12 @@ public class LocaleConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocaleResolver localeResolver() {
+    LocaleResolver localeResolver() {
         final AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
         // should be dynamically in the future
         // depends on the available messages files
-        localeResolver.setSupportedLocales(List.of(Locale.GERMAN, Locale.ENGLISH));
-        localeResolver.setDefaultLocale(Locale.GERMAN);
+        localeResolver.setSupportedLocales(List.of(GERMAN, ENGLISH));
+        localeResolver.setDefaultLocale(GERMAN);
         return localeResolver;
     }
 }
