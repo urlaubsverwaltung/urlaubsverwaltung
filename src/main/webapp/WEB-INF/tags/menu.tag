@@ -26,7 +26,7 @@
           <li>
             <a href="${URL_PREFIX}/overview" class="tw-flex tw-items-center">
               <img
-                src="<c:out value='${signedInUser.gravatarURL}?d=mm&s=20'/>"
+                src="<c:out value='${menuGravatarUrl}?d=mm&s=20'/>"
                 alt=""
                 class="gravatar gravatar--small tw-rounded-full tw-mr-2 print:tw-hidden"
                 width="24px"
