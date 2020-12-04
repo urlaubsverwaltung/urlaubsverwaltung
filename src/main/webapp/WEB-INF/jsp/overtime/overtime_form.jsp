@@ -62,8 +62,7 @@
                 <form:hidden path="person" value="${overtime.person.id}"/>
                 <div class="form-section">
                     <div class="col-xs-12">
-                        <c:set var="formErrors"><form:errors/></c:set>
-                        <c:if test="${not empty formErrors}">
+                        <c:if test="${not empty errors.globalErrors}">
                             <div class="alert alert-danger">
                                 <form:errors/>
                             </div>
