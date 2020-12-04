@@ -89,7 +89,7 @@
                            class="form-horizontal" role="form">
                 <form:hidden path="person" value="${person.id}"/>
 
-                <c:if test="${not empty errors}">
+                <c:if test="${not empty errors.globalErrors}">
                     <div class="row">
                         <div class="col-xs-12 alert alert-danger">
                             <form:errors/>
