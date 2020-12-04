@@ -38,16 +38,13 @@ public class OidcSecurityConfiguration {
     public ClientRegistrationRepository clientRegistrationRepository() {
         final ClientRegistration.Builder builder = ClientRegistrations
             .fromOidcIssuerLocation(properties.getIssuerUri())
+            .scope(properties.getScopes())
             .registrationId("oidc");
 
         builder.clientId(properties.getClientId());
 
         if (properties.getClientSecret() != null) {
             builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(BASIC);
-        }
-
-        if (properties.getScopes() != null) {
-            builder.scope(properties.getScopes());
         }
 
         builder.authorizationGrantType(AUTHORIZATION_CODE);

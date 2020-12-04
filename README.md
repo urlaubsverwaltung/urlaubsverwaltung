@@ -169,6 +169,7 @@ uv.security.oidc.client-id
 uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
 uv.security.oidc.logout-uri
+uv.security.oidc.scopes=openid,profile,email
 
 # jsp template engine
 uv.template-engine.jsp.use-precompiled=false
@@ -208,9 +209,9 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
       Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
       die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
-    * By Default werden für den Authorize Call keine Scopes übergeben. 
-      Wenn der OAuth Provider einen oder mehrere Scopes benötigt, können diese in der
-      Konfiguration z.B. via `uv.security.oidc.scopes=openid,profile,email` angegeben werden. 
+    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
+      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
+      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
 
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.

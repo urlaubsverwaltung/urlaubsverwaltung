@@ -43,9 +43,10 @@ public class OidcSecurityProperties {
     private String logoutUri;
 
     /**
-     * the scopes to use for the authorization request
+     * OIDC client scopes to receive family name, given name and email in the OIDC access token.
      */
-    private List<String> scopes;
+    @NotEmpty
+    private List<String> scopes = List.of("openid", "profile", "email");
 
     public String getIssuerUri() {
         return issuerUri;
