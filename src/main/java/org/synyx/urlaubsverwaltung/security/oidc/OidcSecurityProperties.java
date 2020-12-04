@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -41,6 +42,12 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String logoutUri;
 
+    /**
+     * OIDC client scopes to receive family name, given name and email in the OIDC access token.
+     */
+    @NotEmpty
+    private List<String> scopes = List.of("openid", "profile", "email");
+
     public String getIssuerUri() {
         return issuerUri;
     }
@@ -71,5 +78,13 @@ public class OidcSecurityProperties {
 
     public void setLogoutUri(String logoutUri) {
         this.logoutUri = logoutUri;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
     }
 }

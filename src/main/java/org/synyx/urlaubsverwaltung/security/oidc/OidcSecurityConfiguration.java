@@ -38,6 +38,7 @@ public class OidcSecurityConfiguration {
     public ClientRegistrationRepository clientRegistrationRepository() {
         final ClientRegistration.Builder builder = ClientRegistrations
             .fromOidcIssuerLocation(properties.getIssuerUri())
+            .scope(properties.getScopes())
             .registrationId("oidc");
 
         builder.clientId(properties.getClientId());
