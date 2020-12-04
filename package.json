@@ -75,7 +75,7 @@
     "node-fetch": "2.6.1",
     "onchange": "7.1.0",
     "optimize-css-assets-webpack-plugin": "5.0.4",
-    "postcss": "8.1.10",
+    "postcss": "8.1.14",
     "postcss-cli": "8.3.0",
     "postcss-import": "13.0.0",
     "postcss-url": "10.1.1",
