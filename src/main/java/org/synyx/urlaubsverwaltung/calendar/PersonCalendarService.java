@@ -40,8 +40,8 @@ class PersonCalendarService {
 
         final Person person = getPersonOrThrow(personId);
 
-        final PersonCalendar maybePersonCalendar = personCalendarRepository.findByPerson(person);
-        final PersonCalendar personCalendar = maybePersonCalendar == null ? new PersonCalendar() : maybePersonCalendar;
+        final Optional<PersonCalendar> maybePersonCalendar = personCalendarRepository.findByPerson(person);
+        final PersonCalendar personCalendar = maybePersonCalendar.isEmpty() ? new PersonCalendar() : maybePersonCalendar.get();
         personCalendar.setPerson(person);
         personCalendar.generateSecret();
 
@@ -52,7 +52,7 @@ class PersonCalendarService {
 
         final Person person = getPersonOrThrow(personId);
 
-        return Optional.ofNullable(personCalendarRepository.findByPerson(person));
+        return personCalendarRepository.findByPerson(person);
     }
 
     File getCalendarForPerson(Integer personId, String secret, Locale locale) {
@@ -61,14 +61,14 @@ class PersonCalendarService {
             throw new IllegalArgumentException("secret must not be empty.");
         }
 
-        final PersonCalendar calendar = personCalendarRepository.findBySecret(secret);
-        if (calendar == null) {
+        final Optional<PersonCalendar> maybePersonCalendar = personCalendarRepository.findBySecret(secret);
+        if (maybePersonCalendar.isEmpty()) {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
         final Person person = getPersonOrThrow(personId);
-
-        if (!calendar.getPerson().equals(person)) {
+        final PersonCalendar personCalendar = maybePersonCalendar.get();
+        if (!personCalendar.getPerson().equals(person)) {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given personId=%s", secret, personId));
         }
 

@@ -69,7 +69,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
@@ -90,7 +90,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> morningAbsences = List.of(absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(morningAbsences);
@@ -113,7 +113,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> manyFullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(manyFullDayAbsences);
@@ -134,7 +134,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> noonAbsences = List.of(absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(noonAbsences);
@@ -153,7 +153,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForPerson(1, "secret", GERMAN));
@@ -179,7 +179,7 @@ class PersonCalendarServiceTest {
 
     @Test
     void getCalendarForPersonButSecretDoesNotExist() {
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(null);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.empty());
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForPerson(1, "secret", GERMAN));
     }
@@ -195,7 +195,7 @@ class PersonCalendarServiceTest {
         notMatchingPerson.setId(1337);
         PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(notMatchingPerson);
-        when(personCalendarRepository.findBySecret("secret")).thenReturn(personCalendar);
+        when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForPerson(1, "secret", GERMAN));
@@ -209,7 +209,7 @@ class PersonCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final PersonCalendar receivedPersonCalendar = new PersonCalendar(person);
-        when(personCalendarRepository.findByPerson(person)).thenReturn(receivedPersonCalendar);
+        when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.of(receivedPersonCalendar));
 
         final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1);
         assertThat(personCalendar).contains(receivedPersonCalendar);
@@ -230,7 +230,7 @@ class PersonCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(personCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
         final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1);
         assertThat(personCalendar).isEmpty();
@@ -244,7 +244,7 @@ class PersonCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final PersonCalendar receivedPersonCalendar = new PersonCalendar(person);
-        when(personCalendarRepository.findByPerson(person)).thenReturn(receivedPersonCalendar);
+        when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.of(receivedPersonCalendar));
 
         when(personCalendarRepository.save(receivedPersonCalendar)).thenReturn(receivedPersonCalendar);
 
@@ -267,7 +267,7 @@ class PersonCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(personCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
         when(personCalendarRepository.save(any(PersonCalendar.class))).thenAnswer(returnsFirstArg());
 
