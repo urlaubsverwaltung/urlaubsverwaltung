@@ -23,7 +23,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Install node and npm
-        run: ./mvnw frontend:install-node-and-npm
+        run: ./mvnw --batch-mode frontend:install-node-and-npm
       - name: Install npm dependencies and build
         run: |
           npm ci
@@ -34,4 +34,7 @@ jobs:
           git config --local user.email schneider@synyx.de
           git diff --quiet --name-only src/main/webapp/WEB-INF/assets-manifest.json || (git add src/main/webapp/WEB-INF/assets-manifest.json; git commit -m  "[dependabot skip] Adapt assets-manifest")
       - name: Assets-Manifest push
-        run: git push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
