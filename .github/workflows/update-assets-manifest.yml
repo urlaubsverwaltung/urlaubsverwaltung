@@ -1,0 +1,40 @@
+name: Update assets-manifest
+on:
+  push:
+    branches:
+      - "dependabot/npm_and_yarn/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Update assets-manifest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.AM_PAT }}
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install node and npm
+        run: ./mvnw frontend:install-node-and-npm
+      - name: Install npm dependencies and build
+        run: |
+          npm ci
+          npm run build
+      - name: Assets-Manifest commit
+        run: |
+          git config --local user.name "Tobias Schneider[bot]"
+          git config --local user.email schneider@synyx.de
+          git diff --quiet --name-only src/main/webapp/WEB-INF/assets-manifest.json || (git add src/main/webapp/WEB-INF/assets-manifest.json; git commit -m  "[dependabot skip] Adapt assets-manifest")
+      - name: Assets-Manifest push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.AM_PAT }}
+          branch: ${{ github.ref }}
+          repository: synyx/urlaubsverwaltung
