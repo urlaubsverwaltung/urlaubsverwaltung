@@ -75,7 +75,7 @@ class CompanyCalendarServiceTest {
 
         CompanyCalendar companyCalendar = new CompanyCalendar();
         companyCalendar.setId(1L);
-        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(companyCalendar);
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
         final File iCal = new File("calendar.ics");
@@ -93,7 +93,7 @@ class CompanyCalendarServiceTest {
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForAll(10, "secret", GERMAN));
@@ -165,7 +165,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCalendar);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCalendar));
 
         final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
 
@@ -177,7 +177,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
         final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
 
@@ -198,7 +198,7 @@ class CompanyCalendarServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
         final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
@@ -216,7 +216,7 @@ class CompanyCalendarServiceTest {
         final CompanyCalendar expectedCompanyCalendar = new CompanyCalendar();
         final String secretBeforeUpdate = expectedCompanyCalendar.getSecret();
 
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCompanyCalendar);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCompanyCalendar));
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
         final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);

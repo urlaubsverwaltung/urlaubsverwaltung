@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.dao;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
@@ -13,6 +12,5 @@ import java.util.List;
  */
 public interface ApplicationCommentRepository extends CrudRepository<ApplicationComment, Integer> {
 
-    @Query("select x from ApplicationComment x where x.application = ?1")
-    List<ApplicationComment> getCommentsByApplication(Application a);
+    List<ApplicationComment> findByApplication(Application application);
 }

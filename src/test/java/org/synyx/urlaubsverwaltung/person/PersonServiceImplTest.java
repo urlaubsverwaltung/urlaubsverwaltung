@@ -349,7 +349,7 @@ class PersonServiceImplTest {
     void ensureReturnsPersonForCurrentlySignedInUser() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.findByUsername("muster")).thenReturn(person);
+        when(personRepository.findByUsername("muster")).thenReturn(Optional.of(person));
 
         final Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(person.getUsername());

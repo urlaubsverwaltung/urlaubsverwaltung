@@ -40,8 +40,8 @@ class CompanyCalendarService {
 
         final Person person = getPersonOrThrow(personId);
 
-        final CompanyCalendar maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
-        final CompanyCalendar companyCalendar = maybeCompanyCalendar == null ? new CompanyCalendar() : maybeCompanyCalendar;
+        final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
+        final CompanyCalendar companyCalendar = maybeCompanyCalendar.isEmpty() ? new CompanyCalendar() : maybeCompanyCalendar.get();
         companyCalendar.setPerson(person);
         companyCalendar.generateSecret();
 
@@ -52,7 +52,7 @@ class CompanyCalendarService {
 
         final Person person = getPersonOrThrow(personId);
 
-        return Optional.ofNullable(companyCalendarRepository.findByPerson(person));
+        return companyCalendarRepository.findByPerson(person);
     }
 
     File getCalendarForAll(Integer personId, String secret, Locale locale) {
@@ -62,8 +62,8 @@ class CompanyCalendarService {
         }
 
         final Person person = getPersonOrThrow(personId);
-        final CompanyCalendar calendar = companyCalendarRepository.findBySecretAndPerson(secret, person);
-        if (calendar == null) {
+        final Optional<CompanyCalendar> calendar = companyCalendarRepository.findBySecretAndPerson(secret, person);
+        if (calendar.isEmpty()) {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 

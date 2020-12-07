@@ -43,6 +43,6 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
     @Override
     public List<SickNoteComment> getCommentsBySickNote(SickNote sickNote) {
-        return sickNoteCommentRepository.getCommentsBySickNote(sickNote);
+        return sickNoteCommentRepository.findBySickNote(sickNote);
     }
 }

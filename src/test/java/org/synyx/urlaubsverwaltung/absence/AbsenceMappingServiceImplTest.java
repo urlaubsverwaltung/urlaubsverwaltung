@@ -2,70 +2,69 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.SICKNOTE;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
 
-
+@ExtendWith(MockitoExtension.class)
 class AbsenceMappingServiceImplTest {
 
     private AbsenceMappingServiceImpl sut;
+
+    @Mock
     private AbsenceMappingRepository absenceMappingRepository;
 
     @BeforeEach
     void setUp() {
-
-        absenceMappingRepository = mock(AbsenceMappingRepository.class);
         sut = new AbsenceMappingServiceImpl(absenceMappingRepository);
     }
-
 
     @Test
     void shouldCreateAbsenceMappingForVacation() {
 
-        String eventId = "eventId";
+        when(absenceMappingRepository.save(any(AbsenceMapping.class))).then(returnsFirstArg());
 
-        AbsenceMapping result = sut.create(42, AbsenceType.VACATION, eventId);
-
-        assertThat(result.getAbsenceId()).isEqualTo(42);
-        assertThat(result.getAbsenceType()).isEqualTo(AbsenceType.VACATION);
-        assertThat(result.getEventId()).isEqualTo(eventId);
-
-        verify(absenceMappingRepository).save(result);
+        final String eventId = "eventId";
+        final AbsenceMapping absenceMapping = sut.create(42, VACATION, eventId);
+        assertThat(absenceMapping.getAbsenceId()).isEqualTo(42);
+        assertThat(absenceMapping.getAbsenceType()).isEqualTo(VACATION);
+        assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
     }
-
 
     @Test
     void shouldCreateAbsenceMappingForSickDay() {
 
-        String eventId = "eventId";
+        when(absenceMappingRepository.save(any(AbsenceMapping.class))).then(returnsFirstArg());
 
-        AbsenceMapping result = sut.create(21, AbsenceType.SICKNOTE, eventId);
-
-        assertThat(result.getAbsenceId()).isEqualTo(21);
-        assertThat(result.getAbsenceType()).isEqualTo(AbsenceType.SICKNOTE);
-        assertThat(result.getEventId()).isEqualTo(eventId);
-
-        verify(absenceMappingRepository).save(result);
+        final String eventId = "eventId";
+        final AbsenceMapping absenceMapping = sut.create(21, SICKNOTE, eventId);
+        assertThat(absenceMapping.getAbsenceId()).isEqualTo(21);
+        assertThat(absenceMapping.getAbsenceType()).isEqualTo(SICKNOTE);
+        assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
     }
-
 
     @Test
     void shouldCallAbsenceMappingDaoDelete() {
 
-        AbsenceMapping absenceMapping = new AbsenceMapping(42, AbsenceType.VACATION, "dummyEvent");
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42, VACATION, "dummyEvent");
         sut.delete(absenceMapping);
 
         verify(absenceMappingRepository).delete(absenceMapping);
     }
 
-
     @Test
     void shouldCallAbsenceMappingDaoFind() {
 
-        sut.getAbsenceByIdAndType(21, AbsenceType.SICKNOTE);
+        sut.getAbsenceByIdAndType(21, SICKNOTE);
 
-        verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceType(21, AbsenceType.SICKNOTE);
+        verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceType(21, SICKNOTE);
     }
 }

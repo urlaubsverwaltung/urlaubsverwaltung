@@ -10,7 +10,6 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-
 @Service
 public class VacationTypeServiceImpl implements VacationTypeService {
 
@@ -18,13 +17,11 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     @Autowired
     public VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository) {
-
         this.vacationTypeRepository = vacationTypeRepository;
     }
 
     @Override
     public List<VacationType> getVacationTypes() {
-
         return vacationTypeRepository.findAll();
     }
 
