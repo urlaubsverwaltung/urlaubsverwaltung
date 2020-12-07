@@ -26,7 +26,6 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
     @Autowired
     ApplicationCommentServiceImpl(ApplicationCommentRepository commentRepository, Clock clock) {
-
         this.commentRepository = commentRepository;
         this.clock = clock;
     }
@@ -46,7 +45,6 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
 
     @Override
     public List<ApplicationComment> getCommentsByApplication(Application application) {
-
-        return commentRepository.getCommentsByApplication(application);
+        return commentRepository.findByApplication(application);
     }
 }
