@@ -13,7 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.AM_PAT }}
+          persist-credentials: false
+          fetch-depth: 0
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
