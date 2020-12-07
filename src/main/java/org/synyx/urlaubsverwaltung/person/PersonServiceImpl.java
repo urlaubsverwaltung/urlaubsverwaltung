@@ -118,7 +118,7 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<Person> getPersonByUsername(String username) {
-        return Optional.ofNullable(personRepository.findByUsername(username));
+        return personRepository.findByUsername(username);
     }
 
     @Override
