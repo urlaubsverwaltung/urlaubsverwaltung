@@ -18,9 +18,7 @@ public class AbsenceMappingServiceImpl implements AbsenceMappingService {
     @Override
     public AbsenceMapping create(Integer id, AbsenceType absenceType, String eventId) {
         final AbsenceMapping absenceMapping = new AbsenceMapping(id, absenceType, eventId);
-        absenceMappingRepository.save(absenceMapping);
-
-        return absenceMapping;
+        return absenceMappingRepository.save(absenceMapping);
     }
 
     @Override

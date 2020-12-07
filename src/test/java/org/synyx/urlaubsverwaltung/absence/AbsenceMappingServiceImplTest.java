@@ -7,7 +7,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.SICKNOTE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
 
@@ -27,26 +30,25 @@ class AbsenceMappingServiceImplTest {
     @Test
     void shouldCreateAbsenceMappingForVacation() {
 
+        when(absenceMappingRepository.save(any(AbsenceMapping.class))).then(returnsFirstArg());
+
         final String eventId = "eventId";
         final AbsenceMapping absenceMapping = sut.create(42, VACATION, eventId);
         assertThat(absenceMapping.getAbsenceId()).isEqualTo(42);
         assertThat(absenceMapping.getAbsenceType()).isEqualTo(VACATION);
         assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
-
-        verify(absenceMappingRepository).save(absenceMapping);
     }
 
     @Test
     void shouldCreateAbsenceMappingForSickDay() {
 
+        when(absenceMappingRepository.save(any(AbsenceMapping.class))).then(returnsFirstArg());
+
         final String eventId = "eventId";
         final AbsenceMapping absenceMapping = sut.create(21, SICKNOTE, eventId);
-
         assertThat(absenceMapping.getAbsenceId()).isEqualTo(21);
         assertThat(absenceMapping.getAbsenceType()).isEqualTo(SICKNOTE);
         assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
-
-        verify(absenceMappingRepository).save(absenceMapping);
     }
 
     @Test
