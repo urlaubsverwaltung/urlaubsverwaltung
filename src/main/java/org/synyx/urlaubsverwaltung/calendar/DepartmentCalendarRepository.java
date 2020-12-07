@@ -6,12 +6,14 @@ import org.springframework.stereotype.Repository;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.Optional;
+
 @Repository
 interface DepartmentCalendarRepository extends CrudRepository<DepartmentCalendar, Long> {
 
-    DepartmentCalendar findByDepartmentAndPerson(Department department, Person person);
+    Optional<DepartmentCalendar> findByDepartmentAndPerson(Department department, Person person);
 
-    DepartmentCalendar findBySecretAndPerson(String secret, Person person);
+    Optional<DepartmentCalendar> findBySecretAndPerson(String secret, Person person);
 
     @Modifying
     void deleteByDepartmentAndPerson(Department department, Person person);

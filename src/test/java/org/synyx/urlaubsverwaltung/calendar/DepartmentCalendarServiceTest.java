@@ -88,7 +88,7 @@ class DepartmentCalendarServiceTest {
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
-        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(departmentCalendar);
+        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(Optional.of(departmentCalendar));
 
         final Optional<DepartmentCalendar> calendarForDepartment = sut.getCalendarForDepartment(1, 10);
         assertThat(calendarForDepartment).contains(departmentCalendar);
@@ -110,7 +110,7 @@ class DepartmentCalendarServiceTest {
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
         departmentCalendar.setId(1L);
         departmentCalendar.setDepartment(department);
-        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(departmentCalendar);
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
         final List<Absence> fullDayAbsences = List.of(absence(person, parse("2019-03-26", ofPattern("yyyy-MM-dd")), parse("2019-03-26", ofPattern("yyyy-MM-dd")), FULL));
         when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
@@ -133,7 +133,7 @@ class DepartmentCalendarServiceTest {
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(new DepartmentCalendar());
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(new DepartmentCalendar()));
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "secret", GERMAN));
@@ -162,7 +162,7 @@ class DepartmentCalendarServiceTest {
 
         final Person person = new Person();
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
-        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "secret", GERMAN));
@@ -182,7 +182,7 @@ class DepartmentCalendarServiceTest {
         notMatchingDepartment.setId(1337);
         DepartmentCalendar calendar = new DepartmentCalendar();
         calendar.setDepartment(notMatchingDepartment);
-        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(calendar);
+        when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(calendar));
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForDepartment(1, 10, "secret", GERMAN));
@@ -200,7 +200,7 @@ class DepartmentCalendarServiceTest {
         when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(department));
 
         DepartmentCalendar receivedDepartmentCalendar = new DepartmentCalendar();
-        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(receivedDepartmentCalendar);
+        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(Optional.of(receivedDepartmentCalendar));
 
         when(departmentCalendarRepository.save(receivedDepartmentCalendar)).thenReturn(receivedDepartmentCalendar);
 
@@ -242,7 +242,7 @@ class DepartmentCalendarServiceTest {
         department.setId(42);
         when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(department));
 
-        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(null);
+        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(Optional.empty());
 
         when(departmentCalendarRepository.save(any(DepartmentCalendar.class))).thenAnswer(returnsFirstArg());
 

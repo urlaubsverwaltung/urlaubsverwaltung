@@ -54,8 +54,8 @@ class DepartmentCalendarService {
         final Person person = getPersonOrThrow(personId);
         final Department department = getDepartmentOrThrow(departmentId);
 
-        final DepartmentCalendar maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentAndPerson(department, person);
-        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar == null ? new DepartmentCalendar() : maybeDepartmentCalendar;
+        final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentAndPerson(department, person);
+        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.isEmpty() ? new DepartmentCalendar() : maybeDepartmentCalendar.get();
         departmentCalendar.setDepartment(department);
         departmentCalendar.setPerson(person);
         departmentCalendar.generateSecret();
@@ -68,7 +68,7 @@ class DepartmentCalendarService {
         final Person person = getPersonOrThrow(personId);
         final Department department = getDepartmentOrThrow(departmentId);
 
-        return Optional.ofNullable(departmentCalendarRepository.findByDepartmentAndPerson(department, person));
+        return departmentCalendarRepository.findByDepartmentAndPerson(department, person);
     }
 
     File getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
@@ -78,14 +78,14 @@ class DepartmentCalendarService {
         }
 
         final Person person = getPersonOrThrow(personId);
-        final DepartmentCalendar calendar = departmentCalendarRepository.findBySecretAndPerson(secret, person);
-        if (calendar == null) {
+        final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findBySecretAndPerson(secret, person);
+        if (maybeDepartmentCalendar.isEmpty()) {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
         final Department department = getDepartmentOrThrow(departmentId);
-
-        if (!calendar.getDepartment().equals(department)) {
+        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.get();
+        if (!departmentCalendar.getDepartment().equals(department)) {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
         }
 
