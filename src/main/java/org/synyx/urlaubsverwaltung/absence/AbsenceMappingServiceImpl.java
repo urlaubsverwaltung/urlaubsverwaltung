@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 public class AbsenceMappingServiceImpl implements AbsenceMappingService {
 
@@ -31,6 +30,6 @@ public class AbsenceMappingServiceImpl implements AbsenceMappingService {
 
     @Override
     public Optional<AbsenceMapping> getAbsenceByIdAndType(Integer id, AbsenceType absenceType) {
-        return Optional.ofNullable(absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceType(id, absenceType));
+        return absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceType(id, absenceType);
     }
 }

@@ -2,8 +2,9 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
 
 interface AbsenceMappingRepository extends CrudRepository<AbsenceMapping, Integer> {
 
-    AbsenceMapping findAbsenceMappingByAbsenceIdAndAbsenceType(Integer id, AbsenceType absenceType);
+    Optional<AbsenceMapping> findAbsenceMappingByAbsenceIdAndAbsenceType(Integer id, AbsenceType absenceType);
 }
