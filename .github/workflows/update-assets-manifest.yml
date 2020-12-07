@@ -36,5 +36,5 @@ jobs:
       - name: Assets-Manifest push
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
