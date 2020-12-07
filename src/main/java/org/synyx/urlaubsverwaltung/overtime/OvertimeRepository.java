@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-
 /**
  * Allows access to overtime records.
  *
@@ -19,10 +18,8 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
 
     List<Overtime> findByPerson(Person person);
 
-
     @Query("SELECT SUM(overtime.hours) FROM Overtime overtime WHERE overtime.person = :person")
     BigDecimal calculateTotalHoursForPerson(@Param("person") Person person);
-
 
     @Query(
         "SELECT overtime FROM Overtime overtime WHERE overtime.person = :person "
