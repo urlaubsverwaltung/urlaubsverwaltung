@@ -11,7 +11,7 @@ duet-date-picker.form-control {
 }
 
 duet-date-picker.error {
-  @apply border-red-800;
+  @apply tw-border-red-800;
 }
 
 .duet-date__input {

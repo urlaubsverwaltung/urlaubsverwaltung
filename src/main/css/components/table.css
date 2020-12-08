@@ -82,10 +82,10 @@ tr.inactive td > * {
 }
 
 .selectable-table tr:hover .action-link {
-  @apply text-opacity-75 !important;
+  @apply tw-text-opacity-75 !important;
 }
 .selectable-table tr:hover .action-link:hover {
-  @apply text-opacity-100 !important;
+  @apply tw-text-opacity-100 !important;
 }
 
 /**************************************************************************

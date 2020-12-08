@@ -4,11 +4,11 @@
 .section-heading h4,
 .section-heading h5,
 .section-heading h6 {
-  @apply text-2xl;
-  @apply font-normal;
-  @apply m-0;
+  @apply tw-text-2xl;
+  @apply tw-font-normal;
+  @apply tw-m-0;
 }
 
 .section-heading-actions a:not(:last-of-type) {
-  @apply mr-2;
+  @apply tw-mr-2;
 }

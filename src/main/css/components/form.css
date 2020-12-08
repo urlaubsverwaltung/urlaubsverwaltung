@@ -33,12 +33,12 @@
 **************************************************************************/
 
 .error {
-  @apply text-red-800;
+  @apply tw-text-red-800;
 }
 
 input.error,
 textarea.error {
-  @apply border-red-800;
+  @apply tw-border-red-800;
 }
 
 .info {

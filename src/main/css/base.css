@@ -18,39 +18,39 @@ footer {
 
 @layer base {
   h1 {
-    @apply text-2xl;
-    @apply font-normal;
-    @apply leading-6;
+    @apply tw-text-2xl;
+    @apply tw-font-normal;
+    @apply tw-leading-6;
   }
   h2 {
-    @apply text-xl;
-    @apply font-normal;
-    @apply leading-6;
+    @apply tw-text-xl;
+    @apply tw-font-normal;
+    @apply tw-leading-6;
   }
   h3 {
-    @apply text-base;
-    @apply font-normal;
-    @apply leading-6;
+    @apply tw-text-base;
+    @apply tw-font-normal;
+    @apply tw-leading-6;
   }
   h4 {
-    @apply text-base;
-    @apply font-normal;
-    @apply leading-6;
+    @apply tw-text-base;
+    @apply tw-font-normal;
+    @apply tw-leading-6;
   }
   h5 {
-    @apply text-base;
-    @apply font-normal;
-    @apply leading-6;
+    @apply tw-text-base;
+    @apply tw-font-normal;
+    @apply tw-leading-6;
   }
   h6 {
-    @apply text-base;
-    @apply font-normal;
-    @apply leading-6;
+    @apply tw-text-base;
+    @apply tw-font-normal;
+    @apply tw-leading-6;
   }
 
   label {
-    @apply font-semibold;
-    @apply text-sm;
-    @apply leading-6;
+    @apply tw-font-semibold;
+    @apply tw-text-sm;
+    @apply tw-leading-6;
   }
 }
