@@ -70,41 +70,39 @@ footer {
   text-align: center;
 }
 
-@layer base {
-  h1 {
-    @apply tw-text-2xl;
-    @apply tw-font-normal;
-    @apply tw-leading-6;
-  }
-  h2 {
-    @apply tw-text-xl;
-    @apply tw-font-normal;
-    @apply tw-leading-6;
-  }
-  h3 {
-    @apply tw-text-base;
-    @apply tw-font-normal;
-    @apply tw-leading-6;
-  }
-  h4 {
-    @apply tw-text-base;
-    @apply tw-font-normal;
-    @apply tw-leading-6;
-  }
-  h5 {
-    @apply tw-text-base;
-    @apply tw-font-normal;
-    @apply tw-leading-6;
-  }
-  h6 {
-    @apply tw-text-base;
-    @apply tw-font-normal;
-    @apply tw-leading-6;
-  }
+h1 {
+  @apply tw-text-2xl;
+  @apply tw-font-normal;
+  @apply tw-leading-6;
+}
+h2 {
+  @apply tw-text-xl;
+  @apply tw-font-normal;
+  @apply tw-leading-6;
+}
+h3 {
+  @apply tw-text-base;
+  @apply tw-font-normal;
+  @apply tw-leading-6;
+}
+h4 {
+  @apply tw-text-base;
+  @apply tw-font-normal;
+  @apply tw-leading-6;
+}
+h5 {
+  @apply tw-text-base;
+  @apply tw-font-normal;
+  @apply tw-leading-6;
+}
+h6 {
+  @apply tw-text-base;
+  @apply tw-font-normal;
+  @apply tw-leading-6;
+}
 
-  label {
-    @apply tw-font-semibold;
-    @apply tw-text-sm;
-    @apply tw-leading-6;
-  }
+label {
+  @apply tw-font-semibold;
+  @apply tw-text-sm;
+  @apply tw-leading-6;
 }
