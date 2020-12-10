@@ -1,4 +1,4 @@
 .separator-bottom {
-  @apply pb-2;
-  @apply border-b-2;
+  @apply tw-pb-2;
+  @apply tw-border-b-2;
 }

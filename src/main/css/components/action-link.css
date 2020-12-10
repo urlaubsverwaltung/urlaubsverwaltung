@@ -1,10 +1,11 @@
 .action-link {
-  @apply no-underline !important;
-  @apply flex !important;
-  @apply items-center !important;
-  @apply transition-opacity duration-100 !important;
+  @apply tw-no-underline !important;
+  @apply tw-flex !important;
+  @apply tw-items-center !important;
+  @apply tw-transition-opacity !important;
+  @apply tw-duration-100 !important;
 }
 
 .action-link:hover {
-  @apply text-opacity-100 !important;
+  @apply tw-text-opacity-100 !important;
 }

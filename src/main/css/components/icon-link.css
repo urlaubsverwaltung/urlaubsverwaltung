@@ -1,9 +1,9 @@
 .icon-link {
-  @apply flex !important;
-  @apply text-gray-700 !important;
-  @apply no-underline !important;
+  @apply tw-flex !important;
+  @apply tw-text-gray-700 !important;
+  @apply tw-no-underline !important;
 }
 
 .icon-link:hover {
-  @apply text-black !important;
+  @apply tw-text-black !important;
 }
