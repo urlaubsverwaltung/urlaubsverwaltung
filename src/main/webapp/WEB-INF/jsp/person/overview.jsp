@@ -130,7 +130,9 @@
         </uv:section-heading>
         <div class="row tw-mb-4 lg:tw-mb-12">
             <div class="col-xs-12">
-                <div id="datepicker"></div>
+                <div id="datepicker" class="tw-flex tw-justify-center tw-items-center">
+                    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                </div>
             </div>
         </div>
 
