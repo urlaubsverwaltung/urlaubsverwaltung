@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
@@ -29,10 +29,10 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCELLED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED_DECLINED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REVOKED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCEL_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -103,7 +103,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Created application for leave: {}", savedApplication);
 
         // COMMENT
-        ApplicationComment createdComment = commentService.create(savedApplication, ApplicationAction.APPLIED, comment,
+        ApplicationComment createdComment = commentService.create(savedApplication, ApplicationCommentAction.APPLIED, comment,
             applier);
 
         // EMAILS
@@ -188,7 +188,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Temporary allowed application for leave: {}", savedApplication);
 
         final ApplicationComment createdComment = commentService.create(savedApplication,
-            ApplicationAction.TEMPORARY_ALLOWED, comment, privilegedUser);
+            ApplicationCommentAction.TEMPORARY_ALLOWED, comment, privilegedUser);
 
         applicationMailService.sendTemporaryAllowedNotification(savedApplication, createdComment);
 
@@ -211,7 +211,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Allowed application for leave: {}", savedApplication);
 
-        final ApplicationComment createdComment = commentService.create(savedApplication, ApplicationAction.ALLOWED,
+        final ApplicationComment createdComment = commentService.create(savedApplication, ApplicationCommentAction.ALLOWED,
             comment, privilegedUser);
 
         applicationMailService.sendAllowedNotification(savedApplication, createdComment);
@@ -234,7 +234,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         LOG.info("Rejected application for leave: {}", savedApplication);
 
-        final ApplicationComment createdComment = commentService.create(savedApplication, ApplicationAction.REJECTED, comment,
+        final ApplicationComment createdComment = commentService.create(savedApplication, ApplicationCommentAction.REJECTED, comment,
             privilegedUser);
 
         applicationMailService.sendRejectedNotification(savedApplication, createdComment);
@@ -349,7 +349,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         final Application savedApplication = applicationService.save(application);
 
-        commentService.create(savedApplication, ApplicationAction.CONVERTED, Optional.empty(), creator);
+        commentService.create(savedApplication, ApplicationCommentAction.CONVERTED, Optional.empty(), creator);
         applicationMailService.sendSickNoteConvertedToVacationNotification(savedApplication);
 
         return savedApplication;
@@ -385,7 +385,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     @Override
     public Application refer(Application application, Person recipient, Person sender) {
 
-        commentService.create(application, ApplicationAction.REFERRED, Optional.of(recipient.getNiceName()), sender);
+        commentService.create(application, ApplicationCommentAction.REFERRED, Optional.of(recipient.getNiceName()), sender);
         applicationMailService.sendReferApplicationNotification(application, recipient, sender);
 
         return application;
@@ -407,7 +407,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationForLeave.setEditedDate(LocalDate.now(clock));
         final Application savedApplication = applicationService.save(applicationForLeave);
 
-        commentService.create(savedApplication, ApplicationAction.EDITED, comment, person);
+        commentService.create(savedApplication, ApplicationCommentAction.EDITED, comment, person);
 
         applicationMailService.sendEditedApplicationNotification(savedApplication, person);
 

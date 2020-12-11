@@ -22,7 +22,7 @@ public class ApplicationComment extends AbstractComment {
     private Application application;
 
     @Enumerated(STRING)
-    private ApplicationAction action;
+    private ApplicationCommentAction action;
 
     protected ApplicationComment() {
         super();
@@ -45,11 +45,11 @@ public class ApplicationComment extends AbstractComment {
         this.application = application;
     }
 
-    public ApplicationAction getAction() {
+    public ApplicationCommentAction getAction() {
         return action;
     }
 
-    public void setAction(ApplicationAction action) {
+    public void setAction(ApplicationCommentAction action) {
         this.action = action;
     }
 }

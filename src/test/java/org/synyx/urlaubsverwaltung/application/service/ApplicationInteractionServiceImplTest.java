@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
@@ -49,12 +49,12 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCELLED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CANCEL_REQUESTED_DECLINED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.CONVERTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.EDITED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REFERRED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCEL_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CONVERTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.REFERRED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -120,7 +120,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getApplicationDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), eq(comment), eq(applier));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), eq(comment), eq(applier));
     }
 
     @Test
@@ -152,7 +152,7 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         ApplicationComment applicationComment = new ApplicationComment(person, clock);
-        when(commentService.create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), any(), eq(person))).thenReturn(applicationComment);
+        when(commentService.create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), any(), eq(person))).thenReturn(applicationComment);
 
         sut.apply(applicationForLeave, person, of("Foo"));
 
@@ -174,7 +174,7 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         ApplicationComment applicationComment = new ApplicationComment(person, clock);
-        when(commentService.create(eq(applicationForLeave), eq(ApplicationAction.APPLIED), any(), eq(applier))).thenReturn(applicationComment);
+        when(commentService.create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), any(), eq(applier))).thenReturn(applicationComment);
 
         sut.apply(applicationForLeave, applier, of("Foo"));
 
@@ -213,12 +213,12 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, boss);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -235,13 +235,13 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(false);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
         when(applicationComment).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, boss);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -259,12 +259,12 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         AbsenceMapping absenceMapping = anyAbsenceMapping();
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, boss, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, boss);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, boss);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -320,12 +320,12 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, departmentHead);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -344,12 +344,12 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.TEMPORARY_ALLOWED, person, departmentHead);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.TEMPORARY_ALLOWED, comment, departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead);
         assertNoCalendarSyncOccurs();
         assertTemporaryAllowedNotificationIsSent(applicationForLeave);
     }
@@ -397,7 +397,7 @@ class ApplicationInteractionServiceImplTest {
         sut.allow(applicationForLeave, departmentHead, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, departmentHead);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, departmentHead);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -416,12 +416,12 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, secondStage);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -440,12 +440,12 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage)).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, secondStage);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
@@ -464,13 +464,13 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
+        final ApplicationComment applicationComment = commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
         when(applicationComment).thenReturn(new ApplicationComment(person, clock));
 
         sut.allow(applicationForLeave, secondStage, comment);
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, secondStage);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStage);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
         assertAllowedNotificationIsSent(applicationForLeave);
         verifyNoInteractions(calendarSyncService);
     }
@@ -492,11 +492,11 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final Optional<String> comment = of("Foo");
-        when(commentService.create(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStageAuthority)).thenReturn(new ApplicationComment(departmentHead, clock));
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStageAuthority)).thenReturn(new ApplicationComment(departmentHead, clock));
 
         sut.allow(applicationForLeave, secondStageAuthority, comment);
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, departmentHead, secondStageAuthority);
-        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationAction.ALLOWED, comment, secondStageAuthority);
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStageAuthority);
         assertAllowedNotificationIsSent(applicationForLeave);
         verifyNoInteractions(calendarSyncService);
     }
@@ -626,7 +626,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getEditedDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REJECTED), eq(comment), eq(boss));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.REJECTED), eq(comment), eq(boss));
     }
 
     @Test
@@ -663,7 +663,7 @@ class ApplicationInteractionServiceImplTest {
         final Optional<String> optionalComment = of("Foo");
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
-        when(commentService.create(applicationForLeave, ApplicationAction.REJECTED, optionalComment, boss)).thenReturn(applicationComment);
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.REJECTED, optionalComment, boss)).thenReturn(applicationComment);
 
         sut.reject(applicationForLeave, boss, optionalComment);
 
@@ -682,7 +682,7 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
-        when(commentService.create(applicationForLeave, ApplicationAction.REVOKED, comment, person)).thenReturn(applicationComment);
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, person)).thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, person, comment);
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.REVOKED);
@@ -724,7 +724,7 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
+        when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
             .thenReturn(new ApplicationComment(person, clock));
 
         sut.cancel(applicationForLeave, person, comment);
@@ -773,7 +773,7 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(ALLOWED);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
+        when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
             .thenReturn(new ApplicationComment(person, clock));
 
         sut.cancel(applicationForLeave, canceller, comment);
@@ -802,7 +802,7 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
-        when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
+        when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
             .thenReturn(new ApplicationComment(person, clock));
 
         sut.cancel(applicationForLeave, canceller, comment);
@@ -813,7 +813,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.REVOKED), eq(comment), eq(canceller));
         verify(applicationMailService).sendRevokedNotifications(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
@@ -830,7 +830,7 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
-        when(commentService.create(any(Application.class), any(ApplicationAction.class), any(), any(Person.class)))
+        when(commentService.create(any(Application.class), any(ApplicationCommentAction.class), any(), any(Person.class)))
             .thenReturn(applicationComment);
 
         sut.cancel(applicationForLeave, canceller, comment);
@@ -841,7 +841,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationAction.REVOKED), eq(comment), eq(canceller));
+        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.REVOKED), eq(comment), eq(canceller));
         verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
     }
 
@@ -1079,7 +1079,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
 
-    private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationAction action,
+    private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationCommentAction action,
                                                              Optional<String> optionalComment, Person privilegedUser) {
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));

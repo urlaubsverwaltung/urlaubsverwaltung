@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -24,7 +24,7 @@ public interface ApplicationCommentService {
      * @param author      of the comment
      * @return the created comment
      */
-    ApplicationComment create(Application application, ApplicationAction action, Optional<String> text, Person author);
+    ApplicationComment create(Application application, ApplicationCommentAction action, Optional<String> text, Person author);
 
 
     /**
