@@ -6,8 +6,7 @@ package org.synyx.urlaubsverwaltung.sicknote;
 public enum SickNoteCategory {
 
     SICK_NOTE("application.data.sicknotetype.sicknote"),
-    SICK_NOTE_CHILD("application.data.sicknotetype.sicknotechild"),
-    OTHER("application.data.sicknotetype.other");
+    SICK_NOTE_CHILD("application.data.sicknotetype.sicknotechild");
 
     private final String messageKey;
 
