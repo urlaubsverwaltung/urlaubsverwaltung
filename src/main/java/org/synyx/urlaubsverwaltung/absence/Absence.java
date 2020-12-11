@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-
 /**
  * Represents a period of time where a person is not at work.
  */
@@ -53,33 +52,23 @@ public class Absence {
         }
     }
 
-
     public ZonedDateTime getStartDate() {
-
         return startDate;
     }
 
-
     public ZonedDateTime getEndDate() {
-
         return endDate;
     }
 
-
     public Person getPerson() {
-
         return person;
     }
 
-
     public boolean isAllDay() {
-
         return isAllDay;
     }
 
-
     public String getEventSubject() {
-
         return String.format("%s abwesend", person.getNiceName());
     }
 
