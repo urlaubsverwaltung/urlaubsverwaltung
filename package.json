@@ -50,7 +50,7 @@
     "@babel/core": "7.12.10",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.12.10",
-    "@types/jest": "26.0.18",
+    "@types/jest": "26.0.19",
     "@urlaubsverwaltung/eslint-plugin": "1.1.0",
     "autoprefixer": "10.1.0",
     "babel-eslint": "10.1.0",
