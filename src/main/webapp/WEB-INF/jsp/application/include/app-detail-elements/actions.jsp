@@ -45,6 +45,6 @@
 
 <c:if test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
     <sec:authorize access="hasAuthority('OFFICE')">
-        <jsp:include page="actions/cancel_cancellation_request_form.jsp"/>
+        <jsp:include page="actions/decline_cancellation_request_form.jsp"/>
     </sec:authorize>
 </c:if>
