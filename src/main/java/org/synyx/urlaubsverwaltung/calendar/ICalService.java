@@ -131,8 +131,7 @@ public class ICalService {
     }
 
     private Attendee generateAttendee(Absence absence) {
-        final Attendee attendee;
-        attendee = new Attendee(URI.create("mailto:" + absence.getPerson().getEmail()));
+        final Attendee attendee = new Attendee(URI.create("mailto:" + absence.getPerson().getEmail()));
         attendee.getParameters().add(REQ_PARTICIPANT);
         attendee.getParameters().add(new Cn(absence.getPerson().getNiceName()));
 
