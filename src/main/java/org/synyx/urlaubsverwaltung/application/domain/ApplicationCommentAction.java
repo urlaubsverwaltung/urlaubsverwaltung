@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.application.domain;
  *
  * @since 2.11.0
  */
-public enum ApplicationAction {
+public enum ApplicationCommentAction {
 
     /*
      * Some notes:
@@ -21,6 +21,7 @@ public enum ApplicationAction {
     REJECTED,
     CANCELLED,
     CANCEL_REQUESTED,
+    CANCEL_REQUESTED_DECLINED,
     REVOKED,
     REFERRED,
     EDITED

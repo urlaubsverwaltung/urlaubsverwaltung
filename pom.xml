@@ -486,6 +486,7 @@
             <exclude>logs/**</exclude>
             <exclude>node/**</exclude>
             <exclude>node_modules/**</exclude>
+            <exclude>.docs/**</exclude>
             <exclude>.mvn/**</exclude>
             <exclude>.m2/**</exclude>
             <exclude>.jdk/**</exclude>

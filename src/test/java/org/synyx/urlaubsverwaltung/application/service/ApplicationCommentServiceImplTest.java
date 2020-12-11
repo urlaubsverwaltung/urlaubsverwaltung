@@ -22,8 +22,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationAction.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 
 

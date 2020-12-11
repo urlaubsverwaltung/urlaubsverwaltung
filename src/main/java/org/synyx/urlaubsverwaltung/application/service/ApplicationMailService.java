@@ -165,6 +165,35 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
     }
 
+    /**
+     * Sends information to the office and applicant that the cancellation request was cancelled
+     *
+     * @param application cancellation requested application
+     */
+    void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(COMMENT, comment);
+
+        // send mail to applicant
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.cancellationRequest.declined.applicant", application.getPerson().getNiceName())
+            .withTemplate("application_cancellation_request_declined_applicant", model)
+            .build();
+        mailService.send(mailToApplicant);
+
+        // send cancelled cancellation request information to the office and relevant persons
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
+        relevantRecipientsToInform.addAll(applicationRecipientService.getRecipientsWithOfficeNotifications());
+        final Mail mailToOffice = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.cancellationRequest.declined.management")
+            .withTemplate("application_cancellation_request_declined_management", model)
+            .build();
+        mailService.send(mailToOffice);
+    }
 
     /**
      * Sends mail to office and informs about

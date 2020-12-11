@@ -16,6 +16,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
@@ -24,7 +25,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 @Service
 public class AbsenceServiceImpl implements AbsenceService {
 
-    private static final List<ApplicationStatus> APPLICATION_STATUSES = List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED);
+    private static final List<ApplicationStatus> APPLICATION_STATUSES = List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
     private static final List<SickNoteStatus> SICK_NOTE_STATUSES = List.of(ACTIVE);
 
     private final ApplicationService applicationService;

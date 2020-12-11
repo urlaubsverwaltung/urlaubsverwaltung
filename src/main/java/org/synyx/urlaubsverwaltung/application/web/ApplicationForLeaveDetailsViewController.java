@@ -39,6 +39,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -245,7 +246,6 @@ public class ApplicationForLeaveDetailsViewController {
             "leave of user '%s'", signedInUser.getId(), person.getId()));
     }
 
-
     /*
      * Cancel an application for leave.
      *
@@ -264,6 +264,7 @@ public class ApplicationForLeaveDetailsViewController {
 
         final boolean isWaiting = application.hasStatus(WAITING);
         final boolean isAllowed = application.hasStatus(ALLOWED);
+        final boolean isAllowedCancellationRequest = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
         final boolean isTemporaryAllowed = application.hasStatus(TEMPORARY_ALLOWED);
 
         // security check: only two cases where cancelling is possible
@@ -273,7 +274,7 @@ public class ApplicationForLeaveDetailsViewController {
         if (signedInUser.equals(application.getPerson())) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed)) {
+        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed || isAllowedCancellationRequest)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
@@ -291,6 +292,36 @@ public class ApplicationForLeaveDetailsViewController {
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
+    /*
+     * Cancel the cancellation request of an application for leave.
+     */
+    @PostMapping("/{applicationId}/decline-cancellation-request")
+    public String declineCancellationRequestApplication(@PathVariable("applicationId") Integer applicationId,
+                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+                                    RedirectAttributes redirectAttributes)
+        throws UnknownApplicationForLeaveException {
+
+        final Application application = applicationService.getApplicationById(applicationId)
+            .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
+
+        final Person signedInUser = personService.getSignedInUser();
+        if (signedInUser.hasRole(OFFICE) && application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
+            // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
+            comment.setMandatory(true);
+        } else {
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel a cancellation request of " +
+                "application for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
+        }
+
+        commentValidator.validate(comment, errors);
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
+            return REDIRECT_WEB_APPLICATION + applicationId + "?action=decline-cancellation-request";
+        }
+
+        applicationInteractionService.declineCancellationRequest(application, signedInUser, Optional.ofNullable(comment.getText()));
+        return REDIRECT_WEB_APPLICATION + applicationId;
+    }
 
     /*
      * Remind the bosses about the decision of an application for leave.

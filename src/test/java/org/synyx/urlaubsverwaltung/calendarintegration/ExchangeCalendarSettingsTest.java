@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

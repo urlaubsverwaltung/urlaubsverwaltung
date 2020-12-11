@@ -34,6 +34,11 @@
                     <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
                         <icon:check-circle className="tw-w-6 tw-h-6" />
                     </c:when>
+                    <c:when test="${app.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
+                        <icon:check-circle className="tw-w-6 tw-h-6" />
+                        <icon:arrow-narrow-right className="tw-w-5 tw-h-5" />
+                        <icon:trash className="tw-w-6 tw-h-6" />
+                    </c:when>
                     <c:when test="${app.status == 'REJECTED'}">
                         <icon:ban className="tw-w-6 tw-h-6" />
                     </c:when>
@@ -114,15 +119,16 @@
                     <span>
                         <c:choose>
                             <c:when test="${app.status == 'WAITING'}">
-                                <spring:message code="application.progress.APPLIED"/> <uv:date
-                                date="${app.applicationDate}"/>
+                                <spring:message code="application.progress.APPLIED"/> <uv:date date="${app.applicationDate}"/>
                             </c:when>
                             <c:when test="${app.status == 'TEMPORARY_ALLOWED'}">
-                                <spring:message code="application.progress.TEMPORARY_ALLOWED"/> <uv:date
-                                date="${app.editedDate}"/>
+                                <spring:message code="application.progress.TEMPORARY_ALLOWED"/> <uv:date date="${app.editedDate}"/>
                             </c:when>
                             <c:when test="${app.status == 'ALLOWED'}">
                                 <spring:message code="application.progress.ALLOWED"/> <uv:date date="${app.editedDate}"/>
+                            </c:when>
+                            <c:when test="${app.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
+                                <spring:message code="application.progress.ALLOWED_CANCELLATION_REQUESTED"/> <uv:date date="${app.editedDate}"/>
                             </c:when>
                             <c:when test="${app.status == 'REJECTED'}">
                                 <spring:message code="application.progress.REJECTED"/> <uv:date date="${app.editedDate}"/>

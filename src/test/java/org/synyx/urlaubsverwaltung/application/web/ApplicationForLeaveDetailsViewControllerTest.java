@@ -48,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
@@ -55,6 +56,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveDetailsViewControllerTest {
@@ -567,6 +569,21 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
+    void cancelApplicationOfAnotherPersonAllowedIfOfficeAndApplicationCancellationRequested() throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        final Application application = cancellationRequestedApplication();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(status().isFound());
+
+        verify(applicationInteractionService).cancel(eq(application), eq(signedInPerson), any());
+    }
+
+    @Test
     void cancelApplicationOfAnotherPersonAllowedIfOfficeAndApplicationAllowed() throws Exception {
 
         final Person signedInPerson = personWithRole(OFFICE);
@@ -641,6 +658,68 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationForUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationWithWrongRolesThrowsAccessDeniedException() {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(USER));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication()));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationWithWrongStatusThrowsAccessDeniedException() {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(waitingApplication()));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationWithValidationErrors() throws Exception{
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication()));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("text", "errors");
+            return null;
+        }).when(commentValidator).validate(any(), any());
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=decline-cancellation-request"));
+    }
+
+    @Test
+    void cancelCancellationRequestApplication() throws Exception{
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).declineCancellationRequest(eq(cancellationRequestedApplication), eq(signedInPerson), any());
     }
 
     @Test
@@ -732,6 +811,14 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         Application application = someApplication();
         application.setStatus(WAITING);
+
+        return application;
+    }
+
+    private static Application cancellationRequestedApplication() {
+
+        Application application = someApplication();
+        application.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         return application;
     }

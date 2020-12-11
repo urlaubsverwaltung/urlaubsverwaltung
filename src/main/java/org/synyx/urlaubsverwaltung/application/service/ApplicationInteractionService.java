@@ -5,7 +5,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Optional;
 
-
 /**
  * Provides interactions with applications for leave, i.e. apply for leave, allow, cancel etc.
  */
@@ -58,6 +57,14 @@ public interface ApplicationInteractionService {
      */
     Application cancel(Application application, Person canceller, Optional<String> comment);
 
+    /**
+     * Decline a cancellation request
+     *
+     * @param application   to cancel the cancellation request
+     * @param canceller     executes the cancellation
+     * @return the application for leave of the declined cancellation request
+     */
+    Application declineCancellationRequest(Application application, Person canceller, Optional<String> comment);
 
     /**
      * Create a directly allowed application for leave due to a converted sick note.
@@ -68,7 +75,6 @@ public interface ApplicationInteractionService {
      */
     Application createFromConvertedSickNote(Application application, Person creator);
 
-
     /**
      * Remind the persons with role {@link org.synyx.urlaubsverwaltung.person.Role#BOSS} to decide about the
      * application for leave (allow or reject it).
@@ -78,9 +84,7 @@ public interface ApplicationInteractionService {
      * @throws RemindAlreadySentException                        in case today already sent remind
      * @throws ImpatientAboutApplicationForLeaveProcessException in case try to remind too early
      */
-    Application remind(Application application) throws RemindAlreadySentException,
-        ImpatientAboutApplicationForLeaveProcessException;
-
+    Application remind(Application application) throws RemindAlreadySentException, ImpatientAboutApplicationForLeaveProcessException;
 
     /**
      * Refer the given application for leave to the given person.

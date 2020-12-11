@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
@@ -77,8 +78,12 @@ class AbsenceApiControllerTest {
         final Application tempAllowedApplication = createApplication(person, tempAllowedApplicationDate, tempAllowedApplicationDate, FULL);
         tempAllowedApplication.setStatus(TEMPORARY_ALLOWED);
 
+        final LocalDate cancellationRequestApplicationDate = LocalDate.of(2016, 4, 9);
+        final Application cancellationRequestApplication = createApplication(person, cancellationRequestApplicationDate, cancellationRequestApplicationDate, FULL);
+        cancellationRequestApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenReturn(List.of(waitingApplication, allowedApplication, tempAllowedApplication));
+            .thenReturn(List.of(waitingApplication, allowedApplication, tempAllowedApplication, cancellationRequestApplication));
 
         perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
@@ -86,19 +91,21 @@ class AbsenceApiControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.absences").exists())
-            .andExpect(jsonPath("$.absences", hasSize(5)))
+            .andExpect(jsonPath("$.absences", hasSize(6)))
             .andExpect(jsonPath("$.absences[0].date", is("2016-04-06")))
             .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
             .andExpect(jsonPath("$.absences[1].date", is("2016-04-07")))
             .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
             .andExpect(jsonPath("$.absences[2].date", is("2016-04-08")))
             .andExpect(jsonPath("$.absences[2].type", is("VACATION")))
-            .andExpect(jsonPath("$.absences[3].date", is("2016-05-19")))
-            .andExpect(jsonPath("$.absences[3].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[3].href", is("1")))
-            .andExpect(jsonPath("$.absences[4].date", is("2016-05-20")))
+            .andExpect(jsonPath("$.absences[3].date", is("2016-04-09")))
+            .andExpect(jsonPath("$.absences[3].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[4].date", is("2016-05-19")))
             .andExpect(jsonPath("$.absences[4].type", is("SICK_NOTE")))
-            .andExpect(jsonPath("$.absences[4].href", is("1")));
+            .andExpect(jsonPath("$.absences[4].href", is("1")))
+            .andExpect(jsonPath("$.absences[5].date", is("2016-05-20")))
+            .andExpect(jsonPath("$.absences[5].type", is("SICK_NOTE")))
+            .andExpect(jsonPath("$.absences[5].href", is("1")));
     }
 
     @Test

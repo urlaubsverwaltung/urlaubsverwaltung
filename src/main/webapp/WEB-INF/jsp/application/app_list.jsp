@@ -52,24 +52,23 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                    <sec:authorize
-                        access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
-                    <sec:authorize access="hasAuthority('OFFICE')">
-                    <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1"
-                       data-title="<spring:message code="action.apply.vacation"/>">
-                        <icon:plus-circle className="tw-w-5 tw-h-5"/>
-                    </a>
-                    </sec:authorize>
-                    <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1"
-                       data-title="<spring:message code="action.applications.absences_overview"/>">
-                        <icon:calendar className="tw-w-5 tw-h-5"/>
-                    </a>
-                    <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1"
-                       data-title="<spring:message code="action.applications.statistics"/>">
-                        <icon:presentation-chart-bar className="tw-w-5 tw-h-5"/>
-                    </a>
-                    </sec:authorize>
-    <uv:print/>
+                <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
+                <sec:authorize access="hasAuthority('OFFICE')">
+                <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1"
+                   data-title="<spring:message code="action.apply.vacation"/>">
+                    <icon:plus-circle className="tw-w-5 tw-h-5"/>
+                </a>
+                </sec:authorize>
+                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1"
+                   data-title="<spring:message code="action.applications.absences_overview"/>">
+                    <icon:calendar className="tw-w-5 tw-h-5"/>
+                </a>
+                <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1"
+                   data-title="<spring:message code="action.applications.statistics"/>">
+                    <icon:presentation-chart-bar className="tw-w-5 tw-h-5"/>
+                </a>
+                </sec:authorize>
+                <uv:print/>
             </jsp:attribute>
             <jsp:body>
                 <h1>
@@ -103,7 +102,7 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-12 tw-mb-10">
                 <c:choose>
                     <c:when test="${empty applications}">
                         <p><spring:message code="applications.none"/></p>
@@ -234,6 +233,141 @@
             </div>
         </div>
 
+        <uv:section-heading>
+            <jsp:body>
+                <h1 id="cancellation-requests">
+                    <spring:message code="applications.cancellation_request"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
+        <div class="row">
+            <div class="col-xs-12 tw-mb-10">
+                <c:choose>
+                    <c:when test="${empty applications_cancellation_request}">
+                        <p><spring:message code="applications.cancellation_request.none"/></p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="list-table selectable-table list-table-bt-0 tw-text-sm">
+                            <tbody>
+                            <c:forEach items="${applications_cancellation_request}" var="application" varStatus="loopStatus">
+                                <tr class="active"
+                                    onclick="navigate('${URL_PREFIX}/application/${application.id}');">
+                                    <td class="hidden-print is-centered">
+                                        <img
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            class="gravatar tw-rounded-full"
+                                            width="60px"
+                                            height="60px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
+                                    </td>
+                                    <td class="hidden-xs">
+                                        <span class="tw-block tw-text-lg tw-mb-1">
+                                            <c:out value="${application.person.niceName}"/>
+                                        </span>
+                                        <span>
+                                            <spring:message code="application.applier.applied"/>
+                                        </span>
+                                    </td>
+                                    <td class="halves">
+                                        <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
+                                           href="${URL_PREFIX}/application/${application.id}">
+                                            <c:choose>
+                                                <c:when test="${application.hours != null}">
+                                                    <uv:number number="${application.hours}"/>
+                                                    <spring:message code="duration.hours"/>
+                                                    <spring:message code="${application.vacationType.messageKey}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <uv:number number="${application.workDays}"/>
+                                                    <spring:message code="duration.days"/>
+                                                    <spring:message code="${application.vacationType.messageKey}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </a>
+                                        <div>
+                                            <c:choose>
+                                                <c:when test="${application.startDate == application.endDate}">
+                                                    <c:set var="APPLICATION_DATE">
+                                                        <spring:message
+                                                            code="${application.weekDayOfStartDate}.short"/>,
+                                                        <uv:date date="${application.startDate}"/>
+                                                    </c:set>
+                                                    <c:choose>
+                                                        <c:when
+                                                            test="${application.startTime != null && application.endTime != null}">
+                                                            <c:set var="APPLICATION_START_TIME">
+                                                                <uv:time
+                                                                    dateTime="${application.startDateWithTime}"/>
+                                                            </c:set>
+                                                            <c:set var="APPLICATION_END_TIME">
+                                                                <uv:time
+                                                                    dateTime="${application.endDateWithTime}"/>
+                                                            </c:set>
+                                                            <c:set var="APPLICATION_TIME">
+                                                                <spring:message code="absence.period.time"
+                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
+                                                                                argumentSeparator=";"/>
+                                                            </c:set>
+                                                            <spring:message code="absence.period.singleDay"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
+                                                                            argumentSeparator=";"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="APPLICATION_DAY_LENGTH">
+                                                                <spring:message
+                                                                    code="${application.dayLength}"/>
+                                                            </c:set>
+                                                            <spring:message code="absence.period.singleDay"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}"
+                                                                            argumentSeparator=";"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="APPLICATION_START_DATE">
+                                                        <spring:message
+                                                            code="${application.weekDayOfStartDate}.short"/>,
+                                                        <uv:date date="${application.startDate}"/>
+                                                    </c:set>
+                                                    <c:set var="APPLICATION_END_DATE">
+                                                        <spring:message
+                                                            code="${application.weekDayOfEndDate}.short"/>,
+                                                        <uv:date date="${application.endDate}"/>
+                                                    </c:set>
+                                                    <spring:message code="absence.period.multipleDays"
+                                                                    arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
+                                                                    argumentSeparator=";"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </td>
+                                    <td class="hidden-xs hidden-sm text-right">
+                                        <c:if test="${IS_OFFICE}">
+                                            <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                   href="${URL_PREFIX}/application/${application.id}?action=cancel&shortcut=true">
+                                                    <icon:trash className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                                    <spring:message code='action.delete'/>
+                                                </a>
+                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                   href="${URL_PREFIX}/application/${application.id}?action=decline-cancellation-request&shortcut=true">
+                                                    <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                                    <spring:message code="action.cancellationRequest"/>
+                                                </a>
+                                            </div>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
     </div>
 </div>
 </body>

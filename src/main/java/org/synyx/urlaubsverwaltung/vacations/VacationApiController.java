@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -29,6 +30,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
@@ -75,8 +77,9 @@ public class VacationApiController {
         }
 
         final Person person = getPerson(personId);
-        final List<Application> applications =
-            applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person, ALLOWED);
+        final List<Application> applications = new ArrayList<>();
+        applications.addAll(applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person, ALLOWED));
+        applications.addAll(applicationService.getApplicationsForACertainPeriodAndPersonAndState(startDate, endDate, person, ALLOWED_CANCELLATION_REQUESTED));
 
         return mapToVacationResponse(applications);
     }
@@ -111,12 +114,14 @@ public class VacationApiController {
 
         final Person person = getPerson(personId);
 
-        final List<Application> applications;
+        final List<Application> applications = new ArrayList<>();
         final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
         if (departments.isEmpty()) {
-            applications = applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED);
+            applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED));
+            applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED_CANCELLATION_REQUESTED));
+
         } else {
-            applications = departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, startDate, endDate);
+            applications.addAll(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, startDate, endDate));
         }
 
         return mapToVacationResponse(applications);

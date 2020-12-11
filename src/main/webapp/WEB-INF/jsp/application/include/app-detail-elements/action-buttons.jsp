@@ -41,10 +41,10 @@
 <%-- DISPLAYING DEPENDS ON VARIABLES --%>
 
 <%-- ALLOW ACTION --%>
-<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
+<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' }">
     <c:if test="${CAN_ALLOW &&(!IS_OWN || IS_BOSS) && !(IS_SECOND_STAGE_AUTHORITY_APPLICATION && IS_DEPARTMENT_HEAD)}">
         <a href="#" class="icon-link tw-px-1 hover:tw-text-green-500" data-title="<spring:message code='action.allow'/>"
-           onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#allow').show();">
+           onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
             <icon:check className="tw-w-5 tw-h-5" solid="true" />
         </a>
     </c:if>
@@ -54,7 +54,7 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
     <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
         <a href="#" class="icon-link tw-px-1" data-title="<spring:message code='action.refer'/>"
-           onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#refer').show();">
+           onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#refer').show();">
             <icon:share className="tw-w-5 tw-h-5" />
         </a>
     </c:if>
@@ -64,7 +64,7 @@
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
     <c:if test="${CAN_ALLOW && (!IS_OWN || IS_BOSS)}">
         <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.reject'/>"
-           onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#reject').show();">
+           onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#reject').show();">
             <icon:ban className="tw-w-5 tw-h-5" solid="true" />
         </a>
     </c:if>
@@ -89,12 +89,34 @@
 </c:if>
 
 <%-- CANCEL ACTION --%>
-<c:if
-    test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'}">
-    <c:if test="${(IS_USER && IS_OWN) || IS_OFFICE}">
-        <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.delete'/>"
-           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').show();">
+<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'|| application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
+    <c:if test="${IS_OFFICE || (IS_USER && IS_OWN && application.status != 'ALLOWED_CANCELLATION_REQUESTED')}">
+
+        <c:choose>
+            <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
+                <c:set var="CANCEL_TITLE">
+                    <spring:message code='action.delete.request'/>
+                </c:set>
+            </c:when>
+            <c:otherwise>
+                <c:set var="CANCEL_TITLE">
+                   <spring:message code='action.delete'/>
+                </c:set>
+            </c:otherwise>
+        </c:choose>
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="${CANCEL_TITLE}"
+           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();">
             <icon:trash className="tw-w-5 tw-h-5" />
+        </a>
+    </c:if>
+</c:if>
+
+<%-- CANCEL CANCELLATION REQUEST ACTION --%>
+<c:if test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED' }">
+    <c:if test="${IS_OFFICE}">
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.cancellationRequest'/>"
+           onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').show();">
+            <icon:ban className="tw-w-5 tw-h-5" />
         </a>
     </c:if>
 </c:if>

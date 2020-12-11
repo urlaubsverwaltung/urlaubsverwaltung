@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationAction;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -31,7 +31,7 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     }
 
     @Override
-    public ApplicationComment create(Application application, ApplicationAction action, Optional<String> text,
+    public ApplicationComment create(Application application, ApplicationCommentAction action, Optional<String> text,
                                      Person author) {
 
         final ApplicationComment comment = new ApplicationComment(author, clock);
