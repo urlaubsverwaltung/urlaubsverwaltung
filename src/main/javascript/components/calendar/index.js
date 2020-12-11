@@ -133,17 +133,26 @@ $(function () {
       isPersonalHolidayFullApproved: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayFullApproved(date);
       },
+      isPersonalHolidayFullCancellationRequest: function (date) {
+        return !isWeekend(date) && holidayService.isPersonalHolidayFullCancellationRequest(date);
+      },
       isPersonalHolidayMorning: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayMorning(date);
       },
       isPersonalHolidayMorningApproved: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayMorningApproved(date);
       },
+      isPersonalHolidayMorningCancellationRequest: function (date) {
+        return !isWeekend(date) && holidayService.isPersonalHolidayMorningCancellationRequest(date);
+      },
       isPersonalHolidayNoon: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayNoon(date);
       },
       isPersonalHolidayNoonApproved: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayNoonApproved(date);
+      },
+      isPersonalHolidayNoonCancellationRequest: function (date) {
+        return !isWeekend(date) && holidayService.isPersonalHolidayNoonCancellationRequest(date);
       },
       isSickDayFull: function (date) {
         return !isWeekend(date) && holidayService.isSickDayFull(date);
@@ -274,6 +283,11 @@ $(function () {
         absencePeriodName: absencePeriod.FULL,
         status: "ALLOWED",
       }),
+      isPersonalHolidayFullCancellationRequest: isOfType("holiday", {
+        absencePeriodName: absencePeriod.FULL,
+        status: "ALLOWED_CANCELLATION_REQUESTED",
+      }),
+
       isPersonalHolidayMorning: isOfType("holiday", {
         absencePeriodName: absencePeriod.MORNING,
         status: "WAITING",
@@ -282,6 +296,11 @@ $(function () {
         absencePeriodName: absencePeriod.MORNING,
         status: "ALLOWED",
       }),
+      isPersonalHolidayMorningCancellationRequest: isOfType("holiday", {
+        absencePeriodName: absencePeriod.MORNING,
+        status: "ALLOWED_CANCELLATION_REQUESTED",
+      }),
+
       isPersonalHolidayNoon: isOfType("holiday", {
         absencePeriodName: absencePeriod.NOON,
         status: "WAITING",
@@ -289,6 +308,10 @@ $(function () {
       isPersonalHolidayNoonApproved: isOfType("holiday", {
         absencePeriodName: absencePeriod.NOON,
         status: "ALLOWED",
+      }),
+      isPersonalHolidayNoonCancellationRequest: isOfType("holiday", {
+        absencePeriodName: absencePeriod.NOON,
+        status: "ALLOWED_CANCELLATION_REQUESTED",
       }),
 
       isPublicHolidayFull: isOfType("publicHoliday", {
@@ -608,10 +631,13 @@ $(function () {
           assert.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
           assert.isPersonalHolidayFull(date) ? CSS.dayPersonalHolidayFull : "",
           assert.isPersonalHolidayFullApproved(date) ? CSS.dayPersonalHolidayFullApproved : "",
+          assert.isPersonalHolidayFullCancellationRequest(date) ? CSS.dayPersonalHolidayFullApproved : "",
           assert.isPersonalHolidayMorning(date) ? CSS.dayPersonalHolidayMorning : "",
           assert.isPersonalHolidayMorningApproved(date) ? CSS.dayPersonalHolidayMorningApproved : "",
+          assert.isPersonalHolidayMorningCancellationRequest(date) ? CSS.dayPersonalHolidayMorningApproved : "",
           assert.isPersonalHolidayNoon(date) ? CSS.dayPersonalHolidayNoon : "",
           assert.isPersonalHolidayNoonApproved(date) ? CSS.dayPersonalHolidayNoonApproved : "",
+          assert.isPersonalHolidayNoonCancellationRequest(date) ? CSS.dayPersonalHolidayNoonApproved : "",
           assert.isSickDayFull(date) ? CSS.daySickDayFull : "",
           assert.isSickDayMorning(date) ? CSS.daySickDayMorning : "",
           assert.isSickDayNoon(date) ? CSS.daySickDayNoon : "",

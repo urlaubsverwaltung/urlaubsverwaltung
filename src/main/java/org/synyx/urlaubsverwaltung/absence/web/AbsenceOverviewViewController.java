@@ -59,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAI
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_MORNING;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_NOON;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -341,7 +342,7 @@ public class AbsenceOverviewViewController {
                 default:
                     return WAITING_VACATION_FULL;
             }
-        } else if (status == ALLOWED) {
+        } else if (status == ALLOWED || status == ALLOWED_CANCELLATION_REQUESTED) {
             switch (application.getDayLength()) {
                 case MORNING:
                     return ALLOWED_VACATION_MORNING;
