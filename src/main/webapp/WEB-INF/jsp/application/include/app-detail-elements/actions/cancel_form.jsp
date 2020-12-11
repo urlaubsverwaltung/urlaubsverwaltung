@@ -24,11 +24,11 @@
     <div class="form-group">
         <strong class="tw-font-medium">
             <c:choose>
-                <c:when test="${IS_OFFICE}">
-                    <spring:message code='action.delete.confirm'/>
+                <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
+                    <spring:message code='action.delete.request.confirm'/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code='action.delete.request.confirm'/>
+                    <spring:message code='action.delete.confirm'/>
                 </c:otherwise>
             </c:choose>
         </strong>
@@ -57,11 +57,11 @@
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
             <c:choose>
-                <c:when test="${IS_OFFICE}">
-                    <spring:message code='action.delete'/>
+                <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
+                    <spring:message code='action.delete.request'/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code='action.delete.request'/>
+                    <spring:message code='action.delete'/>
                 </c:otherwise>
             </c:choose>
         </button>

@@ -91,17 +91,18 @@
 <%-- CANCEL ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED'|| application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
     <c:if test="${IS_OFFICE || (IS_USER && IS_OWN && application.status != 'ALLOWED_CANCELLATION_REQUESTED')}">
+
         <c:choose>
-            <c:when test="${IS_OFFICE}">
-                <c:set var="CANCEL_TITLE">
-                    <spring:message code='action.delete'/>
-                </c:set>
-            </c:when>
-            <c:when test="${(IS_USER && IS_OWN && application.status != 'ALLOWED_CANCELLATION_REQUESTED')}">
+            <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
                 <c:set var="CANCEL_TITLE">
                     <spring:message code='action.delete.request'/>
                 </c:set>
             </c:when>
+            <c:otherwise>
+                <c:set var="CANCEL_TITLE">
+                   <spring:message code='action.delete'/>
+                </c:set>
+            </c:otherwise>
         </c:choose>
         <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="${CANCEL_TITLE}"
            onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();">
