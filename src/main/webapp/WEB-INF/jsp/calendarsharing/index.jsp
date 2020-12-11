@@ -28,6 +28,14 @@
         </h1>
     </header>
     <main>
+
+        <div class="tw-block tw-mb-8">
+            <spring:message code="calendar.share.info"/>
+            <a href="https://github.com/synyx/urlaubsverwaltung/wiki/Fragen-zur-iCal-Kalenderfreigabe">
+                <spring:message code="calendar.share.info.wiki"/>
+            </a>
+        </div>
+
         <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me"
                    modelAttribute="privateCalendarShare" cssClass="tw-mb-8">
             <div class="tw-mb-4">
