@@ -136,6 +136,23 @@
                                 </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
+                                <c:if test="${defaultVacationDaysFromSettings}">
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4"
+                                           for="accountSettings.defaultVacationDays">
+                                        <spring:message code='settings.vacation.defaultVacationDays'/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="accountSettings.defaultVacationDays"
+                                                    path="accountSettings.defaultVacationDays"
+                                                    class="form-control" cssErrorClass="form-control error"
+                                                    type="number" step="1"/>
+                                        <uv:error-text>
+                                            <form:errors path="accountSettings.defaultVacationDays" />
+                                        </uv:error-text>
+                                    </div>
+                                </div>
+                                </c:if>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
                                            for="accountSettings.maximumAnnualVacationDays">

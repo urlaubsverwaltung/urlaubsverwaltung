@@ -66,4 +66,5 @@
   <include file="dbchangelogs/changelog-4.0.0-add-timezone.xml"/>
   <include file="dbchangelogs/changelog-4.3.0-increase-application-status-length.xml"/>
   <include file="dbchangelogs/changelog-4.3.0-increase-application-comment-action-length.xml"/>
+  <include file="dbchangelogs/changelog-4.4.0-accountsettings-default-vacation-days.xml"/>
 </databaseChangeLog>

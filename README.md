@@ -112,7 +112,7 @@ Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung
 
 ```properties
 # account
-uv.account.default-vacation-days=20
+uv.account.default-vacation-days=20 # deprecated - kann über 'Einstellungen' gesetzt werden wenn auf '-1' gesetzt
 uv.account.update.cron=0 0 5 1 1 *
 
 # application

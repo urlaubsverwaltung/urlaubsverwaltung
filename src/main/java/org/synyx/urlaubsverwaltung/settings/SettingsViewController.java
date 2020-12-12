@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -29,16 +30,17 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping("/web/settings")
 public class SettingsViewController {
 
+    private final AccountProperties accountProperties;
     private final SettingsService settingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
     private final Clock clock;
 
     @Autowired
-    public SettingsViewController(SettingsService settingsService,
+    public SettingsViewController(AccountProperties accountProperties, SettingsService settingsService,
                                   List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock) {
-
+        this.accountProperties = accountProperties;
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
@@ -99,6 +101,8 @@ public class SettingsViewController {
     }
 
     private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
+        model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
+
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());

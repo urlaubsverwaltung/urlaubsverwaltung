@@ -16,17 +16,20 @@ import javax.validation.constraints.NotNull;
 public class AccountProperties {
 
     @NotNull
-    @Min(0)
+    @Min(-1)
     @Max(365)
+    @Deprecated(since = "4.4.0", forRemoval = true)
     private Integer defaultVacationDays = 20;
 
     @Valid
     private Update update = new Update();
 
+    @Deprecated(since = "4.4.0", forRemoval = true)
     public Integer getDefaultVacationDays() {
         return defaultVacationDays;
     }
 
+    @Deprecated(since = "4.4.0", forRemoval = true)
     public void setDefaultVacationDays(Integer defaultVacationDays) {
         this.defaultVacationDays = defaultVacationDays;
     }
@@ -55,5 +58,4 @@ public class AccountProperties {
             this.cron = cron;
         }
     }
-
 }

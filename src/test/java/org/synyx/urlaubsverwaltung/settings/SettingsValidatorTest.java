@@ -182,7 +182,7 @@ class SettingsValidatorTest {
 
     // Account settings ------------------------------------------------------------------------------------------------
     @Test
-    void ensureAccountSettingsCanNotBeNull() {
+    void ensureMaximumAnnualVacationDaysAccountSettingsCanNotBeNull() {
 
         final Settings settings = new Settings();
         final AccountSettings accountSettings = settings.getAccountSettings();
@@ -194,7 +194,7 @@ class SettingsValidatorTest {
     }
 
     @Test
-    void ensureAccountSettingsCanNotBeNegative() {
+    void ensureMaximumAnnualVacationDaysAccountSettingsCanNotBeNegative() {
 
         final Settings settings = new Settings();
         final AccountSettings accountSettings = settings.getAccountSettings();
@@ -206,29 +206,62 @@ class SettingsValidatorTest {
     }
 
     @Test
-    void ensureThatMaximumAnnualVacationDaysSmallerThanAYear() {
+    void ensureThatDefaultVacationDaysSmallerThanAYear() {
 
         final Settings settings = new Settings();
-        settings.getAccountSettings().setMaximumAnnualVacationDays(367);
+        settings.getAccountSettings().setDefaultVacationDays(366);
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.invalid");
+        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.invalid");
     }
 
     @Test
-    void ensureThatAccountSettingsAreSmallerOrEqualsThanMaxInt() {
+    void ensureDefaultVacationDaysAccountSettingsCanNotBeNull() {
 
         final Settings settings = new Settings();
         final AccountSettings accountSettings = settings.getAccountSettings();
-
-        accountSettings.setMaximumAnnualVacationDays(Integer.MAX_VALUE + 1);
+        accountSettings.setDefaultVacationDays(null);
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("accountSettings.maximumAnnualVacationDays", "error.entry.invalid");
+        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.mandatory");
     }
 
+    @Test
+    void ensureDefaultVacationDaysAccountSettingsCanNotBeNegative() {
+
+        final Settings settings = new Settings();
+        final AccountSettings accountSettings = settings.getAccountSettings();
+        accountSettings.setDefaultVacationDays(-1);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.invalid");
+    }
+
+    @Test
+    void ensureDefaultVacationDaysSmallerThanAYear() {
+
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setDefaultVacationDays(366);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.invalid");
+    }
+
+    @Test
+    void ensureDefaultVacationDaysSmallerMaxDays() {
+
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setMaximumAnnualVacationDays(19);
+        settings.getAccountSettings().setDefaultVacationDays(20);
+
+        final Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "settings.account.error.defaultMustBeSmallerOrEqualThanMax");
+    }
 
     // SickNote settings ------------------------------------------------------------------------------------------------
     @Test
