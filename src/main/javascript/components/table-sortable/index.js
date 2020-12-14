@@ -8,7 +8,7 @@ $(document).ready(function () {
       return false;
     },
     format: function (s) {
-      var d;
+      let d;
       if (s.length > 10) {
         d = s.slice(0, 10);
       } else if (s.length == 10) {
@@ -17,7 +17,7 @@ $(document).ready(function () {
         return -1;
       }
 
-      var a = d.split(".");
+      const a = d.split(".");
       a[1] = a[1].replace(/^0+/g, "");
       return new Date(a.reverse().join("/")).getTime();
     },
@@ -30,7 +30,7 @@ $(document).ready(function () {
       return false;
     },
     format: function (s) {
-      var reg = new RegExp("\\d+");
+      const reg = new RegExp("\\d+");
 
       if (reg.test(s)) {
         s = s.replace(/[,.]/g, ".");

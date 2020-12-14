@@ -28,8 +28,8 @@ import { getJSON } from "../../js/fetch";
 import "./calendar.css";
 
 function paramize(p) {
-  var result = "?";
-  for (var v in p) {
+  let result = "?";
+  for (let v in p) {
     if (p[v]) {
       result += v + "=" + p[v] + "&";
     }
@@ -38,21 +38,21 @@ function paramize(p) {
 }
 
 $(function () {
-  var $datepicker = $("#datepicker");
+  const $datepicker = $("#datepicker");
 
-  var numberOfMonths = 10;
+  const numberOfMonths = 10;
 
-  var keyCodes = {
+  const keyCodes = {
     escape: 27,
   };
 
-  var mouseButtons = {
+  const mouseButtons = {
     left: 0,
     middle: 1,
     right: 2,
   };
 
-  var CSS = {
+  const CSS = {
     day: "datepicker-day",
     daySelected: "datepicker-day-selected",
     dayToday: "datepicker-day-today",
@@ -76,7 +76,7 @@ $(function () {
     mousedown: "mousedown",
   };
 
-  var DATA = {
+  const DATA = {
     date: "datepickerDate",
     month: "datepickerMonth",
     year: "datepickerYear",
@@ -95,10 +95,10 @@ $(function () {
     return parseISO($(element).data(DATA.date));
   }
 
-  var Assertion = (function () {
-    var holidayService;
+  const Assertion = (function () {
+    let holidayService;
 
-    var assert = {
+    const assert = {
       isToday: function (date) {
         return isToday(date);
       },
@@ -185,12 +185,12 @@ $(function () {
     };
   })();
 
-  var HolidayService = (function () {
-    var _CACHE = {};
+  const HolidayService = (function () {
+    const _CACHE = {};
 
-    var webPrefix;
-    var apiPrefix;
-    var personId;
+    let webPrefix;
+    let apiPrefix;
+    let personId;
 
     /**
      *
@@ -204,10 +204,10 @@ $(function () {
     }
 
     function cacheAbsences(type, year) {
-      var c = (_CACHE[type] = _CACHE[type] || {});
+      const c = (_CACHE[type] = _CACHE[type] || {});
 
       return function (data) {
-        var absences = data.absences;
+        const absences = data.absences;
 
         if (absences.length > 0) {
           $.each(absences, function (idx, absence) {
@@ -221,10 +221,10 @@ $(function () {
     }
 
     function cachePublicHoliday(year) {
-      var c = (_CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {});
+      const c = (_CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {});
 
       return function (data) {
-        var publicHolidays = data.publicHolidays;
+        const publicHolidays = data.publicHolidays;
 
         if (publicHolidays.length > 0) {
           $.each(publicHolidays, function (idx, publicHoliday) {
@@ -325,11 +325,11 @@ $(function () {
       }),
 
       getDescription: function (date) {
-        var year = getYear(date);
-        var formattedDate = format(date, "yyyy-MM-dd");
+        const year = getYear(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
 
         if (_CACHE["publicHoliday"] && _CACHE["publicHoliday"][year]) {
-          var publicHoliday = findWhere(_CACHE["publicHoliday"][year], {
+          const publicHoliday = findWhere(_CACHE["publicHoliday"][year], {
             date: formattedDate,
           });
           if (publicHoliday) {
@@ -341,11 +341,11 @@ $(function () {
       },
 
       getStatus: function (date) {
-        var year = getYear(date);
-        var formattedDate = format(date, "yyyy-MM-dd");
+        const year = getYear(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
 
         if (_CACHE["holiday"] && _CACHE["holiday"][year]) {
-          var holiday = findWhere(_CACHE["holiday"][year], {
+          const holiday = findWhere(_CACHE["holiday"][year], {
             date: formattedDate,
           });
           if (holiday) {
@@ -357,11 +357,11 @@ $(function () {
       },
 
       getAbsenceId: function (date) {
-        var year = getYear(date);
-        var formattedDate = format(date, "yyyy-MM-dd");
+        const year = getYear(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
 
         if (_CACHE["holiday"] && _CACHE["holiday"][year]) {
-          var holiday = findWhere(_CACHE["holiday"][year], {
+          const holiday = findWhere(_CACHE["holiday"][year], {
             date: formattedDate,
           });
           if (holiday) {
@@ -370,7 +370,7 @@ $(function () {
         }
 
         if (_CACHE["sick"] && _CACHE["sick"][year]) {
-          var sickDay = findWhere(_CACHE["sick"][year], {
+          const sickDay = findWhere(_CACHE["sick"][year], {
             date: formattedDate,
           });
           if (sickDay) {
@@ -382,11 +382,11 @@ $(function () {
       },
 
       getAbsenceType: function (date) {
-        var year = getYear(date);
-        var formattedDate = format(date, "yyyy-MM-dd");
+        const year = getYear(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
 
         if (_CACHE["holiday"] && _CACHE["holiday"][year]) {
-          var holiday = findWhere(_CACHE["holiday"][year], {
+          const holiday = findWhere(_CACHE["holiday"][year], {
             date: formattedDate,
           });
           if (holiday) {
@@ -395,7 +395,7 @@ $(function () {
         }
 
         if (_CACHE["sick"] && _CACHE["sick"][year]) {
-          var sickDay = findWhere(_CACHE["sick"][year], {
+          const sickDay = findWhere(_CACHE["sick"][year], {
             date: formattedDate,
           });
           if (sickDay) {
@@ -412,7 +412,7 @@ $(function () {
        * @param {Date} [to]
        */
       bookHoliday: function (from, to) {
-        var parameters = {
+        const parameters = {
           personId: personId,
           from: format(from, "yyyy-MM-dd"),
           to: to ? format(to, "yyyy-MM-dd") : undefined,
@@ -495,10 +495,10 @@ $(function () {
     };
   })();
 
-  var View = (function () {
-    var assert;
+  const View = (function () {
+    let assert;
 
-    var TMPL = {
+    const TMPL = {
       container: '{{previousButton}}<div class="datepicker-months-container">{{months}}</div>{{nextButton}}',
 
       button: '<button class="{{css}}">{{text}}</button>',
@@ -525,21 +525,21 @@ $(function () {
           return data.apply(this, arguments);
         }
 
-        var value = data[type];
+        const value = data[type];
         return typeof value === "function" ? value() : value;
       });
     }
 
     function renderCalendar(date) {
-      var monthsToShow = numberOfMonths;
+      let monthsToShow = numberOfMonths;
 
       return render(TMPL.container, {
         previousButton: renderButton(CSS.previous, `<span>${icons.chevronLeft}</span>`),
         nextButton: renderButton(CSS.next, `<span>${icons.chevronRight}</span>`),
 
         months: function () {
-          var html = "";
-          var d = subMonths(date, 4);
+          let html = "";
+          let d = subMonths(date, 4);
           while (monthsToShow--) {
             html += renderMonth(d);
             d = addMonths(d, 1);
@@ -557,8 +557,8 @@ $(function () {
     }
 
     function renderMonth(date, cssClasses) {
-      var m = getMonth(date);
-      var d = startOfMonth(date);
+      const m = getMonth(date);
+      let d = startOfMonth(date);
 
       return render(TMPL.month, {
         css: cssClasses || "",
@@ -568,7 +568,7 @@ $(function () {
         weekdays: renderWeekdaysHeader(d),
 
         weeks: function () {
-          var html = "";
+          let html = "";
           while (getMonth(d) === m) {
             html += renderWeek(d);
             d = addWeeks(d, 1);
@@ -586,7 +586,7 @@ $(function () {
     }
 
     function renderWeekdaysHeader(date) {
-      var d = startOfWeek(date);
+      const d = startOfWeek(date);
 
       return render(TMPL.weekdays, {
         0: format(d, "EEEEEE"),
@@ -600,8 +600,8 @@ $(function () {
     }
 
     function renderWeek(date) {
-      var d = date;
-      var m = getMonth(d);
+      let d = date;
+      const m = getMonth(d);
 
       return render(TMPL.week, function (_, dayIdx) {
         let dayIndexToRender = Number(dayIdx) + window.uv.weekStartsOn;
@@ -609,7 +609,7 @@ $(function () {
           dayIndexToRender = 0;
         }
 
-        var html = "&nbsp;";
+        let html = "&nbsp;";
 
         if (dayIndexToRender === getDay(d) && m === getMonth(d)) {
           html = renderDay(d);
@@ -677,39 +677,39 @@ $(function () {
       });
     }
 
-    var View = {
+    const View = {
       display: function (date) {
         $datepicker.html(renderCalendar(date)).addClass("unselectable");
         tooltip();
       },
 
       displayNext: function () {
-        var elements = $datepicker.find("." + CSS.month).get();
-        var length_ = elements.length;
+        const elements = $datepicker.find("." + CSS.month).get();
+        const length_ = elements.length;
 
         $(elements[0]).remove();
 
-        var $lastMonth = $(elements[length_ - 1]);
-        var month = Number($lastMonth.data(DATA.month));
-        var year = Number($lastMonth.data(DATA.year));
+        const $lastMonth = $(elements[length_ - 1]);
+        const month = Number($lastMonth.data(DATA.month));
+        const year = Number($lastMonth.data(DATA.year));
 
-        var $nextMonth = $(renderMonth(addMonths(new Date(year, month), 1)));
+        const $nextMonth = $(renderMonth(addMonths(new Date(year, month), 1)));
 
         $lastMonth.after($nextMonth);
         tooltip();
       },
 
       displayPrevious: function () {
-        var elements = $datepicker.find("." + CSS.month).get();
-        var length_ = elements.length;
+        const elements = $datepicker.find("." + CSS.month).get();
+        const length_ = elements.length;
 
         $(elements[length_ - 1]).remove();
 
-        var $firstMonth = $(elements[0]);
-        var month = Number($firstMonth.data(DATA.month));
-        var year = Number($firstMonth.data(DATA.year));
+        const $firstMonth = $(elements[0]);
+        const month = Number($firstMonth.data(DATA.month));
+        const year = Number($firstMonth.data(DATA.year));
 
-        var previousMonth = $(renderMonth(subMonths(new Date(year, month), 1)));
+        const previousMonth = $(renderMonth(subMonths(new Date(year, month), 1)));
 
         $firstMonth.before(previousMonth);
         tooltip();
@@ -724,11 +724,11 @@ $(function () {
     };
   })();
 
-  var Controller = (function () {
-    var view;
-    var holidayService;
+  const Controller = (function () {
+    let view;
+    let holidayService;
 
-    var datepickerHandlers = {
+    const datepickerHandlers = {
       mousedown: function (event) {
         if (event.button != mouseButtons.left) {
           return;
@@ -736,7 +736,7 @@ $(function () {
 
         $(document.body).addClass(CSS.mousedown);
 
-        var dateThis = getDateFromElement(this);
+        const dateThis = getDateFromElement(this);
 
         const start = selectionFrom();
         const end = selectionTo();
@@ -756,10 +756,10 @@ $(function () {
 
       mouseover: function () {
         if ($(document.body).hasClass(CSS.mousedown)) {
-          var dateThis = getDateFromElement(this);
-          var dateSelected = $datepicker.data(DATA.selected);
+          const dateThis = getDateFromElement(this);
+          const dateSelected = $datepicker.data(DATA.selected);
 
-          var isThisBefore = isBefore(dateThis, dateSelected);
+          const isThisBefore = isBefore(dateThis, dateSelected);
 
           selectionFrom(isThisBefore ? dateThis : dateSelected);
           selectionTo(isThisBefore ? dateSelected : dateThis);
@@ -767,14 +767,14 @@ $(function () {
       },
 
       click: function () {
-        var dateFrom = selectionFrom();
-        var dateTo = selectionTo();
+        const dateFrom = selectionFrom();
+        const dateTo = selectionTo();
 
-        var dateThis = getDateFromElement(this);
+        const dateThis = getDateFromElement(this);
 
-        var isSelectable = $(this).attr("data-datepicker-selectable");
-        var absenceId = $(this).attr("data-datepicker-absence-id");
-        var absenceType = $(this).attr("data-datepicker-absence-type");
+        const isSelectable = $(this).attr("data-datepicker-selectable");
+        const absenceId = $(this).attr("data-datepicker-absence-id");
+        const absenceType = $(this).attr("data-datepicker-absence-type");
 
         if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
           holidayService.navigateToApplicationForLeave(absenceId);
@@ -795,13 +795,13 @@ $(function () {
 
       clickNext: function () {
         // last month of calendar
-        var $month = $($datepicker.find("." + CSS.month)[numberOfMonths - 1]);
+        const $month = $($datepicker.find("." + CSS.month)[numberOfMonths - 1]);
 
         const y = $month.data(DATA.year);
         const m = $month.data(DATA.month);
 
         // to load data for the new (invisible) prev month
-        var date = addMonths(new Date(y, m, 1), 1);
+        const date = addMonths(new Date(y, m, 1), 1);
 
         Promise.all([
           holidayService.fetchPublic(getYear(date)),
@@ -812,13 +812,13 @@ $(function () {
 
       clickPrevious: function () {
         // first month of calendar
-        var $month = $($datepicker.find("." + CSS.month)[0]);
+        const $month = $($datepicker.find("." + CSS.month)[0]);
 
         const y = $month.data(DATA.year);
         const m = $month.data(DATA.month);
 
         // to load data for the new (invisible) prev month
-        var date = subMonths(new Date(y, m, 1), 1);
+        const date = subMonths(new Date(y, m, 1), 1);
 
         Promise.all([
           holidayService.fetchPublic(getYear(date)),
@@ -871,7 +871,7 @@ $(function () {
 
     // eslint-disable-next-line unicorn/consistent-function-scoping
     function select(element, select) {
-      var element_ = $(element);
+      const element_ = $(element);
 
       if (!element_.data(DATA.selectable)) {
         return;
@@ -884,7 +884,7 @@ $(function () {
       }
     }
 
-    var Controller = {
+    const Controller = {
       bind: function () {
         $datepicker.on("mousedown", "." + CSS.day, datepickerHandlers.mousedown);
         $datepicker.on("mouseover", "." + CSS.day, datepickerHandlers.mouseover);
@@ -914,17 +914,17 @@ $(function () {
     };
   })();
 
-  var Calendar = (function () {
-    var view;
-    var date;
+  const Calendar = (function () {
+    let view;
+    let date;
 
     return {
       init: function (holidayService, referenceDate) {
         date = referenceDate;
 
-        var a = Assertion.create(holidayService);
+        const a = Assertion.create(holidayService);
         view = View.create(a);
-        var c = Controller.create(holidayService, view);
+        const c = Controller.create(holidayService, view);
 
         view.display(date);
         c.bind();

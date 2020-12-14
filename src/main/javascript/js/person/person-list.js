@@ -13,7 +13,7 @@ $(document).ready(function () {
     },
   });
 
-  var options = {
+  const options = {
     valueNames: ["firstname", "lastname"],
     page: 500,
   };

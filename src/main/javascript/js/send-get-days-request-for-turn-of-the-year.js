@@ -23,8 +23,8 @@ export default async function sendGetDaysRequestForTurnOfTheYear(
     return;
   }
 
-  var before;
-  var after;
+  let before;
+  let after;
 
   if (getYear(startDate) < getYear(toDate)) {
     before = startDate;
