@@ -30,6 +30,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @Api("Availabilities: Get all availabilities for a certain person and period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
+@Deprecated(forRemoval = true, since = "4.4.0")
 public class AvailabilityApiController {
 
     public static final String AVAILABILITIES = "availabilities";

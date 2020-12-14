@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 

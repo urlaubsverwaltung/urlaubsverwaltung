@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.availability.api;
 
 import java.util.List;
 
+@Deprecated(forRemoval = true, since = "4.4.0")
 class AvailabilityListDto {
 
     private final Integer personId;

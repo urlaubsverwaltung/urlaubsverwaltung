@@ -18,6 +18,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.T
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
 
