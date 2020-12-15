@@ -134,7 +134,7 @@ class LdapUserMapperTest {
     }
 
     @Test
-    void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() throws UnsupportedMemberAffiliationException {
+    void ensureThrowsIfMappingUserFromContextThatIsNotMemberOfMemberFilter() {
 
         DirContextOperations ctx = mock(DirContextOperations.class);
         when(ctx.getStringAttribute(IDENTIFIER_ATTRIBUTE)).thenReturn("rick");
