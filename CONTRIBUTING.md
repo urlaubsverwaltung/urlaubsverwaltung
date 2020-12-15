@@ -56,7 +56,7 @@ automatically use our EditorConfig.
 
 ### Building from Source
 The Urlaubsverwaltungs source can be build from the command line using
-[Apache Maven](http://maven.apache.org/run-maven/index.html) on JDK 11 or above.
+[Apache Maven](http://maven.apache.org/run-maven/index.html) on JDK 15 or above.
 We include '`Maven Wrapper`' scripts (`./mvnw` or `mvnw.bat`) that you can run rather
 than needing to install Maven locally.
 

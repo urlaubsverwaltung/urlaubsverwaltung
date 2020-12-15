@@ -23,7 +23,7 @@
   <properties>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    <java.version>11</java.version>
+    <java.version>15</java.version>
     <testcontainers.version>1.16.0</testcontainers.version>
     <selenium.version>3.141.59</selenium.version>
   </properties>
