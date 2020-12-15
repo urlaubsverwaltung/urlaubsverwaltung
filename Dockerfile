@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jre
+FROM eclipse-temurin:15-jre
 EXPOSE 8080
 
 ENV JAVA_TOOL_OPTIONS=""
