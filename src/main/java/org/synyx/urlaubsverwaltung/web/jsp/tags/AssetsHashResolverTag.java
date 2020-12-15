@@ -11,7 +11,7 @@ public class AssetsHashResolverTag extends RequestContextAwareTag {
 
     private String value;
 
-    private UrlTag urlTag;
+    private final UrlTag urlTag;
 
     public AssetsHashResolverTag() {
         this.urlTag = new UrlTag();

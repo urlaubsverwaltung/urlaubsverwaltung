@@ -10,7 +10,7 @@ import static org.testcontainers.containers.MariaDBContainer.NAME;
 @DirtiesContext
 public abstract class TestContainersBase {
 
-    static MariaDBContainer<?> mariaDB = new MariaDBContainer<>(NAME + ":10.5");
+    static final MariaDBContainer<?> mariaDB = new MariaDBContainer<>(NAME + ":10.5");
 
     @DynamicPropertySource
     static void mariaDBProperties(DynamicPropertyRegistry registry) {
