@@ -5,26 +5,26 @@ import getUrlParameter from "../get-url-parameter";
 import "../../components/calendar";
 
 $(document).ready(function () {
-  var personId = window.uv.personId;
-  var webPrefix = window.uv.webPrefix;
-  var apiPrefix = window.uv.apiPrefix;
+  const personId = window.uv.personId;
+  const webPrefix = window.uv.webPrefix;
+  const apiPrefix = window.uv.apiPrefix;
 
   function initCalendar() {
-    var year = getUrlParameter("year");
-    var date = new Date();
+    const year = getUrlParameter("year");
+    let date = new Date();
 
     if (year.length > 0 && year != getYear(date)) {
       date = startOfYear(setYear(date, year));
     }
 
-    var holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
+    const holidayService = Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, +personId);
 
-    var shownNumberOfMonths = 10;
-    var startDate = subMonths(date, shownNumberOfMonths / 2);
-    var endDate = addMonths(date, shownNumberOfMonths / 2);
+    const shownNumberOfMonths = 10;
+    const startDate = subMonths(date, shownNumberOfMonths / 2);
+    const endDate = addMonths(date, shownNumberOfMonths / 2);
 
-    var yearOfStartDate = getYear(startDate);
-    var yearOfEndDate = getYear(endDate);
+    const yearOfStartDate = getYear(startDate);
+    const yearOfEndDate = getYear(endDate);
 
     $.when(
       holidayService.fetchPublic(yearOfStartDate),
@@ -41,7 +41,7 @@ $(document).ready(function () {
 
   initCalendar();
 
-  var resizeTimer;
+  let resizeTimer;
 
   $(window).on("resize", function () {
     if (resizeTimer) {

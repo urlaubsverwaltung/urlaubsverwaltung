@@ -13,7 +13,7 @@ $(document).ready(function () {
       7: { sorter: "commaNumber" },
     },
     textExtraction: function (node) {
-      var sortable = $(node).find(".sortable");
+      const sortable = $(node).find(".sortable");
 
       if (sortable.length > 0) {
         return sortable[0].innerHTML;

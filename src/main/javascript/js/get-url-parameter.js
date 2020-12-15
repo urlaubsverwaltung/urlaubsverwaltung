@@ -3,9 +3,9 @@ export default function getUrlParameter(name) {
   // eslint-disable-next-line no-useless-escape
   name = name.replace(/\[/, "\\[").replace(/]/, "\\]");
 
-  var regexS = "[\\?&]" + name + "=([^&#]*)";
-  var regex = new RegExp(regexS);
-  var results = regex.exec(window.location.href);
+  const regexS = "[\\?&]" + name + "=([^&#]*)";
+  const regex = new RegExp(regexS);
+  const results = regex.exec(window.location.href);
 
   if (results) {
     return results[1];
