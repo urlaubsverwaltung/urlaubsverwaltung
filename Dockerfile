@@ -1,4 +1,4 @@
-FROM adoptopenjdk:11-jre-hotspot
+FROM adoptopenjdk:15-jre-hotspot
 EXPOSE 8080
 
 ENV JAVA_TOOL_OPTIONS=""
