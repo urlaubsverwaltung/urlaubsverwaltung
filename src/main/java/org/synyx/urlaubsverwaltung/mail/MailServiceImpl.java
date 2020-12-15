@@ -50,9 +50,11 @@ class MailServiceImpl implements MailService {
         getRecipients(mail).forEach(recipient -> {
             model.put("recipient", recipient);
             final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+
             mail.getMailAttachments().ifPresentOrElse(
                 mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
-                () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body));
+                () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body)
+            );
         });
     }
 

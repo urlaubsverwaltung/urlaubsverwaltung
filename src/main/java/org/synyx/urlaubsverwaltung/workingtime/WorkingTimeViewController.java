@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -117,13 +118,16 @@ public class WorkingTimeViewController {
 
     private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes, FederalState defaultFederalState) {
         return workingTimes.stream()
-            .map(workingTime -> {
-
-                final boolean isValid = currentWorkingTime.equals(workingTime);
-                final FederalState federalState = workingTime.getFederalStateOverride().orElse(defaultFederalState);
-                final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
-                return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.toString(), isValid);
-            })
+            .map(toWorkingTimeHistoryDto(currentWorkingTime, defaultFederalState))
             .collect(toList());
+    }
+
+    private Function<WorkingTime, WorkingTimeHistoryDto> toWorkingTimeHistoryDto(WorkingTime currentWorkingTime, FederalState defaultFederalState) {
+        return workingTime -> {
+            final boolean isValid = currentWorkingTime.equals(workingTime);
+            final FederalState federalState = workingTime.getFederalStateOverride().orElse(defaultFederalState);
+            final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
+            return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.toString(), isValid);
+        };
     }
 }
