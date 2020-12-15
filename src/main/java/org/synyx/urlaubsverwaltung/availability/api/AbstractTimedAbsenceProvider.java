@@ -12,6 +12,7 @@ import static java.math.BigDecimal.ZERO;
  * which defines in which order absences are to be checked. This ensures, that multiple overlapping absences for a
  * certain date do not sum up to more than a full day. Priorities are: free time > public holidays > sick > vacation
  */
+@Deprecated(forRemoval = true, since = "4.4.0")
 abstract class AbstractTimedAbsenceProvider {
 
     private final AbstractTimedAbsenceProvider nextPriorityAbsenceProvider;

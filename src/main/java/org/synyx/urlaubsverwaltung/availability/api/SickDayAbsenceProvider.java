@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
 

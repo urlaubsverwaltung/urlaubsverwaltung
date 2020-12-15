@@ -12,6 +12,7 @@ import static java.math.BigDecimal.ZERO;
  * Wrapper class for a list of {@link TimedAbsence} which provides additional utility methods to retrieve information
  * about the list.
  */
+@Deprecated(forRemoval = true, since = "4.4.0")
 class TimedAbsenceSpans {
 
     private final List<TimedAbsence> absencesList;

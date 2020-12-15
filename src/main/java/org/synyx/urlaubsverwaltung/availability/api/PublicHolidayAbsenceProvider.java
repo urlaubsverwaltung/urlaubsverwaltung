@@ -16,7 +16,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
-
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 class PublicHolidayAbsenceProvider extends AbstractTimedAbsenceProvider {
 
