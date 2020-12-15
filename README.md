@@ -51,7 +51,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ### Voraussetzungen
 
-* [JDK 11](https://adoptium.net)
+* [JDK 17](https://adoptium.net)
 * [MariaDB Datenbank (v10.6)](https://mariadb.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
@@ -348,7 +348,7 @@ vom Typ "Question" erstellen.
 
 ### Voraussetzungen
 
-* [JDK 11](https://adoptium.net)
+* [JDK 17](https://adoptium.net)
 * [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
