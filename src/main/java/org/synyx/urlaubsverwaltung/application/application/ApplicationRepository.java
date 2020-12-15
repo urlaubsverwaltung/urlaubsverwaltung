@@ -29,37 +29,39 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
 
     List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
 
-    @Query(
-        "select x from Application x "
-            + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-            + "or (x.startDate < ?1 and x.endDate > ?2)) "
-            + "order by x.startDate"
-    )
+    @Query("""
+        SELECT x FROM Application x
+        WHERE x.status = ?3
+            AND ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2))
+        ORDER BY x.startDate
+        """)
     List<Application> getApplicationsForACertainTimeAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
-    @Query(
-        "select x from Application x "
-            + "where x.person = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-            + "or (x.startDate < ?1 and x.endDate > ?2)) "
-            + "order by x.startDate"
-    )
+    @Query("""
+        SELECT x FROM Application x
+        WHERE x.person = ?3
+            AND ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2))
+        ORDER BY x.startDate
+        """)
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
     List<Application> findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
 
-    @Query(
-        "select x from Application x "
-            + "where x.person = ?3 and x.status = ?4 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-            + "or (x.startDate < ?1 and x.endDate > ?2)) "
-            + "order by x.startDate"
-    )
+    @Query("""
+        SELECT x FROM Application x
+        WHERE x.person = ?3
+            AND x.status = ?4
+            AND ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2))
+        ORDER BY x.startDate
+        """)
     List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
 
-    @Query(
-        "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
-            + "AND application.vacationType.category = 'OVERTIME' "
-            + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
-    )
+    @Query("""
+        SELECT SUM(application.hours) FROM Application application
+        WHERE application.person = :person
+            AND application.vacationType.category = 'OVERTIME'
+            AND (application.status = 'WAITING' OR application.status = 'ALLOWED')
+        """)
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
 
     @Query(
