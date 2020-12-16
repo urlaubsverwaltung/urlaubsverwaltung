@@ -252,7 +252,7 @@ class ApplicationMailService {
      *
      * @param application to inform the holiday replacement
      */
-    void notifyHolidayReplacement(Application application) {
+    void notifyHolidayReplacementAllow(Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -260,7 +260,7 @@ class ApplicationMailService {
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(application.getHolidayReplacement())
-            .withSubject("subject.application.holidayReplacement")
+            .withSubject("subject.application.holidayReplacement.allow")
             .withTemplate("notify_holiday_replacement", model)
             .build();
 

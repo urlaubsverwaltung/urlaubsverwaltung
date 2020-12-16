@@ -214,7 +214,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationMailService.sendAllowedNotification(savedApplication, createdComment);
 
         if (savedApplication.getHolidayReplacement() != null) {
-            applicationMailService.notifyHolidayReplacement(savedApplication);
+            applicationMailService.notifyHolidayReplacementAllow(savedApplication);
         }
 
         return savedApplication;

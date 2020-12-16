@@ -332,13 +332,13 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("dayLength", "FULL");
 
-        sut.notifyHolidayReplacement(application);
+        sut.notifyHolidayReplacementAllow(application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement");
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement");
         assertThat(mail.getTemplateModel()).isEqualTo(model);
     }

@@ -386,7 +386,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
         application.setHolidayReplacement(holidayReplacement);
 
-        sut.notifyHolidayReplacement(application);
+        sut.notifyHolidayReplacementAllow(application);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
@@ -399,7 +399,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("Urlaubsvertretung");
+        assertThat(content).contains("die Abwesenheit von Lieschen Müller, bei der du als Vertreter eingetragen wurdest, wurde genehmigt");
     }
 
     @Test

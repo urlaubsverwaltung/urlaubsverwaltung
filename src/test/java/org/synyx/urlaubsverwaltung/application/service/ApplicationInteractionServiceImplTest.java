@@ -568,7 +568,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(applicationMailService).notifyHolidayReplacement(eq(applicationForLeave));
+        verify(applicationMailService).notifyHolidayReplacementAllow(eq(applicationForLeave));
     }
 
     @Test
@@ -584,7 +584,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(Application.class));
     }
 
     @Test
@@ -602,7 +602,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, departmentHead, of("Foo"));
 
-        verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(Application.class));
     }
 
     // REJECT APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
