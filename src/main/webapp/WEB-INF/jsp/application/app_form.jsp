@@ -100,7 +100,7 @@
                 <div class="form-section tw-mb-8">
                     <uv:section-heading>
                         <h1>
-                                ${heading}
+                            ${heading}
                         </h1>
                     </uv:section-heading>
                     <div class="row">
@@ -265,8 +265,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <c:if test="${overtimeActive}">
+                    <c:if test="${overtimeActive}">
+                        <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
@@ -289,8 +291,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </c:if>
-                    </div>
+                        </div>
+                    </c:if>
                 </div>
 
                 <div class="form-section tw-mb-16">
