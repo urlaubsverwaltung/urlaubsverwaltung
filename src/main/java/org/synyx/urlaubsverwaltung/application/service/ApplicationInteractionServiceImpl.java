@@ -418,6 +418,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationMailService.sendEditedApplicationNotification(savedApplication, person);
 
+        if (savedApplication.getHolidayReplacement() != null) {
+            applicationMailService.notifyHolidayReplacementAboutEdit(savedApplication);
+        }
+
         return savedApplication;
     }
 }
