@@ -120,6 +120,11 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // relevant management person gets email that a new application for leave has been created
         applicationMailService.sendNewApplicationNotification(savedApplication, createdComment);
 
+        // send email to holiday replacement to inform beforehand the confirmation
+        if (savedApplication.getHolidayReplacement() != null) {
+            applicationMailService.notifyHolidayReplacementForApply(savedApplication);
+        }
+
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 

@@ -377,13 +377,37 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementApplyMailIsSent() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        application.setHolidayReplacement(holidayReplacement);
 
+        sut.notifyHolidayReplacementForApply(application);
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Mar Teria");
+        assertThat(content).contains("Lieschen Müller hat dich beim Beantragen einer Abwesenheit als Vertretung eingetragen.");
+    }
+
+    @Test
+    void ensureCorrectHolidayReplacementAllowMailIsSent() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
 
         sut.notifyHolidayReplacementAllow(application);

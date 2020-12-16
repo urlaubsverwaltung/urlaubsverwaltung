@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
@@ -13,7 +14,6 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 import java.io.File;
 import java.util.AbstractMap;
@@ -248,6 +248,28 @@ class ApplicationMailService {
     /**
      * Sends mail to person to inform that he/she
      * has been selected as holiday replacement
+     * but that this application status is WAITING
+     *
+     * @param application to inform the holiday replacement beforehand
+     */
+    void notifyHolidayReplacementForApply(Application application) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+
+        final Mail mailToReplacement = Mail.builder()
+            .withRecipient(application.getHolidayReplacement())
+            .withSubject("subject.application.holidayReplacement.apply")
+            .withTemplate("notify_holiday_replacement_apply", model)
+            .build();
+
+        mailService.send(mailToReplacement);
+    }
+
+    /**
+     * Sends mail to person to inform that he/she
+     * has been selected as holiday replacement
      * that stands in while someone is on holiday.
      *
      * @param application to inform the holiday replacement
@@ -261,7 +283,7 @@ class ApplicationMailService {
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(application.getHolidayReplacement())
             .withSubject("subject.application.holidayReplacement.allow")
-            .withTemplate("notify_holiday_replacement", model)
+            .withTemplate("notify_holiday_replacement_allow", model)
             .build();
 
         mailService.send(mailToReplacement);
