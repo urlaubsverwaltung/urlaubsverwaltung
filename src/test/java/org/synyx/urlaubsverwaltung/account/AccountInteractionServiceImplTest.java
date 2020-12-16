@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +7,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -19,7 +20,6 @@ import java.util.Optional;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.math.BigDecimal.valueOf;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
@@ -46,11 +46,13 @@ class AccountInteractionServiceImplTest {
     @Mock
     private Clock clock;
     @Mock
+    private SettingsService settingsService;
+    @Mock
     private AccountProperties accountProperties;
 
     @BeforeEach
     void setup() {
-        sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, clock);
+        sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, settingsService, clock);
     }
 
     @Test
@@ -62,16 +64,53 @@ class AccountInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(accountProperties.getDefaultVacationDays()).thenReturn(20);
+        when(accountProperties.getDefaultVacationDays()).thenReturn(24);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         sut.createDefaultAccount(person);
 
-        Account expectedAccount = new Account(person, LocalDate.now(clock), LocalDate.now(clock).with(lastDayOfYear()), valueOf(20), ZERO, ZERO, "");
-        expectedAccount.setVacationDays(valueOf(7));
-
-        ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
+        final ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
         verify(accountService).save(argument.capture());
-        AssertionsForClassTypes.assertThat(argument.getValue()).isEqualToComparingFieldByField(expectedAccount);
+
+        final Account account = argument.getValue();
+        assertThat(account.getPerson()).isEqualTo(person);
+        assertThat(account.getValidFrom()).isEqualTo(LocalDate.now(clock));
+        assertThat(account.getValidTo()).isEqualTo(LocalDate.now(clock).with(lastDayOfYear()));
+        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(24));
+        assertThat(account.getComment()).isEmpty();
+        assertThat(account.getYear()).isEqualTo(LocalDate.now(clock).getYear());
+        assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
+        assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+    }
+
+    @Test
+    void testDefaultAccountCreationUseSettingsInsteadOfProperties() {
+
+        final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), ZoneId.of("UTC"));
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        when(accountProperties.getDefaultVacationDays()).thenReturn(-1);
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setDefaultVacationDays(1);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        sut.createDefaultAccount(person);
+
+        final ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
+        verify(accountService).save(argument.capture());
+
+        final Account account = argument.getValue();
+        assertThat(account.getPerson()).isEqualTo(person);
+        assertThat(account.getValidFrom()).isEqualTo(LocalDate.now(clock));
+        assertThat(account.getValidTo()).isEqualTo(LocalDate.now(clock).with(lastDayOfYear()));
+        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(1));
+        assertThat(account.getComment()).isEmpty();
+        assertThat(account.getYear()).isEqualTo(LocalDate.now(clock).getYear());
+        assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
+        assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
     }
 
     @Test
@@ -144,36 +183,31 @@ class AccountInteractionServiceImplTest {
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.empty());
 
         sut.updateRemainingVacationDays(2012, person);
-
         assertThat(nextYearAccount.getRemainingVacationDays()).isEqualTo(remainingVacationDays);
 
         verify(vacationDaysService, never()).calculateTotalLeftVacationDays(any());
         verify(accountService, never()).save(any());
     }
 
-
     @Test
     void ensureCreatesNewHolidaysAccountIfNotExistsYet() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        int year = 2014;
-        int nextYear = 2015;
+        final int year = 2014;
+        final int nextYear = 2015;
 
-        LocalDate startDate = LocalDate.of(year, JANUARY, 1);
-        LocalDate endDate = LocalDate.of(year, OCTOBER, 31);
-        BigDecimal leftDays = BigDecimal.ONE;
+        final LocalDate startDate = LocalDate.of(year, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(year, OCTOBER, 31);
+        final BigDecimal leftDays = BigDecimal.ONE;
 
-        Account referenceHolidaysAccount = new Account(person, startDate, endDate,
+        final Account referenceHolidaysAccount = new Account(person, startDate, endDate,
             BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.empty());
         when(vacationDaysService.calculateTotalLeftVacationDays(referenceHolidaysAccount)).thenReturn(leftDays);
         when(accountService.save(any())).then(returnsFirstArg());
 
-        Account createdHolidaysAccount = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceHolidaysAccount);
-
-        assertThat(createdHolidaysAccount).isNotNull();
-
+        final Account createdHolidaysAccount = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceHolidaysAccount);
         assertThat(createdHolidaysAccount.getPerson()).isEqualTo(person);
         assertThat(createdHolidaysAccount.getAnnualVacationDays()).isEqualTo(referenceHolidaysAccount.getAnnualVacationDays());
         assertThat(createdHolidaysAccount.getRemainingVacationDays()).isEqualTo(leftDays);
@@ -182,34 +216,31 @@ class AccountInteractionServiceImplTest {
         assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, 12, 31));
 
         verify(accountService).save(createdHolidaysAccount);
-
         verify(vacationDaysService).calculateTotalLeftVacationDays(referenceHolidaysAccount);
         verify(accountService, times(2)).getHolidaysAccount(nextYear, person);
     }
-
 
     @Test
     void ensureUpdatesRemainingVacationDaysOfHolidaysAccountIfAlreadyExists() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        int year = 2014;
-        int nextYear = 2015;
+        final int year = 2014;
+        final int nextYear = 2015;
 
-        LocalDate startDate = LocalDate.of(year, JANUARY, 1);
-        LocalDate endDate = LocalDate.of(year, OCTOBER, 31);
-        BigDecimal leftDays = BigDecimal.valueOf(7);
+        final LocalDate startDate = LocalDate.of(year, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(year, OCTOBER, 31);
+        final BigDecimal leftDays = BigDecimal.valueOf(7);
 
-        Account referenceAccount = new Account(person, startDate, endDate, BigDecimal.valueOf(30),
+        final Account referenceAccount = new Account(person, startDate, endDate, BigDecimal.valueOf(30),
             BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
 
-        Account nextYearAccount = new Account(person, LocalDate.of(nextYear, 1, 1), LocalDate.of(
+        final Account nextYearAccount = new Account(person, LocalDate.of(nextYear, 1, 1), LocalDate.of(
             nextYear, 10, 31), BigDecimal.valueOf(28), ZERO, ZERO, "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.of(nextYearAccount));
         when(vacationDaysService.calculateTotalLeftVacationDays(referenceAccount)).thenReturn(leftDays);
 
-        Account account = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceAccount);
-
+        final Account account = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceAccount);
         assertThat(account).isNotNull();
         assertThat(account.getPerson()).isEqualTo(person);
         assertThat(account.getAnnualVacationDays()).isEqualTo(nextYearAccount.getAnnualVacationDays());
@@ -219,7 +250,6 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidTo()).isEqualTo(nextYearAccount.getValidTo());
 
         verify(accountService).save(account);
-
         verify(vacationDaysService).calculateTotalLeftVacationDays(referenceAccount);
         verify(accountService).getHolidaysAccount(nextYear, person);
     }
@@ -228,13 +258,13 @@ class AccountInteractionServiceImplTest {
     void createHolidaysAccount() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
-        LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.empty());
         when(accountService.save(any())).then(returnsFirstArg());
 
-        Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
+        final Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
         assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(TEN);
         assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
@@ -247,14 +277,14 @@ class AccountInteractionServiceImplTest {
     void updateHolidaysAccount() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
-        LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
-        Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         when(accountService.save(any())).then(returnsFirstArg());
 
-        Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, ONE, ONE, ONE, ONE, "new comment");
+        final Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, ONE, ONE, ONE, ONE, "new comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
         assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(ONE);
         assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
