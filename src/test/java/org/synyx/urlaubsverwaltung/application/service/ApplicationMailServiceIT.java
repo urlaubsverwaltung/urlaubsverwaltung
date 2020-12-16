@@ -27,6 +27,8 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @Transactional
 class ApplicationMailServiceIT extends TestContainersBase {
 
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     @RegisterExtension
     public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
@@ -420,10 +423,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Urlaubsvertretung");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
+        String startDate = application.getStartDate().format(DATE_TIME_FORMATTER);
+        String endDate = application.getEndDate().format(DATE_TIME_FORMATTER);
+
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("die Abwesenheit von Lieschen Müller, bei der du als Vertreter eingetragen wurdest, wurde genehmigt");
+        assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
+        assertThat(content).contains("Du wurdest damit für den Zeitraum vom " + startDate + " bis " + endDate + ", ganztägig als Vertretung eingetragen.");
+
     }
 
     @Test
@@ -470,10 +478,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung editiert");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
+        String startDate = application.getStartDate().format(DATE_TIME_FORMATTER);
+        String endDate = application.getEndDate().format(DATE_TIME_FORMATTER);
+
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("der Antrag von Lieschen Müller, bei dem du als Vertreter eingetragen wurdest, wurde editiert.");
+        assertThat(content).contains("der Antrag von Lieschen Müller wurde editiert.");
+        assertThat(content).contains("Du wurdest damit für den Zeitraum vom " + startDate + " bis " + endDate + ", ganztägig als Vertretung eingetragen.");
     }
 
     @Test
