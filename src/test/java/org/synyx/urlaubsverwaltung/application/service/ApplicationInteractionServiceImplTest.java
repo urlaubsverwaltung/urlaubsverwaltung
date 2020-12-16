@@ -704,6 +704,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final AbsenceMapping absenceMapping = anyAbsenceMapping();
         when(absenceMappingService.getAbsenceByIdAndType(null, VACATION)).thenReturn(of(absenceMapping));

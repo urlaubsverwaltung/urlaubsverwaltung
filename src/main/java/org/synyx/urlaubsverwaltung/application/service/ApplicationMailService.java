@@ -290,6 +290,28 @@ class ApplicationMailService {
     }
 
     /**
+     * Sends mail to person to inform that he/she
+     * has been selected as holiday replacement
+     * but that the request was cancelled/rejected/revoked/...
+     *
+     * @param application to inform the holiday replacement was cancelled
+     */
+    void notifyHolidayReplacementAboutCancellation(Application application) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+
+        final Mail mailToReplacement = Mail.builder()
+            .withRecipient(application.getHolidayReplacement())
+            .withSubject("subject.application.holidayReplacement.cancellation")
+            .withTemplate("notify_holiday_replacement_cancellation", model)
+            .build();
+
+        mailService.send(mailToReplacement);
+    }
+
+    /**
      * Sends an email to the applicant that the application
      * has been made successfully.
      *

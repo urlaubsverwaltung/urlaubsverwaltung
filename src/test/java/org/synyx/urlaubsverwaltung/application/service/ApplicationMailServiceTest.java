@@ -371,6 +371,33 @@ class ApplicationMailServiceTest {
     }
 
     @Test
+    void notifyHolidayReplacementAboutCancellation() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final Person holidayReplacement = new Person();
+
+        final Application application = new Application();
+        application.setHolidayReplacement(holidayReplacement);
+        application.setDayLength(dayLength);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("dayLength", "FULL");
+
+        sut.notifyHolidayReplacementAboutCancellation(application);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.cancellation");
+        assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_cancellation");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
     void sendConfirmation() {
 
         final DayLength dayLength = FULL;

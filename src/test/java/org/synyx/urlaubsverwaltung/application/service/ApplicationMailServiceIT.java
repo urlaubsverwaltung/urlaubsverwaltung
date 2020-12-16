@@ -427,6 +427,31 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
+    void ensureCorrectHolidayReplacementCancellationMailIsSent() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        application.setHolidayReplacement(holidayReplacement);
+
+        sut.notifyHolidayReplacementAboutCancellation(application);
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung abgelehnt");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Mar Teria");
+        assertThat(content).contains("bei dem du als Vertreter eingetragen wurdest, wurde nicht genehmigt.");
+    }
+
+    @Test
     void ensureCorrectFrom() throws MessagingException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");

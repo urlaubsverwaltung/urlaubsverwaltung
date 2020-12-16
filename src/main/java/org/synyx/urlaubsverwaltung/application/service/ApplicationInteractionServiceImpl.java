@@ -289,6 +289,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         final ApplicationComment savedComment = commentService.create(savedApplication, REVOKED, comment, canceller);
         applicationMailService.sendRevokedNotifications(application, savedComment);
+
+        if (savedApplication.getHolidayReplacement() != null) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(savedApplication);
+        }
     }
 
 
@@ -307,6 +311,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
             final ApplicationComment savedComment = commentService.create(savedApplication, CANCELLED, comment, canceller);
             applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
+
+            if (savedApplication.getHolidayReplacement() != null) {
+                applicationMailService.notifyHolidayReplacementAboutCancellation(savedApplication);
+            }
         } else {
             /*
              * Users cannot cancel already allowed applications directly.
