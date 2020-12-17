@@ -14,8 +14,6 @@ enum DemoUser {
     OFFICE("office", Role.USER, Role.BOSS, Role.OFFICE),
     ADMIN("admin", Role.USER, Role.ADMIN);
 
-    public static final String SECRET = "{pbkdf2}7fa3ad492f74237b2fae54a07d81df1b17e5b3790fa629eb1b3fea19f86d4fccb62cf12bcfbd5913";
-
     private final String username;
     private final Role[] roles;
 
@@ -30,9 +28,5 @@ enum DemoUser {
 
     Role[] getRoles() {
         return roles;
-    }
-
-    String getPasswordHash() {
-        return SECRET;
     }
 }
