@@ -47,7 +47,6 @@ class AccountTest {
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
-        person.setPassword("Theo");
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
 
