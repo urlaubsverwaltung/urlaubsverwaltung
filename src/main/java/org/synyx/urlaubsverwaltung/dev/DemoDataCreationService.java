@@ -34,8 +34,6 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CH
 
 public class DemoDataCreationService {
 
-    private static final String NO_PASSWORD_HASH = "{pbkdf2}1705db0e2b2e0f81fa9a0500ee21f16fe3f0b2f8370ba0fbba77bd07c072d292f3d251985686ec49";
-
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDataProvider personDataProvider;
@@ -78,18 +76,18 @@ public class DemoDataCreationService {
         personDataProvider.createTestPerson(DemoUser.ADMIN, "Senor", "Operation", "admin@example.org");
 
         // Users
-        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD_HASH, "Hans", "Dampf", "dampf@example.org", USER);
-        final Person guenther = personDataProvider.createTestPerson("gbaier", NO_PASSWORD_HASH, "Günther", "Baier", "baier@example.org", USER);
-        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD_HASH, "Elena", "Schneider", "schneider@example.org", USER);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD_HASH, "Brigitte", "Händel", "haendel@example.org", USER);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD_HASH, "Niko", "Schmidt", "schmidt@example.org", USER);
-        personDataProvider.createTestPerson("horst", NO_PASSWORD_HASH, "Horst", "Dieter", "hdieter@example.org", INACTIVE);
+        final Person hans = personDataProvider.createTestPerson("hdampf", "Hans", "Dampf", "dampf@example.org", USER);
+        final Person guenther = personDataProvider.createTestPerson("gbaier", "Günther", "Baier", "baier@example.org", USER);
+        final Person elena = personDataProvider.createTestPerson("eschneider", "Elena", "Schneider", "schneider@example.org", USER);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", "Brigitte", "Händel", "haendel@example.org", USER);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", "Niko", "Schmidt", "schmidt@example.org", USER);
+        personDataProvider.createTestPerson("horst", "Horst", "Dieter", "hdieter@example.org", INACTIVE);
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, NO_PASSWORD_HASH, "Horst", "Aktiv", "hdieter-active@example.org", USER));
+            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active@example.org", USER));
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, NO_PASSWORD_HASH, "Horst", "Inaktiv", "hdieter-inactive@example.org", INACTIVE));
+            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst", "Inaktiv", "hdieter-inactive@example.org", INACTIVE));
 
         // Departments
         final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);

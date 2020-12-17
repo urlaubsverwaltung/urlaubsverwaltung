@@ -27,7 +27,6 @@ public class Person {
     private Integer id;
 
     private String username;
-    private String password;
     private String lastName;
     private String firstName;
     private String email;
@@ -91,14 +90,6 @@ public class Person {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void setPermissions(Collection<Role> permissions) {
