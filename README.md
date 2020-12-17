@@ -185,8 +185,14 @@ uv.workingtime.default-working-days[4]=5
 
 Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
 
-* `default`
-    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
+* `oidc`
+    * Authentifizierung via OpenID Connect (OIDC)
+    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
+      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
+      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
+    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
+      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
+      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
 * `ldap`
     * Authentifizierung via LDAP
     * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns
@@ -198,15 +204,9 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert
       sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `oidc`
-    * Authentifizierung via OpenID Connect (OIDC)
-    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
-      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
-    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
-      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
-      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
-
+* `development`
+    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
+    
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
 
@@ -303,17 +303,16 @@ java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.war
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
 
-Die Demodaten enthalten folgende **Benutzer**:
+Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
-| Rolle                            | Benutzername           | Passwort |
-| -------------------------        | -------------          | -------- |
-| User                             | user                   | secret   |
-| User & Abteilungsleiter          | departmentHead         | secret   |
-| User & Freigabe-Verantwortlicher | secondStageAuthority   | secret   |
-| User & Chef                      | boss                   | secret   |
-| User & Chef & Office             | office                 | secret   |
-| User & Admin                     | admin                  | secret   |
-
+| Rolle                            | Benutzername
+| -------------------------        | -------------        
+| User                             | user
+| User & Abteilungsleiter          | departmentHead
+| User & Freigabe-Verantwortlicher | secondStageAuthority
+| User & Chef                      | boss
+| User & Chef & Office             | office
+| User & Admin                     | admin
 
 Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
 
