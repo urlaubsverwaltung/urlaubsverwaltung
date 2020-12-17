@@ -9,10 +9,10 @@ public class SecurityConfigurationProperties {
 
     public enum AuthenticationProvider {
 
-        DEFAULT,
         OIDC,
         LDAP,
-        ACTIVEDIRECTORY
+        ACTIVEDIRECTORY,
+        DEFAULT
     }
 
     private AuthenticationProvider auth = AuthenticationProvider.DEFAULT;

@@ -110,7 +110,6 @@ class OvertimeTest {
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
-        person.setPassword("Theo");
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
         final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
