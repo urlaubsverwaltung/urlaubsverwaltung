@@ -15,7 +15,7 @@ public class SecurityConfigurationProperties {
         DEVELOPMENT
     }
 
-    private AuthenticationProvider auth = AuthenticationProvider.DEVELOPMENT;
+    private AuthenticationProvider auth = AuthenticationProvider.OIDC;
 
     public AuthenticationProvider getAuth() {
         return auth;
