@@ -13,7 +13,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Configuration
-@ConditionalOnProperty(name = "uv.security.auth", havingValue = "default")
+@ConditionalOnProperty(name = "uv.security.auth", havingValue = "development")
 class LocalDevelopmentAuthConfiguration {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -26,7 +26,7 @@ class LocalDevelopmentAuthConfiguration {
     @PostConstruct
     void onlyUseForLocalDevelopment(){
         LOG.info("#################################################################");
-        LOG.info("##          You are using `uv.security.auth=default`           ##");
+        LOG.info("##         You are using `uv.security.auth=development`        ##");
         LOG.info("##     Do not use this authentication method in production     ##");
         LOG.info("##       This should only be used in local development         ##");
         LOG.info("#################################################################");

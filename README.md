@@ -211,7 +211,7 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert
       sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `default`
+* `development`
     * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
     
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
