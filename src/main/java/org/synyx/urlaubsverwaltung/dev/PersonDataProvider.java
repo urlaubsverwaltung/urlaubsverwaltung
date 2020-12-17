@@ -64,13 +64,12 @@ class PersonDataProvider {
     Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
 
         final String username = demoUser.getUsername();
-        final String passwordHash = demoUser.getPasswordHash();
         final Role[] roles = demoUser.getRoles();
 
-        return createTestPerson(username, passwordHash, firstName, lastName, email, roles);
+        return createTestPerson(username, firstName, lastName, email, roles);
     }
 
-    Person createTestPerson(String username, String passwordHash, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, String firstName, String lastName, String email, Role... roles) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
@@ -83,7 +82,6 @@ class PersonDataProvider {
         final Person person = new Person(username, lastName, firstName, email);
         person.setPermissions(permissions);
         person.setNotifications(notifications);
-        person.setPassword(passwordHash);
         final Person savedPerson = personService.create(person);
 
         final int currentYear = Year.now(clock).getValue();
