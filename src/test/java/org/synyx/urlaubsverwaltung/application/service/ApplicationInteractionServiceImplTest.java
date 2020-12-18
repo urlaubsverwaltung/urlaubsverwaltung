@@ -1055,6 +1055,35 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
+    void editApplicationForLeaveHolidayReplacementAdded() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person newHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        newHolidayReplacement.setId(1);
+
+        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(applicationId);
+        newApplication.setHolidayReplacement(newHolidayReplacement);
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
+
+        verify(commentService).create(editedApplication, EDITED, comment, person);
+        verify(applicationMailService).notifyHolidayReplacementForApply(newApplication);
+        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
     void editApplicationForLeaveHolidayReplacementChanged() {
 
         final Integer applicationId = 1;
