@@ -281,7 +281,7 @@
 
                 </sec:authorize>
 
-                <div class="print:hidden">
+                <div class="print:tw-hidden">
                     <uv:section-heading>
                         <h2>
                             <spring:message code="sicknote.data.person"/>
