@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
@@ -36,8 +38,12 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, Clock clock) {
-        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, clock);
+    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, Clock clock,
+                                          SecurityConfigurationProperties properties) {
+
+        boolean isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+
+        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, clock, isOauth2Enabled);
     }
 
     @Bean

@@ -68,20 +68,20 @@ public class DemoDataCreationService {
 
         LOG.info("-> Starting demo data creation...");
         // Users to be able to SIGN-IN with
-        final Person user = personDataProvider.createTestPerson(DemoUser.USER, "Klaus", "Müller", "user@example.org");
-        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@example.org");
-        final Person boss = personDataProvider.createTestPerson(BOSS, "Max", "Mustermann", "boss@example.org");
-        final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@example.org");
-        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Peter", "Huber", "secondStageAuthority@example.org");
-        personDataProvider.createTestPerson(DemoUser.ADMIN, "Senor", "Operation", "admin@example.org");
+        final Person user = personDataProvider.createTestPerson(DemoUser.USER);
+        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD);
+        final Person boss = personDataProvider.createTestPerson(BOSS);
+        final Person office = personDataProvider.createTestPerson(OFFICE);
+        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY);
+        personDataProvider.createTestPerson(DemoUser.ADMIN);
 
         // Users
-        final Person hans = personDataProvider.createTestPerson("hdampf", "Hans", "Dampf", "dampf@example.org", USER);
-        final Person guenther = personDataProvider.createTestPerson("gbaier", "Günther", "Baier", "baier@example.org", USER);
-        final Person elena = personDataProvider.createTestPerson("eschneider", "Elena", "Schneider", "schneider@example.org", USER);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", "Brigitte", "Händel", "haendel@example.org", USER);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", "Niko", "Schmidt", "schmidt@example.org", USER);
-        personDataProvider.createTestPerson("horst", "Horst", "Dieter", "hdieter@example.org", INACTIVE);
+        final Person hans = personDataProvider.createTestPerson(DemoUser.HANS);
+        final Person guenther = personDataProvider.createTestPerson(DemoUser.GUENTHER);
+        final Person elena = personDataProvider.createTestPerson(DemoUser.ELENA);
+        final Person brigitte = personDataProvider.createTestPerson(DemoUser.BRIGITTE);
+        final Person niko = personDataProvider.createTestPerson(DemoUser.NIKO);
+        personDataProvider.createTestPerson(DemoUser.HORST);
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
             .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active@example.org", USER));

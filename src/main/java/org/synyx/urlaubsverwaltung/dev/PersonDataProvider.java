@@ -45,13 +45,16 @@ class PersonDataProvider {
     private final WorkingTimeService workingTimeService;
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
+    private final boolean isOauth2Enabled;
 
     PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                       AccountInteractionService accountInteractionService, Clock clock) {
+                       AccountInteractionService accountInteractionService, Clock clock, boolean isOauth2Enabled
+                       ) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.accountInteractionService = accountInteractionService;
         this.clock = clock;
+        this.isOauth2Enabled = isOauth2Enabled;
     }
 
     boolean isPersonAlreadyCreated(String username) {
@@ -60,12 +63,11 @@ class PersonDataProvider {
         return personByUsername.isPresent();
     }
 
-    Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
+    Person createTestPerson(DemoUser demoUser) {
 
-        final String username = demoUser.getUsername();
-        final Role[] roles = demoUser.getRoles();
+        final String username = isOauth2Enabled ? demoUser.getUuid() : demoUser.getUsername();
 
-        return createTestPerson(username, firstName, lastName, email, roles);
+        return createTestPerson(username, demoUser.getFirstName(), demoUser.getLastName(), demoUser.getEmail(), demoUser.getRoles());
     }
 
     Person createTestPerson(String username, String firstName, String lastName, String email, Role... roles) {
