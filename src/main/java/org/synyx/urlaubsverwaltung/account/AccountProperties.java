@@ -17,7 +17,7 @@ public class AccountProperties {
 
     @NotNull
     @Min(-1)
-    @Max(365)
+    @Max(366)
     @Deprecated(since = "4.4.0", forRemoval = true)
     private Integer defaultVacationDays = 20;
 
