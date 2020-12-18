@@ -122,7 +122,7 @@
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
-                                    <td class="hidden-xs">
+                                    <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
                                             <c:out value="${application.person.niceName}"/>
                                         </span>
@@ -197,7 +197,7 @@
                                             </c:choose>
                                         </div>
                                     </td>
-                                    <td class="hidden-xs hidden-sm text-right">
+                                    <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                                             <c:if test="${application.person.id == signedInUser.id && application.status == 'WAITING'}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
@@ -263,7 +263,7 @@
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
-                                    <td class="hidden-xs">
+                                    <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
                                             <c:out value="${application.person.niceName}"/>
                                         </span>
@@ -344,7 +344,7 @@
                                             </c:choose>
                                         </div>
                                     </td>
-                                    <td class="hidden-xs hidden-sm text-right">
+                                    <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <c:if test="${IS_OFFICE}">
                                             <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
