@@ -230,7 +230,7 @@ public class ApplicationForLeaveFormViewController {
         final Application savedApplicationForLeave;
         final Person signedInUser = personService.getSignedInUser();
         try {
-            savedApplicationForLeave = applicationInteractionService.edit(editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
+            savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
         } catch (EditApplicationForLeaveNotAllowedException e) {
             return "application/app_notwaiting";
         }

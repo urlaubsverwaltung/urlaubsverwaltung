@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
+import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
@@ -33,25 +34,29 @@ final class ApplicationMapper {
     }
 
     static Application merge(Application applicationForLeave, ApplicationForLeaveForm applicationForLeaveForm) {
-        applicationForLeave.setPerson(applicationForLeaveForm.getPerson());
 
-        applicationForLeave.setStartDate(applicationForLeaveForm.getStartDate());
-        applicationForLeave.setStartTime(applicationForLeaveForm.getStartTime());
+        final Application newApplication = new Application();
+        BeanUtils.copyProperties(applicationForLeave, newApplication);
 
-        applicationForLeave.setEndDate(applicationForLeaveForm.getEndDate());
-        applicationForLeave.setEndTime(applicationForLeaveForm.getEndTime());
+        newApplication.setPerson(applicationForLeaveForm.getPerson());
 
-        applicationForLeave.setVacationType(applicationForLeaveForm.getVacationType());
-        applicationForLeave.setDayLength(applicationForLeaveForm.getDayLength());
-        applicationForLeave.setReason(applicationForLeaveForm.getReason());
-        applicationForLeave.setHolidayReplacement(applicationForLeaveForm.getHolidayReplacement());
-        applicationForLeave.setAddress(applicationForLeaveForm.getAddress());
-        applicationForLeave.setTeamInformed(applicationForLeaveForm.isTeamInformed());
+        newApplication.setStartDate(applicationForLeaveForm.getStartDate());
+        newApplication.setStartTime(applicationForLeaveForm.getStartTime());
 
-        if (OVERTIME.equals(applicationForLeave.getVacationType().getCategory())) {
-            applicationForLeave.setHours(applicationForLeaveForm.getHours());
+        newApplication.setEndDate(applicationForLeaveForm.getEndDate());
+        newApplication.setEndTime(applicationForLeaveForm.getEndTime());
+
+        newApplication.setVacationType(applicationForLeaveForm.getVacationType());
+        newApplication.setDayLength(applicationForLeaveForm.getDayLength());
+        newApplication.setReason(applicationForLeaveForm.getReason());
+        newApplication.setHolidayReplacement(applicationForLeaveForm.getHolidayReplacement());
+        newApplication.setAddress(applicationForLeaveForm.getAddress());
+        newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());
+
+        if (OVERTIME.equals(newApplication.getVacationType().getCategory())) {
+            newApplication.setHours(applicationForLeaveForm.getHours());
         }
 
-        return applicationForLeave;
+        return newApplication;
     }
 }

@@ -27,6 +27,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @Transactional
 class ApplicationMailServiceIT extends TestContainersBase {
 
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     @RegisterExtension
     public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
@@ -377,16 +379,41 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectHolidayReplacementMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementApplyMailIsSent() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
-
-        final Application application = createApplication(person);
         application.setHolidayReplacement(holidayReplacement);
 
-        sut.notifyHolidayReplacement(application);
+        sut.notifyHolidayReplacementForApply(application);
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Mar Teria");
+        assertThat(content).contains("Lieschen Müller hat dich bei einer Abwesenheit als Vertretung vorgesehen.");
+        assertThat(content).contains("Es handelt sich um den Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig.");
+    }
+
+    @Test
+    void ensureCorrectHolidayReplacementAllowMailIsSent() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        application.setHolidayReplacement(holidayReplacement);
+
+        sut.notifyHolidayReplacementAllow(application);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
@@ -396,10 +423,68 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Urlaubsvertretung");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
+        String startDate = application.getStartDate().format(DATE_TIME_FORMATTER);
+        String endDate = application.getEndDate().format(DATE_TIME_FORMATTER);
+
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Mar Teria");
-        assertThat(content).contains("Urlaubsvertretung");
+        assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
+        assertThat(content).contains("Du wurdest damit für den Zeitraum vom " + startDate + " bis " + endDate + ", ganztägig als Vertretung eingetragen.");
+
+    }
+
+    @Test
+    void ensureCorrectHolidayReplacementCancellationMailIsSent() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        application.setHolidayReplacement(holidayReplacement);
+
+        sut.notifyHolidayReplacementAboutCancellation(application);
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung abgelehnt");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Mar Teria");
+        assertThat(content).contains("du bist für die Abwesenheit von Lieschen Müller");
+        assertThat(content).contains("im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,");
+        assertThat(content).contains("nicht mehr als Vertretung vorgesehen.");
+    }
+
+    @Test
+    void ensureCorrectHolidayReplacementEditMailIsSent() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+
+        final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        application.setHolidayReplacement(holidayReplacement);
+
+        sut.notifyHolidayReplacementAboutEdit(application);
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung editiert");
+        assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("Hallo Mar Teria");
+        assertThat(content).contains("der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.");
+        assertThat(content).contains("Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.");
     }
 
     @Test

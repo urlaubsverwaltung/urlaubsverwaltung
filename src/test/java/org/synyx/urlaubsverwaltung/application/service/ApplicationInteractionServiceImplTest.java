@@ -568,7 +568,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(applicationMailService).notifyHolidayReplacement(eq(applicationForLeave));
+        verify(applicationMailService).notifyHolidayReplacementAllow(eq(applicationForLeave));
     }
 
     @Test
@@ -584,7 +584,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(Application.class));
     }
 
     @Test
@@ -602,7 +602,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, departmentHead, of("Foo"));
 
-        verify(applicationMailService, never()).notifyHolidayReplacement(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(Application.class));
     }
 
     // REJECT APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
@@ -704,6 +704,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         final AbsenceMapping absenceMapping = anyAbsenceMapping();
         when(absenceMappingService.getAbsenceByIdAndType(null, VACATION)).thenReturn(of(absenceMapping));
@@ -1045,11 +1046,139 @@ class ApplicationInteractionServiceImplTest {
 
         final Optional<String> comment = of("Comment");
 
-        final Application editedApplication = sut.edit(application, person, comment);
+        final Application editedApplication = sut.edit(application, application, person, comment);
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
+    void editApplicationForLeaveHolidayReplacementChanged() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person newHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        newHolidayReplacement.setId(1);
+
+        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(applicationId);
+        newApplication.setHolidayReplacement(newHolidayReplacement);
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Person oldHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        oldHolidayReplacement.setId(2);
+        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        oldApplication.setHolidayReplacement(oldHolidayReplacement);
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
+
+        verify(commentService).create(editedApplication, EDITED, comment, person);
+        verify(applicationMailService).notifyHolidayReplacementForApply(newApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(oldApplication);
+        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
+    void editApplicationForLeaveHolidayReplacementRemoved() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(applicationId);
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Person oldHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        oldHolidayReplacement.setId(2);
+        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        oldApplication.setHolidayReplacement(oldHolidayReplacement);
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
+
+        verify(commentService).create(editedApplication, EDITED, comment, person);
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(oldApplication);
+        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
+    void editApplicationForLeaveHolidayRelevantEntriesChangedFromTo() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        holidayReplacement.setId(2);
+
+        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(applicationId);
+        newApplication.setStartDate(LocalDate.of(2020,10,3));
+        newApplication.setEndDate(LocalDate.of(2020,10,3));
+        newApplication.setHolidayReplacement(holidayReplacement);
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        oldApplication.setHolidayReplacement(holidayReplacement);
+        oldApplication.setStartDate(LocalDate.of(2020,10,4));
+        oldApplication.setEndDate(LocalDate.of(2020,10,4));
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
+
+        verify(commentService).create(editedApplication, EDITED, comment, person);
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(newApplication);
+        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
+    }
+
+    @Test
+    void editApplicationForLeaveHolidayRelevantEntriesChangedDayLeng() {
+
+        final Integer applicationId = 1;
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        holidayReplacement.setId(2);
+
+        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        newApplication.setStatus(WAITING);
+        newApplication.setId(applicationId);
+        newApplication.setDayLength(DayLength.FULL);
+        newApplication.setHolidayReplacement(holidayReplacement);
+        when(applicationService.save(newApplication)).thenReturn(newApplication);
+
+        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        oldApplication.setHolidayReplacement(holidayReplacement);
+        oldApplication.setDayLength(DayLength.NOON);
+
+        final Optional<String> comment = of("Comment");
+
+        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
+        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
+
+        verify(commentService).create(editedApplication, EDITED, comment, person);
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(newApplication);
+        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verifyNoMoreInteractions(applicationMailService);
     }
 
     @Test
@@ -1061,7 +1190,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Optional<String> comment = of("Comment");
 
-        assertThatThrownBy(() -> sut.edit(application, person, comment))
+        assertThatThrownBy(() -> sut.edit(application, application, person, comment))
             .isInstanceOf(EditApplicationForLeaveNotAllowedException.class);
 
         verifyNoInteractions(applicationMailService);
