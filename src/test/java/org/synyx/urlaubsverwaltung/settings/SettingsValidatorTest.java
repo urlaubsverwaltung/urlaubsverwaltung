@@ -206,17 +206,6 @@ class SettingsValidatorTest {
     }
 
     @Test
-    void ensureThatDefaultVacationDaysSmallerThanAYear() {
-
-        final Settings settings = new Settings();
-        settings.getAccountSettings().setDefaultVacationDays(366);
-
-        final Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("accountSettings.defaultVacationDays", "error.entry.invalid");
-    }
-
-    @Test
     void ensureDefaultVacationDaysAccountSettingsCanNotBeNull() {
 
         final Settings settings = new Settings();
@@ -241,10 +230,10 @@ class SettingsValidatorTest {
     }
 
     @Test
-    void ensureDefaultVacationDaysSmallerThanAYear() {
+    void ensureDefaultVacationDaysSmallerThanAYearWithLeapYearForExample() {
 
         final Settings settings = new Settings();
-        settings.getAccountSettings().setDefaultVacationDays(366);
+        settings.getAccountSettings().setDefaultVacationDays(367);
 
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);

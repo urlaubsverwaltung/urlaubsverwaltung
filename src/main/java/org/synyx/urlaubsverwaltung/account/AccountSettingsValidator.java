@@ -8,7 +8,7 @@ public class AccountSettingsValidator {
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
     private static final String ERROR_DEFAULT_DAYS_SMALLER_OR_EQUAL_THAN_MAX_DAYS = "settings.account.error.defaultMustBeSmallerOrEqualThanMax";
 
-    private static final int DAYS_PER_YEAR = 365;
+    private static final int DAYS_PER_YEAR = 366;
 
     private AccountSettingsValidator(){
         // private
