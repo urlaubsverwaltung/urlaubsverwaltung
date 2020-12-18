@@ -38,6 +38,7 @@ final class ApplicationMapper {
         final Application newApplication = new Application();
         BeanUtils.copyProperties(applicationForLeave, newApplication);
 
+        newApplication.setId(applicationForLeave.getId());
         newApplication.setPerson(applicationForLeaveForm.getPerson());
 
         newApplication.setStartDate(applicationForLeaveForm.getStartDate());
