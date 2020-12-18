@@ -42,11 +42,7 @@
 
 <uv:menu/>
 
-<div class="print-info--only-portrait">
-    <h4><spring:message code="print.info.portrait"/></h4>
-</div>
-
-<div class="content print--only-portrait">
+<div class="content">
 
     <div class="container">
 

@@ -25,11 +25,7 @@
 
 <uv:menu/>
 
-<div class="print-info--only-landscape">
-    <h4><spring:message code="print.info.landscape"/></h4>
-</div>
-
-<div class="content print--only-landscape">
+<div class="content">
     <div class="container">
 
         <uv:section-heading>

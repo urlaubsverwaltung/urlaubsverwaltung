@@ -37,33 +37,3 @@
     font-weight: bold !important;
   }
 }
-
-/* LANDSCAPE */
-
-.print-info--only-landscape {
-  display: none;
-}
-
-@media print and (orientation: portrait) {
-  .print-info--only-landscape {
-    display: block;
-  }
-  .print--only-landscape {
-    display: none;
-  }
-}
-
-/* PORTRAIT */
-
-.print-info--only-portrait {
-  display: none;
-}
-
-@media print and (orientation: landscape) {
-  .print-info--only-portrait {
-    display: block;
-  }
-  .print--only-portrait {
-    display: none;
-  }
-}

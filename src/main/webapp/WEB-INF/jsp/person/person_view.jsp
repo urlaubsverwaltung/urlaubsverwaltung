@@ -30,13 +30,9 @@
 
 <uv:menu/>
 
-<div class="print-info--only-landscape">
-    <h4><spring:message code="print.info.landscape"/></h4>
-</div>
-
 <h1 class="tw-sr-only"><spring:message code="nav.person.title"/></h1>
 
-<div class="content print--only-landscape">
+<div class="content">
     <div class="container">
         <uv:section-heading>
             <jsp:attribute name="actions">
