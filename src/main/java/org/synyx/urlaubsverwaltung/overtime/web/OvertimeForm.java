@@ -20,6 +20,7 @@ public class OvertimeForm {
     private LocalDate endDate;
     private BigDecimal numberOfHours;
     private String comment;
+    private boolean reduce;
 
     OvertimeForm() {
 
@@ -36,11 +37,13 @@ public class OvertimeForm {
 
         Assert.notNull(overtime, "Overtime must be given.");
 
+
         this.id = overtime.getId();
         this.person = overtime.getPerson();
         this.startDate = overtime.getStartDate();
         this.endDate = overtime.getEndDate();
-        this.numberOfHours = overtime.getHours();
+        this.numberOfHours = overtime.getHours() == null ? null : overtime.getHours().abs();
+        this.reduce = overtime.getHours() != null && overtime.getHours().doubleValue() < 0;
     }
 
     public Integer getId() {
@@ -107,13 +110,24 @@ public class OvertimeForm {
         this.comment = comment;
     }
 
+    public boolean isReduce() {
+        return reduce;
+    }
+
+    public void setReduce(boolean reduce) {
+        this.reduce = reduce;
+    }
+
     public Overtime generateOvertime() {
-        return new Overtime(getPerson(), getStartDate(), getEndDate(), getNumberOfHours());
+        final BigDecimal hours = reduce ? getNumberOfHours().negate() : getNumberOfHours();
+        return new Overtime(getPerson(), getStartDate(), getEndDate(), hours);
     }
 
     public void updateOvertime(Overtime overtime) {
+        final BigDecimal hours = reduce ? getNumberOfHours().negate() : getNumberOfHours();
+
         overtime.setPerson(getPerson());
-        overtime.setHours(getNumberOfHours());
+        overtime.setHours(hours);
         overtime.setStartDate(getStartDate());
         overtime.setEndDate(getEndDate());
     }

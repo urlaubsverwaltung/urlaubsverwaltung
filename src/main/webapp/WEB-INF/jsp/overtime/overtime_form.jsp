@@ -132,11 +132,16 @@
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="numberOfHours" cssClass="form-control"
-                                            cssErrorClass="form-control error"/>
+                                <form:input path="numberOfHours" cssClass="form-control" cssErrorClass="form-control error"/>
                                 <uv:error-text>
                                     <form:errors path="numberOfHours" />
                                 </uv:error-text>
+                                <div class="tw-mt-2">
+                                    <form:checkbox id="overtime-reduce" path="reduce" />
+                                    <label for="overtime-reduce" class="tw-font-normal">
+                                        <spring:message code="overtime.data.reduceOvertime"/>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                             <%-- End of number of overtime form group --%>
