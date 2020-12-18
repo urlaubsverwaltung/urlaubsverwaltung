@@ -29,7 +29,7 @@
                     <c:out value="${person.niceName}"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="${URL_PREFIX}/person/${person.id}/overview">
+                    <a href="${URL_PREFIX}/person/${person.id}/overview" class="print:no-link">
                         <c:out value="${person.niceName}"/>
                     </a>
                 </c:otherwise>
