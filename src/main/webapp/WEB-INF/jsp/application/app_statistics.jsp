@@ -86,7 +86,7 @@
                         <table class="list-table sortable tablesorter tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
-                                <th scope="col" class="hidden-print"><%-- placeholder to ensure correct number of th --%></th>
+                                <th scope="col" class="print:tw-hidden"><%-- placeholder to ensure correct number of th --%></th>
                                 <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
                                 <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
                                 <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
@@ -102,7 +102,7 @@
                             <tbody>
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
-                                    <td class="hidden-print is-centered">
+                                    <td class="print:tw-hidden is-centered">
                                         <img
                                             src="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${statistic.person.niceName}"/>"
@@ -114,7 +114,7 @@
                                     </td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
                                     <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>
-                                    <td class="visible-xs hidden-print">
+                                    <td class="visible-xs print:tw-hidden">
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
                                     <td class="visible-xs">

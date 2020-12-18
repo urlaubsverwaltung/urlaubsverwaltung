@@ -112,7 +112,7 @@
                             <tbody>
                             <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
-                                    <td class="hidden-print is-centered">
+                                    <td class="print:tw-hidden is-centered">
                                         <img
                                             src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
@@ -253,7 +253,7 @@
                             <c:forEach items="${applications_cancellation_request}" var="application" varStatus="loopStatus">
                                 <tr class="active"
                                     onclick="navigate('${URL_PREFIX}/application/${application.id}');">
-                                    <td class="hidden-print is-centered">
+                                    <td class="print:tw-hidden is-centered">
                                         <img
                                             src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"

@@ -23,7 +23,7 @@
                     <spring:message code="${app.status}"/>
                 </span>
             </td>
-            <td class="is-centered state ${app.status} hidden-print">
+            <td class="is-centered state ${app.status} print:tw-hidden">
                 <c:choose>
                     <c:when test="${app.status == 'WAITING'}">
                         <icon:question-mark-circle className="tw-w-6 tw-h-6" />
@@ -113,7 +113,7 @@
                     </script>
                 </c:if>
             </td>
-            <td class="is-centered hidden-xs hidden-print">
+            <td class="is-centered hidden-xs print:tw-hidden">
                 <div class="tw-flex tw-items-center">
                     <icon:clock className="tw-w-4 tw-h-4" />&nbsp;
                     <span>

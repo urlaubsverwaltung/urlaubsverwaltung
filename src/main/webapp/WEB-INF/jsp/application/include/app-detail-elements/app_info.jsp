@@ -24,7 +24,7 @@
         </span>
         <span class="tw-my-1 tw-text-lg tw-font-medium">
             <spring:message code="${application.vacationType.messageKey}"/>
-            <span class="state ${application.status} pull-right hidden-print hidden-xs" title="<spring:message code='${application.status}' />">
+            <span class="state ${application.status} pull-right print:tw-hidden hidden-xs" title="<spring:message code='${application.status}' />">
                 <c:choose>
                     <c:when test="${application.status == 'WAITING'}">
                         <icon:question-mark-circle className="tw-w-5 tw-h-5" />

@@ -127,7 +127,7 @@
             </div>
             <%--End of first column--%>
 
-            <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
+            <div class="col-xs-12 col-sm-12 col-md-6 print:tw-hidden">
 
                 <uv:section-heading>
                     <h2>
@@ -151,7 +151,7 @@
                 <%@include file="include/app-detail-elements/app_progress.jsp" %>
             </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
+            <div class="col-xs-12 col-sm-12 col-md-6 print:tw-hidden">
                 <uv:section-heading>
                     <h2>
                         <spring:message code="application.department.title"/>

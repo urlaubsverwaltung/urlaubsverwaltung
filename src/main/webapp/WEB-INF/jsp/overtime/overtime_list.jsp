@@ -76,7 +76,7 @@
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
-                                        <span class="hidden-print">
+                                        <span class="print:tw-hidden">
                                             <icon:briefcase className="tw-w-4 tw-h-4" />
                                         </span>
                                     </td>
@@ -84,7 +84,7 @@
                                         <h4 class="visible-print">
                                             <spring:message code="overtime.title"/>
                                         </h4>
-                                        <a class="hidden-print" href="${URL_PREFIX}/overtime/${record.id}">
+                                        <a class="print:tw-hidden" href="${URL_PREFIX}/overtime/${record.id}">
                                             <h4><spring:message code="overtime.title"/></h4>
                                         </a>
                                         <p><uv:date date="${record.startDate}"/> - <uv:date
@@ -94,7 +94,7 @@
                                         <uv:number number="${record.hours}"/>
                                         <spring:message code="duration.hours"/>
                                     </td>
-                                    <td class="hidden-print is-centered hidden-xs">
+                                    <td class="print:tw-hidden is-centered hidden-xs">
                                         <div class="tw-flex tw-items-center">
                                             <icon:clock className="tw-w-4 tw-h-4" />
                                             &nbsp;<spring:message code="overtime.progress.lastEdited"/>

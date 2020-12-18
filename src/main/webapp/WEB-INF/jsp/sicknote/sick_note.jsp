@@ -202,7 +202,7 @@
                     <tbody>
                     <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                         <tr>
-                            <td class="hidden-print">
+                            <td class="print:tw-hidden">
                                 <img
                                     src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
                                     alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
