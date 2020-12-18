@@ -287,7 +287,6 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
-
     @Test
     void recordOvertimeSignedInUserIsNotSame() {
 
@@ -390,13 +389,55 @@ class OvertimeViewControllerTest {
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
-                .param("numberOfHours", "8")
+                .param("hours", "8")
                 .param("comment", "To much work")
         );
 
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/overtime/2"));
         resultActions.andExpect(flash().attribute("overtimeRecord", "CREATED"));
+    }
+
+    @Test
+    void ensureOvertimeHoursMustBeGreaterZero() throws Exception {
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final ResultActions resultActions = perform(
+            post("/web/overtime")
+                .param("person.id", "4")
+                .param("startDate", "18.12.2020")
+                .param("endDate", "18.12.2020")
+                .param("hours", "-8")
+        );
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasFieldErrors("overtime", "hours"))
+            .andExpect(view().name("overtime/overtime_form"));
+    }
+
+    @Test
+    void ensureOvertimeMinutesMustBeGreaterZero() throws Exception {
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final ResultActions resultActions = perform(
+            post("/web/overtime")
+                .param("person.id", "4")
+                .param("startDate", "18.12.2020")
+                .param("endDate", "18.12.2020")
+                .param("minutes", "-30")
+        );
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasFieldErrors("overtime", "minutes"))
+            .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test
@@ -413,7 +454,7 @@ class OvertimeViewControllerTest {
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
-                .param("numberOfHours", "8")
+                .param("hours", "8")
                 .param("comment", "To much work")
         )).isInstanceOf(NestedServletException.class);
     }
@@ -438,7 +479,7 @@ class OvertimeViewControllerTest {
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
-                .param("numberOfHours", "8")
+                .param("hours", "8")
                 .param("comment", "To much work")
         );
 
@@ -466,7 +507,7 @@ class OvertimeViewControllerTest {
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
-                .param("numberOfHours", "8")
+                .param("hours", "8")
                 .param("comment", "To much work")
         );
 
@@ -492,7 +533,7 @@ class OvertimeViewControllerTest {
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
-                .param("numberOfHours", "8")
+                .param("hours", "8")
                 .param("comment", "To much work")
         )).isInstanceOf(NestedServletException.class);
     }
@@ -518,7 +559,7 @@ class OvertimeViewControllerTest {
                 .param("person.id", "4")
                 .param("startDate", "02.07.2019")
                 .param("endDate", "02.07.2019")
-                .param("numberOfHours", "8")
+                .param("hours", "8")
                 .param("comment", "To much work")
         );
 

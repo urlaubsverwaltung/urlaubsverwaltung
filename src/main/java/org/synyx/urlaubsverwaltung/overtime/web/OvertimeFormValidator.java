@@ -33,7 +33,6 @@ public class OvertimeFormValidator implements Validator {
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
-    private static final String ATTRIBUTE_NUMBER_OF_HOURS = "numberOfHours";
     private static final String ATTRIBUTE_COMMENT = "comment";
 
     private final OvertimeService overtimeService;
@@ -99,18 +98,16 @@ public class OvertimeFormValidator implements Validator {
 
     private void validateNumberOfHours(OvertimeForm overtimeForm, Errors errors) {
 
-        BigDecimal numberOfHours = overtimeForm.getNumberOfHours();
-
-        // may be that number of hours field is null because of cast exception, than there is already a field error
-        if (numberOfHours == null && !errors.hasFieldErrors(ATTRIBUTE_NUMBER_OF_HOURS)) {
-            errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MANDATORY);
+        if (overtimeForm.getHours() == null && overtimeForm.getMinutes() == null) {
+            errors.rejectValue("hours", "overtime.error.hoursOrMinutesRequired");
+            errors.rejectValue("minutes", "overtime.error.hoursOrMinutesRequired");
         }
     }
 
 
     private void validateMaximumOvertimeNotReached(OvertimeSettings settings, OvertimeForm overtimeForm,Errors errors) {
 
-        final BigDecimal numberOfHours = overtimeForm.getNumberOfHours();
+        final BigDecimal numberOfHours = overtimeForm.getDuration();
 
         if (numberOfHours != null) {
             final BigDecimal maximumOvertime = new BigDecimal(settings.getMaximumOvertime());
@@ -136,15 +133,13 @@ public class OvertimeFormValidator implements Validator {
 
             // left overtime + overtime record must not be greater than maximum overtime
             if (leftOvertime.add(numberOfHours).compareTo(maximumOvertime) > 0) {
-                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MAX_OVERTIME, new Object[]{maximumOvertime},
-                    null);
+                errors.reject(ERROR_MAX_OVERTIME, new Object[]{maximumOvertime}, null);
             }
 
             // left overtime + overtime record must be greater than minimum overtime
             // minimum overtime are missing hours (means negative)
             if (leftOvertime.add(numberOfHours).compareTo(minimumOvertime.negate()) < 0) {
-                errors.rejectValue(ATTRIBUTE_NUMBER_OF_HOURS, ERROR_MIN_OVERTIME, new Object[]{minimumOvertime},
-                    null);
+                errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime}, null);
             }
         }
     }

@@ -6,8 +6,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 /**
@@ -19,12 +22,14 @@ public class OvertimeForm {
     private Person person;
     private LocalDate startDate;
     private LocalDate endDate;
-
-    @Min(0)
-    private BigDecimal numberOfHours;
-
     private String comment;
     private boolean reduce;
+
+    @Min(0)
+    private Integer hours;
+
+    @Min(0)
+    private Integer minutes;
 
     OvertimeForm() {
 
@@ -41,13 +46,15 @@ public class OvertimeForm {
 
         Assert.notNull(overtime, "Overtime must be given.");
 
+        final BigDecimal overtimeHours = overtime.getHours() == null ? BigDecimal.ZERO : overtime.getHours();
 
         this.id = overtime.getId();
         this.person = overtime.getPerson();
         this.startDate = overtime.getStartDate();
         this.endDate = overtime.getEndDate();
-        this.numberOfHours = overtime.getHours() == null ? null : overtime.getHours().abs();
-        this.reduce = overtime.getHours() != null && overtime.getHours().doubleValue() < 0;
+        this.hours = overtimeHours.setScale(0, RoundingMode.DOWN).abs().intValueExact();
+        this.minutes = overtimeHours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
+        this.reduce = overtimeHours.doubleValue() < 0;
     }
 
     public Integer getId() {
@@ -98,12 +105,20 @@ public class OvertimeForm {
         this.endDate = endDate;
     }
 
-    public BigDecimal getNumberOfHours() {
-        return numberOfHours;
+    public Integer getHours() {
+        return hours;
     }
 
-    public void setNumberOfHours(BigDecimal numberOfHours) {
-        this.numberOfHours = numberOfHours;
+    public void setHours(Integer hours) {
+        this.hours = hours;
+    }
+
+    public Integer getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(Integer minutes) {
+        this.minutes = minutes;
     }
 
     public String getComment() {
@@ -123,16 +138,33 @@ public class OvertimeForm {
     }
 
     public Overtime generateOvertime() {
-        final BigDecimal hours = reduce ? getNumberOfHours().negate() : getNumberOfHours();
-        return new Overtime(getPerson(), getStartDate(), getEndDate(), hours);
+        return new Overtime(getPerson(), getStartDate(), getEndDate(), getDuration());
     }
 
     public void updateOvertime(Overtime overtime) {
-        final BigDecimal hours = reduce ? getNumberOfHours().negate() : getNumberOfHours();
-
         overtime.setPerson(getPerson());
-        overtime.setHours(hours);
+        overtime.setHours(getDuration());
         overtime.setStartDate(getStartDate());
         overtime.setEndDate(getEndDate());
+    }
+
+    /**
+     *
+     * @return the hours and minutes fields mapped to a {@link BigDecimal}
+     */
+    public BigDecimal getDuration() {
+
+        if (getMinutes() == null && getHours() == null) {
+            return null;
+        }
+
+        final double originalMinutes = getMinutes() == null ? 0.0 : getMinutes();
+
+        final double durationMinutes = originalMinutes % 60;
+        final double hoursToAdd = (originalMinutes - durationMinutes) / 60;
+        final double durationHours = requireNonNullElse(getHours(), 0) + hoursToAdd;
+
+        final BigDecimal duration = BigDecimal.valueOf(durationHours + (durationMinutes / 60));
+        return reduce ? duration.negate() : duration;
     }
 }
