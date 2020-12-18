@@ -441,10 +441,12 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Integer applicationId = 1;
         final Application application = new Application();
-        application.setId(applicationId);
         application.setStatus(WAITING);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
-        when(applicationInteractionService.edit(application, person, Optional.of("comment"))).thenReturn(application);
+        when(applicationInteractionService.edit(eq(application), any(Application.class), eq(person), eq(Optional.of("comment")))).thenReturn(editedApplication);
 
         perform(post("/web/application/1")
             .param("person.id", "1")
@@ -506,10 +508,11 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Integer applicationId = 1;
         final Application application = new Application();
-        application.setId(applicationId);
         application.setStatus(WAITING);
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
-        when(applicationInteractionService.edit(application, person, Optional.of("comment"))).thenThrow(EditApplicationForLeaveNotAllowedException.class);
+        when(applicationInteractionService.edit(eq(application), any(Application.class), eq(person), eq(Optional.of("comment")))).thenThrow(EditApplicationForLeaveNotAllowedException.class);
 
         perform(post("/web/application/1")
             .param("person.id", "1")

@@ -96,7 +96,21 @@ public interface ApplicationInteractionService {
      */
     Application refer(Application application, Person recipient, Person sender);
 
+    /**
+     * Returns the application for leave with the given id
+     * @param applicationId to get the application
+     * @return saved application for leave with id
+     */
     Optional<Application> get(Integer applicationId);
 
-    Application edit(Application application, Person person, Optional<String> comment);
+    /**
+     * Edit the application for leave if the status is waiting
+     *
+     * @param application application for leave
+     * @param editedApplication edited application for leave to save
+     * @param person who edited the application for leave
+     * @param comment optional comment of the app form
+     * @return saved application for leave
+     */
+    Application edit(Application application, Application editedApplication, Person person, Optional<String> comment);
 }

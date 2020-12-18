@@ -1,4 +1,4 @@
 Hallo ${application.holidayReplacement.niceName},
 
-der Antrag von ${application.person.niceName} wurde editiert.
-Du wurdest damit für den Zeitraum vom ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength} als Vertretung eingetragen.
+der Zeitraum für die Abwesenheit von ${application.person.niceName} bei dem du als Vertretung vorgesehen bist, hat sich geändert.
+Der neue Zeitraum ist von ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}.

@@ -398,30 +398,52 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         return application;
     }
 
+    @Override
     public Optional<Application> get(Integer applicationId) {
         return applicationService.getApplicationById(applicationId);
     }
 
     @Override
-    public Application edit(Application applicationForLeave, Person person, Optional<String> comment) {
+    public Application edit(Application actualApplication, Application editedApplication, Person person, Optional<String> comment) {
 
-        if (applicationForLeave.getStatus().compareTo(WAITING) != 0) {
+        if (actualApplication.getStatus().compareTo(WAITING) != 0) {
             throw new EditApplicationForLeaveNotAllowedException(format("Cannot edit application for leave " +
-                "with id %d because the status is %s and not waiting.", applicationForLeave.getId(), applicationForLeave.getStatus()));
+                "with id %d because the status is %s and not waiting.", actualApplication.getId(), actualApplication.getStatus()));
         }
 
-        applicationForLeave.setStatus(WAITING);
-        applicationForLeave.setEditedDate(LocalDate.now(clock));
-        final Application savedApplication = applicationService.save(applicationForLeave);
+        editedApplication.setStatus(WAITING);
+        editedApplication.setEditedDate(LocalDate.now(clock));
+        final Application savedApplication = applicationService.save(editedApplication);
 
         commentService.create(savedApplication, EDITED, comment, person);
 
         applicationMailService.sendEditedApplicationNotification(savedApplication, person);
 
-        if (savedApplication.getHolidayReplacement() != null) {
+        if (replacementChanged(actualApplication, savedApplication)) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(actualApplication);
+            applicationMailService.notifyHolidayReplacementForApply(savedApplication);
+        } else if (replacementDeleted(actualApplication, savedApplication)) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(actualApplication);
+        } else if (relevantEntriesChanged(editedApplication, savedApplication)) {
             applicationMailService.notifyHolidayReplacementAboutEdit(savedApplication);
         }
 
         return savedApplication;
+    }
+
+    private boolean replacementChanged(Application actualApplication, Application savedApplication) {
+        return savedApplication.getHolidayReplacement() != null
+            && savedApplication.getHolidayReplacement() != actualApplication.getHolidayReplacement();
+    }
+
+    private boolean replacementDeleted(Application actualApplication, Application savedApplication) {
+        return savedApplication.getHolidayReplacement() == null && actualApplication.getHolidayReplacement() != null;
+    }
+
+    private boolean relevantEntriesChanged(Application editedApplication, Application savedApplication) {
+        return savedApplication.getHolidayReplacement() != null &&
+            (savedApplication.getStartDate() != editedApplication.getStartDate()
+                || savedApplication.getEndDate() != editedApplication.getEndDate()
+                || savedApplication.getDayLength().equals(editedApplication.getDayLength()));
     }
 }
