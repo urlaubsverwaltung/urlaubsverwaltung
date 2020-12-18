@@ -4,6 +4,7 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +19,10 @@ public class OvertimeForm {
     private Person person;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @Min(0)
     private BigDecimal numberOfHours;
+
     private String comment;
     private boolean reduce;
 

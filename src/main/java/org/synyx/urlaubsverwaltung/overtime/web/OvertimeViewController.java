@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -159,7 +160,7 @@ public class OvertimeViewController {
 
 
     @PostMapping("/overtime")
-    public String recordOvertime(@ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
+    public String recordOvertime(@Valid @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
                                  RedirectAttributes redirectAttributes) {
 
         final Person signedInUser = personService.getSignedInUser();
