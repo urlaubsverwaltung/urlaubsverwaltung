@@ -383,6 +383,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2020, 12, 18));
+        application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
@@ -409,6 +411,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2020, 5, 29));
+        application.setEndDate(LocalDate.of(2020, 5, 29));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
@@ -423,14 +427,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Urlaubsvertretung");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        String startDate = application.getStartDate().format(DATE_TIME_FORMATTER);
-        String endDate = application.getEndDate().format(DATE_TIME_FORMATTER);
-
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
-        assertThat(content).contains("Du wurdest damit für den Zeitraum vom " + startDate + " bis " + endDate + ", ganztägig als Vertretung eingetragen.");
+        assertThat(content).contains("Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.");
 
     }
 
@@ -439,6 +440,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2020, 12, 18));
+        application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
@@ -466,6 +469,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2020, 12, 18));
+        application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
