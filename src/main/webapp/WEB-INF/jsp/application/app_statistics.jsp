@@ -84,17 +84,17 @@
                     </c:when>
                     <c:otherwise>
                         <table class="list-table sortable tablesorter tw-text-sm">
-                            <thead class="hidden-xs hidden-sm">
+                            <thead class="tw-hidden lg:tw-table-header-group">
                             <tr>
-                                <th scope="col" class="print:tw-hidden"><%-- placeholder to ensure correct number of th --%></th>
-                                <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
-                                <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
-                                <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
-                                <th scope="col" class="hidden"><%-- placeholder to ensure correct number of th --%></th>
-                                <th scope="col" class="hidden"><%-- placeholder to ensure correct number of th --%></th>
-                                <th scope="col" class="sortable-field"><spring:message code="applications.statistics.allowed"/></th>
-                                <th scope="col" class="sortable-field"><spring:message code="applications.statistics.waiting"/></th>
-                                <th scope="col" class="sortable-field"><spring:message code="applications.statistics.left"/> (<c:out
+                                <th scope="col" class=""><%-- placeholder to ensure correct number of th --%></th>
+                                <th scope="col" class="tw-hidden lg:tw-table-cell sortable-field"><spring:message code="person.data.firstName"/></th>
+                                <th scope="col" class="tw-hidden lg:tw-table-cell sortable-field"><spring:message code="person.data.lastName"/></th>
+                                <th scope="col" class="lg:tw-hidden"><%-- placeholder to ensure correct number of th --%></th>
+                                <th scope="col" class="md:tw-hidden"><%-- placeholder to ensure correct number of th --%></th>
+                                <th scope="col" class="tw-hidden md:tw-table-cell"><%-- placeholder to ensure correct number of th --%></th>
+                                <th scope="col" class="tw-hidden md:tw-table-cell sortable-field"><spring:message code="applications.statistics.allowed"/></th>
+                                <th scope="col" class="tw-hidden md:tw-table-cell sortable-field"><spring:message code="applications.statistics.waiting"/></th>
+                                <th scope="col" class="tw-hidden md:tw-table-cell sortable-field"><spring:message code="applications.statistics.left"/> (<c:out
                                     value="${from.year}"/>)
                                 </th>
                             </tr>
@@ -102,7 +102,7 @@
                             <tbody>
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
-                                    <td class="print:tw-hidden is-centered">
+                                    <td class="is-centered">
                                         <img
                                             src="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${statistic.person.niceName}"/>"
@@ -112,12 +112,12 @@
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
-                                    <td class="hidden-xs"><c:out value="${statistic.person.firstName}"/></td>
-                                    <td class="hidden-xs"><c:out value="${statistic.person.lastName}"/></td>
-                                    <td class="visible-xs print:tw-hidden">
+                                    <td class="tw-hidden lg:tw-table-cell"><c:out value="${statistic.person.firstName}"/></td>
+                                    <td class="tw-hidden lg:tw-table-cell"><c:out value="${statistic.person.lastName}"/></td>
+                                    <td class="lg:tw-hidden">
                                         <c:out value="${statistic.person.niceName}"/>
                                     </td>
-                                    <td class="visible-xs">
+                                    <td class="md:tw-hidden">
                                         <div class="tw-flex tw-items-center">
                                             <span class="tw-w-6">
                                                 <icon:check className="tw-w-5 tw-h-5" />
@@ -135,7 +135,7 @@
                                             </span>
                                         </div>
                                     </td>
-                                    <td class="hidden-xs hidden-sm">
+                                    <td class="tw-hidden md:tw-table-cell">
                                         <spring:message code="applications.statistics.total"/>:
                                         <c:forEach items="${vacationTypes}" var="type">
                                             <br/>
@@ -144,7 +144,7 @@
                                             </small>
                                         </c:forEach>
                                     </td>
-                                    <td class="hidden-xs hidden-sm number">
+                                    <td class="tw-hidden md:tw-table-cell number">
                                         <strong class="sortable">
                                             <uv:number
                                                 number="${statistic.totalAllowedVacationDays}"/>
@@ -157,7 +157,7 @@
                                             </small>
                                         </c:forEach>
                                     </td>
-                                    <td class="hidden-xs hidden-sm number">
+                                    <td class="tw-hidden md:tw-table-cell number">
                                         <strong class="sortable">
                                             <uv:number
                                                 number="${statistic.totalWaitingVacationDays}"/>
@@ -170,7 +170,7 @@
                                             </small>
                                         </c:forEach>
                                     </td>
-                                    <td class="hidden-xs">
+                                    <td class="tw-hidden md:tw-table-cell">
                                         <strong class="sortable">
                                             <uv:number number="${statistic.leftVacationDays}"/>
                                         </strong>
