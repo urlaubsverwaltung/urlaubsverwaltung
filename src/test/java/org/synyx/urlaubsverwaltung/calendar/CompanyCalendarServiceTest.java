@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -60,14 +61,14 @@ class CompanyCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource);
+        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
     }
 
     @Test
     void getCalendarForAllForOneFullDay() {
 
         final List<Absence> absences = List.of(absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
-        when(absenceService.getOpenAbsences()).thenReturn(absences);
+        when(absenceService.getOpenAbsencesSince(any(LocalDate.class))).thenReturn(absences);
 
         final Person person = new Person();
         person.setId(10);

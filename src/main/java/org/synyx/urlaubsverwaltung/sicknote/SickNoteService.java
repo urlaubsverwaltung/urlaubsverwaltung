@@ -68,5 +68,5 @@ public interface SickNoteService {
      *
      * @return all {@link SickNote} with specific states and persons
      */
-    List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons);
+    List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since);
 }

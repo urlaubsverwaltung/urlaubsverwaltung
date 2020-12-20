@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
@@ -57,17 +56,19 @@ class AbsenceServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
+        final LocalDate since = LocalDate.of(2020, 10, 13);
+
         final LocalDate startDate = LocalDate.of(2019, 12, 10);
         final LocalDate endDate = LocalDate.of(2019, 12, 23);
         final Application application = createApplication(person, startDate, endDate, FULL);
-        when(applicationService.getForStatesAndPerson(eq(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED)), eq(List.of(person)))).thenReturn(List.of(application));
+        when(applicationService.getForStatesAndPersonSince(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(person), since)).thenReturn(List.of(application));
 
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
-        when(sickNoteService.getForStatesAndPerson(eq(List.of(ACTIVE)), eq(List.of(person)))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPersonSince(List.of(ACTIVE), List.of(person), since)).thenReturn(List.of(sickNote));
 
-        final List<Absence> openAbsences = sut.getOpenAbsences(List.of(person));
+        final List<Absence> openAbsences = sut.getOpenAbsencesSince(List.of(person), since);
         assertThat(openAbsences).hasSize(2);
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
         assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-12-10T00:00Z[Etc/UTC]"));
@@ -88,17 +89,19 @@ class AbsenceServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
+        final LocalDate since = LocalDate.of(2020, 11, 13);
+
         final LocalDate startDate = LocalDate.of(2019, 11, 10);
         final LocalDate endDate = LocalDate.of(2019, 11, 23);
         final Application application = createApplication(person, startDate, endDate, FULL);
-        when(applicationService.getForStates(eq(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))).thenReturn(List.of(application));
+        when(applicationService.getForStatesSince(List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), since)).thenReturn(List.of(application));
 
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
-        when(sickNoteService.getForStates(eq(List.of(ACTIVE)))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStates(List.of(ACTIVE))).thenReturn(List.of(sickNote));
 
-        final List<Absence> openAbsences = sut.getOpenAbsences();
+        final List<Absence> openAbsences = sut.getOpenAbsencesSince(since);
         assertThat(openAbsences).hasSize(2);
         assertThat(openAbsences.get(0).getPerson()).isEqualTo(person);
         assertThat(openAbsences.get(0).getStartDate()).isEqualTo(ZonedDateTime.parse("2019-11-10T00:00Z[Etc/UTC]"));

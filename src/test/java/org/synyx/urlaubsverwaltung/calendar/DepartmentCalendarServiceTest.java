@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,8 @@ class DepartmentCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new DepartmentCalendarService(absenceService, departmentService, personService, departmentCalendarRepository, iCalService, messageSource);
+        sut = new DepartmentCalendarService(absenceService, departmentService, personService,
+            departmentCalendarRepository, iCalService, messageSource, Clock.systemUTC());
     }
 
     @Test
@@ -110,10 +112,11 @@ class DepartmentCalendarServiceTest {
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
         departmentCalendar.setId(1L);
         departmentCalendar.setDepartment(department);
+        departmentCalendar.setFetchSinceMonths(12);
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
         final List<Absence> fullDayAbsences = List.of(absence(person, parse("2019-03-26", ofPattern("yyyy-MM-dd")), parse("2019-03-26", ofPattern("yyyy-MM-dd")), FULL));
-        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
+        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
         final File iCal = new File("calendar.ics");

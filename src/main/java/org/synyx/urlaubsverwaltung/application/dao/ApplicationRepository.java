@@ -19,8 +19,11 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
 
     List<Application> findByStatusIn(List<ApplicationStatus> statuses);
 
+    List<Application> findByStatusInAndEndDateGreaterThanEqual(List<ApplicationStatus> statuses, LocalDate since);
+
     List<Application> findByStatusInAndPersonIn(List<ApplicationStatus> statuses, List<Person> persons);
 
+    List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate sinceStartDate);
 
     @Query(
         "select x from Application x "

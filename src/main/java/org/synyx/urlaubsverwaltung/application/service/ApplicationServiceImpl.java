@@ -60,8 +60,18 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> getForStatesSince(List<ApplicationStatus> statuses, LocalDate since) {
+        return applicationRepository.findByStatusInAndEndDateGreaterThanEqual(statuses, since);
+    }
+
+    @Override
     public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons) {
         return applicationRepository.findByStatusInAndPersonIn(statuses, persons);
+    }
+
+    @Override
+    public List<Application> getForStatesAndPersonSince(List<ApplicationStatus> statuses, List<Person> persons, LocalDate since) {
+        return applicationRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(statuses, persons, since);
     }
 
     @Override

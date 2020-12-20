@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,9 +82,9 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkPrivateCalendar(@PathVariable int personId) {
+    public String linkPrivateCalendar(@PathVariable int personId, @ModelAttribute PersonCalendarDto personCalendarDto) {
 
-        personCalendarService.createCalendarForPerson(personId);
+        personCalendarService.createCalendarForPerson(personId, personCalendarDto.getFetchSince());
 
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
@@ -178,6 +179,7 @@ public class CalendarSharingViewController {
                 .replacePath(path).build().toString();
 
             dto.setCalendarUrl(url);
+            dto.setFetchSince(personCalendar.getFetchSinceMonths());
         }
 
         return dto;

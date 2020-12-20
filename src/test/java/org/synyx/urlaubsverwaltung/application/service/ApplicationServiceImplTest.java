@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,9 +95,9 @@ class ApplicationServiceImplTest {
         final Application application = new Application();
         final List<Application> applications = List.of(application);
 
-        when(applicationRepository.findByStatusIn(List.of(WAITING))).thenReturn(applications);
+        when(applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(WAITING), LocalDate.of(2020, 10, 3))).thenReturn(applications);
 
-        final List<Application> result = applicationService.getForStates(List.of(WAITING));
+        final List<Application> result = applicationService.getForStatesSince(List.of(WAITING), LocalDate.of(2020, 10, 3));
         assertThat(result).isEqualTo(applications);
     }
 

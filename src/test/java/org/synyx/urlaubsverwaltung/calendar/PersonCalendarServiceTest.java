@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,7 @@ class PersonCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new PersonCalendarService(absenceService, personService, personCalendarRepository, iCalService, messageSource);
+        sut = new PersonCalendarService(absenceService, personService, personCalendarRepository, iCalService, messageSource, Clock.systemUTC());
     }
 
     @Test
@@ -69,10 +70,11 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
+        personCalendar.setFetchSinceMonths(12);
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
-        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(fullDayAbsences);
+        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn(new File("calendar.ics"));
@@ -90,10 +92,11 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
+        personCalendar.setFetchSinceMonths(12);
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> morningAbsences = List.of(absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING));
-        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(morningAbsences);
+        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(morningAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final File iCal = new File("calendar.ics");
@@ -113,10 +116,11 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
+        personCalendar.setFetchSinceMonths(12);
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> manyFullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL));
-        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(manyFullDayAbsences);
+        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(manyFullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn(new File("calendar.ics"));
@@ -134,10 +138,11 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
+        personCalendar.setFetchSinceMonths(12);
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> noonAbsences = List.of(absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON));
-        when(absenceService.getOpenAbsences(List.of(person))).thenReturn(noonAbsences);
+        when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(noonAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn(new File("calendar.ics"));
@@ -248,16 +253,17 @@ class PersonCalendarServiceTest {
 
         when(personCalendarRepository.save(receivedPersonCalendar)).thenReturn(receivedPersonCalendar);
 
-        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1);
+        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, 12);
         assertThat(calendarForPerson.getPerson()).isEqualTo(person);
         assertThat(calendarForPerson.getSecret()).isNotBlank();
+        assertThat(calendarForPerson.getFetchSinceMonths()).isEqualTo(12);
     }
 
     @Test
     void createCalendarForPersonNoPersonFound() {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForPerson(1));
+            .isThrownBy(() -> sut.createCalendarForPerson(1, 12));
     }
 
     @Test
@@ -271,9 +277,10 @@ class PersonCalendarServiceTest {
 
         when(personCalendarRepository.save(any(PersonCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1);
+        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, 12);
         assertThat(calendarForPerson.getPerson()).isEqualTo(person);
         assertThat(calendarForPerson.getSecret()).isNotBlank();
+        assertThat(calendarForPerson.getFetchSinceMonths()).isEqualTo(12);
 
         verify(personCalendarRepository).save(any(PersonCalendar.class));
     }

@@ -4,6 +4,7 @@ public class PersonCalendarDto {
 
     private int personId;
     private String calendarUrl;
+    private int fetchSince;
 
     public int getPersonId() {
         return personId;
@@ -19,5 +20,13 @@ public class PersonCalendarDto {
 
     public void setCalendarUrl(String calendarUrl) {
         this.calendarUrl = calendarUrl;
+    }
+
+    public int getFetchSince() {
+        return fetchSince;
+    }
+
+    public void setFetchSince(int fetchSince) {
+        this.fetchSince = fetchSince;
     }
 }

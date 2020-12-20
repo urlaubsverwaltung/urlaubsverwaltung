@@ -471,7 +471,7 @@ class CalendarSharingViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(personCalendarService).createCalendarForPerson(1);
+        verify(personCalendarService).createCalendarForPerson(1, 0);
     }
 
     @Test

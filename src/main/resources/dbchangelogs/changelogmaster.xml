@@ -68,4 +68,5 @@
   <include file="dbchangelogs/changelog-4.3.0-increase-application-comment-action-length.xml"/>
   <include file="dbchangelogs/changelog-4.4.0-accountsettings-default-vacation-days.xml"/>
   <include file="dbchangelogs/changelog-4.6.0-rename-absencetype-to-absencemappingtype.xml"/>
+  <include file="dbchangelogs/changelog-4.7.0-add-fetch-since-months-for-calendar.xml"/>
 </databaseChangeLog>

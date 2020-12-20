@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -41,19 +42,19 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     @Override
-    public List<Absence> getOpenAbsences(List<Person> persons) {
-        final List<Application> openApplications = applicationService.getForStatesAndPerson(APPLICATION_STATUSES, persons);
+    public List<Absence> getOpenAbsencesSince(List<Person> persons, LocalDate since) {
+        final List<Application> openApplications = applicationService.getForStatesAndPersonSince(APPLICATION_STATUSES, persons, since);
         final List<Absence> applicationAbsences = generateAbsencesFromApplication(openApplications);
 
-        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(SICK_NOTE_STATUSES, persons);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPersonSince(SICK_NOTE_STATUSES, persons, since);
         final List<Absence> sickNoteAbsences = generateAbsencesFromSickNotes(openSickNotes);
 
         return ListUtils.union(applicationAbsences, sickNoteAbsences);
     }
 
     @Override
-    public List<Absence> getOpenAbsences() {
-        final List<Application> openApplications = applicationService.getForStates(APPLICATION_STATUSES);
+    public List<Absence> getOpenAbsencesSince(LocalDate since) {
+        final List<Application> openApplications = applicationService.getForStatesSince(APPLICATION_STATUSES, since);
         final List<Absence> applicationAbsences = generateAbsencesFromApplication(openApplications);
 
         final List<SickNote> openSickNotes = sickNoteService.getForStates(SICK_NOTE_STATUSES);

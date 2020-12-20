@@ -81,11 +81,25 @@ public interface ApplicationService {
     List<Application> getForStates(List<ApplicationStatus> statuses);
 
     /**
+     * Get all {@link Application} with specific states since
+     *
+     * @return all {@link Application}
+     */
+    List<Application> getForStatesSince(List<ApplicationStatus> statuses, LocalDate since);
+
+    /**
      * Get all {@link Application} with specific states and persons
      *
      * @return all {@link Application}
      */
     List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons);
+
+    /**
+     * Get all {@link Application} with specific states and persons
+     *
+     * @return all {@link Application}
+     */
+    List<Application> getForStatesAndPersonSince(List<ApplicationStatus> statuses, List<Person> persons, LocalDate since);
 
 
     /**

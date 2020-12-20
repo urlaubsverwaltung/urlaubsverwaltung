@@ -21,6 +21,8 @@ abstract class Calendar {
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
+    private int fetchSinceMonths;
+
     protected Calendar() {
         generateSecret();
     }
@@ -39,5 +41,13 @@ abstract class Calendar {
 
     public void generateSecret() {
         secret = RandomStringUtils.randomAlphanumeric(SECRET_LENGTH);
+    }
+
+    public int getFetchSinceMonths() {
+        return fetchSinceMonths;
+    }
+
+    public void setFetchSinceMonths(int fetchSince) {
+        this.fetchSinceMonths = fetchSince;
     }
 }

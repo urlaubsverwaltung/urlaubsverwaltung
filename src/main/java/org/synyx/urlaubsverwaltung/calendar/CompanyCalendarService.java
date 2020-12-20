@@ -12,10 +12,14 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.io.File;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 
 @Service
@@ -26,14 +30,16 @@ class CompanyCalendarService {
     private final ICalService iCalService;
     private final PersonService personService;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     @Autowired
-    CompanyCalendarService(AbsenceService absenceService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource) {
+    CompanyCalendarService(AbsenceService absenceService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource, Clock clock) {
         this.absenceService = absenceService;
         this.companyCalendarRepository = companyCalendarRepository;
         this.iCalService = iCalService;
         this.personService = personService;
         this.messageSource = messageSource;
+        this.clock = clock;
     }
 
     CompanyCalendar createCalendarForPerson(int personId) {
@@ -62,13 +68,16 @@ class CompanyCalendarService {
         }
 
         final Person person = getPersonOrThrow(personId);
-        final Optional<CompanyCalendar> calendar = companyCalendarRepository.findBySecretAndPerson(secret, person);
-        if (calendar.isEmpty()) {
+        final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findBySecretAndPerson(secret, person);
+        if (maybeCompanyCalendar.isEmpty()) {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
         final String title = messageSource.getMessage("calendar.company.title", new Object[]{}, locale);
-        final List<Absence> absences = absenceService.getOpenAbsences();
+
+        final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
+        final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getFetchSinceMonths(), MONTHS);
+        final List<Absence> absences = absenceService.getOpenAbsencesSince(sinceDate);
 
         return iCalService.getCalendar(title, absences);
     }

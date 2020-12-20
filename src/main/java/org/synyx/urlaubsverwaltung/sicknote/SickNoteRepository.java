@@ -45,5 +45,6 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
 
     List<SickNote> findByStatusIn(List<SickNoteStatus> openSickNoteStatuses);
 
-    List<SickNote> findByStatusInAndPersonIn(List<SickNoteStatus> openSickNoteStatuses, List<Person> persons);
+    List<SickNote> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses,
+                                                                         List<Person> persons, LocalDate sinceStartDate);
 }

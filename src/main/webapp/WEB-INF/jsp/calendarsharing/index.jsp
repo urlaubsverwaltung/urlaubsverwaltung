@@ -44,6 +44,7 @@
                         <spring:message code="calendar.share.me.title"/>
                     </h2>
                 </uv:section-heading>
+                <form:input path="fetchSince" value="30"/>
                 <c:choose>
                     <c:when test="${empty privateCalendarShare.calendarUrl}">
                         <div class="tw-max-w-3xl">
