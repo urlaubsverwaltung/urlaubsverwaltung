@@ -62,11 +62,7 @@
                 <form:hidden path="person" value="${overtime.person.id}"/>
                 <div class="form-section">
                     <div class="col-xs-12">
-                        <c:if test="${not empty errors.globalErrors}">
-                            <div class="alert alert-danger">
-                                <form:errors/>
-                            </div>
-                        </c:if>
+                        <form:errors cssClass="alert alert-danger" element="div" />
                     </div>
                     <div class="col-xs-12">
                         <uv:section-heading>
@@ -126,20 +122,63 @@
                                 </uv:error-text>
                             </div>
                         </div>
-                            <%-- End of end date form group --%>
+
                         <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="numberOfHours">
+                            <label class="control-label col-md-3" for="hours">
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <form:input path="numberOfHours" cssClass="form-control"
-                                            cssErrorClass="form-control error"/>
-                                <uv:error-text>
-                                    <form:errors path="numberOfHours" />
-                                </uv:error-text>
+                                <div class="tw-flex tw-items-center">
+                                    <span class="tw-flex-1">
+                                        <span class="input-group">
+                                            <spring:message var="hoursPlaceholder" code='overtime.data.hours.input.placeholder' />
+                                            <form:input
+                                                path="hours"
+                                                cssClass="form-control"
+                                                cssErrorClass="form-control error"
+                                                placeholder="${hoursPlaceholder}"
+                                                type="text"
+                                                inputmode="numeric"
+                                                autocomplete="off"
+                                            />
+                                            <span class="input-group-addon">
+                                                <spring:message code="overtime.data.hours.abbr" />
+                                            </span>
+                                        </span>
+                                        <uv:error-text>
+                                            <form:errors path="hours" />
+                                        </uv:error-text>
+                                    </span>&nbsp;
+                                    <span class="tw-flex-1">
+                                        <span class="input-group">
+                                            <spring:message var="minutesPlaceholder" code='overtime.data.minutes.input.placeholder'/>
+                                            <form:input
+                                                path="minutes"
+                                                cssClass="form-control"
+                                                cssErrorClass="form-control error"
+                                                placeholder="${minutesPlaceholder}"
+                                                type="text"
+                                                inputmode="numeric"
+                                                autocomplete="off"
+                                            />
+                                            <span class="input-group-addon">
+                                                <spring:message code="overtime.data.minutes.abbr" />
+                                            </span>
+                                        </span>
+                                        <uv:error-text>
+                                            <form:errors path="minutes" />
+                                        </uv:error-text>
+                                    </span>
+                                </div>
+                                <div class="tw-mt-2">
+                                    <form:checkbox id="overtime-reduce" path="reduce" />
+                                    <label for="overtime-reduce" class="tw-font-normal">
+                                        <spring:message code="overtime.data.reduceOvertime"/>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                            <%-- End of number of overtime form group --%>
+
                         <div class="form-group">
                             <label class="control-label col-md-3" for="comment">
                                 <spring:message code="overtime.data.comment"/>:
