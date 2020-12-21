@@ -137,11 +137,11 @@ public class OvertimeForm {
         this.reduce = reduce;
     }
 
-    public Overtime generateOvertime() {
+    Overtime generateOvertime() {
         return new Overtime(getPerson(), getStartDate(), getEndDate(), getDuration());
     }
 
-    public void updateOvertime(Overtime overtime) {
+    void updateOvertime(Overtime overtime) {
         overtime.setPerson(getPerson());
         overtime.setHours(getDuration());
         overtime.setStartDate(getStartDate());
