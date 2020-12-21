@@ -152,7 +152,7 @@ public class OvertimeForm {
      *
      * @return the hours and minutes fields mapped to a {@link BigDecimal}
      */
-    public BigDecimal getDuration() {
+    BigDecimal getDuration() {
 
         if (getMinutes() == null && getHours() == null) {
             return null;
