@@ -43,11 +43,7 @@
 
 <uv:menu/>
 
-<div class="print-info--only-landscape">
-    <h4><spring:message code="print.info.landscape"/></h4>
-</div>
-
-<div class="content print--only-landscape">
+<div class="content">
     <div class="container">
 
         <uv:section-heading>
@@ -86,7 +82,7 @@
                 <table class="list-table selectable-table sortable tablesorter tw-text-sm">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
-                        <th scope="col" class="hidden-print"></th>
+                        <th scope="col" class="print:tw-hidden"></th>
                         <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
                         <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
                         <th scope="col" class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
@@ -99,7 +95,7 @@
                     <tbody>
                     <c:forEach items="${persons}" var="person">
                     <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
-                        <td class="is-centered hidden-print">
+                        <td class="is-centered print:tw-hidden">
                             <img
                                 src="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"
                                 alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"

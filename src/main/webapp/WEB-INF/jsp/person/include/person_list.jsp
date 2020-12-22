@@ -25,7 +25,7 @@
     </form>
 
     <table class="list-table selectable-table sortable tablesorter tw-text-sm">
-        <thead class="hidden-xs hidden-sm">
+        <thead class="hidden-xs hidden-sm print:tw-table-header-group">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
             <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
@@ -70,7 +70,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
                         <c:when test="${accounts[person] != null}">
                             <uv:number number="${accounts[person].annualVacationDays}"/>
@@ -80,7 +80,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
                         <c:when test="${accounts[person] != null}">
                             <uv:number number="${accounts[person].vacationDays}"/>
@@ -90,7 +90,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
                         <c:when test="${accounts[person] != null}">
                             <uv:number number="${accounts[person].remainingVacationDays}"/>
@@ -100,7 +100,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
                         <c:when test="${vacationDaysLeftMap[person] != null}">
                             <uv:number number="${vacationDaysLeftMap[person].vacationDays}"/>

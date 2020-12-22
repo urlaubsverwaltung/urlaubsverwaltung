@@ -27,11 +27,7 @@
 
 <uv:menu/>
 
-<div class="print-info--only-portrait">
-    <h4><spring:message code="print.info.portrait"/></h4>
-</div>
-
-<div class="content print--only-portrait">
+<div class="content">
 
     <div class="container">
 
@@ -206,7 +202,7 @@
                     <tbody>
                     <c:forEach items="${comments}" var="comment" varStatus="loopStatus">
                         <tr>
-                            <td class="hidden-print">
+                            <td class="print:tw-hidden">
                                 <img
                                     src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
                                     alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
@@ -285,7 +281,7 @@
 
                 </sec:authorize>
 
-                <div class="print:hidden">
+                <div class="print:tw-hidden">
                     <uv:section-heading>
                         <h2>
                             <spring:message code="sicknote.data.person"/>

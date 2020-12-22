@@ -112,7 +112,7 @@
                             <tbody>
                             <c:forEach items="${applications}" var="application" varStatus="loopStatus">
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
-                                    <td class="hidden-print is-centered">
+                                    <td class="print:tw-hidden is-centered">
                                         <img
                                             src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
@@ -122,7 +122,7 @@
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
-                                    <td class="hidden-xs">
+                                    <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
                                             <c:out value="${application.person.niceName}"/>
                                         </span>
@@ -197,7 +197,7 @@
                                             </c:choose>
                                         </div>
                                     </td>
-                                    <td class="hidden-xs hidden-sm text-right">
+                                    <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                                             <c:if test="${application.person.id == signedInUser.id && application.status == 'WAITING'}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
@@ -253,7 +253,7 @@
                             <c:forEach items="${applications_cancellation_request}" var="application" varStatus="loopStatus">
                                 <tr class="active"
                                     onclick="navigate('${URL_PREFIX}/application/${application.id}');">
-                                    <td class="hidden-print is-centered">
+                                    <td class="print:tw-hidden is-centered">
                                         <img
                                             src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
@@ -263,7 +263,7 @@
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
-                                    <td class="hidden-xs">
+                                    <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
                                             <c:out value="${application.person.niceName}"/>
                                         </span>
@@ -344,7 +344,7 @@
                                             </c:choose>
                                         </div>
                                     </td>
-                                    <td class="hidden-xs hidden-sm text-right">
+                                    <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <c:if test="${IS_OFFICE}">
                                             <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"

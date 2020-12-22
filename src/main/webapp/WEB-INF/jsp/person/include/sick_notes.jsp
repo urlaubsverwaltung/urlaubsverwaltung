@@ -16,7 +16,7 @@
         </c:otherwise>
     </c:choose>
     <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
-        <td class="is-centered hidden-print state ${sickNote.sickNoteType}">
+        <td class="is-centered print:tw-hidden state ${sickNote.sickNoteType}">
             <c:choose>
                 <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                     <icon:child className="tw-w-6 tw-h-6" />
@@ -55,7 +55,7 @@
         <td class="is-centered hidden-xs">
             <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days"/></span>
         </td>
-        <td class="hidden-print is-centered hidden-xs">
+        <td class="print:tw-hidden is-centered hidden-xs">
             <div class="tw-flex tw-items-center">
                 <icon:clock className="tw-w-4 tw-h-4" />&nbsp;
                 <span><spring:message code="sicknote.progress.lastEdited"/> <uv:date date="${sickNote.lastEdited}"/></span>

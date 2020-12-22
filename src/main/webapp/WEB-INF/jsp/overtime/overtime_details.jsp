@@ -122,7 +122,7 @@
                         <spring:message code="overtime.data.person"/>
                     </h2>
                 </uv:section-heading>
-                <uv:person person="${record.person}" cssClass="hidden-print tw-h-32 tw-mb-5"/>
+                <uv:person person="${record.person}" cssClass="print:tw-hidden tw-h-32 tw-mb-5"/>
                 <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4" />
                 <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4" />
             </div>

@@ -42,11 +42,7 @@
 
 <uv:menu/>
 
-<div class="print-info--only-portrait">
-    <h4><spring:message code="print.info.portrait"/></h4>
-</div>
-
-<div class="content print--only-portrait">
+<div class="content">
 
     <div class="container">
 
@@ -115,23 +111,25 @@
         </c:if>
 
         <!-- Calendar -->
-        <uv:section-heading>
-            <jsp:attribute name="actions">
-                <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
-                    <icon:calendar className="tw-w-5 tw-h-5" />
-                    &nbsp;<spring:message code="overview.calendar.share.link.text" />
-                </a>
-            </jsp:attribute>
-            <jsp:body>
-                <h2 id="calendar">
-                    <spring:message code="overview.calendar.title"/>
-                </h2>
-            </jsp:body>
-        </uv:section-heading>
-        <div class="row tw-mb-4 lg:tw-mb-12">
-            <div class="col-xs-12">
-                <div id="datepicker" class="tw-flex tw-justify-center tw-items-center">
-                    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        <div class="print:tw-hidden">
+            <uv:section-heading>
+                <jsp:attribute name="actions">
+                    <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
+                        <icon:calendar className="tw-w-5 tw-h-5" />
+                        &nbsp;<spring:message code="overview.calendar.share.link.text" />
+                    </a>
+                </jsp:attribute>
+                <jsp:body>
+                    <h2 id="calendar">
+                        <spring:message code="overview.calendar.title"/>
+                    </h2>
+                </jsp:body>
+            </uv:section-heading>
+            <div class="row tw-mb-4 lg:tw-mb-12">
+                <div class="col-xs-12">
+                    <div id="datepicker" class="tw-flex tw-justify-center tw-items-center">
+                        <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                    </div>
                 </div>
             </div>
         </div>
