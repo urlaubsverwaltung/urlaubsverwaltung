@@ -128,7 +128,7 @@
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <div class="tw-flex tw-items-center">
+                                <div class="tw-flex tw-items-start">
                                     <span class="tw-flex-1">
                                         <span class="input-group">
                                             <spring:message var="hoursPlaceholder" code='overtime.data.hours.input.placeholder' />
