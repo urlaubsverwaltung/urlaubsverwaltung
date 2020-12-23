@@ -184,7 +184,7 @@
                                 <spring:message code="overtime.data.comment"/>:
                             </label>
                             <div class="col-md-9">
-                                <span id="char-counter"></span><spring:message code="action.comment.maxChars"/>
+                                <small><span id="char-counter"></span><spring:message code="action.comment.maxChars"/></small>
                                 <form:textarea path="comment" cssClass="form-control" rows="2"
                                                onkeyup="count(this.value, 'char-counter');"
                                                onkeydown="maxChars(this,200); count(this.value, 'char-counter');"/>
