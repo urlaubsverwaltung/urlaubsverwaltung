@@ -47,7 +47,7 @@ class OvertimeFormTest {
         final OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
         overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
-        overtimeForm.setHours(1);
+        overtimeForm.setHours(BigDecimal.ONE);
         overtimeForm.setMinutes(15);
         overtimeForm.setComment("Lorem ipsum");
 
@@ -132,7 +132,7 @@ class OvertimeFormTest {
         assertThat(overtimeForm.getPerson()).isEqualTo(overtime.getPerson());
         assertThat(overtimeForm.getStartDate()).isEqualTo(overtime.getStartDate());
         assertThat(overtimeForm.getEndDate()).isEqualTo(overtime.getEndDate());
-        assertThat(overtimeForm.getHours()).isEqualTo(1);
+        assertThat(overtimeForm.getHours()).isEqualTo(BigDecimal.ONE);
         assertThat(overtimeForm.getMinutes()).isEqualTo(15);
         assertThat(overtimeForm.getComment()).isNull();
     }
@@ -146,7 +146,7 @@ class OvertimeFormTest {
         final OvertimeForm overtimeForm = new OvertimeForm(person);
         overtimeForm.setStartDate(LocalDate.now(UTC));
         overtimeForm.setEndDate(ZonedDateTime.now(UTC).plusDays(1).toLocalDate());
-        overtimeForm.setHours(1);
+        overtimeForm.setHours(BigDecimal.valueOf(1.5));
         overtimeForm.setMinutes(15);
         overtimeForm.setComment("Lorem ipsum");
 
@@ -157,7 +157,7 @@ class OvertimeFormTest {
         assertThat(overtime.getPerson()).isEqualTo(overtimeForm.getPerson());
         assertThat(overtime.getStartDate()).isEqualTo(overtimeForm.getStartDate());
         assertThat(overtime.getEndDate()).isEqualTo(overtimeForm.getEndDate());
-        assertThat(overtime.getHours()).isEqualTo(BigDecimal.valueOf(1.25));
+        assertThat(overtime.getHours()).isEqualTo(BigDecimal.valueOf(1.75));
         assertThat(overtimeForm.getId()).isNull();
     }
 
@@ -168,7 +168,7 @@ class OvertimeFormTest {
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
-        assertThat(overtimeForm.getHours()).isEqualTo(42);
+        assertThat(overtimeForm.getHours()).isEqualTo(BigDecimal.valueOf(42));
         assertThat(overtimeForm.getMinutes()).isEqualTo(30);
         assertThat(overtimeForm.isReduce()).isTrue();
     }
@@ -180,7 +180,7 @@ class OvertimeFormTest {
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
-        assertThat(overtimeForm.getHours()).isEqualTo(1);
+        assertThat(overtimeForm.getHours()).isEqualTo(BigDecimal.ONE);
         assertThat(overtimeForm.getMinutes()).isEqualTo(1);
     }
 
@@ -191,7 +191,17 @@ class OvertimeFormTest {
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
-        assertThat(overtimeForm.getHours()).isEqualTo(1);
+        assertThat(overtimeForm.getHours()).isEqualTo(BigDecimal.ONE);
         assertThat(overtimeForm.getMinutes()).isEqualTo(59);
+    }
+
+    @Test
+    void ensureDurationOfHourDecimalValueAndMinutes() {
+        final OvertimeForm overtimeForm = new OvertimeForm();
+        overtimeForm.setHours(BigDecimal.valueOf(1.1));
+        overtimeForm.setMinutes(12);
+
+        final BigDecimal duration = overtimeForm.getDuration();
+        assertThat(duration).isEqualTo(BigDecimal.valueOf(1.3));
     }
 }
