@@ -1,25 +1,33 @@
 package org.synyx.urlaubsverwaltung.person.metrics;
 
-import io.micrometer.core.instrument.Metrics;
-import org.springframework.scheduling.annotation.Scheduled;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 class PersonMetrics {
 
     private static final String METRIC_USERS_ACTIVE = "users.active";
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 
-    PersonMetrics(PersonService personService) {
+    PersonMetrics(PersonService personService, MeterRegistry meterRegistry) {
 
         this.personService = personService;
+
+        Gauge.builder(METRIC_USERS_ACTIVE, this::countActiveUsers).register(meterRegistry);
     }
 
-    @Scheduled(fixedDelay = 300000)
-    void countActiveUsers() {
-        Metrics.gauge(METRIC_USERS_ACTIVE, this.personService.getActivePersons().size());
+    int countActiveUsers() {
+        final int activeUsersCount = this.personService.getActivePersons().size();
+        LOG.debug("active users count is {}", activeUsersCount);
+        return activeUsersCount;
     }
 
 }
