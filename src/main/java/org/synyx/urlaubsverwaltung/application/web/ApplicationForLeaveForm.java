@@ -54,25 +54,18 @@ public class ApplicationForLeaveForm {
     private Integer id;
 
     public Person getPerson() {
-
         return person;
     }
 
-
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
-
     public String getAddress() {
-
         return address;
     }
 
-
     public void setAddress(String address) {
-
         this.address = address;
     }
 
@@ -85,61 +78,42 @@ public class ApplicationForLeaveForm {
     }
 
     public LocalDate getEndDate() {
-
         return endDate;
     }
 
-
     public void setEndDate(LocalDate endDate) {
-
         this.endDate = endDate;
     }
 
-
     public DayLength getDayLength() {
-
         return dayLength;
     }
 
-
     public void setDayLength(DayLength dayLength) {
-
         this.dayLength = dayLength;
     }
 
-
     public BigDecimal getHours() {
-
         return hours;
     }
 
-
     public void setHours(BigDecimal hours) {
-
         this.hours = hours;
     }
 
-
     public String getReason() {
-
         return reason;
     }
 
-
     public void setReason(String reason) {
-
         this.reason = reason;
     }
 
-
     public Person getHolidayReplacement() {
-
         return holidayReplacement;
     }
 
-
     public void setHolidayReplacement(Person holidayReplacement) {
-
         this.holidayReplacement = holidayReplacement;
     }
 
@@ -152,73 +126,50 @@ public class ApplicationForLeaveForm {
     }
 
     public LocalDate getStartDate() {
-
         return startDate;
     }
 
-
     public void setStartDate(LocalDate startDate) {
-
         this.startDate = startDate;
     }
 
-
     public Time getStartTime() {
-
         return startTime;
     }
 
-
     public void setStartTime(Time startTime) {
-
         this.startTime = startTime;
     }
 
-
     public Time getEndTime() {
-
         return endTime;
     }
 
-
     public void setEndTime(Time endTime) {
-
         this.endTime = endTime;
     }
 
-
     public VacationType getVacationType() {
-
         return vacationType;
     }
 
-
     public void setVacationType(VacationType vacationType) {
-
         this.vacationType = vacationType;
     }
 
-
     public String getComment() {
-
         return comment;
     }
 
-
     public void setComment(String comment) {
-
         this.comment = comment;
     }
 
-
     public boolean isTeamInformed() {
-
         return teamInformed;
     }
 
-
     public void setTeamInformed(boolean teamInformed) {
-
         this.teamInformed = teamInformed;
     }
 
