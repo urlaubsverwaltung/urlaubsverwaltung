@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -265,7 +266,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
-        final LocalDate date = LocalDate.now(UTC);
+        final LocalDate date = LocalDate.of(Year.now(UTC).getValue(), 10, 10);
 
         appForm.setDayLength(NOON);
         appForm.setStartDate(date);
@@ -817,10 +818,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(MORNING));
 
+        final int actualYear = Year.now().getValue();
+
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(2019, 12, 24))
-            .endDate(LocalDate.of(2019, 12, 24))
+            .startDate(LocalDate.of(actualYear, 12, 24))
+            .endDate(LocalDate.of(actualYear, 12, 24))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -841,10 +844,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
+        final int actualYear = Year.now().getValue();
+
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(2019, 12, 24))
-            .endDate(LocalDate.of(2019, 12, 24))
+            .startDate(LocalDate.of(actualYear, 12, 24))
+            .endDate(LocalDate.of(actualYear, 12, 24))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -864,10 +869,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(NOON));
 
+        final int actualYear = Year.now().getValue();
+
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(NOON)
-            .startDate(LocalDate.of(2019, 12, 24))
-            .endDate(LocalDate.of(2019, 12, 24))
+            .startDate(LocalDate.of(actualYear, 12, 24))
+            .endDate(LocalDate.of(actualYear, 12, 24))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -888,7 +895,9 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(FULL));
 
-        final LocalDate christmasEve = LocalDate.of(2019, 12, 24);
+        final int actualYear = Year.now().getValue();
+
+        final LocalDate christmasEve = LocalDate.of(actualYear, 12, 24);
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(dayLength)
             .startDate(christmasEve)
@@ -912,10 +921,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(MORNING));
 
+        final int actualYear = Year.now().getValue();
+
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(2019, 12, 31))
-            .endDate(LocalDate.of(2019, 12, 31))
+            .startDate(LocalDate.of(actualYear, 12, 31))
+            .endDate(LocalDate.of(actualYear, 12, 31))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -935,10 +946,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
 
+        final int actualYear = Year.now().getValue();
+
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(MORNING)
-            .startDate(LocalDate.of(2019, 12, 31))
-            .endDate(LocalDate.of(2019, 12, 31))
+            .startDate(LocalDate.of(actualYear, 12, 31))
+            .endDate(LocalDate.of(actualYear, 12, 31))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -958,10 +971,12 @@ class ApplicationForLeaveFormValidatorTest {
         when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(NOON));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
+        final int actualYear = Year.now().getValue();
+
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(NOON)
-            .startDate(LocalDate.of(2019, 12, 31))
-            .endDate(LocalDate.of(2019, 12, 31))
+            .startDate(LocalDate.of(actualYear, 12, 31))
+            .endDate(LocalDate.of(actualYear, 12, 31))
             .build();
 
         final Errors errors = mock(Errors.class);
@@ -980,11 +995,11 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
+        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(FULL));
 
-        when(settingsService.getSettings())
-            .thenReturn(createSettingsForNewYearsEveWithAbsence(FULL));
+        final int actualYear = Year.now().getValue();
 
-        final LocalDate christmasEve = LocalDate.of(2019, 12, 31);
+        final LocalDate christmasEve = LocalDate.of(actualYear, 12, 31);
         final ApplicationForLeaveForm appForm = appFormBuilderWithDefaults()
             .dayLength(dayLength)
             .startDate(christmasEve)
