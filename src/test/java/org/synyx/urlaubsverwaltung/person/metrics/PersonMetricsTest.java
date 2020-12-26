@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -20,20 +17,18 @@ class PersonMetricsTest {
     @Mock
     private PersonService personService;
 
-    private PersonMetrics sut;
-
     @Test
     void countActiveUsers() {
         final SimpleMeterRegistry registry = new SimpleMeterRegistry();
 
-        sut = new PersonMetrics(personService, registry);
+        final PersonMetrics sut = new PersonMetrics(personService, registry);
 
-        when(personService.getActivePersons()).thenReturn(List.of(new Person()));
+        when(personService.numberOfActivePersons()).thenReturn(1);
 
         final int countActiveUsers = sut.countActiveUsers();
-
         assertThat(countActiveUsers).isOne();
-        Gauge gauge = registry.find("users.active").gauge();
+
+        final Gauge gauge = registry.find("users.active").gauge();
         assertThat(gauge.value()).isOne();
     }
 }

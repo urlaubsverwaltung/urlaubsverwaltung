@@ -10,4 +10,6 @@ import java.util.Optional;
 interface PersonRepository extends JpaRepository<Person, Integer> {
 
     Optional<Person> findByUsername(String username);
+
+    int countByPermissionsNotContaining(Role permission);
 }

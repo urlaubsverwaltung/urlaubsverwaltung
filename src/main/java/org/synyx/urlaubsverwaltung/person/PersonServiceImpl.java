@@ -197,6 +197,11 @@ class PersonServiceImpl implements PersonService {
         return savedPerson;
     }
 
+    @Override
+    public int numberOfActivePersons() {
+        return personRepository.countByPermissionsNotContaining(INACTIVE);
+    }
+
     private Comparator<Person> personComparator() {
         return Comparator.comparing(p -> p.getNiceName().toLowerCase());
     }

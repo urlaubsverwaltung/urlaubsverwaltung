@@ -25,9 +25,8 @@ class PersonMetrics {
     }
 
     int countActiveUsers() {
-        final int activeUsersCount = this.personService.getActivePersons().size();
+        final int activeUsersCount = this.personService.numberOfActivePersons();
         LOG.debug("active users count is {}", activeUsersCount);
         return activeUsersCount;
     }
-
 }
