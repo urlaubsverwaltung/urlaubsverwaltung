@@ -421,4 +421,13 @@ class PersonServiceImplTest {
         sut.save(activePerson);
         verifyNoInteractions(applicationEventPublisher);
     }
+
+    @Test
+    void numberOfActivePersons() {
+
+        when(personRepository.countByPermissionsNotContaining(INACTIVE)).thenReturn(2);
+
+        final int numberOfActivePersons = sut.numberOfActivePersons();
+        assertThat(numberOfActivePersons).isEqualTo(2);
+    }
 }

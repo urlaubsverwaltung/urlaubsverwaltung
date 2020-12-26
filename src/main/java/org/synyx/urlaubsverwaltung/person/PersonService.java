@@ -124,4 +124,12 @@ public interface PersonService {
      * if no other active person with {@link Role#OFFICE} is available.
      */
     Person appointAsOfficeUserIfNoOfficeUserPresent(Person person);
+
+    /**
+     * Returns the number of all users that do not have the role INACTIVE.
+     * These users are called active users.
+     *
+     * @return number of active users
+     */
+    int numberOfActivePersons();
 }
