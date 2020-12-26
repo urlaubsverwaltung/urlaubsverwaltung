@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
@@ -12,63 +13,52 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static java.math.BigDecimal.TEN;
+import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
-
+@ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveTest {
 
+    @Mock
     private WorkDaysCountService workDaysCountService;
-
-    @BeforeEach
-    void setUp() {
-
-        workDaysCountService = mock(WorkDaysCountService.class);
-    }
-
 
     @Test
     void ensureCreatesCorrectApplicationForLeave() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Application application = TestDataCreator.createApplication(person, LocalDate.of(2015, 3, 3),
-            LocalDate.of(2015, 3, 6), DayLength.FULL);
+        final Application application = createApplication(person, of(2015, 3, 3), of(2015, 3, 6), FULL);
 
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
-            .thenReturn(BigDecimal.TEN);
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+            .thenReturn(TEN);
 
-        ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+        final ApplicationForLeave sut = new ApplicationForLeave(application, workDaysCountService);
+        assertThat(sut.getStartDate()).isEqualTo(application.getStartDate());
+        assertThat(sut.getEndDate()).isEqualTo(application.getEndDate());
+        assertThat(sut.getDayLength()).isEqualTo(application.getDayLength());
+        assertThat(sut.getWorkDays()).isEqualTo(TEN);
 
-        verify(workDaysCountService)
-            .getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
-
-        assertThat(applicationForLeave.getStartDate()).isEqualTo(application.getStartDate());
-        assertThat(applicationForLeave.getEndDate()).isEqualTo(application.getEndDate());
-        assertThat(applicationForLeave.getDayLength()).isEqualTo(application.getDayLength());
-        assertThat(applicationForLeave.getWorkDays()).isEqualTo(BigDecimal.TEN);
+        verify(workDaysCountService).getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), person);
     }
-
 
     @Test
     void ensureApplicationForLeaveHasInformationAboutDayOfWeek() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Application application = TestDataCreator.createApplication(person, LocalDate.of(2016, 3, 1),
-            LocalDate.of(2016, 3, 4), DayLength.FULL);
+        final Application application = createApplication(person, of(2016, 3, 1), of(2016, 3, 4), FULL);
 
-        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
-            any(LocalDate.class), any(Person.class)))
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.valueOf(4));
 
-        ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
-
-        assertThat(applicationForLeave.getWeekDayOfStartDate()).isEqualTo(WeekDay.TUESDAY);
-        assertThat(applicationForLeave.getWeekDayOfEndDate()).isEqualTo(WeekDay.FRIDAY);
+        final ApplicationForLeave sut = new ApplicationForLeave(application, workDaysCountService);
+        assertThat(sut.getWeekDayOfStartDate()).isEqualTo(WeekDay.TUESDAY);
+        assertThat(sut.getWeekDayOfEndDate()).isEqualTo(WeekDay.FRIDAY);
     }
 }
