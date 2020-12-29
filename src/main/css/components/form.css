@@ -7,7 +7,9 @@
   @apply tw-rounded-md;
 }
 
-.form-control:focus {
+.form-control:focus,
+.duet-date__input:focus,
+.duet-date__toggle:focus {
   /* reset bootstrap stuff */
   border-color: inherit !important;
   box-shadow: none;
