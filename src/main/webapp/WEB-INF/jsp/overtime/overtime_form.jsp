@@ -130,41 +130,47 @@
                             <div class="col-md-9">
                                 <div class="tw-flex tw-items-start">
                                     <span class="tw-flex-1">
-                                        <span class="input-group">
-                                            <spring:message var="hoursPlaceholder" code='overtime.data.hours.input.placeholder' />
-                                            <form:input
-                                                path="hours"
-                                                cssClass="form-control"
-                                                cssErrorClass="form-control error"
-                                                placeholder="${hoursPlaceholder}"
-                                                type="text"
-                                                inputmode="numeric"
-                                                autocomplete="off"
-                                            />
-                                            <span class="input-group-addon">
+                                        <spring:bind path="hours">
+                                        <uv:input-group hasError="${status.error}">
+                                            <jsp:attribute name="addon">
                                                 <spring:message code="overtime.data.hours.abbr" />
-                                            </span>
-                                        </span>
+                                            </jsp:attribute>
+                                            <jsp:body>
+                                                <spring:message var="hoursPlaceholder" code='overtime.data.hours.input.placeholder' />
+                                                <form:input
+                                                    path="hours"
+                                                    cssClass="form-control"
+                                                    placeholder="${hoursPlaceholder}"
+                                                    type="text"
+                                                    inputmode="numeric"
+                                                    autocomplete="off"
+                                                />
+                                            </jsp:body>
+                                        </uv:input-group>
+                                        </spring:bind>
                                         <uv:error-text>
                                             <form:errors path="hours" />
                                         </uv:error-text>
                                     </span>&nbsp;
                                     <span class="tw-flex-1">
-                                        <span class="input-group">
-                                            <spring:message var="minutesPlaceholder" code='overtime.data.minutes.input.placeholder'/>
-                                            <form:input
-                                                path="minutes"
-                                                cssClass="form-control"
-                                                cssErrorClass="form-control error"
-                                                placeholder="${minutesPlaceholder}"
-                                                type="text"
-                                                inputmode="numeric"
-                                                autocomplete="off"
-                                            />
-                                            <span class="input-group-addon">
+                                        <spring:bind path="minutes">
+                                        <uv:input-group hasError="${status.error}">
+                                            <jsp:attribute name="addon">
                                                 <spring:message code="overtime.data.minutes.abbr" />
-                                            </span>
-                                        </span>
+                                            </jsp:attribute>
+                                            <jsp:body>
+                                                <spring:message var="minutesPlaceholder" code='overtime.data.minutes.input.placeholder'/>
+                                                <form:input
+                                                    path="minutes"
+                                                    cssClass="form-control"
+                                                    placeholder="${minutesPlaceholder}"
+                                                    type="text"
+                                                    inputmode="numeric"
+                                                    autocomplete="off"
+                                                />
+                                            </jsp:body>
+                                        </uv:input-group>
+                                        </spring:bind>
                                         <uv:error-text>
                                             <form:errors path="minutes" />
                                         </uv:error-text>
