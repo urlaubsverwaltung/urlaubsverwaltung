@@ -1,3 +1,21 @@
+.form-control {
+  /* ring-0 is required to enable transition to ring-x of the focused form-control */
+  @apply tw-ring-0;
+  @apply tw-transition;
+  @apply tw-duration-150;
+  @apply tw-ease-in-out;
+  @apply tw-rounded-md;
+}
+
+.form-control:focus {
+  /* reset bootstrap stuff */
+  border-color: inherit !important;
+  box-shadow: none;
+  /* and add custom styling */
+  @apply tw-ring-2 !important;
+  @apply tw-ring-blue-300 !important;
+}
+
 .input-group {
   @apply tw-rounded-md !important;
   @apply tw-border;
@@ -14,12 +32,6 @@
   @apply tw-border-0 !important;
   /* no right rounded corners since there is an input-group-addon attached to the right */
   @apply tw-rounded-r-none !important;
-  /* ring-0 is required to enable transition to ring-x of the focused form-control */
-  @apply tw-ring-0;
-  @apply tw-transition;
-  @apply tw-duration-150;
-  @apply tw-ease-in-out;
-  @apply tw-rounded-md;
 }
 
 .input-group .input-group-addon {
@@ -37,9 +49,6 @@
 }
 
 .input-group .form-control:focus {
-  /* reset bootstrap stuff */
-  border-color: inherit !important;
-  box-shadow: none;
   /* reset ring since input-group defines it already */
   @apply tw-ring-0 !important;
   @apply tw-border-transparent;
