@@ -207,7 +207,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(-1);
+        overtimeForm.setHours(BigDecimal.ONE.negate());
         overtimeForm.setMinutes(0);
 
         sut.validate(overtimeForm, errors);
@@ -225,7 +225,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(0);
+        overtimeForm.setHours(BigDecimal.ZERO);
         overtimeForm.setMinutes(0);
 
         sut.validate(overtimeForm, errors);
@@ -242,7 +242,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.ZERO);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(0);
+        overtimeForm.setHours(BigDecimal.ZERO);
         overtimeForm.setMinutes(30);
 
         sut.validate(overtimeForm, errors);
@@ -272,7 +272,7 @@ class OvertimeFormValidatorTest {
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
         // just not important how many number of hours, can not record overtime!
-        overtimeForm.setHours(0);
+        overtimeForm.setHours(BigDecimal.ZERO);
         overtimeForm.setMinutes(0);
 
         sut.validate(overtimeForm, errors);
@@ -293,7 +293,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(new BigDecimal("8"));
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(8);
+        overtimeForm.setHours(new BigDecimal(8));
         overtimeForm.setMinutes(0);
 
         sut.validate(overtimeForm, errors);
@@ -313,7 +313,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(new BigDecimal("8"));
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(8);
+        overtimeForm.setHours(new BigDecimal(8));
         overtimeForm.setMinutes(30);
 
         sut.validate(overtimeForm, errors);
@@ -334,7 +334,7 @@ class OvertimeFormValidatorTest {
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
         overtimeForm.setReduce(true);
-        overtimeForm.setHours(1);
+        overtimeForm.setHours(BigDecimal.ONE);
         overtimeForm.setMinutes(30);
 
         sut.validate(overtimeForm, errors);
@@ -354,7 +354,7 @@ class OvertimeFormValidatorTest {
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(new BigDecimal("99.5"));
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(2);
+        overtimeForm.setHours(new BigDecimal(2));
         overtimeForm.setMinutes(0);
         overtimeForm.setId(42);
 
@@ -381,7 +381,7 @@ class OvertimeFormValidatorTest {
             .thenReturn(new BigDecimal("3.5"));
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
-        overtimeForm.setHours(3);
+        overtimeForm.setHours(new BigDecimal(3));
         overtimeForm.setMinutes(0);
         overtimeForm.setId(42);
 
@@ -409,7 +409,7 @@ class OvertimeFormValidatorTest {
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
         overtimeForm.setReduce(true);
-        overtimeForm.setHours(3);
+        overtimeForm.setHours(new BigDecimal(3));
         overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();

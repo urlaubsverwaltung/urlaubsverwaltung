@@ -26,7 +26,7 @@ public class OvertimeForm {
     private boolean reduce;
 
     @Min(0)
-    private Integer hours;
+    private BigDecimal hours;
 
     @Min(0)
     private Integer minutes;
@@ -52,7 +52,7 @@ public class OvertimeForm {
         this.person = overtime.getPerson();
         this.startDate = overtime.getStartDate();
         this.endDate = overtime.getEndDate();
-        this.hours = overtimeHours.setScale(0, RoundingMode.DOWN).abs().intValueExact();
+        this.hours = overtimeHours.setScale(0, RoundingMode.DOWN).abs();
         this.minutes = overtimeHours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
         this.reduce = overtimeHours.doubleValue() < 0;
     }
@@ -105,11 +105,11 @@ public class OvertimeForm {
         this.endDate = endDate;
     }
 
-    public Integer getHours() {
+    public BigDecimal getHours() {
         return hours;
     }
 
-    public void setHours(Integer hours) {
+    public void setHours(BigDecimal hours) {
         this.hours = hours;
     }
 
@@ -158,11 +158,16 @@ public class OvertimeForm {
             return null;
         }
 
-        final double originalMinutes = getMinutes() == null ? 0.0 : getMinutes();
+        final BigDecimal originalHours = requireNonNullElse(getHours(), BigDecimal.ZERO);
+        final double originalMinutes = requireNonNullElse(getMinutes(), 0).doubleValue();
 
-        final double durationMinutes = originalMinutes % 60;
-        final double hoursToAdd = (originalMinutes - durationMinutes) / 60;
-        final double durationHours = requireNonNullElse(getHours(), 0) + hoursToAdd;
+        final double minutesFromOriginalHours = (originalHours.doubleValue() % 1) * 60;
+        final double minutesFromOriginalMinutes = originalMinutes % 60;
+
+        final double hoursToAdd = (originalMinutes - minutesFromOriginalMinutes) / 60;
+
+        final double durationHours = originalHours.setScale(0, RoundingMode.DOWN).doubleValue() + hoursToAdd;
+        final double durationMinutes = minutesFromOriginalHours + minutesFromOriginalMinutes;
 
         final BigDecimal duration = BigDecimal.valueOf(durationHours + (durationMinutes / 60));
         return reduce ? duration.negate() : duration;

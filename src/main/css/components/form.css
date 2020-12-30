@@ -1,3 +1,61 @@
+.form-control {
+  /* ring-0 is required to enable transition to ring-x of the focused form-control */
+  @apply tw-ring-0;
+  @apply tw-transition;
+  @apply tw-duration-150;
+  @apply tw-ease-in-out;
+  @apply tw-rounded-md;
+}
+
+.form-control:focus,
+.duet-date__input:focus,
+.duet-date__toggle:focus {
+  /* reset bootstrap stuff */
+  border-color: inherit !important;
+  box-shadow: none;
+  /* and add custom styling */
+  @apply tw-ring-2 !important;
+  @apply tw-ring-blue-300 !important;
+}
+
+.input-group {
+  @apply tw-rounded-md !important;
+  @apply tw-border;
+  @apply tw-border-gray-400;
+  @apply tw-transition;
+}
+
+.input-group.has-error {
+  @apply tw-border-red-800;
+}
+
+.input-group .form-control {
+  /* remove border of form-control since the input-group defines it */
+  @apply tw-border-0 !important;
+  /* no right rounded corners since there is an input-group-addon attached to the right */
+  @apply tw-rounded-r-none !important;
+}
+
+.input-group .input-group-addon {
+  /* remove border of input-group-addon since the input-group defines it */
+  @apply tw-border-0 !important;
+  /* however, left border should still be visible */
+  @apply tw-border-l-2 !important;
+  @apply tw-border-gray-300 !important;
+}
+
+.input-group:focus-within {
+  @apply tw-ring-2;
+  @apply tw-ring-blue-300;
+  @apply tw-border-transparent;
+}
+
+.input-group .form-control:focus {
+  /* reset ring since input-group defines it already */
+  @apply tw-ring-0 !important;
+  @apply tw-border-transparent;
+}
+
 /**************************************************************************
 
   REQUIRED FORM FIELDS
