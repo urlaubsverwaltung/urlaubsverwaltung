@@ -2,6 +2,6 @@ package org.synyx.urlaubsverwaltung.absence;
 
 public enum AbsenceType {
 
-    VACATION,
-    SICKNOTE
+    DEFAULT,
+    HOLIDAY_REPLACEMENT
 }
