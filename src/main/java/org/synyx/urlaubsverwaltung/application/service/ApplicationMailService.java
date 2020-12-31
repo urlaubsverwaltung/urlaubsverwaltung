@@ -19,9 +19,9 @@ import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
@@ -29,8 +29,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 
 @Service
 class ApplicationMailService {
-
-    private static final Locale LOCALE = Locale.GERMAN;
 
     private static final String APPLICATION = "application";
     private static final String VACATION_TYPE = "vacationType";
@@ -597,7 +595,7 @@ class ApplicationMailService {
     }
 
     private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, LOCALE);
+        return messageSource.getMessage(key, args, GERMAN);
     }
 
     private File generateCalendar(Application application, String calendarName) {
