@@ -58,8 +58,7 @@ class ApplicationMailService {
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
-        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
-        final File calendarFile = iCalService.getCalendar(application.getPerson().getNiceName(), List.of(absence));
+        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -276,6 +275,9 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAllow(Application application) {
 
+        final String calendarName = getTranslation("calendar.mail.holiday-replacement.name", application.getPerson().getNiceName());
+        final File calendarFile = generateCalendar(application, calendarName);
+
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
@@ -284,6 +286,7 @@ class ApplicationMailService {
             .withRecipient(application.getHolidayReplacement())
             .withSubject("subject.application.holidayReplacement.allow")
             .withTemplate("notify_holiday_replacement_allow", model)
+            .withAttachment("calendar.ics", calendarFile)
             .build();
 
         mailService.send(mailToReplacement);
@@ -595,6 +598,11 @@ class ApplicationMailService {
 
     private String getTranslation(String key, Object... args) {
         return messageSource.getMessage(key, args, LOCALE);
+    }
+
+    private File generateCalendar(Application application, String calendarName) {
+        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
+        return iCalService.getCalendar(calendarName, List.of(absence));
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {

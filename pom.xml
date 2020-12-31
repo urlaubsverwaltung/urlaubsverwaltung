@@ -140,6 +140,13 @@
       <version>1.6.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-email</artifactId>
+      <version>1.5</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <!-- PUBLIC HOLIDAYS INFORMATION -->
     <dependency>

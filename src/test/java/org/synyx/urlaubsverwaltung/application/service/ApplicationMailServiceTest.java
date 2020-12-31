@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -319,18 +320,34 @@ class ApplicationMailServiceTest {
     @Test
     void notifyHolidayReplacementAllow() {
 
+        final Settings settings = new Settings();
+        settings.setApplicationSettings(new ApplicationSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
         final Person holidayReplacement = new Person();
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
 
         final Application application = new Application();
+        application.setPerson(applicant);
         application.setHolidayReplacement(holidayReplacement);
         application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.of(2020, 3, 5));
+        application.setEndDate(LocalDate.of(2020, 3, 6));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("dayLength", "FULL");
+
+        final String calendarName = "Vertretung für ...";
+        when(messageSource.getMessage("calendar.mail.holiday-replacement.name",  new Object[]{"Theo Fritz"}, Locale.GERMAN)).thenReturn(calendarName);
+
+        final File file = new File("");
+        when(iCalService.getCalendar(eq(calendarName), any())).thenReturn(file);
 
         sut.notifyHolidayReplacementAllow(application);
 
@@ -341,6 +358,8 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_allow");
         assertThat(mail.getTemplateModel()).isEqualTo(model);
+        assertThat(mail.getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mail.getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
     @Test
