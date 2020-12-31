@@ -20,7 +20,7 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private AbsenceType absenceType;
+    private AbsenceMappingType absenceMappingType;
 
     @Column(nullable = false)
     private String eventId;
@@ -29,9 +29,9 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
         /* OK */
     }
 
-    public AbsenceMapping(Integer absenceId, AbsenceType absenceType, String eventId) {
+    public AbsenceMapping(Integer absenceId, AbsenceMappingType absenceMappingType, String eventId) {
         this.absenceId = absenceId;
-        this.absenceType = absenceType;
+        this.absenceMappingType = absenceMappingType;
         this.eventId = eventId;
     }
 
@@ -43,12 +43,12 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
         this.absenceId = absenceId;
     }
 
-    public AbsenceType getAbsenceType() {
-        return absenceType;
+    public AbsenceMappingType getAbsenceMappingType() {
+        return absenceMappingType;
     }
 
-    public void setAbsenceType(AbsenceType absenceType) {
-        this.absenceType = absenceType;
+    public void setAbsenceType(AbsenceMappingType absenceMappingType) {
+        this.absenceMappingType = absenceMappingType;
     }
 
     public String getEventId() {

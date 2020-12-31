@@ -6,5 +6,5 @@ import java.util.Optional;
 
 interface AbsenceMappingRepository extends CrudRepository<AbsenceMapping, Integer> {
 
-    Optional<AbsenceMapping> findAbsenceMappingByAbsenceIdAndAbsenceType(Integer id, AbsenceType absenceType);
+    Optional<AbsenceMapping> findAbsenceMappingByAbsenceIdAndAbsenceMappingType(Integer id, AbsenceMappingType absenceType);
 }

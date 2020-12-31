@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
@@ -60,8 +60,8 @@ class SickNoteInteractionServiceImplTest {
         settingsService = mock(SettingsService.class);
 
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        absenceMapping = new AbsenceMapping(1, AbsenceType.VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE)))
+        absenceMapping = new AbsenceMapping(1, AbsenceMappingType.VACATION, "42");
+        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE)))
             .thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -111,7 +111,7 @@ class SickNoteInteractionServiceImplTest {
 
         verify(calendarSyncService).addAbsence(any(Absence.class));
         verify(absenceMappingService)
-            .create(eq(sickNote.getId()), eq(AbsenceType.SICKNOTE), anyString());
+            .create(eq(sickNote.getId()), eq(AbsenceMappingType.SICKNOTE), anyString());
     }
 
 
@@ -145,7 +145,7 @@ class SickNoteInteractionServiceImplTest {
         sickNoteInteractionService.update(sickNote, person);
 
         verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE));
+        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE));
     }
 
 
@@ -168,7 +168,7 @@ class SickNoteInteractionServiceImplTest {
 
         sickNoteInteractionService.cancel(sickNote, person);
 
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE));
+        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE));
         verify(calendarSyncService).deleteAbsence(anyString());
         verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
@@ -213,9 +213,9 @@ class SickNoteInteractionServiceImplTest {
 
         sickNoteInteractionService.convert(sickNote, applicationForLeave, person);
 
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceType.SICKNOTE));
+        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE));
         verify(calendarSyncService).update(any(Absence.class), anyString());
         verify(absenceMappingService).delete(eq(absenceMapping));
-        verify(absenceMappingService).create(isNull(), eq(AbsenceType.VACATION), anyString());
+        verify(absenceMappingService).create(isNull(), eq(AbsenceMappingType.VACATION), anyString());
     }
 }
