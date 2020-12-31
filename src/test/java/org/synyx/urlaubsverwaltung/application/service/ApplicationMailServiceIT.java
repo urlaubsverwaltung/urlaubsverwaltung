@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.jupiter.api.Test;
@@ -68,7 +67,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     private DepartmentService departmentService;
 
     @Test
-    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
+    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
 
@@ -96,18 +95,20 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxUser.length).isOne();
 
         // check email user attributes
-        Message msg = inboxUser[0];
+        MimeMessage msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
-        String contentUser = GreenMailUtil.getBody(msg);
+        String contentUser = readPlainContent(msg);
         assertThat(contentUser).contains("Lieschen Mueller");
         assertThat(contentUser).contains("gestellter Antrag wurde von Hugo Boss genehmigt");
         assertThat(contentUser).contains(comment.getText());
         assertThat(contentUser).contains(comment.getPerson().getNiceName());
         assertThat(contentUser).contains("/web/application/1234");
-        assertThat(contentUser).contains("filename=calendar.ics");
+
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
