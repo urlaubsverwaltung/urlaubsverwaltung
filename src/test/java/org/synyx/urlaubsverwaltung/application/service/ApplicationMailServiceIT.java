@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
-import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import javax.activation.DataSource;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -27,7 +28,6 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +49,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @Transactional
 class ApplicationMailServiceIT extends TestContainersBase {
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     @RegisterExtension
     public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
@@ -68,7 +67,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     private DepartmentService departmentService;
 
     @Test
-    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws MessagingException, IOException {
+    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
 
@@ -96,18 +95,20 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxUser.length).isOne();
 
         // check email user attributes
-        Message msg = inboxUser[0];
+        MimeMessage msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
-        String contentUser = GreenMailUtil.getBody(msg);
+        String contentUser = readPlainContent(msg);
         assertThat(contentUser).contains("Lieschen Mueller");
         assertThat(contentUser).contains("gestellter Antrag wurde von Hugo Boss genehmigt");
         assertThat(contentUser).contains(comment.getText());
         assertThat(contentUser).contains(comment.getPerson().getNiceName());
         assertThat(contentUser).contains("/web/application/1234");
-        assertThat(contentUser).contains("filename=calendar.ics");
+
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
@@ -407,7 +408,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectHolidayReplacementAllowMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementAllowMailIsSent() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
@@ -423,16 +424,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Urlaubsvertretung");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
+        String content = readPlainContent(msg);
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
         assertThat(content).contains("Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.");
 
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1043,5 +1046,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setApplier(person);
 
         return application;
+    }
+
+    private String readPlainContent(MimeMessage message) throws Exception {
+        return new MimeMessageParser(message).parse().getPlainContent();
+    }
+
+    private List<DataSource> getAttachments(MimeMessage message) throws Exception {
+        return new MimeMessageParser(message).parse().getAttachmentList();
     }
 }

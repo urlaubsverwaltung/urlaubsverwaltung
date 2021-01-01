@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung;
 
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.absence.AbsenceType;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -228,6 +228,6 @@ public final class TestDataCreator {
     }
 
     public static AbsenceMapping anyAbsenceMapping() {
-        return new AbsenceMapping(null, AbsenceType.VACATION, "eventId");
+        return new AbsenceMapping(null, AbsenceMappingType.VACATION, "eventId");
     }
 }

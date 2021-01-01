@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
@@ -19,18 +20,18 @@ import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @Service
 class ApplicationMailService {
-
-    private static final Locale LOCALE = Locale.GERMAN;
 
     private static final String APPLICATION = "application";
     private static final String VACATION_TYPE = "vacationType";
@@ -58,8 +59,7 @@ class ApplicationMailService {
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
-        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration());
-        final File calendarFile = iCalService.getCalendar(application.getPerson().getNiceName(), List.of(absence));
+        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -276,6 +276,9 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAllow(Application application) {
 
+        final String calendarName = getTranslation("calendar.mail.holiday-replacement.name", application.getPerson().getNiceName());
+        final File calendarFile = generateCalendar(application, calendarName, HOLIDAY_REPLACEMENT);
+
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
@@ -284,6 +287,7 @@ class ApplicationMailService {
             .withRecipient(application.getHolidayReplacement())
             .withSubject("subject.application.holidayReplacement.allow")
             .withTemplate("notify_holiday_replacement_allow", model)
+            .withAttachment("calendar.ics", calendarFile)
             .build();
 
         mailService.send(mailToReplacement);
@@ -594,7 +598,12 @@ class ApplicationMailService {
     }
 
     private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, LOCALE);
+        return messageSource.getMessage(key, args, GERMAN);
+    }
+
+    private File generateCalendar(Application application, String calendarName, AbsenceType absenceType) {
+        final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
+        return iCalService.getCalendar(calendarName, List.of(absence));
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {

@@ -21,8 +21,8 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.SICKNOTE;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.SICKNOTE;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.EDITED;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;

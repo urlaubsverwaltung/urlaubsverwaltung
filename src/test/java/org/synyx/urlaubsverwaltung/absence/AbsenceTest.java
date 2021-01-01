@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -163,6 +164,16 @@ class AbsenceTest {
     }
 
     @Test
+    void ensureCorrectEventSubjectForHolidayReplacement() {
+
+        LocalDate today = LocalDate.now(clock);
+        Period period = new Period(today, today, DayLength.FULL);
+
+        Absence absence = new Absence(person, period, timeConfiguration, HOLIDAY_REPLACEMENT);
+        assertThat(absence.getEventSubject()).isEqualTo("Vertretung für Marlene Muster");
+    }
+
+    @Test
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
@@ -177,7 +188,8 @@ class AbsenceTest {
         final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(timeSettings));
 
         final String absenceToString = absence.toString();
-        assertThat(absenceToString).isEqualTo("Absence{startDate=2015-10-23T00:00Z[Etc/UTC]," +
-            " endDate=2015-10-26T00:00Z[Etc/UTC], person=Person{id='10'}, isAllDay=true}");
+        assertThat(absenceToString)
+            .isEqualTo("Absence{startDate=2015-10-23T00:00Z[Etc/UTC], endDate=2015-10-26T00:00Z[Etc/UTC], " +
+                "person=Person{id='10'}, isAllDay=true, absenceType=DEFAULT}");
     }
 }

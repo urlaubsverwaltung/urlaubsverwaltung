@@ -16,8 +16,8 @@ public class AbsenceMappingServiceImpl implements AbsenceMappingService {
     }
 
     @Override
-    public AbsenceMapping create(Integer id, AbsenceType absenceType, String eventId) {
-        final AbsenceMapping absenceMapping = new AbsenceMapping(id, absenceType, eventId);
+    public AbsenceMapping create(Integer id, AbsenceMappingType absenceMappingType, String eventId) {
+        final AbsenceMapping absenceMapping = new AbsenceMapping(id, absenceMappingType, eventId);
         return absenceMappingRepository.save(absenceMapping);
     }
 
@@ -27,7 +27,7 @@ public class AbsenceMappingServiceImpl implements AbsenceMappingService {
     }
 
     @Override
-    public Optional<AbsenceMapping> getAbsenceByIdAndType(Integer id, AbsenceType absenceType) {
-        return absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceType(id, absenceType);
+    public Optional<AbsenceMapping> getAbsenceByIdAndType(Integer id, AbsenceMappingType absenceMappingType) {
+        return absenceMappingRepository.findAbsenceMappingByAbsenceIdAndAbsenceMappingType(id, absenceMappingType);
     }
 }

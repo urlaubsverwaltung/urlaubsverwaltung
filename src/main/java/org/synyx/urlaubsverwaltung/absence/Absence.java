@@ -7,6 +7,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import static java.lang.String.format;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
+
 /**
  * Represents a period of time where a person is not at work.
  */
@@ -16,17 +20,23 @@ public class Absence {
     private final ZonedDateTime endDate;
     private final Person person;
     private final boolean isAllDay;
+    private final AbsenceType absenceType;
 
     public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
+        this(person, period, absenceTimeConfiguration, DEFAULT);
+    }
+
+    public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
 
         Assert.notNull(person, "Person must be given");
         Assert.notNull(period, "Period must be given");
         Assert.notNull(absenceTimeConfiguration, "Time configuration must be given");
 
         this.person = person;
+        this.absenceType = absenceType;
 
-        ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
-        ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
 
         switch (period.getDayLength()) {
             case FULL:
@@ -69,7 +79,11 @@ public class Absence {
     }
 
     public String getEventSubject() {
-        return String.format("%s abwesend", person.getNiceName());
+        if (absenceType == HOLIDAY_REPLACEMENT) {
+            return format("Vertretung für %s", person.getNiceName());
+        }
+
+        return format("%s abwesend", person.getNiceName());
     }
 
     @Override
@@ -79,6 +93,7 @@ public class Absence {
             ", endDate=" + endDate +
             ", person=" + person +
             ", isAllDay=" + isAllDay +
+            ", absenceType=" + absenceType +
             '}';
     }
 }

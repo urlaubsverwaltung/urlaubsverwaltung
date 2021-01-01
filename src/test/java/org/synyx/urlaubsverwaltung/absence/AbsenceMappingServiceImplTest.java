@@ -11,8 +11,8 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.SICKNOTE;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.SICKNOTE;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceMappingServiceImplTest {
@@ -35,7 +35,7 @@ class AbsenceMappingServiceImplTest {
         final String eventId = "eventId";
         final AbsenceMapping absenceMapping = sut.create(42, VACATION, eventId);
         assertThat(absenceMapping.getAbsenceId()).isEqualTo(42);
-        assertThat(absenceMapping.getAbsenceType()).isEqualTo(VACATION);
+        assertThat(absenceMapping.getAbsenceMappingType()).isEqualTo(VACATION);
         assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
     }
 
@@ -47,7 +47,7 @@ class AbsenceMappingServiceImplTest {
         final String eventId = "eventId";
         final AbsenceMapping absenceMapping = sut.create(21, SICKNOTE, eventId);
         assertThat(absenceMapping.getAbsenceId()).isEqualTo(21);
-        assertThat(absenceMapping.getAbsenceType()).isEqualTo(SICKNOTE);
+        assertThat(absenceMapping.getAbsenceMappingType()).isEqualTo(SICKNOTE);
         assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
     }
 
@@ -65,6 +65,6 @@ class AbsenceMappingServiceImplTest {
 
         sut.getAbsenceByIdAndType(21, SICKNOTE);
 
-        verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceType(21, SICKNOTE);
+        verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceMappingType(21, SICKNOTE);
     }
 }

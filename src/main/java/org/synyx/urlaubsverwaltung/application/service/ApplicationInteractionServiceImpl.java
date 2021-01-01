@@ -28,7 +28,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.VACATION;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.APPLIED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.CANCEL_REQUESTED;
