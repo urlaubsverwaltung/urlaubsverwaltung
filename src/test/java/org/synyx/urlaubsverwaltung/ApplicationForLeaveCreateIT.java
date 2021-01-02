@@ -13,6 +13,8 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -22,6 +24,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
+import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -48,11 +51,12 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
+import static org.testcontainers.containers.MariaDBContainer.NAME;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ContextConfiguration(initializers = ApplicationForLeaveCreateIT.Initializer.class)
-class ApplicationForLeaveCreateIT extends TestContainersBase {
+class ApplicationForLeaveCreateIT {
 
     @LocalServerPort
     private int port;
@@ -61,6 +65,16 @@ class ApplicationForLeaveCreateIT extends TestContainersBase {
     private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
         .withRecordingMode(RECORD_FAILING, new File("target"))
         .withCapabilities(new FirefoxOptions());
+
+    static final MariaDBContainer<?> mariaDB = new MariaDBContainer<>(NAME + ":10.5");
+
+    @DynamicPropertySource
+    static void mariaDBProperties(DynamicPropertyRegistry registry) {
+        mariaDB.start();
+        registry.add("spring.datasource.url", mariaDB::getJdbcUrl);
+        registry.add("spring.datasource.username", mariaDB::getUsername);
+        registry.add("spring.datasource.password", mariaDB::getPassword);
+    }
 
     @Autowired
     private PersonService personService;
