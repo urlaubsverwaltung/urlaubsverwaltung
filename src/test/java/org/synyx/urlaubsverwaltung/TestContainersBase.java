@@ -7,7 +7,6 @@ import org.testcontainers.containers.MariaDBContainer;
 
 import static org.testcontainers.containers.MariaDBContainer.NAME;
 
-@DirtiesContext
 public abstract class TestContainersBase {
 
     static final MariaDBContainer<?> mariaDB = new MariaDBContainer<>(NAME + ":10.5");
