@@ -12,6 +12,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,14 +43,16 @@ public class ApplicationForLeaveViewController {
     private final WorkDaysCountService calendarService;
     private final DepartmentService departmentService;
     private final PersonService personService;
+    private final Clock clock;
 
     @Autowired
     public ApplicationForLeaveViewController(ApplicationService applicationService, WorkDaysCountService calendarService,
-                                             DepartmentService departmentService, PersonService personService) {
+                                             DepartmentService departmentService, PersonService personService, Clock clock) {
         this.applicationService = applicationService;
         this.calendarService = calendarService;
         this.departmentService = departmentService;
         this.personService = personService;
+        this.clock = clock;
     }
 
     /*
@@ -66,7 +70,18 @@ public class ApplicationForLeaveViewController {
         final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
         model.addAttribute("applications_cancellation_request", applicationsForLeaveCancellationRequests);
 
+        final LocalDate holidayReplacementForDate = LocalDate.now(clock);
+        final List<ApplicationForLeave> holidayReplacement = getHolidayReplacements(signedInUser, holidayReplacementForDate);
+        model.addAttribute("applications_holiday_replacements", holidayReplacement);
+
         return "application/app_list";
+    }
+
+    private List<ApplicationForLeave> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate) {
+        return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate).stream()
+            .map(application -> new ApplicationForLeave(application, calendarService))
+            .sorted(byStartDate())
+            .collect(toList());
     }
 
     private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests() {

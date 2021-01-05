@@ -368,6 +368,124 @@
                 </c:choose>
             </div>
         </div>
+
+        <uv:section-heading>
+            <jsp:body>
+                <h1 id="holiday-replacement">
+                    <spring:message code="applications.holiday_replacement"/>
+                </h1>
+            </jsp:body>
+        </uv:section-heading>
+
+        <div class="row">
+            <div class="col-xs-12 tw-mb-10">
+                <c:choose>
+                    <c:when test="${empty applications_holiday_replacements}">
+                        <p><spring:message code="applications.holiday_replacement.none"/></p>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="list-table list-table-bt-0 tw-text-sm">
+                            <tbody>
+                            <c:forEach items="${applications_holiday_replacements}" var="application" varStatus="loopStatus">
+                                <tr class="active">
+                                    <td class="print:tw-hidden is-centered">
+                                        <img
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            class="gravatar tw-rounded-full"
+                                            width="60px"
+                                            height="60px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
+                                    </td>
+                                    <td class="hidden-xs print:tw-table-cell">
+                                        <span class="tw-block tw-text-lg tw-mb-1">
+                                            <c:out value="${application.person.niceName}"/>
+                                        </span>
+                                    </td>
+                                    <td class="halves">
+                                        <span class="tw-block tw-mb-1 tw-text-lg">
+                                            <c:choose>
+                                                <c:when test="${application.hours != null}">
+                                                    <uv:number number="${application.hours}"/>
+                                                    <spring:message code="duration.hours"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <uv:number number="${application.workDays}"/>
+                                                    <spring:message code="duration.days"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                        <div>
+                                            <c:choose>
+                                                <c:when test="${application.startDate == application.endDate}">
+                                                    <c:set var="APPLICATION_DATE">
+                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
+                                                        <uv:date date="${application.startDate}"/>
+                                                    </c:set>
+                                                    <c:choose>
+                                                        <c:when
+                                                            test="${application.startTime != null && application.endTime != null}">
+                                                            <c:set var="APPLICATION_START_TIME">
+                                                                <uv:time
+                                                                    dateTime="${application.startDateWithTime}"/>
+                                                            </c:set>
+                                                            <c:set var="APPLICATION_END_TIME">
+                                                                <uv:time
+                                                                    dateTime="${application.endDateWithTime}"/>
+                                                            </c:set>
+                                                            <c:set var="APPLICATION_TIME">
+                                                                <spring:message code="absence.period.time"
+                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
+                                                                                argumentSeparator=";"/>
+                                                            </c:set>
+                                                            <spring:message code="absence.period.singleDay"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
+                                                                            argumentSeparator=";"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <c:set var="APPLICATION_DAY_LENGTH">
+                                                                <spring:message
+                                                                    code="${application.dayLength}"/>
+                                                            </c:set>
+                                                            <spring:message code="absence.period.singleDay"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}"
+                                                                            argumentSeparator=";"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="APPLICATION_START_DATE">
+                                                        <spring:message
+                                                            code="${application.weekDayOfStartDate}.short"/>,
+                                                        <uv:date date="${application.startDate}"/>
+                                                    </c:set>
+                                                    <c:set var="APPLICATION_END_DATE">
+                                                        <spring:message
+                                                            code="${application.weekDayOfEndDate}.short"/>,
+                                                        <uv:date date="${application.endDate}"/>
+                                                    </c:set>
+                                                    <spring:message code="absence.period.multipleDays"
+                                                                    arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
+                                                                    argumentSeparator=";"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
+                                            <spring:message code="applications.holiday_replacement.pending"/>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+
     </div>
 </div>
 </body>
