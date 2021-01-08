@@ -113,7 +113,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
-        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -359,7 +359,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
-        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
             .andExpect(view().name("calendarsharing/index"))
@@ -514,11 +514,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkCompanyCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(companyCalendarService).createCalendarForPerson(1);
+        verify(companyCalendarService).createCalendarForPerson(1, Period.parse("P1Y"));
     }
 
     @Test
@@ -573,6 +576,14 @@ class CalendarSharingViewControllerTest {
         departmentCalendar.setCalendarPeriod(Period.parse("P1Y"));
 
         return departmentCalendar;
+    }
+
+    private CompanyCalendar anyCompanyCalendar() {
+
+        final CompanyCalendar companyCalendar = new CompanyCalendar();
+        companyCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return companyCalendar;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

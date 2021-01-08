@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -40,13 +41,14 @@ class CompanyCalendarService {
         this.clock = clock;
     }
 
-    CompanyCalendar createCalendarForPerson(int personId) {
+    CompanyCalendar createCalendarForPerson(int personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
 
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.isEmpty() ? new CompanyCalendar() : maybeCompanyCalendar.get();
         companyCalendar.setPerson(person);
+        companyCalendar.setCalendarPeriod(calendarPeriod);
         companyCalendar.generateSecret();
 
         return companyCalendarRepository.save(companyCalendar);

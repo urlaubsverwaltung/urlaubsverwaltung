@@ -124,9 +124,10 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/company")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkCompanyCalendar(@PathVariable int personId) {
+    public String linkCompanyCalendar(@PathVariable int personId, @ModelAttribute CompanyCalendarDto companyCalendarDto) {
 
-        companyCalendarService.createCalendarForPerson(personId);
+        final Period calendarPeriod = companyCalendarDto.getCalendarPeriod().getPeriod();
+        companyCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
@@ -251,6 +252,7 @@ public class CalendarSharingViewController {
                 .replacePath(path).build().toString();
 
             companyCalendarDto.setCalendarUrl(url);
+            companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));
         }
 
         return companyCalendarDto;

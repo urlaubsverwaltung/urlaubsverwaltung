@@ -191,7 +191,7 @@ class CompanyCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForPerson(1));
+            .isThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")));
     }
 
     @Test
@@ -203,7 +203,7 @@ class CompanyCalendarServiceTest {
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
 
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
@@ -221,7 +221,7 @@ class CompanyCalendarServiceTest {
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCompanyCalendar));
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
 
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
