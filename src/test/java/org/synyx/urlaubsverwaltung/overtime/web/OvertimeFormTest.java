@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -56,7 +57,7 @@ class OvertimeFormTest {
         assertThat(overtime.getPerson()).isEqualTo(overtimeForm.getPerson());
         assertThat(overtime.getStartDate()).isEqualTo(overtimeForm.getStartDate());
         assertThat(overtime.getEndDate()).isEqualTo(overtimeForm.getEndDate());
-        assertThat(overtime.getDuration()).isEqualTo(BigDecimal.valueOf(1.25));
+        assertThat(overtime.getDuration()).isEqualTo(Duration.ofMinutes(75));
         assertThat(overtimeForm.getId()).isNull();
     }
 
@@ -120,7 +121,7 @@ class OvertimeFormTest {
 
         // Simulate existing overtime record
         final Overtime overtime = TestDataCreator.createOvertimeRecord();
-        overtime.setDuration(BigDecimal.valueOf(1.25));
+        overtime.setDuration(Duration.ofMinutes(75));
 
         final Field idField = ReflectionUtils.findField(Overtime.class, "id");
         idField.setAccessible(true);
@@ -157,14 +158,14 @@ class OvertimeFormTest {
         assertThat(overtime.getPerson()).isEqualTo(overtimeForm.getPerson());
         assertThat(overtime.getStartDate()).isEqualTo(overtimeForm.getStartDate());
         assertThat(overtime.getEndDate()).isEqualTo(overtimeForm.getEndDate());
-        assertThat(overtime.getDuration()).isEqualTo(BigDecimal.valueOf(1.75));
+        assertThat(overtime.getDuration()).isEqualTo(Duration.ofMinutes(105));
         assertThat(overtimeForm.getId()).isNull();
     }
 
     @Test
     void ensureNegativeNumberOfHours() {
         final Overtime overtime = TestDataCreator.createOvertimeRecord();
-        overtime.setDuration(BigDecimal.valueOf(-42.5));
+        overtime.setDuration(Duration.ofMinutes(-2550));
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
@@ -176,7 +177,7 @@ class OvertimeFormTest {
     @Test
     void ensureRoundingOfNumberOfHoursToOneMinute() {
         final Overtime overtime = TestDataCreator.createOvertimeRecord();
-        overtime.setDuration(BigDecimal.valueOf(1.0166666666666666));
+        overtime.setDuration(Duration.ofMinutes(61));
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
@@ -187,7 +188,7 @@ class OvertimeFormTest {
     @Test
     void ensureRoundingOfNumberOfHoursTo59Minutes() {
         final Overtime overtime = TestDataCreator.createOvertimeRecord();
-        overtime.setDuration(BigDecimal.valueOf(1.983333333));
+        overtime.setDuration(Duration.ofMinutes(119));
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 
@@ -201,7 +202,6 @@ class OvertimeFormTest {
         overtimeForm.setHours(BigDecimal.valueOf(1.1));
         overtimeForm.setMinutes(12);
 
-        final BigDecimal duration = overtimeForm.getDuration();
-        assertThat(duration).isEqualTo(BigDecimal.valueOf(1.3));
+        assertThat(overtimeForm.getDuration()).isEqualTo(Duration.ofMinutes(78));
     }
 }

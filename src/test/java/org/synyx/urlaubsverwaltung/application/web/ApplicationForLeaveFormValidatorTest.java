@@ -22,8 +22,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Optional;
@@ -32,7 +34,6 @@ import java.util.function.Consumer;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.TEN;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -690,10 +691,10 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(TEN);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(10));
 
         appForm.setVacationType(createVacationType(OVERTIME));
-        appForm.setHours(new BigDecimal("0.5"));
+        appForm.setHours(new BigDecimal("0.5").setScale(1, RoundingMode.HALF_UP));
 
         sut.validate(appForm, errors);
 
@@ -1042,7 +1043,7 @@ class ApplicationForLeaveFormValidatorTest {
         final Settings settings = setupOvertimeSettings();
         settings.getOvertimeSettings().setMinimumOvertime(5);
 
-        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(BigDecimal.ZERO);
+        when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
         sut.validate(appForm, errors);
     }

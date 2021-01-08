@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class ApplicationForLeaveStatistics {
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
     private BigDecimal leftVacationDays = ZERO;
-    private BigDecimal leftOvertime = ZERO;
+    private Duration leftOvertime = Duration.ZERO;
 
     public ApplicationForLeaveStatistics(Person person, VacationTypeService vacationTypeService) {
 
@@ -103,15 +104,15 @@ public class ApplicationForLeaveStatistics {
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 
-    public void setLeftOvertime(BigDecimal hours) {
+    public void setLeftOvertime(Duration leftOvertime) {
 
-        Assert.notNull(hours, "Hours must be given.");
+        Assert.notNull(leftOvertime, "Overtime must be given.");
 
-        this.leftOvertime = hours;
+        this.leftOvertime = leftOvertime;
     }
 
 
-    public BigDecimal getLeftOvertime() {
+    public Duration getLeftOvertime() {
         return leftOvertime;
     }
 }
