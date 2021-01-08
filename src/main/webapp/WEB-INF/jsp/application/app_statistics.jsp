@@ -175,7 +175,7 @@
                                         </strong>
                                         <spring:message code="duration.vacationDays"/>
                                         <br/>
-                                        <strong><uv:number number="${statistic.leftOvertime}"/></strong>
+                                        <strong><uv:duration duration="${statistic.leftOvertime}"/></strong>
                                         <spring:message code="duration.overtime"/>
                                     </td>
                                 </tr>
