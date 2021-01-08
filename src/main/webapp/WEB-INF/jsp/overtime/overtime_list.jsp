@@ -91,8 +91,7 @@
                                             date="${record.endDate}"/></p>
                                     </td>
                                     <td class="is-centered hidden-xs">
-                                        <uv:number number="${record.duration}"/>
-                                        <spring:message code="duration.hours"/>
+                                        <uv:duration duration="${record.duration}"/>
                                     </td>
                                     <td class="print:tw-hidden is-centered hidden-xs">
                                         <div class="tw-flex tw-items-center">

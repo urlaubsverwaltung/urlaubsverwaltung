@@ -99,8 +99,8 @@ public class OvertimeViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
         model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
+        model.addAttribute("overtimeTotal", BigDecimal.valueOf(overtimeService.getTotalOvertimeForPersonAndYear(person, year).toMinutes() / 60));
+        model.addAttribute("overtimeLeft", BigDecimal.valueOf(overtimeService.getLeftOvertimeForPerson(person).toMinutes() / 60));
 
         return "overtime/overtime_list";
     }
@@ -121,8 +121,8 @@ public class OvertimeViewController {
 
         model.addAttribute("record", overtime);
         model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
+        model.addAttribute("overtimeTotal", BigDecimal.valueOf(overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()).toMinutes() / 60));
+        model.addAttribute("overtimeLeft", BigDecimal.valueOf(overtimeService.getLeftOvertimeForPerson(person).toMinutes() / 60));
         model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         return "overtime/overtime_details";
