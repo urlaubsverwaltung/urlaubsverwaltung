@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,13 +59,13 @@ public interface OvertimeService {
     List<OvertimeComment> getCommentsForOvertime(Overtime overtime);
 
     /**
-     * Get the total hours of all overtime records of the given person and year.
+     * Get the total duration of all overtime records of the given person and year.
      *
      * @param person to get the total overtime for
      * @param year   to get the total overtime for
      * @return the total overtime for the given year, never {@code null}
      */
-    BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year);
+    Duration getTotalOvertimeForPersonAndYear(Person person, int year);
 
     /**
      * Get the left overtime hours of the given person: the difference between the total overtime and the overtime
@@ -75,5 +75,5 @@ public interface OvertimeService {
      * @return the left overtime, never {@code null}
      * @since 2.13.0
      */
-    BigDecimal getLeftOvertimeForPerson(Person person);
+    Duration getLeftOvertimeForPerson(Person person);
 }

@@ -11,11 +11,13 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.math.BigDecimal.ZERO;
+import static java.time.Duration.ZERO;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
@@ -104,36 +106,39 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year) {
+    public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
 
         Assert.notNull(person, "Person to get total overtime for must be given.");
         Assert.isTrue(year > 0, "Year must be a valid number.");
 
         final List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
 
-        BigDecimal totalHours = ZERO;
+        Duration totalOvertime = ZERO;
         for (Overtime record : overtimeRecords) {
-            totalHours = totalHours.add(record.getDuration());
+            totalOvertime = totalOvertime.plus(record.getDuration());
         }
 
-        return totalHours;
+        return totalOvertime;
     }
 
     @Override
-    public BigDecimal getLeftOvertimeForPerson(Person person) {
+    public Duration getLeftOvertimeForPerson(Person person) {
 
         Assert.notNull(person, "Person to get left overtime for must be given.");
 
-        final BigDecimal totalOvertime = getTotalOvertimeForPerson(person);
-        final BigDecimal overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
+        final Duration totalOvertime = getTotalOvertimeForPerson(person);
+        final long totalOvertimeReductionInMinutes = applicationService.getTotalOvertimeReductionOfPerson(person).multiply(BigDecimal.valueOf(60)).longValue();
+        final Duration overtimeReduction = Duration.ofMinutes(totalOvertimeReductionInMinutes);
 
-        return totalOvertime.subtract(overtimeReduction);
+        return totalOvertime.minus(overtimeReduction);
     }
 
-    private BigDecimal getTotalOvertimeForPerson(Person person) {
+    private Duration getTotalOvertimeForPerson(Person person) {
 
-        final Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person));
-        return totalOvertime.orElse(ZERO);
+        final Long totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person))
+            .map(aDouble -> (long) (aDouble * 60))
+            .orElse(0L);
+        return Duration.of(totalOvertime, ChronoUnit.MINUTES);
 
     }
 }

@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -46,7 +47,7 @@ public class OvertimeForm {
 
         Assert.notNull(overtime, "Overtime must be given.");
 
-        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : overtime.getDuration();
+        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf( (double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();
         this.person = overtime.getPerson();
@@ -149,9 +150,9 @@ public class OvertimeForm {
     }
 
     /**
-     * @return the hours and minutes fields mapped to a {@link BigDecimal}
+     * @return the hours and minutes fields mapped to a {@link Duration}
      */
-    BigDecimal getDuration() {
+    Duration getDuration() {
 
         if (getMinutes() == null && getHours() == null) {
             return null;
@@ -168,7 +169,8 @@ public class OvertimeForm {
         final double durationHours = originalHours.setScale(0, RoundingMode.DOWN).doubleValue() + hoursToAdd;
         final double durationMinutes = minutesFromOriginalHours + minutesFromOriginalMinutes;
 
-        final BigDecimal duration = BigDecimal.valueOf(durationHours + (durationMinutes / 60));
-        return reduce ? duration.negate() : duration;
+        final Duration duration = Duration.ofMinutes((long) (durationHours * 60 + durationMinutes));
+
+        return reduce ? duration.negated() : duration;
     }
 }

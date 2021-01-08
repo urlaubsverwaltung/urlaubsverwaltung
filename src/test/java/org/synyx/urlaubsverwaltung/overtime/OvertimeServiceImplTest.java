@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -239,8 +240,8 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.emptyList());
 
-        final BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
-        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
+        final Duration totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
+        assertThat(totalHours).isEqualTo(Duration.ZERO);
 
         final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
         final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
@@ -253,16 +254,16 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
-        overtimeRecord.setDuration(BigDecimal.ONE);
+        overtimeRecord.setDuration(Duration.ofHours(1));
 
         final Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
-        otherOvertimeRecord.setDuration(BigDecimal.TEN);
+        otherOvertimeRecord.setDuration(Duration.ofHours(10));
 
         when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(List.of(overtimeRecord, otherOvertimeRecord));
 
-        final BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
-        assertThat(totalHours).isEqualTo(new BigDecimal("11"));
+        final Duration totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
+        assertThat(totalHours).isEqualTo(Duration.ofHours(11));
 
         final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
         final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
@@ -283,8 +284,8 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
-        final BigDecimal totalHours = sut.getLeftOvertimeForPerson(person);
-        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
+        final Duration totalHours = sut.getLeftOvertimeForPerson(person);
+        assertThat(totalHours).isEqualTo(Duration.ZERO);
 
         verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
@@ -295,11 +296,11 @@ class OvertimeServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
+        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(Duration.ofHours(10L).toMinutes() / 60.0);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
-        final BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
-        assertThat(leftOvertime).isEqualTo(new BigDecimal("9"));
+        final Duration leftOvertime = sut.getLeftOvertimeForPerson(person);
+        assertThat(leftOvertime).isEqualTo(Duration.ofHours(9));
 
         verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
@@ -313,7 +314,7 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
-        final BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
-        assertThat(leftOvertime).isEqualTo(BigDecimal.ZERO);
+        final Duration leftOvertime = sut.getLeftOvertimeForPerson(person);
+        assertThat(leftOvertime).isEqualTo(Duration.ZERO);
     }
 }

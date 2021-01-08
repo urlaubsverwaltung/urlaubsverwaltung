@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -71,7 +72,7 @@ class ApplicationForLeaveStatisticsCsvExportService {
             csvRow[3] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
             csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
             csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftOvertime());
+            csvRow[6] = decimalFormat.format(new BigDecimal(applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
             csvWriter.writeNext(csvRow);
 
             for (VacationType type : vacationTypeService.getVacationTypes()) {

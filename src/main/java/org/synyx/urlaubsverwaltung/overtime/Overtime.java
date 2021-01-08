@@ -4,11 +4,12 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -37,7 +38,8 @@ public class Overtime {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private BigDecimal duration;
+    @Convert(converter = DurationConverter.class)
+    private Duration duration;
 
     @Column(nullable = false)
     private LocalDate lastModificationDate;
@@ -46,7 +48,7 @@ public class Overtime {
         // OK
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, BigDecimal duration) {
+    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
 
         Assert.notNull(person, "Person must be given.");
         Assert.notNull(startDate, "Start date must be given.");
@@ -89,7 +91,7 @@ public class Overtime {
         return endDate;
     }
 
-    public BigDecimal getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
@@ -114,7 +116,7 @@ public class Overtime {
         this.endDate = endDate;
     }
 
-    public void setDuration(BigDecimal duration) {
+    public void setDuration(Duration duration) {
 
         Assert.notNull(duration, "Duration of overtime must be given.");
 
