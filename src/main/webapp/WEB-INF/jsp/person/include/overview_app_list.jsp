@@ -128,7 +128,7 @@
                                 <spring:message code="application.progress.ALLOWED"/> <uv:date date="${app.editedDate}"/>
                             </c:when>
                             <c:when test="${app.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
-                                <spring:message code="application.progress.ALLOWED_CANCELLATION_REQUESTED"/> <uv:date date="${app.editedDate}"/>
+                                <spring:message code="application.progress.ALLOWED_CANCELLATION_REQUESTED"/> <uv:date date="${app.cancelDate}"/>
                             </c:when>
                             <c:when test="${app.status == 'REJECTED'}">
                                 <spring:message code="application.progress.REJECTED"/> <uv:date date="${app.editedDate}"/>
