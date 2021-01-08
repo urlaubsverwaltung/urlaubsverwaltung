@@ -155,6 +155,30 @@
                                         <p class="tw-mb-4 tw-text-base">
                                             <spring:message code="calendar.share.department.paragraph.info.reset"/>
                                         </p>
+                                        <p>
+                                            <spring:message code="calendar.share.range.paragraph"/>
+                                        </p>
+                                        <div class="tw-mb-4">
+                                            <c:forEach items="${calendarPeriods}" varStatus="periodLoop">
+                                                <div>
+                                                    <label
+                                                        for="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}"
+                                                        class="tw-flex tw-items-center tw-space-x-1"
+                                                    >
+                                                        <input
+                                                            id="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}"
+                                                            type="radio"
+                                                            name="calendarPeriod"
+                                                            value="${periodLoop.current}"
+                                                            class="tw-m-0"
+                                                        >
+                                                        <span>
+                                                            <spring:message code="calendar.share.range.${periodLoop.current}"/>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
                                         <button type="submit" class="btn btn-primary">
                                             <spring:message code="calendar.share.department.form.submit.text" arguments="${departmentCal.departmentName}" />
                                         </button>
@@ -163,7 +187,12 @@
                                 <c:otherwise>
                                     <div class="tw-max-w-4xl">
                                         <p class="tw-mb-8 tw-text-base">
-                                            <spring:message code="calendar.share.department.isshared.paragraph.status" arguments="${departmentCal.departmentName}" />
+                                            <spring:message var="calendarPeriodText" code="calendar.share.range.${departmentCal.calendarPeriod}" />
+                                            <spring:message
+                                                code="calendar.share.department.isshared.paragraph.status"
+                                                arguments="${departmentCal.departmentName}:::${calendarPeriodText}"
+                                                argumentSeparator=":::"
+                                            />
                                         </p>
                                         <p class="tw-mb-2 tw-text-base">
                                             <spring:message code="calendar.share.department.isshared.paragraph.info"/>

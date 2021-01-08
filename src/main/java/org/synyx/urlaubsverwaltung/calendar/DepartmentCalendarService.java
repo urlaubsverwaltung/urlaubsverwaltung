@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -53,7 +54,7 @@ class DepartmentCalendarService {
         departmentCalendarRepository.deleteByDepartmentAndPerson(department, person);
     }
 
-    DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId) {
+    DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
         final Department department = getDepartmentOrThrow(departmentId);
@@ -62,6 +63,7 @@ class DepartmentCalendarService {
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.isEmpty() ? new DepartmentCalendar() : maybeDepartmentCalendar.get();
         departmentCalendar.setDepartment(department);
         departmentCalendar.setPerson(person);
+        departmentCalendar.setCalendarPeriod(calendarPeriod);
         departmentCalendar.generateSecret();
 
         return departmentCalendarRepository.save(departmentCalendar);

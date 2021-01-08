@@ -289,7 +289,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(new DepartmentCalendar()));
+        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(anyDepartmentCalendar()));
         when(departmentCalendarService.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
@@ -491,11 +491,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkDepartmentCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
 
-        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1);
+        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -562,6 +565,14 @@ class CalendarSharingViewControllerTest {
         personCalendar.setCalendarPeriod(Period.parse("P1Y"));
 
         return personCalendar;
+    }
+
+    private DepartmentCalendar anyDepartmentCalendar() {
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+        departmentCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return departmentCalendar;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

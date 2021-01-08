@@ -6,6 +6,7 @@ public class DepartmentCalendarDto {
     private int departmentId;
     private String departmentName;
     private String calendarUrl;
+    private CalendarPeriodViewType calendarPeriod;
 
     /**
      * Whether this calendar is currently active/visible in the view or not.
@@ -51,5 +52,13 @@ public class DepartmentCalendarDto {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public CalendarPeriodViewType getCalendarPeriod() {
+        return calendarPeriod;
+    }
+
+    public void setCalendarPeriod(CalendarPeriodViewType calendarPeriod) {
+        this.calendarPeriod = calendarPeriod;
     }
 }

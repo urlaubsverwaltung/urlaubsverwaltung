@@ -207,7 +207,7 @@ class DepartmentCalendarServiceTest {
 
         when(departmentCalendarRepository.save(receivedDepartmentCalendar)).thenReturn(receivedDepartmentCalendar);
 
-        final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1);
+        final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M"));
         assertThat(actualDepartmentCalendar.getDepartment()).isEqualTo(department);
         assertThat(actualDepartmentCalendar.getPerson()).isEqualTo(person);
         assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
@@ -218,7 +218,7 @@ class DepartmentCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1));
+            .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M")));
     }
 
     @Test
@@ -231,7 +231,7 @@ class DepartmentCalendarServiceTest {
         when(departmentService.getDepartmentById(42)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1));
+            .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M")));
     }
 
     @Test
@@ -249,7 +249,7 @@ class DepartmentCalendarServiceTest {
 
         when(departmentCalendarRepository.save(any(DepartmentCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1);
+        final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M"));
         assertThat(actualDepartmentCalendar.getDepartment()).isEqualTo(department);
         assertThat(actualDepartmentCalendar.getPerson()).isEqualTo(person);
         assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
