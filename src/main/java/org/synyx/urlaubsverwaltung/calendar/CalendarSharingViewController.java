@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +60,7 @@ public class CalendarSharingViewController {
 
         final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
+        model.addAttribute("calendarPeriods", CalendarPeriodViewType.values());
 
         setCompanyCalendarViewModel(model, personId);
 
@@ -84,7 +86,8 @@ public class CalendarSharingViewController {
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String linkPrivateCalendar(@PathVariable int personId, @ModelAttribute PersonCalendarDto personCalendarDto) {
 
-        personCalendarService.createCalendarForPerson(personId, personCalendarDto.getFetchSince());
+        final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
+        personCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
@@ -179,7 +182,7 @@ public class CalendarSharingViewController {
                 .replacePath(path).build().toString();
 
             dto.setCalendarUrl(url);
-            dto.setFetchSince(personCalendar.getFetchSinceMonths());
+            dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
         }
 
         return dto;

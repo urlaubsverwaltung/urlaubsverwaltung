@@ -44,7 +44,6 @@
                         <spring:message code="calendar.share.me.title"/>
                     </h2>
                 </uv:section-heading>
-                <form:input path="fetchSince" value="30"/>
                 <c:choose>
                     <c:when test="${empty privateCalendarShare.calendarUrl}">
                         <div class="tw-max-w-3xl">
@@ -57,6 +56,27 @@
                             <p class="tw-mb-4 tw-text-base">
                                 <spring:message code="calendar.share.me.paragraph.info.reset"/>
                             </p>
+                            <p>
+                                <spring:message code="calendar.share.range.paragraph"/>
+                            </p>
+                            <div class="tw-mb-4">
+                                <c:forEach items="${calendarPeriods}" varStatus="loop">
+                                    <div>
+                                        <label for="personal-calendar-period-${loop.index}" class="tw-flex tw-items-center tw-space-x-1">
+                                            <input
+                                                id="personal-calendar-period-${loop.index}"
+                                                type="radio"
+                                                name="calendarPeriod"
+                                                value="${loop.current}"
+                                                class="tw-m-0"
+                                            >
+                                            <span>
+                                                <spring:message code="calendar.share.range.${loop.current}"/>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
                             <button type="submit" class="btn btn-primary">
                                 <spring:message code="calendar.share.me.form.submit.text"/>
                             </button>
@@ -65,7 +85,8 @@
                     <c:otherwise>
                         <div class="tw-max-w-4xl">
                             <p class="tw-mb-8 tw-text-base">
-                                <spring:message code="calendar.share.me.isshared.paragraph.status"/>
+                                <spring:message var="calendarPeriodText" code="calendar.share.range.${privateCalendarShare.calendarPeriod}" />
+                                <spring:message code="calendar.share.me.isshared.paragraph.status" arguments="${calendarPeriodText}"/>
                             </p>
                             <p class="tw-mb-2 tw-text-base">
                                 <spring:message code="calendar.share.me.isshared.paragraph.info"/>

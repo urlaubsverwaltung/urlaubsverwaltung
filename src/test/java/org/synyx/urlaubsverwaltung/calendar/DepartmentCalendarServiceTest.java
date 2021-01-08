@@ -112,7 +112,7 @@ class DepartmentCalendarServiceTest {
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
         departmentCalendar.setId(1L);
         departmentCalendar.setDepartment(department);
-        departmentCalendar.setFetchSinceMonths(12);
+        departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
         final List<Absence> fullDayAbsences = List.of(absence(person, parse("2019-03-26", ofPattern("yyyy-MM-dd")), parse("2019-03-26", ofPattern("yyyy-MM-dd")), FULL));

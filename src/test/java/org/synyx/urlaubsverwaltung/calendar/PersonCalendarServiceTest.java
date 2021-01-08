@@ -70,7 +70,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        personCalendar.setFetchSinceMonths(12);
+        personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> fullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
@@ -92,7 +92,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        personCalendar.setFetchSinceMonths(12);
+        personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> morningAbsences = List.of(absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING));
@@ -116,7 +116,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        personCalendar.setFetchSinceMonths(12);
+        personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> manyFullDayAbsences = List.of(absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL));
@@ -138,7 +138,7 @@ class PersonCalendarServiceTest {
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
-        personCalendar.setFetchSinceMonths(12);
+        personCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         final List<Absence> noonAbsences = List.of(absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON));
@@ -253,17 +253,18 @@ class PersonCalendarServiceTest {
 
         when(personCalendarRepository.save(receivedPersonCalendar)).thenReturn(receivedPersonCalendar);
 
-        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, 12);
+        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
         assertThat(calendarForPerson.getPerson()).isEqualTo(person);
         assertThat(calendarForPerson.getSecret()).isNotBlank();
-        assertThat(calendarForPerson.getFetchSinceMonths()).isEqualTo(12);
+        assertThat(calendarForPerson.getCalendarPeriod()).isEqualTo(java.time.Period.parse("P12M"));
+
     }
 
     @Test
     void createCalendarForPersonNoPersonFound() {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForPerson(1, 12));
+            .isThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")));
     }
 
     @Test
@@ -277,10 +278,10 @@ class PersonCalendarServiceTest {
 
         when(personCalendarRepository.save(any(PersonCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, 12);
+        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
         assertThat(calendarForPerson.getPerson()).isEqualTo(person);
         assertThat(calendarForPerson.getSecret()).isNotBlank();
-        assertThat(calendarForPerson.getFetchSinceMonths()).isEqualTo(12);
+        assertThat(calendarForPerson.getCalendarPeriod()).isEqualTo(java.time.Period.parse("P12M"));
 
         verify(personCalendarRepository).save(any(PersonCalendar.class));
     }

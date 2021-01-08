@@ -13,11 +13,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
-import static java.time.temporal.ChronoUnit.MONTHS;
 
 
 @Service
@@ -42,14 +41,14 @@ class PersonCalendarService {
         this.clock = clock;
     }
 
-    PersonCalendar createCalendarForPerson(Integer personId, int fetchSince) {
+    PersonCalendar createCalendarForPerson(Integer personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
 
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarRepository.findByPerson(person);
         final PersonCalendar personCalendar = maybePersonCalendar.isEmpty() ? new PersonCalendar() : maybePersonCalendar.get();
         personCalendar.setPerson(person);
-        personCalendar.setFetchSinceMonths(fetchSince);
+        personCalendar.setCalendarPeriod(calendarPeriod);
         personCalendar.generateSecret();
 
         return personCalendarRepository.save(personCalendar);
@@ -81,7 +80,7 @@ class PersonCalendarService {
 
         final String title = messageSource.getMessage("calendar.person.title", List.of(person.getNiceName()).toArray(), locale);
 
-        final LocalDate sinceDate = LocalDate.now(clock).minus(personCalendar.getFetchSinceMonths(), MONTHS);
+        final LocalDate sinceDate = LocalDate.now(clock).minus(personCalendar.getCalendarPeriod());
         final List<Absence> absences = absenceService.getOpenAbsencesSince(List.of(person), sinceDate);
 
         return iCalService.getCalendar(title, absences);

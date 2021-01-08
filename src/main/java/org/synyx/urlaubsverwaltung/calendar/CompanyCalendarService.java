@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.time.temporal.ChronoUnit.MONTHS;
-
 
 @Service
 class CompanyCalendarService {
@@ -76,7 +74,7 @@ class CompanyCalendarService {
         final String title = messageSource.getMessage("calendar.company.title", new Object[]{}, locale);
 
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
-        final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getFetchSinceMonths(), MONTHS);
+        final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getCalendarPeriod());
         final List<Absence> absences = absenceService.getOpenAbsencesSince(sinceDate);
 
         return iCalService.getCalendar(title, absences);

@@ -76,6 +76,7 @@ class CompanyCalendarServiceTest {
 
         CompanyCalendar companyCalendar = new CompanyCalendar();
         companyCalendar.setId(1L);
+        companyCalendar.setCalendarPeriod(java.time.Period.parse("P1Y"));
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");

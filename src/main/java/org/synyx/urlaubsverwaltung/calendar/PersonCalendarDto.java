@@ -4,7 +4,7 @@ public class PersonCalendarDto {
 
     private int personId;
     private String calendarUrl;
-    private int fetchSince;
+    private CalendarPeriodViewType calendarPeriod;
 
     public int getPersonId() {
         return personId;
@@ -22,11 +22,11 @@ public class PersonCalendarDto {
         this.calendarUrl = calendarUrl;
     }
 
-    public int getFetchSince() {
-        return fetchSince;
+    public CalendarPeriodViewType getCalendarPeriod() {
+        return calendarPeriod;
     }
 
-    public void setFetchSince(int fetchSince) {
-        this.fetchSince = fetchSince;
+    public void setCalendarPeriod(CalendarPeriodViewType calendarPeriod) {
+        this.calendarPeriod = calendarPeriod;
     }
 }

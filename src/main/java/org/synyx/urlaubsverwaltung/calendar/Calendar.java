@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import java.time.Period;
 
 @Entity
 @Inheritance
@@ -21,7 +22,7 @@ abstract class Calendar {
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
-    private int fetchSinceMonths;
+    private Period calendarPeriod;
 
     protected Calendar() {
         generateSecret();
@@ -43,11 +44,11 @@ abstract class Calendar {
         secret = RandomStringUtils.randomAlphanumeric(SECRET_LENGTH);
     }
 
-    public int getFetchSinceMonths() {
-        return fetchSinceMonths;
+    public Period getCalendarPeriod() {
+        return calendarPeriod;
     }
 
-    public void setFetchSinceMonths(int fetchSince) {
-        this.fetchSinceMonths = fetchSince;
+    public void setCalendarPeriod(Period calendarPeriod) {
+        this.calendarPeriod = calendarPeriod;
     }
 }
