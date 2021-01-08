@@ -253,10 +253,10 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
-        overtimeRecord.setHours(BigDecimal.ONE);
+        overtimeRecord.setDuration(BigDecimal.ONE);
 
         final Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
-        otherOvertimeRecord.setHours(BigDecimal.TEN);
+        otherOvertimeRecord.setDuration(BigDecimal.TEN);
 
         when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(List.of(overtimeRecord, otherOvertimeRecord));

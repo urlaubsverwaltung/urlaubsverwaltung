@@ -6,7 +6,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,7 +23,7 @@ class OvertimeTest {
     @Test
     void ensureThrowsOnNullPerson() {
         LocalDate now = LocalDate.now(UTC);
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(null, now, now, BigDecimal.ONE));
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(null, now, now, Duration.ofHours(1)));
     }
 
     @Test
@@ -31,7 +31,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, null, now, BigDecimal.ONE));
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, null, now, Duration.ofHours(1)));
     }
 
     @Test
@@ -39,7 +39,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, null, BigDecimal.ONE));
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, null, Duration.ofHours(1)));
     }
 
     @Test
@@ -55,7 +55,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now, now.plusDays(2), BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now, now.plusDays(2), Duration.ofHours(1));
         assertThat(overtime.getStartDate()).isEqualTo(now);
     }
 
@@ -64,7 +64,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
         assertThat(overtime.getEndDate()).isEqualTo(now);
     }
 
@@ -73,7 +73,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now.minusDays(2), now.plusDays(4), Duration.ofHours(1));
         assertThat(overtime.getLastModificationDate()).isEqualTo(now);
     }
 
@@ -82,7 +82,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
 
         Field startDateField = ReflectionUtils.findField(Overtime.class, "startDate");
         startDateField.setAccessible(true);
@@ -96,7 +96,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
 
         Field endDateField = ReflectionUtils.findField(Overtime.class, "endDate");
         endDateField.setAccessible(true);
@@ -111,7 +111,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
 
         Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
         lastModificationDateField.setAccessible(true);
@@ -126,7 +126,7 @@ class OvertimeTest {
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         LocalDate now = LocalDate.now(UTC);
 
-        Overtime overtime = new Overtime(person, now.minusDays(2), now, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, now.minusDays(2), now, Duration.ofHours(1));
 
         // Simulate that the overtime record has been created to an earlier time
         Field lastModificationDateField = ReflectionUtils.findField(Overtime.class, "lastModificationDate");
@@ -150,7 +150,7 @@ class OvertimeTest {
 
     @Test
     void ensureThrowsIfTryingToSetHoursToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setHours(null));
+        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setDuration(null));
     }
 
     @Test
@@ -165,11 +165,11 @@ class OvertimeTest {
         person.setPassword("Theo");
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
-        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(1);
 
         final String overtimeToString = overtime.toString();
-        assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, hours=10, person=Person{id='10'}}");
+        assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, duration=PT10H, person=Person{id='10'}}");
     }
 
     @Test

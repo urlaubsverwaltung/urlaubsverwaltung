@@ -359,7 +359,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();
-        originalOvertimeRecord.setHours(new BigDecimal("3"));
+        originalOvertimeRecord.setDuration(new BigDecimal("3"));
 
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
 
@@ -386,7 +386,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();
-        originalOvertimeRecord.setHours(new BigDecimal("2.5"));
+        originalOvertimeRecord.setDuration(new BigDecimal("2.5"));
 
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
 
@@ -413,7 +413,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setId(42);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();
-        originalOvertimeRecord.setHours(new BigDecimal("-2.5"));
+        originalOvertimeRecord.setDuration(new BigDecimal("-2.5"));
 
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
 

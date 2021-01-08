@@ -62,7 +62,7 @@
                             <c:out value="${record.person.niceName}"/>&nbsp;<spring:message code="overtime.details.hours.1"/>
                         </span>
                         <span class="tw-my-1 tw-text-lg tw-font-medium">
-                            <spring:message code="overtime.details.hours.2" arguments="${record.hours}"/>
+                            <spring:message code="overtime.details.hours.2" arguments="${record.duration}"/>
                         </span>
                         <span class="tw-text-sm">
                             <c:set var="START_DATE">

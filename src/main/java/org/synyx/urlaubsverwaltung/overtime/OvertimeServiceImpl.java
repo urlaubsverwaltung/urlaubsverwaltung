@@ -113,7 +113,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         BigDecimal totalHours = ZERO;
         for (Overtime record : overtimeRecords) {
-            totalHours = totalHours.add(record.getHours());
+            totalHours = totalHours.add(record.getDuration());
         }
 
         return totalHours;
