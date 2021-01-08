@@ -95,8 +95,8 @@ class OvertimeRepositoryIT extends TestContainersBase {
         assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2015, 12, 28));
         assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2015, 10, 5));
         assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2014, 12, 30));
-        assertThat(overtimes.get(0).getHours()).isEqualTo(BigDecimal.valueOf(3));
-        assertThat(overtimes.get(1).getHours()).isEqualTo(BigDecimal.valueOf(2));
-        assertThat(overtimes.get(2).getHours()).isEqualTo(BigDecimal.valueOf(1));
+        assertThat(overtimes.get(0).getDuration()).isEqualTo(BigDecimal.valueOf(3));
+        assertThat(overtimes.get(1).getDuration()).isEqualTo(BigDecimal.valueOf(2));
+        assertThat(overtimes.get(2).getDuration()).isEqualTo(BigDecimal.valueOf(1));
     }
 }

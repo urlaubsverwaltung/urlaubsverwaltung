@@ -18,7 +18,7 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
 
     List<Overtime> findByPerson(Person person);
 
-    @Query("SELECT SUM(overtime.hours) FROM Overtime overtime WHERE overtime.person = :person")
+    @Query("SELECT SUM(overtime.duration) FROM Overtime overtime WHERE overtime.person = :person")
     BigDecimal calculateTotalHoursForPerson(@Param("person") Person person);
 
     @Query(

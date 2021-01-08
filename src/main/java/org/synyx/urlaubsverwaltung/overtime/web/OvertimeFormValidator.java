@@ -121,7 +121,7 @@ public class OvertimeFormValidator implements Validator {
                 Optional<Overtime> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
 
                 if (overtimeRecordOptional.isPresent()) {
-                    leftOvertime = leftOvertime.subtract(overtimeRecordOptional.get().getHours());
+                    leftOvertime = leftOvertime.subtract(overtimeRecordOptional.get().getDuration());
                 }
             }
 

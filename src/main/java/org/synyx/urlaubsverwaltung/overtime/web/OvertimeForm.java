@@ -46,7 +46,7 @@ public class OvertimeForm {
 
         Assert.notNull(overtime, "Overtime must be given.");
 
-        final BigDecimal overtimeHours = overtime.getHours() == null ? BigDecimal.ZERO : overtime.getHours();
+        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : overtime.getDuration();
 
         this.id = overtime.getId();
         this.person = overtime.getPerson();
@@ -143,7 +143,7 @@ public class OvertimeForm {
 
     void updateOvertime(Overtime overtime) {
         overtime.setPerson(getPerson());
-        overtime.setHours(getDuration());
+        overtime.setDuration(getDuration());
         overtime.setStartDate(getStartDate());
         overtime.setEndDate(getEndDate());
     }
