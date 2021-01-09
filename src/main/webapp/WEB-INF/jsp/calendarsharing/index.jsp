@@ -29,11 +29,22 @@
     </header>
     <main>
 
-        <div class="tw-block tw-mb-8">
+        <p class="tw-mb-8">
             <spring:message code="calendar.share.info"/>
             <a href="https://github.com/synyx/urlaubsverwaltung/wiki/Fragen-zur-iCal-Kalenderfreigabe">
                 <spring:message code="calendar.share.info.wiki"/>
             </a>
+        </p>
+
+        <div class="tw-mb-8">
+            <uv:privacy-box>
+                <p class="tw-space-y-4">
+                    <spring:message code="calendar.share.privacy-info.paragraph"/>
+                </p>
+                <p>
+                    <spring:message code="calendar.share.privacy-info.reset"/>
+                </p>
+            </uv:privacy-box>
         </div>
 
         <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me"
@@ -49,12 +60,6 @@
                         <div class="tw-max-w-3xl">
                             <p class="tw-mb-8 tw-text-base">
                                 <spring:message code="calendar.share.me.paragraph.status"/>
-                            </p>
-                            <p class="tw-mb-2 tw-text-base">
-                                <spring:message code="calendar.share.me.paragraph.info"/>
-                            </p>
-                            <p class="tw-mb-4 tw-text-base">
-                                <spring:message code="calendar.share.me.paragraph.info.reset"/>
                             </p>
                             <p>
                                 <spring:message code="calendar.share.range.paragraph"/>
@@ -148,12 +153,6 @@
                                     <div class="tw-max-w-3xl">
                                         <p class="tw-mb-8 tw-text-base">
                                             <spring:message code="calendar.share.department.paragraph.status" arguments="${departmentCal.departmentName}"/>
-                                        </p>
-                                        <p class="tw-mb-2 tw-text-base">
-                                            <spring:message code="calendar.share.department.paragraph.info"/>
-                                        </p>
-                                        <p class="tw-mb-4 tw-text-base">
-                                            <spring:message code="calendar.share.department.paragraph.info.reset"/>
                                         </p>
                                         <p>
                                             <spring:message code="calendar.share.range.paragraph"/>
@@ -270,12 +269,6 @@
                                 <div class="tw-max-w-3xl">
                                     <p class="tw-mb-8 tw-text-base">
                                         <spring:message code="calendar.share.company.paragraph.status"/>
-                                    </p>
-                                    <p class="tw-mb-2 tw-text-base">
-                                        <spring:message code="calendar.share.company.paragraph.info"/>
-                                    </p>
-                                    <p class="tw-mb-4 tw-text-base">
-                                        <spring:message code="calendar.share.company.paragraph.info.reset"/>
                                     </p>
                                     <p>
                                         <spring:message code="calendar.share.range.paragraph"/>
