@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +60,7 @@ public class CalendarSharingViewController {
 
         final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
+        model.addAttribute("calendarPeriods", CalendarPeriodViewType.values());
 
         setCompanyCalendarViewModel(model, personId);
 
@@ -73,6 +76,7 @@ public class CalendarSharingViewController {
 
         final List<DepartmentCalendarDto> departmentCalendarDtos = getDepartmentCalendarDtos(personId, activeDepartmentId);
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
+        model.addAttribute("calendarPeriods", CalendarPeriodViewType.values());
 
         setCompanyCalendarViewModel(model, personId);
 
@@ -81,9 +85,10 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkPrivateCalendar(@PathVariable int personId) {
+    public String linkPrivateCalendar(@PathVariable int personId, @ModelAttribute PersonCalendarDto personCalendarDto) {
 
-        personCalendarService.createCalendarForPerson(personId);
+        final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
+        personCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
@@ -99,9 +104,11 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/departments/{departmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId) {
+    public String linkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId,
+                                         @ModelAttribute DepartmentCalendarDto departmentCalendarDto) {
 
-        departmentCalendarService.createCalendarForDepartmentAndPerson(departmentId, personId);
+        final Period calendarPeriod = departmentCalendarDto.getCalendarPeriod().getPeriod();
+        departmentCalendarService.createCalendarForDepartmentAndPerson(departmentId, personId, calendarPeriod);
 
         return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
     }
@@ -117,9 +124,10 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/company")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkCompanyCalendar(@PathVariable int personId) {
+    public String linkCompanyCalendar(@PathVariable int personId, @ModelAttribute CompanyCalendarDto companyCalendarDto) {
 
-        companyCalendarService.createCalendarForPerson(personId);
+        final Period calendarPeriod = companyCalendarDto.getCalendarPeriod().getPeriod();
+        companyCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
@@ -178,6 +186,7 @@ public class CalendarSharingViewController {
                 .replacePath(path).build().toString();
 
             dto.setCalendarUrl(url);
+            dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
         }
 
         return dto;
@@ -216,6 +225,7 @@ public class CalendarSharingViewController {
                     .replacePath(path).build().toString();
 
                 departmentCalendarDto.setCalendarUrl(url);
+                departmentCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(departmentCalendar.getCalendarPeriod()));
             }
 
             departmentCalendarDtos.add(departmentCalendarDto);
@@ -242,6 +252,7 @@ public class CalendarSharingViewController {
                 .replacePath(path).build().toString();
 
             companyCalendarDto.setCalendarUrl(url);
+            companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));
         }
 
         return companyCalendarDto;

@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -60,14 +61,14 @@ class CompanyCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource);
+        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
     }
 
     @Test
     void getCalendarForAllForOneFullDay() {
 
         final List<Absence> absences = List.of(absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
-        when(absenceService.getOpenAbsences()).thenReturn(absences);
+        when(absenceService.getOpenAbsencesSince(any(LocalDate.class))).thenReturn(absences);
 
         final Person person = new Person();
         person.setId(10);
@@ -75,6 +76,7 @@ class CompanyCalendarServiceTest {
 
         CompanyCalendar companyCalendar = new CompanyCalendar();
         companyCalendar.setId(1L);
+        companyCalendar.setCalendarPeriod(java.time.Period.parse("P1Y"));
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
@@ -189,7 +191,7 @@ class CompanyCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForPerson(1));
+            .isThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")));
     }
 
     @Test
@@ -201,7 +203,7 @@ class CompanyCalendarServiceTest {
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
 
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
@@ -219,7 +221,7 @@ class CompanyCalendarServiceTest {
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCompanyCalendar));
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
 
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();

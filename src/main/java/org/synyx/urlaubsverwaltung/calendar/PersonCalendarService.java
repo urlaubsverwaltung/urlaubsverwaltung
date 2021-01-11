@@ -11,6 +11,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -24,25 +27,28 @@ class PersonCalendarService {
     private final PersonCalendarRepository personCalendarRepository;
     private final ICalService iCalService;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     @Autowired
     PersonCalendarService(AbsenceService absenceService, PersonService personService,
-                          PersonCalendarRepository personCalendarRepository, ICalService iCalService, MessageSource messageSource) {
+                          PersonCalendarRepository personCalendarRepository, ICalService iCalService, MessageSource messageSource, Clock clock) {
 
         this.absenceService = absenceService;
         this.personService = personService;
         this.personCalendarRepository = personCalendarRepository;
         this.iCalService = iCalService;
         this.messageSource = messageSource;
+        this.clock = clock;
     }
 
-    PersonCalendar createCalendarForPerson(Integer personId) {
+    PersonCalendar createCalendarForPerson(Integer personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
 
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarRepository.findByPerson(person);
         final PersonCalendar personCalendar = maybePersonCalendar.isEmpty() ? new PersonCalendar() : maybePersonCalendar.get();
         personCalendar.setPerson(person);
+        personCalendar.setCalendarPeriod(calendarPeriod);
         personCalendar.generateSecret();
 
         return personCalendarRepository.save(personCalendar);
@@ -73,7 +79,9 @@ class PersonCalendarService {
         }
 
         final String title = messageSource.getMessage("calendar.person.title", List.of(person.getNiceName()).toArray(), locale);
-        final List<Absence> absences = absenceService.getOpenAbsences(List.of(person));
+
+        final LocalDate sinceDate = LocalDate.now(clock).minus(personCalendar.getCalendarPeriod());
+        final List<Absence> absences = absenceService.getOpenAbsencesSince(List.of(person), sinceDate);
 
         return iCalService.getCalendar(title, absences);
     }

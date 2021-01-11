@@ -78,7 +78,7 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatuses, List<Person> persons) {
-        return sickNoteRepository.findByStatusInAndPersonIn(sickNoteStatuses, persons);
+    public List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since) {
+        return sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(sickNoteStatuses, persons, since);
     }
 }

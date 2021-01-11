@@ -13,6 +13,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -27,10 +30,11 @@ class DepartmentCalendarService {
     private final DepartmentCalendarRepository departmentCalendarRepository;
     private final ICalService iCalService;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     @Autowired
     public DepartmentCalendarService(AbsenceService absenceService, DepartmentService departmentService,
-                                     PersonService personService, DepartmentCalendarRepository departmentCalendarRepository, ICalService iCalService, MessageSource messageSource) {
+                                     PersonService personService, DepartmentCalendarRepository departmentCalendarRepository, ICalService iCalService, MessageSource messageSource, Clock clock) {
 
         this.absenceService = absenceService;
         this.departmentService = departmentService;
@@ -38,6 +42,7 @@ class DepartmentCalendarService {
         this.departmentCalendarRepository = departmentCalendarRepository;
         this.iCalService = iCalService;
         this.messageSource = messageSource;
+        this.clock = clock;
     }
 
     @Transactional
@@ -49,7 +54,7 @@ class DepartmentCalendarService {
         departmentCalendarRepository.deleteByDepartmentAndPerson(department, person);
     }
 
-    DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId) {
+    DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
         final Department department = getDepartmentOrThrow(departmentId);
@@ -58,6 +63,7 @@ class DepartmentCalendarService {
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.isEmpty() ? new DepartmentCalendar() : maybeDepartmentCalendar.get();
         departmentCalendar.setDepartment(department);
         departmentCalendar.setPerson(person);
+        departmentCalendar.setCalendarPeriod(calendarPeriod);
         departmentCalendar.generateSecret();
 
         return departmentCalendarRepository.save(departmentCalendar);
@@ -90,7 +96,9 @@ class DepartmentCalendarService {
         }
 
         final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);
-        final List<Absence> absences = absenceService.getOpenAbsences(department.getMembers());
+
+        final LocalDate sinceDate = LocalDate.now(clock).minus(departmentCalendar.getCalendarPeriod());
+        final List<Absence> absences = absenceService.getOpenAbsencesSince(department.getMembers(), sinceDate);
 
         return iCalService.getCalendar(title, absences);
     }

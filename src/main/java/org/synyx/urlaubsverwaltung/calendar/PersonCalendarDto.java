@@ -4,6 +4,7 @@ public class PersonCalendarDto {
 
     private int personId;
     private String calendarUrl;
+    private CalendarPeriodViewType calendarPeriod;
 
     public int getPersonId() {
         return personId;
@@ -19,5 +20,13 @@ public class PersonCalendarDto {
 
     public void setCalendarUrl(String calendarUrl) {
         this.calendarUrl = calendarUrl;
+    }
+
+    public CalendarPeriodViewType getCalendarPeriod() {
+        return calendarPeriod;
+    }
+
+    public void setCalendarPeriod(CalendarPeriodViewType calendarPeriod) {
+        this.calendarPeriod = calendarPeriod;
     }
 }

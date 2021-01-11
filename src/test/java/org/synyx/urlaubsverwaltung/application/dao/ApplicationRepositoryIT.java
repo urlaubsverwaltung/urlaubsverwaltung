@@ -92,7 +92,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         revokedOvertimeReduction.setStatus(REVOKED);
         applicationRepository.save(revokedOvertimeReduction);
 
-        final List<Application> allowedApplications = applicationRepository.findByStatusIn(List.of(ALLOWED));
+        final List<Application> allowedApplications = applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(ALLOWED), LocalDate.of(2020, 10, 3));
         assertThat(allowedApplications)
             .contains(fullDayOvertimeReduction, fullDayHoliday)
             .hasSize(2);
@@ -135,7 +135,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         revokedOvertimeReduction.setStatus(REVOKED);
         applicationRepository.save(revokedOvertimeReduction);
 
-        final List<Application> allowedApplications = applicationRepository.findByStatusIn(List.of(ALLOWED, REJECTED));
+        final List<Application> allowedApplications = applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(ALLOWED, REJECTED), LocalDate.of(2020, 10, 3));
         assertThat(allowedApplications)
             .contains(fullDayOvertimeReduction, fullDayHoliday, rejectedOvertimeReduction)
             .hasSize(3);
@@ -154,7 +154,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         revokedOvertimeReduction.setStatus(REVOKED);
         applicationRepository.save(revokedOvertimeReduction);
 
-        final List<Application> allowedApplications = applicationRepository.findByStatusIn(List.of());
+        final List<Application> allowedApplications = applicationRepository.findByStatusInAndEndDateGreaterThanEqual(List.of(), LocalDate.of(2020, 10, 3));
         assertThat(allowedApplications)
             .isEmpty();
     }

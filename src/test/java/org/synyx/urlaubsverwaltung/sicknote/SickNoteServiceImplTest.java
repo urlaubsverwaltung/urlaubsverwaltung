@@ -118,10 +118,12 @@ class SickNoteServiceImplTest {
         final List<Person> persons = List.of(person);
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
-        final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findByStatusInAndPersonIn(openSickNoteStatuses, persons)).thenReturn(List.of(sickNote));
+        final LocalDate since = LocalDate.of(2020, 10, 3);
 
-        final List<SickNote> sickNotes = sut.getForStatesAndPerson(openSickNoteStatuses, persons);
+        final SickNote sickNote = new SickNote();
+        when(sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(openSickNoteStatuses, persons, since)).thenReturn(List.of(sickNote));
+
+        final List<SickNote> sickNotes = sut.getForStatesAndPersonSince(openSickNoteStatuses, persons, since);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);

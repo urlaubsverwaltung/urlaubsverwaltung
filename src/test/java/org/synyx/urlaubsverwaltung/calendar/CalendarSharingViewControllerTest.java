@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +70,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
@@ -90,7 +91,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
@@ -111,8 +112,8 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
-        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -132,7 +133,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(officeUser);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
@@ -150,7 +151,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
 
@@ -168,7 +169,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -184,7 +185,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(bossPerson));
         when(departmentService.getAssignedDepartmentsOfMember(bossPerson)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -200,7 +201,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(officePerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(officePerson));
         when(departmentService.getAssignedDepartmentsOfMember(officePerson)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -217,7 +218,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -240,7 +241,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -264,7 +265,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))
@@ -287,8 +288,8 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(new DepartmentCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(anyDepartmentCalendar()));
         when(departmentCalendarService.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
@@ -358,7 +359,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
-        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
             .andExpect(view().name("calendarsharing/index"))
@@ -422,7 +423,7 @@ class CalendarSharingViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(status().isBadRequest());
@@ -456,7 +457,7 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -467,11 +468,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkPrivateCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/me"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/me")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(personCalendarService).createCalendarForPerson(1);
+        verify(personCalendarService).createCalendarForPerson(1, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -487,11 +491,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkDepartmentCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
 
-        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1);
+        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -507,11 +514,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkCompanyCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(companyCalendarService).createCalendarForPerson(1);
+        verify(companyCalendarService).createCalendarForPerson(1, Period.parse("P1Y"));
     }
 
     @Test
@@ -550,6 +560,30 @@ class CalendarSharingViewControllerTest {
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
         verify(calendarAccessibleService).disableCompanyCalendar();
+    }
+
+    private PersonCalendar anyPersonCalendar() {
+
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return personCalendar;
+    }
+
+    private DepartmentCalendar anyDepartmentCalendar() {
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+        departmentCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return departmentCalendar;
+    }
+
+    private CompanyCalendar anyCompanyCalendar() {
+
+        final CompanyCalendar companyCalendar = new CompanyCalendar();
+        companyCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return companyCalendar;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

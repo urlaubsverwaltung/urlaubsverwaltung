@@ -171,7 +171,11 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
+            .with(csrf())
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -186,7 +190,11 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
+            .with(csrf())
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
@@ -201,7 +209,11 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
+            .with(csrf())
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
