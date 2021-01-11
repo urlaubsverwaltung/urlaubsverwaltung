@@ -33,6 +33,6 @@ class PeriodConverterTest {
         final Converter annotation = PeriodConverter.class.getAnnotation(Converter.class);
 
         assertThat(annotation).isNotNull();
-        assertThat(annotation.autoApply()).isTrue();
+        assertThat(annotation.autoApply()).isFalse();
     }
 }

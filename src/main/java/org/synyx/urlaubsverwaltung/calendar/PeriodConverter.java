@@ -4,7 +4,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.time.Period;
 
-@Converter(autoApply = true)
+@Converter
 class PeriodConverter implements AttributeConverter<Period, String> {
 
     @Override

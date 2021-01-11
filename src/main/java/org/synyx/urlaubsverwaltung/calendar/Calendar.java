@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,6 +23,7 @@ abstract class Calendar {
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
+    @Convert(converter = PeriodConverter.class)
     private Period calendarPeriod;
 
     protected Calendar() {
