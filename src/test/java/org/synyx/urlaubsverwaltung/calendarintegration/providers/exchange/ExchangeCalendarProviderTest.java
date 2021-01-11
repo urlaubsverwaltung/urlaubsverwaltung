@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange;
 
 import microsoft.exchange.webservices.data.core.ExchangeService;
-import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
-import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
+import microsoft.exchange.webservices.data.core.service.item.Item;
 import microsoft.exchange.webservices.data.property.complex.Attendee;
 import microsoft.exchange.webservices.data.property.complex.AttendeeCollection;
 import microsoft.exchange.webservices.data.property.complex.FolderId;
@@ -13,15 +12,26 @@ import microsoft.exchange.webservices.data.property.complex.time.TimeZoneDefinit
 import microsoft.exchange.webservices.data.search.FindFoldersResults;
 import microsoft.exchange.webservices.data.search.FolderView;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
+import static microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion.Exchange2010_SP2;
+import static microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName.Calendar;
+import static microsoft.exchange.webservices.data.core.enumeration.service.MessageDisposition.SaveOnly;
+import static microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode.SendToNone;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,89 +39,89 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ExchangeCalendarProviderTest {
+
+    @Mock
+    private CalendarMailService calendarMailService;
+    @Mock
+    private CalendarSettings calendarSettings;
+    @Mock
+    private ExchangeCalendarSettings exchangeCalSettings;
+    @Mock
+    private ExchangeService exchangeService;
+    @Mock
+    private ExchangeFactory exchangeFactory;
 
     @Test
     void checkCalendarSyncSettingsNoExceptionForEmptyEmail() {
-        final CalendarMailService calendarMailService = mock(CalendarMailService.class);
 
-        ExchangeCalendarProvider cut = new ExchangeCalendarProvider(calendarMailService);
-
-        CalendarSettings calendarSettings = mock(CalendarSettings.class);
-        ExchangeCalendarSettings exchangeCalSettings = mock(ExchangeCalendarSettings.class);
+        final ExchangeCalendarProvider sut = new ExchangeCalendarProvider(calendarMailService);
 
         when(calendarSettings.getExchangeCalendarSettings()).thenReturn(exchangeCalSettings);
         when(exchangeCalSettings.getEmail()).thenReturn("");
 
-        cut.checkCalendarSyncSettings(calendarSettings); // no Exception is test enough
+        sut.checkCalendarSyncSettings(calendarSettings); // no Exception is test enough
     }
 
-    private CalendarSettings getMockedCalendarSettings() {
-        CalendarSettings calendarSettings = mock(CalendarSettings.class);
-        ExchangeCalendarSettings exchangeCalSettings = mock(ExchangeCalendarSettings.class);
+    @Test
+    void add() throws Exception {
+        final ExchangeService exchangeService = getExchangeService();
+
+        final Appointment appointment = createAppointment();
+        when(exchangeFactory.getNewAppointment(exchangeService)).thenReturn(appointment);
+
+        final ExchangeCalendarProvider sut = new ExchangeCalendarProvider(exchangeService, exchangeFactory, calendarMailService);
+
+        final Person person = new Person("username", "lastName", "firstName", "abc@de.f");
+
+        final LocalDate start = LocalDate.of(2021, 1, 11);
+        final LocalDate end = LocalDate.of(2021, 1, 12);
+        final TimeSettings timeSettings = new TimeSettings();
+        timeSettings.setTimeZoneId("Etc/UTC");
+        final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(timeSettings));
+
+        final Optional<String> uniqueId = sut.add(absence, getCalendarSettings());
+        assertThat(uniqueId).hasValue("item-id");
+
+        verify(appointment).setStartTimeZone(any(TimeZoneDefinition.class));
+        verify(appointment).setEndTimeZone(any(TimeZoneDefinition.class));
+    }
+
+    private CalendarSettings getCalendarSettings() {
         when(exchangeCalSettings.getTimeZoneId()).thenReturn("Europe/Berlin");
 
         when(calendarSettings.getExchangeCalendarSettings()).thenReturn(exchangeCalSettings);
         when(exchangeCalSettings.getEmail()).thenReturn("test@example.org");
         when(exchangeCalSettings.getPassword()).thenReturn("secret");
-        when(exchangeCalSettings.getCalendar()).thenReturn("");
+        when(exchangeCalSettings.getCalendar()).thenReturn("CalendarName");
 
         return calendarSettings;
     }
 
-    private ExchangeService getMockedExchangeService() throws Exception {
+    private ExchangeService getExchangeService() throws Exception {
 
-        ExchangeService exchangeService = mock(ExchangeService.class);
-
-        FindFoldersResults calendarRoot = new FindFoldersResults();
-
-        CalendarFolder folder = mock(CalendarFolder.class);
-
-        when(folder.getDisplayName()).thenReturn("");
+        final CalendarFolder folder = mock(CalendarFolder.class);
+        when(folder.getDisplayName()).thenReturn("CalendarName");
         when(folder.getId()).thenReturn(new FolderId("folder-id"));
 
+        final FindFoldersResults calendarRoot = new FindFoldersResults();
         calendarRoot.getFolders().add(folder);
 
-        when(exchangeService.findFolders(eq(WellKnownFolderName.Calendar), any(FolderView.class))).thenReturn(calendarRoot);
-        when(exchangeService.getRequestedServerVersion()).thenReturn(ExchangeVersion.Exchange2010_SP2);
+        when(exchangeService.findFolders(eq(Calendar), any(FolderView.class))).thenReturn(calendarRoot);
 
         return exchangeService;
     }
 
-    private Appointment getMockedAppointment() throws Exception {
-        Appointment appointment = mock(Appointment.class);
+    private Appointment createAppointment() throws Exception {
 
-
-        AttendeeCollection attendeeCollection = new AttendeeCollection();
+        final AttendeeCollection attendeeCollection = new AttendeeCollection();
         attendeeCollection.add(new Attendee("smtpAddress"));
 
+        final Appointment appointment = mock(Appointment.class);
         when(appointment.getRequiredAttendees()).thenReturn(attendeeCollection);
         when(appointment.getId()).thenReturn(new ItemId("item-id"));
 
         return appointment;
-    }
-
-
-    @Test
-    void add() throws Exception {
-        CalendarMailService calendarMailService = mock(CalendarMailService.class);
-        ExchangeFactory exchangeFactory = mock(ExchangeFactory.class);
-
-        Appointment appointment = getMockedAppointment();
-        when(exchangeFactory.getNewAppointment(any(ExchangeService.class))).thenReturn(appointment);
-
-        ExchangeService exchangeService = getMockedExchangeService();
-        ExchangeCalendarProvider cut = new ExchangeCalendarProvider(exchangeService, exchangeFactory, calendarMailService);
-
-        Absence absence = mock(Absence.class);
-        when(absence.getPerson()).thenReturn(new Person("username", "lastName", "firstName", "abc@de.f"));
-        when(absence.getStartDate()).thenReturn(ZonedDateTime.now(UTC));
-        when(absence.getEndDate()).thenReturn(ZonedDateTime.now(UTC));
-
-        final CalendarSettings calendarSettings = getMockedCalendarSettings();
-
-        assertThat(cut.add(absence, calendarSettings)).hasValue("item-id");
-        verify(appointment).setStartTimeZone(any(TimeZoneDefinition.class));
-        verify(appointment).setEndTimeZone(any(TimeZoneDefinition.class));
     }
 }
