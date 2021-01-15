@@ -5,7 +5,7 @@ import java.time.Period;
 public enum CalendarPeriodViewType {
 
     THREE_MONTHS("P3M"),
-    HALVE_YEAR("P6M"),
+    HALF_YEAR("P6M"),
     YEAR("P1Y"),
     ALL("P100Y");
 
@@ -28,7 +28,7 @@ public enum CalendarPeriodViewType {
         }
 
         if (months <= 6) {
-            return HALVE_YEAR;
+            return HALF_YEAR;
         }
 
         if (months <= 12) {
