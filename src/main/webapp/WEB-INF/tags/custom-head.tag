@@ -37,7 +37,6 @@
 <script defer src="<asset:url value='npm.babel.js' />"></script>
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
 <script defer src="<asset:url value='npm.bootstrap.js' />"></script>
-<script defer src="<asset:url value='npm.webpack.js' />"></script>
 <script defer src="<asset:url value='npm.underscore.js' />"></script>
 <script defer src="<asset:url value='npm.datalist-polyfill.js' />"></script>
 <script defer src="<asset:url value='common.js' />"></script>
