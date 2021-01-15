@@ -72,14 +72,12 @@ public class OvertimeViewController {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-
     @GetMapping("/overtime")
     public String showPersonalOvertime() {
 
         final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
-
 
     @GetMapping(value = "/overtime", params = PERSON_ATTRIBUTE)
     public String showOvertime(
@@ -129,7 +127,6 @@ public class OvertimeViewController {
 
         return "overtime/overtime_details";
     }
-
 
     @GetMapping("/overtime/new")
     public String recordOvertime(

@@ -22,7 +22,6 @@ public interface OvertimeService {
      */
     List<Overtime> getOvertimeRecordsForPerson(Person person);
 
-
     /**
      * Fetch all the overtime records for a certain person and year.
      *
@@ -31,7 +30,6 @@ public interface OvertimeService {
      * @return list of matching overtime records
      */
     List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
-
 
     /**
      * Saves an overtime record.
@@ -52,7 +50,6 @@ public interface OvertimeService {
      */
     Optional<Overtime> getOvertimeById(Integer id);
 
-
     /**
      * Fetch the comments for a certain overtime record.
      *
@@ -60,7 +57,6 @@ public interface OvertimeService {
      * @return comments to the given overtime record
      */
     List<OvertimeComment> getCommentsForOvertime(Overtime overtime);
-
 
     /**
      * Get the total hours of all overtime records of the given person and year.
@@ -70,7 +66,6 @@ public interface OvertimeService {
      * @return the total overtime for the given year, never {@code null}
      */
     BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year);
-
 
     /**
      * Get the left overtime hours of the given person: the difference between the total overtime and the overtime
