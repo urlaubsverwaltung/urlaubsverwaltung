@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALVE_YEAR;
+
 public class CompanyCalendarDto {
 
     private int personId;
     private String calendarUrl;
-    private CalendarPeriodViewType calendarPeriod;
+    private CalendarPeriodViewType calendarPeriod = HALVE_YEAR;
 
     public int getPersonId() {
         return personId;

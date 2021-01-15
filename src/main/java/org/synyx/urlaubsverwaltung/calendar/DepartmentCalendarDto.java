@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALVE_YEAR;
+
 public class DepartmentCalendarDto {
 
     private int personId;
     private int departmentId;
     private String departmentName;
     private String calendarUrl;
-    private CalendarPeriodViewType calendarPeriod;
+    private CalendarPeriodViewType calendarPeriod = HALVE_YEAR;
 
     /**
      * Whether this calendar is currently active/visible in the view or not.

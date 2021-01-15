@@ -73,6 +73,7 @@
                                                 type="radio"
                                                 name="calendarPeriod"
                                                 value="${loop.current}"
+                                                ${privateCalendarShare.calendarPeriod == loop.current ? 'checked="checked"' : ''}
                                                 class="tw-m-0"
                                             >
                                             <span>
@@ -169,6 +170,7 @@
                                                             type="radio"
                                                             name="calendarPeriod"
                                                             value="${periodLoop.current}"
+                                                            ${departmentCal.calendarPeriod == periodLoop.current ? 'checked="checked"' : ''}
                                                             class="tw-m-0"
                                                         >
                                                         <span>
@@ -285,6 +287,7 @@
                                                         type="radio"
                                                         name="calendarPeriod"
                                                         value="${periodLoop.current}"
+                                                        ${companyCalendarShare.calendarPeriod == periodLoop.current ? 'checked="checked"' : ''}
                                                         class="tw-m-0"
                                                     >
                                                     <span>
