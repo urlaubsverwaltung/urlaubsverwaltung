@@ -149,7 +149,6 @@ public class OvertimeForm {
     }
 
     /**
-     *
      * @return the hours and minutes fields mapped to a {@link BigDecimal}
      */
     BigDecimal getDuration() {

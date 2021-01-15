@@ -48,27 +48,19 @@ public class OvertimeComment extends AbstractComment {
         this.action = action;
     }
 
-
     public Overtime getOvertime() {
-
         return overtime;
     }
 
-
     public void setOvertime(Overtime overtime) {
-
         this.overtime = overtime;
     }
 
-
     public OvertimeAction getAction() {
-
         return action;
     }
 
-
     public void setAction(OvertimeAction action) {
-
         this.action = action;
     }
 }

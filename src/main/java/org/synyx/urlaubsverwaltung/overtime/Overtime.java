@@ -42,7 +42,6 @@ public class Overtime extends AbstractPersistable<Integer> {
         // OK
     }
 
-
     public Overtime(Person person, LocalDate startDate, LocalDate endDate, BigDecimal numberOfHours) {
 
         Assert.notNull(person, "Person must be given.");
@@ -59,13 +58,10 @@ public class Overtime extends AbstractPersistable<Integer> {
     }
 
     public Person getPerson() {
-
         return person;
     }
 
-
     public LocalDate getStartDate() {
-
         if (startDate == null) {
             throw new IllegalStateException("Missing start date!");
         }
@@ -73,9 +69,7 @@ public class Overtime extends AbstractPersistable<Integer> {
         return startDate;
     }
 
-
     public LocalDate getEndDate() {
-
         if (endDate == null) {
             throw new IllegalStateException("Missing end date!");
         }
@@ -83,15 +77,12 @@ public class Overtime extends AbstractPersistable<Integer> {
         return endDate;
     }
 
-
     public BigDecimal getHours() {
-
         return hours;
     }
 
     @Override
     public void setId(Integer id) { // NOSONAR - make it public instead of protected
-
         super.setId(id);
     }
 
@@ -102,14 +93,12 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.person = person;
     }
 
-
     public void setStartDate(LocalDate startDate) {
 
         Assert.notNull(startDate, "Start date must be given.");
 
         this.startDate = startDate;
     }
-
 
     public void setEndDate(LocalDate endDate) {
 
@@ -118,7 +107,6 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.endDate = endDate;
     }
 
-
     public void setHours(BigDecimal hours) {
 
         Assert.notNull(hours, "Hours must be given.");
@@ -126,9 +114,7 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.hours = hours;
     }
 
-
     public LocalDate getLastModificationDate() {
-
         if (lastModificationDate == null) {
             throw new IllegalStateException("Missing last modification date!");
         }
@@ -136,12 +122,10 @@ public class Overtime extends AbstractPersistable<Integer> {
         return this.lastModificationDate;
     }
 
-
     /**
      * Should be called whenever an overtime entity is updated.
      */
     public void onUpdate() {
-
         this.lastModificationDate = LocalDate.now(UTC);
     }
 

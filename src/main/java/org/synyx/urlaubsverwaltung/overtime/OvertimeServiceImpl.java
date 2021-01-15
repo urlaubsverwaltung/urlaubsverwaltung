@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.math.BigDecimal.ZERO;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.EDITED;
 
 
 /**
@@ -53,7 +56,6 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeRepository.findByPerson(person);
     }
 
-
     @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
 
@@ -62,18 +64,17 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeRepository.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
     }
 
-
     @Override
     public Overtime record(Overtime overtime, Optional<String> comment, Person author) {
 
-        boolean isNewOvertime = overtime.isNew();
+        final boolean isNewOvertime = overtime.isNew();
 
         // save overtime record
         overtime.onUpdate();
         overtimeRepository.save(overtime);
 
         // save comment
-        OvertimeAction action = isNewOvertime ? OvertimeAction.CREATED : OvertimeAction.EDITED;
+        final OvertimeAction action = isNewOvertime ? CREATED : EDITED;
         OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
         comment.ifPresent(overtimeComment::setText);
 
@@ -86,7 +87,6 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtime;
     }
 
-
     @Override
     public Optional<Overtime> getOvertimeById(Integer id) {
 
@@ -94,7 +94,6 @@ class OvertimeServiceImpl implements OvertimeService {
 
         return overtimeRepository.findById(id);
     }
-
 
     @Override
     public List<OvertimeComment> getCommentsForOvertime(Overtime overtime) {
@@ -104,17 +103,15 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeCommentRepository.findByOvertime(overtime);
     }
 
-
     @Override
     public BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year) {
 
         Assert.notNull(person, "Person to get total overtime for must be given.");
         Assert.isTrue(year > 0, "Year must be a valid number.");
 
-        List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
+        final List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
 
-        BigDecimal totalHours = BigDecimal.ZERO;
-
+        BigDecimal totalHours = ZERO;
         for (Overtime record : overtimeRecords) {
             totalHours = totalHours.add(record.getHours());
         }
@@ -122,24 +119,21 @@ class OvertimeServiceImpl implements OvertimeService {
         return totalHours;
     }
 
-
     @Override
     public BigDecimal getLeftOvertimeForPerson(Person person) {
 
         Assert.notNull(person, "Person to get left overtime for must be given.");
 
-        BigDecimal totalOvertime = getTotalOvertimeForPerson(person);
-        BigDecimal overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
+        final BigDecimal totalOvertime = getTotalOvertimeForPerson(person);
+        final BigDecimal overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
         return totalOvertime.subtract(overtimeReduction);
     }
 
-
     private BigDecimal getTotalOvertimeForPerson(Person person) {
 
-        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person));
-
-        return totalOvertime.orElse(BigDecimal.ZERO);
+        final Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person));
+        return totalOvertime.orElse(ZERO);
 
     }
 }
