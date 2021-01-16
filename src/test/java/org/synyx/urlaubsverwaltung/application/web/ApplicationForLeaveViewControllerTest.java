@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -58,7 +59,7 @@ class ApplicationForLeaveViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService,
-            personService);
+            personService, Clock.systemUTC());
     }
 
     @Test

@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 
 /**
  * Implementation of interface {@link ApplicationService}.
@@ -80,5 +84,11 @@ class ApplicationServiceImpl implements ApplicationService {
 
         final BigDecimal overtime = applicationRepository.calculateTotalOvertimeOfPerson(person);
         return Optional.ofNullable(overtime).orElse(ZERO);
+    }
+
+    @Override
+    public List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date) {
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationRepository.findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, statuses);
     }
 }

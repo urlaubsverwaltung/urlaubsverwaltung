@@ -59,4 +59,6 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
             + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
     )
     BigDecimal calculateTotalOvertimeOfPerson(@Param("person") Person person);
+
+    List<Application> findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn(Person holidayReplacement, LocalDate date, List<ApplicationStatus> status);
 }
