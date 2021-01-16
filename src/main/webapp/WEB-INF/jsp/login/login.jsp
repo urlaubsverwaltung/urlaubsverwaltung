@@ -99,7 +99,7 @@
         <div class="row">
             <p>
                 <small>
-                    <spring:message code="header.title"/> v${version} powered by <a href="https://synyx.de/">synyx</a>
+                    <spring:message code="header.title"/> v${version} powered by <a href="https://focus-shift.de/">Focus Shift Software GmbH</a> and <a href="https://synyx.de/">synyx</a>
                 </small>
             </p>
         </div>
