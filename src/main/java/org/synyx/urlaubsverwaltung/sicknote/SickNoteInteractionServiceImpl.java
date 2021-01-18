@@ -154,10 +154,10 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private void updateCalendar(SickNote sickNote) {
 
         final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
-        Optional<String> eventId = calendarSyncService.addAbsence(new Absence(sickNote.getPerson(),
-            sickNote.getPeriod(), timeConfiguration));
+        final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), timeConfiguration);
 
-        eventId.ifPresent(s -> absenceMappingService.create(sickNote.getId(), SICKNOTE, s));
+        final Optional<String> maybeEventId = calendarSyncService.addAbsence(absence);
+        maybeEventId.ifPresent(eventId -> absenceMappingService.create(sickNote.getId(), SICKNOTE, eventId));
     }
 
     private TimeSettings getTimeSettings() {
