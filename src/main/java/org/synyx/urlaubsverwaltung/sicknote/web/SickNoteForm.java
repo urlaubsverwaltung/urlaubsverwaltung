@@ -23,7 +23,7 @@ public class SickNoteForm {
     private LocalDate aubEndDate;
     private String comment;
 
-    SickNoteForm() {
+    protected SickNoteForm() {
         // default constructor needed for empty object
     }
 

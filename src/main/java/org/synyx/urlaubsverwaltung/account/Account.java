@@ -1,18 +1,24 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  */
 @Entity
-public class Account extends AbstractPersistable<Integer> {
+public class Account {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
     private Person person;
@@ -49,6 +55,14 @@ public class Account extends AbstractPersistable<Integer> {
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
         this.comment = comment;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Person getPerson() {
@@ -111,6 +125,14 @@ public class Account extends AbstractPersistable<Integer> {
         return this.validFrom.getYear();
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -124,11 +146,20 @@ public class Account extends AbstractPersistable<Integer> {
             '}';
     }
 
-    public String getComment() {
-        return comment;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Account that = (Account) o;
+        return null != this.getId() && Objects.equals(id, that.id);
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

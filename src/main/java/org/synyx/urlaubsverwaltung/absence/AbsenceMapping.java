@@ -1,10 +1,11 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -13,7 +14,11 @@ import static javax.persistence.EnumType.STRING;
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
  */
 @Entity
-public class AbsenceMapping extends AbstractPersistable<Integer> {
+public class AbsenceMapping {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Column(nullable = false)
     private Integer absenceId;
@@ -33,6 +38,14 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
         this.absenceId = absenceId;
         this.absenceMappingType = absenceMappingType;
         this.eventId = eventId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getAbsenceId() {
@@ -57,5 +70,23 @@ public class AbsenceMapping extends AbstractPersistable<Integer> {
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AbsenceMapping that = (AbsenceMapping) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

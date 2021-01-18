@@ -1,14 +1,16 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -19,9 +21,11 @@ import static java.time.ZoneOffset.UTC;
  * @since 2.11.0
  */
 @Entity
-public class Overtime extends AbstractPersistable<Integer> {
+public class Overtime {
 
-    private static final long serialVersionUID = 67834589209309L;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
     private Person person;
@@ -38,7 +42,7 @@ public class Overtime extends AbstractPersistable<Integer> {
     @Column(nullable = false)
     private LocalDate lastModificationDate;
 
-    Overtime() {
+    protected Overtime() {
         // OK
     }
 
@@ -55,6 +59,14 @@ public class Overtime extends AbstractPersistable<Integer> {
         this.hours = numberOfHours;
 
         this.lastModificationDate = LocalDate.now(UTC);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Person getPerson() {
@@ -79,11 +91,6 @@ public class Overtime extends AbstractPersistable<Integer> {
 
     public BigDecimal getHours() {
         return hours;
-    }
-
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
     }
 
     public void setPerson(Person person) {
@@ -138,5 +145,22 @@ public class Overtime extends AbstractPersistable<Integer> {
             ", hours=" + hours +
             ", person=" + person +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Overtime that = (Overtime) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

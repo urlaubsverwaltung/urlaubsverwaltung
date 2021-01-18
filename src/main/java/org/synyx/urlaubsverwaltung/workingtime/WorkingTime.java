@@ -1,17 +1,19 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static javax.persistence.EnumType.STRING;
@@ -30,7 +32,11 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
  * Entity representing the working time of a person.
  */
 @Entity
-public class WorkingTime extends AbstractPersistable<Integer> {
+public class WorkingTime {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @OneToOne
     private Person person;
@@ -134,6 +140,14 @@ public class WorkingTime extends AbstractPersistable<Integer> {
         this.friday = ZERO;
         this.saturday = ZERO;
         this.sunday = ZERO;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Person getPerson() {
@@ -255,5 +269,22 @@ public class WorkingTime extends AbstractPersistable<Integer> {
             ", validFrom=" + validFrom +
             ", federalStateOverride=" + federalStateOverride +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final WorkingTime that = (WorkingTime) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

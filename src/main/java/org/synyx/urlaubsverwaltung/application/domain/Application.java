@@ -1,18 +1,20 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.EnumType.STRING;
@@ -22,9 +24,11 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.C
  * This class describes an application for leave.
  */
 @Entity
-public class Application extends AbstractPersistable<Integer> {
+public class Application {
 
-    private static final long serialVersionUID = 1234589209309L;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     /**
      * Person that will be on vacation if this application for leave is allowed.
@@ -148,9 +152,12 @@ public class Application extends AbstractPersistable<Integer> {
      */
     private BigDecimal hours;
 
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -325,32 +332,6 @@ public class Application extends AbstractPersistable<Integer> {
         this.hours = hours;
     }
 
-    @Override
-    public String toString() {
-        return "Application{" +
-            "person=" + person +
-            ", applier=" + applier +
-            ", boss=" + boss +
-            ", canceller=" + canceller +
-            ", twoStageApproval=" + twoStageApproval +
-            ", startDate=" + startDate +
-            ", startTime=" + startTime +
-            ", endDate=" + endDate +
-            ", endTime=" + endTime +
-            ", vacationType=" + vacationType +
-            ", dayLength=" + dayLength +
-            ", holidayReplacement=" + holidayReplacement +
-            ", address='" + address + '\'' +
-            ", applicationDate=" + applicationDate +
-            ", cancelDate=" + cancelDate +
-            ", editedDate=" + editedDate +
-            ", remindDate=" + remindDate +
-            ", status=" + status +
-            ", teamInformed=" + teamInformed +
-            ", hours=" + hours +
-            '}';
-    }
-
     /**
      * Checks if the application for leave has the given status.
      *
@@ -402,5 +383,48 @@ public class Application extends AbstractPersistable<Integer> {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Application{" +
+            "person=" + person +
+            ", applier=" + applier +
+            ", boss=" + boss +
+            ", canceller=" + canceller +
+            ", twoStageApproval=" + twoStageApproval +
+            ", startDate=" + startDate +
+            ", startTime=" + startTime +
+            ", endDate=" + endDate +
+            ", endTime=" + endTime +
+            ", vacationType=" + vacationType +
+            ", dayLength=" + dayLength +
+            ", holidayReplacement=" + holidayReplacement +
+            ", address='" + address + '\'' +
+            ", applicationDate=" + applicationDate +
+            ", cancelDate=" + cancelDate +
+            ", editedDate=" + editedDate +
+            ", remindDate=" + remindDate +
+            ", status=" + status +
+            ", teamInformed=" + teamInformed +
+            ", hours=" + hours +
+            '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Application that = (Application) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
