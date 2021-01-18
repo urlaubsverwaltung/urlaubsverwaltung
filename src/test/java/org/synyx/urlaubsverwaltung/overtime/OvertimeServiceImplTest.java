@@ -2,7 +2,10 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -12,6 +15,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,144 +27,128 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
+@ExtendWith(MockitoExtension.class)
 class OvertimeServiceImplTest {
 
     private OvertimeServiceImpl sut;
 
+    @Mock
     private OvertimeRepository overtimeRepository;
+    @Mock
     private OvertimeCommentRepository commentDAO;
+    @Mock
     private ApplicationService applicationService;
+    @Mock
     private OvertimeMailService overtimeMailService;
-
-    private Overtime overtimeMock;
-    private Person authorMock;
 
     @BeforeEach
     void setUp() {
-
-        commentDAO = mock(OvertimeCommentRepository.class);
-        overtimeRepository = mock(OvertimeRepository.class);
-        applicationService = mock(ApplicationService.class);
-        overtimeMailService = mock(OvertimeMailService.class);
-
         sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, Clock.systemUTC());
-
-        overtimeMock = mock(Overtime.class);
-        authorMock = mock(Person.class);
     }
 
-
     // Record overtime -------------------------------------------------------------------------------------------------
-
     @Test
     void ensurePersistsOvertimeAndComment() {
 
-        sut.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
+        final Overtime overtime = new Overtime();
+        final Person author = new Person();
 
-        verify(overtimeRepository).save(overtimeMock);
+        sut.record(overtime, Optional.of("Foo Bar"), author);
+
+        verify(overtimeRepository).save(overtime);
         verify(commentDAO).save(any(OvertimeComment.class));
     }
-
 
     @Test
     void ensureRecordingUpdatesLastModificationDate() {
 
-        sut.record(overtimeMock, Optional.empty(), authorMock);
+        final Person author = new Person();
 
-        verify(overtimeMock).onUpdate();
+        final Overtime overtime = sut.record(new Overtime(), Optional.empty(), author);
+        assertThat(overtime.getLastModificationDate()).isToday();
     }
-
 
     @Test
     void ensureRecordingOvertimeSendsNotification() {
 
-        sut.record(overtimeMock, Optional.of("Foo Bar"), authorMock);
+        final Overtime overtime = new Overtime();
+        final Person author = new Person();
 
-        verify(overtimeMailService).sendOvertimeNotification(eq(overtimeMock), any(OvertimeComment.class));
+        sut.record(overtime, Optional.of("Foo Bar"), author);
+
+        verify(overtimeMailService).sendOvertimeNotification(eq(overtime), any(OvertimeComment.class));
     }
-
 
     @Test
     void ensureCreatesCommentWithCorrectActionForNewOvertime() {
 
-        when(overtimeMock.isNew()).thenReturn(true);
+        final Overtime overtime = new Overtime();
+        final Person author = new Person();
 
-        ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        sut.record(overtime, Optional.empty(), author);
 
-        sut.record(overtimeMock, Optional.empty(), authorMock);
-
-        verify(overtimeMock).isNew();
+        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(commentDAO).save(commentCaptor.capture());
-
-        OvertimeComment comment = commentCaptor.getValue();
-
+        final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeAction.CREATED);
     }
 
-
     @Test
     void ensureCreatesCommentWithCorrectActionForExistentOvertime() {
 
-        when(overtimeMock.isNew()).thenReturn(false);
+        final Overtime overtime = new Overtime();
+        overtime.setId(1);
+        final Person author = new Person();
 
-        ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        sut.record(overtime, Optional.empty(), author);
 
-        sut.record(overtimeMock, Optional.empty(), authorMock);
-
-        verify(overtimeMock).isNew();
+        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(commentDAO).save(commentCaptor.capture());
-
-        OvertimeComment comment = commentCaptor.getValue();
-
+        final         OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeAction.EDITED);
     }
 
-
     @Test
     void ensureCreatedCommentWithoutTextHasCorrectProperties() {
 
-        ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final Overtime overtime = new Overtime();
+        final Person author = new Person();
 
-        sut.record(overtimeMock, Optional.empty(), authorMock);
+        sut.record(overtime, Optional.empty(), author);
 
+        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(commentDAO).save(commentCaptor.capture());
-
-        OvertimeComment comment = commentCaptor.getValue();
-
+        final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
-        assertThat(comment.getPerson()).isEqualTo(authorMock);
-        assertThat(comment.getOvertime()).isEqualTo(overtimeMock);
+        assertThat(comment.getPerson()).isEqualTo(author);
+        assertThat(comment.getOvertime()).isEqualTo(overtime);
         assertThat(comment.getText()).isNull();
     }
-
 
     @Test
     void ensureCreatedCommentWithTextHasCorrectProperties() {
 
-        ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
+        final Overtime overtime = new Overtime();
+        final Person author = new Person();
 
-        sut.record(overtimeMock, Optional.of("Foo"), authorMock);
+        sut.record(overtime, Optional.of("Foo"), author);
 
+        final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(commentDAO).save(commentCaptor.capture());
-
-        OvertimeComment comment = commentCaptor.getValue();
-
+        final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
-        assertThat(comment.getPerson()).isEqualTo(authorMock);
-        assertThat(comment.getOvertime()).isEqualTo(overtimeMock);
+        assertThat(comment.getPerson()).isEqualTo(author);
+        assertThat(comment.getOvertime()).isEqualTo(overtime);
         assertThat(comment.getText()).isEqualTo("Foo");
     }
 
-
     // Get overtime records for person ---------------------------------------------------------------------------------
-
     @Test
     void ensureGetForPersonCallsCorrectDAOMethod() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.getOvertimeRecordsForPerson(person);
 
@@ -172,9 +160,7 @@ class OvertimeServiceImplTest {
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getOvertimeRecordsForPerson(null));
     }
 
-
     // Get overtime record by ID ---------------------------------------------------------------------------------------
-
     @Test
     void ensureGetByIDCallsCorrectDAOMethod() {
 
@@ -183,52 +169,43 @@ class OvertimeServiceImplTest {
         verify(overtimeRepository).findById(42);
     }
 
-
     @Test
     void ensureThrowsIfTryingToGetOvertimeByEmptyID() {
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getOvertimeById(null));
     }
-
 
     @Test
     void ensureReturnsEmptyOptionalIfNoOvertimeFoundForID() {
 
         when(overtimeRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        Optional<Overtime> overtimeOptional = sut.getOvertimeById(42);
-
-        assertThat(overtimeOptional).isEmpty();
+        final Optional<Overtime> maybeOvertime = sut.getOvertimeById(42);
+        assertThat(maybeOvertime).isEmpty();
     }
 
-
     // Get overtime records for person and year ------------------------------------------------------------------------
-
     @Test
     void ensureThrowsIfTryingToGetRecordsByPersonAndYearWithNullPerson() {
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getOvertimeRecordsForPersonAndYear(null, 2015));
     }
 
-
     @Test
     void ensureGetRecordsByPersonAndYearCallsCorrectDAOMethod() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         sut.getOvertimeRecordsForPersonAndYear(person, 2015);
 
-        LocalDate firstDay = LocalDate.of(2015, 1, 1);
-        LocalDate lastDay = LocalDate.of(2015, 12, 31);
-
+        final LocalDate firstDay = LocalDate.of(2015, 1, 1);
+        final LocalDate lastDay = LocalDate.of(2015, 12, 31);
         verify(overtimeRepository).findByPersonAndPeriod(person, firstDay, lastDay);
     }
-
 
     // Get overtime comments -------------------------------------------------------------------------------------------
     @Test
     void ensureGetCommentsCorrectDAOMethod() {
 
-        Overtime overtime = mock(Overtime.class);
-
+        final Overtime overtime = new Overtime();
         sut.getCommentsForOvertime(overtime);
 
         verify(commentDAO).findByOvertime(overtime);
@@ -255,50 +232,43 @@ class OvertimeServiceImplTest {
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(new Person("muster", "Muster", "Marlene", "muster@example.org"), 0));
     }
 
-
     @Test
     void ensureReturnsZeroIfPersonHasNoOvertimeRecordsYetForTheGivenYear() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(Collections.emptyList());
 
-        BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
-
-        LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
-        LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
-
-        verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
-
+        final BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
         assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
-    }
 
+        final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
+        final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
+        verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
+    }
 
     @Test
     void ensureReturnsCorrectYearOvertimeForPerson() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
+        final Overtime overtimeRecord = TestDataCreator.createOvertimeRecord(person);
         overtimeRecord.setHours(BigDecimal.ONE);
 
-        Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
+        final Overtime otherOvertimeRecord = TestDataCreator.createOvertimeRecord(person);
         otherOvertimeRecord.setHours(BigDecimal.TEN);
 
         when(overtimeRepository.findByPersonAndPeriod(eq(person), any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(Arrays.asList(overtimeRecord, otherOvertimeRecord));
+            .thenReturn(List.of(overtimeRecord, otherOvertimeRecord));
 
-        BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
-
-        LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
-        LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
-
-        verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
-
+        final BigDecimal totalHours = sut.getTotalOvertimeForPersonAndYear(person, 2016);
         assertThat(totalHours).isEqualTo(new BigDecimal("11"));
-    }
 
+        final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
+        final LocalDate lastDayOfYear = LocalDate.of(2016, 12, 31);
+        verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
+    }
 
     // Get left overtime -----------------------------------------------------------------------------------------------
     @Test
@@ -309,47 +279,42 @@ class OvertimeServiceImplTest {
     @Test
     void ensureReturnsZeroAsLeftOvertimeIfPersonHasNoOvertimeRecordsYet() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
-        BigDecimal totalHours = sut.getLeftOvertimeForPerson(person);
+        final BigDecimal totalHours = sut.getLeftOvertimeForPerson(person);
+        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
 
         verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
-
-        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
     }
-
 
     @Test
     void ensureTheLeftOvertimeIsTheDifferenceBetweenTotalOvertimeAndOvertimeReduction() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(BigDecimal.TEN);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
-        BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
+        final BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
+        assertThat(leftOvertime).isEqualTo(new BigDecimal("9"));
 
         verify(overtimeRepository).calculateTotalHoursForPerson(person);
         verify(applicationService).getTotalOvertimeReductionOfPerson(person);
-
-        assertThat(leftOvertime).isEqualTo(new BigDecimal("9"));
     }
-
 
     @Test
     void ensureTheLeftOvertimeIsZeroIfPersonHasNeitherOvertimeRecordsNorOvertimeReduction() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
 
-        BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
-
+        final BigDecimal leftOvertime = sut.getLeftOvertimeForPerson(person);
         assertThat(leftOvertime).isEqualTo(BigDecimal.ZERO);
     }
 }
