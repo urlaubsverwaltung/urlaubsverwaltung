@@ -28,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -163,7 +162,7 @@ class CompanyCalendarServiceTest {
     @Test
     void ensureGetCompanyCalendarReturnsCalendar() {
 
-        final CompanyCalendar expectedCalendar = mock(CompanyCalendar.class);
+        final CompanyCalendar expectedCalendar = new CompanyCalendar();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));

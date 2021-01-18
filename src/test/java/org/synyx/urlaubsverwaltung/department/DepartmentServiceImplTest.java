@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -32,9 +31,11 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,7 +72,7 @@ class DepartmentServiceImplTest {
     @Test
     void ensureUpdateCallDepartmentDAOUpdate() {
 
-        Department department = createDepartment();
+        final Department department = createDepartment();
 
         sut.update(department);
 
@@ -89,35 +90,32 @@ class DepartmentServiceImplTest {
     @Test
     void ensureGetManagedDepartmentsOfDepartmentHeadCallCorrectDAOMethod() {
 
-        Person person = mock(Person.class);
+        final Person person = new Person();
 
         sut.getManagedDepartmentsOfDepartmentHead(person);
 
         verify(departmentRepository).getManagedDepartments(person);
     }
 
-
     @Test
     void ensureGetManagedDepartmentsOfSecondStageAuthorityCallCorrectDAOMethod() {
 
-        Person person = mock(Person.class);
+        final Person person = new Person();
 
         sut.getManagedDepartmentsOfSecondStageAuthority(person);
 
         verify(departmentRepository).getDepartmentsForSecondStageAuthority(person);
     }
 
-
     @Test
     void ensureGetAssignedDepartmentsOfMemberCallCorrectDAOMethod() {
 
-        Person person = mock(Person.class);
+        final Person person = new Person();
 
         sut.getAssignedDepartmentsOfMember(person);
 
         verify(departmentRepository).getAssignedDepartments(person);
     }
-
 
     @Test
     void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() {
@@ -143,23 +141,20 @@ class DepartmentServiceImplTest {
         verify(departmentRepository).deleteById(eq(id));
     }
 
-
     @Test
     void ensureSetLastModificationOnUpdate() {
 
-        Department department = mock(Department.class);
+        final Department department = new Department();
 
         sut.update(department);
-
-        verify(department).setLastModification(any(LocalDate.class));
+        assertThat(department.getLastModification()).isToday();
     }
-
 
     @Test
     void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
 
-        Person departmentHead = mock(Person.class);
-        Person secondDepartmentHead = mock(Person.class);
+        final Person departmentHead = new Person();
+        final Person secondDepartmentHead = new Person();
 
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -173,7 +168,10 @@ class DepartmentServiceImplTest {
         admins.setDepartmentHeads(asList(departmentHead, secondDepartmentHead));
 
         Department marketing = createDepartment("marketing");
-        Person secondStageAuth = mock(Person.class);
+
+        final Person secondStageAuth = new Person();
+        secondStageAuth.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
         marketing.setMembers(asList(marketing1, marketing2, marketing3, departmentHead, secondStageAuth));
         marketing.setSecondStageAuthorities(singletonList(secondStageAuth));
 
@@ -186,7 +184,7 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
 
-        Person departmentHead = mock(Person.class);
+        final Person departmentHead = new Person();
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(emptyList());
 
@@ -197,8 +195,8 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsTrueIfIsDepartmentHeadOfTheGivenPerson() {
 
-        Person departmentHead = mock(Person.class);
-        when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -215,8 +213,8 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsFalseIfIsNotDepartmentHeadOfTheGivenPerson() {
 
-        Person departmentHead = mock(Person.class);
-        when(departmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(true);
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -235,8 +233,8 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsFalseIfIsInTheSameDepartmentButHasNotDepartmentHeadRole() {
 
-        Person noDepartmentHead = mock(Person.class);
-        when(noDepartmentHead.hasRole(Role.DEPARTMENT_HEAD)).thenReturn(false);
+        final Person noDepartmentHead = new Person();
+        noDepartmentHead.setPermissions(List.of(USER));
 
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -251,8 +249,10 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsEmptyListOfDepartmentApplicationsIfPersonIsNotAssignedToAnyDepartment() {
 
-        Person person = mock(Person.class);
-        LocalDate date = LocalDate.now(UTC);
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        final LocalDate date = LocalDate.now(UTC);
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(emptyList());
 
@@ -266,7 +266,9 @@ class DepartmentServiceImplTest {
     @Test
     void ensureReturnsEmptyListOfDepartmentApplicationsIfNoMatchingApplicationsForLeave() {
 
-        Person person = mock(Person.class);
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
         LocalDate date = LocalDate.now(UTC);
 
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -305,9 +307,11 @@ class DepartmentServiceImplTest {
 
 
     @Test
-    void ensureReturnsOnlyWaitingAndAllowedAndCancellatioNRequestDepartmentApplicationsForLeave() {
+    void ensureReturnsOnlyWaitingAndAllowedAndCancellationRequestDepartmentApplicationsForLeave() {
 
-        final Person person = mock(Person.class);
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
         final LocalDate date = LocalDate.now(UTC);
 
         final Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
@@ -319,24 +323,17 @@ class DepartmentServiceImplTest {
         final Department marketing = createDepartment("marketing");
         marketing.setMembers(asList(marketing1, person));
 
-        final Application waitingApplication = mock(Application.class);
-        when(waitingApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(true);
-        when(waitingApplication.hasStatus(ALLOWED)).thenReturn(false);
+        final Application waitingApplication = new Application();
+        waitingApplication.setStatus(TEMPORARY_ALLOWED);
 
-        final Application allowedApplication = mock(Application.class);
-        when(allowedApplication.hasStatus(ALLOWED)).thenReturn(true);
+        final Application allowedApplication = new Application();
+        allowedApplication.setStatus(ALLOWED);
 
-        final Application cancellationRequestApplication = mock(Application.class);
-        when(cancellationRequestApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(false);
-        when(cancellationRequestApplication.hasStatus(WAITING)).thenReturn(false);
-        when(cancellationRequestApplication.hasStatus(ALLOWED)).thenReturn(false);
-        when(cancellationRequestApplication.hasStatus(ALLOWED_CANCELLATION_REQUESTED)).thenReturn(true);
+        final Application cancellationRequestApplication = new Application();
+        cancellationRequestApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        final Application otherApplication = mock(Application.class);
-        when(otherApplication.hasStatus(TEMPORARY_ALLOWED)).thenReturn(false);
-        when(otherApplication.hasStatus(WAITING)).thenReturn(false);
-        when(otherApplication.hasStatus(ALLOWED)).thenReturn(false);
-        when(otherApplication.hasStatus(ALLOWED_CANCELLATION_REQUESTED)).thenReturn(false);
+        final Application otherApplication = new Application();
+        otherApplication.setStatus(REJECTED);
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
 
@@ -356,11 +353,11 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInOfficeUserCanAccessPersonData() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(singletonList(USER));
 
-        Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setId(2);
         office.setPermissions(asList(USER, OFFICE));
 
@@ -371,11 +368,11 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInBossUserCanAccessPersonData() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(singletonList(USER));
 
-        Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setId(2);
         boss.setPermissions(asList(USER, Role.BOSS));
 
@@ -386,11 +383,11 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(singletonList(USER));
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
