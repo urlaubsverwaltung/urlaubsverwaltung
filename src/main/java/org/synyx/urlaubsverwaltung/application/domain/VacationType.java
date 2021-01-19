@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -15,16 +17,23 @@ import static javax.persistence.EnumType.STRING;
  * @since 2.15.0
  */
 @Entity
-public class VacationType extends AbstractPersistable<Integer> {
+public class VacationType {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Enumerated(STRING)
     private VacationCategory category;
 
     private String messageKey;
 
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public VacationCategory getCategory() {
@@ -54,5 +63,22 @@ public class VacationType extends AbstractPersistable<Integer> {
             "category=" + category +
             ", messageKey='" + messageKey + '\'' +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final VacationType that = (VacationType) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

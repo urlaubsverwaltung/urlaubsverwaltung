@@ -67,7 +67,7 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Overtime record(Overtime overtime, Optional<String> comment, Person author) {
 
-        final boolean isNewOvertime = overtime.isNew();
+        final boolean isNewOvertime = overtime.getId() == null;
 
         // save overtime record
         overtime.onUpdate();

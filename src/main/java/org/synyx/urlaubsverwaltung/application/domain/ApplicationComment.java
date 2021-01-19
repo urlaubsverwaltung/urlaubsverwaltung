@@ -16,8 +16,6 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 public class ApplicationComment extends AbstractComment {
 
-    private static final long serialVersionUID = 8908423789423089L;
-
     @ManyToOne
     private Application application;
 

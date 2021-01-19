@@ -2,17 +2,19 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -20,7 +22,11 @@ import static java.time.ZoneOffset.UTC;
  * Department represents an organisation unit of a company.
  */
 @Entity
-public class Department extends AbstractPersistable<Integer> {
+public class Department {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
@@ -51,6 +57,14 @@ public class Department extends AbstractPersistable<Integer> {
         this.lastModification = LocalDate.now(UTC);
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -73,11 +87,6 @@ public class Department extends AbstractPersistable<Integer> {
 
     public void setLastModification(LocalDate lastModification) {
         this.lastModification = lastModification;
-    }
-
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
     }
 
     public boolean isTwoStageApproval() {
@@ -135,5 +144,22 @@ public class Department extends AbstractPersistable<Integer> {
             ", departmentHeads=" + departmentHeads +
             ", secondStageAuthorities=" + secondStageAuthorities +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Department that = (Department) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -1,22 +1,28 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Objects;
 
 
 /**
  * Represents the settings / business rules for the application.
  */
 @Entity
-public class Settings extends AbstractPersistable<Integer> {
+public class Settings {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private ApplicationSettings applicationSettings;
     private AccountSettings accountSettings;
@@ -27,6 +33,14 @@ public class Settings extends AbstractPersistable<Integer> {
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public ApplicationSettings getApplicationSettings() {
         if (applicationSettings == null) {
@@ -118,7 +132,19 @@ public class Settings extends AbstractPersistable<Integer> {
     }
 
     @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Settings that = (Settings) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

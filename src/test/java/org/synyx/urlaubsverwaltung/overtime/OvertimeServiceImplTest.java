@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -89,6 +87,7 @@ class OvertimeServiceImplTest {
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(commentDAO).save(commentCaptor.capture());
+
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeAction.CREATED);
@@ -105,7 +104,7 @@ class OvertimeServiceImplTest {
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
         verify(commentDAO).save(commentCaptor.capture());
-        final         OvertimeComment comment = commentCaptor.getValue();
+        final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeAction.EDITED);
     }

@@ -1,24 +1,33 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.util.Assert;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 
 @Entity
-public class SickNoteType extends AbstractPersistable<Integer> {
+public class SickNoteType {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Enumerated(STRING)
     private SickNoteCategory category;
 
     private String messageKey;
 
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public SickNoteCategory getCategory() {
@@ -48,5 +57,22 @@ public class SickNoteType extends AbstractPersistable<Integer> {
             "category=" + category +
             ", messageKey='" + messageKey + '\'' +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SickNoteType that = (SickNoteType) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

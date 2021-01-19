@@ -61,7 +61,7 @@ public class OverlapService {
         final LocalDate endDate = application.getEndDate();
 
         List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, application.getDayLength());
-        if (!application.isNew()) {
+        if (application.getId() != null) {
             applications = applications.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(application.getId()))
                 .collect(toList());
@@ -87,7 +87,7 @@ public class OverlapService {
         final List<Application> applications = getRelevantApplicationsForLeave(person, startDate, endDate, sickNote.getDayLength());
 
         List<SickNote> sickNotes = getRelevantSickNotes(person, startDate, endDate);
-        if (!sickNote.isNew()) {
+        if (sickNote.getId() != null) {
             sickNotes = sickNotes.stream()
                 .filter(input -> input.getId() != null && !input.getId().equals(sickNote.getId()))
                 .collect(toList());

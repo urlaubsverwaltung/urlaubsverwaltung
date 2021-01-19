@@ -1,14 +1,16 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.EnumType.STRING;
@@ -17,9 +19,11 @@ import static javax.persistence.EnumType.STRING;
  * Entity representing a sick note with information about employee and period.
  */
 @Entity
-public class SickNote extends AbstractPersistable<Integer> {
+public class SickNote {
 
-    private static final long serialVersionUID = 8524575678589823089L;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     /**
      * One person may have multiple sick notes.
@@ -62,6 +66,14 @@ public class SickNote extends AbstractPersistable<Integer> {
 
     public SickNote() {
         this.lastEdited = LocalDate.now(UTC);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Person getPerson() {
@@ -149,11 +161,6 @@ public class SickNote extends AbstractPersistable<Integer> {
     }
 
     @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-        super.setId(id);
-    }
-
-    @Override
     public String toString() {
         return "SickNote{" +
             "id=" + getId() +
@@ -167,5 +174,22 @@ public class SickNote extends AbstractPersistable<Integer> {
             ", lastEdited=" + lastEdited +
             ", status=" + status +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SickNote that = (SickNote) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

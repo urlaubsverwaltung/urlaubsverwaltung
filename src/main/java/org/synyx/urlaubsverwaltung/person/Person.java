@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.hibernate.annotations.LazyCollection;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Collection;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
@@ -18,9 +20,11 @@ import static org.springframework.util.StringUtils.hasText;
  * This class describes a person.
  */
 @Entity
-public class Person extends AbstractPersistable<Integer> {
+public class Person {
 
-    private static final long serialVersionUID = 765672310978437L;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String username;
     private String password;
@@ -47,6 +51,14 @@ public class Person extends AbstractPersistable<Integer> {
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -151,12 +163,24 @@ public class Person extends AbstractPersistable<Integer> {
     }
 
     @Override
-    public void setId(Integer id) { // NOSONAR - needed for setting ID in form
-        super.setId(id);
+    public String toString() {
+        return "Person{id='" + getId() + "'}";
     }
 
     @Override
-    public String toString() {
-        return "Person{id='" + super.getId() + "'}";
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Person that = (Person) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
