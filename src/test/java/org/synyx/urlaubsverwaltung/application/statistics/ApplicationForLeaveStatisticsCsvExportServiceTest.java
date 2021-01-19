@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -23,20 +26,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     private ApplicationForLeaveStatisticsCsvExportService sut;
 
+    @Mock
     private MessageSource messageSource;
+    @Mock
+    private VacationTypeService vacationTypeService;
 
     @BeforeEach
     void setUp() {
-        messageSource = mock(MessageSource.class);
-        VacationTypeService vacationTypeService = mock(VacationTypeService.class);
-
-        final DateFormatAware dateFormatAware = new DateFormatAware();
-
-        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService, dateFormatAware);
+        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService, new DateFormatAware());
     }
 
     @Test
@@ -50,25 +52,24 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(person.getFirstName()).thenReturn("personOneFirstName");
         when(person.getLastName()).thenReturn("personOneLastName");
 
-        final VacationTypeService vts = mock(VacationTypeService.class);
-        when(vts.getVacationTypes()).thenReturn(emptyList());
+        when(vacationTypeService.getVacationTypes()).thenReturn(emptyList());
 
-        statistics.add(new ApplicationForLeaveStatistics(person, vts));
+        statistics.add(new ApplicationForLeaveStatistics(person, vacationTypeService));
 
         final CSVWriter csvWriter = mock(CSVWriter.class);
 
-        mockMessageSource("absence.period");
+        addMessageSource("absence.period");
 
-        mockMessageSource("person.data.firstName");
-        mockMessageSource("person.data.lastName");
-        mockMessageSource("applications.statistics.allowed");
-        mockMessageSource("applications.statistics.waiting");
-        mockMessageSource("applications.statistics.left");
+        addMessageSource("person.data.firstName");
+        addMessageSource("person.data.lastName");
+        addMessageSource("applications.statistics.allowed");
+        addMessageSource("applications.statistics.waiting");
+        addMessageSource("applications.statistics.left");
 
-        mockMessageSource("duration.vacationDays");
-        mockMessageSource("duration.overtime");
+        addMessageSource("duration.vacationDays");
+        addMessageSource("duration.overtime");
 
-        mockMessageSource("applications.statistics.total");
+        addMessageSource("applications.statistics.total");
 
         sut.writeStatistics(period, statistics, csvWriter);
 
@@ -97,26 +98,22 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(personTwo.getFirstName()).thenReturn("personTwoFirstName");
         when(personTwo.getLastName()).thenReturn("personTwoLastName");
 
-        VacationTypeService vts = mock(VacationTypeService.class);
-        when(vts.getVacationTypes()).thenReturn(emptyList());
+        when(vacationTypeService.getVacationTypes()).thenReturn(emptyList());
 
-        statistics.add(new ApplicationForLeaveStatistics(personOne, vts));
-        statistics.add(new ApplicationForLeaveStatistics(personTwo, vts));
+        statistics.add(new ApplicationForLeaveStatistics(personOne, vacationTypeService));
+        statistics.add(new ApplicationForLeaveStatistics(personTwo, vacationTypeService));
 
         final CSVWriter csvWriter = mock(CSVWriter.class);
 
-        mockMessageSource("absence.period");
-
-        mockMessageSource("person.data.firstName");
-        mockMessageSource("person.data.lastName");
-        mockMessageSource("applications.statistics.allowed");
-        mockMessageSource("applications.statistics.waiting");
-        mockMessageSource("applications.statistics.left");
-
-        mockMessageSource("duration.vacationDays");
-        mockMessageSource("duration.overtime");
-
-        mockMessageSource("applications.statistics.total");
+        addMessageSource("absence.period");
+        addMessageSource("person.data.firstName");
+        addMessageSource("person.data.lastName");
+        addMessageSource("applications.statistics.allowed");
+        addMessageSource("applications.statistics.waiting");
+        addMessageSource("applications.statistics.left");
+        addMessageSource("duration.vacationDays");
+        addMessageSource("duration.overtime");
+        addMessageSource("applications.statistics.total");
 
         sut.writeStatistics(period, statistics, csvWriter);
 
@@ -156,7 +153,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         assertThat(fileName).isEqualTo("test_01012019_31122019.csv");
     }
 
-    private void mockMessageSource(String key) {
+    private void addMessageSource(String key) {
         when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
     }
 }

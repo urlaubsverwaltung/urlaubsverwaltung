@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -14,7 +13,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,17 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 class SickDaysOverviewTest {
-
-    private WorkDaysCountService workDaysCountService;
-
-    @BeforeEach
-    void setUp() {
-
-        workDaysCountService = mock(WorkDaysCountService.class);
-    }
-
 
     @Test
     void ensureGeneratesCorrectSickDaysOverview() {
@@ -85,23 +73,25 @@ class SickDaysOverviewTest {
         inactiveChildSickNote.setStartDate(LocalDate.of(2014, 10, 18));
         inactiveChildSickNote.setEndDate(LocalDate.of(2014, 10, 18));
 
-        List<SickNote> sickNotes = Arrays.asList(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
+        final List<SickNote> sickNotes = List.of(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
+
+        final WorkDaysCountService workDaysCountService = mock(WorkDaysCountService.class);
 
         // just return 1 day for each sick note
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class),
             any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
-        SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
+        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
 
-        SickDays sickDays = sickDaysOverview.getSickDays();
+        final SickDays sickDays = sickDaysOverview.getSickDays();
         assertThat(sickDays.getDays())
             .isNotNull()
             .containsEntry("TOTAL", new BigDecimal("2"))
             .containsEntry("WITH_AUB", BigDecimal.ONE);
 
-        SickDays childSickDays = sickDaysOverview.getChildSickDays();
+        final SickDays childSickDays = sickDaysOverview.getChildSickDays();
         assertThat(childSickDays.getDays())
             .isNotNull()
             .containsEntry("TOTAL", new BigDecimal("2"))

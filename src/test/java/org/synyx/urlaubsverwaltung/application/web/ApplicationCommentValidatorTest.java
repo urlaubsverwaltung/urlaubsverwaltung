@@ -26,32 +26,25 @@ class ApplicationCommentValidatorTest {
         errors = mock(Errors.class);
     }
 
-
     @Test
     void ensureSupportsCommentClass() {
-
         assertThat(validator.supports(ApplicationCommentForm.class)).isTrue();
     }
 
-
     @Test
     void ensureDoesNotSupportNull() {
-
         assertThat(validator.supports(null)).isFalse();
     }
 
-
     @Test
     void ensureDoesNotSupportOtherClass() {
-
         assertThat(validator.supports(SickNoteComment.class)).isFalse();
     }
-
 
     @Test
     void ensureReasonCanBeNullIfNotMandatory() {
 
-        ApplicationCommentForm comment = new ApplicationCommentForm();
+        final ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(false);
         comment.setText(null);
 
@@ -59,12 +52,11 @@ class ApplicationCommentValidatorTest {
 
         verifyNoInteractions(errors);
     }
-
 
     @Test
     void ensureReasonCanBeEmptyIfNotMandatory() {
 
-        ApplicationCommentForm comment = new ApplicationCommentForm();
+        final ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(false);
         comment.setText("");
 
@@ -73,11 +65,10 @@ class ApplicationCommentValidatorTest {
         verifyNoInteractions(errors);
     }
 
-
     @Test
     void ensureReasonCanNotBeNullIfMandatory() {
 
-        ApplicationCommentForm comment = new ApplicationCommentForm();
+        final ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(true);
         comment.setText(null);
 
@@ -86,11 +77,10 @@ class ApplicationCommentValidatorTest {
         verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
-
     @Test
     void ensureReasonCanNotBeEmptyIfMandatory() {
 
-        ApplicationCommentForm comment = new ApplicationCommentForm();
+        final ApplicationCommentForm comment = new ApplicationCommentForm();
         comment.setMandatory(true);
         comment.setText("");
 
@@ -99,11 +89,10 @@ class ApplicationCommentValidatorTest {
         verify(errors).rejectValue("text", "error.entry.mandatory");
     }
 
-
     @Test
     void ensureThereIsAMaximumCharLengthForReason() {
 
-        ApplicationCommentForm comment = new ApplicationCommentForm();
+        final ApplicationCommentForm comment = new ApplicationCommentForm();
 
         comment.setText(
             "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
