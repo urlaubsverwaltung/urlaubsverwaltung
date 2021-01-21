@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.overtime.Overtime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,25 +23,20 @@ class PersonTest {
     void ensureReturnsFirstAndLastNameAsNiceName() {
 
         Person person = new Person("muster", "Muster", "Max", "");
-
         assertThat(person.getNiceName()).isEqualTo("Max Muster");
     }
-
 
     @Test
     void ensureReturnsDummyAsNiceNameIfFirstAndLastNameAreNotSet() {
 
         Person person = new Person("muster", "", "", "");
-
         assertThat(person.getNiceName()).isEqualTo("---");
-
     }
 
     @Test
     void ensureReturnsFirstNameAsNiceNameIfLastNameIsNotSet() {
 
         Person person = new Person("muster", "Muster", "", "");
-
         assertThat(person.getNiceName()).isEqualTo("Muster");
     }
 
@@ -48,71 +44,57 @@ class PersonTest {
     void ensureReturnsLastNameAsNiceNameIfFirstNameIsNotSet() {
 
         Person person = new Person("muster", "", "Max", "");
-
         assertThat(person.getNiceName()).isEqualTo("Max");
     }
-
 
     @Test
     void ensureReturnsTrueIfPersonHasTheGivenRole() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(Arrays.asList(USER, BOSS));
-
         assertThat(person.hasRole(BOSS)).isTrue();
     }
-
 
     @Test
     void ensureReturnsFalseIfPersonHasNotTheGivenRole() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(singletonList(USER));
-
         assertThat(person.hasRole(BOSS)).isFalse();
     }
-
 
     @Test
     void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(Arrays.asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
-
         assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isTrue();
     }
-
 
     @Test
     void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(singletonList(NOTIFICATION_USER));
-
         assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isFalse();
     }
-
 
     @Test
     void ensureReturnsEmptyStringAsGravatarURLIfEmailIsEmpty() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setEmail(null);
-
         assertThat(person.getGravatarURL()).isSameAs("");
     }
-
 
     @Test
     void ensureCanReturnGravatarURL() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setEmail("muster@example.org");
-
         assertThat(person.getGravatarURL()).isNotEqualTo("");
         assertThat(person.getEmail()).isNotEqualTo(person.getGravatarURL());
     }
-
 
     @Test
     void ensurePermissionsAreUnmodifiable() {
@@ -126,7 +108,6 @@ class PersonTest {
         final Collection<Role> permissions = person.getPermissions();
         assertThatThrownBy(() -> permissions.add(BOSS)).isInstanceOf(UnsupportedOperationException.class);
     }
-
 
     @Test
     void ensureNotificationsAreUnmodifiable() {
@@ -153,5 +134,32 @@ class PersonTest {
         assertThat(personToString)
             .isEqualTo("Person{id='10'}")
             .doesNotContain("Theo", "USER", "NOTIFICATION_USER");
+    }
+
+    @Test
+    void equals() {
+        final Person personOne = new Person();
+        personOne.setId(1);
+
+        final Person personOneOne = new Person();
+        personOneOne.setId(1);
+
+        final Person personTwo = new Person();
+        personTwo.setId(2);
+
+        assertThat(personOne)
+            .isEqualTo(personOne)
+            .isEqualTo(personOneOne)
+            .isNotEqualTo(personTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final Person personOne = new Person();
+        personOne.setId(1);
+
+        assertThat(personOne.hashCode()).isEqualTo(32);
     }
 }

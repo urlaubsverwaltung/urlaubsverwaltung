@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -25,7 +26,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class ApplicationTest {
 
     // Status ----------------------------------------------------------------------------------------------------------
-
     @Test
     void ensureReturnsTrueIfItHasTheGivenStatus() {
 
@@ -34,7 +34,6 @@ class ApplicationTest {
 
         assertThat(application.hasStatus(ApplicationStatus.ALLOWED)).isTrue();
     }
-
 
     @Test
     void ensureReturnsFalseIfItHasNotTheGivenStatus() {
@@ -45,9 +44,7 @@ class ApplicationTest {
         assertThat(application.hasStatus(ApplicationStatus.ALLOWED)).isFalse();
     }
 
-
     // Formerly allowed ------------------------------------------------------------------------------------------------
-
     @Test
     void ensureIsFormerlyAllowedReturnsFalseIfIsRevoked() {
 
@@ -56,7 +53,6 @@ class ApplicationTest {
 
         assertThat(application.isFormerlyAllowed()).isFalse();
     }
-
 
     @Test
     void ensureIsFormerlyAllowedReturnsTrueIfIsCancelled() {
@@ -67,9 +63,7 @@ class ApplicationTest {
         assertThat(application.isFormerlyAllowed()).isTrue();
     }
 
-
     // Period ----------------------------------------------------------------------------------------------------------
-
     @Test
     void ensureThrowsIfTryingToGetPeriodForApplicationWithoutStartDate() {
 
@@ -80,7 +74,6 @@ class ApplicationTest {
 
         assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
     }
-
 
     @Test
     void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
@@ -93,7 +86,6 @@ class ApplicationTest {
         assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
     }
 
-
     @Test
     void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
 
@@ -104,7 +96,6 @@ class ApplicationTest {
 
         assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
     }
-
 
     @Test
     void ensureGetPeriodReturnsCorrectPeriod() {
@@ -124,9 +115,7 @@ class ApplicationTest {
         assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
     }
 
-
     // Start and end time ----------------------------------------------------------------------------------------------
-
     @Test
     void ensureGetStartDateWithTimeReturnsCorrectDateTime() {
 
@@ -142,7 +131,6 @@ class ApplicationTest {
         assertThat(startDateWithTime).isEqualTo(expected);
     }
 
-
     @Test
     void ensureGetStartDateWithTimeReturnsNullIfStartTimeIsNull() {
 
@@ -155,7 +143,6 @@ class ApplicationTest {
         assertThat(startDateWithTime).isNull();
     }
 
-
     @Test
     void ensureGetStartDateWithTimeReturnsNullIfStartDateIsNull() {
 
@@ -167,7 +154,6 @@ class ApplicationTest {
 
         assertThat(startDateWithTime).isNull();
     }
-
 
     @Test
     void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
@@ -184,7 +170,6 @@ class ApplicationTest {
         assertThat(endDateWithTime).isEqualTo(expected);
     }
 
-
     @Test
     void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
 
@@ -196,7 +181,6 @@ class ApplicationTest {
 
         assertThat(endDateWithTime).isNull();
     }
-
 
     @Test
     void ensureGetEndDateWithTimeReturnsNullIfEndDateIsNull() {
@@ -254,5 +238,32 @@ class ApplicationTest {
             "holidayReplacement=Person{id='10'}, address='Address', applicationDate=1970-01-01, " +
             "cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, " +
             "teamInformed=true, hours=10}");
+    }
+
+    @Test
+    void equals() {
+        final Application applicationOne = new Application();
+        applicationOne.setId(1);
+
+        final Application applicationOneOne = new Application();
+        applicationOneOne.setId(1);
+
+        final Application applicationTwo = new Application();
+        applicationTwo.setId(2);
+
+        assertThat(applicationOne)
+            .isEqualTo(applicationOne)
+            .isEqualTo(applicationOneOne)
+            .isNotEqualTo(applicationTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final Application applicationOne = new Application();
+        applicationOne.setId(1);
+
+        assertThat(applicationOne.hashCode()).isEqualTo(32);
     }
 }

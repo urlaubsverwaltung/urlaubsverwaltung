@@ -16,6 +16,7 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
@@ -29,8 +30,7 @@ class WorkingTimeTest {
     @Test
     void testDefaultValues() {
 
-        WorkingTime workingTime = new WorkingTime();
-
+        final WorkingTime workingTime = new WorkingTime();
         assertThat(workingTime.getMonday()).isEqualTo(ZERO);
         assertThat(workingTime.getTuesday()).isEqualTo(ZERO);
         assertThat(workingTime.getWednesday()).isEqualTo(ZERO);
@@ -44,16 +44,16 @@ class WorkingTimeTest {
     @Test
     void testHasWorkingDaysIdentical() {
 
-        List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+        final  List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
 
-        List<Integer> workingDaysToCompare = Arrays.asList(FRIDAY.getValue(), TUESDAY.getValue(),
+        final  List<Integer> workingDaysToCompare = Arrays.asList(FRIDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), MONDAY.getValue(), THURSDAY.getValue());
 
-        WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, FULL);
 
-        boolean returnValue = workingTime.hasWorkingDays(workingDaysToCompare);
+        final boolean returnValue = workingTime.hasWorkingDays(workingDaysToCompare);
         assertThat(returnValue).isTrue();
     }
 
@@ -61,34 +61,62 @@ class WorkingTimeTest {
     @Test
     void testHasWorkingDaysDifferent() {
 
-        List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+        final List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
 
-        List<Integer> workingDaysToCompare = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
+        final List<Integer> workingDaysToCompare = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
             WEDNESDAY.getValue(), THURSDAY.getValue(), SUNDAY.getValue());
 
-        WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, FULL);
 
-        boolean returnValue = workingTime.hasWorkingDays(workingDaysToCompare);
+        final boolean returnValue = workingTime.hasWorkingDays(workingDaysToCompare);
         assertThat(returnValue).isFalse();
     }
 
     @Test
     void ensureWorkingDaysInWorkingTimeList() {
 
-        List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)
-            .map(DayOfWeek::getValue).collect(Collectors.toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)
+            .map(DayOfWeek::getValue)
+            .collect(toList());
 
-        WorkingTime workingEveryDay = new WorkingTime();
+        final WorkingTime workingEveryDay = new WorkingTime();
         workingEveryDay.setWorkingDays(workingDays, FULL);
 
         assertThat(workingEveryDay.getWorkingDays())
             .containsExactly(WeekDay.MONDAY, WeekDay.TUESDAY, WeekDay.WEDNESDAY, WeekDay.THURSDAY, WeekDay.FRIDAY, WeekDay.SATURDAY, WeekDay.SUNDAY);
 
-        WorkingTime workingNoDay = new WorkingTime();
+        final WorkingTime workingNoDay = new WorkingTime();
         workingNoDay.setWorkingDays(workingDays, ZERO);
 
         assertThat(workingNoDay.getWorkingDays()).isEmpty();
+    }
+
+    @Test
+    void equals() {
+        final WorkingTime WorkingTimeOne = new WorkingTime();
+        WorkingTimeOne.setId(1);
+
+        final WorkingTime WorkingTimeOneOne = new WorkingTime();
+        WorkingTimeOneOne.setId(1);
+
+        final WorkingTime WorkingTimeTwo = new WorkingTime();
+        WorkingTimeTwo.setId(2);
+
+        assertThat(WorkingTimeOne)
+            .isEqualTo(WorkingTimeOne)
+            .isEqualTo(WorkingTimeOneOne)
+            .isNotEqualTo(WorkingTimeTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final WorkingTime WorkingTimeOne = new WorkingTime();
+        WorkingTimeOne.setId(1);
+
+        assertThat(WorkingTimeOne.hashCode()).isEqualTo(32);
     }
 }
