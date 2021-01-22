@@ -81,4 +81,31 @@ class DepartmentTest {
             "lastModification=+999999999-12-31, twoStageApproval=true, members=[Person{id='null'}], " +
             "departmentHeads=[Person{id='null'}], secondStageAuthorities=[Person{id='null'}]}");
     }
+
+    @Test
+    void equals() {
+        final Department departmentOne = new Department();
+        departmentOne.setId(1);
+
+        final Department departmentOneOne = new Department();
+        departmentOneOne.setId(1);
+
+        final Department departmentTwo = new Department();
+        departmentTwo.setId(2);
+
+        assertThat(departmentOne)
+            .isEqualTo(departmentOne)
+            .isEqualTo(departmentOneOne)
+            .isNotEqualTo(departmentTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final Department departmentOne = new Department();
+        departmentOne.setId(1);
+
+        assertThat(departmentOne.hashCode()).isEqualTo(32);
+    }
 }

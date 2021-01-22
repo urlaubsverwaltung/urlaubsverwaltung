@@ -67,4 +67,31 @@ class AbsenceMappingServiceImplTest {
 
         verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceMappingType(21, SICKNOTE);
     }
+
+    @Test
+    void equals() {
+        final AbsenceMapping absenceMappingOne = new AbsenceMapping();
+        absenceMappingOne.setId(1);
+
+        final AbsenceMapping absenceMappingOneOne = new AbsenceMapping();
+        absenceMappingOneOne.setId(1);
+
+        final AbsenceMapping absenceMappingTwo = new AbsenceMapping();
+        absenceMappingTwo.setId(2);
+
+        assertThat(absenceMappingOne)
+            .isEqualTo(absenceMappingOne)
+            .isEqualTo(absenceMappingOneOne)
+            .isNotEqualTo(absenceMappingTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final AbsenceMapping absenceMappingOne = new AbsenceMapping();
+        absenceMappingOne.setId(1);
+
+        assertThat(absenceMappingOne.hashCode()).isEqualTo(32);
+    }
 }

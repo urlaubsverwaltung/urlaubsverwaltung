@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
@@ -169,5 +170,32 @@ class OvertimeTest {
 
         final String overtimeToString = overtime.toString();
         assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, hours=10, person=Person{id='10'}}");
+    }
+
+    @Test
+    void equals() {
+        final Overtime overtimeOne = new Overtime();
+        overtimeOne.setId(1);
+
+        final Overtime overtimeOneOne = new Overtime();
+        overtimeOneOne.setId(1);
+
+        final Overtime overtimeTwo = new Overtime();
+        overtimeTwo.setId(2);
+
+        assertThat(overtimeOne)
+            .isEqualTo(overtimeOne)
+            .isEqualTo(overtimeOneOne)
+            .isNotEqualTo(overtimeTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final Overtime overtimeOne = new Overtime();
+        overtimeOne.setId(1);
+
+        assertThat(overtimeOne.hashCode()).isEqualTo(32);
     }
 }

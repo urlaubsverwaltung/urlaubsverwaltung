@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 
 class VacationTypeTest {
 
@@ -13,34 +15,59 @@ class VacationTypeTest {
         assertThatIllegalArgumentException().isThrownBy(() -> new VacationType().isOfCategory(null));
     }
 
-
     @Test
     void ensureReturnsTrueIfVacationTypeIsOfGivenCategory() {
 
-        VacationType vacationType = new VacationType();
-        vacationType.setCategory(VacationCategory.OVERTIME);
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(OVERTIME);
 
-        assertThat(vacationType.isOfCategory(VacationCategory.OVERTIME)).isTrue();
+        assertThat(vacationType.isOfCategory(OVERTIME)).isTrue();
     }
-
 
     @Test
     void ensureReturnsFalseIfVacationTypeIsNotOfGivenCategory() {
 
-        VacationType vacationType = new VacationType();
-        vacationType.setCategory(VacationCategory.HOLIDAY);
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
 
-        assertThat(vacationType.isOfCategory(VacationCategory.OVERTIME)).isFalse();
+        assertThat(vacationType.isOfCategory(OVERTIME)).isFalse();
     }
 
     @Test
     void toStringTest() {
-        VacationType vacationType = new VacationType();
-        vacationType.setCategory(VacationCategory.HOLIDAY);
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
         vacationType.setMessageKey("messageKey");
         vacationType.setId(10);
 
         final String vacationTypeToString = vacationType.toString();
         assertThat(vacationTypeToString).isEqualTo("VacationType{category=HOLIDAY, messageKey='messageKey'}");
+    }
+
+    @Test
+    void equals() {
+        final VacationType vacationTypeOne = new VacationType();
+        vacationTypeOne.setId(1);
+
+        final VacationType vacationTypeOneOne = new VacationType();
+        vacationTypeOneOne.setId(1);
+
+        final VacationType vacationTypeTwo = new VacationType();
+        vacationTypeTwo.setId(2);
+
+        assertThat(vacationTypeOne)
+            .isEqualTo(vacationTypeOne)
+            .isEqualTo(vacationTypeOneOne)
+            .isNotEqualTo(vacationTypeTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final VacationType vacationTypeOne = new VacationType();
+        vacationTypeOne.setId(1);
+
+        assertThat(vacationTypeOne.hashCode()).isEqualTo(32);
     }
 }

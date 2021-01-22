@@ -27,4 +27,31 @@ class AccountTest {
             " validTo=+999999999-12-31, annualVacationDays=10, vacationDays=null, remainingVacationDays=10," +
             " remainingVacationDaysNotExpiring=10}");
     }
+
+    @Test
+    void equals() {
+        final Account accountOne = new Account();
+        accountOne.setId(1);
+
+        final Account accountOneOne = new Account();
+        accountOneOne.setId(1);
+
+        final Account accountTwo = new Account();
+        accountTwo.setId(2);
+
+        assertThat(accountOne)
+            .isEqualTo(accountOne)
+            .isEqualTo(accountOneOne)
+            .isNotEqualTo(accountTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final Account accountOne = new Account();
+        accountOne.setId(1);
+
+        assertThat(accountOne.hashCode()).isEqualTo(32);
+    }
 }
