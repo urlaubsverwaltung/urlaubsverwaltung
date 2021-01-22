@@ -1,6 +1,6 @@
 // disabling date-fns#format is ok since we're formatting dates for api requests
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
-import { isAfter, format } from "date-fns";
+import { format, isAfter } from "date-fns";
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import parseISO from "date-fns/parseISO";
 import { getJSON } from "../js/fetch";
@@ -33,26 +33,43 @@ export default async function sendGetDepartmentVacationsRequest(
   const vacations = data.vacations;
 
   const element = document.querySelector(elementSelector);
-  element.innerHTML = window.uv.i18n["application.applier.applicationsOfColleagues"];
+  element.innerHTML = `${vacations.length} ${window.uv.i18n["application.applier.applicationsOfColleagues"]}`;
 
   if (vacations.length > 0) {
-    const html = vacations.map((vacation) => createHtmlForVacation(vacation));
+    let lastPersonName = -1;
+    let isNewPerson = false;
+
+    const html = vacations.map((vacation) => {
+      isNewPerson = lastPersonName !== vacation.person.niceName;
+      lastPersonName = vacation.person.niceName;
+
+      return createHtmlForVacation(vacation, isNewPerson);
+    });
+
     element.innerHTML += `<ul class="tw-m-0 tw-p-0">${html.join("")}</ul>`;
-  } else {
-    element.innerHTML += window.uv.i18n["application.applier.none"];
   }
 }
 
-function createHtmlForVacation(vacation) {
+function createHtmlForVacation(vacation, isNewPerson) {
   const startDate = format(parseISO(vacation.from), "dd.MM.yyyy");
   const endDate = format(parseISO(vacation.to), "dd.MM.yyyy");
   const person = vacation.person.niceName;
 
-  let html = `<li class="tw-flex tw-items-center">${person}: ${startDate} - ${endDate}`;
-
-  if (vacation.status === "ALLOWED") {
-    html += `&nbsp;<span class="tw-text-green-500">${icons.check}</span>`;
+  let html = "";
+  if (isNewPerson) {
+    html += `<li class="tw-flex tw-items-center tw-pt-2">${person}:</li>`;
   }
+
+  html += `<li class="tw-flex tw-items-center tw-pl-5">`;
+  if (vacation.status === "ALLOWED") {
+    html += `<span class="tw-text-green-500 tw-absolute tw--ml-5" title="${window.uv.i18n["application.status.allowed"]}">${icons.check}</span>`;
+  }
+
+  let dateInformation = `${startDate} - ${endDate}`;
+  if (startDate === endDate) {
+    dateInformation = `${startDate}`;
+  }
+  html += `${dateInformation}`;
 
   return html + "</li>";
 }

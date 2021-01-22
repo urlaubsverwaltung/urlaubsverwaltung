@@ -27,6 +27,7 @@
         window.uv.weekStartsOn = 1;
 
         window.uv.i18n = [];
+        window.uv.i18n['application.status.allowed'] = "<spring:message code='ALLOWED' javaScriptEscape='true' />";
         window.uv.i18n['application.applier.applicationsOfColleagues'] = "<spring:message code='application.applier.applicationsOfColleagues' javaScriptEscape='true' />";
         window.uv.i18n['application.applier.none'] = "<spring:message code='application.applier.none' javaScriptEscape='true' />";
         window.uv.i18n['application.applier.invalidPeriod'] = "<spring:message code='application.applier.invalidPeriod' javaScriptEscape='true' />";
@@ -78,6 +79,9 @@
     </c:otherwise>
 </c:choose>
 
+<c:set var="IS_SPECIALLEAVE_SHOWN" value="${application.vacationType.category == 'SPECIALLEAVE' ? '' : 'hidden'}"/>
+<c:set var="IS_OVERTIME_SHOWN" value="${application.vacationType.category == 'OVERTIME' ? '' : 'hidden'}"/>
+
 <div class="content">
     <div class="container">
         <c:choose>
@@ -85,8 +89,7 @@
                 <spring:message code="application.applier.account.none"/>
             </c:when>
             <c:otherwise>
-                <form:form method="POST" action="${ACTION}" modelAttribute="application"
-                           class="form-horizontal" role="form">
+                <form:form method="POST" action="${ACTION}" modelAttribute="application" class="form-horizontal" role="form">
                 <form:hidden path="person" value="${person.id}"/>
 
                 <c:if test="${not empty errors.globalErrors}">
@@ -103,34 +106,32 @@
                             ${heading}
                         </h1>
                     </uv:section-heading>
+
                     <div class="row">
-                        <div class="col-md-4 col-md-push-8">
-                            <span class="help-block tw-text-sm">
-                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
-                                <spring:message code="application.data.description"/>
-                            </span>
-                            <span id="departmentVacations" class="help-block info tw-text-sm"></span>
-                        </div>
-
-                        <div class="col-md-8 col-md-pull-4">
-                            <c:if test="${IS_OFFICE}">
-                                <%-- office applies for a user --%>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">
-                                        <spring:message code="application.data.person"/>
-                                    </label>
-                                    <div class="col-md-9">
-                                        <uv:select id="person-select" name="" onchange="window.location.href=this.options[this.selectedIndex].value">
-                                            <c:forEach items="${persons}" var="p">
-                                                <option value="${URL_PREFIX}/application/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
-                                                    <c:out value="${p.niceName}"/>
-                                                </option>
-                                            </c:forEach>
-                                        </uv:select>
-                                    </div>
+                        <c:if test="${IS_OFFICE}">
+                        <div class="col-md-8">
+                            <%-- office applies for a user --%>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">
+                                    <spring:message code="application.data.person"/>
+                                </label>
+                                <div class="col-md-9">
+                                    <uv:select id="person-select" name="" onchange="window.location.href=this.options[this.selectedIndex].value">
+                                        <c:forEach items="${persons}" var="p">
+                                            <option value="${URL_PREFIX}/application/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
+                                                <c:out value="${p.niceName}"/>
+                                            </option>
+                                        </c:forEach>
+                                    </uv:select>
                                 </div>
-                            </c:if>
+                            </div>
+                        </div>
+                        </c:if>
+                    </div>
 
+                    <%-- Vacation Type--%>
+                    <div class="row">
+                        <div class="col-md-8">
                             <div class="form-group is-required">
                                 <label class="control-label col-md-3" for="vacationType">
                                     <spring:message code="application.data.vacationType"/>:
@@ -154,38 +155,22 @@
                                     </uv:select>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
+                    <%-- start and end date--%>
+                    <div class="row">
+                        <div class="col-md-8">
                             <div class="form-group is-required">
-                                <label class="control-label col-md-3">
-                                    <spring:message code="absence.period"/>:
-                                </label>
-                                <div class="col-md-9 radio">
-                                    <label class="thirds">
-                                        <form:radiobutton id="fullDay" class="dayLength-full" path="dayLength" checked="checked"
-                                                          value="FULL"/>
-                                        <spring:message code="FULL"/>
-                                    </label>
-                                    <label class="thirds">
-                                        <form:radiobutton id="morning" class="dayLength-half" path="dayLength" value="MORNING"/>
-                                        <spring:message code="MORNING"/>
-                                    </label>
-                                    <label class="thirds">
-                                        <form:radiobutton id="noon" class="dayLength-half" path="dayLength" value="NOON"/>
-                                        <spring:message code="NOON"/>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group is-required">
-                                <label class="col-md-3 control-label" for="from">
+                                <label class="control-label col-xs-12 col-md-3" for="from">
                                     <spring:message code="absence.period.startDate"/>:
                                 </label>
-                                <div class="col-md-5">
+                                <div class="col-xs-8 col-md-5">
                                     <form:input id="from" path="startDate" class="form-control"
                                                 cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
                                                 autocomplete="off" data-iso-value="${application.startDateIsoValue}" />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-xs-4 col-md-4">
                                     <form:input id="startTime" path="startTime" class="form-control"
                                                 cssErrorClass="form-control error" placeholder="${TIME_PATTERN}"
                                                 autocomplete="off"/>
@@ -193,15 +178,15 @@
                             </div>
 
                             <div class="form-group is-required">
-                                <label class="control-label col-md-3" for="to">
+                                <label class="control-label col-xs-12 col-md-3" for="to">
                                     <spring:message code="absence.period.endDate"/>:
                                 </label>
-                                <div class="col-md-5">
+                                <div class="col-xs-8 col-md-5">
                                     <form:input id="to" path="endDate" class="form-control"
                                                 cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
                                                 autocomplete="off" data-iso-value="${application.endDateIsoValue}" />
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-xs-4 col-md-4">
                                     <form:input id="endTime" path="endTime" class="form-control"
                                                 cssErrorClass="form-control error" placeholder="${TIME_PATTERN}"
                                                 autocomplete="off"/>
@@ -214,6 +199,121 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <span id="departmentVacations" class="help-block info tw-text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%-- Absence Period --%>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group is-required">
+                                <label class="control-label col-md-3">
+                                    <spring:message code="absence.period"/>:
+                                </label>
+                                <div class="col-md-9 radio">
+                                    <label class="thirds">
+                                        <form:radiobutton id="fullDay" class="dayLength-full" path="dayLength" checked="checked" value="FULL"/>
+                                        <spring:message code="FULL"/>
+                                    </label>
+                                    <label class="thirds">
+                                        <form:radiobutton id="morning" class="dayLength-half" path="dayLength" value="MORNING"/>
+                                        <spring:message code="MORNING"/>
+                                    </label>
+                                    <label class="thirds">
+                                        <form:radiobutton id="noon" class="dayLength-half" path="dayLength" value="NOON"/>
+                                        <spring:message code="NOON"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%-- Overtime Information--%>
+                    <c:if test="${overtimeActive}">
+                    <div class="row ${IS_OVERTIME_SHOWN}" id="overtime">
+                        <div class="col-md-8">
+                            <div class="form-group is-required" id="form-group--hours">
+                                <label class="control-label col-md-3" for="hours">
+                                    <spring:message code="application.data.hours"/>:
+                                </label>
+                                <div class="col-md-9">
+                                    <form:input path="hours" class="form-control" cssErrorClass="form-control error"/>
+                                    <uv:error-text>
+                                        <form:errors path="hours" />
+                                    </uv:error-text>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </c:if>
+
+                    <%-- Special Leave Information --%>
+                    <div class="row ${IS_SPECIALLEAVE_SHOWN}" id="special-leave">
+                        <div class="col-md-8">
+                            <div class="form-group is-required" id="form-group--reason">
+                                <label class="control-label col-md-3" for="reason">
+                                    <spring:message code="application.data.reason"/>:
+                                </label>
+                                <div class="col-md-9">
+                                    <small>
+                                        <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
+                                    <form:textarea id="reason" rows="1" path="reason" class="form-control"
+                                                   cssErrorClass="form-control error"
+                                                   onkeyup="count(this.value, 'text-reason');"
+                                                   onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
+                                    <uv:error-text>
+                                        <form:errors path="reason" />
+                                    </uv:error-text>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-md-push-2">
+                            <span class="help-block tw-text-sm">
+                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                <spring:message code="application.data.description"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section tw-mb-16">
+
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code="application.data.furtherInformation.title"/>
+                        </h2>
+                    </uv:section-heading>
+
+                    <div class="row">
+                        <div class="col-md-8">
+
+                            <%-- agreed wiht team --%>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">
+                                    <spring:message code="application.data.teamInformed"/>:
+                                </label>
+                                <div class="col-md-9 radio">
+                                    <label class="thirds">
+                                        <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
+                                        <spring:message code="application.data.teamInformed.true"/>
+                                    </label>
+                                    <label class="thirds">
+                                        <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
+                                        <spring:message code="application.data.teamInformed.false"/>
+                                    </label>
+                                    <label class="thirds"></label>
+                                    <uv:error-text>
+                                        <form:errors path="teamInformed" />
+                                    </uv:error-text>
+                                </div>
+                            </div>
+
+                            <%-- holiday replacement--%>
                             <div class="form-group">
                                 <label class="control-label col-md-3" for="holidayReplacement">
                                     <spring:message code="application.data.holidayReplacement"/>:
@@ -246,89 +346,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group is-required">
-                                <label class="control-label col-md-3">
-                                    <spring:message code="application.data.teamInformed"/>:
-                                </label>
-                                <div class="col-md-9 radio">
-                                    <label class="halves">
-                                        <form:radiobutton id="teamInformed" path="teamInformed" value="true"/>
-                                        <spring:message code="application.data.teamInformed.true"/>
-                                    </label>
-                                    <label class="halves">
-                                        <form:radiobutton id="teamNotInformed" path="teamInformed" value="false"/>
-                                        <spring:message code="application.data.teamInformed.false"/>
-                                    </label>
-                                    <uv:error-text>
-                                        <form:errors path="teamInformed" />
-                                    </uv:error-text>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <c:if test="${overtimeActive}">
-                        <div class="row">
-                            <div class="col-md-4 col-md-push-8">
-                                <span class="help-block tw-text-sm">
-                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
-                                    <spring:message code="application.data.hours.description"/>
-                                </span>
-                            </div>
-
-                            <div class="col-md-8 col-md-pull-4">
-                                <c:set var="HOURS_IS_REQUIRED"
-                                       value="${application.vacationType.category == 'OVERTIME' ? 'is-required' : ''}"/>
-                                <div class="form-group ${HOURS_IS_REQUIRED}" id="form-group--hours">
-                                    <label class="control-label col-md-3" for="hours">
-                                        <spring:message code="application.data.hours"/>:
-                                    </label>
-                                    <div class="col-md-9">
-                                        <form:input path="hours" class="form-control" cssErrorClass="form-control error"/>
-                                        <uv:error-text>
-                                            <form:errors path="hours" />
-                                        </uv:error-text>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </c:if>
-                </div>
-
-                <div class="form-section tw-mb-16">
-                    <uv:section-heading>
-                        <h2>
-                            <spring:message code="application.data.furtherInformation.title"/>
-                        </h2>
-                    </uv:section-heading>
-                    <div class="row">
-                        <div class="col-md-4 col-md-push-8">
-                            <span class="help-block tw-text-sm">
-                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
-                                <spring:message code="application.data.furtherInformation.description"/>
-                            </span>
-                        </div>
-                        <div class="col-md-8 col-md-pull-4">
-                            <c:set var="REASON_IS_REQUIRED"
-                                   value="${application.vacationType.category == 'SPECIALLEAVE' ? 'is-required' : ''}"/>
-
-                            <div class="form-group ${REASON_IS_REQUIRED}" id="form-group--reason">
-                                <label class="control-label col-md-3" for="reason">
-                                    <spring:message code="application.data.reason"/>:
-                                </label>
-                                <div class="col-md-9">
-                                    <small>
-                                        <span id="text-reason"></span><spring:message code="action.comment.maxChars"/>
-                                    </small>
-                                    <form:textarea id="reason" rows="1" path="reason" class="form-control"
-                                                   cssErrorClass="form-control error"
-                                                   onkeyup="count(this.value, 'text-reason');"
-                                                   onkeydown="maxChars(this,200); count(this.value, 'text-reason');"/>
-                                    <uv:error-text>
-                                        <form:errors path="reason" />
-                                    </uv:error-text>
-                                </div>
-                            </div>
+                            <%-- Address and phone number--%>
                             <div class="form-group">
                                 <label class="control-label col-md-3" for="address">
                                     <spring:message code="application.data.furtherInformation.address"/>:
@@ -346,6 +364,8 @@
                                     </uv:error-text>
                                 </div>
                             </div>
+
+                            <%-- Comment --%>
                             <div class="form-group">
                                 <label class="control-label col-md-3" for="comment">
                                     <spring:message code="application.data.furtherInformation.comment"/>:
@@ -383,8 +403,8 @@
             </form:form>
         </c:otherwise>
     </c:choose>
-</div>
-<!-- End of grid container -->
+    </div>
+    <!-- End of grid container -->
 
 </div>
 </body>
