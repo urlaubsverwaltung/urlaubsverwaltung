@@ -44,6 +44,8 @@ public class ApplicationForLeaveForm {
     // Stands in while the person is on holiday
     private Person holidayReplacement;
 
+    private String holidayReplacementNote;
+
     // Address and phone number during holiday
     private String address;
 
@@ -52,6 +54,14 @@ public class ApplicationForLeaveForm {
     private String comment;
 
     private Integer id;
+
+    public String getHolidayReplacementNote() {
+        return holidayReplacementNote;
+    }
+
+    public void setHolidayReplacementNote(String holidayReplacementNote) {
+        this.holidayReplacementNote = holidayReplacementNote;
+    }
 
     public Person getPerson() {
         return person;

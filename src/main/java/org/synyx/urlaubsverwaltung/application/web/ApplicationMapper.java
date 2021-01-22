@@ -51,6 +51,7 @@ final class ApplicationMapper {
         newApplication.setDayLength(applicationForLeaveForm.getDayLength());
         newApplication.setReason(applicationForLeaveForm.getReason());
         newApplication.setHolidayReplacement(applicationForLeaveForm.getHolidayReplacement());
+        newApplication.setHolidayReplacementNote(applicationForLeaveForm.getHolidayReplacementNote());
         newApplication.setAddress(applicationForLeaveForm.getAddress());
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());
 
