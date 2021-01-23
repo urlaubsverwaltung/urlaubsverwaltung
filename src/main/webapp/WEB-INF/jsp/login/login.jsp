@@ -45,15 +45,12 @@
 
 <body class="md:tw-bg-gray-100">
 
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navigation" role="navigation">
     <div class="container">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">
-                <spring:message code="header.title"/>
-            </a>
-        </div>
-    </div><!-- /.container-fluid -->
+        <h1 class="tw-text-lg tw-m-0 tw-py-3">
+            <spring:message code="header.title"/>
+        </h1>
+    </div>
 </nav>
 
 <div class="col-xs-12">
