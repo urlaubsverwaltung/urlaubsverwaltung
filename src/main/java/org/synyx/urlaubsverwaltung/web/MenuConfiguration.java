@@ -11,7 +11,7 @@ class MenuConfiguration implements WebMvcConfigurer {
     private final MenuDataProvider menuDataProvider;
 
     @Autowired
-    MenuConfiguration( MenuDataProvider menuDataProvider) {
+    MenuConfiguration(MenuDataProvider menuDataProvider) {
         this.menuDataProvider = menuDataProvider;
     }
 

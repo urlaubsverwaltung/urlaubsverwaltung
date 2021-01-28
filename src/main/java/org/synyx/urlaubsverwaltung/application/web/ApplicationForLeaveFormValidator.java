@@ -238,7 +238,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            final  ApplicationSettings applicationSettings = settings.getApplicationSettings();
+            final ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
             validateNotTooFarInTheFuture(endDate, applicationSettings, errors);
             validateNotTooFarInThePast(startDate, applicationSettings, errors);
@@ -392,7 +392,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private boolean enoughVacationDaysLeft(Application application) {
 
-        final  boolean isHoliday = HOLIDAY.equals(application.getVacationType().getCategory());
+        final boolean isHoliday = HOLIDAY.equals(application.getVacationType().getCategory());
 
         if (isHoliday) {
             return calculationService.checkApplication(application);

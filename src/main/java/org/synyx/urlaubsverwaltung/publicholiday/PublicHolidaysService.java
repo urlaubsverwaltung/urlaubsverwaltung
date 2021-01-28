@@ -5,9 +5,9 @@ import de.jollyday.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.math.BigDecimal;

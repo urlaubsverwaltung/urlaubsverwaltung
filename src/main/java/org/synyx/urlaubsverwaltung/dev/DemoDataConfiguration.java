@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;

@@ -108,7 +108,7 @@ public class OverviewViewController {
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to access the overview page of user '%s'",
-                    signedInUser.getId(), person.getId()));
+                signedInUser.getId(), person.getId()));
         }
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
@@ -148,8 +148,8 @@ public class OverviewViewController {
         // get the person's applications for the given year
         final List<Application> applications =
             applicationService.getApplicationsForACertainPeriodAndPerson(getFirstDayOfYear(year), getLastDayOfYear(year), person).stream()
-            .filter(input -> !input.hasStatus(REVOKED))
-            .collect(toList());
+                .filter(input -> !input.hasStatus(REVOKED))
+                .collect(toList());
 
         if (!applications.isEmpty()) {
             final List<ApplicationForLeave> applicationsForLeave = applications.stream()

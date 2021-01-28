@@ -21,9 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.IOException;

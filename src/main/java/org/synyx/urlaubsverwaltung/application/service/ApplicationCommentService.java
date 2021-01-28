@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;

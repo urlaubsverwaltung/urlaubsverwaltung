@@ -10,7 +10,7 @@ public class AccountSettingsValidator {
 
     private static final int DAYS_PER_YEAR = 366;
 
-    private AccountSettingsValidator(){
+    private AccountSettingsValidator() {
         // private
     }
 

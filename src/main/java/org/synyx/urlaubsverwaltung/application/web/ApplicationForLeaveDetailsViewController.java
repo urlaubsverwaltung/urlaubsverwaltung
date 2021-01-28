@@ -297,8 +297,8 @@ public class ApplicationForLeaveDetailsViewController {
      */
     @PostMapping("/{applicationId}/decline-cancellation-request")
     public String declineCancellationRequestApplication(@PathVariable("applicationId") Integer applicationId,
-                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
-                                    RedirectAttributes redirectAttributes)
+                                                        @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+                                                        RedirectAttributes redirectAttributes)
         throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)

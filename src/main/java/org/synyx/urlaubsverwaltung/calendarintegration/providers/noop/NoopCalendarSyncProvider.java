@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.calendarintegration.providers.noop;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 
 import java.util.Optional;
 

@@ -11,8 +11,8 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -104,7 +104,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         LOG.info("Created application for leave: {}", savedApplication);
 
         // COMMENT
-        final         ApplicationComment createdComment = commentService.create(savedApplication, APPLIED, comment, applier);
+        final ApplicationComment createdComment = commentService.create(savedApplication, APPLIED, comment, applier);
 
         // EMAILS
         if (person.equals(applier)) {
@@ -333,7 +333,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
     }
 
     @Override
-    public Application declineCancellationRequest(Application applicationForLeave, Person person, Optional<String> comment){
+    public Application declineCancellationRequest(Application applicationForLeave, Person person, Optional<String> comment) {
 
         if (applicationForLeave.getStatus().compareTo(ALLOWED_CANCELLATION_REQUESTED) != 0) {
             throw new DeclineCancellationRequestedApplicationForLeaveNotAllowedException(format("Cannot cancel the cancellation " +
@@ -448,7 +448,7 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
     private boolean relevantEntriesChanged(Application oldApplication, Application savedEditedApplication) {
         return savedEditedApplication.getHolidayReplacement() != null && (!oldApplication.getStartDate().equals(savedEditedApplication.getStartDate())
-                || !oldApplication.getEndDate().equals(savedEditedApplication.getEndDate())
-                || !oldApplication.getDayLength().equals(savedEditedApplication.getDayLength()));
+            || !oldApplication.getEndDate().equals(savedEditedApplication.getEndDate())
+            || !oldApplication.getDayLength().equals(savedEditedApplication.getDayLength()));
     }
 }

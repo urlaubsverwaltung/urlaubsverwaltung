@@ -25,8 +25,8 @@ public class Mail {
     private final List<MailAttachment> mailAttachments;
 
     Mail(List<Person> mailAddressRecipients, MailNotification mailNotificationRecipients, boolean sendToTechnicalMail,
-                String templateName, Map<String, Object> templateModel, String subjectMessageKey,
-                Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
+         String templateName, Map<String, Object> templateModel, String subjectMessageKey,
+         Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
         this.mailAddressRecipients = mailAddressRecipients;
         this.mailNotificationRecipients = mailNotificationRecipients;
         this.sendToTechnicalMail = sendToTechnicalMail;

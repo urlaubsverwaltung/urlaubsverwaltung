@@ -113,12 +113,11 @@ public interface ApplicationService {
 
     /**
      * Get a list of all active holiday replacements of the given person and that are active at the given date
-     *
+     * <p>
      * A active holiday replacement is a replacement that will end after the given date
      *
      * @param holidayReplacement of the application
-     * @param date that will indicate when a holiday replacement is active or not
-     *
+     * @param date               that will indicate when a holiday replacement is active or not
      * @return List of applications where the given person is the active holiday replacement
      */
     List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date);

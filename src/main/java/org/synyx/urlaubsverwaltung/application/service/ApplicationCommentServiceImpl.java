@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationCommentRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
