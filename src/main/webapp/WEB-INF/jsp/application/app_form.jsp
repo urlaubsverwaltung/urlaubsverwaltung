@@ -160,6 +160,7 @@
 
                     <%-- start and end date--%>
                     <div class="row">
+
                         <div class="col-md-8">
                             <div class="form-group is-required">
                                 <label class="control-label col-xs-12 col-md-3" for="from">
@@ -195,12 +196,14 @@
 
                             <div class="form-group">
                                 <div class="col-md-9 col-md-offset-3">
-                                    <span class="help-block info days"></span>
+                                    <span class="help-block info days tw-text-sm"></span>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <div class="col-md-9 col-md-offset-3">
+                                <div class="col-xs-9">
                                     <span id="departmentVacations" class="help-block info tw-text-sm"></span>
                                 </div>
                             </div>
