@@ -19,7 +19,7 @@ public class SickNoteComment extends AbstractComment {
     private SickNote sickNote;
 
     @Enumerated(STRING)
-    private SickNoteAction action;
+    private SickNoteCommentAction action;
 
     protected SickNoteComment() {
         super();
@@ -37,11 +37,11 @@ public class SickNoteComment extends AbstractComment {
         this.sickNote = sickNote;
     }
 
-    public SickNoteAction getAction() {
+    public SickNoteCommentAction getAction() {
         return action;
     }
 
-    public void setAction(SickNoteAction action) {
+    public void setAction(SickNoteCommentAction action) {
         this.action = action;
     }
 }
