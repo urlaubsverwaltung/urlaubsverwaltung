@@ -90,7 +90,7 @@ class OvertimeServiceImplTest {
 
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
-        assertThat(comment.getAction()).isEqualTo(OvertimeAction.CREATED);
+        assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
     }
 
     @Test
@@ -106,7 +106,7 @@ class OvertimeServiceImplTest {
         verify(commentDAO).save(commentCaptor.capture());
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
-        assertThat(comment.getAction()).isEqualTo(OvertimeAction.EDITED);
+        assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
     }
 
     @Test

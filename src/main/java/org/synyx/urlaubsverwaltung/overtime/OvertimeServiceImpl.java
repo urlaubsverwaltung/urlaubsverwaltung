@@ -17,8 +17,8 @@ import java.util.Optional;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.EDITED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
 
 
 /**
@@ -74,7 +74,7 @@ class OvertimeServiceImpl implements OvertimeService {
         overtimeRepository.save(overtime);
 
         // save comment
-        final OvertimeAction action = isNewOvertime ? CREATED : EDITED;
+        final OvertimeCommentAction action = isNewOvertime ? CREATED : EDITED;
         OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
         comment.ifPresent(overtimeComment::setText);
 

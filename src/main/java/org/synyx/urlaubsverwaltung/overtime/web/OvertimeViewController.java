@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeAction;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -182,7 +182,7 @@ public class OvertimeViewController {
         final Optional<String> overtimeFormComment = Optional.ofNullable(overtimeForm.getComment());
         final Overtime recordedOvertime = overtimeService.record(overtime, overtimeFormComment, signedInUser);
 
-        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.CREATED.name());
+        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.CREATED.name());
         return "redirect:/web/overtime/" + recordedOvertime.getId();
     }
 
@@ -232,7 +232,7 @@ public class OvertimeViewController {
         overtimeForm.updateOvertime(overtime);
         overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()), signedInUser);
 
-        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.EDITED.name());
+        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;
     }
 }

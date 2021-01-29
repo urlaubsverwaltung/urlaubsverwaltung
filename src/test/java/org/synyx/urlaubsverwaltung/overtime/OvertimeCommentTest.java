@@ -10,7 +10,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeAction.CREATED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 
 
 class OvertimeCommentTest {
@@ -44,11 +44,11 @@ class OvertimeCommentTest {
         Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Overtime overtime = createOvertimeRecord();
 
-        OvertimeComment comment = new OvertimeComment(author, overtime, OvertimeAction.CREATED, clock);
+        OvertimeComment comment = new OvertimeComment(author, overtime, OvertimeCommentAction.CREATED, clock);
 
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getOvertime()).isEqualTo(overtime);
-        assertThat(comment.getAction()).isEqualTo(OvertimeAction.CREATED);
+        assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.CREATED);
         assertThat(comment.getDate()).isEqualTo(Instant.now(clock).truncatedTo(DAYS));
         assertThat(comment.getText()).isNull();
     }
