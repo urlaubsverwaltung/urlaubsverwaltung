@@ -81,6 +81,7 @@
 
 <c:set var="IS_SPECIALLEAVE_SHOWN" value="${application.vacationType.category == 'SPECIALLEAVE' ? '' : 'hidden'}"/>
 <c:set var="IS_OVERTIME_SHOWN" value="${application.vacationType.category == 'OVERTIME' ? '' : 'hidden'}"/>
+<c:set var="IS_DAYS_COUNT_SHOWN" value="hidden"/>
 
 <div class="content">
     <div class="container">
@@ -194,9 +195,9 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div id="days-count" class="form-group ${IS_DAYS_COUNT_SHOWN}">
                                 <div class="col-md-9 col-md-offset-3">
-                                    <span class="help-block info days tw-text-sm"></span>
+                                    <span class="info days tw-text-sm"></span>
                                 </div>
                             </div>
                         </div>
@@ -285,7 +286,6 @@
                 </div>
 
                 <div class="form-section tw-mb-16">
-
                     <uv:section-heading>
                         <h2>
                             <spring:message code="application.data.furtherInformation.title"/>
