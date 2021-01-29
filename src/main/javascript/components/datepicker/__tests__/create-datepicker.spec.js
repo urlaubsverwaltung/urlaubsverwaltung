@@ -1,5 +1,9 @@
 import { createDatepicker } from "../create-datepicker";
+import DatepickerEN from "../locale/en";
+import DatepickerDE from "../locale/de";
 import fetchMock from "fetch-mock";
+import de from "date-fns/locale/de";
+import { setLocale } from "../../../lib/date-fns/locale-resolver";
 
 describe("create-datepicker", () => {
   beforeEach(() => {
@@ -8,6 +12,7 @@ describe("create-datepicker", () => {
         localisation: datepickerLocalisation(),
       },
     };
+    setLocale(de);
   });
 
   afterEach(async () => {
@@ -75,7 +80,7 @@ describe("create-datepicker", () => {
     expect(datepicker.classList).toContain("bar");
   });
 
-  test("assigns original 'name' attribute", async () => {
+  test("assigns original 'name' attribute to the visible input element", async () => {
     document.body.innerHTML = `
       <input name="start-date" />
     `;
@@ -85,7 +90,9 @@ describe("create-datepicker", () => {
 
     const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
 
-    expect(datepicker.querySelector("input").getAttribute("name")).toBe("start-date");
+    const actualElement = datepicker.querySelector('input[name="start-date"]');
+    expect(actualElement.getAttribute("type")).not.toBe("hidden");
+    expect(actualElement.getAttribute("placeholder")).toBe("placeholder-message");
   });
 
   test("fails to render with preset date value but missing iso-value", async () => {
@@ -101,7 +108,7 @@ describe("create-datepicker", () => {
     try {
       await createDatepicker("input", { urlPrefix, getPersonId });
     } catch (error) {
-      expect(error.message).toEqual("Invalid time value");
+      expect(error.message).toEqual("date input defines a value but no `data-iso-value` attribute is given.");
     }
   });
 
@@ -137,7 +144,41 @@ describe("create-datepicker", () => {
     expect(onSelect).toHaveBeenCalledWith(event);
   });
 
-  describe.each([["en"], ["de"], ["de-de"]])("with locale '%s'", (givenLanguage) => {
+  test("initialises duet-date-picker with EN adapter for uv localisation 'en' config", async () => {
+    window.uv.datepicker.localisation.locale = "en";
+
+    document.body.innerHTML = `
+      <input id="awesome-date-picker" />
+    `;
+
+    const urlPrefix = "";
+    const getPersonId = () => 42;
+
+    await createDatepicker("#awesome-date-picker", { urlPrefix, getPersonId });
+
+    const duetDatePicker = document.querySelector("duet-date-picker");
+    expect(duetDatePicker).toBeTruthy();
+    expect(duetDatePicker.dateAdapter).toBe(DatepickerEN.dateAdapter);
+  });
+
+  test("initialises duet-date-picker with DE adapter for uv localisation 'de' config", async () => {
+    window.uv.datepicker.localisation.locale = "de";
+
+    document.body.innerHTML = `
+      <input id="awesome-date-picker" />
+    `;
+
+    const urlPrefix = "";
+    const getPersonId = () => 42;
+
+    await createDatepicker("#awesome-date-picker", { urlPrefix, getPersonId });
+
+    const duetDatePicker = document.querySelector("duet-date-picker");
+    expect(duetDatePicker).toBeTruthy();
+    expect(duetDatePicker.dateAdapter).toBe(DatepickerDE.dateAdapter);
+  });
+
+  describe.each([["en"], ["de"], ["de-de"]])("with browser locale '%s'", (givenLanguage) => {
     beforeEach(() => {
       jest.spyOn(window.navigator, "language", "get").mockReturnValue(givenLanguage);
     });
@@ -289,14 +330,14 @@ describe("create-datepicker", () => {
           expect(element.classList).toContain("datepicker-day-weekend");
         };
 
-        assertWeekend("05.12.2020");
-        assertWeekend("06.12.2020");
-        assertWeekend("12.12.2020");
-        assertWeekend("13.12.2020");
-        assertWeekend("19.12.2020");
-        assertWeekend("20.12.2020");
-        assertWeekend("26.12.2020");
-        assertWeekend("27.12.2020");
+        assertWeekend("5. Dezember");
+        assertWeekend("6. Dezember");
+        assertWeekend("12. Dezember");
+        assertWeekend("13. Dezember");
+        assertWeekend("19. Dezember");
+        assertWeekend("20. Dezember");
+        assertWeekend("26. Dezember");
+        assertWeekend("27. Dezember");
       });
 
       describe("public holiday", () => {
@@ -331,7 +372,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).toContain("datepicker-day-public-holiday-full");
           expect(element.classList).not.toContain("datepicker-day-public-holiday-morning");
@@ -348,7 +389,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-public-holiday-full");
           expect(element.classList).toContain("datepicker-day-public-holiday-morning");
@@ -365,7 +406,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-public-holiday-full");
           expect(element.classList).not.toContain("datepicker-day-public-holiday-morning");
@@ -407,7 +448,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).toContain("datepicker-day-personal-holiday-full");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning");
@@ -426,7 +467,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-full");
           expect(element.classList).toContain("datepicker-day-personal-holiday-morning");
@@ -445,7 +486,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-full");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning");
@@ -487,7 +528,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).toContain("datepicker-day-personal-holiday-full-approved");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning-approved");
@@ -506,7 +547,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-full-approved");
           expect(element.classList).toContain("datepicker-day-personal-holiday-morning-approved");
@@ -525,7 +566,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-full-approved");
           expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning-approved");
@@ -566,7 +607,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).toContain("datepicker-day-sick-note-full");
           expect(element.classList).not.toContain("datepicker-day-sick-note-morning");
@@ -584,7 +625,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-sick-note-full");
           expect(element.classList).toContain("datepicker-day-sick-note-morning");
@@ -602,7 +643,7 @@ describe("create-datepicker", () => {
 
           await renderCurrentDatepickerMonth();
 
-          const element = getDatepickerDayElement("24.12.2020");
+          const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
           expect(element.classList).not.toContain("datepicker-day-sick-note-full");
           expect(element.classList).not.toContain("datepicker-day-sick-note-morning");
@@ -612,7 +653,7 @@ describe("create-datepicker", () => {
     });
   });
 
-  test.each([["en"], ["de"]])("formats date with 'dd.MM.yyyy' for locale=%s", async (givenLanguage) => {
+  test.each([["en"], ["de"]])("formats date with 'dd.MM.yyyy' for browser locale=%s", async (givenLanguage) => {
     jest.spyOn(window.navigator, "language", "get").mockReturnValue(givenLanguage);
 
     document.body.innerHTML = `
@@ -630,6 +671,7 @@ describe("create-datepicker", () => {
 
 function datepickerLocalisation() {
   return {
+    locale: "de",
     buttonLabel: "buttonLabel-message",
     placeholder: "placeholder-message",
     selectedDateMessage: "selectedDateMessage-message",

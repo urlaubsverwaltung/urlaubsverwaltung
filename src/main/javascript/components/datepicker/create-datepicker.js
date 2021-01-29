@@ -1,8 +1,10 @@
 import { findWhere } from "underscore";
-import { endOfMonth, formatISO, isToday, isWeekend, parse, parseISO } from "date-fns";
+import { endOfMonth, formatISO, isToday, isWeekend, parseISO } from "date-fns";
+import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
 import DE from "./locale/de";
+import EN from "./locale/en";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -13,29 +15,13 @@ defineCustomElements(window);
 const noop = () => {};
 
 export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
-  const dateFormat = DE.dateFormat;
+  const { localisation } = window.uv.datepicker;
 
-  const dateElement = document.querySelector(selector);
-  const duetDateElement = document.createElement("duet-date-picker");
+  // currently the UV supports 'en' and 'de' only. and the default is 'de'.
+  const dateAdapter = localisation.locale === "en" ? EN.dateAdapter : DE.dateAdapter;
+  const dateFormatShort = localisation.locale === "en" ? EN.dateFormatShort : DE.dateFormatShort;
 
-  const { isoValue } = dateElement.dataset;
-
-  duetDateElement.dateAdapter = DE.dateAdapter;
-  duetDateElement.localization = window.uv.datepicker.localisation;
-
-  const parsedDate = parse(isoValue, "yyyy-MM-dd", new Date());
-  const isoDateString = dateElement.value ? formatISO(parsedDate, { representation: "date" }) : "";
-
-  duetDateElement.setAttribute("style", "--duet-radius=0");
-  duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
-  duetDateElement.setAttribute("value", isoDateString);
-  dateElement.replaceWith(duetDateElement);
-
-  await waitForDatePickerHydration(duetDateElement);
-
-  const duetDateInputElement = duetDateElement.querySelector("input");
-  duetDateInputElement.setAttribute("id", dateElement.getAttribute("id"));
-  duetDateInputElement.setAttribute("name", dateElement.getAttribute("name"));
+  const duetDateElement = await replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation);
 
   const monthElement = duetDateElement.querySelector(".duet-date__select--month");
   const yearElement = duetDateElement.querySelector(".duet-date__select--year");
@@ -62,13 +48,25 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         pick("absences"),
       ),
     ]).then(([publicHolidays, absences]) => {
+      const selectedMonth = Number(monthElement.value);
+      const selectedYear = Number(yearElement.value);
       for (let dayElement of [...duetDateElement.querySelectorAll(".duet-date__day")]) {
-        const date = dayElement.querySelector(".duet-date__vhidden").textContent;
-        const cssClasses = getCssClassesForDate(
-          parse(date, dateFormat, new Date()),
-          publicHolidays.value,
-          absences.value,
-        );
+        const dayAndMonthString = dayElement.querySelector(".duet-date__vhidden").textContent;
+        const date = parse(dayAndMonthString, dateFormatShort, new Date());
+        // dayAndMonthString is a hard coded duet-date-picker screen-reader-only value which does not contain the year.
+        // therefore the parsed date will always be assigned to the current year and we have to adjust it when:
+        if (selectedMonth === 0 && date.getMonth() === 11) {
+          // datepicker selected month is january, but the rendered day item is december of the previous year
+          // (e.g. december 31) to fill the week row.
+          date.setFullYear(selectedYear - 1);
+        } else if (selectedMonth === 11 && date.getMonth() === 0) {
+          // datepicker selected month is december, but the rendered day item is january of the next year
+          // (e.g. january 1) to fill the week row.
+          date.setFullYear(selectedYear + 1);
+        } else {
+          date.setFullYear(selectedYear);
+        }
+        const cssClasses = getCssClassesForDate(date, publicHolidays.value, absences.value);
         dayElement.classList.add(...cssClasses);
       }
     });
@@ -83,6 +81,34 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
 
   monthElement.addEventListener("change", showAbsences);
   yearElement.addEventListener("change", showAbsences);
+
+  return duetDateElement;
+}
+
+async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localization) {
+  const dateElement = document.querySelector(selector);
+  const duetDateElement = document.createElement("duet-date-picker");
+
+  if (dateElement.value && !dateElement.dataset.isoValue) {
+    throw new Error("date input defines a value but no `data-iso-value` attribute is given.");
+  }
+
+  duetDateElement.dateAdapter = dateAdapter;
+  duetDateElement.localization = localization;
+
+  duetDateElement.setAttribute("style", "--duet-radius=0");
+  duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
+  duetDateElement.setAttribute("value", dateElement.dataset.isoValue || "");
+  duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
+  dateElement.replaceWith(duetDateElement);
+
+  await waitForDatePickerHydration(duetDateElement);
+
+  // name attribute must be set to the actual visible input element
+  // the backend handles the raw user input for progressive enhancement reasons.
+  // (german locale is 'dd.MM.yyyy', while english locale would be 'yyyy/MM/dd' for instance)
+  const duetDateInputElement = duetDateElement.querySelector("input.duet-date__input");
+  duetDateInputElement.setAttribute("name", dateElement.getAttribute("name"));
 
   return duetDateElement;
 }
