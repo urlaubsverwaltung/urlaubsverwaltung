@@ -1,18 +1,20 @@
 const SPECIAL_LEAVE = "2000";
 const OVERTIME = "4000";
 
-export default function vacationTypeChanged(value) {
-  const reasonElement = document.querySelector("#form-group--reason");
-  const hoursElement = document.querySelector("#form-group--hours");
+function vacationTypeChanged(value) {
+  const overtime = document.querySelector("#overtime");
+  const specialLeave = document.querySelector("#special-leave");
 
   if (value === SPECIAL_LEAVE) {
-    hoursElement.classList.remove("is-required");
-    reasonElement.classList.add("is-required");
+    overtime.classList.add("hidden");
+    specialLeave.classList.remove("hidden");
   } else if (value === OVERTIME) {
-    hoursElement.classList.add("is-required");
-    reasonElement.classList.remove("is-required");
+    overtime.classList.remove("hidden");
+    specialLeave.classList.add("hidden");
   } else {
-    hoursElement.classList.remove("is-required");
-    reasonElement.classList.remove("is-required");
+    overtime.classList.add("hidden");
+    specialLeave.classList.add("hidden");
   }
 }
+
+export default vacationTypeChanged;
