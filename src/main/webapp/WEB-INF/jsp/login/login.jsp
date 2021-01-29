@@ -45,48 +45,44 @@
 
 <body class="md:tw-bg-gray-100">
 
-<nav class="navigation" role="navigation">
-    <div class="container">
-        <h1 class="tw-text-lg tw-m-0 tw-py-3">
-            <spring:message code="header.title"/>
-        </h1>
-    </div>
+<nav role="navigation">
+    <h1 class="tw-text-3xl tw-my-8 tw-text-center">
+        <spring:message code="header.title"/>
+    </h1>
 </nav>
 
 <div class="col-xs-12">
     <div class="row">
-        <div class="content">
-            <div class="login">
+        <div class="login">
 
-                <spring:url var="LOGIN" value="/login"/>
-                <form:form method="post" class="login--form" action="${LOGIN}">
-                    <c:if test="${param.login_error != null}">
-                        <div id="login--error" class="alert alert-danger">
-                            <spring:message code="login.form.error"/>
-                        </div>
-                    </c:if>
-
-                    <div class="form-group">
-                        <label for="username"><spring:message code="login.form.username"/></label>
-                        <input class="form-control" type="text" name="username" id="username" autofocus="autofocus" value="<c:out value="${param.username}" />">
+            <spring:url var="LOGIN" value="/login"/>
+            <form:form method="post" class="login--form" action="${LOGIN}">
+                <c:if test="${param.login_error != null}">
+                    <div id="login--error" class="alert alert-danger">
+                        <spring:message code="login.form.error"/>
                     </div>
+                </c:if>
 
-                    <div class="form-group">
-                        <label for="password"><spring:message code="login.form.password"/></label>
-                        <input class="form-control" type="password" name="password" id="password" value="<c:out value="${param.password}" />">
-                    </div>
+                <div class="form-group">
+                    <label for="username"><spring:message code="login.form.username"/></label>
+                    <input class="form-control" type="text" name="username" id="username" autofocus="autofocus" value="<c:out value="${param.username}" />">
+                </div>
 
-                    <div class="form-group">
-                        <button class="btn btn-primary btn-block" type="submit">
-                            <span class="tw-flex tw-items-center tw-justify-center">
-                                <icon:login className="tw-w-5 tw-h-5" />
-                                &nbsp;<spring:message code="login.form.submit"/>
-                            </span>
-                        </button>
-                    </div>
-                </form:form>
+                <div class="form-group">
+                    <label for="password"><spring:message code="login.form.password"/></label>
+                    <input class="form-control" type="password" name="password" id="password" value="<c:out value="${param.password}" />">
+                </div>
 
-            </div>
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" type="submit">
+                        <span class="tw-flex tw-items-center tw-justify-center">
+                            <icon:login className="tw-w-5 tw-h-5" />
+                            &nbsp;<spring:message code="login.form.submit"/>
+                        </span>
+                    </button>
+                </div>
+            </form:form>
+
         </div>
     </div>
 </div>
@@ -94,10 +90,11 @@
 <footer>
     <div class="col-xs-12">
         <div class="row">
-            <p>
-                <small>
-                    <spring:message code="header.title"/> v${version} powered by <a href="https://focus-shift.de/">Focus Shift Software GmbH</a> and <a href="https://synyx.de/">synyx</a>
-                </small>
+            <p class="tw-text-sm">
+                powered by <a href="https://synyx.de/">synyx</a> and <a href="https://focus-shift.de/">Focus Shift</a>
+            </p>
+            <p class="tw-text-xs">
+               v${version}
             </p>
         </div>
     </div>
