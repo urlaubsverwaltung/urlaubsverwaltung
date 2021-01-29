@@ -1,0 +1,20 @@
+.navigation {
+  @apply tw-fixed;
+  @apply tw-top-0;
+  @apply tw-w-full;
+  @apply tw-z-50;
+  @apply tw-bg-gray-200;
+  @apply tw-h-12;
+}
+
+@screen lg {
+  .navigation {
+    @apply tw-h-auto;
+  }
+}
+
+@screen print {
+  .navigation {
+    @apply tw-hidden;
+  }
+}
