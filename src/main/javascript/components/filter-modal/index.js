@@ -1,12 +1,7 @@
-import $ from "jquery";
-import { createDatepickerInstances } from "../datepicker";
+import { createDatepicker } from "../datepicker";
 
 const getPersonId = () => {};
-const onSelect = () => {};
+const urlPrefix = window.uv.apiPrefix;
 
-$(document).ready(async function () {
-  const selectors = ["#startDate", "#endDate"];
-  const urlPrefix = window.uv.apiPrefix;
-
-  await createDatepickerInstances(selectors, urlPrefix, getPersonId, onSelect);
-});
+createDatepicker("#startDate", { urlPrefix, getPersonId });
+createDatepicker("#endDate", { urlPrefix, getPersonId });
