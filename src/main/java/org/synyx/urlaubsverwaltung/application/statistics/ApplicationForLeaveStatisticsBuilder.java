@@ -36,19 +36,19 @@ public class ApplicationForLeaveStatisticsBuilder {
 
     private final AccountService accountService;
     private final ApplicationService applicationService;
-    private final WorkDaysCountService calendarService;
+    private final WorkDaysCountService workDaysCountService;
     private final VacationDaysService vacationDaysService;
     private final OvertimeService overtimeService;
     private final VacationTypeService vacationTypeService;
 
     @Autowired
     public ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-                                                WorkDaysCountService calendarService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
+                                                WorkDaysCountService workDaysCountService, VacationDaysService vacationDaysService, OvertimeService overtimeService,
                                                 VacationTypeService vacationTypeService) {
 
         this.accountService = accountService;
         this.applicationService = applicationService;
-        this.calendarService = calendarService;
+        this.workDaysCountService = workDaysCountService;
         this.vacationDaysService = vacationDaysService;
         this.overtimeService = overtimeService;
         this.vacationTypeService = vacationTypeService;
@@ -92,10 +92,10 @@ public class ApplicationForLeaveStatisticsBuilder {
             final LocalDate startDate = getStartDateForCalculation(application, relevantYear);
             final LocalDate endDate = getEndDateForCalculation(application, relevantYear);
 
-            return calendarService.getWorkDaysCount(dayLength, startDate, endDate, person);
+            return workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
         }
 
-        return calendarService.getWorkDaysCount(dayLength, application.getStartDate(), application.getEndDate(), person);
+        return workDaysCountService.getWorkDaysCount(dayLength, application.getStartDate(), application.getEndDate(), person);
     }
 
     private LocalDate getStartDateForCalculation(Application application, int relevantYear) {

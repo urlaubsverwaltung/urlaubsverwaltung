@@ -40,16 +40,16 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 public class ApplicationForLeaveViewController {
 
     private final ApplicationService applicationService;
-    private final WorkDaysCountService calendarService;
+    private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveViewController(ApplicationService applicationService, WorkDaysCountService calendarService,
+    public ApplicationForLeaveViewController(ApplicationService applicationService, WorkDaysCountService workDaysCountService,
                                              DepartmentService departmentService, PersonService personService, Clock clock) {
         this.applicationService = applicationService;
-        this.calendarService = calendarService;
+        this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
         this.clock = clock;
@@ -79,7 +79,7 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate) {
         return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate).stream()
-            .map(application -> new ApplicationForLeave(application, calendarService))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(byStartDate())
             .collect(toList());
     }
@@ -96,7 +96,7 @@ public class ApplicationForLeaveViewController {
         }
 
         return cancellationRequests.stream()
-            .map(application -> new ApplicationForLeave(application, calendarService))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(byStartDate())
             .collect(toList());
     }
@@ -132,14 +132,14 @@ public class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
         return applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)).stream()
-            .map(application -> new ApplicationForLeave(application, calendarService))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(byStartDate())
             .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
-            .map(application -> new ApplicationForLeave(application, calendarService))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(byStartDate())
             .collect(toList());
     }
@@ -149,7 +149,7 @@ public class ApplicationForLeaveViewController {
         return applicationService.getForStatesAndPerson(List.of(WAITING), members).stream()
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
-            .map(application -> new ApplicationForLeave(application, calendarService))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(byStartDate())
             .collect(toList());
     }
@@ -158,7 +158,7 @@ public class ApplicationForLeaveViewController {
         final List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
             .filter(withoutApplicationsOf(secondStage))
-            .map(application -> new ApplicationForLeave(application, calendarService))
+            .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(byStartDate())
             .collect(toList());
     }

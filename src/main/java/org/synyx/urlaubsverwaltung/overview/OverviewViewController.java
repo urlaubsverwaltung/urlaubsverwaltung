@@ -55,7 +55,7 @@ public class OverviewViewController {
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final ApplicationService applicationService;
-    private final WorkDaysCountService calendarService;
+    private final WorkDaysCountService workDaysCountService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
@@ -65,14 +65,14 @@ public class OverviewViewController {
     @Autowired
     public OverviewViewController(PersonService personService, AccountService accountService,
                                   VacationDaysService vacationDaysService,
-                                  ApplicationService applicationService, WorkDaysCountService calendarService,
+                                  ApplicationService applicationService, WorkDaysCountService workDaysCountService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
                                   SettingsService settingsService, DepartmentService departmentService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.applicationService = applicationService;
-        this.calendarService = calendarService;
+        this.workDaysCountService = workDaysCountService;
         this.sickNoteService = sickNoteService;
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
@@ -134,12 +134,12 @@ public class OverviewViewController {
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, getFirstDayOfYear(year), getLastDayOfYear(year));
 
         final List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
-            .map(input -> new ExtendedSickNote(input, calendarService))
+            .map(input -> new ExtendedSickNote(input, workDaysCountService))
             .sorted(Comparator.comparing(ExtendedSickNote::getStartDate).reversed())
             .collect(toList());
         model.addAttribute("sickNotes", extendedSickNotes);
 
-        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, calendarService);
+        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
@@ -153,12 +153,12 @@ public class OverviewViewController {
 
         if (!applications.isEmpty()) {
             final List<ApplicationForLeave> applicationsForLeave = applications.stream()
-                .map(application -> new ApplicationForLeave(application, calendarService))
+                .map(application -> new ApplicationForLeave(application, workDaysCountService))
                 .sorted(Comparator.comparing(ApplicationForLeave::getStartDate).reversed())
                 .collect(toList());
             model.addAttribute("applications", applicationsForLeave);
 
-            final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, calendarService);
+            final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 

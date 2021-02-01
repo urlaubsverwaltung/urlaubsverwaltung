@@ -16,15 +16,15 @@ import java.time.Clock;
 public class SickNoteStatisticsService {
 
     private final SickNoteService sickNoteService;
-    private final WorkDaysCountService calendarService;
+    private final WorkDaysCountService workDaysCountService;
 
     @Autowired
-    public SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService calendarService) {
+    public SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService) {
         this.sickNoteService = sickNoteService;
-        this.calendarService = calendarService;
+        this.workDaysCountService = workDaysCountService;
     }
 
     public SickNoteStatistics createStatistics(Clock clock) {
-        return new SickNoteStatistics(clock, sickNoteService, calendarService);
+        return new SickNoteStatistics(clock, sickNoteService, workDaysCountService);
     }
 }
