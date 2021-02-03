@@ -61,7 +61,7 @@
 <c:set var="TIME_PATTERN">
     <spring:message code="pattern.time"/> <spring:message code="application.data.time.placeholder"/>
 </c:set>
-
+<c:set var="IS_VACATION_REPLACEMENT_SHOWN" value="${application.holidayReplacement ? '' : 'hidden'}"/>
 <uv:menu/>
 
 <c:choose>
@@ -214,29 +214,6 @@
                     <%-- Absence Period --%>
                     <div class="row">
                         <div class="col-md-8">
-
-                            <div class="form-group">
-                                <label class="control-label col-md-3" for="holidayReplacement">
-                                    Notiz an Vertreter/in:
-                                </label>
-                                <div class="col-md-9">
-                                    <small>
-                                        <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
-                                    </small>
-                                    <form:textarea id="holidayReplacementNote" rows="1" path="holidayReplacementNote" class="form-control"
-                                                   cssErrorClass="form-control error"
-                                                   onkeyup="count(this.value, 'text-address');"
-                                                   onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
-                                    <uv:error-text>
-                                        <form:errors path="holidayReplacementNote" />
-                                    </uv:error-text>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-8">
                             <div class="form-group is-required">
                                 <label class="control-label col-md-3">
                                     <spring:message code="absence.period"/>:
@@ -345,7 +322,7 @@
                                     <spring:message code="application.data.holidayReplacement"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <uv:select id="holidayReplacement" name="holidayReplacement">
+                                    <uv:select id="holidayReplacement" name="holidayReplacement" onchange="holidayReplacementChanged(this.value);">
                                         <option value="-1">
                                             <spring:message code="application.data.holidayReplacement.none" />
                                         </option>
@@ -371,6 +348,26 @@
                                     </uv:error-text>
                                 </div>
                             </div>
+
+                            <%-- holiday replacement note--%>
+                            <div id="holidayReplacementNoteRow" class="form-group ${IS_VACATION_REPLACEMENT_SHOWN}">
+                                <label class="control-label col-md-3" for="holidayReplacement">
+                                    Notiz an Vertreter/in:
+                                </label>
+                                <div class="col-md-9">
+                                    <small>
+                                        <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
+                                    </small>
+                                    <form:textarea id="holidayReplacementNote" rows="1" path="holidayReplacementNote" class="form-control"
+                                                   cssErrorClass="form-control error"
+                                                   onkeyup="count(this.value, 'text-address');"
+                                                   onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
+                                    <uv:error-text>
+                                        <form:errors path="holidayReplacementNote" />
+                                    </uv:error-text>
+                                </div>
+                            </div>
+
 
                             <%-- Address and phone number--%>
                             <div class="form-group">

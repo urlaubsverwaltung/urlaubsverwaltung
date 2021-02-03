@@ -9,6 +9,10 @@ import vacationTypeChanged from "../js/application/vacation-type-changed";
 
 window.vacationTypeChanged = vacationTypeChanged;
 
+import holidayReplacementChanged from "../js/application/holiday-replacement-changed";
+
+window.holidayReplacementChanged = holidayReplacementChanged;
+
 import count from "../js/count";
 import maxChars from "../js/max-chars";
 
