@@ -356,12 +356,12 @@
                                 </label>
                                 <div class="col-md-9">
                                     <small>
-                                        <span id="text-address"></span><spring:message code="action.comment.maxChars"/>
+                                        <span id="text-holiday-replacement-note"></span><spring:message code="action.comment.maxChars"/>
                                     </small>
                                     <form:textarea id="holidayReplacementNote" rows="1" path="holidayReplacementNote" class="form-control"
                                                    cssErrorClass="form-control error"
-                                                   onkeyup="count(this.value, 'text-address');"
-                                                   onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
+                                                   onkeyup="count(this.value, 'text-holiday-replacement-note');"
+                                                   onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note');"/>
                                     <uv:error-text>
                                         <form:errors path="holidayReplacementNote" />
                                     </uv:error-text>
