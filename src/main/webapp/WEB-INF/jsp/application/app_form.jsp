@@ -61,7 +61,7 @@
 <c:set var="TIME_PATTERN">
     <spring:message code="pattern.time"/> <spring:message code="application.data.time.placeholder"/>
 </c:set>
-<c:set var="IS_VACATION_REPLACEMENT_SHOWN" value="${application.holidayReplacement ? '' : 'hidden'}"/>
+<c:set var="IS_VACATION_REPLACEMENT_SHOWN" value="${application.holidayReplacement != null ? '' : 'hidden'}"/>
 <uv:menu/>
 
 <c:choose>
