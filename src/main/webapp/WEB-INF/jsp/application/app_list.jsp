@@ -402,6 +402,11 @@
                                         <span class="tw-block tw-text-lg tw-mb-1">
                                             <c:out value="${application.person.niceName}"/>
                                         </span>
+                                        <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
+                                            <div>
+                                                <spring:message code="applications.holiday_replacement.pending"/>
+                                            </div>
+                                        </c:if>
                                     </td>
                                     <td class="halves">
                                         <span class="tw-block tw-mb-1 tw-text-lg">
@@ -473,8 +478,8 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-                                            <spring:message code="applications.holiday_replacement.pending"/>
+                                        <c:if test="${application.holidayReplacementNote != null}">
+                                            " <c:out value="${application.holidayReplacementNote}"/> "
                                         </c:if>
                                     </td>
                                 </tr>
