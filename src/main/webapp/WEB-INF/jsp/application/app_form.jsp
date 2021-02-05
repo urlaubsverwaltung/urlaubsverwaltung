@@ -351,7 +351,7 @@
 
                             <%-- holiday replacement note--%>
                             <div id="holidayReplacementNoteRow" class="form-group ${IS_VACATION_REPLACEMENT_SHOWN}">
-                                <label class="control-label col-md-3" for="holidayReplacement">
+                                <label class="control-label col-md-3" for="holidayReplacementNote">
                                     <spring:message code="application.data.holidayReplacementNote"/>:
                                 </label>
                                 <div class="col-md-9">
