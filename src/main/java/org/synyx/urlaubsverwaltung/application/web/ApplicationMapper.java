@@ -24,6 +24,7 @@ final class ApplicationMapper {
             .hours(application.getHours())
             .person(application.getPerson())
             .holidayReplacement(application.getHolidayReplacement())
+            .holidayReplacementNote(application.getHolidayReplacementNote())
             .vacationType(application.getVacationType())
             .reason(application.getReason())
             .build();
@@ -51,6 +52,7 @@ final class ApplicationMapper {
         newApplication.setDayLength(applicationForLeaveForm.getDayLength());
         newApplication.setReason(applicationForLeaveForm.getReason());
         newApplication.setHolidayReplacement(applicationForLeaveForm.getHolidayReplacement());
+        newApplication.setHolidayReplacementNote(applicationForLeaveForm.getHolidayReplacementNote());
         newApplication.setAddress(applicationForLeaveForm.getAddress());
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());
 

@@ -389,6 +389,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
+        application.setHolidayReplacementNote("Eine Nachricht an die Vertretung");
 
         sut.notifyHolidayReplacementForApply(application);
 
@@ -405,8 +406,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("Lieschen Müller hat dich bei einer Abwesenheit als Vertretung vorgesehen.");
         assertThat(content).contains("Es handelt sich um den Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig.");
-        assertThat(content).contains("Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
+        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("Eine Nachricht an die Vertretung");
     }
 
     @Test
@@ -419,6 +421,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
+        application.setHolidayReplacementNote("Eine Nachricht an die Vertretung");
 
         sut.notifyHolidayReplacementAllow(application);
 
@@ -435,8 +438,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
         assertThat(content).contains("Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.");
-        assertThat(content).contains("Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
+        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("Eine Nachricht an die Vertretung");
 
         final List<DataSource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
@@ -469,7 +473,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("du bist für die Abwesenheit von Lieschen Müller");
         assertThat(content).contains("im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,");
         assertThat(content).contains("nicht mehr als Vertretung vorgesehen.");
-        assertThat(content).contains("Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
+        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
     }
 
@@ -483,6 +487,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
         application.setHolidayReplacement(holidayReplacement);
+        application.setHolidayReplacementNote("Eine Nachricht an die Vertretung");
 
         sut.notifyHolidayReplacementAboutEdit(application);
 
@@ -499,8 +504,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.");
         assertThat(content).contains("Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.");
-        assertThat(content).contains("Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
+        assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("Eine Nachricht an die Vertretung");
     }
 
     @Test

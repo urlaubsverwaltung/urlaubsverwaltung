@@ -4,6 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <uv:box className="tw-h-32 tw-mb-4">
     <jsp:attribute name="icon">
@@ -80,7 +81,7 @@
     </jsp:body>
 </uv:box>
 
-<table class="list-table striped-table bordered-table tw-text-sm">
+<table class="list-table striped-table bordered-table tw-text-sm tw-table-fixed">
 
     <tr>
         <td><spring:message code="absence.period.duration"/></td>
@@ -137,7 +138,7 @@
         <td>
             <spring:message code='application.data.reason'/>
         </td>
-        <td>
+        <td class="tw-break-words">
             <c:choose>
                 <c:when test="${application.reason != null && !empty application.reason}">
                     <c:out value="${application.reason}"/>
@@ -166,9 +167,24 @@
     </tr>
     <tr>
         <td>
+            <spring:message code='application.data.holidayReplacementNote'/>
+        </td>
+        <td class="tw-break-words">
+            <c:choose>
+                <c:when test="${fn:length(application.holidayReplacementNote) > 0}">
+                    <c:out value="${application.holidayReplacementNote}"/>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code="application.data.furtherInformation.notSpecified"/>
+                </c:otherwise>
+            </c:choose>
+        </td>
+    </tr>
+    <tr>
+        <td>
             <spring:message code="application.data.furtherInformation.address"/>
         </td>
-        <td>
+        <td class="tw-break-words">
             <c:choose>
                 <c:when test="${application.address!= null && !empty application.address}">
                     <c:out value="${application.address}"/>

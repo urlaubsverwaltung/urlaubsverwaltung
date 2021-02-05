@@ -108,7 +108,7 @@ public class Application {
     @ManyToOne
     @JoinColumn(name = "rep_id")
     private Person holidayReplacement;
-
+    private String holidayReplacementNote;
     /**
      * Further information: address, phone number etc.
      */
@@ -383,6 +383,14 @@ public class Application {
         }
 
         return null;
+    }
+
+    public void setHolidayReplacementNote(String holidayReplacementNote) {
+        this.holidayReplacementNote = holidayReplacementNote;
+    }
+
+    public String getHolidayReplacementNote() {
+        return holidayReplacementNote;
     }
 
     @Override

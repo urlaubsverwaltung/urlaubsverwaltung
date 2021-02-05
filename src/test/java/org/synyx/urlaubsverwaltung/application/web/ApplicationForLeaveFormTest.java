@@ -73,6 +73,7 @@ class ApplicationForLeaveFormTest {
         form.setAddress("Musterstr. 39");
         form.setComment("Kommentar");
         form.setHolidayReplacement(holidayReplacement);
+        form.setHolidayReplacementNote("Some note");
         form.setReason("Deshalb");
         form.setTeamInformed(true);
         form.setVacationType(overtime);
@@ -81,6 +82,7 @@ class ApplicationForLeaveFormTest {
         final Application application = form.generateApplicationForLeave();
         assertThat(application.getPerson()).isEqualTo(person);
         assertThat(application.getHolidayReplacement()).isEqualTo(holidayReplacement);
+        assertThat(application.getHolidayReplacementNote()).isEqualTo("Some note");
         assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
         assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
         assertThat(application.getReason()).isEqualTo("Deshalb");
@@ -135,6 +137,7 @@ class ApplicationForLeaveFormTest {
             .hours(BigDecimal.ZERO)
             .reason("Good one.")
             .holidayReplacement(holidayReplacement)
+            .holidayReplacementNote("some note")
             .address("Gartenstrasse 67")
             .teamInformed(true)
             .comment("Welcome!")
@@ -150,6 +153,7 @@ class ApplicationForLeaveFormTest {
         assertThat(form.getHours()).isEqualTo(BigDecimal.ZERO);
         assertThat(form.getReason()).isEqualTo("Good one.");
         assertThat(form.getHolidayReplacement()).isEqualTo(holidayReplacement);
+        assertThat(form.getHolidayReplacementNote()).isEqualTo("some note");
         assertThat(form.getAddress()).isEqualTo("Gartenstrasse 67");
         assertThat(form.isTeamInformed()).isTrue();
         assertThat(form.getComment()).isEqualTo("Welcome!");
@@ -220,6 +224,7 @@ class ApplicationForLeaveFormTest {
             .hours(BigDecimal.ZERO)
             .reason("Reason")
             .holidayReplacement(holidayReplacement)
+            .holidayReplacementNote("some note")
             .address("Address")
             .teamInformed(true)
             .comment("Comment")
@@ -228,6 +233,6 @@ class ApplicationForLeaveFormTest {
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
             "vacationType=VacationType{category=null, messageKey='null'}, dayLength=ZERO, hours=0, " +
-            "holidayReplacement=Person{id='null'}, address='Address', teamInformed=true}");
+            "holidayReplacement=Person{id='null'}, holidayReplacementNote='some note', address='Address', teamInformed=true}");
     }
 }
