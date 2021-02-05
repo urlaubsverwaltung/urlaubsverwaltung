@@ -1,0 +1,32 @@
+version: '2.4'
+services:
+  mariadb:
+    image: mariadb:10.5
+    ports:
+      - '3308:3306'
+    environment:
+      - MYSQL_DATABASE=urlaubsverwaltung
+      - MYSQL_USER=urlaubsverwaltung
+      - MYSQL_PASSWORD=urlaubsverwaltung
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+  keycloak:
+    image: jboss/keycloak:12.0.2
+    environment:
+      DB_VENDOR: h2
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    entrypoint:
+      - "/opt/jboss/tools/docker-entrypoint.sh"
+      # to export the urlaubsverwaltung realm
+      # - "-Dkeycloak.migration.action=export -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/tmp/urlaubsverwaltung-realm-export.json -Dkeycloak.migration.realmName=urlaubsverwaltung"
+      # to import the urlaubsverwaltung realm (default)
+      - "-Dkeycloak.import=/tmp/urlaubsverwaltung-realm.json"
+    volumes:
+      - ./urlaubsverwaltung-realm-export.json:/tmp/urlaubsverwaltung-realm.json:ro
+    ports:
+      - 8090:8080
