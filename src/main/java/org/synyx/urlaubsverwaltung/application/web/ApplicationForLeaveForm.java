@@ -200,6 +200,7 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setDayLength(dayLength);
         applicationForLeave.setReason(reason);
         applicationForLeave.setHolidayReplacement(holidayReplacement);
+        applicationForLeave.setHolidayReplacementNote(holidayReplacementNote);
         applicationForLeave.setAddress(address);
         applicationForLeave.setTeamInformed(teamInformed);
 
@@ -222,6 +223,7 @@ public class ApplicationForLeaveForm {
             ", dayLength=" + dayLength +
             ", hours=" + hours +
             ", holidayReplacement=" + holidayReplacement +
+            ", holidayReplacementNote='" + holidayReplacementNote + '\'' +
             ", address='" + address + '\'' +
             ", teamInformed=" + teamInformed +
             '}';
@@ -247,6 +249,7 @@ public class ApplicationForLeaveForm {
         private BigDecimal hours;
         private String reason;
         private Person holidayReplacement;
+        private String holidayReplacementNote;
         private String address;
         private boolean teamInformed;
         private String comment;
@@ -302,6 +305,11 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
+        public ApplicationForLeaveForm.Builder holidayReplacementNote(String holidayReplacementNote) {
+            this.holidayReplacementNote = holidayReplacementNote;
+            return this;
+        }
+
         public ApplicationForLeaveForm.Builder address(String address) {
             this.address = address;
             return this;
@@ -336,6 +344,7 @@ public class ApplicationForLeaveForm {
             form.setHours(hours);
             form.setReason(reason);
             form.setHolidayReplacement(holidayReplacement);
+            form.setHolidayReplacementNote(holidayReplacementNote);
             form.setAddress(address);
             form.setTeamInformed(teamInformed);
             form.setComment(comment);

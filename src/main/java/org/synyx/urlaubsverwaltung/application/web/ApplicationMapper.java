@@ -24,6 +24,7 @@ final class ApplicationMapper {
             .hours(application.getHours())
             .person(application.getPerson())
             .holidayReplacement(application.getHolidayReplacement())
+            .holidayReplacementNote(application.getHolidayReplacementNote())
             .vacationType(application.getVacationType())
             .reason(application.getReason())
             .build();
