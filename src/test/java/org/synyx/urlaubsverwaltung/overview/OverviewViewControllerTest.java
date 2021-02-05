@@ -228,24 +228,28 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
-        final Application revokedApplication = new Application();
-        revokedApplication.setStatus(REVOKED);
-
         final VacationType vacationType = new VacationType();
         vacationType.setCategory(HOLIDAY);
+
+        final Application revokedApplication = new Application();
+        revokedApplication.setStatus(REVOKED);
+        revokedApplication.setVacationType(vacationType);
+        revokedApplication.setPerson(person);
+        revokedApplication.setStartDate(LocalDate.now(UTC).plusDays(1L));
+        revokedApplication.setEndDate(LocalDate.now(UTC).plusDays(2L));
 
         final Application waitingApplication = new Application();
         waitingApplication.setVacationType(vacationType);
         waitingApplication.setPerson(person);
         waitingApplication.setStatus(WAITING);
-        waitingApplication.setStartDate(LocalDate.now(UTC).minusDays(1L));
-        waitingApplication.setEndDate(LocalDate.now(UTC).plusDays(1L));
+        waitingApplication.setStartDate(LocalDate.now(UTC).plusDays(3L));
+        waitingApplication.setEndDate(LocalDate.now(UTC).plusDays(4L));
 
         final Application allowedApplication = new Application();
         allowedApplication.setVacationType(vacationType);
         allowedApplication.setPerson(person);
         allowedApplication.setStatus(ALLOWED);
-        allowedApplication.setStartDate(LocalDate.now(UTC).minusDays(10L));
+        allowedApplication.setStartDate(LocalDate.now(UTC).plusDays(5L));
         allowedApplication.setEndDate(LocalDate.now(UTC).plusDays(10L));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
@@ -263,7 +267,7 @@ class OverviewViewControllerTest {
         final ResultActions resultActions = perform(builder);
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("person/overview"));
-        resultActions.andExpect(model().attribute("applications", hasSize(2)));
+        resultActions.andExpect(model().attribute("applications", hasSize(3)));
         resultActions.andExpect(model().attribute("sickNotes", hasSize(2)));
         resultActions.andExpect(model().attribute("signedInUser", person));
     }

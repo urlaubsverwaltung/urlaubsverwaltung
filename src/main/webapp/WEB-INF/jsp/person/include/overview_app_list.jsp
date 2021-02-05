@@ -10,7 +10,7 @@
     <tbody>
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
         <c:choose>
-            <c:when test="${app.status == 'CANCELLED' || app.status == 'REJECTED'}">
+            <c:when test="${app.status == 'CANCELLED' || app.status == 'REJECTED' || app.status == 'REVOKED'}">
                 <c:set var="CSS_CLASS" value="inactive"/>
             </c:when>
             <c:otherwise>
@@ -42,7 +42,7 @@
                     <c:when test="${app.status == 'REJECTED'}">
                         <icon:ban className="tw-w-6 tw-h-6" />
                     </c:when>
-                    <c:when test="${app.status == 'CANCELLED'}">
+                    <c:when test="${app.status == 'CANCELLED'  || app.status == 'REVOKED'}">
                         <icon:trash className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:otherwise>&nbsp;</c:otherwise>

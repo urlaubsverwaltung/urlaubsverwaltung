@@ -36,7 +36,6 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -147,9 +146,7 @@ public class OverviewViewController {
 
         // get the person's applications for the given year
         final List<Application> applications =
-            applicationService.getApplicationsForACertainPeriodAndPerson(getFirstDayOfYear(year), getLastDayOfYear(year), person).stream()
-                .filter(input -> !input.hasStatus(REVOKED))
-                .collect(toList());
+            applicationService.getApplicationsForACertainPeriodAndPerson(getFirstDayOfYear(year), getLastDayOfYear(year), person);
 
         if (!applications.isEmpty()) {
             final List<ApplicationForLeave> applicationsForLeave = applications.stream()
