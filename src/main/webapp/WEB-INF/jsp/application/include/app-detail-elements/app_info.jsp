@@ -4,6 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <uv:box className="tw-h-32 tw-mb-4">
     <jsp:attribute name="icon">
@@ -170,7 +171,7 @@
         </td>
         <td>
             <c:choose>
-                <c:when test="${application.holidayReplacementNote != null}">
+                <c:when test="${fn:length(application.holidayReplacementNote) > 0}">
                     <c:out value="${application.holidayReplacementNote}"/>
                 </c:when>
                 <c:otherwise>
