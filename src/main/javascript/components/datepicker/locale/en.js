@@ -1,12 +1,13 @@
 import format from "../../../lib/date-fns/format";
 
+// due to historical reasons the english date format is equal to the german one
 const DATE_FORMAT = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
 
 /**
  * format used for the visually visible date string of the input element.
  * @type {string}
  */
-export const dateFormat = "dd.MM.yyyy";
+const dateFormat = "dd.MM.yyyy";
 
 /**
  * short date format used by duet-date-picker for screen reader description only.
@@ -17,7 +18,7 @@ export const dateFormat = "dd.MM.yyyy";
  *
  *  @type {string}
  */
-export const dateFormatShort = "dd. MMMM";
+const dateFormatShort = "MMMM dd";
 
 /**
  * duet-date-picker adapter to format and parse dates

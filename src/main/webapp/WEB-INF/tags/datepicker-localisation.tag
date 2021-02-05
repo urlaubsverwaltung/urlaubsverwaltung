@@ -4,6 +4,7 @@
     window.uv = window.uv || {};
     window.uv.datepicker = window.uv.datepicker || {};
     window.uv.datepicker.localisation = {
+        locale: "${language}",
         buttonLabel: "<spring:message code="datepicker.buttonLabel" />",
         placeholder: "<spring:message code="datepicker.placeholder" />",
         selectedDateMessage: "<spring:message code="datepicker.selectedDateMessage" />",

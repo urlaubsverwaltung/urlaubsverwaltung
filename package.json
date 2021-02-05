@@ -33,7 +33,7 @@
   "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
   "dependencies": {
     "@babel/polyfill": "7.12.1",
-    "@duetds/date-picker": "1.1.0",
+    "@duetds/date-picker": "1.2.0",
     "bootstrap": "3.4.1",
     "datalist-polyfill": "1.24.4",
     "font-awesome": "4.7.0",
