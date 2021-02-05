@@ -156,8 +156,8 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("person", is(person)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
-        resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(new BigDecimal("1.0"))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(new BigDecimal("0.0"))));
     }
 
     @Test
@@ -196,8 +196,8 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("person", is(person)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
-        resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(new BigDecimal("1.0"))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(new BigDecimal("0.0"))));
     }
 
     @Test
@@ -250,8 +250,8 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_details"));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
-        resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(new BigDecimal("1.0"))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(new BigDecimal("0.0"))));
     }
 
     @Test
