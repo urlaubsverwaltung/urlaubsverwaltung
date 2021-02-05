@@ -5,8 +5,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.Optional;
@@ -28,14 +28,26 @@ class OidcLoginLogger {
 
     @EventListener
     public void handle(AuthenticationSuccessEvent event) {
-        final Authentication authentication = event.getAuthentication();
-        final OidcUser user = (OidcUser) authentication.getPrincipal();
-        final String userUniqueID = user.getIdToken().getSubject();
+        parseUsername(event.getAuthentication())
+            .ifPresent(username ->
+                personService.getPersonByUsername(username).ifPresentOrElse(
+                    person -> LOG.info("User '{}' has signed in", person.getId()),
+                    () -> LOG.error("Could not find signed-in user with id '{}'", username)
+                )
+            );
+    }
 
-        final Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
-        optionalPerson.ifPresentOrElse(
-            person -> LOG.info("User '{}' has signed in", person.getId()),
-            () -> LOG.error("Could not find signed-in user with id '{}'", userUniqueID)
-        );
+    private Optional<String> parseUsername(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof OidcUser) {
+            final OidcUser user = (OidcUser) authentication.getPrincipal();
+            return Optional.of(user.getIdToken().getSubject());
+
+        } else if (authentication.getPrincipal() instanceof Jwt) {
+            final Jwt jwt = (Jwt) authentication.getPrincipal();
+            return Optional.of(jwt.getSubject());
+
+        } else {
+            return Optional.empty();
+        }
     }
 }
