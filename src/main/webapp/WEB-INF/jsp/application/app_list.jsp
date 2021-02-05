@@ -479,7 +479,7 @@
                                     </td>
                                     <td>
                                         <c:if test="${application.holidayReplacementNote != null}">
-                                            " <c:out value="${application.holidayReplacementNote}"/> "
+                                            <c:out value="${application.holidayReplacementNote}"/>
                                         </c:if>
                                     </td>
                                 </tr>
