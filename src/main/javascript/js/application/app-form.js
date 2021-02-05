@@ -75,6 +75,17 @@ $(document).ready(async function () {
     forceRoundTime: true,
     scrollDefault: "now",
   });
+
+  let applicationSubmitPressed = false;
+  document.querySelector("#apply-application").addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const button = event.target || event.srcElement;
+    if (!applicationSubmitPressed) {
+      button.form.submit();
+    }
+    applicationSubmitPressed = true;
+  });
 });
 
 function compose(...functions) {
