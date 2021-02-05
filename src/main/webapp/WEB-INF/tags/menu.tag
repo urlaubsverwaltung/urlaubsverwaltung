@@ -90,7 +90,7 @@
 
 <div class="navigation">
     <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden">
-    <label for="menu-toggle-checkbox" class="tw-flex tw-items-center tw-px-4 tw-py-4 tw-absolute tw-top-0 tw-left-0 lg:tw-hidden tw-cursor-pointer">
+    <label for="menu-toggle-checkbox" class="tw-flex tw-items-center tw-px-4 tw-py-4 tw-absolute tw-top-0 tw-left-0 lg:tw-hidden tw-cursor-pointer tw-z-50">
         <span class="tw-inline-block">
             <span class="hamburger-bar"></span>
             <span class="hamburger-bar"></span>
@@ -99,19 +99,31 @@
             <span class="hamburger-bar"></span>
         </span>
     </label>
-    <nav class="tw-max-w-6xl tw-mx-auto">
+    <nav class="tw-relative tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-200">
             <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center">
-                <a href="${URL_PREFIX}/overview" class="tw-inline-block">
-                    <img
-                        src="<c:out value='${menuGravatarUrl}?d=mm&s=20'/>"
-                        alt=""
-                        class="gravatar tw-rounded-full"
-                        width="24px"
-                        height="24px"
-                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                    />
-                </a>
+                <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row-reverse">
+                    <li class="">
+                        <a href="${URL_PREFIX}/overview" class="tw-inline-block">
+                            <img
+                                src="<c:out value='${menuGravatarUrl}?d=mm&s=20'/>"
+                                alt=""
+                                class="gravatar tw-rounded-full"
+                                width="24px"
+                                height="24px"
+                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                            />
+                        </a>
+                    </li>
+                    <li class="tw-mr-5">
+                        <a href="${URL_PREFIX}/notification" class="tw-relative tw-block" id="nav-notification-link">
+                            <icon:bell className="tw-w-6 tw-h-6 tw-text-black tw-text-opacity-50" />
+                            <small class="tw-absolute tw--bottom-1 tw--right-2 tw-text-blue-100 tw-bg-blue-500 tw-flex tw-items-center tw-justify-center tw-rounded-full tw-text-xs tw-font-bold tw-h-5 tw-w-5">
+                                4
+                            </small>
+                        </a>
+                    </li>
+                </ul>
             </div>
             <div class="tw-flex-1 navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                 <ul class="tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4 lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2 xl:tw-px-0">
