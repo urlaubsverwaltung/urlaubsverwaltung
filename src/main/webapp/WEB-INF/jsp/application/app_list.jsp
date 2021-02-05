@@ -384,7 +384,7 @@
                         <p><spring:message code="applications.holiday_replacement.none"/></p>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table list-table-bt-0 tw-text-sm tw-table-auto">
+                        <table class="list-table list-table-bt-0 tw-text-sm">
                             <tbody>
                             <c:forEach items="${applications_holiday_replacements}" var="application" varStatus="loopStatus">
                                 <tr class="active">
