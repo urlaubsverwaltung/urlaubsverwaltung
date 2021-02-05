@@ -69,5 +69,5 @@
   <include file="dbchangelogs/changelog-4.4.0-accountsettings-default-vacation-days.xml"/>
   <include file="dbchangelogs/changelog-4.6.0-rename-absencetype-to-absencemappingtype.xml"/>
   <include file="dbchangelogs/changelog-4.7.0-add-calendar-period.xml"/>
-  <include file="dbchangelogs/changelog-4.10.0-add-replcement-note.xml"/>
+  <include file="dbchangelogs/changelog-4.10.0-add-replacement-note.xml"/>
 </databaseChangeLog>
