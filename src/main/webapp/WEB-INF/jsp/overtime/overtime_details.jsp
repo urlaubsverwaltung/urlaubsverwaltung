@@ -91,7 +91,7 @@
                         <tr>
                             <td>
                                 <img
-                                    src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
+                                    src="<c:out value='${comment.person.gravatarUrl}?d=mm&s=40'/>"
                                     alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
                                     class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
                                     width="40px"
@@ -122,7 +122,7 @@
                         <spring:message code="overtime.data.person"/>
                     </h2>
                 </uv:section-heading>
-                <uv:person person="${record.person}" cssClass="print:tw-hidden tw-h-32 tw-mb-5"/>
+                <uv:overtime_person person="${record.person}" cssClass="print:tw-hidden tw-h-32 tw-mb-5"/>
                 <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4" />
                 <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4" />
             </div>
