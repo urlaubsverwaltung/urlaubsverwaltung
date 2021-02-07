@@ -25,12 +25,12 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author) {
+    public SickNoteComment create(SickNote sickNote, SickNoteCommentAction action, Person author) {
         return this.create(sickNote, action, author, null);
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text) {
+    public SickNoteComment create(SickNote sickNote, SickNoteCommentAction action, Person author, String text) {
 
         final SickNoteComment comment = new SickNoteComment(clock);
         comment.setSickNote(sickNote);

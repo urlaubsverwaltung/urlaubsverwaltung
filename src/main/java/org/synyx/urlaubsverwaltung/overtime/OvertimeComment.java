@@ -25,7 +25,7 @@ public class OvertimeComment extends AbstractComment {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private OvertimeAction action;
+    private OvertimeCommentAction action;
 
     protected OvertimeComment() {
         super();
@@ -35,7 +35,7 @@ public class OvertimeComment extends AbstractComment {
         super(clock);
     }
 
-    public OvertimeComment(Person author, Overtime overtime, OvertimeAction action, Clock clock) {
+    public OvertimeComment(Person author, Overtime overtime, OvertimeCommentAction action, Clock clock) {
         super(clock);
 
         Assert.notNull(author, "Author must be given.");
@@ -56,11 +56,11 @@ public class OvertimeComment extends AbstractComment {
         this.overtime = overtime;
     }
 
-    public OvertimeAction getAction() {
+    public OvertimeCommentAction getAction() {
         return action;
     }
 
-    public void setAction(OvertimeAction action) {
+    public void setAction(OvertimeCommentAction action) {
         this.action = action;
     }
 }

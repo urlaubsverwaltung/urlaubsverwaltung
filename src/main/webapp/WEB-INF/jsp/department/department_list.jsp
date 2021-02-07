@@ -79,8 +79,7 @@
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>
                                 <th scope="col" class="sortable-field"><spring:message code="department.members"/></th>
-                                <th scope="col" class="sortable-field"><spring:message
-                                    code='department.data.lastModification'/></th>
+                                <th scope="col" class="sortable-field"><spring:message code='department.data.lastModification'/></th>
                                 <sec:authorize access="hasAuthority('OFFICE')">
                                     <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
                                 </sec:authorize>

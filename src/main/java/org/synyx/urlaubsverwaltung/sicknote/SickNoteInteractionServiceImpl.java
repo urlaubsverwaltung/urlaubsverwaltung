@@ -23,7 +23,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.SICKNOTE;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
-import static org.synyx.urlaubsverwaltung.sicknote.SickNoteAction.EDITED;
+import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
@@ -70,7 +70,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         sickNote.setStatus(ACTIVE);
         saveSickNote(sickNote);
 
-        commentService.create(sickNote, SickNoteAction.CREATED, creator, comment);
+        commentService.create(sickNote, SickNoteCommentAction.CREATED, creator, comment);
 
         LOG.info("Created sick note: {}", sickNote);
 
@@ -104,7 +104,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         sickNote.setStatus(CONVERTED_TO_VACATION);
         saveSickNote(sickNote);
 
-        commentService.create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, converter);
+        commentService.create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
         applicationInteractionService.createFromConvertedSickNote(application, converter);
         LOG.info("Converted sick note to vacation: {}", sickNote);
 
@@ -130,7 +130,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         saveSickNote(sickNote);
         LOG.info("Cancelled sick note: {}", sickNote);
 
-        commentService.create(sickNote, SickNoteAction.CANCELLED, canceller);
+        commentService.create(sickNote, SickNoteCommentAction.CANCELLED, canceller);
 
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {

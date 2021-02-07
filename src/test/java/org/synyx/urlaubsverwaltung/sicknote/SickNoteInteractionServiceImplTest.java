@@ -77,7 +77,7 @@ class SickNoteInteractionServiceImplTest {
         assertThat(createdSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CREATED, creator, null);
+        verify(commentService).create(sickNote, SickNoteCommentAction.CREATED, creator, null);
     }
 
     @Test
@@ -93,7 +93,7 @@ class SickNoteInteractionServiceImplTest {
         sut.create(sickNote, creator, comment);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CREATED, creator, comment);
+        verify(commentService).create(sickNote, SickNoteCommentAction.CREATED, creator, comment);
     }
 
     @Test
@@ -127,7 +127,7 @@ class SickNoteInteractionServiceImplTest {
         assertThat(updatedSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.EDITED, creator, null);
+        verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, null);
     }
 
     @Test
@@ -144,7 +144,7 @@ class SickNoteInteractionServiceImplTest {
         sut.update(sickNote, creator, comment);
 
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.EDITED, creator, comment);
+        verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, comment);
     }
 
     @Test
@@ -177,7 +177,7 @@ class SickNoteInteractionServiceImplTest {
         assertThat(cancelledSickNote.getLastEdited()).isNotNull();
         assertThat(cancelledSickNote.getStatus()).isEqualTo(SickNoteStatus.CANCELLED);
 
-        verify(commentService).create(sickNote, SickNoteAction.CANCELLED, creator);
+        verify(commentService).create(sickNote, SickNoteCommentAction.CANCELLED, creator);
         verify(sickNoteService).save(sickNote);
     }
 
@@ -221,7 +221,7 @@ class SickNoteInteractionServiceImplTest {
 
         // assert sick note correctly updated
         verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteAction.CONVERTED_TO_VACATION, creator);
+        verify(commentService).create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, creator);
 
         // assert application for leave correctly created
         verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, creator);

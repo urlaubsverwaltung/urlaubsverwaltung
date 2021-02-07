@@ -18,7 +18,7 @@ public interface SickNoteCommentService {
      * @param author   of the comment
      * @return the created comment
      */
-    SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author);
+    SickNoteComment create(SickNote sickNote, SickNoteCommentAction action, Person author);
 
     /**
      * Creates a comment for the given sick note with the given action. The given person defines the author of the
@@ -30,7 +30,7 @@ public interface SickNoteCommentService {
      * @param text     of the comment
      * @return the created comment
      */
-    SickNoteComment create(SickNote sickNote, SickNoteAction action, Person author, String text);
+    SickNoteComment create(SickNote sickNote, SickNoteCommentAction action, Person author, String text);
 
     /**
      * Gets all comments for the given sick note.

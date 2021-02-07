@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteAction;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
@@ -196,7 +196,7 @@ public class SickNoteViewController {
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
         } else {
-            sickNoteCommentService.create(sickNote, SickNoteAction.COMMENTED, personService.getSignedInUser(), comment.getText());
+            sickNoteCommentService.create(sickNote, SickNoteCommentAction.COMMENTED, personService.getSignedInUser(), comment.getText());
         }
 
         return REDIRECT_WEB_SICKNOTE + id;
