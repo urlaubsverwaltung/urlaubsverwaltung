@@ -26,7 +26,7 @@
 }
 
 .input-group.has-error {
-  @apply tw-border-red-800;
+  @apply tw-border-red-700;
 }
 
 .input-group .form-control {
@@ -96,7 +96,7 @@
 
 input.error,
 textarea.error {
-  @apply tw-border-red-800;
+  @apply tw-border-red-700;
 }
 
 .info {

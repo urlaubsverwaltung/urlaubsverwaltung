@@ -100,7 +100,7 @@
         </span>
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
-        <div class="tw-flex tw-w-full tw-bg-gray-200">
+        <div class="tw-flex tw-w-full tw-bg-gray-100">
             <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center">
                 <a href="${URL_PREFIX}/overview" class="tw-inline-block">
                     <img
@@ -116,9 +116,9 @@
             <div class="tw-flex-1 navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                 <ul class="tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4 lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2 xl:tw-px-0">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/overview" id="home-link" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/overview" id="home-link" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:home className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:home className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2 lg:tw-sr-only xl:tw-not-sr-only xl:tw-ml-2">
                                     <spring:message code="nav.home.title"/>
                                 </span>
@@ -127,9 +127,9 @@
                     </li>
                     <sec:authorize access="hasAuthority('USER')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:plus-circle className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:plus-circle className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.apply.title"/>
                                 </span>
@@ -138,9 +138,9 @@
                     </li>
                     </sec:authorize>
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/application" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/application" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:calendar className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:calendar className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.vacation.title"/>
                                 </span>
@@ -149,9 +149,9 @@
                     </li>
                     <sec:authorize access="hasAuthority('OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/sicknote" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/sicknote" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:medkit className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:medkit className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.sicknote.title"/>
                                 </span>
@@ -161,9 +161,9 @@
                     </sec:authorize>
                     <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/person?active=true" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/person?active=true" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:user className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:user className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.person.title"/>
                                 </span>
@@ -173,9 +173,9 @@
                     </sec:authorize>
                     <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/department" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/department" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:user-group className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:user-group className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.department.title"/>
                                 </span>
@@ -185,9 +185,9 @@
                     </sec:authorize>
                     <sec:authorize access="hasAuthority('OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/settings" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-600 tw-transition-colors">
+                        <a href="${URL_PREFIX}/settings" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:cog className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                <icon:cog className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.settings.title"/>
                                 </span>
@@ -198,9 +198,9 @@
                     <sec:authorize access="hasAuthority('USER')">
                     <li class="tw-flex tw-items-center">
                         <form:form action="/logout" method="POST">
-                            <button type="submit" class="tw-group tw-inline-block tw-text-gray-900 tw-text-lg lg:tw-text-base tw-bg-transparent tw-p-0 hover:tw-text-blue-600 tw-transition-colors">
+                            <button type="submit" class="tw-group tw-inline-block tw-text-gray-900 tw-text-lg lg:tw-text-base tw-bg-transparent tw-p-0 hover:tw-text-blue-400 tw-transition-colors">
                                 <span class="tw-flex tw-items-center">
-                                    <icon:logout className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-600 tw-transition-colors" />
+                                    <icon:logout className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                     <span class="tw-ml-5 lg:tw-ml-2">
                                         <spring:message code="nav.signout.title"/>
                                     </span>
@@ -213,11 +213,11 @@
             </div>
         </div>
         <div class="tw-flex tw-w-full lg:tw-hidden">
-            <div class="tw-w-4 tw-bg-gray-200">
+            <div class="tw-w-4 tw-bg-gray-100">
                 <div class="tw-h-4 tw-rounded-tl-full tw-bg-white"></div>
             </div>
             <div class="tw-flex-1"></div>
-            <div class="tw-w-4 tw-bg-gray-200">
+            <div class="tw-w-4 tw-bg-gray-100">
                 <div class="tw-h-4 tw-rounded-tr-full tw-bg-white"></div>
             </div>
         </div>

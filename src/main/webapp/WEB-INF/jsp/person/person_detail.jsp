@@ -58,7 +58,7 @@
 
                 <uv:box className="tw-mb-8">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-500 tw-text-white">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
                             <icon:key className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
@@ -80,7 +80,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-8">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-500 tw-text-white">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
                             <icon:user-group className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
