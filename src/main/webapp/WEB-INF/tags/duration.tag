@@ -10,4 +10,7 @@
 <c:if test="${duration.abs().toMinutesPart() > 0}">
     <c:out value="${duration.abs().toMinutesPart()}"/> <spring:message code="overtime.data.minutes.abbr"/>
 </c:if>
+<c:if test="${duration.toMinutes() == 0}">
+    <spring:message code="overtime.person.zero"/>
+</c:if>
 
