@@ -61,7 +61,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
         sut.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), Duration.ofHours(5)));
 
         final Double totalHours = sut.calculateTotalHoursForPerson(person);
-        assertThat(totalHours).isEqualTo(Duration.ofMinutes(150).toMinutes() / 60.0);
+        assertThat(totalHours).isEqualTo((double) Duration.ofMinutes(150).toMinutes() / 60);
     }
 
     @Test
