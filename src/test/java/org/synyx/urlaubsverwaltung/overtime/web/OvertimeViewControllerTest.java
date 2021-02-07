@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -156,8 +155,8 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("person", is(person)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
-        resultActions.andExpect(model().attribute("overtimeTotal", is(new BigDecimal("1.0"))));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(new BigDecimal("0.0"))));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -196,8 +195,8 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("person", is(person)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
-        resultActions.andExpect(model().attribute("overtimeTotal", is(new BigDecimal("1.0"))));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(new BigDecimal("0.0"))));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -250,8 +249,8 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_details"));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
-        resultActions.andExpect(model().attribute("overtimeTotal", is(new BigDecimal("1.0"))));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(new BigDecimal("0.0"))));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
