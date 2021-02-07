@@ -115,7 +115,7 @@
 
                     <uv:box className="tw-mb-8">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-red-600 tw-text-white">
+                            <uv:box-icon className="tw-bg-red-500 tw-text-white">
                                 <c:choose>
                                     <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
                                         <icon:child className="tw-w-8 tw-h-8" />
