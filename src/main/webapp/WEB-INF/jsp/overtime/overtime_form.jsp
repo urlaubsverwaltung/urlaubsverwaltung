@@ -66,16 +66,23 @@
                     </div>
                     <div class="col-xs-12">
                         <uv:section-heading>
-                            <h2>
-                                <c:choose>
-                                    <c:when test="${overtime.id == null}">
-                                        <spring:message code="overtime.record.new"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <spring:message code="overtime.record.edit"/>
-                                    </c:otherwise>
-                                </c:choose>
-                            </h2>
+                            <jsp:attribute name="actions">
+                                <a href="${URL_PREFIX}/overtime?person=${overtime.person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
+                                    <icon:view-grid className="tw-w-5 tw-h-5" />
+                                </a>
+                            </jsp:attribute>
+                            <jsp:body>
+                                <h2>
+                                    <c:choose>
+                                        <c:when test="${overtime.id == null}">
+                                            <spring:message code="overtime.record.new"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <spring:message code="overtime.record.edit"/>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </h2>
+                            </jsp:body>
                         </uv:section-heading>
                     </div>
                     <div class="col-md-4 col-md-push-8">
