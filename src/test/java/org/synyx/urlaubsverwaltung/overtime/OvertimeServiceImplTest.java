@@ -296,7 +296,7 @@ class OvertimeServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(Duration.ofHours(10L).toMinutes() / 60.0);
+        when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn((double) Duration.ofHours(10L).toMinutes() / 60);
         when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
         final Duration leftOvertime = sut.getLeftOvertimeForPerson(person);

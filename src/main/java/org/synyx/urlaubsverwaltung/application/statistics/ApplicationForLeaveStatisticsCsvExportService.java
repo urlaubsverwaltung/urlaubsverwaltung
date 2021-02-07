@@ -72,7 +72,7 @@ class ApplicationForLeaveStatisticsCsvExportService {
             csvRow[3] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
             csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
             csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-            csvRow[6] = decimalFormat.format(new BigDecimal(applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
+            csvRow[6] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
             csvWriter.writeNext(csvRow);
 
             for (VacationType type : vacationTypeService.getVacationTypes()) {
