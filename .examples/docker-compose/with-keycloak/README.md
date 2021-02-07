@@ -9,5 +9,4 @@ bzw. einem OpenID Connect fähigen Autorisierungsserver verwendet werden kann.
   --spring.profiles.active=keycloak`
 
 
-Logins sind auf Basis von Demodata. Dabei ist zu beachten, dass sich der Benutzername aus `Benutzer@example.org`
-zusammen setzt.
+Logins sind auf Basis von [Demodata](../../../README.md#Demodaten-Modus). 

@@ -281,7 +281,7 @@
   "users" : [ {
     "id" : "1e04fb76-3d43-4adb-afcf-d0f7a93beb83",
     "createdTimestamp" : 1608290123086,
-    "username" : "admin@example.org",
+    "username" : "admin",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -311,7 +311,7 @@
   }, {
     "id" : "244d5644-246c-4e2e-a0bf-ef4fabc95acd",
     "createdTimestamp" : 1608289897631,
-    "username" : "baier@example.org",
+    "username" : "baier",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -341,7 +341,7 @@
   }, {
     "id" : "9e7f6ab0-7075-4a17-853b-9a76fd063381",
     "createdTimestamp" : 1608290049557,
-    "username" : "boss@example.org",
+    "username" : "boss",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -371,7 +371,7 @@
   }, {
     "id" : "893e54e2-a8ad-45bf-ae40-c14e7392dda6",
     "createdTimestamp" : 1608289918785,
-    "username" : "dampf@example.org",
+    "username" : "dampf",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -401,7 +401,7 @@
   }, {
     "id" : "65c9e89f-7c92-45e8-b39f-2cfedf1883bc",
     "createdTimestamp" : 1608290144220,
-    "username" : "departmenthead@example.org",
+    "username" : "departmenthead",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -431,7 +431,7 @@
   }, {
     "id" : "4cffef90-1068-42be-b5fa-ba0b8edbac81",
     "createdTimestamp" : 1608289815022,
-    "username" : "haendel@example.org",
+    "username" : "haendel",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -461,7 +461,7 @@
   }, {
     "id" : "9a11eb12-2b0f-4ba1-9943-3aaf3dde3de6",
     "createdTimestamp" : 1608289946800,
-    "username" : "hdieter-active@example.org",
+    "username" : "hdieter-active",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -491,7 +491,7 @@
   }, {
     "id" : "58400ef7-1cc9-48cb-93a8-f45c7af186ad",
     "createdTimestamp" : 1608289715282,
-    "username" : "office@example.org",
+    "username" : "office",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -521,7 +521,7 @@
   }, {
     "id" : "8682331e-5555-48dd-989c-0bc589d9da0d",
     "createdTimestamp" : 1608290077734,
-    "username" : "schmidt@example.org",
+    "username" : "schmidt",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -551,7 +551,7 @@
   }, {
     "id" : "b50b27cc-5768-4ba9-a4c6-bbdba9796342",
     "createdTimestamp" : 1608289863522,
-    "username" : "schneider@example.org",
+    "username" : "schneider",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -581,7 +581,7 @@
   }, {
     "id" : "f45e3262-d738-4f1e-8a9a-e142c1633731",
     "createdTimestamp" : 1608290099219,
-    "username" : "secondstageauthority@example.org",
+    "username" : "secondstageauthority",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
@@ -611,7 +611,7 @@
   }, {
     "id" : "3d07ae0d-90a1-4dfd-9393-172c0c9e7c10",
     "createdTimestamp" : 1608289984833,
-    "username" : "user@example.org",
+    "username" : "user",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
