@@ -15,6 +15,6 @@ public class DurationConverter implements AttributeConverter<Duration, Double> {
 
     @Override
     public Duration convertToEntityAttribute(Double duration) {
-        return Duration.of((long) (duration * 60), ChronoUnit.MINUTES);
+        return Duration.of(Math.round(duration * 60), ChronoUnit.MINUTES);
     }
 }

@@ -134,7 +134,7 @@ class OvertimeServiceImpl implements OvertimeService {
     private Duration getTotalOvertimeForPerson(Person person) {
 
         final Long totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person))
-            .map(aDouble -> (long) (aDouble * 60))
+            .map(aDouble -> Math.round(aDouble * 60))
             .orElse(0L);
         return Duration.of(totalOvertime, ChronoUnit.MINUTES);
 

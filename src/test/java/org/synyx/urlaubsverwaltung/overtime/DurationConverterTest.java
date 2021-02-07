@@ -17,18 +17,11 @@ class DurationConverterTest {
     }
 
     @Test
-    void convertToDatabaseColumn() {
-
-        final Double converted = sut.convertToDatabaseColumn(Duration.parse("PT1H15M"));
-        assertThat(converted).isEqualTo(1.25);
-    }
-
-    @Test
-    void convertToEntityAttribute() {
-
-        assertThat(sut.convertToEntityAttribute(1.25)).isEqualTo(Duration.parse("PT1H15M"));
-        assertThat(sut.convertToEntityAttribute(1.26)).isEqualTo(Duration.parse("PT1H15M"));
-        assertThat(sut.convertToEntityAttribute(1.24)).isEqualTo(Duration.parse("PT1H14M"));
-        assertThat(sut.convertToEntityAttribute(1.23)).isEqualTo(Duration.parse("PT1H13M"));
+    void ensureConversionOfMinutesCorrectly() {
+        for (int i = 0; i <= 60; i++) {
+            Duration expected = Duration.ofMinutes(i);
+            final Duration actual = sut.convertToEntityAttribute(sut.convertToDatabaseColumn(expected));
+            assertThat(actual).isEqualTo(expected);
+        }
     }
 }
