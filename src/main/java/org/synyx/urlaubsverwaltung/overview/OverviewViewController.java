@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -160,8 +159,8 @@ public class OverviewViewController {
             model.addAttribute("usedDaysOverview", usedDaysOverview);
         }
 
-        model.addAttribute("overtimeTotal", BigDecimal.valueOf(overtimeService.getTotalOvertimeForPersonAndYear(person, year).toMinutes() / 60.0));
-        model.addAttribute("overtimeLeft", BigDecimal.valueOf(overtimeService.getLeftOvertimeForPerson(person).toMinutes() / 60.0));
+        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
+        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }
 
     private void prepareHolidayAccounts(Person person, int year, Model model) {

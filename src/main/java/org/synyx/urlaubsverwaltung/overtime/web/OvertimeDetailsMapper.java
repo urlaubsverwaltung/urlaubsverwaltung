@@ -4,7 +4,6 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +23,7 @@ class OvertimeDetailsMapper {
             .map(OvertimeDetailsMapper::mapComment)
             .collect(Collectors.toList());
 
-        return new OvertimeDetailsDto(record, commentDtos,
-            BigDecimal.valueOf(totalOvertime.toMinutes() / 60.0),
-            BigDecimal.valueOf(leftOvertime.toMinutes() / 60.0));
+        return new OvertimeDetailsDto(record, commentDtos, totalOvertime, leftOvertime);
     }
 
     private static OvertimeCommentDto mapComment(OvertimeComment comment) {

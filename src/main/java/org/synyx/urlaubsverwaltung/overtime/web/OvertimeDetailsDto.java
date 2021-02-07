@@ -1,16 +1,16 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 public class OvertimeDetailsDto {
 
     private final OvertimeDetailRecordDto record;
     private final List<OvertimeCommentDto> comments;
-    private final BigDecimal overtimeTotal;
-    private final BigDecimal overtimeLeft;
+    private final Duration overtimeTotal;
+    private final Duration overtimeLeft;
 
-    public OvertimeDetailsDto(OvertimeDetailRecordDto record, List<OvertimeCommentDto> comments, BigDecimal overtimeTotal, BigDecimal overtimeLeft) {
+    public OvertimeDetailsDto(OvertimeDetailRecordDto record, List<OvertimeCommentDto> comments, Duration overtimeTotal, Duration overtimeLeft) {
         this.record = record;
         this.comments = comments;
         this.overtimeTotal = overtimeTotal;
@@ -25,11 +25,11 @@ public class OvertimeDetailsDto {
         return comments;
     }
 
-    public BigDecimal getOvertimeTotal() {
+    public Duration getOvertimeTotal() {
         return overtimeTotal;
     }
 
-    public BigDecimal getOvertimeLeft() {
+    public Duration getOvertimeLeft() {
         return overtimeLeft;
     }
 }

@@ -127,7 +127,8 @@ public class OvertimeViewController {
 
         model.addAttribute(SIGNED_IN_USER, signedInUser);
 
-        final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(overtime,
+        final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
+            overtime,
             overtimeService.getCommentsForOvertime(overtime),
             overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
             overtimeService.getLeftOvertimeForPerson(person));
