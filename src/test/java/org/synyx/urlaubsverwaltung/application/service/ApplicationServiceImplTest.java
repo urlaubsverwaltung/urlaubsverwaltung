@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -74,13 +75,13 @@ class ApplicationServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(null);
+        when(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).thenReturn(null);
 
-        final BigDecimal totalHours = sut.getTotalOvertimeReductionOfPerson(person);
+        final Duration totalHours = sut.getTotalOvertimeReductionOfPerson(person);
 
-        verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
+        verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
 
-        assertThat(totalHours).isEqualTo(BigDecimal.ZERO);
+        assertThat(totalHours).isEqualTo(Duration.ZERO);
     }
 
     @Test
@@ -115,13 +116,13 @@ class ApplicationServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(applicationRepository.calculateTotalOvertimeOfPerson(person)).thenReturn(BigDecimal.ONE);
+        when(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
 
-        final BigDecimal totalHours = sut.getTotalOvertimeReductionOfPerson(person);
+        final Duration totalHours = sut.getTotalOvertimeReductionOfPerson(person);
 
-        verify(applicationRepository).calculateTotalOvertimeOfPerson(person);
+        verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
 
-        assertThat(totalHours).isEqualTo(BigDecimal.ONE);
+        assertThat(totalHours).isEqualTo(Duration.ofHours(1));
     }
 
     @Test

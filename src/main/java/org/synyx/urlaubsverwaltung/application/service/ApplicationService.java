@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +108,7 @@ public interface ApplicationService {
      * @param person to get the total hours of overtime reduction for
      * @return the total overtime reduction of a person, never {@code null}
      */
-    BigDecimal getTotalOvertimeReductionOfPerson(Person person);
+    Duration getTotalOvertimeReductionOfPerson(Person person);
 
 
     /**

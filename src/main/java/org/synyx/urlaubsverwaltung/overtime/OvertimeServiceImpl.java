@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -127,8 +126,7 @@ class OvertimeServiceImpl implements OvertimeService {
         Assert.notNull(person, "Person to get left overtime for must be given.");
 
         final Duration totalOvertime = getTotalOvertimeForPerson(person);
-        final long totalOvertimeReductionInMinutes = applicationService.getTotalOvertimeReductionOfPerson(person).multiply(BigDecimal.valueOf(60)).longValue();
-        final Duration overtimeReduction = Duration.ofMinutes(totalOvertimeReductionInMinutes);
+        final Duration overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
         return totalOvertime.minus(overtimeReduction);
     }

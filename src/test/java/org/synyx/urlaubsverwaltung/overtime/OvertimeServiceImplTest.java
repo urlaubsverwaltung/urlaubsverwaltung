@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -282,7 +281,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
-        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(Duration.ZERO);
 
         final Duration totalHours = sut.getLeftOvertimeForPerson(person);
         assertThat(totalHours).isEqualTo(Duration.ZERO);
@@ -297,7 +296,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn((double) Duration.ofHours(10L).toMinutes() / 60);
-        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ONE);
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(Duration.ofHours(1));
 
         final Duration leftOvertime = sut.getLeftOvertimeForPerson(person);
         assertThat(leftOvertime).isEqualTo(Duration.ofHours(9));
@@ -312,7 +311,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(overtimeRepository.calculateTotalHoursForPerson(person)).thenReturn(null);
-        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(BigDecimal.ZERO);
+        when(applicationService.getTotalOvertimeReductionOfPerson(person)).thenReturn(Duration.ZERO);
 
         final Duration leftOvertime = sut.getLeftOvertimeForPerson(person);
         assertThat(leftOvertime).isEqualTo(Duration.ZERO);
