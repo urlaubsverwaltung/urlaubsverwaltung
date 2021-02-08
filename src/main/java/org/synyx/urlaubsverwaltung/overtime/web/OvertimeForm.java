@@ -47,7 +47,7 @@ public class OvertimeForm {
 
         Assert.notNull(overtime, "Overtime must be given.");
 
-        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf( (double) overtime.getDuration().toMinutes() / 60);
+        final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();
         this.person = overtime.getPerson();

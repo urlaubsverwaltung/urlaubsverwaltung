@@ -57,7 +57,7 @@
                 <uv:box className="tw-h-32 tw-mb-8">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-                            <icon:briefcase className="tw-w-8 tw-h-8" />
+                            <icon:briefcase className="tw-w-8 tw-h-8"/>
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
@@ -126,8 +126,8 @@
                     </h2>
                 </uv:section-heading>
                 <uv:overtime_person person="${record.person}" cssClass="print:tw-hidden tw-h-32 tw-mb-5"/>
-                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4" />
-                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4"/>
+                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4"/>
             </div>
         </div>
         <%-- End of row --%>

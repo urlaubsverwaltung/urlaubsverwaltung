@@ -8,18 +8,18 @@
 <uv:box__ className="${cssClass}">
     <jsp:attribute name="icon">
         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-            <icon:sort-descending className="tw-w-8 tw-h-8" />
+            <icon:sort-descending className="tw-w-8 tw-h-8"/>
         </uv:box-icon>
     </jsp:attribute>
     <jsp:body>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
-            <spring:message code="overtime.person.left.1" />
+            <spring:message code="overtime.person.left.1"/>
         </span>
         <span class="tw-my-1 tw-text-lg tw-font-medium">
             <uv:duration duration="${hours}"/>
         </span>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
-            <spring:message code="overtime.person.left.2" />
+            <spring:message code="overtime.person.left.2"/>
         </span>
     </jsp:body>
 </uv:box__>

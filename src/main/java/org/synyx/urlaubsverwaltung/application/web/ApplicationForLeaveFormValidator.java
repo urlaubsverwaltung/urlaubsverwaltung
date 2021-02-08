@@ -431,6 +431,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
      * Converts {@link BigDecimal}  interpreted as hours to {@link Duration}.
      * Works only for factions representing minutes, smaller fractions will be rounded.
      * e.g. 1.25 is 1h 15min
+     *
      * @param hours {@link BigDecimal} interpreted as hours with factional minutes
      * @return calculated {@link Duration}
      */

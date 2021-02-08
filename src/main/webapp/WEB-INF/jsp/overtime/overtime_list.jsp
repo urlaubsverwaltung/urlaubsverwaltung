@@ -48,13 +48,13 @@
 
             <div class="tw-space-y-4 lg:tw-space-y-0">
                 <div class="col-xs-12 col-sm-12 col-md-4">
-                    <uv:person person="${person}" cssClass="tw-h-32" />
+                    <uv:person person="${person}" cssClass="tw-h-32"/>
                 </div>
                 <div class="col-xs-12 col-md-4">
-                    <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center" />
+                    <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center"/>
                 </div>
                 <div class="col-xs-12 col-md-4">
-                    <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center" />
+                    <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center"/>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
                                         <span class="print:tw-hidden">
-                                            <icon:briefcase className="tw-w-4 tw-h-4" />
+                                            <icon:briefcase className="tw-w-4 tw-h-4"/>
                                         </span>
                                     </td>
                                     <td>
@@ -95,7 +95,7 @@
                                     </td>
                                     <td class="print:tw-hidden is-centered hidden-xs">
                                         <div class="tw-flex tw-items-center">
-                                            <icon:clock className="tw-w-4 tw-h-4" />
+                                            <icon:clock className="tw-w-4 tw-h-4"/>
                                             &nbsp;<spring:message code="overtime.progress.lastEdited"/>
                                             <uv:date date="${record.lastModificationDate}"/>
                                         </div>

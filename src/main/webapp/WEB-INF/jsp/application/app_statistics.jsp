@@ -4,7 +4,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+<%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
 <html lang="${language}">
@@ -45,8 +45,8 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <uv:export />
-                <uv:print />
+                <uv:export/>
+                <uv:print/>
             </jsp:attribute>
             <jsp:attribute name="below">
                 <p class="tw-text-sm">
@@ -119,7 +119,7 @@
                                     <td class="md:tw-hidden print:tw-hidden">
                                         <div class="tw-flex tw-items-center">
                                             <span class="tw-w-6">
-                                                <icon:check className="tw-w-5 tw-h-5" />
+                                                <icon:check className="tw-w-5 tw-h-5"/>
                                             </span>
                                             <span>
                                                 <uv:number number="${statistic.totalAllowedVacationDays}"/>
@@ -127,7 +127,7 @@
                                         </div>
                                         <div class="tw-flex tw-items-center">
                                             <span class="tw-w-6">
-                                                <icon:question-mark-circle className="tw-w-4 tw-h-4" />
+                                                <icon:question-mark-circle className="tw-w-4 tw-h-4"/>
                                             </span>
                                             <span>
                                                 <uv:number number="${statistic.totalWaitingVacationDays}"/>

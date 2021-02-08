@@ -37,7 +37,7 @@
         </div>
         <a href="mailto:<c:out value='${person.email}'/>" class="tw-inline-block tw-text-sm print:no-link">
             <span class="tw-flex tw-items-center">
-                <icon:mail className="tw-w-4 tw-h-4" />
+                <icon:mail className="tw-w-4 tw-h-4"/>
                 &nbsp;<c:out value="${person.email}"/>
             </span>
         </a>
