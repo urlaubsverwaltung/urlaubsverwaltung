@@ -9,11 +9,11 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ZERO;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -79,11 +79,11 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public BigDecimal getTotalOvertimeReductionOfPerson(Person person) {
+    public Duration getTotalOvertimeReductionOfPerson(Person person) {
         Assert.notNull(person, "Person to get overtime reduction for must be given.");
 
-        final BigDecimal overtime = applicationRepository.calculateTotalOvertimeOfPerson(person);
-        return Optional.ofNullable(overtime).orElse(ZERO);
+        final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).orElse(BigDecimal.ZERO);
+        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 
     @Override

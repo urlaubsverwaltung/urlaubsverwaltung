@@ -8,9 +8,8 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.util.CalcUtil;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -101,19 +100,19 @@ public class OvertimeFormValidator implements Validator {
 
     private void validateMaximumOvertimeNotReached(OvertimeSettings settings, OvertimeForm overtimeForm, Errors errors) {
 
-        final BigDecimal numberOfHours = overtimeForm.getDuration();
+        final Duration numberOfHours = overtimeForm.getDuration();
 
         if (numberOfHours != null) {
-            final BigDecimal maximumOvertime = new BigDecimal(settings.getMaximumOvertime());
-            final BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
+            final Duration maximumOvertime = Duration.ofHours(settings.getMaximumOvertime());
+            final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
 
-            if (CalcUtil.isZero(maximumOvertime)) {
+            if (maximumOvertime.isZero()) {
                 errors.reject(ERROR_OVERTIME_DEACTIVATED);
 
                 return;
             }
 
-            BigDecimal leftOvertime = overtimeService.getLeftOvertimeForPerson(overtimeForm.getPerson());
+            Duration leftOvertime = overtimeService.getLeftOvertimeForPerson(overtimeForm.getPerson());
 
             Integer overtimeRecordId = overtimeForm.getId();
 
@@ -121,18 +120,18 @@ public class OvertimeFormValidator implements Validator {
                 Optional<Overtime> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
 
                 if (overtimeRecordOptional.isPresent()) {
-                    leftOvertime = leftOvertime.subtract(overtimeRecordOptional.get().getHours());
+                    leftOvertime = leftOvertime.minus(overtimeRecordOptional.get().getDuration());
                 }
             }
 
             // left overtime + overtime record must not be greater than maximum overtime
-            if (leftOvertime.add(numberOfHours).compareTo(maximumOvertime) > 0) {
+            if (leftOvertime.plus(numberOfHours).compareTo(maximumOvertime) > 0) {
                 errors.reject(ERROR_MAX_OVERTIME, new Object[]{maximumOvertime}, null);
             }
 
             // left overtime + overtime record must be greater than minimum overtime
             // minimum overtime are missing hours (means negative)
-            if (leftOvertime.add(numberOfHours).compareTo(minimumOvertime.negate()) < 0) {
+            if (leftOvertime.plus(numberOfHours).compareTo(minimumOvertime.negated()) < 0) {
                 errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime}, null);
             }
         }

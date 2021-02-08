@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -419,10 +420,23 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private boolean checkOvertimeHours(Application application, OvertimeSettings settings) {
 
-        final BigDecimal minimumOvertime = new BigDecimal(settings.getMinimumOvertime());
-        final BigDecimal leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
-        final BigDecimal temporaryOvertimeForPerson = leftOvertimeForPerson.subtract(application.getHours());
+        final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
+        final Duration leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
+        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(getDuration(application.getHours()));
 
-        return temporaryOvertimeForPerson.compareTo(minimumOvertime.negate()) >= 0;
+        return temporaryOvertimeForPerson.compareTo(minimumOvertime.negated()) >= 0;
+    }
+
+    /**
+     * Converts {@link BigDecimal}  interpreted as hours to {@link Duration}.
+     * Works only for factions representing minutes, smaller fractions will be rounded.
+     * e.g. 1.25 is 1h 15min
+     *
+     * @param hours {@link BigDecimal} interpreted as hours with factional minutes
+     * @return calculated {@link Duration}
+     */
+    private Duration getDuration(BigDecimal hours) {
+
+        return Duration.ofMinutes(hours.longValue() * 60);
     }
 }

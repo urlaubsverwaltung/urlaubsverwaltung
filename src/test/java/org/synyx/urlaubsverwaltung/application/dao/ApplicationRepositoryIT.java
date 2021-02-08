@@ -53,7 +53,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person savedPerson = personService.save(person);
 
-        BigDecimal totalHours = sut.calculateTotalOvertimeOfPerson(savedPerson);
+        BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(savedPerson);
         assertThat(totalHours).isNull();
     }
 
@@ -349,7 +349,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         // Let's calculate! --------------------------------------------------------------------------------------------
 
-        BigDecimal totalHours = sut.calculateTotalOvertimeOfPerson(person);
+        BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(person);
         assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.50).setScale(2, UNNECESSARY));
     }
 

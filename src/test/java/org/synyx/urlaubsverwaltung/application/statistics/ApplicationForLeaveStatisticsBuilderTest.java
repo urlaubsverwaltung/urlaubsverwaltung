@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -103,7 +104,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         when(vacationDaysService.calculateTotalLeftVacationDays(eq(account))).thenReturn(TEN);
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(BigDecimal.valueOf(9));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
 
         final Application holidayWaiting = anyFullDayApplication(person);
         holidayWaiting.setVacationType(vacationTypes.get(0));
@@ -190,7 +191,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         when(vacationDaysService.calculateTotalLeftVacationDays(eq(account)))
             .thenReturn(TEN);
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("9"));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
 
         Application holidayAllowed = anyFullDayApplication(person);
         holidayAllowed.setVacationType(vacationTypes.get(0));
@@ -234,13 +235,13 @@ class ApplicationForLeaveStatisticsBuilderTest {
         Account account = mock(Account.class);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(new BigDecimal("6.5"));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(390));
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
 
         ApplicationForLeaveStatistics statistics = sut.build(person, from, to);
 
         // VACATION DAYS
-        assertThat(statistics.getLeftOvertime()).isEqualTo(new BigDecimal("6.5"));
+        assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofMinutes(390));
         assertThat(statistics.getLeftVacationDays()).isEqualTo(new BigDecimal("8.5"));
 
         verify(overtimeService).getLeftOvertimeForPerson(person);

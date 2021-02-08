@@ -16,14 +16,15 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,7 +92,7 @@ class OvertimeViewControllerTest {
     @Test
     void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
 
-        final Overtime overtime = new Overtime(new Person(), LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(new Person(), LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(overtime));
 
         final Person signedInPerson = new Person();
@@ -137,11 +138,15 @@ class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
 
-        final List<Overtime> records = List.of(new Overtime(person, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN));
+        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        final List<Overtime> records = List.of(overtime);
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
-        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(BigDecimal.ONE);
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(BigDecimal.ZERO);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        final List<OvertimeListRecordDto> recordDtos = List.of(
+            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
 
         final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
         resultActions.andExpect(status().isOk());
@@ -149,9 +154,9 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("year", is(year)));
         resultActions.andExpect(model().attribute("person", is(person)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
-        resultActions.andExpect(model().attribute("records", is(records)));
-        resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
+        assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
+        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -169,11 +174,15 @@ class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
 
-        final List<Overtime> records = List.of(new Overtime(person, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN));
+        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        final List<Overtime> records = List.of(overtime);
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
-        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(BigDecimal.ONE);
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(BigDecimal.ZERO);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
+        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        final List<OvertimeListRecordDto> recordDtos = List.of(
+            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
 
         final ResultActions resultActions = perform(
             get("/web/overtime")
@@ -185,9 +194,9 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(model().attribute("year", is(year)));
         resultActions.andExpect(model().attribute("person", is(person)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
-        resultActions.andExpect(model().attribute("records", is(records)));
-        resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
+        assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
+        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -214,7 +223,7 @@ class OvertimeViewControllerTest {
 
         final int overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, Duration.ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -223,20 +232,25 @@ class OvertimeViewControllerTest {
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(true);
 
-        final List<OvertimeComment> overtimeComments = List.of(new OvertimeComment(overtimePerson, overtime, CREATED, Clock.systemUTC()));
+        final OvertimeComment comment = new OvertimeComment(overtimePerson, overtime, CREATED, Clock.systemUTC());
+        final List<OvertimeComment> overtimeComments = List.of(comment);
         when(overtimeService.getCommentsForOvertime(overtime)).thenReturn(overtimeComments);
 
-        when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(BigDecimal.ONE);
-        when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(BigDecimal.ZERO);
+        when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(Duration.ofHours(1));
+        when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(Duration.ZERO);
+
+        final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL());
+        final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate());
+        final List<OvertimeCommentDto> commentDtos = List.of(new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText()));
 
         final ResultActions resultActions = perform(get("/web/overtime/2"));
+        assertThat(resultActions.andReturn().getModelAndView().getModel().get("record")).usingRecursiveComparison().isEqualTo(record);
+        assertThat(resultActions.andReturn().getModelAndView().getModel().get("comments")).usingRecursiveComparison().isEqualTo(commentDtos);
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_details"));
-        resultActions.andExpect(model().attribute("record", is(overtime)));
-        resultActions.andExpect(model().attribute("comments", is(overtimeComments)));
         resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
-        resultActions.andExpect(model().attribute("overtimeTotal", is(BigDecimal.ONE)));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(BigDecimal.ZERO)));
+        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
+        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -245,7 +259,7 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
 
         final int overtimeId = 2;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -322,7 +336,7 @@ class OvertimeViewControllerTest {
 
         final int overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, Duration.ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
@@ -342,7 +356,7 @@ class OvertimeViewControllerTest {
 
         final int overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, Duration.ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -360,7 +374,7 @@ class OvertimeViewControllerTest {
 
         final int overtimeId = 2;
         final LocalDate overtimeEndDate = LocalDate.MAX;
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, Duration.ofHours(10));
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
@@ -380,7 +394,7 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
 
@@ -469,7 +483,7 @@ class OvertimeViewControllerTest {
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
 
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
@@ -495,7 +509,7 @@ class OvertimeViewControllerTest {
         overtimePerson.setId(4);
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
@@ -523,7 +537,7 @@ class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 
@@ -547,7 +561,7 @@ class OvertimeViewControllerTest {
 
         final Person overtimePerson = new Person();
         overtimePerson.setId(4);
-        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, BigDecimal.TEN);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
 

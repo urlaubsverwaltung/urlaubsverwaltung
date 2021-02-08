@@ -4,11 +4,12 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -37,7 +38,8 @@ public class Overtime {
     private LocalDate endDate;
 
     @Column(nullable = false)
-    private BigDecimal hours;
+    @Convert(converter = DurationConverter.class)
+    private Duration duration;
 
     @Column(nullable = false)
     private LocalDate lastModificationDate;
@@ -46,17 +48,17 @@ public class Overtime {
         // OK
     }
 
-    public Overtime(Person person, LocalDate startDate, LocalDate endDate, BigDecimal numberOfHours) {
+    public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
 
         Assert.notNull(person, "Person must be given.");
         Assert.notNull(startDate, "Start date must be given.");
         Assert.notNull(endDate, "End date must be given.");
-        Assert.notNull(numberOfHours, "Number of hours must be given.");
+        Assert.notNull(duration, "Duration of must be given.");
 
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.hours = numberOfHours;
+        this.duration = duration;
 
         this.lastModificationDate = LocalDate.now(UTC);
     }
@@ -89,8 +91,8 @@ public class Overtime {
         return endDate;
     }
 
-    public BigDecimal getHours() {
-        return hours;
+    public Duration getDuration() {
+        return duration;
     }
 
     public void setPerson(Person person) {
@@ -114,11 +116,11 @@ public class Overtime {
         this.endDate = endDate;
     }
 
-    public void setHours(BigDecimal hours) {
+    public void setDuration(Duration duration) {
 
-        Assert.notNull(hours, "Hours must be given.");
+        Assert.notNull(duration, "Duration of overtime must be given.");
 
-        this.hours = hours;
+        this.duration = duration;
     }
 
     public LocalDate getLastModificationDate() {
@@ -142,7 +144,7 @@ public class Overtime {
             "id=" + getId() +
             ", startDate=" + startDate +
             ", endDate=" + endDate +
-            ", hours=" + hours +
+            ", duration=" + duration +
             ", person=" + person +
             '}';
     }

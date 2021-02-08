@@ -98,9 +98,15 @@ public class OvertimeViewController {
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
-        model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
+
+        final OvertimeListDto overtimeListDto = OvertimeListMapper.mapToDto(
+            overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, year),
+            overtimeService.getLeftOvertimeForPerson(person));
+
+        model.addAttribute("records", overtimeListDto.getRecords());
+        model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
+        model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
 
         return "overtime/overtime_list";
     }
@@ -119,11 +125,18 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute("record", overtime);
-        model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
         model.addAttribute(SIGNED_IN_USER, signedInUser);
+
+        final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
+            overtime,
+            overtimeService.getCommentsForOvertime(overtime),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
+            overtimeService.getLeftOvertimeForPerson(person));
+
+        model.addAttribute("record", overtimeDetailsDto.getRecord());
+        model.addAttribute("comments", overtimeDetailsDto.getComments());
+        model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
+        model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
 
         return "overtime/overtime_details";
     }

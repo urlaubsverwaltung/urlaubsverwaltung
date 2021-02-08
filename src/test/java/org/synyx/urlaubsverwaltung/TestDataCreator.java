@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public final class TestDataCreator {
     public static Overtime createOvertimeRecord() {
         final LocalDate startDate = LocalDate.now(UTC);
         final LocalDate endDate = startDate.plusDays(7);
-        return new Overtime(new Person("muster", "Muster", "Marlene", "muster@example.org"), startDate, endDate, BigDecimal.ONE);
+        return new Overtime(new Person("muster", "Muster", "Marlene", "muster@example.org"), startDate, endDate, Duration.ofHours(1));
     }
 
     public static Overtime createOvertimeRecord(Person person) {
@@ -58,7 +59,7 @@ public final class TestDataCreator {
         LocalDate startDate = LocalDate.now(UTC);
         LocalDate endDate = startDate.plusDays(7);
 
-        Overtime overtime = new Overtime(person, startDate, endDate, BigDecimal.ONE);
+        Overtime overtime = new Overtime(person, startDate, endDate, Duration.ofHours(1));
         overtime.setId(1234);
         return overtime;
     }

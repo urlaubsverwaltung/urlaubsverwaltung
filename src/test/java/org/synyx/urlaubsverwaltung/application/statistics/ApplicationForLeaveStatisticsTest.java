@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 import static java.math.BigDecimal.ONE;
@@ -45,7 +46,7 @@ class ApplicationForLeaveStatisticsTest {
 
         // Left
         assertThat(statistics.getLeftVacationDays()).isEqualTo(ZERO);
-        assertThat(statistics.getLeftOvertime()).isEqualTo(ZERO);
+        assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ZERO);
 
         // Per vacation type
         assertThat(statistics.getWaitingVacationDays()).hasSize(createVacationTypes().size());
@@ -180,8 +181,8 @@ class ApplicationForLeaveStatisticsTest {
     @Test
     void ensureCanSetTotalLeftOvertime() {
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-        statistics.setLeftOvertime(ONE);
-        assertThat(statistics.getLeftOvertime()).isEqualByComparingTo(ONE);
+        statistics.setLeftOvertime(Duration.ofHours(1));
+        assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofHours(1));
     }
 
     @Test

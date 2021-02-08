@@ -43,6 +43,9 @@
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </c:if>
+                        <a href="${URL_PREFIX}/overtime?person=${record.person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
+                            <icon:view-grid className="tw-w-5 tw-h-5" />
+                        </a>
                     </jsp:attribute>
                     <jsp:body>
                         <h1>
@@ -54,7 +57,7 @@
                 <uv:box className="tw-h-32 tw-mb-8">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
-                            <icon:briefcase className="tw-w-8 tw-h-8" />
+                            <icon:briefcase className="tw-w-8 tw-h-8"/>
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
@@ -62,7 +65,7 @@
                             <c:out value="${record.person.niceName}"/>&nbsp;<spring:message code="overtime.details.hours.1"/>
                         </span>
                         <span class="tw-my-1 tw-text-lg tw-font-medium">
-                            <spring:message code="overtime.details.hours.2" arguments="${record.hours}"/>
+                            <uv:duration duration="${record.duration}"/>
                         </span>
                         <span class="tw-text-sm">
                             <c:set var="START_DATE">
@@ -91,7 +94,7 @@
                         <tr>
                             <td>
                                 <img
-                                    src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
+                                    src="<c:out value='${comment.person.gravatarUrl}?d=mm&s=40'/>"
                                     alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
                                     class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
                                     width="40px"
@@ -122,9 +125,9 @@
                         <spring:message code="overtime.data.person"/>
                     </h2>
                 </uv:section-heading>
-                <uv:person person="${record.person}" cssClass="print:tw-hidden tw-h-32 tw-mb-5"/>
-                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4" />
-                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:overtime_person person="${record.person}" cssClass="print:tw-hidden tw-h-32 tw-mb-5"/>
+                <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-mb-4"/>
+                <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-mb-4"/>
             </div>
         </div>
         <%-- End of row --%>
