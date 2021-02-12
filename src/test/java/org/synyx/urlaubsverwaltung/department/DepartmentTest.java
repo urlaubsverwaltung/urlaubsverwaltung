@@ -100,12 +100,4 @@ class DepartmentTest {
             .isNotEqualTo(new Object())
             .isNotEqualTo(null);
     }
-
-    @Test
-    void hashCodeTest() {
-        final Department departmentOne = new Department();
-        departmentOne.setId(1);
-
-        assertThat(departmentOne.hashCode()).isEqualTo(32);
-    }
 }

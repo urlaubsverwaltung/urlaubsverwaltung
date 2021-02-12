@@ -8,16 +8,16 @@ import java.util.List;
 
 
 /**
- * Repository for {@link Department} entities.
+ * Repository for {@link DepartmentEntity} entities.
  */
-public interface DepartmentRepository extends JpaRepository<Department, Integer> {
+public interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
 
     @Query("SELECT d FROM Department d, in (d.departmentHeads) person WHERE person = ?1")
-    List<Department> getManagedDepartments(Person person);
+    List<DepartmentEntity> getManagedDepartments(Person person);
 
     @Query("SELECT d FROM Department d, in (d.secondStageAuthorities) person WHERE person = ?1")
-    List<Department> getDepartmentsForSecondStageAuthority(Person person);
+    List<DepartmentEntity> getDepartmentsForSecondStageAuthority(Person person);
 
     @Query("SELECT d FROM Department d, in (d.members) person WHERE person = ?1")
-    List<Department> getAssignedDepartments(Person person);
+    List<DepartmentEntity> getAssignedDepartments(Person person);
 }

@@ -51,15 +51,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Optional<Department> getDepartmentById(Integer departmentId) {
-        return departmentRepository.findById(departmentId);
+        return departmentRepository.findById(departmentId).map(this::mapToDepartment);
     }
 
     @Override
     public Department create(Department department) {
 
-        department.setLastModification(LocalDate.now(clock));
+        final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
+        departmentEntity.setLastModification(LocalDate.now(clock));
 
-        final Department createdDepartment = departmentRepository.save(department);
+        final DepartmentEntity createdDepartmentEntity = departmentRepository.save(departmentEntity);
+        final Department createdDepartment = mapToDepartment(createdDepartmentEntity);
 
         LOG.info("Created department: {}", createdDepartment);
 
@@ -69,9 +71,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department update(Department department) {
 
-        department.setLastModification(LocalDate.now(clock));
+        final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
+        departmentEntity.setLastModification(LocalDate.now(clock));
 
-        final Department updatedDepartment = departmentRepository.save(department);
+        final DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
+        final Department updatedDepartment = mapToDepartment(updatedDepartmentEntity);
 
         LOG.info("Updated department: {}", updatedDepartment);
 
@@ -90,22 +94,30 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+        return departmentRepository.findAll().stream()
+            .map(this::mapToDepartment)
+            .collect(toList());
     }
 
     @Override
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
-        return departmentRepository.getAssignedDepartments(member);
+        return departmentRepository.getAssignedDepartments(member).stream()
+            .map(this::mapToDepartment)
+            .collect(toList());
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
-        return departmentRepository.getManagedDepartments(departmentHead);
+        return departmentRepository.getManagedDepartments(departmentHead).stream()
+            .map(this::mapToDepartment)
+            .collect(toList());
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
-        return departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority);
+        return departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority).stream()
+            .map(this::mapToDepartment)
+            .collect(toList());
     }
 
     @Override
@@ -215,5 +227,35 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
         return person -> !department.getSecondStageAuthorities().contains(person);
+    }
+
+    private Department mapToDepartment(DepartmentEntity departmentEntity) {
+        final Department department = new Department();
+
+        department.setId(departmentEntity.getId());
+        department.setName(departmentEntity.getName());
+        department.setDescription(departmentEntity.getDescription());
+        department.setMembers(departmentEntity.getMembers());
+        department.setDepartmentHeads(departmentEntity.getDepartmentHeads());
+        department.setSecondStageAuthorities(departmentEntity.getSecondStageAuthorities());
+        department.setTwoStageApproval(departmentEntity.isTwoStageApproval());
+        department.setLastModification(departmentEntity.getLastModification());
+
+        return department;
+    }
+
+    private DepartmentEntity mapToDepartmentEntity(Department department) {
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+
+        departmentEntity.setId(department.getId());
+        departmentEntity.setName(department.getName());
+        departmentEntity.setDescription(department.getDescription());
+        departmentEntity.setMembers(department.getMembers());
+        departmentEntity.setDepartmentHeads(department.getDepartmentHeads());
+        departmentEntity.setSecondStageAuthorities(department.getSecondStageAuthorities());
+        departmentEntity.setTwoStageApproval(department.isTwoStageApproval());
+        departmentEntity.setLastModification(department.getLastModification());
+
+        return departmentEntity;
     }
 }
