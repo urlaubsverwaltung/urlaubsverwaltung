@@ -187,7 +187,7 @@ class DepartmentCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(new Department()));
+        when(departmentService.departmentExists(42)).thenReturn(true);
 
         DepartmentCalendar receivedDepartmentCalendar = new DepartmentCalendar();
         when(departmentCalendarRepository.findByDepartmentIdAndPerson(42, person)).thenReturn(Optional.of(receivedDepartmentCalendar));
@@ -215,7 +215,7 @@ class DepartmentCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(42)).thenReturn(Optional.empty());
+        when(departmentService.departmentExists(42)).thenReturn(false);
 
         assertThatIllegalStateException()
             .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M")));
@@ -228,7 +228,7 @@ class DepartmentCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(new Department()));
+        when(departmentService.departmentExists(42)).thenReturn(true);
 
         when(departmentCalendarRepository.findByDepartmentIdAndPerson(42, person)).thenReturn(Optional.empty());
 

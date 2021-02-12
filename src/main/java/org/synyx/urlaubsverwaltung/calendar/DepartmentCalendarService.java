@@ -57,7 +57,7 @@ class DepartmentCalendarService {
 
         final Person person = getPersonOrThrow(personId);
 
-        if (!departmentExists(departmentId)) {
+        if (!departmentService.departmentExists(departmentId)) {
             throw new IllegalStateException("department with id does not exist.");
         }
 
@@ -69,10 +69,6 @@ class DepartmentCalendarService {
         departmentCalendar.generateSecret();
 
         return departmentCalendarRepository.save(departmentCalendar);
-    }
-
-    private boolean departmentExists(Integer departmentId) {
-        return departmentService.getDepartmentById(departmentId).isPresent();
     }
 
     Optional<DepartmentCalendar> getCalendarForDepartment(Integer departmentId, Integer personId) {
