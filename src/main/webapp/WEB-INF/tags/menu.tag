@@ -101,8 +101,8 @@
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
-            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center">
-                <a href="${URL_PREFIX}/overview" class="tw-inline-block">
+            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-relative">
+                <a href="#avatar-menu" class="tw-inline-block" id="avatar-link">
                     <img
                         src="<c:out value='${menuGravatarUrl}'/>"
                         alt=""
@@ -112,6 +112,33 @@
                         onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                     />
                 </a>
+                <div
+                    id="avatar-menu"
+                    class="tw-w-screen tw-absolute tw-right-3 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-2"
+                >
+                    <div
+                        class="tw-inline-block tw-px-6 tw-py-4 tw-bg-gray-600 tw-bg-opacity-80 tw-rounded-md"
+                        style="backdrop-filter: blur(3px)"
+                    >
+                        <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-4">
+                            <li class="tw-flex tw-items-center">
+                                <form:form action="/logout" method="POST" cssClass="tw-ml-auto">
+                                    <button
+                                        type="submit"
+                                        class="tw-inline-block tw-text-lg lg:tw-text-base tw-bg-transparent tw-p-0 tw-text-right"
+                                    >
+                                        <span class="tw-flex tw-items-center tw-text-white">
+                                            <icon:logout className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4" />
+                                            <span class="tw-ml-4">
+                                                <spring:message code="nav.signout.title"/>
+                                            </span>
+                                        </span>
+                                    </button>
+                                </form:form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="tw-flex-1 navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                 <ul class="tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4 lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2 xl:tw-px-0">
@@ -193,20 +220,6 @@
                                 </span>
                             </span>
                         </a>
-                    </li>
-                    </sec:authorize>
-                    <sec:authorize access="hasAuthority('USER')">
-                    <li class="tw-flex tw-items-center">
-                        <form:form action="/logout" method="POST">
-                            <button type="submit" class="tw-group tw-inline-block tw-text-gray-900 tw-text-lg lg:tw-text-base tw-bg-transparent tw-p-0 hover:tw-text-blue-400 tw-transition-colors">
-                                <span class="tw-flex tw-items-center">
-                                    <icon:logout className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
-                                    <span class="tw-ml-5 lg:tw-ml-2">
-                                        <spring:message code="nav.signout.title"/>
-                                    </span>
-                                </span>
-                            </button>
-                        </form:form>
                     </li>
                     </sec:authorize>
                 </ul>
