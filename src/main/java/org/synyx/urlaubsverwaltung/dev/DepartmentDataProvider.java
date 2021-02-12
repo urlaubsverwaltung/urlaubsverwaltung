@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.department.web.DepartmentForm;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
@@ -22,7 +23,7 @@ class DepartmentDataProvider {
     }
 
     void createTestDepartment(String name, String description, List<Person> members, List<Person> departmentHeads,
-                              List<Person> secondStageAuthorities) {
+                                        List<Person> secondStageAuthorities) {
 
         final Department department = new Department();
         department.setName(name);

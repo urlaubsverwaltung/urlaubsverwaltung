@@ -86,9 +86,10 @@ public class DepartmentViewController {
             return DEPARTMENT_DEPARTMENT_FORM;
         }
 
-        departmentService.create(mapToDepartment(departmentForm));
+        final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
+        final DepartmentForm createdDepartmentForm = mapToDepartmentForm(createdDepartment);
 
-        redirectAttributes.addFlashAttribute("createdDepartment", departmentForm);
+        redirectAttributes.addFlashAttribute("createdDepartment", createdDepartmentForm);
 
         return REDIRECT_WEB_DEPARTMENT;
     }
@@ -128,9 +129,10 @@ public class DepartmentViewController {
             return DEPARTMENT_DEPARTMENT_FORM;
         }
 
-        departmentService.update(mapToDepartment(departmentForm));
+        final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
+        final DepartmentForm updatedDepartmentForm = mapToDepartmentForm(updatedDepartment);
 
-        redirectAttributes.addFlashAttribute("updatedDepartment", departmentForm);
+        redirectAttributes.addFlashAttribute("updatedDepartment", updatedDepartmentForm);
 
         return REDIRECT_WEB_DEPARTMENT;
     }

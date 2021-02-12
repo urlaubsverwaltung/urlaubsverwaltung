@@ -55,23 +55,27 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public void create(Department department) {
+    public Department create(Department department) {
 
         department.setLastModification(LocalDate.now(clock));
 
-        departmentRepository.save(department);
+        final Department createdDepartment = departmentRepository.save(department);
 
-        LOG.info("Created department: {}", department);
+        LOG.info("Created department: {}", createdDepartment);
+
+        return createdDepartment;
     }
 
     @Override
-    public void update(Department department) {
+    public Department update(Department department) {
 
         department.setLastModification(LocalDate.now(clock));
 
-        departmentRepository.save(department);
+        final Department updatedDepartment = departmentRepository.save(department);
 
-        LOG.info("Updated department: {}", department);
+        LOG.info("Updated department: {}", updatedDepartment);
+
+        return updatedDepartment;
     }
 
     @Override

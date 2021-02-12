@@ -26,14 +26,14 @@ public interface DepartmentService {
      *
      * @param department the {@link Department} to create
      */
-    void create(Department department);
+    Department create(Department department);
 
     /**
      * Updates a given department in repository.
      *
      * @param department the {@link Department} to update
      */
-    void update(Department department);
+    Department update(Department department);
 
     /**
      * Deletes department with given id.
