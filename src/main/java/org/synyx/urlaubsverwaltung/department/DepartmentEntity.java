@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
@@ -17,6 +19,7 @@ import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.FetchType.EAGER;
+import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
 @Entity(name = "Department")
 class DepartmentEntity {
@@ -38,15 +41,18 @@ class DepartmentEntity {
     // flag for two stage approval process
     private boolean twoStageApproval;
 
-    @OneToMany(fetch = EAGER)
+    @OneToMany
+    @LazyCollection(FALSE)
     @CollectionTable(name = "Department_Member")
     private List<Person> members = new ArrayList<>();
 
-    @OneToMany(fetch = EAGER)
+    @OneToMany
+    @LazyCollection(FALSE)
     @CollectionTable(name = "Department_DepartmentHead")
     private List<Person> departmentHeads = new ArrayList<>();
 
-    @OneToMany(fetch = EAGER)
+    @OneToMany
+    @LazyCollection(FALSE)
     @CollectionTable(name = "Department_SecondStageAuthority")
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
