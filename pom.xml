@@ -55,9 +55,9 @@
 
     <!-- API DOCUMENTATION -->
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-boot-starter</artifactId>
-      <version>3.0.0</version>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>1.5.4</version>
     </dependency>
 
     <!-- WEB -->
@@ -146,7 +146,6 @@
       <version>1.5</version>
       <scope>test</scope>
     </dependency>
-
 
     <!-- PUBLIC HOLIDAYS INFORMATION -->
     <dependency>

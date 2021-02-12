@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -25,12 +25,10 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Sick Notes: Get all sick notes for a certain period")
+@Tag(name = "sick notes", description = "Sick Notes: Get all sick notes for a certain period")
 @RestController
 @RequestMapping("/api")
 public class SickNoteApiController {
@@ -46,18 +44,19 @@ public class SickNoteApiController {
         this.sickNoteService = sickNoteService;
     }
 
-    @ApiOperation(
-        value = "Get all sick notes for a certain period", notes = "Get all sick notes for a certain period. "
-        + "Information only reachable for users with role office."
+    @Operation(
+        summary = "Get all sick notes for a certain period",
+        description = "Get all sick notes for a certain period. "
+            + "Information only reachable for users with role office."
     )
     @GetMapping(SICKNOTES)
     @PreAuthorize(IS_OFFICE)
     public SickNotesDto getSickNotes(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {
@@ -74,21 +73,22 @@ public class SickNoteApiController {
         return new SickNotesDto(sickNoteResponse);
     }
 
-    @ApiOperation(
-        value = "Get all sick notes for a certain period and person", notes = "Get all sick notes for a certain period and person. "
-        + "Information only reachable for users with role office and for own sicknotes."
+    @Operation(
+        summary = "Get all sick notes for a certain period and person",
+        description = "Get all sick notes for a certain period and person. "
+            + "Information only reachable for users with role office and for own sicknotes."
     )
     @GetMapping("/persons/{personId}/" + SICKNOTES)
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public SickNotesDto personsSickNotes(
-        @ApiParam(value = "ID of the person")
+        @Parameter(description = "ID of the person")
         @PathVariable("personId")
             Integer personId,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -24,11 +24,10 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Work Days: Get information about work day in a certain period")
+@Tag(name = "work days", description = "Work Days: Get information about work day in a certain period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
 public class WorkDaysCountApiController {
@@ -53,25 +52,25 @@ public class WorkDaysCountApiController {
      * @param personId  id of the person to number of work days for
      * @return number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
-    @ApiOperation(
-        value = "Calculate the work days for a certain period and person",
-        notes = "The calculation depends on the working time of the person."
+    @Operation(
+        summary = "Calculate the work days for a certain period and person",
+        description = "The calculation depends on the working time of the person."
     )
     @GetMapping(WORKDAYS)
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public WorkDaysCountDto personsWorkDays(
-        @ApiParam(value = "ID of the person")
+        @Parameter(description = "ID of the person")
         @PathVariable("personId")
             Integer personId,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-08")
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate,
-        @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
+        @Parameter(description = "Day Length")
         @RequestParam("length")
             String length) {
 
