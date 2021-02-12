@@ -153,10 +153,7 @@ class DepartmentServiceImplTest {
     @Test
     void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() {
 
-        int id = 0;
-        when(departmentRepository.findById(id)).thenReturn(Optional.empty());
-
-        sut.delete(id);
+        sut.delete(0);
 
         verify(departmentRepository, never()).deleteById(anyInt());
     }
@@ -168,11 +165,11 @@ class DepartmentServiceImplTest {
         final DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setName("department");
 
-        when(departmentRepository.findById(0)).thenReturn(Optional.of(departmentEntity));
+        when(departmentRepository.existsById(0)).thenReturn(true);
 
         sut.delete(0);
 
-        verify(departmentRepository).findById(0);
+        verify(departmentRepository).existsById(0);
         verify(departmentRepository).deleteById(0);
     }
 

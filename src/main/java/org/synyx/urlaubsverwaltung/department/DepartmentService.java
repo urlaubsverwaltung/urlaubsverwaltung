@@ -14,6 +14,14 @@ import java.util.Optional;
 public interface DepartmentService {
 
     /**
+     * Check if a {@link Department} with the given departmentId exists or not.
+     *
+     * @param departmentId id of a {@link Department} to check
+     * @return <code>true</code> if the departmentId exists, <code>false</code> otherwise
+     */
+    boolean departmentExists(Integer departmentId);
+
+    /**
      * Returns a department by its unique identifier
      *
      * @param departmentId the unique identifier to of a department

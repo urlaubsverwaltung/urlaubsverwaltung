@@ -50,6 +50,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public boolean departmentExists(Integer departmentId) {
+        return departmentRepository.existsById(departmentId);
+    }
+
+    @Override
     public Optional<Department> getDepartmentById(Integer departmentId) {
         return departmentRepository.findById(departmentId).map(this::mapToDepartment);
     }
@@ -85,7 +90,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(Integer departmentId) {
 
-        if (departmentRepository.findById(departmentId).isPresent()) {
+        if (this.departmentExists(departmentId)) {
             departmentRepository.deleteById(departmentId);
         } else {
             LOG.info("No department found for ID = {}, deletion is not necessary.", departmentId);
