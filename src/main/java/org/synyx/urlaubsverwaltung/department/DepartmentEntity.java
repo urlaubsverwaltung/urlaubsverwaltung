@@ -1,15 +1,13 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
+import static javax.persistence.FetchType.EAGER;
 
 @Entity(name = "Department")
 class DepartmentEntity {
@@ -39,19 +38,16 @@ class DepartmentEntity {
     // flag for two stage approval process
     private boolean twoStageApproval;
 
+    @OneToMany(fetch = EAGER)
     @CollectionTable(name = "Department_Member")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> members = new ArrayList<>();
 
+    @OneToMany(fetch = EAGER)
     @CollectionTable(name = "Department_DepartmentHead")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> departmentHeads = new ArrayList<>();
 
+    @OneToMany(fetch = EAGER)
     @CollectionTable(name = "Department_SecondStageAuthority")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
     public DepartmentEntity() {
