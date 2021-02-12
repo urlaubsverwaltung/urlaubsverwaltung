@@ -10,6 +10,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,9 @@ class DepartmentEntity {
     private String name;
 
     private String description;
+
+    @NotNull
+    private LocalDate createdAt;
 
     private LocalDate lastModification;
 
@@ -76,6 +80,14 @@ class DepartmentEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDate getLastModification() {

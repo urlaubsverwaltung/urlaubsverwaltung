@@ -3,11 +3,9 @@ package org.synyx.urlaubsverwaltung.department;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -26,6 +24,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -80,10 +79,39 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureCreatedDateIsSetForNewDepartment() {
+
+        final Department department = new Department();
+        department.setName("department");
+
+        when(departmentRepository.save(any())).thenReturn(new DepartmentEntity());
+
+        sut.create(department);
+
+        final ArgumentCaptor<DepartmentEntity> departmentEntityArgumentCaptor = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
+
+        final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
+        assertThat(savedDepartmentEntity.getCreatedAt()).isEqualTo(LocalDate.now(clock));
+    }
+
+    @Test
     void ensureCallDepartmentRepositoryFindById() {
 
         sut.getDepartmentById(42);
         verify(departmentRepository).findById(eq(42));
+    }
+
+    @Test
+    void ensureUpdateDepartmentFailsWhenDepartmentDoesNotExistYet() {
+        final Department department = new Department();
+        department.setId(42);
+        department.setName("department");
+
+        when(departmentRepository.findById(42)).thenReturn(Optional.empty());
+
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.update(department));
     }
 
     @Test
@@ -92,6 +120,8 @@ class DepartmentServiceImplTest {
         final Department department = new Department();
         department.setId(42);
         department.setName("department");
+
+        when(departmentRepository.findById(42)).thenReturn(Optional.of(new DepartmentEntity()));
 
         final DepartmentEntity updatedDepartmentEntity = new DepartmentEntity();
         updatedDepartmentEntity.setId(42);
@@ -111,6 +141,29 @@ class DepartmentServiceImplTest {
         assertThat(departmentEntityToUpdate.getName()).isEqualTo("department");
     }
 
+    @Test
+    void ensureUpdateDoesNotChangeTheCreatedAtDate() {
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setName("department");
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setCreatedAt(LocalDate.of(2020, Month.DECEMBER, 4));
+        departmentEntity.setLastModification(LocalDate.of(2020, Month.DECEMBER, 4));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+        when(departmentRepository.save(any())).thenReturn(new DepartmentEntity());
+
+        sut.update(department);
+
+        final ArgumentCaptor<DepartmentEntity> departmentEntityArgumentCaptor = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
+
+        final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
+        assertThat(savedDepartmentEntity.getCreatedAt()).isEqualTo(LocalDate.of(2020, Month.DECEMBER, 4));
+        assertThat(savedDepartmentEntity.getLastModification()).isEqualTo(LocalDate.now(clock));
+    }
 
     @Test
     void ensureGetAllCallDepartmentDAOFindAll() {
@@ -182,6 +235,7 @@ class DepartmentServiceImplTest {
         final LocalDate expectedModificationDate = LocalDate.of(2020, Month.JANUARY, 1);
         departmentEntity.setLastModification(expectedModificationDate);
 
+        when(departmentRepository.findById(any())).thenReturn(Optional.of(new DepartmentEntity()));
         when(departmentRepository.save(any())).thenReturn(departmentEntity);
 
         final Department updatedDepartment = sut.update(department);

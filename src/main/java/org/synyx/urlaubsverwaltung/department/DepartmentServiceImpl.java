@@ -63,6 +63,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public Department create(Department department) {
 
         final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
+        departmentEntity.setCreatedAt(LocalDate.now(clock));
         departmentEntity.setLastModification(LocalDate.now(clock));
 
         final DepartmentEntity createdDepartmentEntity = departmentRepository.save(departmentEntity);
@@ -76,7 +77,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department update(Department department) {
 
+        final DepartmentEntity currentDepartmentEntity = departmentRepository.findById(department.getId())
+            .orElseThrow(() -> new IllegalStateException("cannot update department since it does not exists."));
+
         final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
+        departmentEntity.setCreatedAt(currentDepartmentEntity.getCreatedAt());
         departmentEntity.setLastModification(LocalDate.now(clock));
 
         final DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
