@@ -8,12 +8,26 @@
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
+<c:choose>
+    <c:when test="${!empty param.year}">
+        <c:set var="displayYear" value="${param.year}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="displayYear" value="${year}"/>
+    </c:otherwise>
+</c:choose>
+
+<c:if test="${not empty param.year && param.year ne year}">
+    <c:set var="yearUrlParameterFirst" scope="page" value="?year=${displayYear}" />
+    <c:set var="yearUrlParameter" scope="page" value="&year=${displayYear}" />
+</c:if>
+
 <!DOCTYPE html>
 <html lang="${language}">
 
 <head>
     <title>
-        <spring:message code="overview.header.title" arguments="${person.niceName}, ${year}"/>
+        <spring:message code="overview.header.title" arguments="${person.niceName}, ${displayYear}"/>
     </title>
     <uv:custom-head/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />" />
@@ -83,7 +97,7 @@
                             <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>
                     </c:if>
-                    <a href="${URL_PREFIX}/overtime?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
+                    <a href="${URL_PREFIX}/overtime?person=${person.id}${yearUrlParameter}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
                         <icon:view-grid className="tw-w-5 tw-h-5" />
                     </a>
                 </jsp:attribute>
