@@ -120,10 +120,11 @@
                         class="tw-inline-block tw-px-6 tw-py-4 tw-bg-gray-600 tw-bg-opacity-80 tw-rounded-md"
                         style="backdrop-filter: blur(3px)"
                     >
-                        <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-4">
-                            <li class="tw-flex tw-items-center">
+                        <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-4" role="menu">
+                            <li class="tw-flex tw-items-center" role="none">
                                 <form:form action="/logout" method="POST" cssClass="tw-ml-auto">
                                     <button
+                                        role="menuitem"
                                         type="submit"
                                         class="tw-inline-block tw-text-lg lg:tw-text-base tw-bg-transparent tw-p-0 tw-text-right"
                                     >
