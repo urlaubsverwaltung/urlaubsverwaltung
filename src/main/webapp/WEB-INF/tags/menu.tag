@@ -104,7 +104,7 @@
             <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center">
                 <a href="${URL_PREFIX}/overview" class="tw-inline-block">
                     <img
-                        src="<c:out value='${menuGravatarUrl}?d=mm&s=32'/>"
+                        src="<c:out value='${menuGravatarUrl}'/>"
                         alt=""
                         class="gravatar tw-rounded-full"
                         width="24px"
