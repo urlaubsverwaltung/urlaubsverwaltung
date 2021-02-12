@@ -49,19 +49,21 @@ class DepartmentCalendarService {
     public void deleteCalendarForDepartmentAndPerson(int departmentId, int personId) {
 
         final Person person = getPersonOrThrow(personId);
-        final Department department = getDepartmentOrThrow(departmentId);
 
-        departmentCalendarRepository.deleteByDepartmentAndPerson(department, person);
+        departmentCalendarRepository.deleteByDepartmentIdAndPerson(departmentId, person);
     }
 
     DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
-        final Department department = getDepartmentOrThrow(departmentId);
 
-        final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentAndPerson(department, person);
+        if (!departmentExists(departmentId)) {
+            throw new IllegalStateException("department with id does not exist.");
+        }
+
+        final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.isEmpty() ? new DepartmentCalendar() : maybeDepartmentCalendar.get();
-        departmentCalendar.setDepartment(department);
+        departmentCalendar.setDepartmentId(departmentId);
         departmentCalendar.setPerson(person);
         departmentCalendar.setCalendarPeriod(calendarPeriod);
         departmentCalendar.generateSecret();
@@ -69,12 +71,15 @@ class DepartmentCalendarService {
         return departmentCalendarRepository.save(departmentCalendar);
     }
 
+    private boolean departmentExists(Integer departmentId) {
+        return departmentService.getDepartmentById(departmentId).isPresent();
+    }
+
     Optional<DepartmentCalendar> getCalendarForDepartment(Integer departmentId, Integer personId) {
 
         final Person person = getPersonOrThrow(personId);
-        final Department department = getDepartmentOrThrow(departmentId);
 
-        return departmentCalendarRepository.findByDepartmentAndPerson(department, person);
+        return departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
     }
 
     File getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
@@ -91,7 +96,7 @@ class DepartmentCalendarService {
 
         final Department department = getDepartmentOrThrow(departmentId);
         final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.get();
-        if (!departmentCalendar.getDepartment().equals(department)) {
+        if (!departmentCalendar.getDepartmentId().equals(departmentId)) {
             throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
         }
 

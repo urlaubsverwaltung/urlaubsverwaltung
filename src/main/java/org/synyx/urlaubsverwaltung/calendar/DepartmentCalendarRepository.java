@@ -11,12 +11,12 @@ import java.util.Optional;
 @Repository
 interface DepartmentCalendarRepository extends CrudRepository<DepartmentCalendar, Long> {
 
-    Optional<DepartmentCalendar> findByDepartmentAndPerson(Department department, Person person);
+    Optional<DepartmentCalendar> findByDepartmentIdAndPerson(Integer departmentId, Person person);
 
     Optional<DepartmentCalendar> findBySecretAndPerson(String secret, Person person);
 
     @Modifying
-    void deleteByDepartmentAndPerson(Department department, Person person);
+    void deleteByDepartmentIdAndPerson(Integer departmentId, Person person);
 
     @Modifying
     void deleteByPerson(Person person);
