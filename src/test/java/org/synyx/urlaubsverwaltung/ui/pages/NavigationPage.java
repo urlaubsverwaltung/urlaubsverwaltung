@@ -21,7 +21,7 @@ public class NavigationPage implements Page {
 
     public NavigationPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, 20);
+        this.wait = new WebDriverWait(driver, 5);
     }
 
     @Override
