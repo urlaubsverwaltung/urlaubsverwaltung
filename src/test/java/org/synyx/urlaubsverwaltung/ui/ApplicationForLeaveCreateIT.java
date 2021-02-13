@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung;
+package org.synyx.urlaubsverwaltung.ui;
 
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,6 +20,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
+import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
+import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
+import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
@@ -37,10 +41,9 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.now;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
+import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
@@ -50,6 +53,8 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.ui.PageConditions.isTrue;
+import static org.synyx.urlaubsverwaltung.ui.PageConditions.pageIsVisible;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
 import static org.testcontainers.containers.MariaDBContainer.NAME;
 
@@ -92,26 +97,35 @@ class ApplicationForLeaveCreateIT {
         final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        webDriver.get("http://host.testcontainers.internal:" + port + "/login");
-        assertThat(webDriver.getTitle()).isEqualTo("Login");
+        final LoginPage loginPage = new LoginPage(webDriver);
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final OverviewPage overviewPage = new OverviewPage(webDriver);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver);
 
-        webDriver.findElementById("username").sendKeys(person.getUsername());
-        webDriver.findElementById("password").sendKeys("secret");
-        webDriver.findElementByXPath("//button[@type='submit']").click();
+        webDriver.get("http://host.testcontainers.internal:" + port);
 
-        new WebDriverWait(webDriver, 20).until(visibilityOfElementLocated(By.id("application-new-link")));
-        assertThat(webDriver.getTitle()).contains("Overview of Donald Bradley from");
-        webDriver.findElementById("application-new-link").click();
+        wait.until(pageIsVisible(loginPage));
+        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
-        new WebDriverWait(webDriver, 20).until(visibilityOfElementLocated(By.id("from")));
-        final String date = ofPattern("dd.MM.yyyy").format(getNextWorkday());
-        assertThat(webDriver.getTitle()).isEqualTo("New vacation request");
-        webDriver.findElement(By.cssSelector("#from")).sendKeys(date);
-        webDriver.findElement(By.cssSelector("button#apply-application")).click();
+        wait.until(pageIsVisible(navigationPage));
+        wait.until(pageIsVisible(overviewPage));
+        assertThat(overviewPage.isVisibleForPerson("Donald Bradley")).isTrue();
 
-        new WebDriverWait(webDriver, 20).until(visibilityOfElementLocated(By.className("alert-success")));
-        assertThat(webDriver.getTitle()).isEqualTo("Vacation request of Donald Bradley");
+        navigationPage.clickNewApplication();
+        wait.until(pageIsVisible(applicationPage));
+
+        applicationPage.from(getNextWorkday());
+        applicationPage.submit();
+
+        wait.until(pageIsVisible(applicationDetailPage));
+        wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
+        assertThat(applicationDetailPage.isVisibleForPerson("Donald Bradley")).isTrue();
+
+        // application created info vanishes sometime
+        wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
     }
 
     private Person createPerson() {
