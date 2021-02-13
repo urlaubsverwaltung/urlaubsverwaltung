@@ -101,7 +101,72 @@
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
-            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center">
+            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-space-x-2" role="menubar">
+                <div class="tw-relative">
+                    <button
+                        id="add-something-new"
+                        class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                    >
+                        <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                        <span class="tw-sr-only">
+                            <spring:message code="nav.add.button.text" />
+                        </span>
+                    </button>
+                    <div
+                        id="add-something-new-menu"
+                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-1"
+                        aria-hidden="true"
+                    >
+                        <div
+                            class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded-md"
+                            style="backdrop-filter: blur(2px)"
+                        >
+                            <ul
+                                class="tw-list-none tw-m-0 tw-p-0"
+                                role="menu"
+                            >
+                                <li role="none">
+                                    <a
+                                        href="${URL_PREFIX}/application/new"
+                                        role="menuitem"
+                                        class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                    >
+                                        <icon:document-text className="tw-h-5 tw-w-5" />
+                                        <span class="tw-ml-3">
+                                            <spring:message code="nav.add.vacation" />
+                                        </span>
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a
+                                        href="${URL_PREFIX}/sicknote/new"
+                                        role="menuitem"
+                                        class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                    >
+                                        <icon:medkit className="tw-h-5 tw-w-5" />
+                                        <span class="tw-ml-3">
+                                            <spring:message code="nav.add.sicknote" />
+                                        </span>
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a
+                                        href="${URL_PREFIX}/overtime/new"
+                                        role="menuitem"
+                                        class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                    >
+                                        <icon:clock className="tw-h-5 tw-w-5" />
+                                        <span class="tw-ml-3">
+                                            <spring:message code="nav.add.overtime" />
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
