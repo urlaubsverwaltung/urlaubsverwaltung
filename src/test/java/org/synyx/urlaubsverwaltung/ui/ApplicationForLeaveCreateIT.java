@@ -126,6 +126,9 @@ class ApplicationForLeaveCreateIT {
 
         // application created info vanishes sometime
         wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
+
+        navigationPage.logout();
+        wait.until(pageIsVisible(loginPage));
     }
 
     private Person createPerson() {

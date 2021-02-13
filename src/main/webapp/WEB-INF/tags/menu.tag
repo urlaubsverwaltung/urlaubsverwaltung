@@ -102,7 +102,14 @@
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
             <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-relative">
-                <a href="#avatar-menu" class="tw-inline-block" id="avatar-link" aria-expanded="false" aria-haspopup="true">
+                <a
+                    href="#avatar-menu"
+                    class="tw-inline-block"
+                    id="avatar-link"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    data-test-id="avatar"
+                >
                     <img
                         src="<c:out value='${menuGravatarUrl}'/>"
                         alt=""
@@ -116,6 +123,7 @@
                     id="avatar-menu"
                     class="tw-w-screen tw-absolute tw-right-3 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-2"
                     aria-hidden="true"
+                    data-test-id="avatar-popupmenu"
                 >
                     <div
                         class="tw-inline-block tw-px-6 tw-py-4 tw-bg-gray-600 tw-bg-opacity-80 tw-rounded-md"
@@ -128,6 +136,7 @@
                                         role="menuitem"
                                         type="submit"
                                         class="tw-inline-block tw-text-lg lg:tw-text-base tw-bg-transparent tw-p-0 tw-text-right"
+                                        data-test-id="logout"
                                     >
                                         <span class="tw-flex tw-items-center tw-text-white">
                                             <icon:logout className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4" />
