@@ -108,6 +108,7 @@
                         class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
                         aria-expanded="false"
                         aria-haspopup="true"
+                        data-test-id="add-something-new"
                     >
                         <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
                         <span class="tw-sr-only">
@@ -118,6 +119,7 @@
                         id="add-something-new-menu"
                         class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-1"
                         aria-hidden="true"
+                        data-test-id="add-something-new-popupmenu"
                     >
                         <div
                             class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded-md"
@@ -132,6 +134,7 @@
                                         href="${URL_PREFIX}/application/new"
                                         role="menuitem"
                                         class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                        data-test-id="add-new-application"
                                     >
                                         <icon:document-text className="tw-h-5 tw-w-5" />
                                         <span class="tw-ml-3">
@@ -144,6 +147,7 @@
                                         href="${URL_PREFIX}/sicknote/new"
                                         role="menuitem"
                                         class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                        data-test-id="add-new-sicknote"
                                     >
                                         <icon:medkit className="tw-h-5 tw-w-5" />
                                         <span class="tw-ml-3">
@@ -156,6 +160,7 @@
                                         href="${URL_PREFIX}/overtime/new"
                                         role="menuitem"
                                         class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                        data-test-id="add-new-overtime"
                                     >
                                         <icon:clock className="tw-h-5 tw-w-5" />
                                         <span class="tw-ml-3">

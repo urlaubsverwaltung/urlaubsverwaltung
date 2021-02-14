@@ -13,14 +13,12 @@ public class NavigationPage implements Page {
 
     private static final By NEW_APPLICATION_SELECTOR = By.id("application-new-link");
 
-    private final WebDriver driver;
-    private final WebDriverWait wait;
     private final AvatarMenu avatarMenu;
+    private final AddSomethingNewMenu addSomethingNewMenu;
 
     public NavigationPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, 5);
         this.avatarMenu = new AvatarMenu(driver);
+        this.addSomethingNewMenu = new AddSomethingNewMenu(driver);
     }
 
     @Override
@@ -36,13 +34,64 @@ public class NavigationPage implements Page {
      * Click "new application" link.
      */
     public void clickNewApplication() {
-        wait.until(elementToBeClickable(NEW_APPLICATION_SELECTOR));
-        driver.findElement(NEW_APPLICATION_SELECTOR).click();
+        addSomethingNewMenu.newApplication();
+    }
+
+    public void newSickNote() {
+        addSomethingNewMenu.newSickNote();
+    }
+
+    public void newOvertime() {
+        addSomethingNewMenu.newOvertime();
     }
 
     private static boolean newApplicationLinkVisible(WebDriver driver) {
         final WebElement element = driver.findElement(NEW_APPLICATION_SELECTOR);
         return element != null && element.isDisplayed();
+    }
+
+    private static class AddSomethingNewMenu {
+        private static final By BUTTON_SELECTOR = By.cssSelector("[data-test-id=add-something-new]");
+        private static final By POPUPMENU_SELECTOR = By.cssSelector("[data-test-id=add-something-new-popupmenu]");
+        private static final By APPLICATION_SELECTOR = By.cssSelector("[data-test-id=add-new-application]");
+        private static final By SICKNOTE_SELECTOR = By.cssSelector("[data-test-id=add-new-sicknote]");
+        private static final By OVERTIME_SELECTOR = By.cssSelector("[data-test-id=add-new-overtime]");
+
+        private final WebDriver driver;
+        private final WebDriverWait wait;
+
+        AddSomethingNewMenu(WebDriver driver) {
+            this.driver = driver;
+            this.wait = new WebDriverWait(driver, 5);
+        }
+
+        void newApplication() {
+            openPopupMenu();
+            wait.until(elementToBeClickable(APPLICATION_SELECTOR));
+            driver.findElement(APPLICATION_SELECTOR).click();
+        }
+
+        void newOvertime() {
+            openPopupMenu();
+            wait.until(elementToBeClickable(OVERTIME_SELECTOR));
+            driver.findElement(OVERTIME_SELECTOR).click();
+        }
+
+        void newSickNote() {
+            openPopupMenu();
+            wait.until(elementToBeClickable(SICKNOTE_SELECTOR));
+            driver.findElement(SICKNOTE_SELECTOR).click();
+        }
+
+        private void openPopupMenu() {
+            wait.until(elementHasAttributeWithValue(BUTTON_SELECTOR, "aria-expanded", "false"));
+            wait.until(elementHasAttributeWithValue(POPUPMENU_SELECTOR, "aria-hidden", "true"));
+
+            driver.findElement(BUTTON_SELECTOR).click();
+
+            wait.until(elementHasAttributeWithValue(BUTTON_SELECTOR, "aria-expanded", "true"));
+            wait.until(elementHasAttributeWithValue(POPUPMENU_SELECTOR, "aria-hidden", "false"));
+        }
     }
 
     private static class AvatarMenu {
