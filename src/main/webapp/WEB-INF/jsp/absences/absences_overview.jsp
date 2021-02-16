@@ -7,6 +7,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
+<%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <%@ page trimDirectiveWhitespaces="true" %>
 
@@ -64,13 +65,13 @@
 
             <form:form method="GET" action="${URL_PREFIX}/absences" id="absenceOverviewForm" class="print:tw-hidden">
 
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="form-group">
                         <div class="row">
-                            <label class="control-label col-md-3" for="yearSelect">
+                            <label class="control-label col-md-1" for="yearSelect">
                                 <spring:message code="absences.overview.year"/>:
                             </label>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <uv:select id="yearSelect" name="year">
                                     <c:forEach var="i" begin="1" end="9">
                                         <option value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}>
@@ -89,10 +90,10 @@
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <label class="control-label col-md-3" for="monthSelect">
+                            <label class="control-label col-md-1" for="monthSelect">
                                 <spring:message code="absences.overview.month"/>:
                             </label>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <uv:select id="monthSelect" name="month">
                                     <option value="" ${selectedMonth == '' ? 'selected="selected"' : ''}>
                                         <spring:message code="month.all"/>
@@ -123,18 +124,24 @@
                     <c:if test="${not empty departments}">
                         <div class="form-group">
                             <div class="row">
-                                <label class="control-label col-md-3" for="departmentSelect">
+                                <label class="control-label col-md-1" for="departmentSelect">
                                     <spring:message code="absences.overview.department"/>:
                                 </label>
-                                <div class="col-md-6">
-                                    <uv:select id="departmentSelect" name="department">
+                                <div class="col-md-4">
+                                    <uv:multi-select id="departmentSelect" name="department">
                                         <c:forEach items="${departments}" var="department">
                                             <option
-                                                value="${department.name}" ${department.name == selectedDepartment ? 'selected="selected"' : ''}>
+                                                value="${department.name}" ${selectedDepartments.contains(department.name) ? 'selected="selected"' : ''}>
                                                 <c:out value="${department.name}"/>
                                             </option>
                                         </c:forEach>
-                                    </uv:select>
+                                    </uv:multi-select>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="help-block tw-text-sm">
+                                        <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                        <spring:message code="absences.overview.department.help"/>
+                                    </span>
                                 </div>
                             </div>
                         </div>

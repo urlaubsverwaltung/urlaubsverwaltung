@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,15 +101,17 @@ public class AbsenceOverviewViewController {
     public String absenceOverview(
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,
-        @RequestParam(required = false) String department,
+        @RequestParam(name = "department", required = false, defaultValue = "") List<String> rawSelectedDepartments,
         Model model, Locale locale) {
         final Person signedInUser = personService.getSignedInUser();
-        final List<Department> departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
-        model.addAttribute("departments", departments);
+        final List<Department> departmentsOfUser = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
+        model.addAttribute("departments", departmentsOfUser);
 
-        final String fallbackDepartment = departments.isEmpty() ? "" : departments.get(0).getName();
-        final String selectedDepartmentName = hasText(department) ? department : fallbackDepartment;
-        model.addAttribute("selectedDepartment", selectedDepartmentName);
+        final String fallbackDepartment = departmentsOfUser.isEmpty() ? "" : departmentsOfUser.get(0).getName();
+        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
+        final List<String> selectedDepartmentNames = preparedSelectedDepartments.isEmpty() ?
+            List.of(fallbackDepartment) : preparedSelectedDepartments;
+        model.addAttribute("selectedDepartments", selectedDepartmentNames);
 
         final LocalDate startDate = getStartDate(year, month);
         final LocalDate endDate = getEndDate(year, month);
@@ -120,7 +123,7 @@ public class AbsenceOverviewViewController {
         model.addAttribute("selectedMonth", selectedMonth);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departments, selectedDepartmentName);
+        final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departmentsOfUser, selectedDepartmentNames);
 
         final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(year, dateRange, overviewPersons, locale);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
@@ -259,16 +262,17 @@ public class AbsenceOverviewViewController {
         return selectedMonth;
     }
 
-    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, String selectedDepartmentName) {
+    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, List<String> selectedDepartmentNames) {
 
         if (departments.isEmpty() && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE))) {
             return personService.getActivePersons();
         }
 
         return departments.stream()
-            .filter(department -> department.getName().equals(selectedDepartmentName))
+            .filter(department -> selectedDepartmentNames.contains(department.getName()))
             .map(Department::getMembers)
             .flatMap(List::stream)
+            .distinct()
             .sorted(comparing(Person::getFirstName))
             .collect(toList());
     }
