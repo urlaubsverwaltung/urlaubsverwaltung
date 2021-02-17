@@ -137,7 +137,7 @@
                                         </c:forEach>
                                     </uv:multi-select>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 hidden-xs">
                                     <span class="help-block tw-text-sm">
                                         <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                         <spring:message code="absences.overview.department.help"/>
