@@ -1,5 +1,6 @@
 import $ from "jquery";
 import "../lib/bootstrap";
+import "../components/avatar-popup";
 import "../components/table-selectable";
 import "../components/textarea";
 import "../components/feedback";
