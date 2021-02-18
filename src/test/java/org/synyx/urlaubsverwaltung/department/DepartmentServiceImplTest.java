@@ -3,16 +3,19 @@ package org.synyx.urlaubsverwaltung.department;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +24,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,18 +52,47 @@ class DepartmentServiceImplTest {
     @Mock
     private ApplicationService applicationService;
 
+    private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+
     @BeforeEach
     void setUp() {
-        sut = new DepartmentServiceImpl(departmentRepository, applicationService, Clock.systemUTC());
+        sut = new DepartmentServiceImpl(departmentRepository, applicationService, clock);
     }
 
     @Test
-    void ensureCallDepartmentDAOSave() {
+    void ensureNewDepartmentCreation() {
+        final Department department = new Department();
+        department.setName("department");
 
-        final Department department = createDepartment();
+        final DepartmentEntity savedDepartmentEntity = new DepartmentEntity();
+        savedDepartmentEntity.setId(42);
+        savedDepartmentEntity.setName("department");
+
+        when(departmentRepository.save(any())).thenReturn(savedDepartmentEntity);
+
+        final Department createdDepartment = sut.create(department);
+
+        assertThat(createdDepartment).isNotSameAs(department);
+        assertThat(createdDepartment.getId()).isEqualTo(42);
+        assertThat(createdDepartment.getName()).isEqualTo("department");
+        assertThat(createdDepartment.getLastModification()).isEqualTo(LocalDate.now(clock));
+    }
+
+    @Test
+    void ensureCreatedDateIsSetForNewDepartment() {
+
+        final Department department = new Department();
+        department.setName("department");
+
+        when(departmentRepository.save(any())).thenReturn(new DepartmentEntity());
+
         sut.create(department);
 
-        verify(departmentRepository).save(eq(department));
+        final ArgumentCaptor<DepartmentEntity> departmentEntityArgumentCaptor = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
+
+        final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
+        assertThat(savedDepartmentEntity.getCreatedAt()).isEqualTo(LocalDate.now(clock));
     }
 
     @Test
@@ -70,13 +103,66 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureUpdateDepartmentFailsWhenDepartmentDoesNotExistYet() {
+        final Department department = new Department();
+        department.setId(42);
+        department.setName("department");
+
+        when(departmentRepository.findById(42)).thenReturn(Optional.empty());
+
+        assertThatIllegalStateException()
+            .isThrownBy(() -> sut.update(department));
+    }
+
+    @Test
     void ensureUpdateCallDepartmentDAOUpdate() {
 
-        final Department department = createDepartment();
+        final Department department = new Department();
+        department.setId(42);
+        department.setName("department");
+
+        when(departmentRepository.findById(42)).thenReturn(Optional.of(new DepartmentEntity()));
+
+        final DepartmentEntity updatedDepartmentEntity = new DepartmentEntity();
+        updatedDepartmentEntity.setId(42);
+        updatedDepartmentEntity.setName("department");
+        when(departmentRepository.save(any())).thenReturn(updatedDepartmentEntity);
+
+        final Department updatedDepartment = sut.update(department);
+
+        assertThat(updatedDepartment).isNotSameAs(department);
+        assertThat(updatedDepartment.getName()).isEqualTo("department");
+
+        final ArgumentCaptor<DepartmentEntity> departmentEntityArgumentCaptor = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
+
+        final DepartmentEntity departmentEntityToUpdate = departmentEntityArgumentCaptor.getValue();
+        assertThat(departmentEntityToUpdate.getId()).isEqualTo(42);
+        assertThat(departmentEntityToUpdate.getName()).isEqualTo("department");
+    }
+
+    @Test
+    void ensureUpdateDoesNotChangeTheCreatedAtDate() {
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setName("department");
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setCreatedAt(LocalDate.of(2020, Month.DECEMBER, 4));
+        departmentEntity.setLastModification(LocalDate.of(2020, Month.DECEMBER, 4));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+        when(departmentRepository.save(any())).thenReturn(new DepartmentEntity());
 
         sut.update(department);
 
-        verify(departmentRepository).save(eq(department));
+        final ArgumentCaptor<DepartmentEntity> departmentEntityArgumentCaptor = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
+
+        final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
+        assertThat(savedDepartmentEntity.getCreatedAt()).isEqualTo(LocalDate.of(2020, Month.DECEMBER, 4));
+        assertThat(savedDepartmentEntity.getLastModification()).isEqualTo(LocalDate.now(clock));
     }
 
     @Test
@@ -120,10 +206,7 @@ class DepartmentServiceImplTest {
     @Test
     void ensureDeletionIsNotExecutedIfDepartmentWithGivenIDDoesNotExist() {
 
-        int id = 0;
-        when(departmentRepository.findById(id)).thenReturn(Optional.empty());
-
-        sut.delete(id);
+        sut.delete(0);
 
         verify(departmentRepository, never()).deleteById(anyInt());
     }
@@ -132,13 +215,15 @@ class DepartmentServiceImplTest {
     @Test
     void ensureDeleteCallFindOneAndDelete() {
 
-        int id = 0;
-        when(departmentRepository.findById(id)).thenReturn(Optional.of(createDepartment()));
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setName("department");
 
-        sut.delete(id);
+        when(departmentRepository.existsById(0)).thenReturn(true);
 
-        verify(departmentRepository).findById(eq(id));
-        verify(departmentRepository).deleteById(eq(id));
+        sut.delete(0);
+
+        verify(departmentRepository).existsById(0);
+        verify(departmentRepository).deleteById(0);
     }
 
     @Test
@@ -146,8 +231,17 @@ class DepartmentServiceImplTest {
 
         final Department department = new Department();
 
-        sut.update(department);
-        assertThat(department.getLastModification()).isToday();
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        final LocalDate expectedModificationDate = LocalDate.of(2020, Month.JANUARY, 1);
+        departmentEntity.setLastModification(expectedModificationDate);
+
+        when(departmentRepository.findById(any())).thenReturn(Optional.of(new DepartmentEntity()));
+        when(departmentRepository.save(any())).thenReturn(departmentEntity);
+
+        final Department updatedDepartment = sut.update(department);
+
+        assertThat(department.getLastModification()).isToday(); // department constructor currently sets the modification date
+        assertThat(updatedDepartment.getLastModification()).isEqualTo(expectedModificationDate);
     }
 
     @Test
@@ -163,11 +257,13 @@ class DepartmentServiceImplTest {
         Person marketing2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person marketing3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = createDepartment("admins");
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead, secondDepartmentHead));
         admins.setDepartmentHeads(asList(departmentHead, secondDepartmentHead));
 
-        Department marketing = createDepartment("marketing");
+        DepartmentEntity marketing = new DepartmentEntity();
+        marketing.setName("marketing");
 
         final Person secondStageAuth = new Person();
         secondStageAuth.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
@@ -201,7 +297,8 @@ class DepartmentServiceImplTest {
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = createDepartment("admins");
+        DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
@@ -219,7 +316,8 @@ class DepartmentServiceImplTest {
         Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = createDepartment("admins");
+        DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
         admins.setMembers(asList(admin1, admin2, departmentHead));
 
         Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -278,10 +376,12 @@ class DepartmentServiceImplTest {
         Person marketing2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person marketing3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Department admins = createDepartment("admins");
+        DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
         admins.setMembers(asList(admin1, admin2, person));
 
-        Department marketing = createDepartment("marketing");
+        DepartmentEntity marketing = new DepartmentEntity();
+        marketing.setName("marketing");
         marketing.setMembers(asList(marketing1, marketing2, marketing3, person));
 
         when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
@@ -317,10 +417,12 @@ class DepartmentServiceImplTest {
         final Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
         final Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
 
-        final Department admins = createDepartment("admins");
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
         admins.setMembers(asList(admin1, person));
 
-        final Department marketing = createDepartment("marketing");
+        final DepartmentEntity marketing = new DepartmentEntity();
+        marketing.setName("marketing");
         marketing.setMembers(asList(marketing1, person));
 
         final Application waitingApplication = new Application();
@@ -391,7 +493,8 @@ class DepartmentServiceImplTest {
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         dep.setMembers(asList(person, departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
@@ -411,7 +514,8 @@ class DepartmentServiceImplTest {
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         dep.setMembers(singletonList(departmentHead));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
@@ -431,7 +535,8 @@ class DepartmentServiceImplTest {
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
 
@@ -452,7 +557,8 @@ class DepartmentServiceImplTest {
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
-        Department dep = createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         dep.setMembers(asList(secondStageAuthority, departmentHead));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
         dep.setDepartmentHeads(singletonList(departmentHead));
@@ -494,11 +600,15 @@ class DepartmentServiceImplTest {
         Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, Role.BOSS));
 
-        Department dep = TestDataCreator.createDepartment("dep");
-        when(departmentRepository.findAll()).thenReturn(singletonList(dep));
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setName("dep");
+        when(departmentRepository.findAll()).thenReturn(singletonList(departmentEntity));
+
+        final Department department = new Department();
+        department.setName("dep");
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(boss);
-        assertThat(allowedDepartments).containsExactly(dep);
+        assertThat(allowedDepartments).containsExactly(department);
     }
 
     @Test
@@ -506,11 +616,15 @@ class DepartmentServiceImplTest {
         Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, OFFICE));
 
-        Department dep = TestDataCreator.createDepartment("dep");
-        when(departmentRepository.findAll()).thenReturn(singletonList(dep));
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setName("dep");
+        when(departmentRepository.findAll()).thenReturn(singletonList(departmentEntity));
+
+        final Department department = new Department();
+        department.setName("dep");
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(office);
-        assertThat(allowedDepartments).containsExactly(dep);
+        assertThat(allowedDepartments).containsExactly(department);
     }
 
     @Test
@@ -518,11 +632,15 @@ class DepartmentServiceImplTest {
         Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Department dep = TestDataCreator.createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         when(departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority)).thenReturn(singletonList(dep));
 
+        final Department expectedDepartment = new Department();
+        expectedDepartment.setName("dep");
+
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(secondStageAuthority);
-        assertThat(allowedDepartments).containsExactly(dep);
+        assertThat(allowedDepartments).containsExactly(expectedDepartment);
     }
 
     @Test
@@ -530,11 +648,15 @@ class DepartmentServiceImplTest {
         Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
-        Department dep = TestDataCreator.createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
+        final Department expectedDepartment = new Department();
+        expectedDepartment.setName("dep");
+
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(departmentHead);
-        assertThat(allowedDepartments).containsExactly(dep);
+        assertThat(allowedDepartments).containsExactly(expectedDepartment);
     }
 
     @Test
@@ -542,10 +664,14 @@ class DepartmentServiceImplTest {
         Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(singletonList(USER));
 
-        Department dep = TestDataCreator.createDepartment("dep");
+        final DepartmentEntity dep = new DepartmentEntity();
+        dep.setName("dep");
         when(departmentRepository.getAssignedDepartments(user)).thenReturn(singletonList(dep));
 
+        final Department expectedDepartment = new Department();
+        expectedDepartment.setName("dep");
+
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(user);
-        assertThat(allowedDepartments).containsExactly(dep);
+        assertThat(allowedDepartments).containsExactly(expectedDepartment);
     }
 }

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -11,8 +11,8 @@ import javax.validation.constraints.NotNull;
 class DepartmentCalendar extends Calendar {
 
     @NotNull
-    @OneToOne
-    private Department department;
+    @Column(name = "department_id")
+    private Integer departmentId;
 
     @NotNull
     @OneToOne
@@ -22,18 +22,18 @@ class DepartmentCalendar extends Calendar {
         // for hibernate - do not use this
     }
 
-    DepartmentCalendar(Department department, Person person) {
+    DepartmentCalendar(Integer departmentId, Person person) {
         super();
-        this.department = department;
+        this.departmentId = departmentId;
         this.person = person;
     }
 
-    public Department getDepartment() {
-        return department;
+    public Integer getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
     }
 
     public Person getPerson() {

@@ -112,6 +112,8 @@ class DepartmentViewControllerTest {
     @Test
     void postNewDepartmentCreatesDepartmentCorrectlyIfValidationSuccessful() throws Exception {
 
+        when(departmentService.create(any())).thenReturn(new Department());
+
         perform(post("/web/department"));
 
         verify(departmentService).create(any(Department.class));
@@ -119,6 +121,8 @@ class DepartmentViewControllerTest {
 
     @Test
     void postNewDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
+
+        when(departmentService.create(any())).thenReturn(new Department());
 
         perform(post("/web/department"))
             .andExpect(status().isFound())
@@ -188,6 +192,7 @@ class DepartmentViewControllerTest {
     void updateDepartmentUpdatesDepartmentCorrectIfValidationSuccessful() throws Exception {
 
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
+        when(departmentService.update(any())).thenReturn(new Department());
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID));
 
@@ -198,6 +203,7 @@ class DepartmentViewControllerTest {
     void updateDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
+        when(departmentService.update(any())).thenReturn(new Department());
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
             .andExpect(status().isFound())

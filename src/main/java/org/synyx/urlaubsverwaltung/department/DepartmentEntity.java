@@ -1,7 +1,15 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,30 +17,44 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
+import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
-/**
- * Department represents an organisation unit of a company.
- */
-public class Department {
+@Entity(name = "Department")
+class DepartmentEntity {
 
+    @Id
+    @GeneratedValue
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
     private String description;
+
+    @NotNull
+    private LocalDate createdAt;
 
     private LocalDate lastModification;
 
     // flag for two stage approval process
     private boolean twoStageApproval;
 
+    @OneToMany
+    @LazyCollection(FALSE)
+    @CollectionTable(name = "Department_Member")
     private List<Person> members = new ArrayList<>();
 
+    @OneToMany
+    @LazyCollection(FALSE)
+    @CollectionTable(name = "Department_DepartmentHead")
     private List<Person> departmentHeads = new ArrayList<>();
 
+    @OneToMany
+    @LazyCollection(FALSE)
+    @CollectionTable(name = "Department_SecondStageAuthority")
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
-    public Department() {
+    public DepartmentEntity() {
         this.lastModification = LocalDate.now(UTC);
     }
 
@@ -58,6 +80,14 @@ public class Department {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDate getLastModification() {
@@ -114,7 +144,7 @@ public class Department {
 
     @Override
     public String toString() {
-        return "Department{" +
+        return "DepartmentEntity{" +
             "name='" + name + '\'' +
             ", description='" + description + '\'' +
             ", lastModification=" + lastModification +
@@ -127,22 +157,18 @@ public class Department {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Department that = (Department) o;
-        return isTwoStageApproval() == that.isTwoStageApproval()
-            && Objects.equals(getId(), that.getId())
-            && Objects.equals(getName(), that.getName())
-            && Objects.equals(getDescription(), that.getDescription())
-            && Objects.equals(getLastModification(), that.getLastModification())
-            && Objects.equals(getMembers(), that.getMembers())
-            && Objects.equals(getDepartmentHeads(), that.getDepartmentHeads())
-            && Objects.equals(getSecondStageAuthorities(), that.getSecondStageAuthorities());
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final DepartmentEntity that = (DepartmentEntity) o;
+        return null != this.getId() && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getDescription(), getLastModification(), isTwoStageApproval(),
-            getMembers(), getDepartmentHeads(), getSecondStageAuthorities());
+        return Objects.hash(id);
     }
 }

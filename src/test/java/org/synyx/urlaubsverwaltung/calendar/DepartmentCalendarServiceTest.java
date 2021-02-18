@@ -28,6 +28,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -65,32 +66,24 @@ class DepartmentCalendarServiceTest {
     @Test
     void deleteCalendarForDepartmentAndPerson() {
 
-        final Department department = createDepartment("DepartmentName");
-        department.setId(1);
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
-
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
         sut.deleteCalendarForDepartmentAndPerson(1, 10);
 
-        verify(departmentCalendarRepository).deleteByDepartmentAndPerson(department, person);
+        verify(departmentCalendarRepository).deleteByDepartmentIdAndPerson(1, person);
     }
 
     @Test
     void getCalendarForDepartment() {
-
-        final Department department = createDepartment("DepartmentName");
-        department.setId(1);
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
-        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(Optional.of(departmentCalendar));
+        when(departmentCalendarRepository.findByDepartmentIdAndPerson(1, person)).thenReturn(Optional.of(departmentCalendar));
 
         final Optional<DepartmentCalendar> calendarForDepartment = sut.getCalendarForDepartment(1, 10);
         assertThat(calendarForDepartment).contains(departmentCalendar);
@@ -111,7 +104,7 @@ class DepartmentCalendarServiceTest {
 
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
         departmentCalendar.setId(1L);
-        departmentCalendar.setDepartment(department);
+        departmentCalendar.setDepartmentId(1);
         departmentCalendar.setCalendarPeriod(java.time.Period.parse("P12M"));
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(departmentCalendar));
 
@@ -174,17 +167,13 @@ class DepartmentCalendarServiceTest {
     @Test
     void getCalendarForDepartmentButSecretDoesNotMatchTheGivenPerson() {
 
-        final Department department = createDepartment();
-        department.setId(1);
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
 
         final Person person = new Person();
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        final Department notMatchingDepartment = createDepartment();
-        notMatchingDepartment.setId(1337);
-        DepartmentCalendar calendar = new DepartmentCalendar();
-        calendar.setDepartment(notMatchingDepartment);
+        final DepartmentCalendar calendar = new DepartmentCalendar();
+        calendar.setDepartmentId(1337);
         when(departmentCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(calendar));
 
         assertThatIllegalArgumentException()
@@ -198,17 +187,15 @@ class DepartmentCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final Department department = createDepartment();
-        department.setId(42);
-        when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(department));
+        when(departmentService.departmentExists(42)).thenReturn(true);
 
         DepartmentCalendar receivedDepartmentCalendar = new DepartmentCalendar();
-        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(Optional.of(receivedDepartmentCalendar));
+        when(departmentCalendarRepository.findByDepartmentIdAndPerson(42, person)).thenReturn(Optional.of(receivedDepartmentCalendar));
 
         when(departmentCalendarRepository.save(receivedDepartmentCalendar)).thenReturn(receivedDepartmentCalendar);
 
         final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M"));
-        assertThat(actualDepartmentCalendar.getDepartment()).isEqualTo(department);
+        assertThat(actualDepartmentCalendar.getDepartmentId()).isEqualTo(42);
         assertThat(actualDepartmentCalendar.getPerson()).isEqualTo(person);
         assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
     }
@@ -228,9 +215,9 @@ class DepartmentCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(42)).thenReturn(Optional.empty());
+        when(departmentService.departmentExists(42)).thenReturn(false);
 
-        assertThatIllegalArgumentException()
+        assertThatIllegalStateException()
             .isThrownBy(() -> sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M")));
     }
 
@@ -241,16 +228,14 @@ class DepartmentCalendarServiceTest {
         person.setId(1);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final Department department = createDepartment();
-        department.setId(42);
-        when(departmentService.getDepartmentById(42)).thenReturn(Optional.of(department));
+        when(departmentService.departmentExists(42)).thenReturn(true);
 
-        when(departmentCalendarRepository.findByDepartmentAndPerson(department, person)).thenReturn(Optional.empty());
+        when(departmentCalendarRepository.findByDepartmentIdAndPerson(42, person)).thenReturn(Optional.empty());
 
         when(departmentCalendarRepository.save(any(DepartmentCalendar.class))).thenAnswer(returnsFirstArg());
 
         final DepartmentCalendar actualDepartmentCalendar = sut.createCalendarForDepartmentAndPerson(42, 1, java.time.Period.parse("P12M"));
-        assertThat(actualDepartmentCalendar.getDepartment()).isEqualTo(department);
+        assertThat(actualDepartmentCalendar.getDepartmentId()).isEqualTo(42);
         assertThat(actualDepartmentCalendar.getPerson()).isEqualTo(person);
         assertThat(actualDepartmentCalendar.getSecret()).isNotBlank();
 
