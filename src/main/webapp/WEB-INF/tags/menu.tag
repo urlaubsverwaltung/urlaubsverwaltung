@@ -122,7 +122,7 @@
                         data-test-id="add-something-new-popupmenu"
                     >
                         <div
-                            class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded-md"
+                            class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded"
                             style="backdrop-filter: blur(2px)"
                         >
                             <ul
@@ -197,7 +197,7 @@
                         data-test-id="avatar-popupmenu"
                     >
                         <div
-                            class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded-md"
+                            class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded"
                             style="backdrop-filter: blur(2px)"
                         >
                             <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
