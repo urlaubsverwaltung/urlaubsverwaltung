@@ -157,6 +157,7 @@
                                     </a>
                                 </li>
                                 </sec:authorize>
+                                <c:if test="${navigationOvertimeItemEnabled}">
                                 <li role="none">
                                     <a
                                         href="${URL_PREFIX}/overtime/new"
@@ -170,6 +171,7 @@
                                         </span>
                                     </a>
                                 </li>
+                                </c:if>
                             </ul>
                         </div>
                     </div>
