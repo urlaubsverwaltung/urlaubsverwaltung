@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -30,8 +30,6 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.VACATION;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_MONTH;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -39,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.W
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Absences: Get all absences for a certain period")
+@Tag(name = "absences", description = "Absences: Get all absences for a certain period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
 public class AbsenceApiController {
@@ -57,27 +55,27 @@ public class AbsenceApiController {
         this.sickNoteService = sickNoteService;
     }
 
-    @ApiOperation(
-        value = "Get all absences for a certain period and person",
-        notes = "Get all absences for a certain period and person"
+    @Operation(
+        summary = "Get all absences for a certain period and person",
+        description = "Get all absences for a certain period and person"
     )
     @GetMapping(ABSENCES)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
     public DayAbsencesDto personsAbsences(
-        @ApiParam(value = "ID of the person")
+        @Parameter(description = "ID of the person")
         @PathVariable("personId")
             Integer personId,
-        @ApiParam(value = "start of interval to get absences from (inclusive)", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "start of interval to get absences from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "end of interval to get absences from (inclusive)", defaultValue = EXAMPLE_LAST_DAY_OF_MONTH)
+        @Parameter(description = "end of interval to get absences from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate,
-        @ApiParam(value = "Type of absences, vacation or sick notes", allowableValues = "VACATION, SICK_NOTE")
+        @Parameter(description = "Type of absences, vacation or sick notes")
         @RequestParam(value = "type", required = false)
             String type) {
 

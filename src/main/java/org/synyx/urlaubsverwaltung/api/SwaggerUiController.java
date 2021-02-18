@@ -12,6 +12,6 @@ public class SwaggerUiController {
 
     @GetMapping
     public RedirectView discover() {
-        return new RedirectView("/swagger-ui/", true);
+        return new RedirectView("/swagger-ui/index.html", true);
     }
 }

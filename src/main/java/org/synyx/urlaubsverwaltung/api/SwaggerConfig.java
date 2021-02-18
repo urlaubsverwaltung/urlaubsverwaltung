@@ -1,46 +1,57 @@
 package org.synyx.urlaubsverwaltung.api;
 
-import io.swagger.annotations.Api;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springdoc.core.Constants;
+import org.springdoc.core.SpringDocConfigProperties;
+import org.springdoc.core.SwaggerUiConfigProperties;
+import org.springdoc.core.SwaggerUiOAuthProperties;
+import org.springdoc.webmvc.ui.SwaggerIndexPageTransformer;
+import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spring.web.plugins.Docket;
-
-import java.util.List;
-
-import static springfox.documentation.spi.DocumentationType.OAS_30;
-
 
 @Configuration
 public class SwaggerConfig {
-
-    public static final String EXAMPLE_YEAR = "2019";
-    public static final String EXAMPLE_LAST_DAY_OF_YEAR = EXAMPLE_YEAR + "-12-31";
-    public static final String EXAMPLE_LAST_DAY_OF_MONTH = EXAMPLE_YEAR + "-01-31";
-    public static final String EXAMPLE_FIRST_DAY_OF_YEAR = EXAMPLE_YEAR + "-01-01";
 
     @Value(value = "${info.app.version}")
     private String version;
 
     @Bean
-    public Docket api() {
-        return new Docket(OAS_30)
-            .select()
-            .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
-            .build()
-            .apiInfo(
-                new ApiInfo(
-                    "Urlaubsverwaltung API",
-                    "This rest API provides the possibility to fetch information about absences, availabilities, persons, public holidays, sicknotes, vacations and many more...",
-                    version,
-                    null,
-                    new Contact("Urlaubsverwaltung", "https://github.com/synyx/urlaubsverwaltung", "urlaubsverwaltung@synyx.de"),
-                    "Apache 2.0",
-                    "https://github.com/synyx/urlaubsverwaltung/blob/master/LICENSE.txt",
-                    List.of())
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .info(
+                new Info()
+                    .title("Urlaubsverwaltung API")
+                    .version(version)
+                    .description("This rest API provides the possibility to fetch information about absences," +
+                        " availabilities, persons, public holidays, sicknotes, vacations and many more...")
+                    .contact(
+                        new Contact()
+                            .name("Urlaubsverwaltung")
+                            .url("https://github.com/synyx/urlaubsverwaltung")
+                            .email("urlaubsverwaltung@synyx.de")
+                    )
+                    .license(
+                        new License()
+                            .name("Apache 2.0")
+                            .url("https://github.com/synyx/urlaubsverwaltung/blob/master/LICENSE.txt")
+                    )
             );
+
+    }
+
+    @Bean
+    public SwaggerIndexTransformer indexPageTransformer(SpringDocConfigProperties springDocConfigProperties, SwaggerUiConfigProperties swaggerUiConfig, SwaggerUiOAuthProperties swaggerUiOAuthProperties, ObjectMapper objectMapper) {
+        return new SwaggerIndexPageTransformer(swaggerUiConfig, swaggerUiOAuthProperties, objectMapper) {
+            @Override
+            protected String overwriteSwaggerDefaultUrl(String html) {
+                return html.replace(Constants.SWAGGER_UI_DEFAULT_URL, springDocConfigProperties.getApiDocs().getPath());
+            }
+        };
     }
 }

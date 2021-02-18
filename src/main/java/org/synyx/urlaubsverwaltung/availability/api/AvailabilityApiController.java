@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.availability.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -22,12 +22,10 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_MONTH;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Availabilities: Get all availabilities for a certain person and period")
+@Tag(name = "availabilities", description = "Availabilities: Get all availabilities for a certain person and period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
 @Deprecated(forRemoval = true, since = "4.4.0")
@@ -44,21 +42,22 @@ public class AvailabilityApiController {
         this.personService = personService;
     }
 
-    @ApiOperation(
-        value = "Get all availabilities for a certain period and person",
-        notes = "Get all availabilities for a certain period and person. Maximum allowed period per request is one month."
+    @Operation(
+        deprecated = true,
+        summary = "Get all availabilities for a certain period and person",
+        description = "Get all availabilities for a certain period and person. Maximum allowed period per request is one month."
     )
     @GetMapping(AVAILABILITIES)
     @PreAuthorize(IS_OFFICE)
     public AvailabilityListDto personsAvailabilities(
-        @ApiParam("id of the person")
+        @Parameter(description = "id of the person")
         @PathVariable("personId")
             Integer personId,
-        @ApiParam(value = "start of interval to get availabilities from (inclusive)", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "start of interval to get availabilities from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "end of interval to get availabilities from (inclusive)", defaultValue = EXAMPLE_LAST_DAY_OF_MONTH)
+        @Parameter(description = "end of interval to get availabilities from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.statistics.vacationoverview.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ import java.util.List;
  * @deprecated historically used by the vacation overview which has been implemented with client side rendering. meanwhile server side rending is used which makes this API obsolete.
  */
 @RestControllerAdviceMarker
-@Api("VacationOverview: Get Vacation-Overview Metadata")
+@Tag(name = "vacation overview", description = "VacationOverview: Get Vacation-Overview Metadata")
 @RestController
 @RequestMapping("/api")
 @Deprecated(since = "4.0.0", forRemoval = true)
@@ -30,9 +30,10 @@ public class VacationOverviewApiController {
         this.vacationOverviewService = vacationOverviewService;
     }
 
-    @ApiOperation(
-        value = "Get Vacation-Overview Metadata",
-        notes = "Get Vacation-Overview metadata for all members of a department")
+    @Operation(
+        deprecated = true,
+        summary = "Get Vacation-Overview Metadata",
+        description = "Get Vacation-Overview metadata for all members of a department")
     @GetMapping("/vacationoverview")
     @PreAuthorize(SecurityRules.IS_PRIVILEGED_USER)
     public VacationOverviewsDto getHolidayOverview(

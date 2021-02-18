@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
 import de.jollyday.Holiday;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -29,12 +29,10 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Public Holidays: Get information about public holidays")
+@Tag(name = "public holidays", description = "Public Holidays: Get information about public holidays")
 @RestController
 @RequestMapping("/api")
 public class PublicHolidayApiController {
@@ -56,18 +54,19 @@ public class PublicHolidayApiController {
         this.settingsService = settingsService;
     }
 
-    @ApiOperation(
-        value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period. "
-        + "Information only reachable for users with role office."
+    @Operation(
+        summary = "Get all public holidays for a certain period",
+        description = "Get all public holidays for a certain period. "
+            + "Information only reachable for users with role office."
     )
     @GetMapping(PUBLIC_HOLIDAYS)
     @PreAuthorize(IS_OFFICE)
     public PublicHolidaysDto getPublicHolidays(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {
@@ -80,8 +79,8 @@ public class PublicHolidayApiController {
         return new PublicHolidaysDto(publicHolidays);
     }
 
-    @ApiOperation(
-        value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period. "
+    @Operation(
+        summary = "Get all public holidays for a certain period", description = "Get all public holidays for a certain period. "
         + "Information only reachable for users with role office and for own public holidays."
     )
     @GetMapping("/persons/{personId}/" + PUBLIC_HOLIDAYS)
@@ -89,14 +88,14 @@ public class PublicHolidayApiController {
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
     public PublicHolidaysDto personsPublicHolidays(
-        @ApiParam(value = "ID of the person to get the public holidays for.")
+        @Parameter(description = "ID of the person to get the public holidays for.")
         @PathVariable("personId")
             Integer personId,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {

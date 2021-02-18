@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +33,7 @@ import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATI
 import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 
 @RestControllerAdviceMarker
-@Api("Persons: Get information about the persons of the application")
+@Tag(name = "pesons", description = "Persons: Get information about the persons of the application")
 @RestController
 @RequestMapping(PersonApiController.ROOT_URL)
 public class PersonApiController {
@@ -48,8 +48,9 @@ public class PersonApiController {
         this.personService = personService;
     }
 
-    @ApiOperation(
-        value = "Get all active persons of the application", notes = "Get all active persons of the application"
+    @Operation(
+        summary = "Get all active persons of the application",
+        description = "Get all active persons of the application"
     )
     @GetMapping
     @PreAuthorize(IS_OFFICE)
@@ -62,7 +63,7 @@ public class PersonApiController {
         return new ResponseEntity<>(persons, OK);
     }
 
-    @ApiOperation(value = "Get one active person by id", notes = "Get one active person by id")
+    @Operation(summary = "Get one active person by id", description = "Get one active person by id")
     @GetMapping(PERSON_URL)
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<PersonDto> getPerson(@PathVariable Integer id) {
