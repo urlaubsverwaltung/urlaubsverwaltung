@@ -142,6 +142,7 @@
                                         </span>
                                     </a>
                                 </li>
+                                <sec:authorize access="hasAuthority('OFFICE')">
                                 <li role="none">
                                     <a
                                         href="${URL_PREFIX}/sicknote/new"
@@ -155,6 +156,7 @@
                                         </span>
                                     </a>
                                 </li>
+                                </sec:authorize>
                                 <li role="none">
                                     <a
                                         href="${URL_PREFIX}/overtime/new"
