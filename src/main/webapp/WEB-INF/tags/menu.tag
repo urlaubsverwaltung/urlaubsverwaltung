@@ -117,7 +117,7 @@
                     </button>
                     <div
                         id="add-something-new-menu"
-                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-1"
+                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="add-something-new-popupmenu"
                     >
@@ -192,7 +192,7 @@
                     </a>
                     <div
                         id="avatar-menu"
-                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-1"
+                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
