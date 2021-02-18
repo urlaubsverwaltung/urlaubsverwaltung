@@ -110,6 +110,10 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   const duetDateInputElement = duetDateElement.querySelector("input.duet-date__input");
   duetDateInputElement.setAttribute("name", dateElement.getAttribute("name"));
 
+  for (const [key, value] of Object.entries(dateElement.dataset)) {
+    duetDateInputElement.dataset[key] = value;
+  }
+
   return duetDateElement;
 }
 
