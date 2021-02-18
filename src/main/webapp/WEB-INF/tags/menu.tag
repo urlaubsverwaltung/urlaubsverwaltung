@@ -102,6 +102,7 @@
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
             <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-space-x-2" role="menubar">
+                <c:if test="${navigationRequestPopupEnabled}">
                 <div class="tw-relative">
                     <button
                         id="add-something-new"
@@ -176,6 +177,7 @@
                         </div>
                     </div>
                 </div>
+                </c:if>
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
