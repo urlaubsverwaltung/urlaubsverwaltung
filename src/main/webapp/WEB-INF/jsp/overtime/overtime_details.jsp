@@ -61,10 +61,10 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <span class="tw-text-sm">
+                        <span class="tw-text-sm" data-test-id="overtime-person">
                             <c:out value="${record.person.niceName}"/>&nbsp;<spring:message code="overtime.details.hours.1"/>
                         </span>
-                        <span class="tw-my-1 tw-text-lg tw-font-medium">
+                        <span class="tw-my-1 tw-text-lg tw-font-medium" data-test-id="overtime-duration">
                             <uv:duration duration="${record.duration}"/>
                         </span>
                         <span class="tw-text-sm">

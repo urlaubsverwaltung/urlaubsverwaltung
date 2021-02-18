@@ -295,7 +295,11 @@
                     </sec:authorize>
                     <sec:authorize access="hasAuthority('OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/settings" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a
+                            href="${URL_PREFIX}/settings"
+                            class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors"
+                            data-test-id="navigation-settings-link"
+                        >
                             <span class="tw-flex tw-items-center">
                                 <icon:cog className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">

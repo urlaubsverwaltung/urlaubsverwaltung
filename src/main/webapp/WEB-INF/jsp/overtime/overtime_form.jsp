@@ -109,7 +109,8 @@
                             <div class="col-md-9">
                                 <form:input path="startDate" data-iso-value="${overtime.startDateIsoValue}"
                                             cssClass="form-control" cssErrorClass="form-control error"
-                                            autocomplete="off" placeholder="${DATE_PATTERN}"/>
+                                            autocomplete="off" placeholder="${DATE_PATTERN}"
+                                            data-test-id="overtime-start-date" />
                                 <uv:error-text>
                                     <form:errors path="startDate" />
                                 </uv:error-text>
@@ -123,7 +124,8 @@
                             <div class="col-md-9">
                                 <form:input path="endDate" data-iso-value="${overtime.endDateIsoValue}"
                                             cssClass="form-control" cssErrorClass="form-control error"
-                                            autocomplete="off" placeholder="${DATE_PATTERN}"/>
+                                            autocomplete="off" placeholder="${DATE_PATTERN}"
+                                            data-test-id="overtime-end-date" />
                                 <uv:error-text>
                                     <form:errors path="endDate" />
                                 </uv:error-text>
@@ -151,6 +153,7 @@
                                                     type="text"
                                                     inputmode="numeric"
                                                     autocomplete="off"
+                                                    data-test-id="overtime-hours"
                                                 />
                                             </jsp:body>
                                         </uv:input-group>
@@ -174,6 +177,7 @@
                                                     type="text"
                                                     inputmode="numeric"
                                                     autocomplete="off"
+                                                    data-test-id="overtime-minutes"
                                                 />
                                             </jsp:body>
                                         </uv:input-group>
@@ -212,7 +216,7 @@
                 <div class="form-section">
                     <div class="col-xs-12">
                         <hr/>
-                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
+                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit" data-test-id="overtime-submit-button">
                             <spring:message code="action.save"/>
                         </button>
                         <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">

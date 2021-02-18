@@ -7,18 +7,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
+import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
 import static org.synyx.urlaubsverwaltung.ui.PageConditions.elementHasAttributeWithValue;
 
 public class NavigationPage implements Page {
 
     private static final By NEW_APPLICATION_SELECTOR = By.id("application-new-link");
+    private static final By SETTINGS_SELECTOR = By.cssSelector("[data-test-id=navigation-settings-link]");
 
+    private final WebDriver driver;
     private final AvatarMenu avatarMenu;
     private final AddSomethingNewMenu addSomethingNewMenu;
 
     public NavigationPage(WebDriver driver) {
         this.avatarMenu = new AvatarMenu(driver);
         this.addSomethingNewMenu = new AddSomethingNewMenu(driver);
+        this.driver = driver;
     }
 
     @Override
@@ -35,6 +39,10 @@ public class NavigationPage implements Page {
      */
     public void clickNewApplication() {
         addSomethingNewMenu.newApplication();
+    }
+
+    public void clickSettings() {
+        driver.findElement(SETTINGS_SELECTOR).click();
     }
 
     public void newSickNote() {
