@@ -12,12 +12,12 @@ import java.util.List;
  */
 public interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
 
-    @Query("SELECT d FROM Department d, in (d.departmentHeads) person WHERE person = ?1")
+    @Query("SELECT d FROM department d, in (d.departmentHeads) person WHERE person = ?1")
     List<DepartmentEntity> getManagedDepartments(Person person);
 
-    @Query("SELECT d FROM Department d, in (d.secondStageAuthorities) person WHERE person = ?1")
+    @Query("SELECT d FROM department d, in (d.secondStageAuthorities) person WHERE person = ?1")
     List<DepartmentEntity> getDepartmentsForSecondStageAuthority(Person person);
 
-    @Query("SELECT d FROM Department d, in (d.members) person WHERE person = ?1")
+    @Query("SELECT d FROM department d, in (d.members) person WHERE person = ?1")
     List<DepartmentEntity> getAssignedDepartments(Person person);
 }

@@ -78,6 +78,7 @@
     <renameTable oldTableName="Department" newTableName="department"/>
     <renameColumn tableName="department" oldColumnName="lastModification" newColumnName="last_modification" columnDataType="DATE"/>
     <renameColumn tableName="department" oldColumnName="twoStageApproval" newColumnName="two_stage_approval" columnDataType="BIT(1)"/>
+    <renameColumn tableName="department" oldColumnName="createdAt" newColumnName="created_at" columnDataType="DATE"/>
   </changeSet>
 
   <changeSet author="schneider" id="default-naming-strategy-department-departmentHead">

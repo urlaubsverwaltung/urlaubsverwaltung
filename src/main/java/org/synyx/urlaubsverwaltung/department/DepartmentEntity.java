@@ -19,7 +19,7 @@ import java.util.Objects;
 import static java.time.ZoneOffset.UTC;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
-@Entity(name = "Department")
+@Entity(name = "department")
 class DepartmentEntity {
 
     @Id
@@ -41,17 +41,17 @@ class DepartmentEntity {
 
     @OneToMany
     @LazyCollection(FALSE)
-    @CollectionTable(name = "Department_Member")
+    @CollectionTable(name = "department_member")
     private List<Person> members = new ArrayList<>();
 
     @OneToMany
     @LazyCollection(FALSE)
-    @CollectionTable(name = "Department_DepartmentHead")
+    @CollectionTable(name = "department_department_head")
     private List<Person> departmentHeads = new ArrayList<>();
 
     @OneToMany
     @LazyCollection(FALSE)
-    @CollectionTable(name = "Department_SecondStageAuthority")
+    @CollectionTable(name = "department_second_stage_authority")
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
     public DepartmentEntity() {
