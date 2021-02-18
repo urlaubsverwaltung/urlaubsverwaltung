@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
-import static javax.persistence.FetchType.EAGER;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
 @Entity(name = "Department")
