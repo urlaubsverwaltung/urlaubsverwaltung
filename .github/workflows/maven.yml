@@ -41,6 +41,10 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
+      - uses: actions/upload-artifact@v2
+        with:
+          name: failed-selenium-tests
+          path: target/FAILED-*.flv
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
