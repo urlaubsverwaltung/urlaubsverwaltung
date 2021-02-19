@@ -97,7 +97,7 @@ class ApplicationForLeaveCreateIT {
         final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 5);
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final LoginPage loginPage = new LoginPage(webDriver);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
