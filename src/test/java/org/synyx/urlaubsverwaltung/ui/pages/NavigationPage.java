@@ -17,11 +17,11 @@ public class NavigationPage implements Page {
 
     private final WebDriver driver;
     private final AvatarMenu avatarMenu;
-    private final AddSomethingNewMenu addSomethingNewMenu;
+    public final QuickAdd quickAdd;
 
     public NavigationPage(WebDriver driver) {
         this.avatarMenu = new AvatarMenu(driver);
-        this.addSomethingNewMenu = new AddSomethingNewMenu(driver);
+        this.quickAdd = new QuickAdd(driver);
         this.driver = driver;
     }
 
@@ -34,59 +34,56 @@ public class NavigationPage implements Page {
         avatarMenu.logout();
     }
 
-    /**
-     * Click "new application" link.
-     */
-    public void clickNewApplication() {
-        addSomethingNewMenu.newApplication();
-    }
-
     public void clickSettings() {
         driver.findElement(SETTINGS_SELECTOR).click();
     }
 
-    public void newSickNote() {
-        addSomethingNewMenu.newSickNote();
-    }
-
-    public void newOvertime() {
-        addSomethingNewMenu.newOvertime();
-    }
 
     private static boolean newApplicationLinkVisible(WebDriver driver) {
         final WebElement element = driver.findElement(NEW_APPLICATION_SELECTOR);
         return element != null && element.isDisplayed();
     }
 
-    private static class AddSomethingNewMenu {
+    public static class QuickAdd {
+        private static final By PLAIN_APPLICATION_SELECTOR = By.cssSelector("[data-test-id=new-application]");
         private static final By BUTTON_SELECTOR = By.cssSelector("[data-test-id=add-something-new]");
         private static final By POPUPMENU_SELECTOR = By.cssSelector("[data-test-id=add-something-new-popupmenu]");
-        private static final By APPLICATION_SELECTOR = By.cssSelector("[data-test-id=add-new-application]");
-        private static final By SICKNOTE_SELECTOR = By.cssSelector("[data-test-id=add-new-sicknote]");
-        private static final By OVERTIME_SELECTOR = By.cssSelector("[data-test-id=add-new-overtime]");
+        private static final By APPLICATION_SELECTOR = By.cssSelector("[data-test-id=quick-add-new-application]");
+        private static final By SICKNOTE_SELECTOR = By.cssSelector("[data-test-id=quick-add-new-sicknote]");
+        private static final By OVERTIME_SELECTOR = By.cssSelector("[data-test-id=quick-add-new-overtime]");
 
         private final WebDriver driver;
         private final WebDriverWait wait;
 
-        AddSomethingNewMenu(WebDriver driver) {
+        private QuickAdd(WebDriver driver) {
             this.driver = driver;
             this.wait = new WebDriverWait(driver, 5);
         }
 
-        void newApplication() {
-            openPopupMenu();
+        public boolean hasPopup() {
+            return !driver.findElements(POPUPMENU_SELECTOR).isEmpty()
+                && driver.findElements(PLAIN_APPLICATION_SELECTOR).isEmpty();
+        }
+
+        public void click() {
+            if (hasPopup()) {
+                driver.findElement(BUTTON_SELECTOR).click();
+            } else {
+                driver.findElement(PLAIN_APPLICATION_SELECTOR).click();
+            }
+        }
+
+        public void newApplication() {
             wait.until(elementToBeClickable(APPLICATION_SELECTOR));
             driver.findElement(APPLICATION_SELECTOR).click();
         }
 
-        void newOvertime() {
-            openPopupMenu();
+        public void newOvertime() {
             wait.until(elementToBeClickable(OVERTIME_SELECTOR));
             driver.findElement(OVERTIME_SELECTOR).click();
         }
 
-        void newSickNote() {
-            openPopupMenu();
+        public void newSickNote() {
             wait.until(elementToBeClickable(SICKNOTE_SELECTOR));
             driver.findElement(SICKNOTE_SELECTOR).click();
         }

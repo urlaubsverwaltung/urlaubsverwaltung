@@ -114,7 +114,9 @@ class OvertimeCreateIT {
         settingsPage.enableOvertime();
         settingsPage.saveSettings();
 
-        navigationPage.newOvertime();
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newOvertime();
         wait.until(pageIsVisible(overtimePage));
 
         final int currentYear = LocalDate.now().getYear();

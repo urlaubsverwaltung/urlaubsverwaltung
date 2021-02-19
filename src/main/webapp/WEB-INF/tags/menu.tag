@@ -136,12 +136,12 @@
                                                 href="${URL_PREFIX}/application/new"
                                                 role="menuitem"
                                                 class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
-                                                data-test-id="add-new-application"
+                                                data-test-id="quick-add-new-application"
                                             >
                                                 <icon:document-text className="tw-h-5 tw-w-5" />
                                                 <span class="tw-ml-3">
-                                            <spring:message code="nav.add.vacation" />
-                                        </span>
+                                                    <spring:message code="nav.add.vacation" />
+                                                </span>
                                             </a>
                                         </li>
                                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -150,12 +150,12 @@
                                                     href="${URL_PREFIX}/sicknote/new"
                                                     role="menuitem"
                                                     class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
-                                                    data-test-id="add-new-sicknote"
+                                                    data-test-id="quick-add-new-sicknote"
                                                 >
                                                     <icon:medkit className="tw-h-5 tw-w-5" />
                                                     <span class="tw-ml-3">
-                                            <spring:message code="nav.add.sicknote" />
-                                        </span>
+                                                        <spring:message code="nav.add.sicknote" />
+                                                    </span>
                                                 </a>
                                             </li>
                                         </sec:authorize>
@@ -165,12 +165,12 @@
                                                     href="${URL_PREFIX}/overtime/new"
                                                     role="menuitem"
                                                     class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
-                                                    data-test-id="add-new-overtime"
+                                                    data-test-id="quick-add-new-overtime"
                                                 >
                                                     <icon:clock className="tw-h-5 tw-w-5" />
                                                     <span class="tw-ml-3">
-                                            <spring:message code="nav.add.overtime" />
-                                        </span>
+                                                        <spring:message code="nav.add.overtime" />
+                                                    </span>
                                                 </a>
                                             </li>
                                         </c:if>
@@ -182,12 +182,11 @@
                     <c:otherwise>
                         <a
                             href="${URL_PREFIX}/application/new"
-                            role="menuitem"
-                            class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
-                            data-test-id="add-new-application"
+                            class="tw-flex tw-items-center"
+                            data-test-id="new-application"
                         >
-                            <icon:document-text className="tw-h-5 tw-w-5" />
-                            <span class="tw-ml-3">
+                            <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                            <span class="tw-sr-only">
                                 <spring:message code="nav.add.vacation" />
                             </span>
                         </a>

@@ -17,8 +17,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
@@ -103,8 +101,9 @@ class SickNoteCreateIT {
 
         wait.until(pageIsVisible(navigationPage));
 
-        navigationPage.newSickNote();
-        // TODO this times out currently. never true.
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newSickNote();
         wait.until(pageIsVisible(sickNotePage));
 
         assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
