@@ -104,7 +104,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 5);
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final LoginPage loginPage = new LoginPage(webDriver);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -152,7 +152,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 5);
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final LoginPage loginPage = new LoginPage(webDriver);
         final NavigationPage navigationPage = new NavigationPage(webDriver);

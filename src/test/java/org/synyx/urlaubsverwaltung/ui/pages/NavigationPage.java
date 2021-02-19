@@ -57,7 +57,7 @@ public class NavigationPage implements Page {
 
         private QuickAdd(WebDriver driver) {
             this.driver = driver;
-            this.wait = new WebDriverWait(driver, 5);
+            this.wait = new WebDriverWait(driver, 20);
         }
 
         public boolean hasPopup() {
@@ -110,7 +110,7 @@ public class NavigationPage implements Page {
 
         AvatarMenu(WebDriver driver) {
             this.driver = driver;
-            this.wait = new WebDriverWait(driver, 5);
+            this.wait = new WebDriverWait(driver, 20);
         }
 
         void logout() {
