@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -16,9 +18,9 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -73,7 +75,7 @@ class MenuDataProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "redirect:", "login" })
+    @ValueSource(strings = {"redirect:", "login"})
     @NullSource
     void postHandleDoNotAddGravatar(String viewName) {
 
@@ -84,9 +86,19 @@ class MenuDataProviderTest {
         assertThat(modelAndView.getModelMap().get("menuGravatarUrl")).isNull();
     }
 
-    @Test
-    void ensureOvertimeIsVisibleWhenActive() throws Exception {
-        mockOvertime(true);
+    static Stream<Arguments> modelPropertiesNavigation() {
+        return Stream.of(
+            Arguments.of("navigationOvertimeItemEnabled", true, true),
+            Arguments.of("navigationOvertimeItemEnabled", false, false),
+            Arguments.of("navigationRequestPopupEnabled", true, false),
+            Arguments.of("navigationRequestPopupEnabled", true, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("modelPropertiesNavigation")
+    void ensureForOvertimeAndRequestIsCorrectSetForOffice(String property, boolean propertyValue, boolean overtimeEnabled) {
+        mockOvertime(overtimeEnabled);
 
         final Person person = new Person();
         person.setPermissions(List.of(OFFICE));
@@ -97,60 +109,11 @@ class MenuDataProviderTest {
 
         sut.postHandle(null, null, null, modelAndView);
 
-        assertThat(modelAndView.getModel()).containsEntry("navigationOvertimeItemEnabled", true);
+        assertThat(modelAndView.getModel()).containsEntry(property, propertyValue);
     }
 
     @Test
-    void ensureOvertimeIsNotVisibleWhenDisabled() throws Exception {
-
-        mockOvertime(false);
-
-        final Person person = new Person();
-        person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("someView");
-
-        sut.postHandle(null, null, null, modelAndView);
-
-        assertThat(modelAndView.getModel()).containsEntry("navigationOvertimeItemEnabled", false);
-    }
-
-    @Test
-    void ensureQuickAddPopupIsEnabledWhenOfficeIsLoggedInAndOvertimeIsDisabled() throws Exception {
-        mockOvertime(false);
-
-        final Person person = new Person();
-        person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("someView");
-
-        sut.postHandle(null, null, null, modelAndView);
-
-        assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", true);
-    }
-
-    @Test
-    void ensureQuickAddPopupIsEnabledWhenUserIsLoggedInAndOvertimeIsEnabled() throws Exception {
-        mockOvertime(true);
-
-        final Person person = new Person();
-        person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("someView");
-
-        sut.postHandle(null, null, null, modelAndView);
-
-        assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", true);
-    }
-
-    @Test
-    void ensureQuickAddPopupIsDisabledWhenUserIsLoggedInAndOvertimeIsDisabled() throws Exception {
+    void ensureQuickAddPopupIsDisabledWhenUserIsLoggedInAndOvertimeIsDisabled() {
         mockOvertime(false);
 
         final Person person = new Person();
