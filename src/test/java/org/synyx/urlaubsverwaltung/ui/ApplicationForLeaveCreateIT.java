@@ -180,7 +180,9 @@ class ApplicationForLeaveCreateIT {
         loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
 
         wait.until(pageIsVisible(overviewPage));
-        wait.until(isTrue(navigationPage.quickAdd::hasPopup));
+        assertThat(overviewPage.isVisibleForPerson("The Joker")).isTrue();
+
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
         // clicking the element should open the popup menu
         navigationPage.quickAdd.click();
