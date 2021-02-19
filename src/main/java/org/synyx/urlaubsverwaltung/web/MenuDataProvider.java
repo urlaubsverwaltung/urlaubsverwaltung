@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,10 +21,12 @@ import java.util.Objects;
 public class MenuDataProvider implements HandlerInterceptor {
 
     private final PersonService personService;
+    private final SettingsService settingsService;
 
     @Autowired
-    public MenuDataProvider(PersonService personService) {
+    public MenuDataProvider(PersonService personService, SettingsService settingsService) {
         this.personService = personService;
+        this.settingsService = settingsService;
     }
 
     @Override
@@ -30,9 +35,13 @@ public class MenuDataProvider implements HandlerInterceptor {
         if (menuIsShown(modelAndView)) {
 
             final Person signedInUserInModel = (Person) modelAndView.getModelMap().get("signedInUser");
-            final String gravatarUrl = Objects.requireNonNullElseGet(signedInUserInModel, personService::getSignedInUser).getGravatarURL();
+            final Person user = Objects.requireNonNullElseGet(signedInUserInModel, personService::getSignedInUser);
+            final String gravatarUrl = user.getGravatarURL();
 
             modelAndView.getModelMap().addAttribute("menuGravatarUrl", gravatarUrl);
+
+            modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
+            modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled());
         }
     }
 
@@ -45,5 +54,14 @@ public class MenuDataProvider implements HandlerInterceptor {
         final String viewName = modelAndView.getViewName();
         return !viewName.startsWith("redirect:")
             && !viewName.startsWith("login");
+    }
+
+    private boolean popupMenuEnabled(Person signedInUser) {
+        return signedInUser.hasRole(Role.OFFICE) || overtimeEnabled();
+    }
+
+    private boolean overtimeEnabled() {
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        return overtimeSettings.isOvertimeActive();
     }
 }
