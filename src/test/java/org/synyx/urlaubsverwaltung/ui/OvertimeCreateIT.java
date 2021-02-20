@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.ui;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -16,19 +15,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
-import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
-import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
+import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
+import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MariaDBContainer;
@@ -38,12 +31,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.LocalDate.now;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,8 +57,8 @@ import static org.testcontainers.containers.MariaDBContainer.NAME;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ContextConfiguration(initializers = ApplicationForLeaveCreateIT.Initializer.class)
-class ApplicationForLeaveCreateIT {
+@ContextConfiguration(initializers = OvertimeCreateIT.Initializer.class)
+class OvertimeCreateIT {
 
     @LocalServerPort
     private int port;
@@ -92,36 +84,26 @@ class ApplicationForLeaveCreateIT {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeService workingTimeService;
-    @Autowired
-    private PublicHolidaysService publicHolidaysService;
-    @Autowired
-    private SettingsService settingsService;
 
     @Test
-    @DisplayName("when USER is logged in and overtime feature is disabled then quick-add directly links to application-for-leave")
-    void ensureQuickAddDirectlyLinksToApplicationForLeave() {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-        final Person userPerson = createPerson("The", "Joker", List.of(USER));
+    void ensureOvertimeCreation() {
+        final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final LoginPage loginPage = new LoginPage(webDriver);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
+        final OvertimePage overtimePage = new OvertimePage(webDriver);
+        final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(webDriver);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
-        // log in as office user
-        // and disable the overtime feature
-
         wait.until(pageIsVisible(loginPage));
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
         wait.until(pageIsVisible(navigationPage));
-        wait.until(pageIsVisible(overviewPage));
 
         navigationPage.clickSettings();
         wait.until(pageIsVisible(settingsPage));
@@ -129,118 +111,42 @@ class ApplicationForLeaveCreateIT {
         settingsPage.clickWorkingTimeTab();
         assertThat(settingsPage.overtimeEnabled()).isFalse();
 
-        navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
-
-        // now the quick-add button should link directly to application-for-leave page
-        // for the user logged in with role=USER
-
-        loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
-
-        wait.until(pageIsVisible(overviewPage));
-
-        assertThat(navigationPage.quickAdd.hasPopup()).isFalse();
-
-        navigationPage.quickAdd.click();
-        wait.until(pageIsVisible(applicationPage));
-    }
-
-    @Test
-    @DisplayName("when USER is logged in and overtime feature is enabled then quick-add opens a popupmenu")
-    void ensureQuickAddOpensPopupMenu() {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-        final Person userPerson = createPerson("The", "Joker", List.of(USER));
-
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
-
-        final LoginPage loginPage = new LoginPage(webDriver);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver);
-        final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-
-        webDriver.get("http://host.testcontainers.internal:" + port);
-
-        wait.until(pageIsVisible(loginPage));
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
-
-        wait.until(pageIsVisible(navigationPage));
-
-        navigationPage.clickSettings();
-        wait.until(pageIsVisible(settingsPage));
-
-        settingsPage.clickWorkingTimeTab();
         settingsPage.enableOvertime();
         settingsPage.saveSettings();
 
-        navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
-
-        loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
-
-        wait.until(pageIsVisible(overviewPage));
-        assertThat(overviewPage.isVisibleForPerson("The Joker")).isTrue();
-
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-
-        // clicking the element should open the popup menu
         navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
+        navigationPage.quickAdd.newOvertime();
+        wait.until(pageIsVisible(overtimePage));
 
-        wait.until(pageIsVisible(applicationPage));
+        final int currentYear = LocalDate.now().getYear();
+
+        overtimePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
+        assertThat(overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
+
+        overtimePage.hours(1);
+        overtimePage.minutes(90);
+
+        overtimePage.submit();
+
+        wait.until(pageIsVisible(overtimeDetailPage));
+        wait.until(isTrue(overtimeDetailPage::showsOvertimeCreatedInfo));
+
+        // overtime created info vanishes sometime
+        wait.until(not(isTrue(overtimeDetailPage::showsOvertimeCreatedInfo)));
+
+        assertThat(overtimeDetailPage.isVisibleForPerson("Donald Bradley")).isTrue();
+        assertThat(overtimeDetailPage.showsHours(2)).isTrue();
+        assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
 
         navigationPage.logout();
         wait.until(pageIsVisible(loginPage));
     }
 
-    @Test
-    void checkIfItIsPossibleToRequestAnApplicationForLeave() {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
-
-        final LoginPage loginPage = new LoginPage(webDriver);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver);
-
-        webDriver.get("http://host.testcontainers.internal:" + port);
-
-        wait.until(pageIsVisible(loginPage));
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
-
-        wait.until(pageIsVisible(navigationPage));
-        wait.until(pageIsVisible(overviewPage));
-        assertThat(overviewPage.isVisibleForPerson("Alfred Pennyworth")).isTrue();
-
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newApplication();
-        wait.until(pageIsVisible(applicationPage));
-
-        applicationPage.from(getNextWorkday());
-        applicationPage.submit();
-
-        wait.until(pageIsVisible(applicationDetailPage));
-        wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
-        assertThat(applicationDetailPage.isVisibleForPerson("Alfred Pennyworth")).isTrue();
-
-        // application created info vanishes sometime
-        wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
-
-        navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
-    }
-
-    private Person createPerson(String firstName, String lastName, List<Role> roles) {
-        final String username = lastName + UUID.randomUUID().getLeastSignificantBits();
-        final String email = String.format("%s.%s@example.org", firstName, lastName);
-        final Person person = new Person(username, lastName, firstName, email);
+    private Person createPerson() {
+        final Person person = new Person("dBradley", "Bradley", "Donald", "Donald.Bradley@example.org");
         person.setPassword("2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec");
-        person.setPermissions(roles);
+        person.setPermissions(List.of(USER, OFFICE));
         final Person savedPerson = personService.save(person);
 
         final int currentYear = LocalDate.now().getYear();
@@ -253,19 +159,7 @@ class ApplicationForLeaveCreateIT {
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, ZERO, null);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
-
         return savedPerson;
-    }
-
-    private LocalDate getNextWorkday() {
-
-        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-
-        LocalDate nextWorkDay = now();
-        while (DayLength.ZERO.compareTo(publicHolidaysService.getAbsenceTypeOfDate(nextWorkDay, federalState)) != 0) {
-            nextWorkDay = nextWorkDay.plusDays(1);
-        }
-        return nextWorkDay;
     }
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

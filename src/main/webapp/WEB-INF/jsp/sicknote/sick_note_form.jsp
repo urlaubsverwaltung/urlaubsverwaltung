@@ -104,7 +104,7 @@
                             <div class="col-md-9">
                                 <c:choose>
                                     <c:when test="${sickNote.id == null}">
-                                        <uv:select id="employee" name="person">
+                                        <uv:select id="employee" name="person" testId="person-select">
                                             <c:forEach items="${persons}" var="person">
                                                 <option value="${person.id}" ${sickNote.person.id == person.id ? 'selected="selected"' : ''}>
                                                     ${person.niceName}
@@ -127,7 +127,7 @@
                             </label>
 
                             <div class="col-md-9">
-                                <uv:select id="sickNoteType" name="sickNoteType">
+                                <uv:select id="sickNoteType" name="sickNoteType" testId="sicknote-type-select">
                                     <c:forEach items="${sickNoteTypes}" var="sickNoteType">
                                         <option value="${sickNoteType.id}" ${sickNoteType == sickNote.sickNoteType ? 'selected="selected"' : ''}>
                                             <spring:message code="${sickNoteType.messageKey}"/>
@@ -144,15 +144,15 @@
                             <div class="col-md-9">
                                 <div class="radio">
                                     <label class="thirds">
-                                        <form:radiobutton path="dayLength" value="FULL" checked="checked"/>
+                                        <form:radiobutton path="dayLength" value="FULL" checked="checked" data-test-id="day-type-full" />
                                         <spring:message code="FULL"/>
                                     </label>
                                     <label class="thirds">
-                                        <form:radiobutton path="dayLength" value="MORNING"/>
+                                        <form:radiobutton path="dayLength" value="MORNING" data-test-id="day-type-morning" />
                                         <spring:message code="MORNING"/>
                                     </label>
                                     <label class="thirds">
-                                        <form:radiobutton path="dayLength" value="NOON"/>
+                                        <form:radiobutton path="dayLength" value="NOON" data-test-id="day-type-noon" />
                                         <spring:message code="NOON"/>
                                     </label>
                                 </div>
@@ -169,7 +169,7 @@
                             <div class="col-md-9">
                                 <form:input id="from" path="startDate" data-iso-value="${sickNote.startDateIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" autocomplete="off"
-                                            placeholder="${DATE_PATTERN}"/>
+                                            placeholder="${DATE_PATTERN}" data-test-id="sicknote-from-date" />
                                 <uv:error-text>
                                     <form:errors path="startDate" />
                                 </uv:error-text>
@@ -183,7 +183,7 @@
                             <div class="col-md-9">
                                 <form:input id="to" path="endDate" data-iso-value="${sickNote.endDateIsoValue}"
                                             class="form-control" cssErrorClass="form-control error" autocomplete="off"
-                                            placeholder="${DATE_PATTERN}"/>
+                                            placeholder="${DATE_PATTERN}" data-test-id="sicknote-to-date" />
                                 <uv:error-text>
                                     <form:errors path="endDate" />
                                 </uv:error-text>
@@ -278,7 +278,11 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <hr/>
-                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit">
+                        <button
+                            class="btn btn-success col-xs-12 col-sm-5 col-md-2"
+                            type="submit"
+                            data-test-id="sicknote-submit-button"
+                        >
                             <spring:message code="action.save"/>
                         </button>
                         <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">

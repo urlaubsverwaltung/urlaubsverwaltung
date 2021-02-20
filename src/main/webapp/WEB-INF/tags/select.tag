@@ -5,6 +5,7 @@
 <%@attribute name="name" type="java.lang.String" required="true" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 <%@attribute name="onchange" type="java.lang.String" required="false" %>
+<%@attribute name="testId" type="java.lang.String" required="false" %>
 
 <c:choose>
     <c:when test="${not empty onchange}">
@@ -15,8 +16,17 @@
     </c:otherwise>
 </c:choose>
 
+<c:choose>
+    <c:when test="${not empty testId}">
+        <c:set var="testid" value="data-test-id='${testId}'"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="testid" value=""/>
+    </c:otherwise>
+</c:choose>
+
 <div class="tw-inline-block tw-relative tw-w-full">
-    <select id="${id}" name="${name}" class="form-control tw-appearance-none tw-pr-8 ${cssClass}" ${onchangeAttribute}>
+    <select id="${id}" name="${name}" class="form-control tw-appearance-none tw-pr-8 ${cssClass}" ${onchangeAttribute} ${testid}>
         <jsp:doBody />
     </select>
     <div class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2 tw-text-gray-700">

@@ -21,7 +21,7 @@ public class ApplicationDetailPage implements Page {
 
     @Override
     public boolean isVisible(WebDriver driver) {
-        return driver.getTitle().equals("Vacation request of Donald Bradley");
+        return driver.getTitle().startsWith("Vacation request of");
     }
 
     public boolean showsApplicationCreatedInfo() {

@@ -101,7 +101,97 @@
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
-            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center">
+            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-space-x-2" role="menubar">
+                <c:choose>
+                    <c:when test="${navigationRequestPopupEnabled}">
+                        <div class="tw-relative">
+                            <button
+                                id="add-something-new"
+                                class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                data-test-id="add-something-new"
+                            >
+                                <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                                <span class="tw-sr-only">
+                                    <spring:message code="nav.add.button.text" />
+                                </span>
+                            </button>
+                            <div
+                                id="add-something-new-menu"
+                                class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                                aria-hidden="true"
+                                data-test-id="add-something-new-popupmenu"
+                            >
+                                <div
+                                    class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
+                                    style="backdrop-filter: blur(2px)"
+                                >
+                                    <ul
+                                        class="tw-list-none tw-m-0 tw-p-0"
+                                        role="menu"
+                                    >
+                                        <li role="none">
+                                            <a
+                                                href="${URL_PREFIX}/application/new"
+                                                role="menuitem"
+                                                class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                data-test-id="quick-add-new-application"
+                                            >
+                                                <icon:document-text className="tw-h-5 tw-w-5" />
+                                                <span class="tw-ml-3">
+                                                    <spring:message code="nav.add.vacation" />
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <sec:authorize access="hasAuthority('OFFICE')">
+                                            <li role="none">
+                                                <a
+                                                    href="${URL_PREFIX}/sicknote/new"
+                                                    role="menuitem"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                    data-test-id="quick-add-new-sicknote"
+                                                >
+                                                    <icon:medkit className="tw-h-5 tw-w-5" />
+                                                    <span class="tw-ml-3">
+                                                        <spring:message code="nav.add.sicknote" />
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </sec:authorize>
+                                        <c:if test="${navigationOvertimeItemEnabled}">
+                                            <li role="none">
+                                                <a
+                                                    href="${URL_PREFIX}/overtime/new"
+                                                    role="menuitem"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                    data-test-id="quick-add-new-overtime"
+                                                >
+                                                    <icon:clock className="tw-h-5 tw-w-5" />
+                                                    <span class="tw-ml-3">
+                                                        <spring:message code="nav.add.overtime" />
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <a
+                            href="${URL_PREFIX}/application/new"
+                            class="tw-flex tw-items-center"
+                            data-test-id="new-application"
+                        >
+                            <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                            <span class="tw-sr-only">
+                                <spring:message code="nav.add.vacation" />
+                            </span>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
@@ -122,12 +212,12 @@
                     </a>
                     <div
                         id="avatar-menu"
-                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1 tw--translate-y-1"
+                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
                         <div
-                            class="tw-inline-block tw-py-1 tw-bg-gray-600 tw-bg-opacity-90 tw-rounded-md"
+                            class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
                             style="backdrop-filter: blur(2px)"
                         >
                             <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
@@ -225,7 +315,11 @@
                     </sec:authorize>
                     <sec:authorize access="hasAuthority('OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/settings" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a
+                            href="${URL_PREFIX}/settings"
+                            class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors"
+                            data-test-id="navigation-settings-link"
+                        >
                             <span class="tw-flex tw-items-center">
                                 <icon:cog className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">

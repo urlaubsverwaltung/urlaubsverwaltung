@@ -98,6 +98,7 @@
                                 role="tab"
                                 data-toggle="tab"
                                 class="${hasPublicHolidayError ? 'tw-text-red-800' : ''}"
+                                data-test-id="settings-tab-working-time"
                             >
                                 <spring:message code="settings.tabs.workingTime"/>
                                 <c:if test="${hasPublicHolidayError}">*</c:if>
@@ -444,12 +445,14 @@
                                     <div class="col-md-8 radio">
                                         <label class="halves">
                                             <form:radiobutton id="overtimeSettings.overtimeActive.true"
-                                                              path="overtimeSettings.overtimeActive" value="true"/>
+                                                              path="overtimeSettings.overtimeActive" value="true"
+                                                              data-test-id="setting-overtime-enabled" />
                                             <spring:message code="settings.overtime.overtimeActive.true"/>
                                         </label>
                                         <label class="halves">
                                             <form:radiobutton id="overtimeSettings.overtimeActive.false"
-                                                              path="overtimeSettings.overtimeActive" value="false"/>
+                                                              path="overtimeSettings.overtimeActive" value="false"
+                                                              data-test-id="setting-overtime-disabled" />
                                             <spring:message code="settings.overtime.overtimeActive.false"/>
                                         </label>
                                     </div>
@@ -743,7 +746,7 @@
                 <div class="row tw-mb-16">
                     <div class="col-xs-12">
                         <p class="help-block tw-text-sm"><spring:message code="settings.action.update.description"/></p>
-                        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2" data-test-id="settings-save-button">
                             <spring:message code='action.save'/>
                         </button>
                     </div>
