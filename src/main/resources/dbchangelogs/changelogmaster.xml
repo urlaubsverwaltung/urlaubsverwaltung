@@ -74,4 +74,5 @@
   <include file="dbchangelogs/changelog-4.11.0-rename-overtime-hours-to-overtime-duration.xml"/>
   <include file="dbchangelogs/changelog-4.12.0-add-department-creation-date-column.xml"/>
   <include file="dbchangelogs/changelog-4.12.0-default-naming-strategy.xml"/>
+  <include file="dbchangelogs/changelog-4.12.2-department-create_at-from-0000-00-00.xml"/>
 </databaseChangeLog>

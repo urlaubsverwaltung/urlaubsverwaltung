@@ -1,0 +1,17 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+  <changeSet author="schneider" id="change-create-column-from-0000-00-00-to-1970-01-01">
+
+    <preConditions>
+      <tableExists tableName="department"/>
+      <columnExists tableName="department" columnName="created_at"/>
+    </preConditions>
+    <update tableName="department">
+      <column name="created_at" value="1970-01-01" />
+      <where>created_at = '0000-00-00'</where>
+    </update>
+  </changeSet>
+</databaseChangeLog>
