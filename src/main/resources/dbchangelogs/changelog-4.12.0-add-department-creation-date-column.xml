@@ -4,14 +4,20 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
   <changeSet author="seber" id="add-department-creation-date-column">
-    <addColumn tableName="Department" >
-      <column name="createdAt" type="date">
-        <constraints nullable="false" />
+
+    <validCheckSum>8:39dda6c8a7c57434b6938dfb67c6bf48</validCheckSum>
+
+    <preConditions>
+      <tableExists tableName="Department"/>
+      <not>
+        <columnExists tableName="Department" columnName="createAt"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="Department">
+      <column name="createdAt" type="date" defaultValue="1970-01-01">
+        <constraints nullable="false"/>
       </column>
     </addColumn>
-    <update tableName="Department">
-      <column name="createdAt" value="1970-01-01" />
-      <where>createdAt IS NULL</where>
-    </update>
   </changeSet>
 </databaseChangeLog>
