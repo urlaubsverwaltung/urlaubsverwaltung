@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -166,6 +168,41 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureAddingMembersToDepartmentAlsoSetsAccessionDate() {
+        final Person existingPerson = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        final Person person = new Person("batman", "Wayne", "Bruce", "wayne@example.org");
+
+        final Department department = new Department();
+        department.setId(42);
+        department.setName("department");
+        department.setMembers(List.of(existingPerson, person));
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(existingPerson);
+        existingPersonMember.setAccessionDate(Instant.now(clock).minus(1, ChronoUnit.DAYS));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setCreatedAt(LocalDate.of(2020, Month.DECEMBER, 4));
+        departmentEntity.setLastModification(LocalDate.of(2020, Month.DECEMBER, 4));
+        departmentEntity.setMembers(List.of(existingPersonMember));
+
+        when(departmentRepository.findById(42)).thenReturn(Optional.of(departmentEntity));
+        when(departmentRepository.save(any())).then(returnsFirstArg());
+
+        final Department updatedDepartment = sut.update(department);
+        assertThat(updatedDepartment.getMembers()).contains(existingPerson, person);
+
+        final ArgumentCaptor<DepartmentEntity> departmentEntityArgumentCaptor = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
+        final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
+
+        assertThat(savedDepartmentEntity.getMembers().get(0).getPerson()).isEqualTo(existingPerson);
+        assertThat(savedDepartmentEntity.getMembers().get(0).getAccessionDate()).isEqualTo(Instant.now(clock).minus(1, ChronoUnit.DAYS));
+        assertThat(savedDepartmentEntity.getMembers().get(1).getPerson()).isEqualTo(person);
+        assertThat(savedDepartmentEntity.getMembers().get(1).getAccessionDate()).isEqualTo(Instant.now(clock));
+    }
+
+    @Test
     void ensureGetAllCallDepartmentDAOFindAll() {
 
         sut.getAllDepartments();
@@ -200,7 +237,7 @@ class DepartmentServiceImplTest {
 
         sut.getAssignedDepartmentsOfMember(person);
 
-        verify(departmentRepository).getAssignedDepartments(person);
+        verify(departmentRepository).findByMembersPerson(person);
     }
 
     @Test
@@ -250,16 +287,18 @@ class DepartmentServiceImplTest {
         final Person departmentHead = new Person();
         final Person secondDepartmentHead = new Person();
 
-        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final DepartmentMemberEmbeddable admin1Member = departmentMemberEmbeddable("admin1", "Muster", "Marlene", "marlene.muster@example.org");
+        final DepartmentMemberEmbeddable admin2Member = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Wayne", "Bruce", "wayne@example.org");
+        final DepartmentMemberEmbeddable secondDepartmentHeadMember = departmentMemberEmbeddable("secondDepartmentHead", "Kent", "Clark", "kent@example.org");
 
-        Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person marketing2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person marketing3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final DepartmentMemberEmbeddable marketing1Member = departmentMemberEmbeddable("marketing1", "marketing1", "Marlene", "marketing1@example.org");
+        final DepartmentMemberEmbeddable marketing2Member = departmentMemberEmbeddable("marketing2", "marketing2", "Marlene", "marketing2@example.org");
+        final DepartmentMemberEmbeddable marketing3Member = departmentMemberEmbeddable("marketing3", "marketing3", "Marlene", "marketing3@example.org");
 
         final DepartmentEntity admins = new DepartmentEntity();
         admins.setName("admins");
-        admins.setMembers(asList(admin1, admin2, departmentHead, secondDepartmentHead));
+        admins.setMembers(asList(admin1Member, admin2Member, departmentHeadMember, secondDepartmentHeadMember));
         admins.setDepartmentHeads(asList(departmentHead, secondDepartmentHead));
 
         DepartmentEntity marketing = new DepartmentEntity();
@@ -267,8 +306,9 @@ class DepartmentServiceImplTest {
 
         final Person secondStageAuth = new Person();
         secondStageAuth.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        final DepartmentMemberEmbeddable secondStageAuthMember = departmentMemberEmbeddable(secondStageAuth);
 
-        marketing.setMembers(asList(marketing1, marketing2, marketing3, departmentHead, secondStageAuth));
+        marketing.setMembers(asList(marketing1Member, marketing2Member, marketing3Member, departmentHeadMember, secondStageAuthMember));
         marketing.setSecondStageAuthorities(singletonList(secondStageAuth));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(asList(admins, marketing));
@@ -294,16 +334,19 @@ class DepartmentServiceImplTest {
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
-        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
 
-        DepartmentEntity admins = new DepartmentEntity();
+        final Person marlenePerson = new Person("muster", "Muster", "Marlene", "marlene.muster@example.org");
+        final DepartmentMemberEmbeddable marleneMember = departmentMemberEmbeddable(marlenePerson);
+        final DepartmentMemberEmbeddable maxMember = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+
+        final DepartmentEntity admins = new DepartmentEntity();
         admins.setName("admins");
-        admins.setMembers(asList(admin1, admin2, departmentHead));
+        admins.setMembers(asList(marleneMember, maxMember, departmentHeadMember));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(admins));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, admin1);
+        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marlenePerson);
         assertThat(isDepartmentHead).isTrue();
     }
 
@@ -312,13 +355,14 @@ class DepartmentServiceImplTest {
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
 
-        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final DepartmentMemberEmbeddable marleneMember = departmentMemberEmbeddable("admin1", "Muster", "Marlene", "marlene.muster@example.org");
+        final DepartmentMemberEmbeddable maxMember = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
 
-        DepartmentEntity admins = new DepartmentEntity();
+        final DepartmentEntity admins = new DepartmentEntity();
         admins.setName("admins");
-        admins.setMembers(asList(admin1, admin2, departmentHead));
+        admins.setMembers(asList(marleneMember, maxMember, departmentHeadMember));
 
         Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -352,12 +396,12 @@ class DepartmentServiceImplTest {
 
         final LocalDate date = LocalDate.now(UTC);
 
-        when(departmentRepository.getAssignedDepartments(person)).thenReturn(emptyList());
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(emptyList());
 
         List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
         assertThat(applications).isEmpty();
 
-        verify(departmentRepository).getAssignedDepartments(person);
+        verify(departmentRepository).findByMembersPerson(person);
         verifyNoInteractions(applicationService);
     }
 
@@ -367,39 +411,48 @@ class DepartmentServiceImplTest {
         final Person person = new Person();
         person.setPermissions(List.of(USER));
 
-        LocalDate date = LocalDate.now(UTC);
+        final DepartmentMemberEmbeddable personMember = departmentMemberEmbeddable(person);
 
-        Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate date = LocalDate.now(UTC);
 
-        Person marketing1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person marketing2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person marketing3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person admin1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person admin2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        DepartmentEntity admins = new DepartmentEntity();
+        final DepartmentMemberEmbeddable admin1Member = departmentMemberEmbeddable(admin1);
+        final DepartmentMemberEmbeddable admin2Member = departmentMemberEmbeddable(admin2);
+
+        final Person marketing1Person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person marketing2Person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person marketing3Person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final DepartmentMemberEmbeddable marketing1Member = departmentMemberEmbeddable(marketing1Person);
+        final DepartmentMemberEmbeddable marketing2Member = departmentMemberEmbeddable(marketing2Person);
+        final DepartmentMemberEmbeddable marketing3Member = departmentMemberEmbeddable(marketing3Person);
+
+        final DepartmentEntity admins = new DepartmentEntity();
         admins.setName("admins");
-        admins.setMembers(asList(admin1, admin2, person));
+        admins.setMembers(asList(admin1Member, admin2Member, personMember));
 
-        DepartmentEntity marketing = new DepartmentEntity();
+        final DepartmentEntity marketing = new DepartmentEntity();
         marketing.setName("marketing");
-        marketing.setMembers(asList(marketing1, marketing2, marketing3, person));
+        marketing.setMembers(asList(marketing1Member, marketing2Member, marketing3Member, personMember));
 
-        when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(asList(admins, marketing));
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(emptyList());
 
-        List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+        final List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
         assertThat(applications).isEmpty();
 
         // Ensure fetches departments of person
-        verify(departmentRepository).getAssignedDepartments(person);
+        verify(departmentRepository).findByMembersPerson(person);
 
         // Ensure fetches applications for leave for every department member
         verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin1));
         verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin2));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing1));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing2));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing3));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing1Person));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing2Person));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing3Person));
 
         // Ensure does not fetch applications for leave for the given person
         verify(applicationService, never()).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(person));
@@ -412,18 +465,23 @@ class DepartmentServiceImplTest {
         final Person person = new Person();
         person.setPermissions(List.of(USER));
 
+        final DepartmentMemberEmbeddable personMember = departmentMemberEmbeddable(person);
+
         final LocalDate date = LocalDate.now(UTC);
 
         final Person admin1 = new Person("shane", "shane", "shane", "shane@example.org");
         final Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
 
+        final DepartmentMemberEmbeddable admin1Member = departmentMemberEmbeddable(admin1);
+        final DepartmentMemberEmbeddable marketing1Member = departmentMemberEmbeddable(marketing1);
+
         final DepartmentEntity admins = new DepartmentEntity();
         admins.setName("admins");
-        admins.setMembers(asList(admin1, person));
+        admins.setMembers(asList(admin1Member, personMember));
 
         final DepartmentEntity marketing = new DepartmentEntity();
         marketing.setName("marketing");
-        marketing.setMembers(asList(marketing1, person));
+        marketing.setMembers(asList(marketing1Member, personMember));
 
         final Application waitingApplication = new Application();
         waitingApplication.setStatus(TEMPORARY_ALLOWED);
@@ -437,7 +495,7 @@ class DepartmentServiceImplTest {
         final Application otherApplication = new Application();
         otherApplication.setStatus(REJECTED);
 
-        when(departmentRepository.getAssignedDepartments(person)).thenReturn(asList(admins, marketing));
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(asList(admins, marketing));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(admin1)))
             .thenReturn(asList(waitingApplication, otherApplication));
@@ -445,7 +503,7 @@ class DepartmentServiceImplTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(marketing1)))
             .thenReturn(List.of(allowedApplication, cancellationRequestApplication));
 
-        List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+        final List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
         assertThat(applications)
             .hasSize(3)
             .contains(waitingApplication, allowedApplication, cancellationRequestApplication)
@@ -489,13 +547,17 @@ class DepartmentServiceImplTest {
         person.setId(1);
         person.setPermissions(singletonList(USER));
 
+        final DepartmentMemberEmbeddable personMember = departmentMemberEmbeddable(person);
+
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
+
         final DepartmentEntity dep = new DepartmentEntity();
         dep.setName("dep");
-        dep.setMembers(asList(person, departmentHead));
+        dep.setMembers(asList(personMember, departmentHeadMember));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
@@ -506,17 +568,19 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadThatIsNotDepartmentHeadOfPersonCanNotAccessPersonData() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
         person.setPermissions(singletonList(USER));
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
+
         final DepartmentEntity dep = new DepartmentEntity();
         dep.setName("dep");
-        dep.setMembers(singletonList(departmentHead));
+        dep.setMembers(singletonList(departmentHeadMember));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
 
@@ -527,17 +591,21 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInDepartmentHeadCanNotAccessSecondStageAuthorityPersonData() {
 
-        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setId(1);
         secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY));
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final DepartmentMemberEmbeddable secondStageAuthorityMember = departmentMemberEmbeddable(secondStageAuthority);
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
 
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
+
         final DepartmentEntity dep = new DepartmentEntity();
         dep.setName("dep");
-        dep.setMembers(asList(secondStageAuthority, departmentHead));
+        dep.setMembers(asList(secondStageAuthorityMember, departmentHeadMember));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
 
         when(departmentRepository.getManagedDepartments(departmentHead)).thenReturn(singletonList(dep));
@@ -549,17 +617,21 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSignedInSecondStageAuthorityCanAccessDepartmentHeadPersonData() {
 
-        Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setId(1);
         secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
 
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final DepartmentMemberEmbeddable secondStageAuthorityMember = departmentMemberEmbeddable(secondStageAuthority);
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
         departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
+
         final DepartmentEntity dep = new DepartmentEntity();
         dep.setName("dep");
-        dep.setMembers(asList(secondStageAuthority, departmentHead));
+        dep.setMembers(asList(secondStageAuthorityMember, departmentHeadMember));
         dep.setSecondStageAuthorities(singletonList(secondStageAuthority));
         dep.setDepartmentHeads(singletonList(departmentHead));
 
@@ -666,12 +738,29 @@ class DepartmentServiceImplTest {
 
         final DepartmentEntity dep = new DepartmentEntity();
         dep.setName("dep");
-        when(departmentRepository.getAssignedDepartments(user)).thenReturn(singletonList(dep));
+        when(departmentRepository.findByMembersPerson(user)).thenReturn(singletonList(dep));
 
         final Department expectedDepartment = new Department();
         expectedDepartment.setName("dep");
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(user);
         assertThat(allowedDepartments).containsExactly(expectedDepartment);
+    }
+
+    private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {
+        final Person person = new Person(username, firstname, lastname, email);
+
+        final DepartmentMemberEmbeddable departmentMemberEmbeddable = new DepartmentMemberEmbeddable();
+        departmentMemberEmbeddable.setPerson(person);
+
+        return  departmentMemberEmbeddable;
+    }
+
+    private DepartmentMemberEmbeddable departmentMemberEmbeddable(Person person) {
+        final DepartmentMemberEmbeddable departmentMemberEmbeddable = new DepartmentMemberEmbeddable();
+
+        departmentMemberEmbeddable.setPerson(person);
+
+        return  departmentMemberEmbeddable;
     }
 }

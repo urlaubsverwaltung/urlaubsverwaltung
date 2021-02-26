@@ -5,9 +5,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -39,10 +41,10 @@ class DepartmentEntity {
     // flag for two stage approval process
     private boolean twoStageApproval;
 
-    @OneToMany
     @LazyCollection(FALSE)
-    @CollectionTable(name = "department_member")
-    private List<Person> members = new ArrayList<>();
+    @CollectionTable(name = "department_member", joinColumns = @JoinColumn(name = "department_id"))
+    @ElementCollection
+    private List<DepartmentMemberEmbeddable> members = new ArrayList<>();
 
     @OneToMany
     @LazyCollection(FALSE)
@@ -106,7 +108,7 @@ class DepartmentEntity {
         this.twoStageApproval = twoStageApproval;
     }
 
-    public List<Person> getMembers() {
+    public List<DepartmentMemberEmbeddable> getMembers() {
         if (members == null) {
             members = Collections.emptyList();
         }
@@ -114,7 +116,7 @@ class DepartmentEntity {
         return Collections.unmodifiableList(members);
     }
 
-    public void setMembers(List<Person> members) {
+    public void setMembers(List<DepartmentMemberEmbeddable> members) {
         this.members = members;
     }
 

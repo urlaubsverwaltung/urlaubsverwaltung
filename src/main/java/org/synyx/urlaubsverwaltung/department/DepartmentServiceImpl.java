@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,9 +63,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department create(Department department) {
 
-        final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
+        final DepartmentEntity departmentEntity = mapToDepartmentEntityWithoutMembers(department);
         departmentEntity.setCreatedAt(LocalDate.now(clock));
         departmentEntity.setLastModification(LocalDate.now(clock));
+
+        final Instant now = Instant.now(clock);
+
+        final List<DepartmentMemberEmbeddable> departmentMembers = department.getMembers().stream().map(person -> {
+            final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
+            memberEmbeddable.setPerson(person);
+            memberEmbeddable.setAccessionDate(now);
+            return memberEmbeddable;
+        }).collect(toList());
+
+        departmentEntity.setMembers(departmentMembers);
 
         final DepartmentEntity createdDepartmentEntity = departmentRepository.save(departmentEntity);
         final Department createdDepartment = mapToDepartment(createdDepartmentEntity);
@@ -80,9 +92,13 @@ public class DepartmentServiceImpl implements DepartmentService {
         final DepartmentEntity currentDepartmentEntity = departmentRepository.findById(department.getId())
             .orElseThrow(() -> new IllegalStateException("cannot update department since it does not exists."));
 
-        final DepartmentEntity departmentEntity = mapToDepartmentEntity(department);
+        final List<DepartmentMemberEmbeddable> departmentMembers =
+            updatedDepartmentMembers(department.getMembers(), currentDepartmentEntity.getMembers());
+
+        final DepartmentEntity departmentEntity = mapToDepartmentEntityWithoutMembers(department);
         departmentEntity.setCreatedAt(currentDepartmentEntity.getCreatedAt());
         departmentEntity.setLastModification(LocalDate.now(clock));
+        departmentEntity.setMembers(departmentMembers);
 
         final DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
         final Department updatedDepartment = mapToDepartment(updatedDepartmentEntity);
@@ -111,7 +127,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
-        return departmentRepository.getAssignedDepartments(member).stream()
+        return departmentRepository.findByMembersPerson(member).stream()
             .map(this::mapToDepartment)
             .collect(toList());
     }
@@ -245,27 +261,55 @@ public class DepartmentServiceImpl implements DepartmentService {
         department.setId(departmentEntity.getId());
         department.setName(departmentEntity.getName());
         department.setDescription(departmentEntity.getDescription());
-        department.setMembers(departmentEntity.getMembers());
         department.setDepartmentHeads(departmentEntity.getDepartmentHeads());
         department.setSecondStageAuthorities(departmentEntity.getSecondStageAuthorities());
         department.setTwoStageApproval(departmentEntity.isTwoStageApproval());
         department.setLastModification(departmentEntity.getLastModification());
 
+        final List<Person> members = departmentEntity.getMembers().stream()
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .collect(toList());
+
+        department.setMembers(members);
+
         return department;
     }
 
-    private DepartmentEntity mapToDepartmentEntity(Department department) {
+    private DepartmentEntity mapToDepartmentEntityWithoutMembers(Department department) {
         final DepartmentEntity departmentEntity = new DepartmentEntity();
 
         departmentEntity.setId(department.getId());
         departmentEntity.setName(department.getName());
         departmentEntity.setDescription(department.getDescription());
-        departmentEntity.setMembers(department.getMembers());
         departmentEntity.setDepartmentHeads(department.getDepartmentHeads());
         departmentEntity.setSecondStageAuthorities(department.getSecondStageAuthorities());
         departmentEntity.setTwoStageApproval(department.isTwoStageApproval());
         departmentEntity.setLastModification(department.getLastModification());
 
         return departmentEntity;
+    }
+
+    private List<DepartmentMemberEmbeddable> updatedDepartmentMembers(List<Person> nextPersons, List<DepartmentMemberEmbeddable> currentMembers) {
+
+        final List<DepartmentMemberEmbeddable> list = new ArrayList<>();
+        final Instant now = Instant.now(clock);
+
+        for (Person person : nextPersons) {
+            final DepartmentMemberEmbeddable currentMember = currentMembers.stream()
+                .filter(departmentMember -> departmentMember.getPerson().equals(person))
+                .findFirst()
+                .orElse(null);
+
+            if (currentMember == null) {
+                final DepartmentMemberEmbeddable departmentMember = new DepartmentMemberEmbeddable();
+                departmentMember.setPerson(person);
+                departmentMember.setAccessionDate(now);
+                list.add(departmentMember);
+            } else {
+                list.add(currentMember);
+            }
+        }
+
+        return list;
     }
 }

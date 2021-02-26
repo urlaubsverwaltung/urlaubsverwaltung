@@ -18,6 +18,5 @@ public interface DepartmentRepository extends JpaRepository<DepartmentEntity, In
     @Query("SELECT d FROM department d, in (d.secondStageAuthorities) person WHERE person = ?1")
     List<DepartmentEntity> getDepartmentsForSecondStageAuthority(Person person);
 
-    @Query("SELECT d FROM department d, in (d.members) person WHERE person = ?1")
-    List<DepartmentEntity> getAssignedDepartments(Person person);
+    List<DepartmentEntity> findByMembersPerson(Person person);
 }
