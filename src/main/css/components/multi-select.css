@@ -1,6 +1,6 @@
 select[multiple] {
   overflow-y: scroll;
-  srollbar-width: none; /* firefox */
+  scrollbar-width: none; /* firefox */
 }
 
 select[multiple]::-webkit-scrollbar {
