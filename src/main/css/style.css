@@ -12,6 +12,7 @@
 @import "./components/legend.css";
 @import "./components/link.css";
 @import "./components/navigation.css";
+@import "./components/multi-select.css";
 @import "./components/table.css";
 @import "./components/tabs.css";
 @import "./components/separator.css";
