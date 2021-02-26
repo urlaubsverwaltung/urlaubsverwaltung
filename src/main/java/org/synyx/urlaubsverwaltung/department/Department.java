@@ -127,22 +127,18 @@ public class Department {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Department that = (Department) o;
-        return isTwoStageApproval() == that.isTwoStageApproval()
-            && Objects.equals(getId(), that.getId())
-            && Objects.equals(getName(), that.getName())
-            && Objects.equals(getDescription(), that.getDescription())
-            && Objects.equals(getLastModification(), that.getLastModification())
-            && Objects.equals(getMembers(), that.getMembers())
-            && Objects.equals(getDepartmentHeads(), that.getDepartmentHeads())
-            && Objects.equals(getSecondStageAuthorities(), that.getSecondStageAuthorities());
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Department that = (Department) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getDescription(), getLastModification(), isTwoStageApproval(),
-            getMembers(), getDepartmentHeads(), getSecondStageAuthorities());
+        return Objects.hash(id);
     }
 }
