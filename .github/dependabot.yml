@@ -6,7 +6,7 @@ updates:
       interval: "monthly"
     labels:
       - "type: dependencies"
-      - javascript
+      - "javascript"
     ignore:
       - dependency-name: bootstrap
         versions:
@@ -21,7 +21,7 @@ updates:
       interval: "weekly"
     labels:
       - "type: dependencies"
-      - java
+      - "java"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -29,4 +29,4 @@ updates:
       interval: "weekly"
     labels:
       - "type: dependencies"
-      - github_actions
+      - "github_actions"
