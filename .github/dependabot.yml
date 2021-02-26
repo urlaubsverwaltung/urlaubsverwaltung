@@ -11,9 +11,6 @@ updates:
       - dependency-name: bootstrap
         versions:
           - ">= 4.a"
-      - dependency-name: timepicker
-        versions:
-          - "> 1.11.14"
 
   - package-ecosystem: "maven"
     directory: "/"
