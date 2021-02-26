@@ -130,10 +130,9 @@
                                 <div class="col-md-4">
                                     <uv:multi-select id="departmentSelect" name="department">
                                         <c:forEach items="${departments}" var="department">
-                                            <option
-                                                value="${department.name}" ${selectedDepartments.contains(department.name) ? 'selected="selected"' : ''}>
+                                            <uv:multi-select-item value="${department.name}" selected="${selectedDepartments.contains(department.name)}">
                                                 <c:out value="${department.name}"/>
-                                            </option>
+                                            </uv:multi-select-item>
                                         </c:forEach>
                                     </uv:multi-select>
                                 </div>
