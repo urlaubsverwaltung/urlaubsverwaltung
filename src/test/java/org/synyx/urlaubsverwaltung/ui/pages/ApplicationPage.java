@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.time.LocalDate;
@@ -22,7 +21,7 @@ public class ApplicationPage implements Page {
 
     @Override
     public boolean isVisible(WebDriver driver) {
-        return title(driver) && fromInputVisible(driver);
+        return title(driver) && fromInputExists(driver);
     }
 
     public void from(LocalDate date) {
@@ -38,8 +37,7 @@ public class ApplicationPage implements Page {
         return driver.getTitle().equals("New vacation request");
     }
 
-    private static boolean fromInputVisible(WebDriver driver) {
-        final WebElement element = driver.findElement(FROM_INPUT_SELECTOR);
-        return element != null && element.isDisplayed();
+    private static boolean fromInputExists(WebDriver driver) {
+        return !driver.findElements(FROM_INPUT_SELECTOR).isEmpty();
     }
 }
