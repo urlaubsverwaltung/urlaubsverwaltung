@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Repository for {@link DepartmentEntity} entities.
  */
-public interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
+interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
 
     @Query("SELECT d FROM department d, in (d.departmentHeads) person WHERE person = ?1")
     List<DepartmentEntity> getManagedDepartments(Person person);
