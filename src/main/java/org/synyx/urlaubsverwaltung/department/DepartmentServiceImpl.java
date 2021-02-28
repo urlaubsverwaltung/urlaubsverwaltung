@@ -134,14 +134,14 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
-        return departmentRepository.getManagedDepartments(departmentHead).stream()
+        return departmentRepository.findByDepartmentHeads(departmentHead).stream()
             .map(this::mapToDepartment)
             .collect(toList());
     }
 
     @Override
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
-        return departmentRepository.getDepartmentsForSecondStageAuthority(secondStageAuthority).stream()
+        return departmentRepository.findBySecondStageAuthorities(secondStageAuthority).stream()
             .map(this::mapToDepartment)
             .collect(toList());
     }

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.department;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
@@ -12,11 +11,9 @@ import java.util.List;
  */
 interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
 
-    @Query("SELECT d FROM department d, in (d.departmentHeads) person WHERE person = ?1")
-    List<DepartmentEntity> getManagedDepartments(Person person);
+    List<DepartmentEntity> findByDepartmentHeads(Person person);
 
-    @Query("SELECT d FROM department d, in (d.secondStageAuthorities) person WHERE person = ?1")
-    List<DepartmentEntity> getDepartmentsForSecondStageAuthority(Person person);
+    List<DepartmentEntity> findBySecondStageAuthorities(Person person);
 
     List<DepartmentEntity> findByMembersPerson(Person person);
 }
