@@ -35,7 +35,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * Implementation for {@link DepartmentService}.
  */
 @Service
-public class DepartmentServiceImpl implements DepartmentService {
+class DepartmentServiceImpl implements DepartmentService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -44,7 +44,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final Clock clock;
 
     @Autowired
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock) {
+    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock) {
         this.departmentRepository = departmentRepository;
         this.applicationService = applicationService;
         this.clock = clock;
