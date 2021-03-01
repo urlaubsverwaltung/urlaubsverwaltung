@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
@@ -23,6 +22,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementDto;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -40,13 +40,16 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
@@ -105,25 +108,16 @@ public class ApplicationForLeaveFormViewController {
 
 
     @GetMapping("/application/new")
-    public String newApplicationForm(
-        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
-        @RequestParam(value = "from", required = false) String startDateString,
-        @RequestParam(value = "to", required = false) String endDateString,
-        Model model)
-        throws UnknownPersonException {
+    public String newApplicationForm(ApplicationForLeaveForm appForLeaveForm, Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        Person person;
-        if (personId == null) {
-            person = signedInUser;
-        } else {
-            person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        }
+        Person person = ofNullable(appForLeaveForm.getPerson())
+            .flatMap(p -> personService.getPersonByID(p.getId()))
+            .orElse(signedInUser);
 
         boolean isApplyingForOneSelf = person.equals(signedInUser);
 
-        // only office may apply for leave on behalf of other users
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
         }
@@ -131,19 +125,53 @@ public class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
-            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
-            final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
+            appForLeaveForm.setHolidayReplacements(updateHolidayReplacements(appForLeaveForm));
 
-            final ApplicationForLeaveForm appForm = new ApplicationForLeaveForm();
-            appForm.setStartDate(startDate);
-            appForm.setEndDate(endDate);
-
-            prepareApplicationForLeaveForm(person, appForm, model);
+            prepareApplicationForLeaveForm(person, appForLeaveForm, model);
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
         return APP_FORM;
     }
+
+    private List<HolidayReplacementDto> updateHolidayReplacements(ApplicationForLeaveForm appForLeaveForm) {
+        List<HolidayReplacementDto> holidayReplacementDtos = filterSelectedReplacements(appForLeaveForm);
+
+        if(appForLeaveForm.getHolidayReplacementsSelection() != null) {
+
+            appForLeaveForm.getHolidayReplacementsSelection().forEach(selection -> {
+                if (selectionNotYetInReplacements(appForLeaveForm, selection)) {
+                    holidayReplacementDtos.add(new HolidayReplacementDto(selection));
+                }
+            });
+        }
+        return holidayReplacementDtos;
+    }
+
+    private  List<HolidayReplacementDto> filterSelectedReplacements(ApplicationForLeaveForm appForLeaveForm) {
+
+        if (appForLeaveForm.getHolidayReplacements() == null) {
+            return new ArrayList<>();
+        }
+        return appForLeaveForm.getHolidayReplacements().stream()
+            .filter(bySelectedReplacements(appForLeaveForm))
+            .collect(toList());
+    }
+
+    private Predicate<HolidayReplacementDto> bySelectedReplacements(ApplicationForLeaveForm appForLeaveForm) {
+        return replacement -> appForLeaveForm.getHolidayReplacementsSelection().contains(replacement.getPerson());
+    }
+
+    private boolean selectionNotYetInReplacements(ApplicationForLeaveForm appForLeaveForm, Person selection) {
+
+        if (appForLeaveForm.getHolidayReplacements() == null) return true;
+
+        return !appForLeaveForm.getHolidayReplacements().stream()
+            .map(HolidayReplacementDto::getPerson)
+            .collect(toList())
+            .contains(selection);
+    }
+
 
     @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,

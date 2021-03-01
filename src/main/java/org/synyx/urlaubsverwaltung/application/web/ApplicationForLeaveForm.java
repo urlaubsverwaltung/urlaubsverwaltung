@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementDto;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -12,6 +13,11 @@ import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -50,6 +56,9 @@ public class ApplicationForLeaveForm {
 
     // Stands in while the person is on holiday
     private Person holidayReplacement;
+
+    private List<Person> holidayReplacementsSelection;
+    private List<HolidayReplacementDto> holidayReplacements;
 
     private String holidayReplacementNote;
 
@@ -204,6 +213,30 @@ public class ApplicationForLeaveForm {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public List<Person> getHolidayReplacementPersons() {
+
+        return ofNullable(holidayReplacements)
+            .orElse(emptyList()).stream()
+            .map(HolidayReplacementDto::getPerson)
+            .collect(toList());
+    }
+
+    public List<HolidayReplacementDto> getHolidayReplacements() {
+        return holidayReplacements;
+    }
+
+    public void setHolidayReplacements(List<HolidayReplacementDto> holidayReplacements) {
+        this.holidayReplacements = holidayReplacements;
+    }
+
+    public List<Person> getHolidayReplacementsSelection() {
+        return holidayReplacementsSelection;
+    }
+
+    public void setHolidayReplacementsSelection(List<Person> holidayReplacementsSelection) {
+        this.holidayReplacementsSelection = holidayReplacementsSelection;
     }
 
     public Application generateApplicationForLeave() {
