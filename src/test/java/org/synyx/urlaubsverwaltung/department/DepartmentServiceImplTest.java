@@ -101,7 +101,7 @@ class DepartmentServiceImplTest {
     void ensureCallDepartmentRepositoryFindById() {
 
         sut.getDepartmentById(42);
-        verify(departmentRepository).findById(eq(42));
+        verify(departmentRepository).findById(42);
     }
 
     @Test
@@ -451,14 +451,14 @@ class DepartmentServiceImplTest {
         verify(departmentRepository).findByMembersPerson(person);
 
         // Ensure fetches applications for leave for every department member
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin1));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(admin2));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing1Person));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing2Person));
-        verify(applicationService).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(marketing3Person));
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, admin1);
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, admin2);
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, marketing1Person);
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, marketing2Person);
+        verify(applicationService).getApplicationsForACertainPeriodAndPerson(date, date, marketing3Person);
 
         // Ensure does not fetch applications for leave for the given person
-        verify(applicationService, never()).getApplicationsForACertainPeriodAndPerson(eq(date), eq(date), eq(person));
+        verify(applicationService, never()).getApplicationsForACertainPeriodAndPerson(date, date, person);
     }
 
 
