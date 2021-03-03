@@ -216,7 +216,7 @@ class AbsenceOverviewViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartment", "superheroes"));
+            .andExpect(model().attribute("selectedDepartments", hasItem("superheroes")));
     }
 
     @Test
@@ -239,7 +239,31 @@ class AbsenceOverviewViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
-            .andExpect(model().attribute("selectedDepartment", "villains"));
+            .andExpect(model().attribute("selectedDepartments", hasItem("villains")));
+    }
+
+    @Test
+    void ensureMultipleSelectedDepartments() throws Exception {
+
+        final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
+        person.setPermissions(singletonList(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var superheroes = department("superheroes");
+        final var villains = department("villains");
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
+
+        final var resultActions = perform(get("/web/absences")
+            .param("department", "villains")
+            .param("department", "superheroes"));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("selectedDepartments", allOf(hasItem("superheroes"), hasItem("villains"))));
     }
 
     @ParameterizedTest
@@ -553,10 +577,43 @@ class AbsenceOverviewViewControllerTest {
 
         resultActions
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartment", "villains"))
+            .andExpect(model().attribute("selectedDepartments", hasItem("villains")))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(3))
+                )))));
+    }
+
+    @Test
+    void ensureDistinctPersonOverviewForGivenDepartments() throws Exception {
+        final var person = new Person();
+        person.setFirstName("bruce");
+        person.setLastName("wayne");
+        person.setEmail("batman@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var heroDepartment = department("heroes");
+        heroDepartment.setMembers(List.of(person));
+
+        final var joker = person("joker");
+        final var lex = person("lex");
+        final var harley = person("harley");
+        final var villainsDepartment = department("villains");
+        villainsDepartment.setMembers(List.of(joker, lex, harley, person));
+
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
+
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("department", "villains")
+            .param("department", "heroes")
+        );
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedDepartments", allOf(hasItem("heroes"), hasItem("villains"))))
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", hasItem(allOf(
+                    hasProperty("persons", hasSize(4))
                 )))));
     }
 
@@ -588,7 +645,7 @@ class AbsenceOverviewViewControllerTest {
 
         resultActions
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartment", ""))
+            .andExpect(model().attribute("selectedDepartments", hasItem("")))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(3))
@@ -608,7 +665,7 @@ class AbsenceOverviewViewControllerTest {
 
         resultActions
             .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartment", ""))
+            .andExpect(model().attribute("selectedDepartments", hasItem("")))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", empty())
