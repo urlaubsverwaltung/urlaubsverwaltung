@@ -34,6 +34,7 @@
 
 <div class="content">
     <div class="container">
+
         <uv:section-heading>
             <jsp:attribute name="actions">
                 <uv:print/>
@@ -90,6 +91,7 @@
                 <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person?active=${param.active}&department=${department.id}&year="/>
             </jsp:body>
         </uv:section-heading>
+
         <div class="row">
             <div class="col-xs-12">
                 <c:choose>
@@ -102,9 +104,8 @@
                 </c:choose>
             </div>
         </div>
+
     </div>
 </div>
-
 </body>
-
 </html>
