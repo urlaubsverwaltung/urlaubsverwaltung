@@ -114,11 +114,11 @@
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
                                             class="gravatar tw-rounded-full"
-                                            width="60px"
-                                            height="60px"
+                                            width="40px"
+                                            height="40px"
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
@@ -255,11 +255,11 @@
                                     onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
                                             class="gravatar tw-rounded-full"
-                                            width="60px"
-                                            height="60px"
+                                            width="40px"
+                                            height="40px"
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
@@ -390,11 +390,11 @@
                                 <tr class="active">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=60'/>"
+                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
                                             class="gravatar tw-rounded-full"
-                                            width="60px"
-                                            height="60px"
+                                            width="40px"
+                                            height="40px"
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
