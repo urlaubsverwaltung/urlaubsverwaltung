@@ -447,7 +447,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectHolidayReplacementCancellationMailIsSent() throws MessagingException, IOException {
+    void ensureCorrectHolidayReplacementCancellationMailIsSent() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
@@ -463,18 +463,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
         assertThat(inbox.length).isOne();
 
-        Message msg = inbox[0];
+        MimeMessage msg = inbox[0];
         assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung abgelehnt");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
+        String content = readPlainContent(msg);
         assertThat(content).contains("Hallo Mar Teria");
         assertThat(content).contains("du bist für die Abwesenheit von Lieschen Müller");
         assertThat(content).contains("im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,");
         assertThat(content).contains("nicht mehr als Vertretung vorgesehen.");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
+
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
@@ -689,7 +692,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws MessagingException, IOException {
+    void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
@@ -716,31 +719,37 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxApplicant.length).isOne();
 
-        Message msg = inboxApplicant[0];
+        MimeMessage msg = inboxApplicant[0];
         assertThat(msg.getSubject()).isEqualTo("Dein Antrag wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        String content = (String) msg.getContent();
+        String content = readPlainContent(msg);
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("Marlene Muster hat einen deiner Urlaubsanträge storniert.");
         assertThat(content).contains(comment.getText());
         assertThat(content).contains(comment.getPerson().getNiceName());
         assertThat(content).contains("/web/application/1234");
 
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+
         // was email sent to relevant person?
         MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
         assertThat(inboxRelevantPerson.length).isOne();
 
-        Message msgRelevantPerson = inboxRelevantPerson[0];
+        MimeMessage msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein Antrag wurde vom Office storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
-        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
+        String contentRelevantPerson = readPlainContent(msgRelevantPerson);
         assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
         assertThat(contentRelevantPerson).contains("Marlene Muster hat den Urlaubsantrag von Lieschen Müller vom 29.05.2020 storniert.");
         assertThat(contentRelevantPerson).contains(comment.getText());
         assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
         assertThat(contentRelevantPerson).contains("/web/application/1234");
+
+        final List<DataSource> attachmentsRelevantPerson = getAttachments(msgRelevantPerson);
+        assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
