@@ -49,11 +49,11 @@
             <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview');">
                 <td class="is-centered">
                     <img
-                        src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
+                        src="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"
                         alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
                         class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
-                        width="60px"
-                        height="60px"
+                        width="40px"
+                        height="40px"
                         onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                     />
                 </td>
