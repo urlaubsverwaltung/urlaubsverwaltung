@@ -202,7 +202,7 @@
                         data-test-id="avatar"
                     >
                         <img
-                            src="<c:out value='${menuGravatarUrl}'/>"
+                            src="<c:out value='${menuGravatarUrl}?d=mm'/>"
                             alt=""
                             class="gravatar tw-rounded-full"
                             width="24px"
