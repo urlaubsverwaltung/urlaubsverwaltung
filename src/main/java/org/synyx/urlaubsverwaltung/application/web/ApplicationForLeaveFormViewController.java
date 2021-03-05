@@ -26,7 +26,6 @@ import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementDto;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -45,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -108,12 +108,15 @@ public class ApplicationForLeaveFormViewController {
 
 
     @GetMapping("/application/new")
-    public String newApplicationForm(ApplicationForLeaveForm appForLeaveForm, Model model) throws UnknownPersonException {
+    public String newApplicationForm(@RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
+                                     @RequestParam(value = "from", required = false) String startDateString,
+                                     @RequestParam(value = "to", required = false) String endDateString,
+                                     ApplicationForLeaveForm appForLeaveForm, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
 
         Person person = ofNullable(appForLeaveForm.getPerson())
-            .flatMap(p -> personService.getPersonByID(p.getId()))
+            .or(getPersonByRequestParam(personId))
             .orElse(signedInUser);
 
         boolean isApplyingForOneSelf = person.equals(signedInUser);
@@ -125,6 +128,11 @@ public class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
+            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(appForLeaveForm.getStartDate());
+            final Supplier<Optional<LocalDate>> endDateSupplier = () -> Optional.ofNullable(appForLeaveForm.getEndDate());
+
+            appForLeaveForm.setStartDate(startDate);
+            appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).or(endDateSupplier).orElse(startDate));
             appForLeaveForm.setHolidayReplacements(updateHolidayReplacements(appForLeaveForm));
 
             prepareApplicationForLeaveForm(person, appForLeaveForm, model);
@@ -133,45 +141,6 @@ public class ApplicationForLeaveFormViewController {
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
         return APP_FORM;
     }
-
-    private List<HolidayReplacementDto> updateHolidayReplacements(ApplicationForLeaveForm appForLeaveForm) {
-        List<HolidayReplacementDto> holidayReplacementDtos = filterSelectedReplacements(appForLeaveForm);
-
-        if(appForLeaveForm.getHolidayReplacementsSelection() != null) {
-
-            appForLeaveForm.getHolidayReplacementsSelection().forEach(selection -> {
-                if (selectionNotYetInReplacements(appForLeaveForm, selection)) {
-                    holidayReplacementDtos.add(new HolidayReplacementDto(selection));
-                }
-            });
-        }
-        return holidayReplacementDtos;
-    }
-
-    private  List<HolidayReplacementDto> filterSelectedReplacements(ApplicationForLeaveForm appForLeaveForm) {
-
-        if (appForLeaveForm.getHolidayReplacements() == null) {
-            return new ArrayList<>();
-        }
-        return appForLeaveForm.getHolidayReplacements().stream()
-            .filter(bySelectedReplacements(appForLeaveForm))
-            .collect(toList());
-    }
-
-    private Predicate<HolidayReplacementDto> bySelectedReplacements(ApplicationForLeaveForm appForLeaveForm) {
-        return replacement -> appForLeaveForm.getHolidayReplacementsSelection().contains(replacement.getPerson());
-    }
-
-    private boolean selectionNotYetInReplacements(ApplicationForLeaveForm appForLeaveForm, Person selection) {
-
-        if (appForLeaveForm.getHolidayReplacements() == null) return true;
-
-        return !appForLeaveForm.getHolidayReplacements().stream()
-            .map(HolidayReplacementDto::getPerson)
-            .collect(toList())
-            .contains(selection);
-    }
-
 
     @PostMapping("/application")
     public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
@@ -201,23 +170,22 @@ public class ApplicationForLeaveFormViewController {
     }
 
     @GetMapping("/application/{applicationId}/edit")
-    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) throws UnknownApplicationForLeaveException {
+    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, ApplicationForLeaveForm appForm,
+                                      Model model) throws UnknownApplicationForLeaveException {
 
-        final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
-        if (maybeApplication.isEmpty()) {
-            throw new UnknownApplicationForLeaveException(applicationId);
-        }
 
-        final Application application = maybeApplication.get();
-        if (WAITING.compareTo(application.getStatus()) != 0) {
+        final ApplicationForLeaveForm applicationForLeaveForm = getAppFormFromFrontend(appForm)
+            .orElse(getAppFormFromDB(applicationId));
+
+        if (applicationForLeaveForm == null)
             return "application/app_notwaiting";
-        }
 
-        final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application);
         final Person person = personService.getSignedInUser();
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
         if (holidaysAccount.isPresent()) {
+
+            applicationForLeaveForm.setHolidayReplacements(updateHolidayReplacements(applicationForLeaveForm));
             prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
         }
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
@@ -269,6 +237,71 @@ public class ApplicationForLeaveFormViewController {
         redirectAttributes.addFlashAttribute("editSuccess", true);
 
         return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
+    }
+    private Supplier<Optional<? extends Person>> getPersonByRequestParam(Integer personId) {
+        if (personId == null) {
+            return Optional::empty;
+        }
+        return () -> personService.getPersonByID(personId);
+    }
+
+    private List<HolidayReplacementDto> updateHolidayReplacements(ApplicationForLeaveForm appForLeaveForm) {
+        List<HolidayReplacementDto> holidayReplacementDtos = filterSelectedReplacements(appForLeaveForm);
+
+        if (appForLeaveForm.getHolidayReplacementsSelection() != null) {
+
+            appForLeaveForm.getHolidayReplacementsSelection().forEach(selection -> {
+                if (selectionNotYetInReplacements(appForLeaveForm, selection)) {
+                    holidayReplacementDtos.add(new HolidayReplacementDto(selection));
+                }
+            });
+        }
+        return holidayReplacementDtos;
+    }
+
+    private List<HolidayReplacementDto> filterSelectedReplacements(ApplicationForLeaveForm appForLeaveForm) {
+
+        if (appForLeaveForm.getHolidayReplacements() == null) {
+            return new ArrayList<>();
+        }
+        return appForLeaveForm.getHolidayReplacements().stream()
+            .filter(bySelectedReplacements(appForLeaveForm))
+            .collect(toList());
+    }
+
+    private Predicate<HolidayReplacementDto> bySelectedReplacements(ApplicationForLeaveForm appForLeaveForm) {
+        return replacement -> appForLeaveForm.getHolidayReplacementsSelection().contains(replacement.getPerson());
+    }
+
+    private boolean selectionNotYetInReplacements(ApplicationForLeaveForm appForLeaveForm, Person selection) {
+
+        if (appForLeaveForm.getHolidayReplacements() == null) return true;
+
+        return !appForLeaveForm.getHolidayReplacements().stream()
+            .map(HolidayReplacementDto::getPerson)
+            .collect(toList())
+            .contains(selection);
+    }
+
+    private ApplicationForLeaveForm getAppFormFromDB(Integer applicationId) throws UnknownApplicationForLeaveException {
+
+        final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
+        if (maybeApplication.isEmpty()) {
+            throw new UnknownApplicationForLeaveException(applicationId);
+        }
+
+        final Application application = maybeApplication.get();
+        if (!WAITING.equals(application.getStatus())) {
+            return null;
+        }
+
+        return mapToApplicationForm(application);
+    }
+
+    private Optional<ApplicationForLeaveForm> getAppFormFromFrontend(ApplicationForLeaveForm appForm) {
+        if (appForm.getId() == null)
+            return Optional.empty();
+        else return Optional.of(appForm);
     }
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {

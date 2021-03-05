@@ -25,7 +25,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -33,13 +32,17 @@ import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.SEPTEMBER;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -204,31 +207,38 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void getNewApplicationFormUsesPersonOfGivenPersonId() throws Exception {
 
+        final Person person = new Person();
+        person.setId(1);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
-        final Person person = new Person();
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
-
-        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
-        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
+        final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
-        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new")
-            .param("person", Integer.toString(PERSON_ID)))
+            .param("person", "1"))
             .andExpect(model().attribute("person", person));
     }
 
     @Test
-    void getNewApplicationFormForUnknownPersonIdThrowsUnknownPersonException() {
+    void getNewApplicationFormForUnknownPersonIdFallsBackToSignedInUser() throws Exception {
 
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.empty());
+        final Person signedInUser = new Person();
+        signedInUser.setId(1337);
 
-        assertThatThrownBy(() ->
-            perform(get("/web/application/new")
-                .param("person", Integer.toString(PERSON_ID)))
-        ).hasCauseInstanceOf(UnknownPersonException.class);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        final Account account = new Account(signedInUser, LocalDate.now(clock), LocalDate.now(clock), ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), signedInUser)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        perform(get("/web/application/new").param("person", "1"))
+            .andExpect(model().attribute("person", hasProperty("id", is(1337))));
     }
 
     @Test
@@ -272,29 +282,34 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void getNewApplicationFormWithGivenDateFrom() throws Exception {
 
+        final Person person = new Person();
+        person.setId(1);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
-        final Person person = new Person();
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
-
-        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
-        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
+        final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
-        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final LocalDate givenDateFrom = LocalDate.now(clock).withMonth(SEPTEMBER.getValue()).withDayOfMonth(30);
+
+
         final ResultActions resultActions = perform(get("/web/application/new")
-            .param("person", Integer.toString(PERSON_ID))
-            .param("from", "2020-10-30"));
+            .param("person", "1")
+            .param("from", givenDateFrom.format(formatter)));
 
         resultActions
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("application", allOf(
-                hasProperty("startDate", is(LocalDate.parse("2020-10-30"))),
-                hasProperty("startDateIsoValue", is("2020-10-30")),
-                hasProperty("endDate", is(LocalDate.parse("2020-10-30"))),
-                hasProperty("endDateIsoValue", is("2020-10-30"))
+                hasProperty("startDate", is(givenDateFrom)),
+                hasProperty("startDateIsoValue", is(givenDateFrom.format(formatter))),
+                hasProperty("endDate", is(givenDateFrom)),
+                hasProperty("endDateIsoValue", is(givenDateFrom.format(formatter)))
             )));
     }
 

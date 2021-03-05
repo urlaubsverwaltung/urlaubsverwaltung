@@ -90,7 +90,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date) {
-        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationRepository.findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, statuses);
+        final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, status);
     }
 }

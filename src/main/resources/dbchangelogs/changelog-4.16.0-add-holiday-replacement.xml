@@ -1,0 +1,20 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="add-holiday-Replacement-table">
+
+    <createTable tableName="holiday_replacements">
+      <column autoIncrement="true" name="id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="holiday_replacements_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="application_id" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog>

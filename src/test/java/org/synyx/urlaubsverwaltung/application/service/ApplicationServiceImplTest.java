@@ -127,7 +127,9 @@ class ApplicationServiceImplTest {
 
         final Application application = new Application();
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        when(applicationRepository.findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, localDate, statuses)).thenReturn(List.of(application));
+
+        when(applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, localDate, statuses))
+            .thenReturn(List.of(application));
 
         final List<Application> holidayReplacementApplications = sut.getForHolidayReplacement(holidayReplacement, localDate);
         assertThat(holidayReplacementApplications).hasSize(1).contains(application);

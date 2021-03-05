@@ -86,12 +86,9 @@ $(document).ready(async function () {
     }
     applicationSubmitPressed = true;
   });
-
-
 });
 
 function updateHolidayReplacementDtos() {
-
   let form = document.querySelector("#applicationForm");
   form.method = "get";
   form.action = window.location.pathname;

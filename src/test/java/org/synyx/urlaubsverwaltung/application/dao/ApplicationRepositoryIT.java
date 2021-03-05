@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -20,20 +21,9 @@ import java.util.List;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.UNPAIDLEAVE;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.*;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.*;
+import static org.synyx.urlaubsverwaltung.period.DayLength.*;
 
 
 @SpringBootTest
@@ -363,17 +353,20 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final Person person = new Person("sam", "smith", "sam", "smith@example.org");
         final Person savedPerson = personService.save(person);
 
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(savedHolidayReplacement);
+
         // correct
         final LocalDate from = LocalDate.of(2020, 5, 3);
         final LocalDate to = LocalDate.of(2020, 5, 10);
         final Application waitingApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
-        waitingApplication.setHolidayReplacement(savedHolidayReplacement);
+        waitingApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         waitingApplication.setStatus(WAITING);
         sut.save(waitingApplication);
 
         // other status
         final Application allowedApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
-        allowedApplication.setHolidayReplacement(savedHolidayReplacement);
+        allowedApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         allowedApplication.setStatus(ALLOWED);
         sut.save(allowedApplication);
 
@@ -381,21 +374,23 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final LocalDate otherStartDate = LocalDate.of(2020, 5, 3);
         final LocalDate otherEndDate = LocalDate.of(2020, 5, 4);
         final Application wrongDateApplication = createApplication(savedPerson, getVacationType(OVERTIME), otherStartDate, otherEndDate, FULL);
-        wrongDateApplication.setHolidayReplacement(savedHolidayReplacement);
+        wrongDateApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         wrongDateApplication.setStatus(WAITING);
         sut.save(wrongDateApplication);
 
         // other holiday replacement
         final Person otherHolidayReplacement = new Person("other", "other", "holiday", "other@example.org");
         final Person savedOtherHolidayReplacement = personService.save(otherHolidayReplacement);
+        final HolidayReplacementEntity otherHolidayReplacementEntity = new HolidayReplacementEntity();
+        otherHolidayReplacementEntity.setPerson(savedOtherHolidayReplacement);
         final Application otherHolidayReplacementApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
-        otherHolidayReplacementApplication.setHolidayReplacement(savedOtherHolidayReplacement);
+        otherHolidayReplacementApplication.setHolidayReplacements(List.of(otherHolidayReplacementEntity));
         otherHolidayReplacementApplication.setStatus(WAITING);
         sut.save(otherHolidayReplacementApplication);
 
         final LocalDate requestDate = LocalDate.of(2020, 5, 5);
         final List<ApplicationStatus> requestStatus = List.of(WAITING);
-        final List<Application> applications = sut.findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, requestDate, requestStatus);
+        final List<Application> applications = sut.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, requestDate, requestStatus);
         assertThat(applications).hasSize(1).contains(waitingApplication);
     }
 

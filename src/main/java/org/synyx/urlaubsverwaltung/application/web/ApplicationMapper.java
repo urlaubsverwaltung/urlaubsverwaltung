@@ -2,9 +2,13 @@ package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementDto;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 
 import java.time.Duration;
+import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
 
@@ -15,6 +19,9 @@ final class ApplicationMapper {
     }
 
     static ApplicationForLeaveForm mapToApplicationForm(Application application) {
+        List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
+            .map(HolidayReplacementDto::from)
+            .collect(toList());
         return new ApplicationForLeaveForm.Builder()
             .id(application.getId())
             .address(application.getAddress())
@@ -26,10 +33,9 @@ final class ApplicationMapper {
             .dayLength(application.getDayLength())
             .hoursAndMinutes(application.getHours())
             .person(application.getPerson())
-            .holidayReplacement(application.getHolidayReplacement())
-            .holidayReplacementNote(application.getHolidayReplacementNote())
             .vacationType(application.getVacationType())
             .reason(application.getReason())
+            .holidayReplacements(holidayReplacementDtos)
             .build();
     }
 
@@ -53,8 +59,6 @@ final class ApplicationMapper {
 
         newApplication.setVacationType(applicationForLeaveForm.getVacationType());
         newApplication.setDayLength(applicationForLeaveForm.getDayLength());
-        newApplication.setHolidayReplacement(applicationForLeaveForm.getHolidayReplacement());
-        newApplication.setHolidayReplacementNote(applicationForLeaveForm.getHolidayReplacementNote());
         newApplication.setAddress(applicationForLeaveForm.getAddress());
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());
 
@@ -70,6 +74,12 @@ final class ApplicationMapper {
         } else {
             newApplication.setReason(null);
         }
+
+        List<HolidayReplacementEntity> holidayReplacementEntities = applicationForLeaveForm.getHolidayReplacements().stream()
+            .map(HolidayReplacementEntity::from)
+            .collect(toList());
+
+        newApplication.setHolidayReplacements(holidayReplacementEntities);
 
         return newApplication;
     }

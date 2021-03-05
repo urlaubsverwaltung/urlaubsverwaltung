@@ -103,6 +103,7 @@
             <c:otherwise>
                 <form:form id="applicationForm" method="POST" action="${ACTION}" modelAttribute="application"
                            class="form-horizontal" role="form">
+                    <form:hidden path="id" value="${application.id}"/>
                     <form:hidden path="person" value="${person.id}"/>
 
                     <c:if test="${not empty errors.globalErrors}">

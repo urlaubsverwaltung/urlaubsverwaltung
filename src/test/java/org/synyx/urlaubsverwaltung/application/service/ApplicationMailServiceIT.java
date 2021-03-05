@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -388,10 +389,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
-        application.setHolidayReplacement(holidayReplacement);
-        application.setHolidayReplacementNote("Eine Nachricht an die Vertretung");
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("Eine Nachricht an die Vertretung");
 
-        sut.notifyHolidayReplacementForApply(application);
+        application.setHolidayReplacements(List.of(replacementEntity));
+
+        sut.notifyHolidayReplacementForApply(replacementEntity, application);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
@@ -420,10 +424,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
-        application.setHolidayReplacement(holidayReplacement);
-        application.setHolidayReplacementNote("Eine Nachricht an die Vertretung");
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("Eine Nachricht an die Vertretung");
 
-        sut.notifyHolidayReplacementAllow(application);
+        application.setHolidayReplacements(List.of(replacementEntity));
+
+        sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
@@ -455,9 +462,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
-        application.setHolidayReplacement(holidayReplacement);
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
 
-        sut.notifyHolidayReplacementAboutCancellation(application);
+        application.setHolidayReplacements(List.of(replacementEntity));
+
+        sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());
@@ -489,10 +499,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
-        application.setHolidayReplacement(holidayReplacement);
-        application.setHolidayReplacementNote("Eine Nachricht an die Vertretung");
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("Eine Nachricht an die Vertretung");
 
-        sut.notifyHolidayReplacementAboutEdit(application);
+        application.setHolidayReplacements(List.of(replacementEntity));
+
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(holidayReplacement.getEmail());

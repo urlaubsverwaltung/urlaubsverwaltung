@@ -31,6 +31,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -40,6 +42,7 @@ import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -95,6 +98,7 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(LocalDate.now(UTC).plusDays(2));
         appForm.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+        appForm.setHolidayReplacements(emptyList());
     }
 
     // Supports --------------------------------------------------------------------------------------------------------
@@ -1163,7 +1167,8 @@ class ApplicationForLeaveFormValidatorTest {
     private static ApplicationForLeaveForm.Builder appFormBuilderWithDefaults() {
         return new ApplicationForLeaveForm.Builder()
             .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
-            .vacationType(createVacationType(HOLIDAY));
+            .vacationType(createVacationType(HOLIDAY))
+            .holidayReplacements(new ArrayList<>());
     }
 
     private void overtimeMinimumTest(BigDecimal hours) {

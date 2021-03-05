@@ -5,6 +5,8 @@ import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementDto;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -14,9 +16,11 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static java.math.BigDecimal.ONE;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApplicationForLeaveFormTest {
@@ -35,6 +39,7 @@ class ApplicationForLeaveFormTest {
         form.setDayLength(DayLength.FULL);
         form.setStartDate(startDate);
         form.setEndDate(endDate);
+        form.setHolidayReplacements(emptyList());
 
         final Application application = form.generateApplicationForLeave();
 
@@ -53,6 +58,7 @@ class ApplicationForLeaveFormTest {
         form.setDayLength(DayLength.MORNING);
         form.setStartDate(now);
         form.setEndDate(now);
+        form.setHolidayReplacements(emptyList());
 
         final Application application = form.generateApplicationForLeave();
         assertThat(application.getStartDate()).isEqualTo(now);
@@ -78,22 +84,28 @@ class ApplicationForLeaveFormTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
+        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
+        holidayReplacementDto.setId(33);
+        holidayReplacementDto.setPerson(holidayReplacement);
+
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setPerson(person);
         form.setDayLength(DayLength.FULL);
         form.setAddress("Musterstr. 39");
         form.setComment("Kommentar");
-        form.setHolidayReplacement(holidayReplacement);
-        form.setHolidayReplacementNote("Some note");
         form.setReason("Deshalb");
         form.setTeamInformed(true);
         form.setVacationType(overtime);
         form.setHours(BigDecimal.valueOf(1.25));
+        form.setHolidayReplacements(List.of(holidayReplacementDto));
+
+        final HolidayReplacementEntity expectedReplacementEntity = new HolidayReplacementEntity();
+        expectedReplacementEntity.setId(33);
+        expectedReplacementEntity.setPerson(holidayReplacement);
 
         final Application application = form.generateApplicationForLeave();
         assertThat(application.getPerson()).isEqualTo(person);
-        assertThat(application.getHolidayReplacement()).isEqualTo(holidayReplacement);
-        assertThat(application.getHolidayReplacementNote()).isEqualTo("Some note");
+        assertThat(application.getHolidayReplacements()).contains(expectedReplacementEntity);
         assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
         assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
         assertThat(application.getReason()).isEqualTo("Deshalb");
@@ -110,23 +122,29 @@ class ApplicationForLeaveFormTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
+        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
+        holidayReplacementDto.setId(33);
+        holidayReplacementDto.setPerson(holidayReplacement);
+
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
         form.setPerson(person);
         form.setDayLength(DayLength.FULL);
         form.setAddress("Musterstr. 39");
         form.setComment("Kommentar");
-        form.setHolidayReplacement(holidayReplacement);
-        form.setHolidayReplacementNote("Some note");
         form.setReason("Deshalb");
         form.setTeamInformed(true);
         form.setVacationType(overtime);
         form.setHours(BigDecimal.valueOf(1));
         form.setMinutes(15);
+        form.setHolidayReplacements(List.of(holidayReplacementDto));
+
+        final HolidayReplacementEntity expectedReplacementEntity = new HolidayReplacementEntity();
+        expectedReplacementEntity.setId(33);
+        expectedReplacementEntity.setPerson(holidayReplacement);
 
         final Application application = form.generateApplicationForLeave();
         assertThat(application.getPerson()).isEqualTo(person);
-        assertThat(application.getHolidayReplacement()).isEqualTo(holidayReplacement);
-        assertThat(application.getHolidayReplacementNote()).isEqualTo("Some note");
+        assertThat(application.getHolidayReplacements()).contains(expectedReplacementEntity);
         assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
         assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
         assertThat(application.getReason()).isEqualTo("Deshalb");
@@ -142,6 +160,7 @@ class ApplicationForLeaveFormTest {
             final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
             form.setVacationType(type);
             form.setHours(ONE);
+            form.setHolidayReplacements(emptyList());
 
             final Application application = form.generateApplicationForLeave();
             assertThat(application.getHours()).isNull();
@@ -170,6 +189,8 @@ class ApplicationForLeaveFormTest {
 
         final VacationType vacationType = new VacationType();
 
+        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
+
         ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
             .person(person)
             .startDate(startDate)
@@ -180,8 +201,7 @@ class ApplicationForLeaveFormTest {
             .dayLength(DayLength.ZERO)
             .hoursAndMinutes(Duration.ofMinutes(75))
             .reason("Good one.")
-            .holidayReplacement(holidayReplacement)
-            .holidayReplacementNote("some note")
+            .holidayReplacements(List.of(holidayReplacementDto))
             .address("Gartenstrasse 67")
             .teamInformed(true)
             .comment("Welcome!")
@@ -197,8 +217,7 @@ class ApplicationForLeaveFormTest {
         assertThat(form.getHours()).isEqualTo(ONE);
         assertThat(form.getMinutes()).isEqualTo(15);
         assertThat(form.getReason()).isEqualTo("Good one.");
-        assertThat(form.getHolidayReplacement()).isEqualTo(holidayReplacement);
-        assertThat(form.getHolidayReplacementNote()).isEqualTo("some note");
+        assertThat(form.getHolidayReplacements()).contains(holidayReplacementDto);
         assertThat(form.getAddress()).isEqualTo("Gartenstrasse 67");
         assertThat(form.isTeamInformed()).isTrue();
         assertThat(form.getComment()).isEqualTo("Welcome!");
@@ -268,6 +287,9 @@ class ApplicationForLeaveFormTest {
 
         final VacationType vacationType = new VacationType();
 
+        final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
+        replacementDto.setPerson(holidayReplacement);
+
         final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
             .person(person)
             .startDate(startDate)
@@ -278,17 +300,17 @@ class ApplicationForLeaveFormTest {
             .dayLength(DayLength.ZERO)
             .hoursAndMinutes(Duration.ZERO)
             .reason("Reason")
-            .holidayReplacement(holidayReplacement)
-            .holidayReplacementNote("some note")
+            .holidayReplacements(List.of(replacementDto))
             .address("Address")
             .teamInformed(true)
             .comment("Comment")
             .build();
 
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=-999999999-01-01, " +
-            "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
-            "vacationType=VacationType{category=null, messageKey='null'}, dayLength=ZERO, hours=0, minutes=0, " +
-            "holidayReplacement=Person{id='null'}, holidayReplacementNote='some note', address='Address', teamInformed=true}");
+            "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, vacationType=VacationType{" +
+            "category=null, messageKey='null'}, dayLength=ZERO, hours=0, minutes=0, holidayReplacements=[" +
+            "HolidayReplacementDto{id=null, person=Person{id='null'}, note='null'}], address='Address', " +
+            "teamInformed=true}");
     }
 
     private ApplicationForLeaveForm formWithOvertime(BigDecimal hours, Integer minutes) {

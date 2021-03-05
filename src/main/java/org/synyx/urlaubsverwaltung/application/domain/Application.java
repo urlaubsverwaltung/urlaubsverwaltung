@@ -1,21 +1,27 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.synyx.urlaubsverwaltung.DurationConverter;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
@@ -104,13 +110,10 @@ public class Application {
      */
     private String reason;
 
-    /**
-     * Person that is the holiday replacement during the vacation.
-     */
-    @ManyToOne
-    @JoinColumn(name = "rep_id")
-    private Person holidayReplacement;
-    private String holidayReplacementNote;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @CollectionTable(name = "holiday_replacements")
+    private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
+
     /**
      * Further information: address, phone number etc.
      */
@@ -275,14 +278,6 @@ public class Application {
         this.reason = reason;
     }
 
-    public Person getHolidayReplacement() {
-        return holidayReplacement;
-    }
-
-    public void setHolidayReplacement(Person holidayReplacement) {
-        this.holidayReplacement = holidayReplacement;
-    }
-
     public LocalDate getStartDate() {
         return this.startDate;
     }
@@ -388,12 +383,12 @@ public class Application {
         return null;
     }
 
-    public void setHolidayReplacementNote(String holidayReplacementNote) {
-        this.holidayReplacementNote = holidayReplacementNote;
+    public List<HolidayReplacementEntity> getHolidayReplacements() {
+        return holidayReplacements;
     }
 
-    public String getHolidayReplacementNote() {
-        return holidayReplacementNote;
+    public void setHolidayReplacements(List<HolidayReplacementEntity> holidayReplacements) {
+        this.holidayReplacements = holidayReplacements;
     }
 
     @Override
@@ -410,7 +405,7 @@ public class Application {
             ", endTime=" + endTime +
             ", vacationType=" + vacationType +
             ", dayLength=" + dayLength +
-            ", holidayReplacement=" + holidayReplacement +
+            ", holidayReplacements=" + holidayReplacements +
             ", address='" + address + '\'' +
             ", applicationDate=" + applicationDate +
             ", cancelDate=" + cancelDate +
