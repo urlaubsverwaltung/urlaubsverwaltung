@@ -29,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 
 
 @Controller
-@RequestMapping("/web/calendars/share/persons/{personId}")
+@RequestMapping("/web/calendars/share")
 public class CalendarSharingViewController {
 
     private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D = "redirect:/web/calendars/share/persons/%d";
@@ -52,6 +52,12 @@ public class CalendarSharingViewController {
     }
 
     @GetMapping
+    public String redirect() {
+
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personService.getSignedInUser().getId());
+    }
+
+    @GetMapping("/persons/{personId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String index(@PathVariable int personId, Model model) {
 
@@ -67,7 +73,7 @@ public class CalendarSharingViewController {
         return "calendarsharing/index";
     }
 
-    @GetMapping("/departments/{activeDepartmentId}")
+    @GetMapping("/persons/{personId}/departments/{activeDepartmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String indexDepartment(@PathVariable int personId, @PathVariable int activeDepartmentId, Model model) {
 
@@ -83,7 +89,7 @@ public class CalendarSharingViewController {
         return "calendarsharing/index";
     }
 
-    @PostMapping(value = "/me")
+    @PostMapping(value = "/persons/{personId}/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String linkPrivateCalendar(@PathVariable int personId, @ModelAttribute PersonCalendarDto personCalendarDto) {
 
@@ -93,7 +99,7 @@ public class CalendarSharingViewController {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
-    @PostMapping(value = "/me", params = "unlink")
+    @PostMapping(value = "/persons/{personId}/me", params = "unlink")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String unlinkPrivateCalendar(@PathVariable int personId) {
 
@@ -102,7 +108,7 @@ public class CalendarSharingViewController {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
-    @PostMapping(value = "/departments/{departmentId}")
+    @PostMapping(value = "/persons/{personId}/departments/{departmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String linkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId,
                                          @ModelAttribute DepartmentCalendarDto departmentCalendarDto) {
@@ -113,7 +119,7 @@ public class CalendarSharingViewController {
         return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
     }
 
-    @PostMapping(value = "/departments/{departmentId}", params = "unlink")
+    @PostMapping(value = "persons/{personId}/departments/{departmentId}", params = "unlink")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String unlinkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId) {
 
@@ -122,7 +128,7 @@ public class CalendarSharingViewController {
         return format("redirect:/web/calendars/share/persons/%d/departments/%d", personId, departmentId);
     }
 
-    @PostMapping(value = "/company")
+    @PostMapping(value = "/persons/{personId}/company")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String linkCompanyCalendar(@PathVariable int personId, @ModelAttribute CompanyCalendarDto companyCalendarDto) {
 
@@ -132,7 +138,7 @@ public class CalendarSharingViewController {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
-    @PostMapping(value = "/company", params = "unlink")
+    @PostMapping(value = "/persons/{personId}/company", params = "unlink")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String unlinkCompanyCalendar(@PathVariable int personId) {
 
@@ -141,7 +147,7 @@ public class CalendarSharingViewController {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
     }
 
-    @PostMapping(value = "/company/accessible")
+    @PostMapping(value = "/persons/{personId}/company/accessible")
     @PreAuthorize(IS_BOSS_OR_OFFICE)
     public String editCompanyCalendarAccessible(@PathVariable int personId, CompanyCalendarAccessibleDto companyCalendarAccessibleDto) {
 

@@ -128,8 +128,8 @@
         <div class="print:tw-hidden">
             <uv:section-heading>
                 <jsp:attribute name="actions">
-                    <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${personId}">
                         <icon:calendar className="tw-w-5 tw-h-5" />
+                    <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/calendars/share">
                         &nbsp;<spring:message code="overview.calendar.share.link.text" />
                     </a>
                 </jsp:attribute>
