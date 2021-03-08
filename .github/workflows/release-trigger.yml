@@ -53,7 +53,7 @@ jobs:
         uses: fregante/setup-git-user@v1
       - name: Commit Release Notes
         run: |
-          git add .chglog/${{ github.event.inputs.milestoneId }}.md
+          git add .chglog/*.md
           git commit -m "Add release notes for ${{ github.event.inputs.milestoneId }}"
       - name: Push Release Notes
         uses: ad-m/github-push-action@v0.6.0
