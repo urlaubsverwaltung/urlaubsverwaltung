@@ -49,6 +49,7 @@ jobs:
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
+          -Pcoverage
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx
