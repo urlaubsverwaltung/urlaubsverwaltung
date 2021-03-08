@@ -62,6 +62,19 @@ class CalendarSharingViewControllerTest {
     }
 
     @Test
+    void redirectUnpersonalizedPathToPersonalizedPath() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/calendars/share"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
     void indexWithoutCompanyCalendarForUserDueToDisabledFeature() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
