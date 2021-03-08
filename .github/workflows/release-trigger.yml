@@ -3,6 +3,10 @@ name: Urlaubsverwaltung Release Trigger
 on:
   workflow_dispatch:
     inputs:
+      milestoneId:
+        description: 'Milestone ID'
+        required: true
+        default: '1'
       releaseVersion:
         description: 'Release version'
         required: true
@@ -39,6 +43,22 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: Create Release Notes
+        uses: docker://decathlon/release-notes-generator-action:3.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_FOLDER: .chglog
+          USE_MILESTONE_TITLE: "true"
+      - name: Setup git user
+        uses: fregante/setup-git-user@v1
+      - name: Commit Release Notes
+        run: |
+          git add .chglog/${{ github.event.inputs.milestoneId }}.md
+          git commit -m "Add release notes for ${{ github.event.inputs.milestoneId }}"
+      - name: Push Release Notes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.AM_PAT }}
       - name: Trigger Release
         run: ./release.sh
         env:

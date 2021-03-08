@@ -34,14 +34,14 @@ jobs:
         run: ./mvnw --batch-mode clean verify
       - name: Extract release tag
         id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+        run: echo ::set-output name=version::${GITHUB_REF#refs/*/urlaubsverwaltung-}
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Release ${{ steps.vars.outputs.tag }}
-          body: Die Änderungen in dieser Version können im [Changelog](https://github.com/synyx/urlaubsverwaltung/blob/master/CHANGELOG.md) nachgelesen werden.
+          name: Release Urlaubsverwaltung ${{ steps.vars.outputs.version }}
+          body_path: .chglog/${{ steps.vars.outputs.version }}.md
           files: ./target/urlaubsverwaltung-*.war
       - name: Publish docker image to Docker Hub
         run: >
