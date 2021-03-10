@@ -27,6 +27,7 @@ jobs:
         run: >
           ./mvnw --batch-mode
           -Pcoverage
+          clean verify
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx
