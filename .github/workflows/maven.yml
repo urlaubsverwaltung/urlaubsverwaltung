@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build
-        run: ./mvnw --batch-mode -Pcoverage clean verify
+        run: ./mvnw --batch-mode clean verify
       - uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
