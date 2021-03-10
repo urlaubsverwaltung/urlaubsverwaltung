@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
@@ -36,5 +38,5 @@ jobs:
       - name: Assets-Manifest push
         uses: ad-m/github-push-action@v0.6.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
