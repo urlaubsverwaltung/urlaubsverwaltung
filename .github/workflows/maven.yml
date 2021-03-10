@@ -44,15 +44,3 @@ jobs:
         with:
           name: failed-selenium-tests
           path: target/FAILED-*.flv
-      - name: Build docker image and push to GitHub Container Registry
-        if: github.ref == 'refs/heads/master'
-        run: >
-          ./mvnw --batch-mode
-          docker:build
-          docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung
-          -Ddocker.push.registry=ghcr.io
-          -Ddocker.push.username=${{ github.actor }}
-          -Ddocker.push.password=${{ secrets.CR_PAT }}
-          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
-          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
