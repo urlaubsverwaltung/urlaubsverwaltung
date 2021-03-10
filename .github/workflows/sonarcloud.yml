@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyse:
+  sonarCloud:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
