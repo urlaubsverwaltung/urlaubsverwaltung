@@ -1,8 +1,11 @@
 name: Update assets-manifest
+
 on:
-  pull_request_target:
-    branches:
-      - "dependabot/npm_and_yarn/**"
+  workflow_run:
+    workflows: ["Urlaubsverwaltung CI"]
+    branches: ["dependabot/npm_and_yarn/**"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
