@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: ./mvnw --batch-mode clean verify
       - uses: actions/upload-artifact@v2
-        if: ${{ always() }}
+        if: hashFiles('target/FAILED-*.flv') != ''
         with:
           name: failed-selenium-tests
           path: target/FAILED-*.flv
