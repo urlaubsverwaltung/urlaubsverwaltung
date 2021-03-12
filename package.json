@@ -37,7 +37,7 @@
     "bootstrap": "3.4.1",
     "datalist-polyfill": "1.24.4",
     "font-awesome": "4.7.0",
-    "jquery": "3.5.1",
+    "jquery": "3.6.0",
     "jquery-ui": "1.12.1",
     "jquery-ui-themes": "1.12.0",
     "list.js": "2.3.1",
