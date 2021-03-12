@@ -55,6 +55,7 @@ jobs:
           -Dsonar.eslint.reportPaths=target/js-eslint/report.json
           -Dsonar.coverage.exclusions=**/__tests__/**,**/*-spec.js,**/*.spec.js,**/*-test.js,**/*.test.js
           -Dsonar.sources=src/main
+          -Dsonar.java.binaries=target/classes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
