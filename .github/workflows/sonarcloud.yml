@@ -2,7 +2,7 @@ name: SonarCloud
 
 on:
   workflow_run:
-    workflows: ["Urlaubsverwaltung CI"]
+    workflows: [ "Urlaubsverwaltung CI" ]
     types:
       - completed
   workflow_dispatch:
@@ -36,11 +36,15 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: Download sonarcloud artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: maven.yml
+          name: sonarcloud
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
-          -Pcoverage
-          clean verify
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=synyx
