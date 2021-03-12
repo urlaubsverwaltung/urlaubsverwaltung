@@ -101,7 +101,15 @@ public class WorkingTimeService {
     }
 
     public void createDefaultWorkingTime(Person person) {
-        LocalDate today = LocalDate.now(clock);
-        this.touch(workingTimeProperties.getDefaultWorkingDays(), Optional.empty(), today, person);
+        final List<Integer> defaultWorkingDays;
+
+        if (workingTimeProperties.isDefaultWorkingDaysDeactivated()) {
+            defaultWorkingDays = settingsService.getSettings().getWorkingTimeSettings().getWorkingDays();
+        } else {
+            defaultWorkingDays = workingTimeProperties.getDefaultWorkingDays();
+        }
+
+        final LocalDate today = LocalDate.now(clock);
+        this.touch(defaultWorkingDays, Optional.empty(), today, person);
     }
 }

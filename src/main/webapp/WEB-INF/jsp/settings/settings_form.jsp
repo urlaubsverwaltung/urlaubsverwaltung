@@ -297,8 +297,46 @@
 
                 <div class="tab-pane" id="publicHolidays">
 
+                    <c:if test="${defaultWorkingTimeFromSettings}">
                     <div class="form-section tw-mb-8">
+                        <uv:section-heading>
+                            <h2>
+                                <spring:message code="settings.workingTime.title"/>
+                            </h2>
+                        </uv:section-heading>
+                        <div class="row">
 
+                            <div class="col-md-4 col-md-push-8">
+                                <span class="help-block tw-text-sm">
+                                </span>
+                            </div>
+                            <div class="col-md-8 col-md-pull-4">
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4">
+                                        <spring:message code="settings.workingTime.weekdays"/>:
+                                    </label>
+                                    <c:forEach items="${weekDays}" var="weekDay" varStatus="counter">
+                                    <c:if test="${counter.first || counter.count == 5}">
+                                    <div class="col-md-4">
+                                    </c:if>
+                                        <div class="checkbox">
+                                            <label for="${weekDay}">
+                                                <form:checkbox id="${weekDay}" path="workingTimeSettings.workingDays"
+                                                               value="${weekDay.dayOfWeek}"/>
+                                                <spring:message code='${weekDay}'/>
+                                            </label>
+                                        </div>
+                                    <c:if test="${counter.last || counter.count == 4}">
+                                    </div>
+                                    </c:if>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </c:if>
+
+                    <div class="form-section tw-mb-8">
                         <uv:section-heading>
                             <h2>
                                 <spring:message code="settings.time.title"/>

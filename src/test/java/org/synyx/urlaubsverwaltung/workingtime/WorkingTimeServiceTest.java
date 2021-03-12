@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -51,8 +52,9 @@ class WorkingTimeServiceTest {
     }
 
     @Test
-    void ensureDefaultWorkingTimeCreation() {
+    void ensureDefaultWorkingTimeCreationFromProperties() {
 
+        when(workingTimeProperties.isDefaultWorkingDaysDeactivated()).thenReturn(false);
         when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -64,6 +66,32 @@ class WorkingTimeServiceTest {
         assertThat(workingTime.getPerson()).isEqualTo(person);
         assertThat(workingTime.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
         assertThat(workingTime.getWorkingDays()).isEqualTo(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY));
+    }
+
+    @Test
+    void ensureDefaultWorkingTimeCreationFromGui() {
+
+        when(workingTimeProperties.isDefaultWorkingDaysDeactivated()).thenReturn(true);
+
+        final Settings settings = new Settings();
+        settings.getWorkingTimeSettings().setMonday(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setTuesday(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setWednesday(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setThursday(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setFriday(DayLength.FULL);
+        settings.getWorkingTimeSettings().setSaturday(DayLength.ZERO);
+        settings.getWorkingTimeSettings().setSunday(DayLength.ZERO);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        sut.createDefaultWorkingTime(person);
+
+        final ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
+        verify(workingTimeRepository).save(argument.capture());
+        final WorkingTime workingTime = argument.getValue();
+        assertThat(workingTime.getPerson()).isEqualTo(person);
+        assertThat(workingTime.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
+        assertThat(workingTime.getWorkingDays()).isEqualTo(List.of(FRIDAY));
     }
 
     @Test

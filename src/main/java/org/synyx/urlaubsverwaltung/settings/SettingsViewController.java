@@ -15,7 +15,9 @@ import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
@@ -31,16 +33,18 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 public class SettingsViewController {
 
     private final AccountProperties accountProperties;
+    private final WorkingTimeProperties workingTimeProperties;
     private final SettingsService settingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
     private final Clock clock;
 
     @Autowired
-    public SettingsViewController(AccountProperties accountProperties, SettingsService settingsService,
-                                  List<CalendarProvider> calendarProviders,
+    public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
+                                  SettingsService settingsService, List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock) {
         this.accountProperties = accountProperties;
+        this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
@@ -102,10 +106,12 @@ public class SettingsViewController {
 
     private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
         model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
+        model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
 
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
+        model.addAttribute("weekDays", WeekDay.values());
 
         final List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())

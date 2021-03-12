@@ -177,7 +177,8 @@ uv.template-engine.jsp.use-precompiled=false
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
-# workingtime
+# workingtime - deprecated - kann über 'Einstellungen' gesetzt werden 
+# wenn auf uv.workingtime.default-working-days[0]=-1 gesetzt
 # (monday till friday)
 uv.workingtime.default-working-days[0]=1
 uv.workingtime.default-working-days[1]=2
