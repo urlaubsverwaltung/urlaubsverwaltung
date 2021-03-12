@@ -1,7 +1,8 @@
 name: Mark issue as planned
 
 on:
-  issues: {types: milestoned}
+  issues:
+    types: [milestoned]
 
 jobs:
   apply-label:
