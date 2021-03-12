@@ -39,16 +39,23 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
-      - name: Upload sonarcloud analyses
-        uses: actions/upload-artifact@v2
-        with:
-          name: sonarcloud
-          path: |
-            target/site/jacoco/jacoco.xml
-            target/site/jacoco-it/jacoco.xml
-            target/js-coverage/lcov.info
-            target/js-eslint/report.json
-            target/classes
+      - name: Analyse with SonarCloud
+        run: >
+          ./mvnw --batch-mode
+          -Pcoverage
+          sonar:sonar
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.organization=synyx
+          -Dsonar.projectKey=org.synyx:urlaubsverwaltung
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml
+          -Dsonar.javascript.lcov.reportPaths=target/js-coverage/lcov.info
+          -Dsonar.javascript.exclusions=**/__tests__/**,**/*-spec.js,**/*.spec.js,**/*-test.js,**/*.test.js
+          -Dsonar.eslint.reportPaths=target/js-eslint/report.json
+          -Dsonar.coverage.exclusions=**/__tests__/**,**/*-spec.js,**/*.spec.js,**/*-test.js,**/*.test.js
+          -Dsonar.sources=src/main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload video of failed tests
         uses: actions/upload-artifact@v2
         if: hashFiles('target/FAILED-*.flv') != ''
