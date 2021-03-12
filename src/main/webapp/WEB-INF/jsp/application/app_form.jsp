@@ -78,12 +78,14 @@
 <c:choose>
     <c:when test="${application.id == null}">
         <c:set var="ACTION" value="${URL_PREFIX}/application"/>
+        <c:set var="ADD_REPLACEMENT_ACTION" value="${URL_PREFIX}/application/new"/>
         <c:set var="heading">
             <spring:message code="application.data.title"/>
         </c:set>
     </c:when>
     <c:otherwise>
         <c:set var="ACTION" value="${URL_PREFIX}/application/${application.id}"/>
+        <c:set var="ADD_REPLACEMENT_ACTION" value="${URL_PREFIX}/application/${application.id}"/>
         <c:set var="heading">
             <spring:message code="application.data.title.edit"/>
         </c:set>
@@ -343,30 +345,35 @@
                                     </div>
                                 </div>
 
-                                    <%-- holiday replacement--%>
+                                <%-- holiday replacement--%>
                                 <c:if test="${not empty persons}">
                                     <div class="form-group">
-                                        <label class="control-label col-md-3" for="holidayReplacementsSelection">
-                                            <spring:message code="application.data.holidayReplacement"/>:
+                                        <label class="control-label col-md-3">
+                                            <spring:message code="application.data.holidayReplacement"/>
                                         </label>
                                         <div class="col-md-9">
-                                            <div class="department--members" style="max-height: 200px;">
-                                                <c:forEach items="${persons}" var="person">
-                                                    <div class="department--member ">
-                                                        <div class="department--member-image">
-                                                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
-                                                                <form:checkbox path="holidayReplacementsSelection" value="${person}"
-                                                                               cssClass="tw-m-0 tw-mr-2"
-                                                                               onchange="updateHolidayReplacementDtos()"/>
-                                                            </label>
-                                                        </div>
-                                                        <div class="department--member-assignment">
-                                                            <p class="department--member-info tw-m-0">
-                                                                <c:out value="${person.niceName}"/>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </c:forEach>
+                                            <div class="tw-flex">
+                                                <uv:select
+                                                    id="holiday-replacement-select"
+                                                    name="holidayReplacementToAdd"
+                                                    cssClass="tw-rounded-l tw-rounded-r-none"
+                                                >
+                                                    <option value=""></option>
+                                                    <c:forEach items="${persons}" var="person">
+                                                        <option value="${person.id}">
+                                                            <c:out value="${person.niceName}"/>
+                                                        </option>
+                                                    </c:forEach>
+                                                </uv:select>
+                                                <button
+                                                    type="submit"
+                                                    class="tw-text-gray-700 tw-border tw-border-l-0 tw-border-gray-300 tw-font-medium tw-rounded-r tw-px-4 hover:tw-bg-gray-200 tw-text-sm"
+                                                    name="add-holiday-replacement"
+                                                    formmethod="post"
+                                                    formaction="${ADD_REPLACEMENT_ACTION}"
+                                                >
+                                                    <spring:message code="application.data.holidayReplacement.add-button.text" />
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -379,25 +386,29 @@
                                                 </label>
                                                 <div class="col-md-9">
                                                     <small style="display: flex; justify-content: space-between;">
-                                                    <span>
-                                                        <spring:message code="application.data.holidayReplacementNote"/>
-                                                        <c:out value="${holidayReplacement.person.firstName}"/> <c:out
-                                                        value="${holidayReplacement.person.lastName}"/>:
-                                                    </span>
+                                                        <span>
+                                                            <spring:message code="application.data.holidayReplacementNote"/>
+                                                            <c:out value="${holidayReplacement.person.firstName}"/> <c:out
+                                                            value="${holidayReplacement.person.lastName}"/>:
+                                                        </span>
                                                         <span style="flex-grow: 1">
-                                                    </span>
-                                                        <span id="text-holiday-replacement-note-${loop.index}">
-                                                    </span>
+                                                        </span>
+                                                            <span id="text-holiday-replacement-note-${loop.index}">
+                                                        </span>
                                                         <spring:message code="action.comment.maxChars"/>
                                                     </small>
-                                                    <form:input path="holidayReplacements[${loop.index}].person"
-                                                                cssClass="hidden"/>
-                                                    <form:textarea rows="1"
-                                                                   path="holidayReplacements[${loop.index}].note"
-                                                                   class="form-control"
-                                                                   cssErrorClass="form-control error"
-                                                                   onkeyup="count(this.value, 'text-holiday-replacement-note-${loop.index}');"
-                                                                   onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note-${loop.index}');"/>
+                                                    <form:input
+                                                        path="holidayReplacements[${loop.index}].person"
+                                                        cssClass="hidden"
+                                                    />
+                                                    <form:textarea
+                                                        rows="1"
+                                                        path="holidayReplacements[${loop.index}].note"
+                                                        class="form-control"
+                                                        cssErrorClass="form-control error"
+                                                        onkeyup="count(this.value, 'text-holiday-replacement-note-${loop.index}');"
+                                                        onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note-${loop.index}');"
+                                                    />
                                                     <uv:error-text>
                                                         <form:errors path="holidayReplacementNote"/>
                                                     </uv:error-text>
