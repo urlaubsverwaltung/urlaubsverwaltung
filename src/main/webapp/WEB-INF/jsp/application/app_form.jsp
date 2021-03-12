@@ -385,18 +385,13 @@
                                                 <label class="control-label col-md-3">
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <small style="display: flex; justify-content: space-between;">
-                                                        <span>
+                                                    <div>
+                                                        <small>
                                                             <spring:message code="application.data.holidayReplacementNote"/>
                                                             <c:out value="${holidayReplacement.person.firstName}"/> <c:out
                                                             value="${holidayReplacement.person.lastName}"/>:
-                                                        </span>
-                                                        <span style="flex-grow: 1">
-                                                        </span>
-                                                            <span id="text-holiday-replacement-note-${loop.index}">
-                                                        </span>
-                                                        <spring:message code="action.comment.maxChars"/>
-                                                    </small>
+                                                        </small>
+                                                    </div>
                                                     <form:input
                                                         path="holidayReplacements[${loop.index}].person"
                                                         cssClass="hidden"
@@ -409,6 +404,13 @@
                                                         onkeyup="count(this.value, 'text-holiday-replacement-note-${loop.index}');"
                                                         onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note-${loop.index}');"
                                                     />
+                                                    <div>
+                                                        <small class="tw-flex tw-justify-between tw-text-sm">
+                                                            <span class="tw-flex-grow"></span>
+                                                            <span id="text-holiday-replacement-note-${loop.index}"></span><spring:message
+                                                            code="action.comment.maxChars"/>
+                                                        </small>
+                                                    </div>
                                                     <uv:error-text>
                                                         <form:errors path="holidayReplacementNote"/>
                                                     </uv:error-text>
@@ -424,15 +426,17 @@
                                         <spring:message code="application.data.furtherInformation.address"/>:
                                     </label>
                                     <div class="col-md-9">
-                                        <small style="display: flex; justify-content: space-between;">
-                                            <span style="flex-grow: 1"></span>
-                                            <span id="text-address"></span><spring:message
-                                            code="action.comment.maxChars"/>
-                                        </small>
                                         <form:textarea id="address" rows="1" path="address" class="form-control"
                                                        cssErrorClass="form-control error"
                                                        onkeyup="count(this.value, 'text-address');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
+                                        <div>
+                                            <small class="tw-flex tw-justify-between tw-text-sm">
+                                                <span class="tw-flex-grow"></span>
+                                                <span id="text-address"></span><spring:message
+                                                code="action.comment.maxChars"/>
+                                            </small>
+                                        </div>
                                         <uv:error-text>
                                             <form:errors path="address"/>
                                         </uv:error-text>
@@ -445,15 +449,17 @@
                                         <spring:message code="application.data.furtherInformation.comment"/>:
                                     </label>
                                     <div class="col-md-9">
-                                        <small style="display: flex; justify-content: space-between;">
-                                            <span style="flex-grow: 1"></span>
-                                            <span id="text-comment"></span><spring:message
-                                            code="action.comment.maxChars"/>
-                                        </small>
                                         <form:textarea id="comment" rows="1" path="comment" class="form-control"
                                                        cssErrorClass="form-control error"
                                                        onkeyup="count(this.value, 'text-comment');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
+                                        <div>
+                                            <small class="tw-flex tw-justify-between tw-text-sm">
+                                                <span class="tw-flex-grow"></span>
+                                                <span id="text-comment"></span><spring:message
+                                                code="action.comment.maxChars"/>
+                                            </small>
+                                        </div>
                                         <uv:error-text>
                                             <form:errors path="comment"/>
                                         </uv:error-text>
