@@ -42,6 +42,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: maven.yml
           name: sonarcloud
+          path: target/
       - name: Analyse with SonarCloud
         run: >
           ./mvnw --batch-mode
