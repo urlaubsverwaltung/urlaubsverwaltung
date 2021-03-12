@@ -6,10 +6,14 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static java.util.Objects.requireNonNullElse;
 
 
 /**
@@ -35,8 +39,13 @@ public class ApplicationForLeaveForm {
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
     private DayLength dayLength;
 
-    // hours are relevant for overtime reduction
+    // hours are relevant for overtime reduction, decimal input possible
+    @Min(0)
     private BigDecimal hours;
+
+    // minutes of overtime reduction
+    @Min(0)
+    private Integer minutes;
 
     // For special and unpaid leave a reason is required
     private String reason;
@@ -111,6 +120,14 @@ public class ApplicationForLeaveForm {
         this.hours = hours;
     }
 
+    public Integer getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(Integer minutes) {
+        this.minutes = minutes;
+    }
+
     public String getReason() {
         return reason;
     }
@@ -183,6 +200,14 @@ public class ApplicationForLeaveForm {
         this.teamInformed = teamInformed;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Application generateApplicationForLeave() {
 
         Application applicationForLeave = new Application();
@@ -205,10 +230,33 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setTeamInformed(teamInformed);
 
         if (VacationCategory.OVERTIME.equals(vacationType.getCategory())) {
-            applicationForLeave.setHours(hours);
+            applicationForLeave.setHours(calculateOvertimeReduction(hours, minutes));
         }
 
         return applicationForLeave;
+    }
+
+    /**
+     * @return the hours and minutes fields mapped to a {@link BigDecimal}
+     */
+    static BigDecimal calculateOvertimeReduction(BigDecimal hours, Integer minutes) {
+
+        if (hours == null && minutes == null) {
+            return null;
+        }
+
+        final BigDecimal originalHours = requireNonNullElse(hours, BigDecimal.ZERO);
+        final double originalMinutes = requireNonNullElse(minutes, 0).doubleValue();
+
+        final double minutesFromOriginalHours = (originalHours.doubleValue() % 1) * 60;
+        final double minutesFromOriginalMinutes = originalMinutes % 60;
+
+        final double hoursToAdd = (originalMinutes - minutesFromOriginalMinutes) / 60;
+
+        final double durationHours = originalHours.setScale(0, RoundingMode.DOWN).doubleValue() + hoursToAdd;
+        final double durationMinutes = minutesFromOriginalHours + minutesFromOriginalMinutes;
+
+        return BigDecimal.valueOf(durationHours + (durationMinutes / 60));
     }
 
     @Override
@@ -222,19 +270,12 @@ public class ApplicationForLeaveForm {
             ", vacationType=" + vacationType +
             ", dayLength=" + dayLength +
             ", hours=" + hours +
+            ", minutes=" + minutes +
             ", holidayReplacement=" + holidayReplacement +
             ", holidayReplacementNote='" + holidayReplacementNote + '\'' +
             ", address='" + address + '\'' +
             ", teamInformed=" + teamInformed +
             '}';
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public static class Builder {
@@ -247,6 +288,7 @@ public class ApplicationForLeaveForm {
         private VacationType vacationType;
         private DayLength dayLength;
         private BigDecimal hours;
+        private Integer minutes;
         private String reason;
         private Person holidayReplacement;
         private String holidayReplacementNote;
@@ -290,8 +332,12 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder hours(BigDecimal hours) {
-            this.hours = hours;
+        public ApplicationForLeaveForm.Builder hoursAndMinutes(BigDecimal hours) {
+
+            if (hours != null) {
+                this.hours = BigDecimal.valueOf(hours.intValue());
+                this.minutes = hours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60L)).intValue();
+            }
             return this;
         }
 
@@ -342,6 +388,7 @@ public class ApplicationForLeaveForm {
             form.setVacationType(vacationType);
             form.setDayLength(dayLength);
             form.setHours(hours);
+            form.setMinutes(minutes);
             form.setReason(reason);
             form.setHolidayReplacement(holidayReplacement);
             form.setHolidayReplacementNote(holidayReplacementNote);
