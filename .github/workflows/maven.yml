@@ -48,6 +48,7 @@ jobs:
             target/site/jacoco-it/jacoco.xml
             target/js-coverage/lcov.info
             target/js-eslint/report.json
+            target/classes
       - name: Upload video of failed tests
         uses: actions/upload-artifact@v2
         if: hashFiles('target/FAILED-*.flv') != ''
