@@ -32,7 +32,6 @@ import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +48,10 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -410,6 +412,78 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void ensureReplacementDeletionForNewApplicationRemovesPersonFromHolidayReplacements() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post("/web/application/new")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("holidayReplacements[2].person.id", "21")
+            .param("remove-holiday-replacement", "1337"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("id", nullValue()),
+                hasProperty("holidayReplacements", contains(
+                    hasProperty("person", hasProperty("id", is(42))),
+                    hasProperty("person", hasProperty("id", is(21)))
+                ))
+            )))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void ensureReplacementDeletionForNewApplicationAddsTheRemovedPersonToSelectableHolidayReplacements() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        final Person bruce = new Person();
+        bruce.setId(42);
+
+        final Person clark = new Person();
+        clark.setId(1337);
+
+        final Person joker = new Person();
+        joker.setId(21);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post("/web/application/new")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("holidayReplacements[2].person.id", "21")
+            .param("remove-holiday-replacement", "1337"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", hasProperty("id", nullValue())))
+            .andExpect(model().attribute("selectableHolidayReplacements", contains(
+                hasProperty("personId", is(1)),
+                hasProperty("personId", is(1337))
+            )))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
     void editApplicationForm() throws Exception {
 
         final Person person = new Person();
@@ -557,6 +631,88 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(true)))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void ensureReplacementDeletionForEditedApplicationRemovesPersonFromHolidayReplacements() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post("/web/application/7")
+            .param("vacationType.category", "HOLIDAY")
+            .param("id", "7")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("holidayReplacements[2].person.id", "21")
+            .param("remove-holiday-replacement", "1337"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("id", is(7)),
+                hasProperty("holidayReplacements", contains(
+                    hasProperty("person", hasProperty("id", is(42))),
+                    hasProperty("person", hasProperty("id", is(21)))
+                ))
+            )))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void ensureReplacementDeletionForEditedApplicationAddsTheRemovedPersonToSelectableHolidayReplacements() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        final Person bruce = new Person();
+        bruce.setId(42);
+
+        final Person clark = new Person();
+        clark.setId(1337);
+
+        final Person joker = new Person();
+        joker.setId(21);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post("/web/application/7")
+            .param("vacationType.category", "HOLIDAY")
+            .param("id", "7")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("holidayReplacements[2].person.id", "21")
+            .param("remove-holiday-replacement", "1337"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", hasProperty("id", is(7))))
+            .andExpect(model().attribute("selectableHolidayReplacements", allOf(
+                contains(
+                    hasProperty("personId", is(1)),
+                    hasProperty("personId", is(1337))
+                ),
+                not(
+                    contains(
+                        hasProperty("personId", is(42)),
+                        hasProperty("personId", is(21))
+                    )
+                )
+            )))
             .andExpect(view().name("application/app_form"));
     }
 

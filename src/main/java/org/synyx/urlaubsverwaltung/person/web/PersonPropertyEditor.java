@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -32,6 +33,10 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public void setAsText(String text) {
+
+        if (!StringUtils.hasText(text)) {
+            return;
+        }
 
         Integer id = Integer.valueOf(text);
 

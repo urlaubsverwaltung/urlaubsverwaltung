@@ -359,9 +359,9 @@
                                                     cssClass="tw-rounded-l tw-rounded-r-none"
                                                 >
                                                     <option value=""></option>
-                                                    <c:forEach items="${persons}" var="person">
-                                                        <option value="${person.id}">
-                                                            <c:out value="${person.niceName}"/>
+                                                    <c:forEach items="${selectableHolidayReplacements}" var="person">
+                                                        <option value="${person.personId}">
+                                                            <c:out value="${person.displayName}"/>
                                                         </option>
                                                     </c:forEach>
                                                 </uv:select>
@@ -385,12 +385,27 @@
                                                 <label class="control-label col-md-3">
                                                 </label>
                                                 <div class="col-md-9">
-                                                    <div>
-                                                        <small>
+                                                    <div class="tw-flex tw-justify-between tw-items-end tw-mb-1">
+                                                        <p class="tw-m-0">
                                                             <spring:message code="application.data.holidayReplacementNote"/>
                                                             <c:out value="${holidayReplacement.person.firstName}"/> <c:out
                                                             value="${holidayReplacement.person.lastName}"/>:
-                                                        </small>
+                                                        </p>
+                                                        <div>
+                                                            <button
+                                                                type="submit"
+                                                                class="tw-bg-transparent tw-text-sm tw-p-0 tw-flex tw-items-center tw-text-black tw-text-opacity-80 hover:tw-text-opacity-100 focus:tw-text-opacity-100 tw-transition-colors"
+                                                                name="remove-holiday-replacement"
+                                                                value="${holidayReplacement.person.id}"
+                                                                formmethod="post"
+                                                                formaction="${ADD_REPLACEMENT_ACTION}"
+                                                            >
+                                                                <span>
+                                                                    Vertretung entfernen
+                                                                </span>
+                                                                <icon:trash className="tw-w-4 tw-h-4" />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <form:input
                                                         path="holidayReplacements[${loop.index}].person"
@@ -404,8 +419,8 @@
                                                         onkeyup="count(this.value, 'text-holiday-replacement-note-${loop.index}');"
                                                         onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note-${loop.index}');"
                                                     />
-                                                    <div>
-                                                        <small class="tw-flex tw-justify-between tw-text-sm">
+                                                    <div class="tw-mt-1">
+                                                        <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
                                                             <span class="tw-flex-grow"></span>
                                                             <span id="text-holiday-replacement-note-${loop.index}"></span><spring:message
                                                             code="action.comment.maxChars"/>
@@ -430,8 +445,8 @@
                                                        cssErrorClass="form-control error"
                                                        onkeyup="count(this.value, 'text-address');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
-                                        <div>
-                                            <small class="tw-flex tw-justify-between tw-text-sm">
+                                        <div class="tw-mt-1">
+                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
                                                 <span class="tw-flex-grow"></span>
                                                 <span id="text-address"></span><spring:message
                                                 code="action.comment.maxChars"/>
@@ -453,8 +468,8 @@
                                                        cssErrorClass="form-control error"
                                                        onkeyup="count(this.value, 'text-comment');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
-                                        <div>
-                                            <small class="tw-flex tw-justify-between tw-text-sm">
+                                        <div class="tw-mt-1">
+                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
                                                 <span class="tw-flex-grow"></span>
                                                 <span id="text-comment"></span><spring:message
                                                 code="action.comment.maxChars"/>

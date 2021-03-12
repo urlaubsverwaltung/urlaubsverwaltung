@@ -42,11 +42,16 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
@@ -132,6 +137,7 @@ public class ApplicationForLeaveFormViewController {
             appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).or(endDateSupplier).orElse(startDate));
 
             prepareApplicationForLeaveForm(person, appForLeaveForm, model);
+            addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements());
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
@@ -154,12 +160,59 @@ public class ApplicationForLeaveFormViewController {
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
+            final Person replacementPersonToAdd = applicationForLeaveForm.getHolidayReplacementToAdd();
             // add replacementToAdd to the replacements list
-            final HolidayReplacementDto replacementDto = new HolidayReplacementDto(applicationForLeaveForm.getHolidayReplacementToAdd());
+            final HolidayReplacementDto replacementDto = new HolidayReplacementDto(replacementPersonToAdd);
             applicationForLeaveForm.getHolidayReplacements().add(replacementDto);
-            // and reset holidayReplacement selection element
+            // reset holidayReplacement selection element
             applicationForLeaveForm.setHolidayReplacementToAdd(null);
             prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+
+            // and remove it from the selectable elements
+            final List<SelectableHolidayReplacementDto> nextSelectableReplacements = selectableHolidayReplacements(
+                not(
+                    personEquals(replacementPersonToAdd)
+                        .or(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                )
+            );
+            addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
+        }
+
+        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
+
+        return APP_FORM;
+    }
+
+    @PostMapping(value = { "/application/new", "/application/{applicationId}" }, params = "remove-holiday-replacement")
+    public String removeHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm,
+                                           @RequestParam(name="remove-holiday-replacement") Integer personIdToRemove,
+                                           Model model) {
+
+        final Person signedInUser = personService.getSignedInUser();
+
+        Person person = ofNullable(applicationForLeaveForm.getPerson())
+            .orElse(signedInUser);
+
+        boolean isApplyingForOneSelf = person.equals(signedInUser);
+
+        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
+        }
+
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
+        if (holidaysAccount.isPresent()) {
+            final List<HolidayReplacementDto> newList = applicationForLeaveForm.getHolidayReplacements()
+                .stream()
+                .filter(holidayReplacementDto -> !holidayReplacementDto.getPerson().getId().equals(personIdToRemove))
+                .collect(toList());
+            applicationForLeaveForm.setHolidayReplacements(newList);
+            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+
+            final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
+                personEquals(personIdToRemove)
+                    .or(not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+            ));
+            addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements);
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
@@ -210,6 +263,11 @@ public class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
         if (holidaysAccount.isPresent()) {
             prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+
+            final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
+                not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+            );
+            model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
 
@@ -310,5 +368,44 @@ public class ApplicationForLeaveFormViewController {
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
         final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
         model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
+    }
+
+    private static Predicate<Person> personEquals(Person person) {
+        return person::equals;
+    }
+
+    private static Predicate<Person> personEquals(Integer personId) {
+        return p -> p.getId().equals(personId);
+    }
+
+    private static Predicate<Person> containsPerson(List<Person> personList) {
+        return personList::contains;
+    }
+
+    private List<Person> getAllSelectableReplacementPersons() {
+        return personService.getActivePersons();
+    }
+
+    private List<SelectableHolidayReplacementDto> selectableHolidayReplacements() {
+        return getAllSelectableReplacementPersons().stream()
+            .map(ApplicationForLeaveFormViewController::toSelectableHolidayReplacementDto)
+            .collect(toUnmodifiableList());
+    }
+    private List<SelectableHolidayReplacementDto> selectableHolidayReplacements(Predicate<Person> predicate) {
+        return getAllSelectableReplacementPersons().stream()
+            .filter(predicate)
+            .map(ApplicationForLeaveFormViewController::toSelectableHolidayReplacementDto)
+            .collect(toUnmodifiableList());
+    }
+
+    private static void addSelectableHolidayReplacementsToModel(Model model, List<SelectableHolidayReplacementDto> dtos) {
+        model.addAttribute("selectableHolidayReplacements", dtos);
+    }
+
+    private static SelectableHolidayReplacementDto toSelectableHolidayReplacementDto(Person person) {
+        final SelectableHolidayReplacementDto dto = new SelectableHolidayReplacementDto();
+        dto.setPersonId(person.getId());
+        dto.setDisplayName(person.getNiceName());
+        return dto;
     }
 }
