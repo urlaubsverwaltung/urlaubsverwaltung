@@ -1,0 +1,66 @@
+name: Urlaubsverwaltung Release Trigger
+
+on:
+  workflow_dispatch:
+    inputs:
+      milestoneId:
+        description: 'Milestone ID'
+        required: true
+        default: '1'
+      releaseVersion:
+        description: 'Release version'
+        required: true
+        default: 'x.xx.x'
+      nextVersion:
+        description: 'Next version'
+        required: true
+        default: 'x.xx.x-SNAPSHOT'
+
+jobs:
+  trigger-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Cache pom dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            node/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Create Release Notes
+        uses: docker://decathlon/release-notes-generator-action:3.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_FOLDER: .chglog
+          USE_MILESTONE_TITLE: "true"
+      - name: Setup git user
+        uses: fregante/setup-git-user@v1
+      - name: Commit Release Notes
+        run: |
+          git add .chglog/*.md
+          git commit -m "Add release notes for ${{ github.event.inputs.milestoneId }}"
+      - name: Push Release Notes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.AM_PAT }}
+      - name: Trigger Release
+        run: ./release.sh
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
+          NEW_VERSION: ${{ github.event.inputs.nextVersion }}

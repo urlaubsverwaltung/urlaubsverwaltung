@@ -1,0 +1,29 @@
+changelog:
+  repository: synyx/urlaubsverwaltung
+  milestone-reference: id
+  sections:
+    - title: "⚠️ Security Issues"
+      labels: ["type: security"]
+      sort: "title"
+    - title: "⭐ Enhancements"
+      labels: ["type: enhancement"]
+      sort: "title"
+    - title: "🐞 Bugs"
+      labels: ["type: bug"]
+      sort: "title"
+    - title: "💥 Breaking Changes"
+      labels: ["type: breaking"]
+      sort: "title"
+    - title: "🚮 Deprecation"
+      labels: ["type: deprecation"]
+      sort: "title"
+    - title: "🔨 Dependency upgrades"
+      labels: ["type: dependencies"]
+      sort: "title"
+    - title: "📝 Documentation"
+      labels: ["type: documentation"]
+      sort: "title"
+  contributors:
+    title: "❤️ Contributors"
+    exclude:
+      names: ["dependabot[bot]"]
