@@ -59,7 +59,7 @@
     "concurrently": "6.0.0",
     "css-loader": "5.1.2",
     "cssnano": "4.1.10",
-    "date-fns": "2.17.0",
+    "date-fns": "2.19.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-prettier": "3.3.1",
