@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.overtime;
+package org.synyx.urlaubsverwaltung;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -10,11 +10,17 @@ public class DurationConverter implements AttributeConverter<Duration, Double> {
 
     @Override
     public Double convertToDatabaseColumn(Duration attribute) {
+        if (attribute == null) {
+            return null;
+        }
         return (double) attribute.toMinutes() / 60;
     }
 
     @Override
     public Duration convertToEntityAttribute(Double duration) {
+        if (duration == null) {
+            return null;
+        }
         return Duration.of(Math.round(duration * 60), ChronoUnit.MINUTES);
     }
 }
