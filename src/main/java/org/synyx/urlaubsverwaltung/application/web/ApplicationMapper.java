@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 
@@ -59,7 +59,7 @@ final class ApplicationMapper {
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());
 
         if (OVERTIME.equals(newApplication.getVacationType().getCategory())) {
-            final BigDecimal overtimeReduction = ApplicationForLeaveForm.calculateOvertimeReduction(applicationForLeaveForm.getHours(), applicationForLeaveForm.getMinutes());
+            final Duration overtimeReduction = applicationForLeaveForm.getOvertimeReduction();
             newApplication.setHours(overtimeReduction);
         }
 

@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.function.Consumer;
@@ -87,7 +88,7 @@ class ApplicationForLeaveFormTest {
         assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
         assertThat(application.getReason()).isEqualTo("Deshalb");
         assertThat(application.getVacationType().getMessageKey()).isEqualTo(overtime.getMessageKey());
-        assertThat(application.getHours()).isEqualTo(BigDecimal.valueOf(1.25));
+        assertThat(application.getHours()).isEqualTo(Duration.ofMinutes(75));
         assertThat(application.isTeamInformed()).isTrue();
     }
 
@@ -120,7 +121,7 @@ class ApplicationForLeaveFormTest {
         assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
         assertThat(application.getReason()).isEqualTo("Deshalb");
         assertThat(application.getVacationType().getMessageKey()).isEqualTo(overtime.getMessageKey());
-        assertThat(application.getHours()).isEqualTo(BigDecimal.valueOf(1.25));
+        assertThat(application.getHours()).isEqualTo(Duration.ofMinutes(75));
         assertThat(application.isTeamInformed()).isTrue();
     }
 
@@ -167,7 +168,7 @@ class ApplicationForLeaveFormTest {
             .endTime(endTime)
             .vacationType(vacationType)
             .dayLength(DayLength.ZERO)
-            .hoursAndMinutes(BigDecimal.valueOf(1.25))
+            .hoursAndMinutes(Duration.ofMinutes(75))
             .reason("Good one.")
             .holidayReplacement(holidayReplacement)
             .holidayReplacementNote("some note")
@@ -234,6 +235,16 @@ class ApplicationForLeaveFormTest {
     }
 
     @Test
+    void ensureCorrectDurationCalculation() {
+        assertThat(formWithOvertime(ONE, 15).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(BigDecimal.valueOf(1.25), 0).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(BigDecimal.valueOf(1.25), null).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(null, 75).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(null, null).getOvertimeReduction()).isNull();
+        assertThat(formWithOvertime(ONE, 75).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(135));
+    }
+
+    @Test
     void toStringTest() {
 
         final Person person = new Person();
@@ -255,7 +266,7 @@ class ApplicationForLeaveFormTest {
             .endTime(endTime)
             .vacationType(vacationType)
             .dayLength(DayLength.ZERO)
-            .hoursAndMinutes(BigDecimal.ZERO)
+            .hoursAndMinutes(Duration.ZERO)
             .reason("Reason")
             .holidayReplacement(holidayReplacement)
             .holidayReplacementNote("some note")
@@ -268,5 +279,12 @@ class ApplicationForLeaveFormTest {
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
             "vacationType=VacationType{category=null, messageKey='null'}, dayLength=ZERO, hours=0, minutes=0, " +
             "holidayReplacement=Person{id='null'}, holidayReplacementNote='some note', address='Address', teamInformed=true}");
+    }
+
+    private ApplicationForLeaveForm formWithOvertime(BigDecimal hours, Integer minutes) {
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
+        form.setHours(hours);
+        form.setMinutes(minutes);
+        return form;
     }
 }

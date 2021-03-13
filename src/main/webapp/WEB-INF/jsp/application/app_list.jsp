@@ -135,8 +135,7 @@
                                            href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
                                                 <c:when test="${application.hours != null}">
-                                                    <uv:number number="${application.hours}"/>
-                                                    <spring:message code="duration.hours"/>
+                                                    <uv:duration duration="${application.hours}"/>
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
@@ -276,8 +275,7 @@
                                            href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
                                                 <c:when test="${application.hours != null}">
-                                                    <uv:number number="${application.hours}"/>
-                                                    <spring:message code="duration.hours"/>
+                                                    <uv:duration duration="${application.hours}"/>
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
@@ -412,8 +410,7 @@
                                         <span class="tw-block tw-mb-1 tw-text-lg">
                                             <c:choose>
                                                 <c:when test="${application.hours != null}">
-                                                    <uv:number number="${application.hours}"/>
-                                                    <spring:message code="duration.hours"/>
+                                                    <uv:duration duration="${application.hours}"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <uv:number number="${application.workDays}"/>

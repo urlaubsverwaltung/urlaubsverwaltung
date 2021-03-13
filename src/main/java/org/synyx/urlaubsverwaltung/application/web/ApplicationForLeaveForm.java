@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -230,33 +231,25 @@ public class ApplicationForLeaveForm {
         applicationForLeave.setTeamInformed(teamInformed);
 
         if (VacationCategory.OVERTIME.equals(vacationType.getCategory())) {
-            applicationForLeave.setHours(calculateOvertimeReduction(hours, minutes));
+            applicationForLeave.setHours(getOvertimeReduction());
         }
 
         return applicationForLeave;
     }
 
     /**
-     * @return the hours and minutes fields mapped to a {@link BigDecimal}
+     * @return the hours and minutes fields mapped to a {@link Duration}
      */
-    static BigDecimal calculateOvertimeReduction(BigDecimal hours, Integer minutes) {
+    Duration getOvertimeReduction() {
 
         if (hours == null && minutes == null) {
             return null;
         }
 
         final BigDecimal originalHours = requireNonNullElse(hours, BigDecimal.ZERO);
-        final double originalMinutes = requireNonNullElse(minutes, 0).doubleValue();
+        final int originalMinutes = requireNonNullElse(minutes, 0);
 
-        final double minutesFromOriginalHours = (originalHours.doubleValue() % 1) * 60;
-        final double minutesFromOriginalMinutes = originalMinutes % 60;
-
-        final double hoursToAdd = (originalMinutes - minutesFromOriginalMinutes) / 60;
-
-        final double durationHours = originalHours.setScale(0, RoundingMode.DOWN).doubleValue() + hoursToAdd;
-        final double durationMinutes = minutesFromOriginalHours + minutesFromOriginalMinutes;
-
-        return BigDecimal.valueOf(durationHours + (durationMinutes / 60));
+        return Duration.ofMinutes(originalHours.multiply(BigDecimal.valueOf(60)).longValue() + originalMinutes);
     }
 
     @Override
@@ -332,12 +325,12 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder hoursAndMinutes(BigDecimal hours) {
+        public ApplicationForLeaveForm.Builder hoursAndMinutes(Duration hours) {
 
-            if (hours != null) {
-                this.hours = BigDecimal.valueOf(hours.intValue());
-                this.minutes = hours.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60L)).intValue();
-            }
+            final BigDecimal overtimeReduction = hours == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) hours.toMinutes() / 60);
+
+            this.hours = overtimeReduction.setScale(0, RoundingMode.DOWN).abs();
+            this.minutes = overtimeReduction.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
             return this;
         }
 

@@ -5,8 +5,8 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -180,7 +180,7 @@ class ApplicationTest {
         application.setPerson(person);
         application.setVacationType(vacationType);
         application.setId(1);
-        application.setHours(BigDecimal.TEN);
+        application.setHours(Duration.ofHours(10));
         application.setApplicationDate(LocalDate.EPOCH);
         application.setTwoStageApproval(true);
         application.setHolidayReplacement(person);
@@ -203,7 +203,7 @@ class ApplicationTest {
             "vacationType=VacationType{category=HOLIDAY, messageKey='null'}, dayLength=FULL, " +
             "holidayReplacement=Person{id='10'}, address='Address', applicationDate=1970-01-01, " +
             "cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, " +
-            "teamInformed=true, hours=10}");
+            "teamInformed=true, hours=PT10H}");
     }
 
     @Test

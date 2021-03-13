@@ -98,7 +98,7 @@
             <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
                     <br/>
-                    <uv:number number="${application.hours}"/>
+                    <uv:duration duration="${application.hours}"/>
                     <spring:message code="application.data.hours.number"/>
                 </span>
             </c:if>
