@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import static java.math.BigDecimal.ONE;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -180,10 +181,20 @@ class OvertimeFormTest {
 
     @Test
     void ensureDurationOfHourDecimalValueAndMinutes() {
-        final OvertimeForm overtimeForm = new OvertimeForm();
-        overtimeForm.setHours(BigDecimal.valueOf(1.1));
-        overtimeForm.setMinutes(12);
+        assertThat(overtimeForm(BigDecimal.valueOf(1.1), 12).getDuration()).isEqualTo(Duration.ofMinutes(78));
+        assertThat(overtimeForm(ONE, 15).getDuration()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(overtimeForm(BigDecimal.valueOf(1.25), 0).getDuration()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(overtimeForm(BigDecimal.valueOf(1.25), null).getDuration()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(overtimeForm(null, 75).getDuration()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(overtimeForm(null, null).getDuration()).isNull();
+        assertThat(overtimeForm(ONE, 75).getDuration()).isEqualTo(Duration.ofMinutes(135));
 
-        assertThat(overtimeForm.getDuration()).isEqualTo(Duration.ofMinutes(78));
+    }
+
+    private OvertimeForm overtimeForm(BigDecimal hours, Integer minutes) {
+        final OvertimeForm overtimeForm = new OvertimeForm();
+        overtimeForm.setHours(hours);
+        overtimeForm.setMinutes(minutes);
+        return overtimeForm;
     }
 }

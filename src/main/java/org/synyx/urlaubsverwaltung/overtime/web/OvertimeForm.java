@@ -148,22 +148,14 @@ public class OvertimeForm {
      */
     Duration getDuration() {
 
-        if (getMinutes() == null && getHours() == null) {
+        if (hours == null && minutes == null) {
             return null;
         }
 
-        final BigDecimal originalHours = requireNonNullElse(getHours(), BigDecimal.ZERO);
-        final double originalMinutes = requireNonNullElse(getMinutes(), 0).doubleValue();
+        final BigDecimal originalHours = requireNonNullElse(hours, BigDecimal.ZERO);
+        final int originalMinutes = requireNonNullElse(minutes, 0);
 
-        final double minutesFromOriginalHours = (originalHours.doubleValue() % 1) * 60;
-        final double minutesFromOriginalMinutes = originalMinutes % 60;
-
-        final double hoursToAdd = (originalMinutes - minutesFromOriginalMinutes) / 60;
-
-        final double durationHours = originalHours.setScale(0, RoundingMode.DOWN).doubleValue() + hoursToAdd;
-        final double durationMinutes = minutesFromOriginalHours + minutesFromOriginalMinutes;
-
-        final Duration duration = Duration.ofMinutes((long) (durationHours * 60 + durationMinutes));
+        final Duration duration = Duration.ofMinutes(originalHours.multiply(BigDecimal.valueOf(60)).longValue() + originalMinutes);
 
         return reduce ? duration.negated() : duration;
     }
