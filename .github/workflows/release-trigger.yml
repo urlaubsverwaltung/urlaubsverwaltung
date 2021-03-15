@@ -59,6 +59,7 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.AM_PAT }}
+          branch: ${{ github.ref }}
       - name: Trigger Release
         run: ./release.sh
         env:
