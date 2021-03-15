@@ -1,0 +1,64 @@
+name: SonarCloud
+
+on:
+  workflow_run:
+    workflows: [ "Urlaubsverwaltung CI" ]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  sonarCloud:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: haya14busa/action-workflow_run-status@v1
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Cache pom dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            node/
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Download sonarcloud artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: maven.yml
+          name: sonarcloud
+          path: target/
+      - name: Analyse with SonarCloud
+        run: >
+          ./mvnw --batch-mode
+          sonar:sonar
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.organization=synyx
+          -Dsonar.projectKey=org.synyx:urlaubsverwaltung
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml
+          -Dsonar.javascript.lcov.reportPaths=target/js-coverage/lcov.info
+          -Dsonar.javascript.exclusions=**/__tests__/**,**/*-spec.js,**/*.spec.js,**/*-test.js,**/*.test.js
+          -Dsonar.eslint.reportPaths=target/js-eslint/report.json
+          -Dsonar.coverage.exclusions=**/__tests__/**,**/*-spec.js,**/*.spec.js,**/*-test.js,**/*.test.js
+          -Dsonar.sources=src/main
+          -Dsonar.java.binaries=target/classes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
