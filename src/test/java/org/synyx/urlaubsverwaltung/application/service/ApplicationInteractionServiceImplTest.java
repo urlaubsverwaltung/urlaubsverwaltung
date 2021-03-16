@@ -11,8 +11,8 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -1157,15 +1157,15 @@ class ApplicationInteractionServiceImplTest {
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
-        newApplication.setStartDate(LocalDate.of(2020,10,3));
-        newApplication.setEndDate(LocalDate.of(2020,10,3));
+        newApplication.setStartDate(LocalDate.of(2020, 10, 3));
+        newApplication.setEndDate(LocalDate.of(2020, 10, 3));
         newApplication.setHolidayReplacement(holidayReplacement);
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
         final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
         oldApplication.setHolidayReplacement(holidayReplacement);
-        oldApplication.setStartDate(LocalDate.of(2020,10,4));
-        oldApplication.setEndDate(LocalDate.of(2020,10,4));
+        oldApplication.setStartDate(LocalDate.of(2020, 10, 4));
+        oldApplication.setEndDate(LocalDate.of(2020, 10, 4));
 
         final Optional<String> comment = of("Comment");
 

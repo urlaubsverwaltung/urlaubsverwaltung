@@ -344,7 +344,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "FULL");
 
         final String calendarName = "Vertretung für ...";
-        when(messageSource.getMessage("calendar.mail.holiday-replacement.name",  new Object[]{"Theo Fritz"}, Locale.GERMAN)).thenReturn(calendarName);
+        when(messageSource.getMessage("calendar.mail.holiday-replacement.name", new Object[]{"Theo Fritz"}, Locale.GERMAN)).thenReturn(calendarName);
 
         final File file = new File("");
         when(iCalService.getCalendar(eq(calendarName), any())).thenReturn(file);

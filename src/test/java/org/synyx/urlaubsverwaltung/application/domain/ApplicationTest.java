@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
