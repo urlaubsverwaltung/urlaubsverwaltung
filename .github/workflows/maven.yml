@@ -40,6 +40,7 @@ jobs:
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
       - name: Analyse with SonarCloud
+        if: ${{ github.event_name != 'pull_request' }}
         run: >
           ./mvnw --batch-mode
           -Pcoverage
