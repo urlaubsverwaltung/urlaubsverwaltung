@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class CalendarProperties {
      * feature
      */
     @Email
+    @Size(min = 1)
     private String organizer;
 
     /**
