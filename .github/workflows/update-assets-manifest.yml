@@ -5,7 +5,7 @@ on:
     workflows: [ "Urlaubsverwaltung CI" ]
     branches: [ "dependabot/npm_and_yarn/**" ]
     types:
-      - requested
+      - completed
   workflow_dispatch:
 
 jobs:
