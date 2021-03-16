@@ -8,9 +8,7 @@ import java.time.Instant;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 
 class OvertimeCommentTest {
 
