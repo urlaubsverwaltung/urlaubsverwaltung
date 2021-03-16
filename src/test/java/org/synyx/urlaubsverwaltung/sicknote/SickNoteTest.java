@@ -93,43 +93,6 @@ class SickNoteTest {
         assertActive.accept(SickNoteStatus.ACTIVE);
     }
 
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutStartDate() {
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(null);
-        sickNote.setEndDate(LocalDate.now(UTC));
-        sickNote.setDayLength(DayLength.FULL);
-
-        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
-    }
-
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(UTC));
-        sickNote.setEndDate(null);
-        sickNote.setDayLength(DayLength.FULL);
-
-        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
-    }
-
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
-
-        SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(UTC));
-        sickNote.setEndDate(LocalDate.now(UTC));
-        sickNote.setDayLength(null);
-
-        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
-    }
-
-
     @Test
     void ensureGetPeriodReturnsCorrectPeriod() {
 

@@ -13,12 +13,6 @@ import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory.SICK_NOTE_CH
 class SickNoteTypeTest {
 
     @Test
-    void ensureThrowsIfCheckingCategoryWithNull() {
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new SickNoteType().isOfCategory(null));
-    }
-
-    @Test
     void ensureReturnsTrueIfTypeIsOfGivenCategory() {
 
         final SickNoteType sickNoteType = new SickNoteType();
