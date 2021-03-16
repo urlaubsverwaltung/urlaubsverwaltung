@@ -198,31 +198,33 @@
                                                     ${(absence.weekend) ? ' vacationOverview-day-weekend' : ''}"
                                             >
                                                 <span class="tw-hidden print:tw-inline print:tw-font-mono">
-                                                    <c:if
-                                                        test="${absence.type eq 'waitingVacationFull'}"><spring:message
-                                                        code="absences.overview.vacation.abbr"/></c:if>
-                                                    <c:if
-                                                        test="${absence.type eq 'waitingVacationMorning'}"><spring:message
-                                                        code="absences.overview.vacation.noon.abbr"/></c:if>
-                                                    <c:if
-                                                        test="${absence.type eq 'waitingVacationNoon'}"><spring:message
-                                                        code="absences.overview.vacation.noon.abbr"/></c:if>
-                                                    <c:if
-                                                        test="${absence.type eq 'allowedVacationFull'}"><spring:message
-                                                        code="absences.overview.allowed.abbr"/></c:if>
-                                                    <c:if
-                                                        test="${absence.type eq 'allowedVacationMorning'}"><spring:message
-                                                        code="absences.overview.allowed.morning.abbr"/></c:if>
-                                                    <c:if
-                                                        test="${absence.type eq 'allowedVacationNoon'}"><spring:message
-                                                        code="absences.overview.allowed.noon.abbr"/></c:if>
-                                                    <c:if test="${absence.type eq 'activeSickNoteFull'}"><spring:message
-                                                        code="absences.overview.sick.abbr"/></c:if>
-                                                    <c:if
-                                                        test="${absence.type eq 'activeSickNoteMorning'}"><spring:message
-                                                        code="absences.overview.sick.morning.abbr"/></c:if>
-                                                    <c:if test="${absence.type eq 'activeSickNoteNoon'}"><spring:message
-                                                        code="absences.overview.sick.noon.abbr"/></c:if>
+                                                    <c:if test="${absence.type eq 'waitingVacationFull'}">
+                                                        <spring:message code="absences.overview.vacation.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'waitingVacationMorning'}">
+                                                        <spring:message code="absences.overview.vacation.noon.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'waitingVacationNoon'}">
+                                                        <spring:message code="absences.overview.vacation.noon.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'allowedVacationFull'}">
+                                                        <spring:message code="absences.overview.allowed.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'allowedVacationMorning'}">
+                                                        <spring:message code="absences.overview.allowed.morning.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'allowedVacationNoon'}">
+                                                        <spring:message code="absences.overview.allowed.noon.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'activeSickNoteFull'}">
+                                                        <spring:message code="absences.overview.sick.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'activeSickNoteMorning'}">
+                                                        <spring:message code="absences.overview.sick.morning.abbr"/>
+                                                    </c:if>
+                                                    <c:if test="${absence.type eq 'activeSickNoteNoon'}">
+                                                        <spring:message code="absences.overview.sick.noon.abbr"/>
+                                                    </c:if>
                                                 </span>
                                             </td>
                                         </c:forEach>
@@ -250,8 +252,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.allowed.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.allowed.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.allowed"/>
@@ -259,8 +262,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.allowed.morning.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.allowed.morning.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.allowed.morning"/>
@@ -268,8 +272,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.allowed.noon.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.allowed.noon.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.allowed.noon"/>
@@ -277,8 +282,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-WAITING'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.vacation.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.vacation.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.vacation"/>
@@ -286,8 +292,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-WAITING'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.vacation.morning.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.vacation.morning.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.vacation.morning"/>
@@ -295,8 +302,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-WAITING'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.vacation.noon.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.vacation.noon.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.vacation.noon"/>
@@ -304,8 +312,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-sick-note'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.sick.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.sick.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.sick"/>
@@ -313,8 +322,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-sick-note'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.sick.morning.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.sick.morning.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.sick.morning"/>
@@ -322,8 +332,9 @@
                         </tr>
                         <tr>
                             <td class='vacationOverview-legend-colorbox vacationOverview-day-sick-note'>
-                                <span class="tw-hidden print:tw-inline"><spring:message
-                                    code="absences.overview.sick.noon.abbr"/></span>
+                                <span class="tw-hidden print:tw-inline">
+                                    <spring:message code="absences.overview.sick.noon.abbr"/>
+                                </span>
                             </td>
                             <td class='vacationOverview-legend-text'>
                                 <spring:message code="absences.overview.sick.noon"/>
