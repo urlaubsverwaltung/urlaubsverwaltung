@@ -26,7 +26,6 @@ class SickNoteTest {
         assertThat(sickNote.getLastEdited()).isEqualTo(LocalDate.now(UTC));
     }
 
-
     @Test
     void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
 
@@ -37,7 +36,6 @@ class SickNoteTest {
         assertThat(sickNote.isAubPresent()).isTrue();
     }
 
-
     @Test
     void ensureAUBIsNotPresentIfOnlyAUBStartDateIsSet() {
 
@@ -46,7 +44,6 @@ class SickNoteTest {
 
         assertThat(sickNote.isAubPresent()).isFalse();
     }
-
 
     @Test
     void ensureAUBIsNotPresentIfOnlyAUBEndDateIsSet() {
@@ -57,13 +54,11 @@ class SickNoteTest {
         assertThat(sickNote.isAubPresent()).isFalse();
     }
 
-
     @Test
     void ensureAUBIsNotPresentIfNoAUBPeriodIsSet() {
 
         assertThat(new SickNote().isAubPresent()).isFalse();
     }
-
 
     @Test
     void ensureIsNotActiveForInactiveStatus() {
@@ -79,7 +74,6 @@ class SickNoteTest {
         assertNotActive.accept(SickNoteStatus.CONVERTED_TO_VACATION);
     }
 
-
     @Test
     void ensureIsActiveForActiveStatus() {
 
@@ -91,6 +85,39 @@ class SickNoteTest {
         };
 
         assertActive.accept(SickNoteStatus.ACTIVE);
+    }
+
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutStartDate() {
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(null);
+        sickNote.setEndDate(LocalDate.now(UTC));
+        sickNote.setDayLength(DayLength.FULL);
+
+        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
+    }
+
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutEndDate() {
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(LocalDate.now(UTC));
+        sickNote.setEndDate(null);
+        sickNote.setDayLength(DayLength.FULL);
+
+        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
+    }
+
+    @Test
+    void ensureThrowsIfTryingToGetPeriodForSickNoteWithoutDayLength() {
+
+        SickNote sickNote = new SickNote();
+        sickNote.setStartDate(LocalDate.now(UTC));
+        sickNote.setEndDate(LocalDate.now(UTC));
+        sickNote.setDayLength(null);
+
+        assertThatIllegalArgumentException().isThrownBy(sickNote::getPeriod);
     }
 
     @Test
