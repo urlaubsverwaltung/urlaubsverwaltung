@@ -14,10 +14,6 @@ public class Period {
     private final DayLength dayLength;
 
     public Period(LocalDate startDate, LocalDate endDate, DayLength dayLength) {
-
-        Assert.notNull(startDate, "Start date must be given");
-        Assert.notNull(endDate, "End date must be given");
-        Assert.notNull(dayLength, "Day length must be given");
         Assert.isTrue(!dayLength.equals(DayLength.ZERO), "Day length may not be zero");
 
         boolean isFullDay = dayLength.equals(DayLength.FULL);

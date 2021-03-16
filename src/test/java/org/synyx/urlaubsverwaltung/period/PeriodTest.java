@@ -12,27 +12,9 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 class PeriodTest {
 
     @Test
-    void ensureThrowsOnNullStartDate() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Period(null, LocalDate.now(UTC), DayLength.FULL));
-    }
-
-    @Test
-    void ensureThrowsOnNullEndDate() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Period(LocalDate.now(UTC), null, DayLength.FULL));
-    }
-
-
-    @Test
-    void ensureThrowsOnNullDayLength() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Period(LocalDate.now(UTC), LocalDate.now(UTC), null));
-    }
-
-
-    @Test
     void ensureThrowsOnZeroDayLength() {
         assertThatIllegalArgumentException().isThrownBy(() -> new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.ZERO));
     }
-
 
     @Test
     void ensureThrowsIfEndDateIsBeforeStartDate() {
@@ -43,20 +25,17 @@ class PeriodTest {
         assertThatIllegalArgumentException().isThrownBy(() -> new Period(startDate, endDateBeforeStartDate, DayLength.FULL));
     }
 
-
     @Test
     void ensureThrowsIfStartAndEndDateAreNotSameForMorningDayLength() {
         LocalDate startDate = LocalDate.now(UTC);
         assertThatIllegalArgumentException().isThrownBy(() -> new Period(startDate, startDate.plusDays(1), DayLength.MORNING));
     }
 
-
     @Test
     void ensureThrowsIfStartAndEndDateAreNotSameForNoonDayLength() {
         LocalDate startDate = LocalDate.now(UTC);
         assertThatIllegalArgumentException().isThrownBy(() -> new Period(startDate, startDate.plusDays(1), DayLength.NOON));
     }
-
 
     @Test
     void ensureCanBeInitializedWithFullDay() {
@@ -70,7 +49,6 @@ class PeriodTest {
         assertThat(period.getEndDate()).isEqualTo(endDate);
         assertThat(period.getDayLength()).isEqualTo(DayLength.FULL);
     }
-
 
     @Test
     void ensureCanBeInitializedWithHalfDay() {
