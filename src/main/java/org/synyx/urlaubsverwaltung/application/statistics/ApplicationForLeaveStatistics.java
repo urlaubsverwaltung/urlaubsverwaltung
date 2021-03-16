@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -18,9 +17,6 @@ import static java.math.BigDecimal.ZERO;
  */
 public class ApplicationForLeaveStatistics {
 
-    private static final String VACATION_TYPE_MUST_BE_GIVEN = "Vacation type must be given.";
-    private static final String DAYS_MUST_BE_GIVEN = "Days must be given.";
-
     private final Person person;
 
     private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
@@ -30,9 +26,6 @@ public class ApplicationForLeaveStatistics {
     private Duration leftOvertime = Duration.ZERO;
 
     public ApplicationForLeaveStatistics(Person person, VacationTypeService vacationTypeService) {
-
-        Assert.notNull(person, "Person must be given.");
-
         this.person = person;
 
         for (VacationType vacationType : vacationTypeService.getVacationTypes()) {
@@ -78,39 +71,22 @@ public class ApplicationForLeaveStatistics {
     }
 
     public void setLeftVacationDays(BigDecimal leftVacationDays) {
-
-        Assert.notNull(leftVacationDays, DAYS_MUST_BE_GIVEN);
-
         this.leftVacationDays = leftVacationDays;
     }
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
-
-        Assert.notNull(vacationType, VACATION_TYPE_MUST_BE_GIVEN);
-        Assert.notNull(waitingVacationDays, DAYS_MUST_BE_GIVEN);
-
         BigDecimal currentWaitingVacationDays = getWaitingVacationDays().get(vacationType);
-
         getWaitingVacationDays().put(vacationType, currentWaitingVacationDays.add(waitingVacationDays));
     }
 
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
-
-        Assert.notNull(vacationType, VACATION_TYPE_MUST_BE_GIVEN);
-        Assert.notNull(allowedVacationDays, DAYS_MUST_BE_GIVEN);
-
         BigDecimal currentAllowedVacationDays = getAllowedVacationDays().get(vacationType);
-
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 
     public void setLeftOvertime(Duration leftOvertime) {
-
-        Assert.notNull(leftOvertime, "Overtime must be given.");
-
         this.leftOvertime = leftOvertime;
     }
-
 
     public Duration getLeftOvertime() {
         return leftOvertime;

@@ -15,22 +15,14 @@ import java.util.List;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsTest {
 
     @Mock
     private VacationTypeService vacationTypeService;
-
-    @Test
-    void ensureThrowsIfInitializedWithNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new ApplicationForLeaveStatistics(null, null));
-    }
 
     @Test
     void ensureHasDefaultValues() {
@@ -67,46 +59,7 @@ class ApplicationForLeaveStatisticsTest {
         assertThat(statistics.getLeftVacationDays()).isEqualByComparingTo(ONE);
     }
 
-    @Test
-    void ensureThrowsIfSettingTotalLeftVacationDaysToNull() {
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> statistics.setLeftVacationDays(null));
-    }
-
     // Adding vacation days --------------------------------------------------------------------------------------------
-    @Test
-    void ensureThrowsIfAddingWaitingVacationDaysWithNullVacationType() {
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> statistics.addWaitingVacationDays(null, ONE));
-    }
-
-
-    @Test
-    void ensureThrowsIfAddingWaitingVacationDaysWithNullDays() {
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> statistics.addWaitingVacationDays(createVacationType(HOLIDAY), null));
-    }
-
-    @Test
-    void ensureThrowsIfAddingAllowedVacationDaysWithNullVacationType() {
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> statistics.addAllowedVacationDays(null, ONE));
-    }
-
-    @Test
-    void ensureThrowsIfAddingAllowedVacationDaysWithNullDays() {
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> statistics.addAllowedVacationDays(createVacationType(HOLIDAY), null));
-    }
-
     @Test
     void ensureCanAddWaitingVacationDays() {
         final List<VacationType> vacationTypes = createVacationTypes();
@@ -183,12 +136,5 @@ class ApplicationForLeaveStatisticsTest {
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
         statistics.setLeftOvertime(Duration.ofHours(1));
         assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofHours(1));
-    }
-
-    @Test
-    void ensureThrowsIfSettingTotalLeftOvertimeToNull() {
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationTypeService);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> statistics.setLeftOvertime(null));
     }
 }
