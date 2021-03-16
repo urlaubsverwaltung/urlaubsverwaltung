@@ -64,39 +64,6 @@ class ApplicationTest {
 
     // Period ----------------------------------------------------------------------------------------------------------
     @Test
-    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutStartDate() {
-
-        Application application = new Application();
-        application.setStartDate(null);
-        application.setEndDate(LocalDate.now(UTC));
-        application.setDayLength(DayLength.FULL);
-
-        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
-
-        Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
-        application.setEndDate(null);
-        application.setDayLength(DayLength.FULL);
-
-        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
-
-        Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
-        application.setEndDate(LocalDate.now(UTC));
-        application.setDayLength(null);
-
-        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
-    }
-
-    @Test
     void ensureGetPeriodReturnsCorrectPeriod() {
 
         LocalDate startDate = LocalDate.now(UTC);
