@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -37,11 +36,6 @@ public class OvertimeComment extends AbstractComment {
 
     public OvertimeComment(Person author, Overtime overtime, OvertimeCommentAction action, Clock clock) {
         super(clock);
-
-        Assert.notNull(author, "Author must be given.");
-        Assert.notNull(overtime, "Overtime record must be given.");
-        Assert.notNull(action, "Action must be given.");
-
         super.setPerson(author);
 
         this.overtime = overtime;

@@ -154,11 +154,6 @@ class OvertimeServiceImplTest {
         verify(overtimeRepository).findByPerson(person);
     }
 
-    @Test
-    void ensureThrowsIfTryingToGetOvertimeForNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getOvertimeRecordsForPerson(null));
-    }
-
     // Get overtime record by ID ---------------------------------------------------------------------------------------
     @Test
     void ensureGetByIDCallsCorrectDAOMethod() {
@@ -166,11 +161,6 @@ class OvertimeServiceImplTest {
         sut.getOvertimeById(42);
 
         verify(overtimeRepository).findById(42);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToGetOvertimeByEmptyID() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getOvertimeById(null));
     }
 
     @Test
@@ -183,11 +173,6 @@ class OvertimeServiceImplTest {
     }
 
     // Get overtime records for person and year ------------------------------------------------------------------------
-    @Test
-    void ensureThrowsIfTryingToGetRecordsByPersonAndYearWithNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getOvertimeRecordsForPersonAndYear(null, 2015));
-    }
-
     @Test
     void ensureGetRecordsByPersonAndYearCallsCorrectDAOMethod() {
 
@@ -210,17 +195,7 @@ class OvertimeServiceImplTest {
         verify(commentDAO).findByOvertime(overtime);
     }
 
-    @Test
-    void ensureThrowsIfTryingToGetCommentsForNullOvertime() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getCommentsForOvertime(null));
-    }
-
     // Get total overtime for year -------------------------------------------------------------------------------------
-    @Test
-    void ensureThrowsIfTryingToGetYearOvertimeForNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(null, 2016));
-    }
-
     @Test
     void ensureThrowsIfTryingToGetYearOvertimeForNegativeYear() {
         assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeForPersonAndYear(new Person("muster", "Muster", "Marlene", "muster@example.org"), -1));
@@ -270,11 +245,6 @@ class OvertimeServiceImplTest {
     }
 
     // Get left overtime -----------------------------------------------------------------------------------------------
-    @Test
-    void ensureThrowsIfTryingToGetLeftOvertimeForNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getLeftOvertimeForPerson(null));
-    }
-
     @Test
     void ensureReturnsZeroAsLeftOvertimeIfPersonHasNoOvertimeRecordsYet() {
 

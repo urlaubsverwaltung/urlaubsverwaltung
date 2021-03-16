@@ -21,7 +21,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
 
-
 /**
  * @since 2.11.0
  */
@@ -51,17 +50,11 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<Overtime> getOvertimeRecordsForPerson(Person person) {
-
-        Assert.notNull(person, "Person to get overtime records for must be given.");
-
         return overtimeRepository.findByPerson(person);
     }
 
     @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
-
-        Assert.notNull(person, "Person to get overtime records for must be given.");
-
         return overtimeRepository.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
     }
 
@@ -90,24 +83,16 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public Optional<Overtime> getOvertimeById(Integer id) {
-
-        Assert.notNull(id, "ID must be given.");
-
         return overtimeRepository.findById(id);
     }
 
     @Override
     public List<OvertimeComment> getCommentsForOvertime(Overtime overtime) {
-
-        Assert.notNull(overtime, "Overtime record to get comments for must be given.");
-
         return overtimeCommentRepository.findByOvertime(overtime);
     }
 
     @Override
     public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
-
-        Assert.notNull(person, "Person to get total overtime for must be given.");
         Assert.isTrue(year > 0, "Year must be a valid number.");
 
         final List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
@@ -122,9 +107,6 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public Duration getLeftOvertimeForPerson(Person person) {
-
-        Assert.notNull(person, "Person to get left overtime for must be given.");
-
         final Duration totalOvertime = getTotalOvertimeForPerson(person);
         final Duration overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
