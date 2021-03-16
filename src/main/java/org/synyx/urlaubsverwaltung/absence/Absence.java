@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -27,10 +26,6 @@ public class Absence {
     }
 
     public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
-
-        Assert.notNull(person, "Person must be given");
-        Assert.notNull(period, "Period must be given");
-        Assert.notNull(absenceTimeConfiguration, "Time configuration must be given");
 
         this.person = person;
         this.absenceType = absenceType;

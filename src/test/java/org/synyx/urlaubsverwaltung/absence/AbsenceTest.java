@@ -134,26 +134,6 @@ class AbsenceTest {
     }
 
     @Test
-    void ensureThrowsOnNullPeriod() {
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Absence(person, null, timeConfiguration));
-    }
-
-    @Test
-    void ensureThrowsOnNullPerson() {
-        Period period = new Period(LocalDate.now(clock), LocalDate.now(clock), DayLength.FULL);
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Absence(null, period, timeConfiguration));
-    }
-
-    @Test
-    void ensureThrowsOnNullConfiguration() {
-        Period period = new Period(LocalDate.now(clock), LocalDate.now(clock), DayLength.FULL);
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Absence(person, period, null));
-    }
-
-    @Test
     void ensureCorrectEventSubject() {
 
         LocalDate today = LocalDate.now(clock);
