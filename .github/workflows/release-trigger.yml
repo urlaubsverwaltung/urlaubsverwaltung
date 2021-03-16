@@ -54,7 +54,7 @@ jobs:
       - name: Commit Release Notes
         run: |
           git add .chglog/*.md
-          git commit -m "Add release notes for ${{ github.event.inputs.milestoneId }}"
+          git commit -m "Add release notes for version ${{ github.event.inputs.releaseVersion }}"
       - name: Push Release Notes
         uses: ad-m/github-push-action@v0.6.0
         with:
