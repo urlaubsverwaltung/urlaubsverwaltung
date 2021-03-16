@@ -73,16 +73,6 @@ class ApplicationForLeaveStatisticsBuilderTest {
     }
 
     @Test
-    void ensureThrowsIfTheGivenFromDateIsNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(mock(Person.class), null, LocalDate.of(2015, 12, 31)));
-    }
-
-    @Test
-    void ensureThrowsIfTheGivenToDateIsNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(mock(Person.class), LocalDate.of(2014, 1, 1), null));
-    }
-
-    @Test
     void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
         assertThatIllegalArgumentException().isThrownBy(() -> sut.build(mock(Person.class), LocalDate.of(2014, 1, 1), LocalDate.of(2015, 1, 1)));
     }

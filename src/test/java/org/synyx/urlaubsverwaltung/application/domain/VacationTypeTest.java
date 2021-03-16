@@ -1,19 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 
 class VacationTypeTest {
-
-    @Test
-    void ensureThrowsIfCheckingCategoryWithNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new VacationType().isOfCategory(null));
-    }
 
     @Test
     void ensureReturnsTrueIfVacationTypeIsOfGivenCategory() {
