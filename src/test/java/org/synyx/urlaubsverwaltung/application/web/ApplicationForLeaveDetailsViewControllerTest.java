@@ -691,7 +691,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void cancelCancellationRequestApplicationWithValidationErrors() throws Exception{
+    void cancelCancellationRequestApplicationWithValidationErrors() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication()));
@@ -708,7 +708,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void cancelCancellationRequestApplication() throws Exception{
+    void cancelCancellationRequestApplication() throws Exception {
 
         final Person signedInPerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);

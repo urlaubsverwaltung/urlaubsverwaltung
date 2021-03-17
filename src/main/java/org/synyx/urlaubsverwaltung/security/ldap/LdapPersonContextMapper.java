@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.Person.Essence;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -103,15 +102,12 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
      * @return the granted authorities for the person
      */
     Collection<GrantedAuthority> getGrantedAuthorities(Person person) {
-
-        Assert.notNull(person, "Person must be given.");
-
-        Collection<Role> permissions = person.getPermissions();
+        final Collection<Role> permissions = person.getPermissions();
         if (permissions.isEmpty()) {
             throw new IllegalStateException("Every user must have at least one role, data seems to be corrupt.");
         }
 
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         permissions.forEach(role -> grantedAuthorities.add(role::name));
 
         return grantedAuthorities;

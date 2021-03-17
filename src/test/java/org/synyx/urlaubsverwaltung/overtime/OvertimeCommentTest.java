@@ -8,35 +8,11 @@ import java.time.Instant;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
-
 
 class OvertimeCommentTest {
 
     private final Clock clock = Clock.systemUTC();
-
-    @Test
-    void ensureThrowsOnNullPerson() {
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new OvertimeComment(null, createOvertimeRecord(), CREATED, clock));
-    }
-
-
-    @Test
-    void ensureThrowsOnNullOvertime() {
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new OvertimeComment(new Person("muster", "Muster", "Marlene", "muster@example.org"), null, CREATED, clock));
-    }
-
-
-    @Test
-    void ensureThrowsOnNullAction() {
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new OvertimeComment(new Person("muster", "Muster", "Marlene", "muster@example.org"), createOvertimeRecord(), null, clock));
-    }
-
 
     @Test
     void ensureCorrectPropertiesAfterInitialization() {

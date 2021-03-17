@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
@@ -12,43 +11,12 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 class OvertimeTest {
-
-    @Test
-    void ensureThrowsOnNullPerson() {
-        LocalDate now = LocalDate.now(UTC);
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(null, now, now, Duration.ofHours(1)));
-    }
-
-    @Test
-    void ensureThrowsOnNullStartDate() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        LocalDate now = LocalDate.now(UTC);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, null, now, Duration.ofHours(1)));
-    }
-
-    @Test
-    void ensureThrowsOnNullEndDate() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        LocalDate now = LocalDate.now(UTC);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, null, Duration.ofHours(1)));
-    }
-
-    @Test
-    void ensureThrowsOnNullNumberOfHours() {
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        LocalDate now = LocalDate.now(UTC);
-
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime(person, now, now, null));
-    }
 
     @Test
     void ensureReturnsCorrectStartDate() {
@@ -136,26 +104,6 @@ class OvertimeTest {
         assertThat(overtime.getLastModificationDate()).isEqualTo(now.minusDays(3));
         overtime.onUpdate();
         assertThat(overtime.getLastModificationDate()).isEqualTo(now);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToSetStartDateToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setStartDate(null));
-    }
-
-    @Test
-    void ensureThrowsIfTryingToSetEndDateToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setEndDate(null));
-    }
-
-    @Test
-    void ensureThrowsIfTryingToSetHoursToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setDuration(null));
-    }
-
-    @Test
-    void ensureThrowsIfTryingToSetPersonToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Overtime().setPerson(null));
     }
 
     @Test

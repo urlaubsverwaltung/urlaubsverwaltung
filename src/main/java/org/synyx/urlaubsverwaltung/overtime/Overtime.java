@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
@@ -49,12 +48,6 @@ public class Overtime {
     }
 
     public Overtime(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {
-
-        Assert.notNull(person, "Person must be given.");
-        Assert.notNull(startDate, "Start date must be given.");
-        Assert.notNull(endDate, "End date must be given.");
-        Assert.notNull(duration, "Duration of must be given.");
-
         this.person = person;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -96,30 +89,18 @@ public class Overtime {
     }
 
     public void setPerson(Person person) {
-
-        Assert.notNull(person, "Person must be given.");
-
         this.person = person;
     }
 
     public void setStartDate(LocalDate startDate) {
-
-        Assert.notNull(startDate, "Start date must be given.");
-
         this.startDate = startDate;
     }
 
     public void setEndDate(LocalDate endDate) {
-
-        Assert.notNull(endDate, "End date must be given.");
-
         this.endDate = endDate;
     }
 
     public void setDuration(Duration duration) {
-
-        Assert.notNull(duration, "Duration of overtime must be given.");
-
         this.duration = duration;
     }
 

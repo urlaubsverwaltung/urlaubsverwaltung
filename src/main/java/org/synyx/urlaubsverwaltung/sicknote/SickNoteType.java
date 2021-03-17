@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote;
 
-import org.springframework.util.Assert;
-
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -35,7 +33,6 @@ public class SickNoteType {
     }
 
     public boolean isOfCategory(SickNoteCategory category) {
-        Assert.notNull(category, "Sick note category must be given");
         return getCategory().equals(category);
     }
 

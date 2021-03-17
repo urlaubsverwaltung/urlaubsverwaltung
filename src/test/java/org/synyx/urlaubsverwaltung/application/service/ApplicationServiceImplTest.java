@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
@@ -65,11 +64,6 @@ class ApplicationServiceImplTest {
     }
 
     // Get total overtime reduction ------------------------------------------------------------------------------------
-    @Test
-    void ensureThrowsIfTryingToGetTotalOvertimeReductionForNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getTotalOvertimeReductionOfPerson(null));
-    }
-
     @Test
     void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveYet() {
 

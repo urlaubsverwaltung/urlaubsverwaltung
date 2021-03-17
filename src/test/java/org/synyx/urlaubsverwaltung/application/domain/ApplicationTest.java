@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -64,39 +63,6 @@ class ApplicationTest {
     }
 
     // Period ----------------------------------------------------------------------------------------------------------
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutStartDate() {
-
-        Application application = new Application();
-        application.setStartDate(null);
-        application.setEndDate(LocalDate.now(UTC));
-        application.setDayLength(DayLength.FULL);
-
-        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutEndDate() {
-
-        Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
-        application.setEndDate(null);
-        application.setDayLength(DayLength.FULL);
-
-        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToGetPeriodForApplicationWithoutDayLength() {
-
-        Application application = new Application();
-        application.setStartDate(LocalDate.now(UTC));
-        application.setEndDate(LocalDate.now(UTC));
-        application.setDayLength(null);
-
-        assertThatIllegalArgumentException().isThrownBy(application::getPeriod);
-    }
-
     @Test
     void ensureGetPeriodReturnsCorrectPeriod() {
 

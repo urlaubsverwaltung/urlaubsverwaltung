@@ -768,6 +768,7 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     // Validate maximal overtime reduction -----------------------------------------------------------------------------
+
     /**
      * User tries to make an application (overtime reduction) but has not enough overtime left and minimum overtime is
      * reached.

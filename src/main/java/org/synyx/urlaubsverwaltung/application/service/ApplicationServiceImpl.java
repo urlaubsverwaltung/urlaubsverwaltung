@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
@@ -80,8 +79,6 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Duration getTotalOvertimeReductionOfPerson(Person person) {
-        Assert.notNull(person, "Person to get overtime reduction for must be given.");
-
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).orElse(BigDecimal.ZERO);
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }

@@ -55,9 +55,6 @@ public class ApplicationForLeaveStatisticsBuilder {
     }
 
     public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to) {
-        Assert.notNull(person, "Person must be given");
-        Assert.notNull(from, "From must be given");
-        Assert.notNull(to, "To must be given");
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, vacationTypeService);

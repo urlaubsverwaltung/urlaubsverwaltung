@@ -22,7 +22,6 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -57,11 +56,6 @@ class LdapPersonContextMapperTest {
     @BeforeEach
     void setUp() {
         sut = new LdapPersonContextMapper(personService, ldapUserMapper);
-    }
-
-    @Test
-    void ensureThrowsIfTryingToGetAuthoritiesForNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getGrantedAuthorities(null));
     }
 
     @Test

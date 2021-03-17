@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
-import org.springframework.util.Assert;
-
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -45,7 +43,6 @@ public class VacationType {
     }
 
     public boolean isOfCategory(VacationCategory category) {
-        Assert.notNull(category, "Vacation category must be given");
         return getCategory().equals(category);
     }
 

@@ -363,8 +363,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final Person savedPerson = personService.save(person);
 
         // correct
-        final LocalDate from = LocalDate.of(2020,5,3);
-        final LocalDate to = LocalDate.of(2020,5,10);
+        final LocalDate from = LocalDate.of(2020, 5, 3);
+        final LocalDate to = LocalDate.of(2020, 5, 10);
         final Application waitingApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
         waitingApplication.setHolidayReplacement(savedHolidayReplacement);
         waitingApplication.setStatus(WAITING);

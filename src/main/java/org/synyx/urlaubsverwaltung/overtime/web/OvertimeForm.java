@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -38,15 +37,10 @@ public class OvertimeForm {
     }
 
     public OvertimeForm(Person person) {
-
-        Assert.notNull(person, "Person must be given.");
         this.person = person;
     }
 
     public OvertimeForm(Overtime overtime) {
-
-        Assert.notNull(overtime, "Overtime must be given.");
-
         final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();

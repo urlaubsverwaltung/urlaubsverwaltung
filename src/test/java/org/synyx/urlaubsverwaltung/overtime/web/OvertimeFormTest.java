@@ -14,15 +14,8 @@ import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-
 
 class OvertimeFormTest {
-
-    @Test
-    void ensureThrowsIfInitializedWithNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm((Person) null));
-    }
 
     @Test
     void ensureCanBeInitializedWithPerson() {
@@ -103,17 +96,6 @@ class OvertimeFormTest {
         overtimeForm.setEndDate(LocalDate.parse("2020-10-30"));
 
         assertThat(overtimeForm.getEndDateIsoValue()).isEqualTo("2020-10-30");
-    }
-
-    @Test
-    void ensureThrowsIfGeneratingOvertimeWithoutCheckingFormAttributes() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm(new Person("muster", "Muster", "Marlene", "muster@example.org")).generateOvertime());
-    }
-
-
-    @Test
-    void ensureThrowsIfInitializedWithNullOvertime() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new OvertimeForm((Overtime) null));
     }
 
     @Test
