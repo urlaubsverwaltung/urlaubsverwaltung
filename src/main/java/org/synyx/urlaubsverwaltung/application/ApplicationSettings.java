@@ -24,6 +24,16 @@ public class ApplicationSettings {
      */
     private Integer daysBeforeRemindForWaitingApplications = 2;
 
+    /**
+     * Activates a notification {daysBeforeRemindForUpcomingApplications} days before upcoming applications
+     */
+    private boolean remindForUpcomingApplications = false;
+
+    /**
+     * Specifies when a reminder for upcoming application should be send
+     */
+    private Integer daysBeforeRemindForUpcomingApplications = 3;
+
     public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
         return maximumMonthsToApplyForLeaveInAdvance;
     }
@@ -46,5 +56,21 @@ public class ApplicationSettings {
 
     public void setDaysBeforeRemindForWaitingApplications(Integer daysBeforeRemindForWaitingApplications) {
         this.daysBeforeRemindForWaitingApplications = daysBeforeRemindForWaitingApplications;
+    }
+
+    public boolean isRemindForUpcomingApplications() {
+        return remindForUpcomingApplications;
+    }
+
+    public void setRemindForUpcomingApplications(boolean remindForStartingSoonApplications) {
+        this.remindForUpcomingApplications = remindForStartingSoonApplications;
+    }
+
+    public Integer getDaysBeforeRemindForUpcomingApplications() {
+        return daysBeforeRemindForUpcomingApplications;
+    }
+
+    public void setDaysBeforeRemindForUpcomingApplications(Integer daysBeforeRemindForUpcomingApplications) {
+        this.daysBeforeRemindForUpcomingApplications = daysBeforeRemindForUpcomingApplications;
     }
 }

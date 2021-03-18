@@ -21,9 +21,11 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
@@ -395,6 +397,49 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final List<ApplicationStatus> requestStatus = List.of(WAITING);
         final List<Application> applications = sut.findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, requestDate, requestStatus);
         assertThat(applications).hasSize(1).contains(waitingApplication);
+    }
+
+    @Test
+    void findByStatusInAndStartDate() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        // yesterday
+        final LocalDate yesterdayDates = LocalDate.of(2020, 5, 3);
+        final Application yesterdayApplication = createApplication(savedPerson, getVacationType(HOLIDAY), yesterdayDates, yesterdayDates, FULL);
+        yesterdayApplication.setStatus(ALLOWED);
+        sut.save(yesterdayApplication);
+
+        // today
+        final LocalDate todayDates = LocalDate.of(2020, 5, 4);
+        final Application todayApplication = createApplication(savedPerson, getVacationType(HOLIDAY), todayDates, todayDates, FULL);
+        todayApplication.setStatus(ALLOWED);
+        sut.save(todayApplication);
+
+        // tomorrow
+        final LocalDate tomorrowAllowedDates = LocalDate.of(2020, 5, 5);
+        final Application tomorrowDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
+        tomorrowDateApplication.setStatus(ALLOWED);
+        sut.save(tomorrowDateApplication);
+
+        final Application tomorrowCancellationRequestDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
+        tomorrowCancellationRequestDateApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        sut.save(tomorrowCancellationRequestDateApplication);
+
+        final Application tomorrowTemporaryAllowedDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
+        tomorrowTemporaryAllowedDateApplication.setStatus(TEMPORARY_ALLOWED);
+        sut.save(tomorrowTemporaryAllowedDateApplication);
+
+        final Application tomorrowWaitingDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
+        tomorrowWaitingDateApplication.setStatus(WAITING);
+        sut.save(tomorrowWaitingDateApplication);
+
+        final LocalDate requestedStartDate = LocalDate.of(2020, 5, 5);
+        final List<ApplicationStatus> requestStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
+        final List<Application> applications = sut.findByStatusInAndStartDate(requestStatuses, requestedStartDate);
+        assertThat(applications)
+            .containsOnly(tomorrowDateApplication, tomorrowCancellationRequestDateApplication, tomorrowTemporaryAllowedDateApplication);
     }
 
     private VacationType getVacationType(VacationCategory category) {
