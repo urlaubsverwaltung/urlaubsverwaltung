@@ -40,7 +40,7 @@ jobs:
       - name: Build
         run: ./mvnw --batch-mode -Pcoverage clean verify
       - name: Analyse with SonarCloud
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ github.event.pull_request.head.repo.full_name == 'synyx/urlaubsverwaltung' }}
         run: >
           ./mvnw --batch-mode
           -Pcoverage
