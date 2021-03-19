@@ -513,7 +513,6 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("application", hasProperty("id", nullValue())))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
-                hasProperty("personId", is(1)),
                 hasProperty("personId", is(1337))
             )))
             .andExpect(view().name("application/app_form"));
@@ -772,17 +771,8 @@ class ApplicationForLeaveFormViewControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(model().attribute("application", hasProperty("id", is(7))))
-            .andExpect(model().attribute("selectableHolidayReplacements", allOf(
-                contains(
-                    hasProperty("personId", is(1)),
-                    hasProperty("personId", is(1337))
-                ),
-                not(
-                    contains(
-                        hasProperty("personId", is(42)),
-                        hasProperty("personId", is(21))
-                    )
-                )
+            .andExpect(model().attribute("selectableHolidayReplacements", contains(
+                hasProperty("personId", is(1337))
             )))
             .andExpect(view().name("application/app_form"));
     }

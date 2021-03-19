@@ -44,11 +44,11 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
+import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -137,7 +137,7 @@ public class ApplicationForLeaveFormViewController {
             appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).or(endDateSupplier).orElse(startDate));
 
             prepareApplicationForLeaveForm(person, appForLeaveForm, model);
-            addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements());
+            addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
@@ -164,6 +164,7 @@ public class ApplicationForLeaveFormViewController {
             if (replacementPersonToAdd == null) {
                 final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
                     not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                        .and(not(isEqual(person)))
                 );
                 addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
             } else {
@@ -178,7 +179,7 @@ public class ApplicationForLeaveFormViewController {
                     not(
                         personEquals(replacementPersonToAdd)
                             .or(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
-                    )
+                    ).and(not(isEqual(person)))
                 );
                 addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
             }
@@ -218,8 +219,9 @@ public class ApplicationForLeaveFormViewController {
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 personEquals(personIdToRemove)
-                    .or(not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
-            ));
+                    .or(not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons())))
+                    .and(not(isEqual(person)))
+            );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements);
         }
 
@@ -274,6 +276,7 @@ public class ApplicationForLeaveFormViewController {
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                    .and(not(isEqual(person)))
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
@@ -394,11 +397,6 @@ public class ApplicationForLeaveFormViewController {
         return personService.getActivePersons();
     }
 
-    private List<SelectableHolidayReplacementDto> selectableHolidayReplacements() {
-        return getAllSelectableReplacementPersons().stream()
-            .map(ApplicationForLeaveFormViewController::toSelectableHolidayReplacementDto)
-            .collect(toUnmodifiableList());
-    }
     private List<SelectableHolidayReplacementDto> selectableHolidayReplacements(Predicate<Person> predicate) {
         return getAllSelectableReplacementPersons().stream()
             .filter(predicate)
