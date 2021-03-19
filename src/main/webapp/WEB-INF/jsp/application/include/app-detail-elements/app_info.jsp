@@ -156,6 +156,15 @@
         </td>
         <td>
             <c:choose>
+                <c:when test="${not empty application.holidayReplacements}">
+                    <ul class="tw-list-none tw-m-0 tw-p-0">
+                        <c:forEach items="${application.holidayReplacements}" var="replacement">
+                        <li>
+                            <c:out value="${replacement.person.niceName}"/>
+                        </li>
+                        </c:forEach>
+                    </ul>
+                </c:when>
                 <c:when test="${application.holidayReplacement != null}">
                     <c:out value="${application.holidayReplacement.niceName}"/>
                 </c:when>
