@@ -161,21 +161,29 @@ public class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
             final Person replacementPersonToAdd = applicationForLeaveForm.getHolidayReplacementToAdd();
-            // add replacementToAdd to the replacements list
-            final HolidayReplacementDto replacementDto = new HolidayReplacementDto(replacementPersonToAdd);
-            applicationForLeaveForm.getHolidayReplacements().add(replacementDto);
-            // reset holidayReplacement selection element
-            applicationForLeaveForm.setHolidayReplacementToAdd(null);
-            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+            if (replacementPersonToAdd == null) {
+                final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
+                    not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                );
+                addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
+            } else {
+                // add replacementToAdd to the replacements list
+                final HolidayReplacementDto replacementDto = new HolidayReplacementDto(replacementPersonToAdd);
+                applicationForLeaveForm.getHolidayReplacements().add(replacementDto);
+                // reset holidayReplacement selection element
+                applicationForLeaveForm.setHolidayReplacementToAdd(null);
 
-            // and remove it from the selectable elements
-            final List<SelectableHolidayReplacementDto> nextSelectableReplacements = selectableHolidayReplacements(
-                not(
-                    personEquals(replacementPersonToAdd)
-                        .or(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
-                )
-            );
-            addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
+                // and remove it from the selectable elements
+                final List<SelectableHolidayReplacementDto> nextSelectableReplacements = selectableHolidayReplacements(
+                    not(
+                        personEquals(replacementPersonToAdd)
+                            .or(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                    )
+                );
+                addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
+            }
+
+            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());

@@ -49,7 +49,9 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasLength;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -412,6 +414,40 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void ensureAddingAnEmptyReplacementForNewApplicationDoesNotThrow() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post("/web/application/new")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("add-holiday-replacement", ""));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("id", nullValue()),
+                hasProperty("holidayReplacements", allOf(
+                    hasSize(2),
+                    contains(
+                        hasProperty("person", hasProperty("id", is(42))),
+                        hasProperty("person", hasProperty("id", is(1337)))
+                    )
+                ))
+            )))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
     void ensureReplacementDeletionForNewApplicationRemovesPersonFromHolidayReplacements() throws Exception {
 
         final Person signedInPerson = new Person();
@@ -631,6 +667,41 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(true)))
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void ensureAddingAnEmptyReplacementToEditedApplicationDoesNotThrow() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post("/web/application/7")
+            .param("vacationType.category", "HOLIDAY")
+            .param("id", "7")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("add-holiday-replacement", ""));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("id", is(7)),
+                hasProperty("holidayReplacements", allOf(
+                    hasSize(2),
+                    contains(
+                        hasProperty("person", hasProperty("id", is(42))),
+                        hasProperty("person", hasProperty("id", is(1337)))
+                    )
+                ))
+            )))
             .andExpect(view().name("application/app_form"));
     }
 
