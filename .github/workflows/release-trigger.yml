@@ -44,11 +44,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Create Release Notes
-        uses: docker://decathlon/release-notes-generator-action:3.1.1
+        uses: docker://decathlon/release-notes-generator-action:3.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_FOLDER: .chglog
-          USE_MILESTONE_TITLE: "true"
+          FILENAME: ${{ github.event.inputs.releaseVersion }}
       - name: Setup git user
         uses: fregante/setup-git-user@v1
       - name: Commit Release Notes
