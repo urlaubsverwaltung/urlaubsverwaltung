@@ -43,6 +43,8 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name: Build
+        run: ./mvnw --batch-mode clean verify
       - name: Create Release Notes
         uses: docker://decathlon/release-notes-generator-action:3.1.4
         env:
@@ -60,9 +62,23 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
-      - name: Trigger Release
-        run: ./release.sh
-        env:
-          RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
-          NEW_VERSION: ${{ github.event.inputs.nextVersion }}
-          GITHUB_TOKEN: ${{ secrets.AM_PAT }}
+      - name: Set release version
+        run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
+      - name: Commit release version
+        run: git add . && git commit -m "New Release Version urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}"
+      - name: Add release tag
+        run: git tag -a -m "urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}" urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}
+      - name: Push release version
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.AM_PAT }}
+          branch: ${{ github.ref }}
+      - name: Set new snapshot version
+        run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
+      - name: Commit new shapshot version
+        run: git add . && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}"
+      - name: Push snapshot commit
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
