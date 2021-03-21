@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
@@ -111,7 +110,6 @@ public class SettingsViewController {
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
-        model.addAttribute("weekDays", WeekDay.values());
 
         final List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())

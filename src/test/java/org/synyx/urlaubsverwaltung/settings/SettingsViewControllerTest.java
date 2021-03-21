@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
@@ -87,7 +86,6 @@ class SettingsViewControllerTest {
             .andExpect(model().attribute("settings", settings))
             .andExpect(model().attribute("federalStateTypes", FederalState.values()))
             .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
-            .andExpect(model().attribute("weekDays", WeekDay.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("defaultVacationDaysFromSettings", is(false)))

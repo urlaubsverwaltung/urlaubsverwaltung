@@ -314,24 +314,76 @@
                             </div>
                             <div class="col-md-8 col-md-pull-4">
                                 <div class="form-group is-required">
-                                    <label class="control-label col-md-4">
+                                    <label class="control-label col-md-4 tw-mb-4">
                                         <spring:message code="settings.workingTime.weekdays"/>:
                                     </label>
-                                    <c:forEach items="${weekDays}" var="weekDay" varStatus="counter">
-                                    <c:if test="${counter.first || counter.count == 5}">
-                                    <div class="col-md-4">
-                                    </c:if>
-                                        <div class="checkbox">
-                                            <label for="${weekDay}">
-                                                <form:checkbox id="${weekDay}" path="workingTimeSettings.workingDays"
-                                                               value="${weekDay.dayOfWeek}"/>
-                                                <spring:message code='${weekDay}'/>
-                                            </label>
-                                        </div>
-                                    <c:if test="${counter.last || counter.count == 4}">
+                                    <div class="col-md-8">
+                                        <ul class="tw-list-none tw-m-0 tw-p-0 tw-grid xs:tw-grid-cols-2 tw-gap-2 md:tw-gap-1">
+                                            <li class="tw-col-start-1 tw-row-start-1">
+                                                <c:set var="labelMonday"><spring:message code="MONDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelMonday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="1"
+                                                    checked="${settings.workingTimeSettings.workingDays[0] == 1}"
+                                                />
+                                            </li>
+                                            <li class="tw-col-start-1 tw-row-start-2">
+                                                <c:set var="labelTuesday"><spring:message code="TUESDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelTuesday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="2"
+                                                    checked="${settings.workingTimeSettings.workingDays[1] == 2}"
+                                                />
+                                            </li>
+                                            <li class="tw-col-start-1 tw-row-start-3">
+                                                <c:set var="labelWednesday"><spring:message code="WEDNESDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelWednesday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="3"
+                                                    checked="${settings.workingTimeSettings.workingDays[2] == 3}"
+                                                />
+                                            </li>
+                                            <li class="tw-col-start-1 tw-row-start-4">
+                                                <c:set var="labelThursday"><spring:message code="THURSDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelThursday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="4"
+                                                    checked="${settings.workingTimeSettings.workingDays[3] == 4}"
+                                                />
+                                            </li>
+                                            <li class="tw-col-start-1 tw-row-start-5">
+                                                <c:set var="labelFriday"><spring:message code="FRIDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelFriday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="5"
+                                                    checked="${settings.workingTimeSettings.workingDays[4] == 5}"
+                                                />
+                                            </li>
+                                            <li class="xs:tw-col-start-2 xs:tw-row-start-1">
+                                                <c:set var="labelSaturday"><spring:message code="SATURDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelSaturday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="5"
+                                                    checked="${settings.workingTimeSettings.workingDays[5] == 6}"
+                                                />
+                                            </li>
+                                            <li class="xs:tw-col-start-2 xs:tw-row-start-2">
+                                                <c:set var="labelSunday"><spring:message code="SUNDAY" /></c:set>
+                                                <uv:checkbox
+                                                    label="${labelSunday}"
+                                                    name="workingTimeSettings.workingDays"
+                                                    value="5"
+                                                    checked="${settings.workingTimeSettings.workingDays[6] == 7}"
+                                                />
+                                            </li>
+                                        </ul>
                                     </div>
-                                    </c:if>
-                                    </c:forEach>
                                 </div>
                             </div>
                         </div>
