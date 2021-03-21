@@ -1,3 +1,4 @@
+const defaultConfig = require("tailwindcss/defaultConfig.js");
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
@@ -23,6 +24,12 @@ module.exports = {
       fontSize: {
         "10rem": "10rem",
       },
+    },
+    screens: {
+      // cannot use 'extend' as `xs` would override other screens
+      // since it's added to the bottom of the css file
+      xs: "480px",
+      ...defaultConfig.theme.screens,
     },
   },
   variants: {
