@@ -23,5 +23,9 @@ public class WorkTimeSettingsValidator {
         if (workingTimeSettings.getWorkingDurationForNewYearsEve() == null) {
             errors.rejectValue("workingTimeSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
         }
+
+        if (workingTimeSettings.getWorkingDays() == null || workingTimeSettings.getWorkingDays().isEmpty()) {
+            errors.rejectValue("workingTimeSettings.workingDays", ERROR_MANDATORY_FIELD);
+        }
     }
 }

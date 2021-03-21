@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 class SettingsValidatorTest {
 
@@ -58,12 +60,20 @@ class SettingsValidatorTest {
         workingTimeSettings.setFederalState(null);
         workingTimeSettings.setWorkingDurationForChristmasEve(null);
         workingTimeSettings.setWorkingDurationForNewYearsEve(null);
+        workingTimeSettings.setMonday(ZERO);
+        workingTimeSettings.setTuesday(ZERO);
+        workingTimeSettings.setWednesday(ZERO);
+        workingTimeSettings.setThursday(ZERO);
+        workingTimeSettings.setFriday(ZERO);
+        workingTimeSettings.setSaturday(ZERO);
+        workingTimeSettings.setSunday(ZERO);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("workingTimeSettings.federalState", "error.entry.mandatory");
         verify(mockError).rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
         verify(mockError).rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
+        verify(mockError).rejectValue("workingTimeSettings.workingDays", "error.entry.mandatory");
     }
 
     // Working time settings: Overtime settings ------------------------------------------------------------------------
