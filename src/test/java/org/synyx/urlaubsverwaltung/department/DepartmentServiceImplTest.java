@@ -248,7 +248,6 @@ class DepartmentServiceImplTest {
         verify(departmentRepository, never()).deleteById(anyInt());
     }
 
-
     @Test
     void ensureDeleteCallFindOneAndDelete() {
 
