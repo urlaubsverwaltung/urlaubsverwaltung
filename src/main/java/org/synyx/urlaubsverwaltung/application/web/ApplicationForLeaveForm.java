@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
@@ -41,11 +40,9 @@ public class ApplicationForLeaveForm {
     private DayLength dayLength;
 
     // hours are relevant for overtime reduction, decimal input possible
-    @Min(0)
     private BigDecimal hours;
 
     // minutes of overtime reduction
-    @Min(0)
     private Integer minutes;
 
     // For special and unpaid leave a reason is required
