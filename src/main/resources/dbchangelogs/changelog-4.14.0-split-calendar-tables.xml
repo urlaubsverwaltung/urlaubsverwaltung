@@ -1,0 +1,120 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="split-calendar-tables">
+
+    <preConditions>
+      <tableExists tableName="calendar"/>
+    </preConditions>
+
+
+    <createTable tableName="company_calendar">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="secret" type="varchar(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="calendar_period" type="VARCHAR(10)" defaultValue="P100Y">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="int"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="company_calendar"
+      baseColumnNames="person_id"
+      constraintName="fk_company_calendar_person"
+      referencedTableName="person"
+      referencedColumnNames="id"
+    />
+
+    <addUniqueConstraint tableName="company_calendar"
+                         columnNames="person_id"
+                         constraintName="unique_company_calendar_per_person"/>
+
+    <sql>
+      INSERT INTO company_calendar(secret, calendar_period, person_id)
+      select secret, calendar_period, person_id
+      from calendar WHERE dtype='CompanyCalendar';
+    </sql>
+
+
+    <createTable tableName="person_calendar">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="secret" type="varchar(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="calendar_period" type="VARCHAR(10)" defaultValue="P100Y">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="int"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="person_calendar"
+      baseColumnNames="person_id"
+      constraintName="fk_person_calendar_person"
+      referencedTableName="person"
+      referencedColumnNames="id"
+    />
+
+    <addUniqueConstraint tableName="person_calendar"
+                         columnNames="person_id"
+                         constraintName="unique_person_calendar_per_person"/>
+
+    <sql>
+      INSERT INTO person_calendar(secret, calendar_period, person_id)
+      select secret, calendar_period, person_id
+      from calendar WHERE dtype='PersonCalendar';
+    </sql>
+
+
+    <createTable tableName="department_calendar">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="secret" type="varchar(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="calendar_period" type="VARCHAR(10)" defaultValue="P100Y">
+        <constraints nullable="false"/>
+      </column>
+      <column name="department_id" type="int"/>
+      <column name="person_id" type="int"/>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="department_calendar"
+      baseColumnNames="department_id"
+      constraintName="fk_department_calendar_department"
+      referencedTableName="department"
+      referencedColumnNames="id"
+    />
+
+    <addForeignKeyConstraint
+      baseTableName="department_calendar"
+      baseColumnNames="person_id"
+      constraintName="fk_department_calendar_person"
+      referencedTableName="person"
+      referencedColumnNames="id"
+    />
+
+    <addUniqueConstraint tableName="department_calendar"
+                         columnNames="department_id, person_id"
+                         constraintName="unique_department_calendar_per_person"/>
+
+    <sql>
+      INSERT INTO department_calendar(secret, calendar_period, department_id, person_id)
+      select secret, calendar_period, department_id, person_id
+      from calendar WHERE dtype='DepartmentCalendar';
+    </sql>
+
+    <dropTable tableName="calendar"/>
+
+  </changeSet>
+</databaseChangeLog>

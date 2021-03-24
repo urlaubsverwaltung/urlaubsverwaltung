@@ -53,6 +53,6 @@ class PersonCalendarRepositoryIT extends TestContainersBase {
         secondPersonCalendar.setCalendarPeriod(Period.ofDays(1));
 
         final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.save(secondPersonCalendar));
-        assertThat(exception.getMessage()).contains("constraint [unique_calendar_per_type]");
+        assertThat(exception.getMessage()).contains("constraint [unique_person_calendar_per_person]");
     }
 }
