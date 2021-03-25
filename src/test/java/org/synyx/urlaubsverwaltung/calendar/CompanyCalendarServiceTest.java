@@ -73,7 +73,7 @@ class CompanyCalendarServiceTest {
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        CompanyCalendar companyCalendar = new CompanyCalendar();
+        CompanyCalendar companyCalendar = new CompanyCalendar(person);
         companyCalendar.setId(1L);
         companyCalendar.setCalendarPeriod(java.time.Period.parse("P1Y"));
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));

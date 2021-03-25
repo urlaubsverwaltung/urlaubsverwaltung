@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -13,6 +14,6 @@ interface CompanyCalendarRepository extends CrudRepository<CompanyCalendar, Long
 
     Optional<CompanyCalendar> findBySecretAndPerson(String secret, Person person);
 
+    @Modifying
     void deleteByPerson(Person person);
-
 }
