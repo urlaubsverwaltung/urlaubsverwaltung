@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
@@ -30,10 +32,12 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -578,7 +582,7 @@ class ApplicationForLeaveFormValidatorTest {
         verifyNoInteractions(calculationService);
     }
 
-    // Validate hours --------------------------------------------------------------------------------------------------
+    // Validate overtime reduction -------------------------------------------------------------------------------------
     @Test
     void ensureHoursIsMandatoryForOvertime() {
 
@@ -647,7 +651,7 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    void ensureHoursCanNotBeZero() {
+    void ensureHoursCanNotBeZeroIfNoMinutesAreSet() {
 
         setupOvertimeSettings();
 
@@ -658,10 +662,38 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         appForm.setHours(BigDecimal.ZERO);
+        appForm.setMinutes(null);
 
         sut.validate(appForm, errors);
 
-        verify(errors).rejectValue("hours", "application.error.invalidHoursForOvertime");
+        verify(errors).rejectValue("hours", "application.error.negativeOvertimeReduction");
+    }
+
+    private static Stream<Arguments> overtimeReductionInput() {
+        return Stream.of(
+            Arguments.of(null, 1),
+            Arguments.of(ZERO, 1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("overtimeReductionInput")
+    void ensureHoursEmptyIfMinutesAreSet(BigDecimal hours, Integer minutes) {
+
+        setupOvertimeSettings();
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
+
+        appForm.setHours(hours);
+        appForm.setMinutes(minutes);
+
+        sut.validate(appForm, errors);
+
+        verify(errors, never()).rejectValue(eq("hours"), anyString());
     }
 
     @Test
@@ -679,7 +711,25 @@ class ApplicationForLeaveFormValidatorTest {
 
         sut.validate(appForm, errors);
 
-        verify(errors).rejectValue("hours", "application.error.invalidHoursForOvertime");
+        verify(errors).rejectValue("hours", "application.error.negativeOvertimeReduction");
+    }
+
+    @Test
+    void ensureMinutesCanNotBeNegative() {
+
+        setupOvertimeSettings();
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
+
+        appForm.setMinutes(-1);
+
+        sut.validate(appForm, errors);
+
+        verify(errors).rejectValue("minutes", "application.error.negativeOvertimeReduction");
     }
 
     @Test

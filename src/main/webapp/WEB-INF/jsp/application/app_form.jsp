@@ -245,10 +245,7 @@
                                     <spring:message code="application.data.hours"/>:
                                 </label>
                                 <div class="col-md-9">
-                                    <form:input path="hours" class="form-control" cssErrorClass="form-control error"/>
-                                    <uv:error-text>
-                                        <form:errors path="hours" />
-                                    </uv:error-text>
+                                    <uv:hour-and-minute-input/>
                                 </div>
                             </div>
                         </div>

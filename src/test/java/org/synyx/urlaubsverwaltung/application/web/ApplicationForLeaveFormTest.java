@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.function.Consumer;
@@ -60,7 +61,7 @@ class ApplicationForLeaveFormTest {
     }
 
     @Test
-    void ensureGeneratedApplicationForLeaveHasCorrectProperties() {
+    void ensureGeneratedApplicationForLeaveWithDecimalOvertimeReduction() {
 
         final VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
 
@@ -77,7 +78,7 @@ class ApplicationForLeaveFormTest {
         form.setReason("Deshalb");
         form.setTeamInformed(true);
         form.setVacationType(overtime);
-        form.setHours(ONE);
+        form.setHours(BigDecimal.valueOf(1.25));
 
         final Application application = form.generateApplicationForLeave();
         assertThat(application.getPerson()).isEqualTo(person);
@@ -87,7 +88,40 @@ class ApplicationForLeaveFormTest {
         assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
         assertThat(application.getReason()).isEqualTo("Deshalb");
         assertThat(application.getVacationType().getMessageKey()).isEqualTo(overtime.getMessageKey());
-        assertThat(application.getHours()).isEqualTo(ONE);
+        assertThat(application.getHours()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(application.isTeamInformed()).isTrue();
+    }
+
+    @Test
+    void ensureGeneratedApplicationForLeaveWithHoursAndMinutesOvertimeReduction() {
+
+        final VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
+        form.setPerson(person);
+        form.setDayLength(DayLength.FULL);
+        form.setAddress("Musterstr. 39");
+        form.setComment("Kommentar");
+        form.setHolidayReplacement(holidayReplacement);
+        form.setHolidayReplacementNote("Some note");
+        form.setReason("Deshalb");
+        form.setTeamInformed(true);
+        form.setVacationType(overtime);
+        form.setHours(BigDecimal.valueOf(1));
+        form.setMinutes(15);
+
+        final Application application = form.generateApplicationForLeave();
+        assertThat(application.getPerson()).isEqualTo(person);
+        assertThat(application.getHolidayReplacement()).isEqualTo(holidayReplacement);
+        assertThat(application.getHolidayReplacementNote()).isEqualTo("Some note");
+        assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
+        assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
+        assertThat(application.getReason()).isEqualTo("Deshalb");
+        assertThat(application.getVacationType().getMessageKey()).isEqualTo(overtime.getMessageKey());
+        assertThat(application.getHours()).isEqualTo(Duration.ofMinutes(75));
         assertThat(application.isTeamInformed()).isTrue();
     }
 
@@ -134,7 +168,7 @@ class ApplicationForLeaveFormTest {
             .endTime(endTime)
             .vacationType(vacationType)
             .dayLength(DayLength.ZERO)
-            .hours(BigDecimal.ZERO)
+            .hoursAndMinutes(Duration.ofMinutes(75))
             .reason("Good one.")
             .holidayReplacement(holidayReplacement)
             .holidayReplacementNote("some note")
@@ -150,7 +184,8 @@ class ApplicationForLeaveFormTest {
         assertThat(form.getEndTime()).isEqualTo(endTime);
         assertThat(form.getVacationType()).isEqualTo(vacationType);
         assertThat(form.getDayLength()).isEqualTo(DayLength.ZERO);
-        assertThat(form.getHours()).isEqualTo(BigDecimal.ZERO);
+        assertThat(form.getHours()).isEqualTo(ONE);
+        assertThat(form.getMinutes()).isEqualTo(15);
         assertThat(form.getReason()).isEqualTo("Good one.");
         assertThat(form.getHolidayReplacement()).isEqualTo(holidayReplacement);
         assertThat(form.getHolidayReplacementNote()).isEqualTo("some note");
@@ -200,6 +235,16 @@ class ApplicationForLeaveFormTest {
     }
 
     @Test
+    void ensureCorrectDurationCalculation() {
+        assertThat(formWithOvertime(ONE, 15).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(BigDecimal.valueOf(1.25), 0).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(BigDecimal.valueOf(1.25), null).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(null, 75).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(75));
+        assertThat(formWithOvertime(null, null).getOvertimeReduction()).isNull();
+        assertThat(formWithOvertime(ONE, 75).getOvertimeReduction()).isEqualTo(Duration.ofMinutes(135));
+    }
+
+    @Test
     void toStringTest() {
 
         final Person person = new Person();
@@ -221,7 +266,7 @@ class ApplicationForLeaveFormTest {
             .endTime(endTime)
             .vacationType(vacationType)
             .dayLength(DayLength.ZERO)
-            .hours(BigDecimal.ZERO)
+            .hoursAndMinutes(Duration.ZERO)
             .reason("Reason")
             .holidayReplacement(holidayReplacement)
             .holidayReplacementNote("some note")
@@ -232,7 +277,14 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
-            "vacationType=VacationType{category=null, messageKey='null'}, dayLength=ZERO, hours=0, " +
+            "vacationType=VacationType{category=null, messageKey='null'}, dayLength=ZERO, hours=0, minutes=0, " +
             "holidayReplacement=Person{id='null'}, holidayReplacementNote='some note', address='Address', teamInformed=true}");
+    }
+
+    private ApplicationForLeaveForm formWithOvertime(BigDecimal hours, Integer minutes) {
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
+        form.setHours(hours);
+        form.setMinutes(minutes);
+        return form;
     }
 }

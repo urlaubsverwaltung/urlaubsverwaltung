@@ -86,7 +86,7 @@
             <span>
                 <c:choose>
                     <c:when test="${app.hours != null}">
-                        <uv:number number="${app.hours}"/> <spring:message code="duration.overtime"/>
+                        <uv:duration duration="${app.hours}"/> <spring:message code="duration.overtime"/>
                     </c:when>
                     <c:otherwise>
                         <uv:number number="${app.workDays}"/> <spring:message code="duration.days"/>

@@ -7,13 +7,13 @@
 
 <c:if test="${duration.negative}">-</c:if>
 <c:if test="${duration.abs().toHours() > 0}">
-    <c:out value="${duration.abs().toHours()} "/><spring:message code="overtime.data.hours.abbr"/>
+    <c:out value="${duration.abs().toHours()} "/><spring:message code="hours.abbr"/>
 </c:if>
 <c:if test="${duration.abs().toMinutesPart() > 0}">
     <c:if test="${duration.abs().toHours() > 0}">
         <c:out value=" "/>
     </c:if>
-    <c:out value="${duration.abs().toMinutesPart()} "/><spring:message code="overtime.data.minutes.abbr"/>
+    <c:out value="${duration.abs().toMinutesPart()} "/><spring:message code="minutes.abbr"/>
 </c:if>
 <c:if test="${duration.toMinutes() == 0}">
     <spring:message code="overtime.person.zero"/>

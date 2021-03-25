@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 
+import java.time.Duration;
+
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 
 final class ApplicationMapper {
@@ -21,7 +23,7 @@ final class ApplicationMapper {
             .endTime(application.getEndTime())
             .teamInformed(application.isTeamInformed())
             .dayLength(application.getDayLength())
-            .hours(application.getHours())
+            .hoursAndMinutes(application.getHours())
             .person(application.getPerson())
             .holidayReplacement(application.getHolidayReplacement())
             .holidayReplacementNote(application.getHolidayReplacementNote())
@@ -57,7 +59,8 @@ final class ApplicationMapper {
         newApplication.setTeamInformed(applicationForLeaveForm.isTeamInformed());
 
         if (OVERTIME.equals(newApplication.getVacationType().getCategory())) {
-            newApplication.setHours(applicationForLeaveForm.getHours());
+            final Duration overtimeReduction = applicationForLeaveForm.getOvertimeReduction();
+            newApplication.setHours(overtimeReduction);
         }
 
         return newApplication;

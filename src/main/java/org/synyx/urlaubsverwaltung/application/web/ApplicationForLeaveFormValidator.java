@@ -68,7 +68,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
     private static final String ERROR_NOT_ENOUGH_OVERTIME = "application.error.notEnoughOvertime";
     private static final String ERROR_MISSING_HOURS = "application.error.missingHoursForOvertime";
-    private static final String ERROR_INVALID_HOURS = "application.error.invalidHoursForOvertime";
+    private static final String ERROR_INVALID_HOURS = "application.error.negativeOvertimeReduction";
 
     private static final String ATTRIBUTE_START_DATE = "startDate";
     private static final String ATTRIBUTE_END_DATE = "endDate";
@@ -76,6 +76,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private static final String ATTRIBUTE_ADDRESS = "address";
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTRIBUTE_HOURS = "hours";
+    private static final String ATTRIBUTE_MINUTES = "minutes";
     private static final String DAY_LENGTH = "dayLength";
 
     private final WorkingTimeService workingTimeService;
@@ -114,8 +115,8 @@ public class ApplicationForLeaveFormValidator implements Validator {
         // check if date fields are valid
         validateDateFields(applicationForm, settings, errors);
 
-        // check hours
-        validateHours(applicationForm, settings, errors);
+        // check overtime reduction
+        validateOvertimeReduction(applicationForm, settings, errors);
 
         validateDayLength(applicationForm, settings, errors);
 
@@ -297,19 +298,26 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateHours(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
+    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
         final BigDecimal hours = applicationForLeave.getHours();
+        final Integer minutes = applicationForLeave.getMinutes();
         final boolean isOvertime = OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
         final boolean overtimeFunctionIsActive = settings.getOvertimeSettings().isOvertimeActive();
-        final boolean hoursRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && hours == null;
+        final boolean overtimeReductionInputRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && (hours == null && minutes == null);
 
-        if (hoursRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
+        if (overtimeReductionInputRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
         }
 
-        if (hours != null && !CalcUtil.isPositive(hours)) {
+        final boolean onlyMinutesAreSet = (hours == null || CalcUtil.isZero(hours)) && minutes != null && minutes > 0;
+
+        if (hours != null && !CalcUtil.isPositive(hours) && !onlyMinutesAreSet) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_INVALID_HOURS);
+        }
+
+        if (minutes != null && minutes <= 0) {
+            errors.rejectValue(ATTRIBUTE_MINUTES, ERROR_INVALID_HOURS);
         }
     }
 
@@ -422,21 +430,9 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
         final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
         final Duration leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
-        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(getDuration(application.getHours()));
+        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(application.getHours());
 
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negated()) >= 0;
     }
 
-    /**
-     * Converts {@link BigDecimal}  interpreted as hours to {@link Duration}.
-     * Works only for factions representing minutes, smaller fractions will be rounded.
-     * e.g. 1.25 is 1h 15min
-     *
-     * @param hours {@link BigDecimal} interpreted as hours with factional minutes
-     * @return calculated {@link Duration}
-     */
-    private Duration getDuration(BigDecimal hours) {
-
-        return Duration.ofMinutes(hours.longValue() * 60);
-    }
 }

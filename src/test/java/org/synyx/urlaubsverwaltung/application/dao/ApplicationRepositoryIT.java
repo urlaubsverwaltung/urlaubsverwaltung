@@ -13,11 +13,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.math.BigDecimal.ONE;
-import static java.math.RoundingMode.UNNECESSARY;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
@@ -306,31 +305,31 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
         Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
-        fullDayOvertimeReduction.setHours(new BigDecimal("8"));
+        fullDayOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayOvertimeReduction.setStatus(ALLOWED);
         sut.save(fullDayOvertimeReduction);
 
         // Waiting overtime reduction (2.5 hours) ----------------------------------------------------------------------
         final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
-        halfDayOvertimeReduction.setHours(new BigDecimal("2.5"));
+        halfDayOvertimeReduction.setHours(Duration.ofMinutes(150));
         halfDayOvertimeReduction.setStatus(WAITING);
         sut.save(halfDayOvertimeReduction);
 
         // Cancelled overtime reduction (1 hour) ----------------------------------------------------------------------
         final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
-        cancelledOvertimeReduction.setHours(ONE);
+        cancelledOvertimeReduction.setHours(Duration.ofHours(1));
         cancelledOvertimeReduction.setStatus(CANCELLED);
         sut.save(cancelledOvertimeReduction);
 
         // Rejected overtime reduction (1 hour) -----------------------------------------------------------------------
         final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
-        rejectedOvertimeReduction.setHours(ONE);
+        rejectedOvertimeReduction.setHours(Duration.ofHours(1));
         rejectedOvertimeReduction.setStatus(REJECTED);
         sut.save(rejectedOvertimeReduction);
 
         // Revoked overtime reduction (1 hour) ------------------------------------------------------------------------
         final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
-        revokedOvertimeReduction.setHours(ONE);
+        revokedOvertimeReduction.setHours(Duration.ofHours(1));
         revokedOvertimeReduction.setStatus(REVOKED);
         sut.save(revokedOvertimeReduction);
 
@@ -339,18 +338,18 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         // NOTE: Holiday should not have hours set, but who knows....
         // More than once heard: "this should never happen" ;)
-        holiday.setHours(ONE);
+        holiday.setHours(Duration.ofHours(1));
         sut.save(holiday);
 
         // Overtime reduction for other person -------------------------------------------------------------------------
         final Application overtimeReduction = createApplication(savedOtherPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), NOON);
-        overtimeReduction.setHours(new BigDecimal("2.5"));
+        overtimeReduction.setHours(Duration.ofMinutes(150));
         sut.save(overtimeReduction);
 
         // Let's calculate! --------------------------------------------------------------------------------------------
 
         BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(person);
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.50).setScale(2, UNNECESSARY));
+        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.5));
     }
 
     @Test

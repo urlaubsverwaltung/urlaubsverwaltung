@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +51,9 @@ class ApplicationForLeaveDataProvider {
 
             if (vacationCategory.equals(OVERTIME)) {
                 if (dayLength == FULL) {
-                    application.setHours(BigDecimal.valueOf(8));
+                    application.setHours(Duration.ofHours(8));
                 } else {
-                    application.setHours(BigDecimal.valueOf(4));
+                    application.setHours(Duration.ofHours(4));
                 }
             }
 

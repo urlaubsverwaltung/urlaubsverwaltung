@@ -1,17 +1,19 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
+import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -150,7 +152,8 @@ public class Application {
      *
      * @since 2.11.0
      */
-    private BigDecimal hours;
+    @Convert(converter = DurationConverter.class)
+    private Duration hours;
 
     public Integer getId() {
         return id;
@@ -324,11 +327,11 @@ public class Application {
         this.teamInformed = teamInformed;
     }
 
-    public BigDecimal getHours() {
+    public Duration getHours() {
         return hours;
     }
 
-    public void setHours(BigDecimal hours) {
+    public void setHours(Duration hours) {
         this.hours = hours;
     }
 
