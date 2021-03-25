@@ -75,7 +75,7 @@ jobs:
           branch: ${{ github.ref }}
       - name: Set new snapshot version
         run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
-      - name: Commit new shapshot version
+      - name: Commit new snapshot version
         run: git add . && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}"
       - name: Push snapshot commit
         uses: ad-m/github-push-action@v0.6.0
