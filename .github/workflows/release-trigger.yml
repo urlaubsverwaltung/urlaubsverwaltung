@@ -56,11 +56,11 @@ jobs:
       - name: Commit Release Notes
         run: |
           git add .chglog/*.md
-          git commit -m "Add release notes for version ${{ github.event.inputs.releaseVersion }}"
+          git commit -m "[skip ci] Add release notes for version ${{ github.event.inputs.releaseVersion }}"
       - name: Push Release Notes
         uses: ad-m/github-push-action@v0.6.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
       - name: Set release version
         run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
@@ -80,5 +80,5 @@ jobs:
       - name: Push snapshot commit
         uses: ad-m/github-push-action@v0.6.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
