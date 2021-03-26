@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN = "ADMIN";
 
     private final boolean isOauth2Enabled;
-    private SecurityContextLogoutHandler oidcLogoutHandler;
+    private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
 
     public WebSecurityConfig(SecurityConfigurationProperties properties) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
@@ -65,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         if (isOauth2Enabled) {
             http.oauth2Login().and()
                 .logout()
-                .addLogoutHandler(oidcLogoutHandler);
+                .logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler);
         } else {
             http.formLogin()
                 .loginPage("/login").permitAll()
@@ -79,7 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired(required = false)
-    public void setOidcLogoutHandler(SecurityContextLogoutHandler oidcLogoutHandler) {
-        this.oidcLogoutHandler = oidcLogoutHandler;
+    public void setOidcClientInitiatedLogoutSuccessHandler(OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) {
+        this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
     }
+
 }
