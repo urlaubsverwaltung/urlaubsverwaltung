@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
@@ -70,12 +70,14 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
-    public SecurityContextLogoutHandler oidcLogoutHandler() {
-        return new OidcLogoutHandler(properties);
+    public OidcLoginLogger oidcLoginLogger(PersonService personService) {
+        return new OidcLoginLogger(personService);
     }
 
     @Bean
-    public OidcLoginLogger oidcLoginLogger(PersonService personService) {
-        return new OidcLoginLogger(personService);
+    OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+        OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+        return oidcClientInitiatedLogoutSuccessHandler;
     }
 }
