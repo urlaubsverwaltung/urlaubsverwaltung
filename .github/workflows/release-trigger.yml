@@ -67,7 +67,7 @@ jobs:
       - name: Set release version
         run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
       - name: Commit release version
-        run: git add . && git commit -m "New Release Version urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}"
+        run: git add pom.xml && git commit -m "New Release Version urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}"
       - name: Add release tag
         run: git tag -a -m "urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}" urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}
       - name: Push release version
@@ -78,7 +78,7 @@ jobs:
       - name: Set new snapshot version
         run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
       - name: Commit new snapshot version
-        run: git add . && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}"
+        run: git add pom.xml && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}"
       - name: Push snapshot commit
         uses: ad-m/github-push-action@v0.6.0
         with:
