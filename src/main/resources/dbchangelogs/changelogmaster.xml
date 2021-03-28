@@ -79,4 +79,5 @@
   <include file="dbchangelogs/changelog-4.14.0-split-calendar-tables.xml"/>
   <include file="dbchangelogs/changelog-4.15.0-delete-department-calendar-on-department-deletion.xml"/>
   <include file="dbchangelogs/changelog-4.15.0-add-upcoming-vacation-reminder.xml"/>
+  <include file="dbchangelogs/changelog-4.15.0-add-to-allow-half-day-absences.xml"/>
 </databaseChangeLog>

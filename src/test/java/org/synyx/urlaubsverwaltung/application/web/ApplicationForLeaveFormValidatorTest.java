@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
@@ -389,6 +390,25 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors).reject("error.entry.invalidPeriod");
     }
+
+
+    @Test
+    void ensureHalfDayIsRejectedWhenDisabled() {
+
+        final var settings = setupOvertimeSettings();
+        final var appSettings = new ApplicationSettings();
+        appSettings.setAllowHalfDays(false);
+        settings.setApplicationSettings(appSettings);
+
+        appForm.setDayLength(MORNING);
+        appForm.setStartDate(LocalDate.now(UTC));
+        appForm.setEndDate(appForm.getStartDate());
+
+        sut.validate(appForm, errors);
+
+        verify(errors).rejectValue("dayLength", "application.error.halfDayPeriod.notAllowed");
+    }
+
 
     // Validate reason -------------------------------------------------------------------------------------------------
     @Test

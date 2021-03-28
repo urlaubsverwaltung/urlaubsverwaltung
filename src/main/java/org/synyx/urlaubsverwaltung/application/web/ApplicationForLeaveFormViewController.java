@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -63,6 +64,7 @@ public class ApplicationForLeaveFormViewController {
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
+    private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
 
@@ -140,7 +142,6 @@ public class ApplicationForLeaveFormViewController {
         }
 
         model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
-
         return APP_FORM;
     }
 
@@ -258,5 +259,10 @@ public class ApplicationForLeaveFormViewController {
         model.addAttribute("vacationTypes", vacationTypes);
 
         model.addAttribute("application", appForm);
+
+        // show the half day option only if allowed (or the form already has it filled in)
+        final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
+        final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
+        model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
     }
 }

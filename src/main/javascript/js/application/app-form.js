@@ -12,7 +12,7 @@ $(document).ready(async function () {
   let toDateElement;
 
   function updateSelectionHints() {
-    const dayLength = $("input:radio[name=dayLength]:checked").val();
+    const dayLength = $("input:radio[name=dayLength]:checked").val() || "FULL";
     const startDate = parseISO(fromDateElement.value);
     const toDate = parseISO(toDateElement.value);
 

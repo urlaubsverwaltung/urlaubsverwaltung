@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public enum DayLength {
 
-    FULL(new BigDecimal("1.0")),
+    FULL(BigDecimal.ONE),
     MORNING(new BigDecimal("0.5")),
     NOON(new BigDecimal("0.5")),
     ZERO(BigDecimal.ZERO);
@@ -38,4 +38,6 @@ public enum DayLength {
 
         return null;
     }
+
+    public boolean isHalfDay() { return duration.equals(MORNING.duration); }
 }

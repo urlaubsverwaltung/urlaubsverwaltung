@@ -212,29 +212,39 @@
                     </div>
 
                     <%-- Absence Period --%>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group is-required">
-                                <label class="control-label col-md-3">
-                                    <spring:message code="absence.period"/>:
-                                </label>
-                                <div class="col-md-9 radio">
-                                    <label class="thirds">
-                                        <form:radiobutton id="fullDay" class="dayLength-full" path="dayLength" checked="checked" value="FULL"/>
-                                        <spring:message code="FULL"/>
-                                    </label>
-                                    <label class="thirds">
-                                        <form:radiobutton id="morning" class="dayLength-half" path="dayLength" value="MORNING"/>
-                                        <spring:message code="MORNING"/>
-                                    </label>
-                                    <label class="thirds">
-                                        <form:radiobutton id="noon" class="dayLength-half" path="dayLength" value="NOON"/>
-                                        <spring:message code="NOON"/>
-                                    </label>
+                    <c:choose>
+                        <c:when test="${showHalfDayOption}">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group is-required">
+                                        <label class="control-label col-md-3">
+                                            <spring:message code="absence.period"/>:
+                                        </label>
+                                        <div class="col-md-9 radio">
+                                            <label class="thirds">
+                                                <form:radiobutton id="fullDay" class="dayLength-full" path="dayLength" checked="checked" value="FULL"/>
+                                                <spring:message code="FULL"/>
+                                            </label>
+                                            <label class="thirds">
+                                                <form:radiobutton id="morning" class="dayLength-half" path="dayLength" value="MORNING"/>
+                                                <spring:message code="MORNING"/>
+                                            </label>
+                                            <label class="thirds">
+                                                <form:radiobutton id="noon" class="dayLength-half" path="dayLength" value="NOON"/>
+                                                <spring:message code="NOON"/>
+                                            </label>
+                                            <uv:error-text>
+                                              <form:errors path="dayLength" />
+                                            </uv:error-text>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </c:when>
+                        <c:otherwise>
+                            <form:hidden path="dayLength" value="FULL" />
+                        </c:otherwise>
+                    </c:choose>
 
                     <%-- Overtime Information--%>
                     <c:if test="${overtimeActive}">
