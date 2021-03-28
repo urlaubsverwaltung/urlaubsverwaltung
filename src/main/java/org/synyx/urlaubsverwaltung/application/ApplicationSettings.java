@@ -19,6 +19,11 @@ public class ApplicationSettings {
     private boolean remindForWaitingApplications = false;
 
     /**
+     * Specifies if applications can be done for half-day leave
+     */
+    private boolean allowHalfDays = true;
+
+    /**
      * Specifies when a reminder for waiting application should be send to boss / department head /
      * secondary stage authority
      */
@@ -38,6 +43,14 @@ public class ApplicationSettings {
 
     public void setRemindForWaitingApplications(boolean remindForWaitingApplications) {
         this.remindForWaitingApplications = remindForWaitingApplications;
+    }
+
+    public boolean isAllowHalfDays() {
+        return allowHalfDays;
+    }
+
+    public void setAllowHalfDays(boolean allowHalfDays) {
+        this.allowHalfDays = allowHalfDays;
     }
 
     public Integer getDaysBeforeRemindForWaitingApplications() {

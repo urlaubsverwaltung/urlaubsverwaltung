@@ -184,6 +184,29 @@
                                         </uv:error-text>
                                     </div>
                                 </div>
+
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4"
+                                           for="applicationSettings.allowHalfDays.true">
+                                        <spring:message code='settings.vacation.allowHalfDays'/>:
+                                    </label>
+                                    <div class="col-md-8 radio">
+                                        <label class="halves">
+                                            <form:radiobutton id="applicationSettings.allowHalfDays.true"
+                                                              path="applicationSettings.allowHalfDays"
+                                                              value="true"/>
+                                            <spring:message code="settings.vacation.allowHalfDays.true"/>
+                                        </label>
+                                        <label class="halves">
+                                            <form:radiobutton id="applicationSettings.allowHalfDays.false"
+                                                              path="applicationSettings.allowHalfDays"
+                                                              value="false"/>
+                                            <spring:message
+                                                code="settings.vacation.allowHalfDays.false"/>
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

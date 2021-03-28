@@ -58,7 +58,7 @@ class SickDayAbsenceProviderTest {
         final List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
-        assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.ONE);
     }
 
     @Test

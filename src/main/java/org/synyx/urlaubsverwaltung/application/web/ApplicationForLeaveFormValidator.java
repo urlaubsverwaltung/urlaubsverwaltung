@@ -64,6 +64,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING = "application.error.alreadyAbsentOn.newYearsEve.morning";
     private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON = "application.error.alreadyAbsentOn.newYearsEve.noon";
     private static final String ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL = "application.error.alreadyAbsentOn.newYearsEve.full";
+    private static final String ERROR_HALF_DAYS_NOT_ALLOWED = "application.error.halfDayPeriod.notAllowed";
 
     private static final String ERROR_NOT_ENOUGH_DAYS = "application.error.notEnoughVacationDays";
     private static final String ERROR_NOT_ENOUGH_OVERTIME = "application.error.notEnoughOvertime";
@@ -153,6 +154,10 @@ public class ApplicationForLeaveFormValidator implements Validator {
             } else if (isNewYearsEve(startDate)) {
                 validateNewYearsEve(dayLength, settings.getWorkingTimeSettings(), errors);
             }
+        }
+
+        if (applicationForm.getDayLength() != DayLength.FULL && !settings.getApplicationSettings().isAllowHalfDays()){
+            errors.rejectValue(DAY_LENGTH, ERROR_HALF_DAYS_NOT_ALLOWED );
         }
     }
 

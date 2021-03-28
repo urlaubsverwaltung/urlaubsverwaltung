@@ -53,7 +53,7 @@ class VacationAbsenceProviderTest {
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, fullDayVacationDate);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList()).hasSize(1);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getPartOfDay()).isEqualTo(FULL.name());
-        assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualTo(BigDecimal.ONE);
     }
 
     @Test
@@ -70,7 +70,7 @@ class VacationAbsenceProviderTest {
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, fullDayVacationDate);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList()).hasSize(1);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getPartOfDay()).isEqualTo(FULL.name());
-        assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualTo(BigDecimal.ONE);
     }
 
     @Test
@@ -87,7 +87,7 @@ class VacationAbsenceProviderTest {
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(new TimedAbsenceSpans(new ArrayList<>()), person, fullDayVacationDate);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList()).hasSize(1);
         assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getPartOfDay()).isEqualTo(FULL.name());
-        assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(updatedTimedAbsenceSpans.getAbsencesList().get(0).getRatio()).isEqualTo(BigDecimal.ONE);
     }
 
     @Test
@@ -107,7 +107,7 @@ class VacationAbsenceProviderTest {
         List<TimedAbsence> absencesList = updatedTimedAbsenceSpans.getAbsencesList();
         assertThat(absencesList).hasSize(1);
         assertThat(absencesList.get(0).getPartOfDay()).isEqualTo(FULL.name());
-        assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.valueOf(1.0));
+        assertThat(absencesList.get(0).getRatio()).isEqualTo(BigDecimal.ONE);
     }
 
     @Test

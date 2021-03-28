@@ -14,12 +14,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -119,6 +121,7 @@ class ApplicationForLeaveFormViewControllerTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("overtimeActive", is(true)));
         resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
+        resultActions.andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
     @Test
@@ -147,6 +150,39 @@ class ApplicationForLeaveFormViewControllerTest {
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("overtimeActive", is(false)));
         resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
+        resultActions.andExpect(model().attribute("showHalfDayOption", is(true)));
+    }
+
+    @Test
+    void halfdayIsDeactivated() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final VacationType vacationType = new VacationType();
+        when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
+
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        overtimeSettings.setOvertimeActive(false);
+
+        final Settings settings = new Settings();
+        settings.setOvertimeSettings(overtimeSettings);
+        final var appSettings = new ApplicationSettings();
+        appSettings.setAllowHalfDays(false);
+        settings.setApplicationSettings(appSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ResultActions resultActions = perform(get("/web/application/new"));
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(model().attribute("overtimeActive", is(false)));
+        resultActions.andExpect(model().attribute("vacationTypes", hasItems(vacationType)));
+        resultActions.andExpect(model().attribute("showHalfDayOption", is(false)));
     }
 
     @Test
@@ -253,6 +289,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         resultActions
             .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("application", allOf(
                 hasProperty("startDate", is(LocalDate.parse("2020-10-30"))),
                 hasProperty("startDateIsoValue", is("2020-10-30")),
@@ -291,6 +328,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         resultActions
             .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("application", allOf(
                 hasProperty("startDate", is(LocalDate.parse(expectedFromString))),
                 hasProperty("startDateIsoValue", is(expectedFromString)),
@@ -323,7 +361,8 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(post("/web/application"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("application/app_form"))
+            .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
     @Test
@@ -383,8 +422,81 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("application/app_form"))
+            .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
+
+    @Test
+    void editApplicationFormHalfdayIsDeactivated() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final Settings settings = new Settings();
+        final var appSettings = new ApplicationSettings();
+        appSettings.setAllowHalfDays(false);
+        settings.setApplicationSettings(appSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final VacationType vacationType = new VacationType();
+        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("noHolidaysAccount", is(false)))
+            .andExpect(view().name("application/app_form"))
+            .andExpect(model().attribute("showHalfDayOption", is(false)));
+    }
+
+    @Test
+    void editApplicationFormWithHalfday() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final Settings settings = new Settings();
+        final var appSettings = new ApplicationSettings();
+        appSettings.setAllowHalfDays(false);
+        settings.setApplicationSettings(appSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final VacationType vacationType = new VacationType();
+        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        application.setDayLength(DayLength.MORNING);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("noHolidaysAccount", is(false)))
+            .andExpect(view().name("application/app_form"))
+            .andExpect(model().attribute("showHalfDayOption", is(true)));
+    }
+
 
     @Test
     void editApplicationFormUnknownApplication() {
@@ -552,7 +664,8 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("dayLength", "FULL")
             .param("comment", "comment"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("application/app_form"))
+            .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
     private Person personWithRole(Role role) {
