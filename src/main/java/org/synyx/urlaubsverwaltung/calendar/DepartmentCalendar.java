@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.annotations.OnDelete;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -13,6 +14,8 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.time.Period;
 
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
+
 @Entity
 class DepartmentCalendar {
 
@@ -24,6 +27,7 @@ class DepartmentCalendar {
 
     @NotNull
     @Column(name = "department_id")
+    @OnDelete(action = CASCADE)
     private Integer departmentId;
 
     @NotNull

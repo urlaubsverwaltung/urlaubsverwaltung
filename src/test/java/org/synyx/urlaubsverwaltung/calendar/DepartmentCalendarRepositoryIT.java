@@ -11,7 +11,11 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.Period;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @Transactional
 class DepartmentCalendarRepositoryIT extends TestContainersBase {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private PersonService personService;
@@ -93,5 +100,28 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
         secondDepartmentCalendar.setCalendarPeriod(Period.ofDays(1));
         final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.save(secondDepartmentCalendar));
         assertThat(exception.getMessage()).contains("constraint [unique_department_calendar_per_person]");
+    }
+
+    @Test
+    void ensuresDeletesDepartmentCalendarOnDepartmentDeletion() {
+
+        final Person savedPerson = personService.save(new Person("theodore", "smith", "theodore", "smith@example.org"));
+
+        final Department department = new Department();
+        department.setName("department");
+        department.setMembers(List.of(savedPerson));
+        final Department savedDepartment = departmentService.create(department);
+
+        final Integer departmentId = savedDepartment.getId();
+        final DepartmentCalendar firstDepartmentCalendar = new DepartmentCalendar(departmentId, savedPerson);
+        firstDepartmentCalendar.setCalendarPeriod(Period.ofDays(1));
+        sut.save(firstDepartmentCalendar);
+
+        departmentService.delete(departmentId);
+
+        entityManager.flush();
+
+        final Optional<DepartmentCalendar> departmentCalendar = sut.findByDepartmentIdAndPerson(departmentId, savedPerson);
+        assertThat(departmentCalendar).isNotPresent();
     }
 }
