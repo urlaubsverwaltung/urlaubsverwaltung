@@ -346,7 +346,7 @@
                                 </div>
 
                                 <%-- holiday replacement--%>
-                                <c:if test="${not empty persons}">
+                                <c:if test="${not empty selectableHolidayReplacements}">
                                     <div class="form-group">
                                         <label class="control-label col-md-3">
                                             <spring:message code="application.data.holidayReplacement"/>
@@ -427,7 +427,7 @@
                                                         </small>
                                                     </div>
                                                     <uv:error-text>
-                                                        <form:errors path="holidayReplacementNote"/>
+                                                        <form:errors path="holidayReplacements[${loop.index}].note"/>
                                                     </uv:error-text>
                                                 </div>
                                             </div>
