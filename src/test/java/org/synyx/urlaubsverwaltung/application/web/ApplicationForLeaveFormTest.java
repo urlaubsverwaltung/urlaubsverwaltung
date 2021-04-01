@@ -61,6 +61,16 @@ class ApplicationForLeaveFormTest {
     }
 
     @Test
+    void ensureSettingNullHourDurationWithBuilderDoesNotSetHoursAndMinutes() {
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm.Builder()
+            .hoursAndMinutes(null)
+            .build();
+
+        assertThat(form.getHours()).isNull();
+        assertThat(form.getMinutes()).isNull();
+    }
+
+    @Test
     void ensureGeneratedApplicationForLeaveWithDecimalOvertimeReduction() {
 
         final VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
