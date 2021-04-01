@@ -8,20 +8,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -71,16 +75,17 @@ public class ApplicationForLeaveViewController {
         model.addAttribute("applications_cancellation_request", applicationsForLeaveCancellationRequests);
 
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
-        final List<ApplicationForLeave> holidayReplacement = getHolidayReplacements(signedInUser, holidayReplacementForDate);
-        model.addAttribute("applications_holiday_replacements", holidayReplacement);
+        final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate);
+        model.addAttribute("applications_holiday_replacements", replacements);
 
         return "application/app_list";
     }
 
-    private List<ApplicationForLeave> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate) {
-        return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate).stream()
-            .map(application -> new ApplicationForLeave(application, workDaysCountService))
-            .sorted(byStartDate())
+    private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate) {
+        return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate)
+            .stream()
+            .map(application -> toApplicationReplacementDto(application, holidayReplacement))
+            .sorted(comparing(ApplicationReplacementDto::getStartDate))
             .collect(toList());
     }
 
@@ -97,7 +102,7 @@ public class ApplicationForLeaveViewController {
 
         return cancellationRequests.stream()
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
-            .sorted(byStartDate())
+            .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
     }
 
@@ -133,14 +138,14 @@ public class ApplicationForLeaveViewController {
     private List<ApplicationForLeave> getApplicationsForLeaveForBossOrOffice() {
         return applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)).stream()
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
-            .sorted(byStartDate())
+            .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
-            .sorted(byStartDate())
+            .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
     }
 
@@ -150,7 +155,7 @@ public class ApplicationForLeaveViewController {
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
-            .sorted(byStartDate())
+            .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
     }
 
@@ -159,7 +164,7 @@ public class ApplicationForLeaveViewController {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
             .filter(withoutApplicationsOf(secondStage))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
-            .sorted(byStartDate())
+            .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
     }
 
@@ -171,12 +176,46 @@ public class ApplicationForLeaveViewController {
         return application -> !application.getPerson().getPermissions().contains(SECOND_STAGE_AUTHORITY);
     }
 
-    private Comparator<ApplicationForLeave> byStartDate() {
-        return Comparator.comparing(Application::getStartDate);
-    }
-
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson) {
+        final DayLength dayLength = application.getDayLength();
+        final LocalDate startDate = application.getStartDate();
+        final LocalDate endDate = application.getEndDate();
+        final Person applicationPerson = application.getPerson();
+        final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, applicationPerson);
+
+        final String note = application.getHolidayReplacements().stream()
+            .filter(holidayReplacementEntity -> holidayReplacementEntity.getPerson().equals(holidayReplacementPerson))
+            .findFirst()
+            .map(HolidayReplacementEntity::getNote)
+            .orElse("");
+
+        final boolean pending = WAITING.equals(application.getStatus()) || TEMPORARY_ALLOWED.equals(application.getStatus());
+
+        return ApplicationReplacementDto.builder()
+            .personGravatarURL(applicationPerson.getGravatarURL())
+            .personName(applicationPerson.getNiceName())
+            .note(note)
+            .pending(pending)
+            .hours(application.getHours())
+            .workDays(workDays)
+            .startDate(startDate)
+            .endDate(endDate)
+            .startTime(application.getStartTime())
+            .endTime(application.getEndTime())
+            .startDateWithTime(application.getStartDateWithTime())
+            .endDateWithTime(application.getEndDateWithTime())
+            .dayLength(dayLength)
+            .weekDayOfStartDate(toWeekDay(startDate))
+            .weekDayOfEndDate(toWeekDay(endDate))
+            .build();
+    }
+
+    private static WeekDay toWeekDay(LocalDate localDate) {
+        return WeekDay.getByDayOfWeek(localDate.getDayOfWeek().getValue());
     }
 }

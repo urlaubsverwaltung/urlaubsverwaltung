@@ -4,13 +4,18 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -19,6 +24,8 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
@@ -56,10 +63,12 @@ class ApplicationForLeaveViewControllerTest {
     @Mock
     private PersonService personService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService,
-            personService, Clock.systemUTC());
+            personService, clock);
     }
 
     @Test
@@ -417,6 +426,130 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
             .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
+            .andExpect(view().name("application/app_list"));
+    }
+
+    @Test
+    void ensureReplacementItem() throws Exception {
+        final Person signedInUser = new Person();
+        signedInUser.setId(1337);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        signedInUser.setLastName("Wayne");
+
+        final Person applicationPerson = new Person();
+        applicationPerson.setId(1);
+        applicationPerson.setFirstName("Alfred");
+        applicationPerson.setLastName("Pennyworth");
+        applicationPerson.setPermissions(List.of(USER));
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(signedInUser);
+        holidayReplacement.setNote("awesome, thanks dude!");
+
+        final Application application = new Application();
+        application.setId(3);
+        application.setPerson(applicationPerson);
+        application.setStartDate(LocalDate.now(clock).plusDays(1));
+        application.setEndDate(LocalDate.now(clock).plusDays(1));
+        application.setHolidayReplacements(List.of(holidayReplacement));
+
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(applicationService.getForHolidayReplacement(signedInUser, LocalDate.now(clock)))
+            .thenReturn(List.of(application));
+
+        final WeekDay expectedWeekdayOfStartDate = WeekDay.getByDayOfWeek(
+            LocalDate.now(clock).plusDays(1).getDayOfWeek().getValue());
+
+        final WeekDay expectedWeekdayOfEndDate = WeekDay.getByDayOfWeek(
+            LocalDate.now(clock).plusDays(1).getDayOfWeek().getValue());
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(signedInUser)))
+            .andExpect(model().attribute("applications_holiday_replacements", contains(
+                allOf(
+                    hasProperty("personName", is("Alfred Pennyworth")),
+                    hasProperty("note", is("awesome, thanks dude!")),
+                    hasProperty("weekDayOfStartDate", is(expectedWeekdayOfStartDate)),
+                    hasProperty("weekDayOfEndDate", is(expectedWeekdayOfEndDate))
+                )
+            )))
+            .andExpect(view().name("application/app_list"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ApplicationStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
+    void ensureReplacementItemIsPendingForApplicationStatus(ApplicationStatus status) throws Exception {
+        final Person signedInUser = new Person();
+        signedInUser.setId(1337);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+
+        final Person applicationPerson = new Person();
+        applicationPerson.setId(1);
+        applicationPerson.setFirstName("Alfred");
+        applicationPerson.setPermissions(List.of(USER));
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(signedInUser);
+
+        final Application application = new Application();
+        application.setId(3);
+        application.setPerson(applicationPerson);
+        application.setStatus(status);
+        application.setStartDate(LocalDate.now(clock).plusDays(1));
+        application.setEndDate(LocalDate.now(clock).plusDays(1));
+        application.setHolidayReplacements(List.of(holidayReplacement));
+
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(applicationService.getForHolidayReplacement(signedInUser, LocalDate.now(clock)))
+            .thenReturn(List.of(application));
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("applications_holiday_replacements", contains(
+                hasProperty("pending", is(true))
+            )))
+            .andExpect(view().name("application/app_list"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = ApplicationStatus.class, names = {"ALLOWED", "ALLOWED_CANCELLATION_REQUESTED", "REJECTED", "CANCELLED", "REVOKED"})
+    void ensureReplacementItemIsNotPendingForApplicationStatus(ApplicationStatus status) throws Exception {
+        final Person signedInUser = new Person();
+        signedInUser.setId(1337);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        signedInUser.setLastName("Wayne");
+
+        final Person applicationPerson = new Person();
+        applicationPerson.setId(1);
+        applicationPerson.setFirstName("Alfred");
+        applicationPerson.setLastName("Pennyworth");
+        applicationPerson.setPermissions(List.of(USER));
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(signedInUser);
+        holidayReplacement.setNote("awesome, thanks dude!");
+
+        final Application application = new Application();
+        application.setId(3);
+        application.setPerson(applicationPerson);
+        application.setStatus(status);
+        application.setStartDate(LocalDate.now(clock).plusDays(1));
+        application.setEndDate(LocalDate.now(clock).plusDays(1));
+        application.setHolidayReplacements(List.of(holidayReplacement));
+
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        when(applicationService.getForHolidayReplacement(signedInUser, LocalDate.now(clock)))
+            .thenReturn(List.of(application));
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("applications_holiday_replacements", contains(
+                hasProperty("pending", is(false))
+            )))
             .andExpect(view().name("application/app_list"));
     }
 
