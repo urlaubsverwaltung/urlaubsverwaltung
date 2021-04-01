@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
@@ -659,8 +661,11 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setCategory(OVERTIME);
+
+        appForm.setVacationType(overtimeVacationType);
         appForm.setHours(BigDecimal.ZERO);
         appForm.setMinutes(null);
 
@@ -705,8 +710,11 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setCategory(OVERTIME);
+
+        appForm.setVacationType(overtimeVacationType);
         appForm.setHours(ONE.negate());
 
         sut.validate(appForm, errors);
@@ -723,8 +731,11 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
-        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setCategory(OVERTIME);
+
+        appForm.setVacationType(overtimeVacationType);
         appForm.setMinutes(-1);
 
         sut.validate(appForm, errors);
@@ -859,6 +870,35 @@ class ApplicationForLeaveFormValidatorTest {
         assertThat(errors.hasErrors()).isFalse();
 
         verify(overtimeService).getLeftOvertimeForPerson(appForm.getPerson());
+    }
+
+    @Test
+    void ensureOvertimeIsNotValidatedForApplicationForLeave() {
+        setupOvertimeSettings();
+
+        final Person person = new Person();
+        person.setId(1);
+
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
+
+        final VacationType holidayVacationType = new VacationType();
+        holidayVacationType.setCategory(HOLIDAY);
+
+        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
+        form.setPerson(person);
+        form.setDayLength(FULL);
+        form.setStartDate(LocalDate.now());
+        form.setEndDate(LocalDate.now().plusDays(1));
+        form.setVacationType(holidayVacationType);
+        form.setHours(null);
+        form.setMinutes(null);
+
+        sut.validate(form, errors);
+
+        verify(errors).hasErrors();
+        verifyNoMoreInteractions(errors);
     }
 
     @Test

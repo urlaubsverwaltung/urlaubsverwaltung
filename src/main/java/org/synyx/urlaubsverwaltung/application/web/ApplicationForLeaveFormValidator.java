@@ -300,11 +300,15 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
 
+        final boolean isOvertime = OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
+        if (!isOvertime) {
+            return;
+        }
+
         final BigDecimal hours = applicationForLeave.getHours();
         final Integer minutes = applicationForLeave.getMinutes();
-        final boolean isOvertime = OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
         final boolean overtimeFunctionIsActive = settings.getOvertimeSettings().isOvertimeActive();
-        final boolean overtimeReductionInputRequiredButNotProvided = isOvertime && overtimeFunctionIsActive && (hours == null && minutes == null);
+        final boolean overtimeReductionInputRequiredButNotProvided = overtimeFunctionIsActive && (hours == null && minutes == null);
 
         if (overtimeReductionInputRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
