@@ -100,7 +100,6 @@ class ApplicationForLeaveFormTest {
         form.setHolidayReplacements(List.of(holidayReplacementDto));
 
         final HolidayReplacementEntity expectedReplacementEntity = new HolidayReplacementEntity();
-        expectedReplacementEntity.setId(33);
         expectedReplacementEntity.setPerson(holidayReplacement);
 
         final Application application = form.generateApplicationForLeave();
@@ -139,7 +138,6 @@ class ApplicationForLeaveFormTest {
         form.setHolidayReplacements(List.of(holidayReplacementDto));
 
         final HolidayReplacementEntity expectedReplacementEntity = new HolidayReplacementEntity();
-        expectedReplacementEntity.setId(33);
         expectedReplacementEntity.setPerson(holidayReplacement);
 
         final Application application = form.generateApplicationForLeave();

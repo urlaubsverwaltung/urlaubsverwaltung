@@ -170,7 +170,6 @@ class ApplicationTest {
         person.setNotifications(List.of(NOTIFICATION_USER));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(person);
         replacementEntity.setNote("hello myself");
 

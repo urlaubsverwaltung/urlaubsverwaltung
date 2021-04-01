@@ -6,15 +6,29 @@
   <changeSet author="weigel" id="add-holiday-Replacement-table">
 
     <createTable tableName="holiday_replacements">
-      <column autoIncrement="true" name="id" type="INT(10)">
-        <constraints primaryKey="true"/>
-      </column>
-      <column name="holiday_replacements_id" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
       <column name="application_id" type="INT(10)">
-        <constraints nullable="false"/>
+        <constraints nullable="false" primaryKey="true" primaryKeyName="pk_application_person"/>
+      </column>
+      <column name="person_id" type="INT(10)">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="pk_application_person"/>
+      </column>
+      <column name="note" type="BLOB">
+        <constraints nullable="true"/>
       </column>
     </createTable>
+    <addForeignKeyConstraint
+      baseTableName="holiday_replacements"
+      baseColumnNames="application_id"
+      constraintName="fk_holiday_replacements_application"
+      referencedTableName="application"
+      referencedColumnNames="id"
+    />
+    <addForeignKeyConstraint
+      baseTableName="holiday_replacements"
+      baseColumnNames="person_id"
+      constraintName="fk_holiday_replacements_person"
+      referencedTableName="person"
+      referencedColumnNames="id"
+    />
   </changeSet>
 </databaseChangeLog>

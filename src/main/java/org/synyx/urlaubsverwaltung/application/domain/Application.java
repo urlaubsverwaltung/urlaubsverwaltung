@@ -1,21 +1,21 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
+import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.EnumType.STRING;
+import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
 
 /**
@@ -110,8 +111,9 @@ public class Application {
      */
     private String reason;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @CollectionTable(name = "holiday_replacements")
+    @LazyCollection(FALSE)
+    @CollectionTable(name = "holiday_replacements", joinColumns = @JoinColumn(name = "application_id"))
+    @ElementCollection
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
     /**

@@ -564,7 +564,6 @@ class ApplicationInteractionServiceImplTest {
         final Person boss = createPerson("boss", USER, Role.BOSS);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(replacementPerson);
 
         final Application applicationForLeave = getDummyApplication(person);
@@ -602,7 +601,6 @@ class ApplicationInteractionServiceImplTest {
         when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(replacementPerson);
 
         final Application applicationForLeave = getDummyApplication(person);
@@ -1075,7 +1073,6 @@ class ApplicationInteractionServiceImplTest {
         newHolidayReplacement.setId(1);
 
         final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
-        newReplacementEntity.setId(1);
         newReplacementEntity.setPerson(newHolidayReplacement);
 
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
@@ -1113,7 +1110,6 @@ class ApplicationInteractionServiceImplTest {
         oldHolidayReplacement.setId(2);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(oldHolidayReplacement);
 
         final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
@@ -1141,7 +1137,6 @@ class ApplicationInteractionServiceImplTest {
         holidayReplacementPerson.setId(2);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(holidayReplacementPerson);
 
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
@@ -1179,7 +1174,6 @@ class ApplicationInteractionServiceImplTest {
         holidayReplacementPerson.setId(2);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(holidayReplacementPerson);
 
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
@@ -1261,7 +1255,6 @@ class ApplicationInteractionServiceImplTest {
 
         final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
-        replacementEntity.setId(1);
         replacementEntity.setPerson(replacementPerson);
 
         final Application applicationForLeave = new Application();
