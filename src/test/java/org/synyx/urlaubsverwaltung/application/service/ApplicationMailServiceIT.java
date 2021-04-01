@@ -633,7 +633,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         String contentRelevantPerson = (String) msgRelevantPerson.getContent();
         assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
-        assertThat(contentRelevantPerson).contains("nicht genehmigter Antrag wurde von Lieschen Müller wurde durch Lieschen Müller storniert.");
+        assertThat(contentRelevantPerson).contains("nicht genehmigte Antrag von Lieschen Müller wurde storniert.");
         assertThat(contentRelevantPerson).contains(comment.getText());
         assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
         assertThat(contentRelevantPerson).contains("/web/application/1234");
@@ -682,7 +682,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         String contentRelevantPerson = (String) msgRelevantPerson.getContent();
         assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
-        assertThat(contentRelevantPerson).contains("nicht genehmigter Antrag wurde von Lieschen Müller wurde durch Office Person storniert.");
+        assertThat(contentRelevantPerson).contains("nicht genehmigte Antrag von Lieschen Müller wurde von Office Person storniert.");
         assertThat(contentRelevantPerson).contains(comment.getText());
         assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
         assertThat(contentRelevantPerson).contains("/web/application/1234");
