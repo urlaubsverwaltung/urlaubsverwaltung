@@ -324,10 +324,12 @@ public class ApplicationForLeaveForm {
 
         public ApplicationForLeaveForm.Builder hoursAndMinutes(Duration hours) {
 
-            final BigDecimal overtimeReduction = hours == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) hours.toMinutes() / 60);
+            if (hours != null) {
+                final BigDecimal overtimeReduction = BigDecimal.valueOf((double) hours.toMinutes() / 60);
+                this.hours = overtimeReduction.setScale(0, RoundingMode.DOWN).abs();
+                this.minutes = overtimeReduction.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
+            }
 
-            this.hours = overtimeReduction.setScale(0, RoundingMode.DOWN).abs();
-            this.minutes = overtimeReduction.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN).abs().intValueExact();
             return this;
         }
 
