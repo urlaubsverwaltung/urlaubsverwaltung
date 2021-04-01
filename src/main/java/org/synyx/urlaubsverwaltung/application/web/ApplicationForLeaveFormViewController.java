@@ -238,6 +238,12 @@ public class ApplicationForLeaveFormViewController {
         applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
+            final Person person = ofNullable(appForm.getPerson()).orElseGet(personService::getSignedInUser);
+            final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
+                not(containsPerson(appForm.getHolidayReplacementPersons()))
+                    .and(not(isEqual(person)))
+            );
+            addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
             prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
