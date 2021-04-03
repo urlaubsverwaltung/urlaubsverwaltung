@@ -309,6 +309,8 @@ public class ApplicationForLeaveFormViewController {
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
+        final Person signedInUser = personService.getSignedInUser();
+
         appForm.setId(application.getId());
         applicationForLeaveFormValidator.validate(appForm, errors);
 
@@ -317,13 +319,17 @@ public class ApplicationForLeaveFormViewController {
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
+
+            addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(
+                not(containsPerson(appForm.getHolidayReplacementPersons())).and(not(isEqual(signedInUser))))
+            );
+
             LOG.info("edit application ({}) has errors: {}", appForm, errors);
             return APP_FORM;
         }
 
         final Application editedApplication = merge(application, appForm);
         final Application savedApplicationForLeave;
-        final Person signedInUser = personService.getSignedInUser();
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
         } catch (EditApplicationForLeaveNotAllowedException e) {

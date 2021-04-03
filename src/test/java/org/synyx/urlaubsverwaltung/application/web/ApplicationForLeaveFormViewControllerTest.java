@@ -49,10 +49,8 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasLength;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -898,6 +896,51 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(view().name("application/app_form"))
             .andExpect(model().attribute("showHalfDayOption", is(true)));
+    }
+
+    @Test
+    void ensureApplicationEditReplacementsAreStillDisplayedWhenValidationFails() throws Exception {
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("startDate", "");
+            return null;
+        }).when(applicationForLeaveFormValidator).validate(any(), any());
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        final Person bruce = new Person();
+        bruce.setId(42);
+
+        final Person clark = new Person();
+        clark.setId(1337);
+
+        final Person joker = new Person();
+        joker.setId(21);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Application application = new Application();
+        application.setId(7);
+        application.setStatus(WAITING);
+        when(applicationInteractionService.get(7)).thenReturn(Optional.of(application));
+
+        final ResultActions perform = perform(post("/web/application/7")
+            .param("vacationType.category", "HOLIDAY")
+            .param("id", "7"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasFieldErrors("application", "startDate"))
+            .andExpect(model().attribute("selectableHolidayReplacements", contains(
+                hasProperty("personId", is(42)),
+                hasProperty("personId", is(1337)),
+                hasProperty("personId", is(21))
+            )))
+            .andExpect(view().name("application/app_form"));
     }
 
     private Person personWithRole(Role role) {
