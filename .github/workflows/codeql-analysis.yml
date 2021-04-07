@@ -6,9 +6,7 @@ on:
 
 jobs:
   CodeQL-Build:
-
     runs-on: ubuntu-20.04
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -30,8 +28,9 @@ jobs:
 
       # Autobuild does not work so we build it by our own
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: 11
       - uses: actions/cache@v2
         with:
@@ -41,6 +40,5 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build with Maven
         run: ./mvnw --batch-mode clean package -DskipTests
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
