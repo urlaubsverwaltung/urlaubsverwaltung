@@ -63,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -836,6 +837,72 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("persons", hasItem(
                         hasProperty("days", hasItems(
                             hasProperty("type", is(dtoDayTypeText))
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureNonDisplayableApplicationsAreIgnored() throws Exception {
+        final LocalDate now = LocalDate.now();
+
+        final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+
+        // create different applications with types that should not be considered in the overview
+        final var revokedApplication = new Application();
+        revokedApplication.setStartDate(now);
+        revokedApplication.setEndDate(now);
+        revokedApplication.setPerson(person);
+        revokedApplication.setDayLength(DayLength.FULL);
+        revokedApplication.setStatus(ApplicationStatus.REVOKED);
+
+        final var rejectedApplication = new Application();
+        rejectedApplication.setStartDate(now);
+        rejectedApplication.setEndDate(now);
+        rejectedApplication.setPerson(person);
+        rejectedApplication.setDayLength(DayLength.FULL);
+        rejectedApplication.setStatus(ApplicationStatus.REJECTED);
+
+        final var cancelledApplication = new Application();
+        cancelledApplication.setStartDate(now);
+        cancelledApplication.setEndDate(now);
+        cancelledApplication.setPerson(person);
+        cancelledApplication.setDayLength(DayLength.FULL);
+        cancelledApplication.setStatus(ApplicationStatus.CANCELLED);
+
+        // create application with type that should be displayed in the overview
+        final var application = new Application();
+        application.setStartDate(now);
+        application.setEndDate(now);
+        application.setPerson(person);
+        application.setDayLength(DayLength.FULL);
+        application.setStatus(ApplicationStatus.ALLOWED);
+
+        // "invalid" applications must come before the valid one in list, since the type determination for the overview
+        // takes the first matching application from the list after the filters are applied.
+        final List<Application> applications = List.of(revokedApplication, rejectedApplication, cancelledApplication, application);
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
+            .thenReturn(applications);
+
+        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
+
+        // confirm that type of correct application is returned
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItem(
+                            hasProperty("type", is(ALLOWED_VACATION_FULL.getIdentifier()))
                         ))
                     ))
                 ))

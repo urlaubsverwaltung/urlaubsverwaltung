@@ -232,6 +232,7 @@ public class AbsenceOverviewViewController {
         } else if (sickNote == null) {
             return applications.stream()
                 .filter(application -> isDateInPeriod(date, application.getPeriod()))
+                .filter(application -> isAllowedOrPending(application.getStatus()))
                 .findFirst()
                 .map(this::getAbsenceOverviewDayType)
                 .orElse(null);
@@ -371,6 +372,21 @@ public class AbsenceOverviewViewController {
         }
 
         return startDate.isBefore(date) && date.isBefore(endDate);
+    }
+
+    private static boolean isAllowedOrPending(ApplicationStatus status) {
+        switch (status) {
+            case WAITING:
+            case TEMPORARY_ALLOWED:
+            case ALLOWED:
+            case ALLOWED_CANCELLATION_REQUESTED:
+                return true;
+            case REJECTED:
+            case CANCELLED:
+            case REVOKED:
+            default:
+                return false;
+        }
     }
 
     private LocalDate getStartDate(Integer year, String month) {
