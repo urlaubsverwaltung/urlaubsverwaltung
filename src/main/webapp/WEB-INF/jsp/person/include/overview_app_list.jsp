@@ -85,7 +85,7 @@
             <td class="is-centered hidden-xs">
             <span>
                 <c:choose>
-                    <c:when test="${app.hours != null}">
+                    <c:when test="${app.vacationType.category == 'OVERTIME'}">
                         <uv:duration duration="${app.hours}"/> <spring:message code="duration.overtime"/>
                     </c:when>
                     <c:otherwise>
