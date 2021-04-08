@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
@@ -672,6 +671,29 @@ class ApplicationForLeaveFormValidatorTest {
         sut.validate(appForm, errors);
 
         verify(errors).rejectValue("hours", "application.error.negativeOvertimeReduction");
+    }
+
+    @Test
+    void ensureMinutesCanBeZeroIfHoursAreSet() {
+
+        setupOvertimeSettings();
+
+        when(errors.hasErrors()).thenReturn(FALSE);
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+        when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
+
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setCategory(OVERTIME);
+
+        appForm.setVacationType(overtimeVacationType);
+        appForm.setHours(ONE);
+        appForm.setMinutes(0);
+
+        sut.validate(appForm, errors);
+
+        verify(errors).hasErrors();
+        verifyNoMoreInteractions(errors);
     }
 
     private static Stream<Arguments> overtimeReductionInput() {

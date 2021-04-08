@@ -17,22 +17,19 @@ class ApplicationMapperTest {
     @Test
     void ensureOvertimeReductionForEditingVacationOvertime() {
 
-        final Application oldApplication = new Application();
         final VacationType oldVacationType = new VacationType();
         oldVacationType.setCategory(OVERTIME);
+        final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
-
-        VacationType newVacationType = new VacationType();
+        final VacationType newVacationType = new VacationType();
         newVacationType.setCategory(OVERTIME);
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setHours(BigDecimal.ONE);
 
-
         final Application newApplication = ApplicationMapper.merge(oldApplication, applicationForLeaveForm);
-
         assertThat(newApplication.getHours()).isEqualTo(Duration.ofHours(1));
         assertThat(newApplication.getVacationType().getCategory()).isEqualTo(OVERTIME);
     }
@@ -40,21 +37,19 @@ class ApplicationMapperTest {
     @Test
     void ensureReasonForEditingVacationSpecialLeave() {
 
-        final Application oldApplication = new Application();
         final VacationType oldVacationType = new VacationType();
         oldVacationType.setCategory(SPECIALLEAVE);
+        final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
-
-        VacationType newVacationType = new VacationType();
+        final VacationType newVacationType = new VacationType();
         newVacationType.setCategory(SPECIALLEAVE);
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setReason("Birth of a child");
 
         final Application newApplication = ApplicationMapper.merge(oldApplication, applicationForLeaveForm);
-
         assertThat(newApplication.getReason()).isEqualTo("Birth of a child");
         assertThat(newApplication.getVacationType().getCategory()).isEqualTo(SPECIALLEAVE);
     }
@@ -62,20 +57,18 @@ class ApplicationMapperTest {
     @Test
     void ensureNoOvertimeReductionForConvertingVacationOvertimeToHoliday() {
 
-        final Application oldApplication = new Application();
         final VacationType oldVacationType = new VacationType();
         oldVacationType.setCategory(OVERTIME);
+        final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
-
-        VacationType newVacationType = new VacationType();
+        final VacationType newVacationType = new VacationType();
         newVacationType.setCategory(HOLIDAY);
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 
         final Application newApplication = ApplicationMapper.merge(oldApplication, applicationForLeaveForm);
-
         assertThat(newApplication.getHours()).isNull();
         assertThat(newApplication.getVacationType().getCategory()).isEqualTo(HOLIDAY);
     }
@@ -83,20 +76,18 @@ class ApplicationMapperTest {
     @Test
     void ensureNoReasonForConvertingVacationSpecialLeaveToHoliday() {
 
-        final Application oldApplication = new Application();
         final VacationType oldVacationType = new VacationType();
         oldVacationType.setCategory(SPECIALLEAVE);
+        final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
-
-        VacationType newVacationType = new VacationType();
+        final VacationType newVacationType = new VacationType();
         newVacationType.setCategory(HOLIDAY);
+        final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 
         final Application newApplication = ApplicationMapper.merge(oldApplication, applicationForLeaveForm);
-
         assertThat(newApplication.getReason()).isNull();
         assertThat(newApplication.getVacationType().getCategory()).isEqualTo(HOLIDAY);
     }
