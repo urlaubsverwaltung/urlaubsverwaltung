@@ -11,5 +11,7 @@ class ApplicationSettingsTest {
 
         final ApplicationSettings settings = new ApplicationSettings();
         assertThat(settings.getMaximumMonthsToApplyForLeaveInAdvance()).isEqualTo(12);
+        assertThat(settings.isRemindForUpcomingApplications()).isFalse();
+        assertThat(settings.getDaysBeforeRemindForUpcomingApplications()).isEqualTo(3);
     }
 }

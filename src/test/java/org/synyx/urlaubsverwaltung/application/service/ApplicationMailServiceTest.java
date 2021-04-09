@@ -669,4 +669,40 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(1).getTemplateName()).isEqualTo("temporary_allowed_second_stage_authority");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelSecondStage);
     }
+
+    @Test
+    void sendRemindForStartsSoonApplicationsReminderNotification() {
+
+        final Person person = new Person();
+        final List<Person> recipients = singletonList(person);
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(FULL);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(ALLOWED);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("daysBeforeUpcomingApplication", 1);
+
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application, application), 1);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("remind_application_upcoming");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(recipients);
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("remind_application_upcoming");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
+    }
 }
