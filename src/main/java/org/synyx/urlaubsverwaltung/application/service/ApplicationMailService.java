@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
@@ -26,8 +27,10 @@ import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @Service
@@ -37,6 +40,7 @@ class ApplicationMailService {
     private static final String VACATION_TYPE = "vacationType";
     private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
+    private static final String CALENDAR_ICS = "calendar.ics";
 
     private final MailService mailService;
     private final DepartmentService departmentService;
@@ -72,7 +76,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson())
             .withSubject("subject.application.allowed.user")
             .withTemplate("allowed_user", model)
-            .withAttachment("calendar.ics", calendarFile)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToApplicant);
 
@@ -287,7 +291,7 @@ class ApplicationMailService {
             .withRecipient(application.getHolidayReplacement())
             .withSubject("subject.application.holidayReplacement.allow")
             .withTemplate("notify_holiday_replacement_allow", model)
-            .withAttachment("calendar.ics", calendarFile)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
         mailService.send(mailToReplacement);
@@ -302,6 +306,8 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAboutCancellation(Application application) {
 
+        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT, CANCELLED);
+
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
@@ -310,6 +316,7 @@ class ApplicationMailService {
             .withRecipient(application.getHolidayReplacement())
             .withSubject("subject.application.holidayReplacement.cancellation")
             .withTemplate("notify_holiday_replacement_cancellation", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
         mailService.send(mailToReplacement);
@@ -436,6 +443,8 @@ class ApplicationMailService {
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
+        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT, CANCELLED);
+
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(COMMENT, comment);
@@ -445,6 +454,7 @@ class ApplicationMailService {
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelled.user")
             .withTemplate("cancelled_by_office", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
         mailService.send(mailToApplicant);
@@ -456,6 +466,7 @@ class ApplicationMailService {
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancelled.management")
             .withTemplate("cancelled_by_office_management", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
         mailService.send(mailToRelevantPersons);
@@ -615,8 +626,11 @@ class ApplicationMailService {
     }
 
     private File generateCalendar(Application application, String calendarName, AbsenceType absenceType) {
+        return generateCalendar(application, calendarName, absenceType, PUBLISHED);
+    }
+    private File generateCalendar(Application application, String calendarName, AbsenceType absenceType, ICalType iCalType) {
         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
-        return iCalService.getCalendar(calendarName, List.of(absence));
+        return iCalService.getCalendar(calendarName, List.of(absence), iCalType);
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {

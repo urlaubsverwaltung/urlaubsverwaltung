@@ -11,6 +11,7 @@ import net.fortuna.ical4j.model.property.Attendee;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RefreshInterval;
+import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
@@ -35,8 +36,10 @@ import static java.util.Date.from;
 import static java.util.stream.Collectors.toList;
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
+import static net.fortuna.ical4j.model.property.Method.CANCEL;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 
 
 @Service
@@ -54,26 +57,18 @@ public class ICalService {
     }
 
     public File getCalendar(String title, List<Absence> absences) {
-        final Calendar calendar = generateCalendar(title, absences);
-
-        final File file;
-        try {
-            file = File.createTempFile("calendar-", ".ics");
-        } catch (IOException e) {
-            throw new CalendarException("Could not generate temp file for " + title + " calendar", e);
-        }
-
-        try (final FileWriter calendarFileWriter = new FileWriter(file)) {
-            final CalendarOutputter calendarOutputter = new CalendarOutputter();
-            calendarOutputter.output(calendar, calendarFileWriter);
-        } catch (ValidationException | IOException e) {
-            throw new CalendarException("iCal calendar could not be written to file", e);
-        }
-
-        return file;
+        return getCalendar(title, absences, PUBLISHED);
     }
 
-    private Calendar generateCalendar(String title, List<Absence> absences) {
+    public File getCalendar(String title, List<Absence> absences, ICalType method) {
+
+        final File file = generateCalenderFile(title);
+        final Calendar calendar = generateCalendar(title, absences, method);
+
+        return writeCalenderIntoFile(calendar, file);
+    }
+
+    private Calendar generateCalendar(String title, List<Absence> absences, ICalType method) {
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
@@ -82,8 +77,12 @@ public class ICalService {
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
         calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 
+        if (method == ICalType.CANCELLED) {
+            calendar.getProperties().add(CANCEL);
+        }
+
         final List<VEvent> absencesVEvents = absences.stream()
-            .map(this::toVEvent)
+            .map(absence -> this.toVEvent(absence, method))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(toList());
@@ -92,7 +91,7 @@ public class ICalService {
         return calendar;
     }
 
-    private Optional<VEvent> toVEvent(Absence absence) {
+    private Optional<VEvent> toVEvent(Absence absence, ICalType method) {
 
         final ZonedDateTime startDateTime = absence.getStartDate();
         final ZonedDateTime endDateTime = absence.getEndDate();
@@ -124,8 +123,12 @@ public class ICalService {
 
         event.getProperties().add(new Uid(generateUid(absence)));
         event.getProperties().add(generateAttendee(absence));
-        calendarProperties.getOrganizer()
-            .ifPresent(organizer -> event.getProperties().add(new Organizer(URI.create("mailto:" + organizer))));
+
+        if (method == ICalType.CANCELLED) {
+            event.getProperties().add(new Sequence(1));
+        }
+
+        event.getProperties().add(new Organizer(URI.create("mailto:" + calendarProperties.getOrganizer())));
 
         return Optional.of(event);
     }
@@ -145,5 +148,25 @@ public class ICalService {
     private String generateUid(Absence absence) {
         final String data = absence.getStartDate() + "" + absence.getEndDate() + "" + absence.getPerson();
         return DigestUtils.md5Hex(data).toUpperCase();
+    }
+
+    private File generateCalenderFile(String title) {
+        final File file;
+        try {
+            file = File.createTempFile("calendar-", ".ics");
+        } catch (IOException e) {
+            throw new CalendarException("Could not generate temp file for " + title + " calendar", e);
+        }
+        return file;
+    }
+
+    private File writeCalenderIntoFile(Calendar calendar, File file) {
+        try (final FileWriter calendarFileWriter = new FileWriter(file)) {
+            final CalendarOutputter calendarOutputter = new CalendarOutputter();
+            calendarOutputter.output(calendar, calendarFileWriter);
+        } catch (ValidationException | IOException e) {
+            throw new CalendarException("iCal calendar could not be written to file", e);
+        }
+        return file;
     }
 }
