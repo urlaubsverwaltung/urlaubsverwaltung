@@ -35,7 +35,7 @@ see https://github.com/synyx/urlaubsverwaltung/releases
 
 ### [urlaubsverwaltung-3.2.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-3.2.0)
 * Add sicknotes to calendar [#987](https://github.com/synyx/urlaubsverwaltung/pull/987)
-* Add vacation days to overtime calender  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
+* Add vacation days to overtime calendar  [#1007](https://github.com/synyx/urlaubsverwaltung/pull/1007)
 * Move absences to absence package and some minor cleanups [#977](https://github.com/synyx/urlaubsverwaltung/pull/977)
 * Refactor Dockerfile, changing base image, rename jvm configuration en... [#1006](https://github.com/synyx/urlaubsverwaltung/pull/1006)
 * Add enforce plugin to check for java 11 and maven 3.3.9 [#1001](https://github.com/synyx/urlaubsverwaltung/pull/1001)
@@ -182,7 +182,7 @@ see https://github.com/synyx/urlaubsverwaltung/releases
 * Quickfix for better overview about department members: add link to department
   members on departments page [#233](https://github.com/synyx/urlaubsverwaltung/issues/233)
 * Fix double half day applications for leave on Christmas/New Year's Eve [#478](https://github.com/synyx/urlaubsverwaltung/issues/478)
-* Fix of empty calender in sick note edit form [#708](https://github.com/synyx/urlaubsverwaltung/issues/708)
+* Fix of empty calendar in sick note edit form [#708](https://github.com/synyx/urlaubsverwaltung/issues/708)
 
 ### [urlaubsverwaltung-2.43.2](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.43.2)
 * Fix release for broken war / container image

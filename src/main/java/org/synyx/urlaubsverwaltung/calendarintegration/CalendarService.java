@@ -26,10 +26,10 @@ public class CalendarService {
      * @return configured CalendarProvider or NoopCalendarSyncProvider in case of problems
      */
     public CalendarProvider getCalendarProvider() {
-        String calenderProvider = settingsService.getSettings().getCalendarSettings().getProvider();
+        final String configuredCalendarProvider = settingsService.getSettings().getCalendarSettings().getProvider();
 
-        Optional<CalendarProvider> option = calendarProviders.stream()
-            .filter(calendarProvider -> calendarProvider.getClass().getSimpleName().equals(calenderProvider))
+        final Optional<CalendarProvider> option = calendarProviders.stream()
+            .filter(calendarProvider -> calendarProvider.getClass().getSimpleName().equals(configuredCalendarProvider))
             .findFirst();
 
         return option.orElse(new NoopCalendarSyncProvider());

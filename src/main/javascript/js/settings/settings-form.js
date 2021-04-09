@@ -8,8 +8,8 @@ import $ from "jquery";
    *   * Anbindung an Microsoft Exchange Kalender
    */
   function updateVisibilityCalendar() {
-    const calenderSettingsProvider = document.querySelector("#calendarSettingsProvider");
-    const value = calenderSettingsProvider ? calenderSettingsProvider.value : "";
+    const calendarSettingsProvider = document.querySelector("#calendarSettingsProvider");
+    const value = calendarSettingsProvider ? calendarSettingsProvider.value : "";
 
     const googleCalendar = document.querySelector("#google-calendar");
     if (googleCalendar) {
