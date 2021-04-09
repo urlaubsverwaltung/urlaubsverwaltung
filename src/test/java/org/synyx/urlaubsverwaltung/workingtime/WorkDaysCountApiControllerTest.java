@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -14,8 +17,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Optional;
 
+import static java.time.Month.JANUARY;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -35,21 +40,21 @@ class WorkDaysCountApiControllerTest {
     private WorkDaysCountApiController sut;
 
     @Mock
-    private PersonService personServiceMock;
+    private PersonService personService;
     @Mock
-    private WorkDaysCountService workDaysCountServiceMock;
+    private WorkDaysCountService workDaysCountService;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkDaysCountApiController(personServiceMock, workDaysCountServiceMock);
+        sut = new WorkDaysCountApiController(personService, workDaysCountService);
     }
 
     @Test
     void ensureReturnsWorkDays() throws Exception {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysCountServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
         perform(get("/api/persons/23/workdays")
@@ -61,16 +66,16 @@ class WorkDaysCountApiControllerTest {
             .andExpect(jsonPath("$.workDays").exists())
             .andExpect(jsonPath("$.workDays", is("1")));
 
-        verify(personServiceMock).getPersonByID(23);
-        verify(workDaysCountServiceMock).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
+        verify(personService).getPersonByID(23);
+        verify(workDaysCountService).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
     }
 
     @Test
     void ensureReturnsNoContentForMissingWorkingDay() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
-        when(workDaysCountServiceMock.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenThrow(WorkDaysCountException.class);
 
         perform(get("/api/persons/23/workdays")
@@ -141,7 +146,7 @@ class WorkDaysCountApiControllerTest {
     @Test
     void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.empty());
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/workdays")
             .param("from", "2016-01-01")
@@ -149,23 +154,34 @@ class WorkDaysCountApiControllerTest {
             .param("length", "FULL"))
             .andExpect(status().isBadRequest());
 
-        verify(personServiceMock).getPersonByID(23);
+        verify(personService).getPersonByID(23);
     }
 
-    @Test
-    void ensureBadRequestForMissingLengthParameter() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"", " "})
+    @NullSource
+    void ensureDayLengthFullFallbackForMissingLengthParameter(String givenLength) throws Exception {
+
+        final Person person = new Person();
+        person.setId(23);
+
+        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2016, JANUARY, 4), LocalDate.of(2016, JANUARY, 4), person))
+            .thenReturn(BigDecimal.ONE);
 
         perform(get("/api/persons/23/workdays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-06"))
-            .andExpect(status().isBadRequest());
+            .param("from", "2016-01-04")
+            .param("to", "2016-01-04")
+            .param("length", givenLength))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.workDays").exists());
     }
 
     @Test
     void ensureBadRequestForInvalidLengthParameter() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personServiceMock.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/persons/23/workdays")
             .param("from", "2016-01-01")

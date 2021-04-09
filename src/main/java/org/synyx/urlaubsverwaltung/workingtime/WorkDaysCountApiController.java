@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
@@ -71,7 +72,7 @@ public class WorkDaysCountApiController {
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate,
         @Parameter(description = "Day Length")
-        @RequestParam("length")
+        @RequestParam(value = "length", required = false)
             String length) {
 
         if (startDate.isAfter(endDate)) {
@@ -85,7 +86,7 @@ public class WorkDaysCountApiController {
 
         final DayLength howLong;
         try {
-            howLong = DayLength.valueOf(length);
+            howLong = hasText(length) ? DayLength.valueOf(length) : DayLength.FULL;
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
