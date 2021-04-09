@@ -1037,8 +1037,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setHolidayReplacement(holidayReplacement);
-        application.setHolidayReplacementNote("Some notes");
+
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+        holidayReplacementEntity.setNote("Some notes");
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
 
@@ -1066,8 +1069,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setHolidayReplacement(holidayReplacement);
-        application.setHolidayReplacementNote("Some notes");
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+        holidayReplacementEntity.setNote("Some notes");
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 3);
 
@@ -1143,7 +1148,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setHolidayReplacement(holidayReplacement);
+
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
 
@@ -1171,7 +1179,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
-        application.setHolidayReplacement(holidayReplacement);
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 3);
 
