@@ -39,7 +39,11 @@ final class ApplicationMapper {
     }
 
     static Application mapToApplication(ApplicationForLeaveForm applicationForLeaveForm) {
-        return merge(new Application(), applicationForLeaveForm);
+
+        final Application target = new Application();
+        target.setId(applicationForLeaveForm.getId());
+
+        return merge(target, applicationForLeaveForm);
     }
 
     static Application merge(Application applicationForLeave, ApplicationForLeaveForm applicationForLeaveForm) {

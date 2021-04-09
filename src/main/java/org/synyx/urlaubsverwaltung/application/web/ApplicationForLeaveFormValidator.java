@@ -36,6 +36,7 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -344,12 +345,10 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
 
-        final Application application = toApplication(applicationForm);
-
         /*
          * Ensure the person has a working time for the period of the application for leave
          */
-        if (!personHasWorkingTime(application)) {
+        if (!personHasWorkingTime(applicationForm)) {
             errors.reject(ERROR_WORKING_TIME);
 
             return;
@@ -358,7 +357,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         /*
          * Ensure that no one applies for leave for a vacation of 0 days
          */
-        if (vacationOfZeroDays(application)) {
+        if (vacationOfZeroDays(applicationForm)) {
             errors.reject(ERROR_ZERO_DAYS);
 
             return;
@@ -367,7 +366,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         /*
          * Ensure that there is no application for leave and no sick note in the same period
          */
-        if (vacationIsOverlapping(application)) {
+        if (vacationIsOverlapping(applicationForm)) {
             errors.reject(ERROR_OVERLAP);
 
             return;
@@ -377,7 +376,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
          * Ensure that the person has enough vacation days left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY}
          */
-        if (!enoughVacationDaysLeft(application)) {
+        if (!enoughVacationDaysLeft(applicationForm)) {
             errors.reject(ERROR_NOT_ENOUGH_DAYS);
         }
 
@@ -385,97 +384,69 @@ public class ApplicationForLeaveFormValidator implements Validator {
          * Ensure that the person has enough overtime hours left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME}
          */
-        if (!enoughOvertimeHoursLeft(application, settings)) {
+        if (!enoughOvertimeHoursLeft(applicationForm, settings)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
     }
 
-    private boolean personHasWorkingTime(Application application) {
+    private boolean personHasWorkingTime(ApplicationForLeaveForm applicationForLeaveForm) {
 
         final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-            application.getPerson(), application.getStartDate());
+            applicationForLeaveForm.getPerson(), applicationForLeaveForm.getStartDate());
 
         return workingTime.isPresent();
     }
 
-    private boolean vacationOfZeroDays(Application application) {
+    private boolean vacationOfZeroDays(ApplicationForLeaveForm applicationForLeaveForm) {
 
-        final BigDecimal days = workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(),
-            application.getEndDate(), application.getPerson());
+        final BigDecimal days = workDaysCountService.getWorkDaysCount(applicationForLeaveForm.getDayLength(), applicationForLeaveForm.getStartDate(),
+            applicationForLeaveForm.getEndDate(), applicationForLeaveForm.getPerson());
 
         return CalcUtil.isZero(days);
     }
 
-    private boolean vacationIsOverlapping(Application application) {
+    private boolean vacationIsOverlapping(ApplicationForLeaveForm applicationForLeaveForm) {
 
+        final Application application = mapToApplication(applicationForLeaveForm);
         final OverlapCase overlap = overlapService.checkOverlap(application);
 
         return overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
     }
 
-    private boolean enoughVacationDaysLeft(Application application) {
+    private boolean enoughVacationDaysLeft(ApplicationForLeaveForm applicationForLeaveForm) {
 
-        final boolean isHoliday = HOLIDAY.equals(application.getVacationType().getCategory());
+        final boolean isHoliday = HOLIDAY.equals(applicationForLeaveForm.getVacationType().getCategory());
 
         if (isHoliday) {
+            final Application application = mapToApplication(applicationForLeaveForm);
             return calculationService.checkApplication(application);
         }
 
         return true;
     }
 
-    private boolean enoughOvertimeHoursLeft(Application application, Settings settings) {
+    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm, Settings settings) {
 
-        final boolean isOvertime = OVERTIME.equals(application.getVacationType().getCategory());
+        final boolean isOvertime = OVERTIME.equals(applicationForLeaveForm.getVacationType().getCategory());
 
         if (isOvertime) {
             final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
             final boolean overtimeActive = overtimeSettings.isOvertimeActive();
 
-            if (overtimeActive && application.getHours() != null) {
-                return checkOvertimeHours(application, overtimeSettings);
+            if (overtimeActive && applicationForLeaveForm.getHours() != null) {
+                return checkOvertimeHours(applicationForLeaveForm, overtimeSettings);
             }
         }
 
         return true;
     }
 
-    private boolean checkOvertimeHours(Application application, OvertimeSettings settings) {
+    private boolean checkOvertimeHours(ApplicationForLeaveForm applicationForLeaveForm, OvertimeSettings settings) {
 
         final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
-        final Duration leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(application.getPerson());
-        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(application.getHours());
+        final Duration leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(applicationForLeaveForm.getPerson());
+        final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(Duration.ofHours(applicationForLeaveForm.getHours().longValue()));
 
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negated()) >= 0;
-    }
-
-    private Application toApplication(ApplicationForLeaveForm appForm) {
-        final List<HolidayReplacementEntity> replacementEntities = appForm.getHolidayReplacements().stream()
-            .map(HolidayReplacementEntity::from)
-            .collect(toList());
-
-        Application applicationForLeave = new Application();
-
-        applicationForLeave.setId(appForm.getId());
-        applicationForLeave.setPerson(appForm.getPerson());
-
-        applicationForLeave.setStartDate(appForm.getStartDate());
-        applicationForLeave.setStartTime(appForm.getStartTime());
-
-        applicationForLeave.setEndDate(appForm.getEndDate());
-        applicationForLeave.setEndTime(appForm.getEndTime());
-
-        applicationForLeave.setVacationType(appForm.getVacationType());
-        applicationForLeave.setDayLength(appForm.getDayLength());
-        applicationForLeave.setReason(appForm.getReason());
-        applicationForLeave.setHolidayReplacements(replacementEntities);
-        applicationForLeave.setAddress(appForm.getAddress());
-        applicationForLeave.setTeamInformed(appForm.isTeamInformed());
-
-        if (VacationCategory.OVERTIME.equals(appForm.getVacationType().getCategory())) {
-            applicationForLeave.setHours(appForm.getOvertimeReduction());
-        }
-
-        return applicationForLeave;
     }
 }
