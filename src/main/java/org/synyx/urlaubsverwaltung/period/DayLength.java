@@ -4,15 +4,17 @@ import java.math.BigDecimal;
 
 public enum DayLength {
 
-    FULL(BigDecimal.ONE),
-    MORNING(new BigDecimal("0.5")),
-    NOON(new BigDecimal("0.5")),
-    ZERO(BigDecimal.ZERO);
+    FULL(BigDecimal.ONE, false),
+    MORNING(new BigDecimal("0.5"), true),
+    NOON(new BigDecimal("0.5"), true),
+    ZERO(BigDecimal.ZERO, false);
 
     private final BigDecimal duration;
+    private final boolean isHalfDay;
 
-    DayLength(BigDecimal duration) {
+    DayLength(BigDecimal duration, boolean isHalfDay) {
         this.duration = duration;
+        this.isHalfDay = isHalfDay;
     }
 
     public BigDecimal getDuration() {
@@ -39,5 +41,5 @@ public enum DayLength {
         return null;
     }
 
-    public boolean isHalfDay() { return duration.equals(MORNING.duration); }
+    public boolean isHalfDay() { return isHalfDay; }
 }
