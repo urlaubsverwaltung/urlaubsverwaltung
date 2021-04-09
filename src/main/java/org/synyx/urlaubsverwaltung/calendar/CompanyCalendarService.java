@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -19,12 +20,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
 class CompanyCalendarService {
 
     private final AbsenceService absenceService;
+    private final DepartmentService departmentService;
     private final CompanyCalendarRepository companyCalendarRepository;
     private final ICalService iCalService;
     private final PersonService personService;
@@ -32,8 +35,9 @@ class CompanyCalendarService {
     private final Clock clock;
 
     @Autowired
-    CompanyCalendarService(AbsenceService absenceService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource, Clock clock) {
+    CompanyCalendarService(AbsenceService absenceService, DepartmentService departmentService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource, Clock clock) {
         this.absenceService = absenceService;
+        this.departmentService = departmentService;
         this.companyCalendarRepository = companyCalendarRepository;
         this.iCalService = iCalService;
         this.personService = personService;
@@ -77,7 +81,17 @@ class CompanyCalendarService {
 
         final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
         final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getCalendarPeriod());
-        final List<Absence> absences = absenceService.getOpenAbsencesSince(sinceDate);
+
+        // for OFFICE, show everyone
+        // for others, show everyone from visible departments
+        final List<Absence> absences;
+        if (person.hasRole(Role.OFFICE)) {
+            absences = absenceService.getOpenAbsencesSince(sinceDate);
+        } else {
+            var departments = departmentService.getAllowedDepartmentsOfPerson(person);
+            var persons = departments.stream().flatMap(d -> d.getMembers().stream()).distinct().collect(Collectors.toList());
+            absences = absenceService.getOpenAbsencesSince(persons, sinceDate);
+        }
 
         return iCalService.getCalendar(title, absences);
     }

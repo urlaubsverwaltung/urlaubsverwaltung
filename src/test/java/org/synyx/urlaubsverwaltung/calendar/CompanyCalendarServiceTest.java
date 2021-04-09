@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -45,6 +46,8 @@ class CompanyCalendarServiceTest {
     @Mock
     private AbsenceService absenceService;
     @Mock
+    private DepartmentService departmentService;
+    @Mock
     private CompanyCalendarRepository companyCalendarRepository;
     @Mock
     private ICalService iCalService;
@@ -59,8 +62,7 @@ class CompanyCalendarServiceTest {
 
     @BeforeEach
     void setUp() {
-
-        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
+        sut = new CompanyCalendarService(absenceService, departmentService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
     }
 
     @Test
@@ -71,6 +73,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person();
         person.setId(10);
+        person.setPermissions(List.of(OFFICE));
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
         CompanyCalendar companyCalendar = new CompanyCalendar(person);
@@ -86,6 +89,30 @@ class CompanyCalendarServiceTest {
         final File calendar = sut.getCalendarForAll(10, "secret", GERMAN);
         assertThat(calendar).hasName("calendar.ics");
     }
+
+    @Test
+    void getCalendarForAllForOneFullDayWrongDepartment() {
+
+        when(absenceService.getOpenAbsencesSince(eq(List.of()), any(LocalDate.class))).thenReturn(List.of());
+
+        final Person person = new Person();
+        person.setId(10);
+        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+
+        CompanyCalendar companyCalendar = new CompanyCalendar(person);
+        companyCalendar.setId(1L);
+        companyCalendar.setCalendarPeriod(java.time.Period.parse("P1Y"));
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));
+
+        when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
+        final File iCal = new File("calendar.ics");
+        iCal.deleteOnExit();
+        when(iCalService.getCalendar("Abwesenheitskalender der Firma", List.of())).thenReturn(iCal);
+
+        final File calendar = sut.getCalendarForAll(10, "secret", GERMAN);
+        assertThat(calendar).hasName("calendar.ics");
+    }
+
 
     @Test
     void getCalendarForAllButNoCompanyCalendarWithSecretFound() {
