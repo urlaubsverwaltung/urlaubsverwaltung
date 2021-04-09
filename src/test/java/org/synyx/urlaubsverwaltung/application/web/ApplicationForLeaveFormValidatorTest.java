@@ -1024,7 +1024,7 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"FULL", "NOON", "MORNING"})
+    @EnumSource(value = DayLength.class, names = {"FULL", "NOON", "MORNING"})
     void ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(final DayLength dayLength) {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -1126,7 +1126,7 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"FULL", "NOON", "MORNING"})
+    @EnumSource(value = DayLength.class, names = {"FULL", "NOON", "MORNING"})
     void ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(final DayLength dayLength) {
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
