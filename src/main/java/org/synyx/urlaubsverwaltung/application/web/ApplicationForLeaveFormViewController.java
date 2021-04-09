@@ -260,7 +260,6 @@ public class ApplicationForLeaveFormViewController {
 
         model.addAttribute("application", appForm);
 
-        // show the half day option only if allowed (or the form already has it filled in)
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
         final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
         model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
