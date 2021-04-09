@@ -2,8 +2,7 @@ package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementDto;
-import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 
 import java.time.Duration;
 import java.util.List;

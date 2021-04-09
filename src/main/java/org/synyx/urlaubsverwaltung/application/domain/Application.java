@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.DurationConverter;
-import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;

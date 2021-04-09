@@ -1,6 +1,7 @@
-package org.synyx.urlaubsverwaltung.holidayreplacement;
+package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.BeanUtils;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 public class HolidayReplacementDto {

@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;

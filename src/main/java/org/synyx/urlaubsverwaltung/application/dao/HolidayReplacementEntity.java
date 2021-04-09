@@ -1,6 +1,7 @@
-package org.synyx.urlaubsverwaltung.holidayreplacement;
+package org.synyx.urlaubsverwaltung.application.dao;
 
 import org.springframework.beans.BeanUtils;
+import org.synyx.urlaubsverwaltung.application.web.HolidayReplacementDto;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Embeddable;

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;

@@ -5,7 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.holidayreplacement.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
