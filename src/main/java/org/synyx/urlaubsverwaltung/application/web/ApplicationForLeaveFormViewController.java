@@ -47,6 +47,7 @@ import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
@@ -163,7 +164,7 @@ public class ApplicationForLeaveFormViewController {
             final Person replacementPersonToAdd = applicationForLeaveForm.getHolidayReplacementToAdd();
             if (replacementPersonToAdd == null) {
                 final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
-                    not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                    not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
                         .and(not(isEqual(person)))
                 );
                 addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
@@ -178,7 +179,7 @@ public class ApplicationForLeaveFormViewController {
                 final List<SelectableHolidayReplacementDto> nextSelectableReplacements = selectableHolidayReplacements(
                     not(
                         personEquals(replacementPersonToAdd)
-                            .or(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                            .or(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
                     ).and(not(isEqual(person)))
                 );
                 addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
@@ -219,7 +220,7 @@ public class ApplicationForLeaveFormViewController {
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 personEquals(personIdToRemove)
-                    .or(not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons())))
+                    .or(not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm))))
                     .and(not(isEqual(person)))
             );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements);
@@ -240,7 +241,7 @@ public class ApplicationForLeaveFormViewController {
         if (errors.hasErrors()) {
             final Person person = ofNullable(appForm.getPerson()).orElseGet(personService::getSignedInUser);
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
-                not(containsPerson(appForm.getHolidayReplacementPersons()))
+                not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
                     .and(not(isEqual(person)))
             );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
@@ -281,7 +282,7 @@ public class ApplicationForLeaveFormViewController {
             prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
-                not(containsPerson(applicationForLeaveForm.getHolidayReplacementPersons()))
+                not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
                     .and(not(isEqual(person)))
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
@@ -321,7 +322,8 @@ public class ApplicationForLeaveFormViewController {
             }
 
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(
-                not(containsPerson(appForm.getHolidayReplacementPersons())).and(not(isEqual(signedInUser))))
+                not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
+                    .and(not(isEqual(signedInUser))))
             );
 
             LOG.info("edit application ({}) has errors: {}", appForm, errors);
@@ -425,5 +427,12 @@ public class ApplicationForLeaveFormViewController {
         dto.setPersonId(person.getId());
         dto.setDisplayName(person.getNiceName());
         return dto;
+    }
+    private static List<Person> holidayReplacementPersonsOfApplication(ApplicationForLeaveForm applicationForLeaveForm) {
+
+        return ofNullable(applicationForLeaveForm.getHolidayReplacements())
+            .orElse(emptyList()).stream()
+            .map(HolidayReplacementDto::getPerson)
+            .collect(toList());
     }
 }

@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -16,11 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-
 import static java.util.Objects.requireNonNullElse;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -194,14 +191,6 @@ public class ApplicationForLeaveForm {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public List<Person> getHolidayReplacementPersons() {
-
-        return ofNullable(holidayReplacements)
-            .orElse(emptyList()).stream()
-            .map(HolidayReplacementDto::getPerson)
-            .collect(toList());
     }
 
     public List<HolidayReplacementDto> getHolidayReplacements() {
