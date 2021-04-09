@@ -18,7 +18,7 @@ public class CalendarProperties {
 
     /**
      * Adds the organizer to all iCal events that
-     * where generated through the calender integration
+     * where generated through the calendar integration
      * feature
      */
     @Email

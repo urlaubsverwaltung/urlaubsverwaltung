@@ -245,22 +245,22 @@ class SettingsViewControllerTest {
 
         @Override
         public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
         public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
         public void delete(String eventId, CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
         public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
     }
 
@@ -268,22 +268,22 @@ class SettingsViewControllerTest {
 
         @Override
         public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
         public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
         public void delete(String eventId, CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
         public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
-            throw new UnsupportedOperationException("This is just a mock to have some named CalenderProvider impl.");
+            throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
     }
 }

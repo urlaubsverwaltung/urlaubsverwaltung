@@ -67,7 +67,7 @@ public class ICalService {
             final CalendarOutputter calendarOutputter = new CalendarOutputter();
             calendarOutputter.output(calendar, calendarFileWriter);
         } catch (ValidationException | IOException e) {
-            throw new CalendarException("iCal calender could not be written to file", e);
+            throw new CalendarException("iCal calendar could not be written to file", e);
         }
 
         return file;
