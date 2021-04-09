@@ -386,7 +386,7 @@
                                                 </label>
                                                 <div class="col-md-9">
                                                     <div class="tw-flex tw-justify-between tw-items-end tw-mb-1">
-                                                        <p class="tw-m-0">
+                                                        <p class="tw-m-0 tw-text-sm">
                                                             <spring:message code="application.data.holidayReplacementNote"/>
                                                             <c:out value="${holidayReplacement.person.firstName}"/> <c:out
                                                             value="${holidayReplacement.person.lastName}"/>:
