@@ -79,6 +79,7 @@
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>
                                 <th scope="col" class="sortable-field"><spring:message code="department.members"/></th>
+                                <th scope="col" class="sortable-field"><spring:message code='department.data.twoStageApproval'/></th>
                                 <th scope="col" class="sortable-field"><spring:message code='department.data.lastModification'/></th>
                                 <sec:authorize access="hasAuthority('OFFICE')">
                                     <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
@@ -124,6 +125,10 @@
                                         </c:if>
 
                                     </td>
+                                    <td class="is-centered hidden-xs">
+                                        <c:if test="${department.twoStageApproval}">
+                                            <icon:check className="tw-w-5 tw-h-5" solid="true" />
+                                        </c:if>
                                     </td>
                                     <td class="hidden-xs">
                                         <uv:date date="${department.lastModification}"/>
