@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import java.time.Duration;
 
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
 
 final class ApplicationMapper {
 
@@ -52,7 +53,6 @@ final class ApplicationMapper {
 
         newApplication.setVacationType(applicationForLeaveForm.getVacationType());
         newApplication.setDayLength(applicationForLeaveForm.getDayLength());
-        newApplication.setReason(applicationForLeaveForm.getReason());
         newApplication.setHolidayReplacement(applicationForLeaveForm.getHolidayReplacement());
         newApplication.setHolidayReplacementNote(applicationForLeaveForm.getHolidayReplacementNote());
         newApplication.setAddress(applicationForLeaveForm.getAddress());
@@ -61,6 +61,14 @@ final class ApplicationMapper {
         if (OVERTIME.equals(newApplication.getVacationType().getCategory())) {
             final Duration overtimeReduction = applicationForLeaveForm.getOvertimeReduction();
             newApplication.setHours(overtimeReduction);
+        } else {
+            newApplication.setHours(null);
+        }
+
+        if (SPECIALLEAVE.equals(newApplication.getVacationType().getCategory())) {
+            newApplication.setReason(applicationForLeaveForm.getReason());
+        } else {
+            newApplication.setReason(null);
         }
 
         return newApplication;

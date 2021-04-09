@@ -314,13 +314,14 @@ public class ApplicationForLeaveFormValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_MISSING_HOURS);
         }
 
-        final boolean onlyMinutesAreSet = (hours == null || CalcUtil.isZero(hours)) && minutes != null && minutes > 0;
+        final boolean hoursNullOrZero = hours == null || CalcUtil.isZero(hours);
+        final boolean onlyMinutesAreSet = hoursNullOrZero && minutes != null && minutes > 0;
 
         if (hours != null && !CalcUtil.isPositive(hours) && !onlyMinutesAreSet) {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_INVALID_HOURS);
         }
 
-        if (minutes != null && minutes <= 0) {
+        if (minutes != null && (minutes < 0 || (minutes == 0 && hoursNullOrZero)))  {
             errors.rejectValue(ATTRIBUTE_MINUTES, ERROR_INVALID_HOURS);
         }
     }
