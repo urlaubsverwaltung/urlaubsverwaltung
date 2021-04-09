@@ -1,8 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -17,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
-import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -207,37 +203,6 @@ public class ApplicationForLeaveForm {
 
     public void setHolidayReplacementToAdd(Person holidayReplacementToAdd) {
         this.holidayReplacementToAdd = holidayReplacementToAdd;
-    }
-
-    public Application generateApplicationForLeave() {
-
-        final List<HolidayReplacementEntity> replacementEntities = holidayReplacements.stream()
-            .map(HolidayReplacementEntity::from)
-            .collect(toList());
-
-        Application applicationForLeave = new Application();
-
-        applicationForLeave.setId(id);
-        applicationForLeave.setPerson(person);
-
-        applicationForLeave.setStartDate(startDate);
-        applicationForLeave.setStartTime(startTime);
-
-        applicationForLeave.setEndDate(endDate);
-        applicationForLeave.setEndTime(endTime);
-
-        applicationForLeave.setVacationType(vacationType);
-        applicationForLeave.setDayLength(dayLength);
-        applicationForLeave.setReason(reason);
-        applicationForLeave.setHolidayReplacements(replacementEntities);
-        applicationForLeave.setAddress(address);
-        applicationForLeave.setTeamInformed(teamInformed);
-
-        if (VacationCategory.OVERTIME.equals(vacationType.getCategory())) {
-            applicationForLeave.setHours(getOvertimeReduction());
-        }
-
-        return applicationForLeave;
     }
 
     /**

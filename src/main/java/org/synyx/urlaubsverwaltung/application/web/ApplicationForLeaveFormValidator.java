@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
@@ -26,8 +28,10 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
@@ -340,7 +344,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
     private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
 
-        final Application application = applicationForm.generateApplicationForLeave();
+        final Application application = toApplication(applicationForm);
 
         /*
          * Ensure the person has a working time for the period of the application for leave
@@ -445,4 +449,33 @@ public class ApplicationForLeaveFormValidator implements Validator {
         return temporaryOvertimeForPerson.compareTo(minimumOvertime.negated()) >= 0;
     }
 
+    private Application toApplication(ApplicationForLeaveForm appForm) {
+        final List<HolidayReplacementEntity> replacementEntities = appForm.getHolidayReplacements().stream()
+            .map(HolidayReplacementEntity::from)
+            .collect(toList());
+
+        Application applicationForLeave = new Application();
+
+        applicationForLeave.setId(appForm.getId());
+        applicationForLeave.setPerson(appForm.getPerson());
+
+        applicationForLeave.setStartDate(appForm.getStartDate());
+        applicationForLeave.setStartTime(appForm.getStartTime());
+
+        applicationForLeave.setEndDate(appForm.getEndDate());
+        applicationForLeave.setEndTime(appForm.getEndTime());
+
+        applicationForLeave.setVacationType(appForm.getVacationType());
+        applicationForLeave.setDayLength(appForm.getDayLength());
+        applicationForLeave.setReason(appForm.getReason());
+        applicationForLeave.setHolidayReplacements(replacementEntities);
+        applicationForLeave.setAddress(appForm.getAddress());
+        applicationForLeave.setTeamInformed(appForm.isTeamInformed());
+
+        if (VacationCategory.OVERTIME.equals(appForm.getVacationType().getCategory())) {
+            applicationForLeave.setHours(appForm.getOvertimeReduction());
+        }
+
+        return applicationForLeave;
+    }
 }

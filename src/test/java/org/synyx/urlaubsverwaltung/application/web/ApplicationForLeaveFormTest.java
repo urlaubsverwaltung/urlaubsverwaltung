@@ -1,69 +1,21 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.sql.Time;
-import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static java.math.BigDecimal.ONE;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ApplicationForLeaveFormTest {
-
-    private final Clock clock = Clock.systemUTC();
-
-    @Test
-    void ensureGeneratedFullDayApplicationForLeaveHasCorrectPeriod() {
-
-        final LocalDate startDate = LocalDate.now(clock);
-        final LocalDate endDate = startDate.plusDays(3);
-
-        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-
-        form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        form.setDayLength(DayLength.FULL);
-        form.setStartDate(startDate);
-        form.setEndDate(endDate);
-        form.setHolidayReplacements(emptyList());
-
-        final Application application = form.generateApplicationForLeave();
-
-        assertThat(application.getStartDate()).isEqualTo(startDate);
-        assertThat(application.getEndDate()).isEqualTo(endDate);
-        assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
-    }
-
-    @Test
-    void ensureGeneratedHalfDayApplicationForLeaveHasCorrectPeriod() {
-
-        final LocalDate now = LocalDate.now(clock);
-
-        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-        form.setVacationType(TestDataCreator.createVacationType(VacationCategory.HOLIDAY));
-        form.setDayLength(DayLength.MORNING);
-        form.setStartDate(now);
-        form.setEndDate(now);
-        form.setHolidayReplacements(emptyList());
-
-        final Application application = form.generateApplicationForLeave();
-        assertThat(application.getStartDate()).isEqualTo(now);
-        assertThat(application.getEndDate()).isEqualTo(now);
-        assertThat(application.getDayLength()).isEqualTo(DayLength.MORNING);
-    }
 
     @Test
     void ensureSettingNullHourDurationWithBuilderDoesNotSetHoursAndMinutes() {
@@ -73,103 +25,6 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form.getHours()).isNull();
         assertThat(form.getMinutes()).isNull();
-    }
-
-    @Test
-    void ensureGeneratedApplicationForLeaveWithDecimalOvertimeReduction() {
-
-        final VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
-        holidayReplacementDto.setId(33);
-        holidayReplacementDto.setPerson(holidayReplacement);
-
-        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-        form.setPerson(person);
-        form.setDayLength(DayLength.FULL);
-        form.setAddress("Musterstr. 39");
-        form.setComment("Kommentar");
-        form.setReason("Deshalb");
-        form.setTeamInformed(true);
-        form.setVacationType(overtime);
-        form.setHours(BigDecimal.valueOf(1.25));
-        form.setHolidayReplacements(List.of(holidayReplacementDto));
-
-        final HolidayReplacementEntity expectedReplacementEntity = new HolidayReplacementEntity();
-        expectedReplacementEntity.setPerson(holidayReplacement);
-
-        final Application application = form.generateApplicationForLeave();
-        assertThat(application.getPerson()).isEqualTo(person);
-        assertThat(application.getHolidayReplacements()).contains(expectedReplacementEntity);
-        assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
-        assertThat(application.getReason()).isEqualTo("Deshalb");
-        assertThat(application.getVacationType().getMessageKey()).isEqualTo(overtime.getMessageKey());
-        assertThat(application.getHours()).isEqualTo(Duration.ofMinutes(75));
-        assertThat(application.isTeamInformed()).isTrue();
-    }
-
-    @Test
-    void ensureGeneratedApplicationForLeaveWithHoursAndMinutesOvertimeReduction() {
-
-        final VacationType overtime = TestDataCreator.createVacationType(VacationCategory.OVERTIME);
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
-        holidayReplacementDto.setId(33);
-        holidayReplacementDto.setPerson(holidayReplacement);
-
-        final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-        form.setPerson(person);
-        form.setDayLength(DayLength.FULL);
-        form.setAddress("Musterstr. 39");
-        form.setComment("Kommentar");
-        form.setReason("Deshalb");
-        form.setTeamInformed(true);
-        form.setVacationType(overtime);
-        form.setHours(BigDecimal.valueOf(1));
-        form.setMinutes(15);
-        form.setHolidayReplacements(List.of(holidayReplacementDto));
-
-        final HolidayReplacementEntity expectedReplacementEntity = new HolidayReplacementEntity();
-        expectedReplacementEntity.setPerson(holidayReplacement);
-
-        final Application application = form.generateApplicationForLeave();
-        assertThat(application.getPerson()).isEqualTo(person);
-        assertThat(application.getHolidayReplacements()).contains(expectedReplacementEntity);
-        assertThat(application.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(application.getAddress()).isEqualTo("Musterstr. 39");
-        assertThat(application.getReason()).isEqualTo("Deshalb");
-        assertThat(application.getVacationType().getMessageKey()).isEqualTo(overtime.getMessageKey());
-        assertThat(application.getHours()).isEqualTo(Duration.ofMinutes(75));
-        assertThat(application.isTeamInformed()).isTrue();
-    }
-
-    @Test
-    void ensureGeneratedApplicationForLeaveHasNullHoursForOtherVacationTypeThanOvertime() {
-
-        Consumer<VacationType> assertHoursAreNotSet = (type) -> {
-            final ApplicationForLeaveForm form = new ApplicationForLeaveForm();
-            form.setVacationType(type);
-            form.setHours(ONE);
-            form.setHolidayReplacements(emptyList());
-
-            final Application application = form.generateApplicationForLeave();
-            assertThat(application.getHours()).isNull();
-        };
-
-        final VacationType holiday = TestDataCreator.createVacationType(VacationCategory.HOLIDAY);
-        final VacationType specialLeave = TestDataCreator.createVacationType(VacationCategory.SPECIALLEAVE);
-        final VacationType unpaidLeave = TestDataCreator.createVacationType(VacationCategory.UNPAIDLEAVE);
-
-        assertHoursAreNotSet.accept(holiday);
-        assertHoursAreNotSet.accept(specialLeave);
-        assertHoursAreNotSet.accept(unpaidLeave);
     }
 
     @Test
