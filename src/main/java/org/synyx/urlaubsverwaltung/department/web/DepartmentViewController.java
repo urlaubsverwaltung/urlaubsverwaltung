@@ -22,8 +22,9 @@ import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartment;
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -58,7 +59,7 @@ public class DepartmentViewController {
 
         final List<Department> departments = departmentService.getAllDepartments();
 
-        model.addAttribute("departments", mapToDepartmentForm(departments));
+        model.addAttribute("departments", mapToDepartmentOverviewDtos(departments));
 
         return "department/department_list";
     }

@@ -34,7 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentViewControllerTest {
@@ -65,7 +66,7 @@ class DepartmentViewControllerTest {
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
         perform(get("/web/department"))
-            .andExpect(model().attribute("departments", mapToDepartmentForm(departments)));
+            .andExpect(model().attribute("departments", mapToDepartmentOverviewDtos(departments)));
     }
 
     @Test

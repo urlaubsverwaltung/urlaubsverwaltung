@@ -6,15 +6,15 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-final class DepartmentMapper {
+final class DepartmentDepartmentFormMapper {
 
-    private DepartmentMapper() {
+    private DepartmentDepartmentFormMapper() {
         // prevents init
     }
 
     static List<DepartmentForm> mapToDepartmentForm(List<Department> departments) {
 
-        return departments.stream().map(DepartmentMapper::mapToDepartmentForm).collect(toList());
+        return departments.stream().map(DepartmentDepartmentFormMapper::mapToDepartmentForm).collect(toList());
     }
 
     static DepartmentForm mapToDepartmentForm(Department department) {

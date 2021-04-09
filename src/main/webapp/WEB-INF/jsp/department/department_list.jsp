@@ -107,10 +107,23 @@
                                         </c:choose>
                                     </td>
                                     <td class="hidden-xs">
-                                        <a href="${URL_PREFIX}/person?active=true&department=${department.id}">
-                                            <c:out value="${fn:length(department.members)}"/>
-                                            <spring:message code="department.members"/>
-                                        </a>
+                                        <c:if test="${department.activeMembersCount > 0}">
+                                            <a href="${URL_PREFIX}/person?active=true&department=${department.id}">
+                                                <c:out value="${department.activeMembersCount}"/>
+                                                <spring:message code="department.members.active"/>
+                                            </a>
+                                        </c:if>
+                                        <c:if test="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
+                                            <c:out value="/"/>
+                                        </c:if>
+                                        <c:if test="${department.inactiveMembersCount > 0}">
+                                            <a href="${URL_PREFIX}/person?active=false&department=${department.id}">
+                                                <c:out value="${department.inactiveMembersCount}"/>
+                                                <spring:message code="department.members.inactive"/>
+                                            </a>
+                                        </c:if>
+
+                                    </td>
                                     </td>
                                     <td class="hidden-xs">
                                         <uv:date date="${department.lastModification}"/>
