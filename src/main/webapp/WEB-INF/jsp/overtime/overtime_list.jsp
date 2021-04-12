@@ -71,13 +71,13 @@
                         <p><spring:message code="overtime.none"/></p>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table bordered-table selectable-table">
+                        <table class="list-table selectable-table tw-text-sm">
                             <tbody>
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
                                         <span class="print:tw-hidden">
-                                            <icon:briefcase className="tw-w-4 tw-h-4"/>
+                                            <icon:briefcase className="tw-w-6 tw-h-6"/>
                                         </span>
                                     </td>
                                     <td>
