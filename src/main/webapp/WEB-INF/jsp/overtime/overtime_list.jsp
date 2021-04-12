@@ -82,14 +82,15 @@
                                         <a class="print:tw-hidden" href="${URL_PREFIX}/overtime/${record.id}">
                                             <h4><spring:message code="overtime.title"/></h4>
                                         </a>
-                                        <p><uv:date date="${record.startDate}"/> - <uv:date
-                                            date="${record.endDate}"/></p>
+                                        <p>
+                                            <uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/>
+                                        </p>
                                     </td>
                                     <td class="is-centered hidden-xs">
                                         <uv:duration duration="${record.duration}"/>
                                     </td>
                                     <td class="print:tw-hidden is-centered hidden-xs">
-                                        <div class="tw-flex tw-items-center">
+                                        <div class="tw-flex tw-items-center tw-justify-end">
                                             <icon:clock className="tw-w-4 tw-h-4"/>
                                             &nbsp;<spring:message code="overtime.progress.lastEdited"/>
                                             <uv:date date="${record.lastModificationDate}"/>
