@@ -61,14 +61,9 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <uv:section-heading>
-                    <h2>
-                        <spring:message code="overtime.list"/>
-                    </h2>
-                </uv:section-heading>
                 <c:choose>
                     <c:when test="${empty records}">
-                        <p><spring:message code="overtime.none"/></p>
+                        <p class="tw-text-center tw-mt-4 lg:tw-mt-8"><spring:message code="overtime.none"/></p>
                     </c:when>
                     <c:otherwise>
                         <table class="list-table selectable-table tw-text-sm">
