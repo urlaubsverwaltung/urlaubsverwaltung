@@ -86,7 +86,7 @@
                                             <uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/>
                                         </p>
                                     </td>
-                                    <td class="is-centered hidden-xs">
+                                    <td class="is-centered">
                                         <uv:duration duration="${record.duration}"/>
                                     </td>
                                     <td class="print:tw-hidden is-centered hidden-xs">
