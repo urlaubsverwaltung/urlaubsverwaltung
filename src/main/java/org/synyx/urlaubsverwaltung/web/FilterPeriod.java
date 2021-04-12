@@ -3,10 +3,10 @@ package org.synyx.urlaubsverwaltung.web;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -32,7 +32,7 @@ public final class FilterPeriod {
 
     public String getStartDateIsoValue() {
         return Optional.ofNullable(startDate)
-            .map(date -> date.format(DateTimeFormatter.ISO_DATE))
+            .map(date -> date.format(ISO_DATE))
             .orElse("");
     }
 
@@ -42,7 +42,7 @@ public final class FilterPeriod {
 
     public String getEndDateIsoValue() {
         return Optional.ofNullable(endDate)
-            .map(date -> date.format(DateTimeFormatter.ISO_DATE))
+            .map(date -> date.format(ISO_DATE))
             .orElse("");
     }
 

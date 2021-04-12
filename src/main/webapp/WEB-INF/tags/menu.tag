@@ -278,6 +278,18 @@
                         </a>
                     </li>
                     <sec:authorize access="hasAuthority('OFFICE')">
+                        <li class="tw-flex tw-items-center">
+                            <a href="${URL_PREFIX}/overtime/statistics" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                            <span class="tw-flex tw-items-center">
+                                <icon:medkit className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <span class="tw-ml-5 lg:tw-ml-2">
+                                    <spring:message code="nav.overtime.title"/>
+                                </span>
+                            </span>
+                            </a>
+                        </li>
+                    </sec:authorize>
+                    <sec:authorize access="hasAuthority('OFFICE')">
                     <li class="tw-flex tw-items-center">
                         <a href="${URL_PREFIX}/sicknote" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
