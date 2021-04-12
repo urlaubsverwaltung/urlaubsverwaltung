@@ -67,6 +67,15 @@
                     </c:when>
                     <c:otherwise>
                         <table class="list-table selectable-table tw-text-sm">
+                            <caption class="tw-sr-only"><spring:message code="overtime.list.title"/></caption>
+                            <thead class="tw-sr-only">
+                                <tr>
+                                    <th scope="col"><spring:message code="overtime.list.col.icon"/></th>
+                                    <th scope="col"><spring:message code="overtime.list.col.date"/></th>
+                                    <th scope="col"><spring:message code="overtime.list.col.duration"/></th>
+                                    <th scope="col"><spring:message code="overtime.list.col.last-edited"/></th>
+                                </tr>
+                            </thead>
                             <tbody>
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
