@@ -54,9 +54,9 @@
                     </jsp:body>
                 </uv:section-heading>
 
-                <uv:person person="${person}" cssClass="tw-mb-4 tw-h-32" />
+                <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" />
 
-                <uv:box className="tw-mb-8">
+                <uv:box className="tw-mb-2 tw-border-none">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-blue-400 tw-text-white">
                             <icon:key className="tw-w-8 tw-h-8" />
@@ -78,7 +78,7 @@
                         <spring:message code="person.details.departments.title"/>
                     </h2>
                 </uv:section-heading>
-                <uv:box className="tw-mb-8">
+                <uv:box className="tw-mb-2 tw-border-none">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-blue-400 tw-text-white">
                             <icon:user-group className="tw-w-8 tw-h-8" />
@@ -90,7 +90,7 @@
                                 <spring:message code="person.details.departments.none"/>
                             </c:when>
                             <c:otherwise>
-                                <ul>
+                                <ul class="tw-text-base">
                                 <c:forEach items="${departments}" var="department">
                                     <c:choose>
                                         <c:when test="${departmentHeadOfDepartments.contains( department )}">
@@ -125,7 +125,7 @@
                     </jsp:body>
                 </uv:section-heading>
 
-                <uv:account-entitlement account="${account}" className="tw-h-32 tw-mb-8" />
+                <uv:account-entitlement account="${account}" className="tw-mb-2 tw-border-none" />
 
                 <uv:section-heading>
                     <jsp:attribute name="actions">
@@ -142,12 +142,12 @@
                     </jsp:body>
                 </uv:section-heading>
 
-                <uv:box className="tw-mb-4">
-                        <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-green-500 tw-text-white">
-                                <icon:clock className="tw-w-8 tw-h-8" />
-                            </uv:box-icon>
-                        </jsp:attribute>
+                <uv:box className="tw-mb-2 tw-border-none">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-green-500 tw-text-white">
+                            <icon:clock className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
                     <jsp:body>
                         <span class="tw-text-sm">
                             <c:choose>
@@ -156,7 +156,7 @@
                                         <spring:message code="person.details.workingTime.validity"/>
                                         <span class="is-inline-block"><uv:date date="${workingTime.validFrom}"/></span>:
                                     </span>
-                                    <ul>
+                                    <ul class="tw-ml-2">
                                     <c:if test="${workingTime.monday.duration > 0}">
                                         <li>
                                             <spring:message code="MONDAY"/>
@@ -202,17 +202,17 @@
                     </jsp:body>
                 </uv:box>
 
-                <uv:box className="tw-mb-8">
+                <uv:box className="tw-mb-8 tw-border-none">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
                             <icon:map className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <span class="tw-text-sm">
-                            <span class="tw-mb-2"><spring:message code="person.details.workingTime.federalState"/></span>
-                            <spring:message code="federalState.${federalState}"/>
-                        </span>
+                        <div>
+                            <div class="tw-text-sm"><spring:message code="person.details.workingTime.federalState"/></div>
+                            <div class="tw-text-base tw-ml-2"><spring:message code="federalState.${federalState}"/></div>
+                        </div>
                     </jsp:body>
                 </uv:box>
             </div>
@@ -220,7 +220,5 @@
         </div>
     </div>
 </div>
-
 </body>
-
 </html>
