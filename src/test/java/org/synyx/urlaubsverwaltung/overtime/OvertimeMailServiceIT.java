@@ -16,7 +16,10 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDate;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
@@ -42,15 +45,20 @@ class OvertimeMailServiceIT extends TestContainersBase {
     void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
-        final Overtime overtimeRecord = createOvertimeRecord(person);
-        final OvertimeComment overtimeComment = new OvertimeComment(person, overtimeRecord, CREATED, clock);
+
+        final LocalDate startDate = LocalDate.of(2020, 4, 16);
+        final LocalDate endDate = LocalDate.of(2020, 4, 23);
+        final Overtime overtime = new Overtime(person, startDate, endDate, Duration.parse("P1DT30H72M"));
+        overtime.setId(1);
+
+        final OvertimeComment overtimeComment = new OvertimeComment(person, overtime, CREATED, clock);
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
         personService.save(office);
 
-        sut.sendOvertimeNotification(overtimeRecord, overtimeComment);
+        sut.sendOvertimeNotification(overtime, overtimeComment);
 
         // was email sent to office?
         assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail()).length).isOne();
@@ -63,7 +71,8 @@ class OvertimeMailServiceIT extends TestContainersBase {
         // check content of email
         final String text = (String) msg.getContent();
         assertThat(text).contains("Hallo Marlene Muster");
-        assertThat(text).contains("es wurden Überstunden erfasst");
-        assertThat(text).contains("/web/overtime/1234");
+        assertThat(text).contains("es wurden Überstunden erfasst: https://localhost:8080/web/overtime/1");
+        assertThat(text).contains("Datum: 16.04.2020 - 23.04.2020");
+        assertThat(text).contains("Dauer: 55 Std. 12 Min.");
     }
 }

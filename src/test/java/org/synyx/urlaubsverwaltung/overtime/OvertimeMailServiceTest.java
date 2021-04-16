@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,10 +34,13 @@ class OvertimeMailServiceTest {
     @Test
     void sendOvertimeNotification() {
         final Overtime overtime = new Overtime();
+        overtime.setDuration(Duration.parse("P1DT30H72M"));
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());
 
         final Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
+        model.put("overtimeDurationHours", "55 Std.");
+        model.put("overtimeDurationMinutes", "12 Min.");
         model.put("comment", overtimeComment);
 
         sut.sendOvertimeNotification(overtime, overtimeComment);
