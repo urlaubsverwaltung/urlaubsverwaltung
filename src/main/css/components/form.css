@@ -152,6 +152,10 @@ textarea.error {
   background-color: #e8efd1;
 }
 
+.department--member.is-inactive {
+  background-color: #fff4ea;
+}
+
 .department--member:last-child {
   border-bottom: none;
 }

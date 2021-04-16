@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 import java.util.Optional;
@@ -142,15 +143,27 @@ class DepartmentViewControllerTest {
     @Test
     void editDepartmentAddsDepartmentAndActivePersonsToModel() throws Exception {
 
+        final Person activePerson = new Person();
+        final Person inactivePerson = inactivePerson();
+
+        List<Person> departmentMembers = List.of(activePerson, inactivePerson);
         final Department department = new Department();
+        department.setMembers(departmentMembers);
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
-        List<Person> persons = List.of(new Person());
-        when(personService.getActivePersons()).thenReturn(persons);
+        List<Person> activePersons = List.of(activePerson);
+        when(personService.getActivePersons()).thenReturn(activePersons);
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
             .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, mapToDepartmentForm(department)))
-            .andExpect(model().attribute(PERSONS_ATTRIBUTE, persons));
+            .andExpect(model().attribute(PERSONS_ATTRIBUTE, List.of(inactivePerson, activePerson)));
+    }
+
+    private Person inactivePerson() {
+        final Person inactivePerson = new Person();
+        inactivePerson.setPermissions(List.of(Role.INACTIVE));
+
+        return inactivePerson;
     }
 
     @Test
