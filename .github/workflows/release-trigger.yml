@@ -1,4 +1,4 @@
-name: Urlaubsverwaltung Release Trigger
+name: Release Trigger
 
 on:
   workflow_dispatch:

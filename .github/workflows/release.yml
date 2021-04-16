@@ -1,4 +1,4 @@
-name: Urlaubsverwaltung Release
+name: Release
 
 on:
   push:

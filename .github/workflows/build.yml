@@ -1,4 +1,4 @@
-name: Urlaubsverwaltung CI
+name: Build
 
 on:
   schedule:
