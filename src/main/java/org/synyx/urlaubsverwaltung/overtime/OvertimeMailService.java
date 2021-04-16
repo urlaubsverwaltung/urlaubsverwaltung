@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.time.DurationFormatUtils.formatDuration;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @Service
@@ -22,6 +23,9 @@ class OvertimeMailService {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
+        model.put("overtimeDurationHours", overtime.getDuration().toHours() + " Std.");
+        model.put("overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.");
+
         model.put("comment", overtimeComment);
 
         final Mail toOffice = Mail.builder()
