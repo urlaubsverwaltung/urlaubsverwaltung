@@ -81,6 +81,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         boss.setPermissions(singletonList(BOSS));
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setBoss(boss);
 
         final ApplicationComment comment = new ApplicationComment(boss, clock);
@@ -115,18 +117,168 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
+        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer genehmigter Antrag vor: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Hugo Boss zum Antrag: OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "----------------------------------------------------------------------------------------------" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Mitarbeiter: Lieschen Mueller" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK);
+    }
 
-        // check content of office email
-        String contentOfficeMail = (String) msgOffice.getContent();
-        assertThat(contentOfficeMail).contains("Hallo Marlene Muster");
-        assertThat(contentOfficeMail).contains("es liegt ein neuer genehmigter Antrag vor");
-        assertThat(contentOfficeMail).contains("Lieschen Mueller");
-        assertThat(contentOfficeMail).contains("Erholungsurlaub");
-        assertThat(contentOfficeMail).contains(comment.getText());
-        assertThat(contentOfficeMail).contains(comment.getPerson().getNiceName());
-        assertThat(contentOfficeMail).contains("es liegt ein neuer genehmigter Antrag vor:");
-        assertThat(contentOfficeMail).contains("/web/application/1234");
-        assertThat(contentOfficeMail).doesNotContain("filename=calendar.ics");
+    @Test
+    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithOneReplacement() throws Exception {
+
+        final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
+        office.setPermissions(singletonList(OFFICE));
+        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
+        personService.save(office);
+
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setPermissions(singletonList(BOSS));
+
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+
+        final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setBoss(boss);
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
+
+        final ApplicationComment comment = new ApplicationComment(boss, clock);
+        comment.setText("OK, Urlaub kann genommen werden");
+
+        sut.sendAllowedNotification(application, comment);
+
+        // were both emails sent?
+        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inboxOffice.length).isOne();
+
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
+
+        // check email user attributes
+        MimeMessage msg = inboxUser[0];
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of user email
+        String contentUser = readPlainContent(msg);
+        assertThat(contentUser).contains("Lieschen Mueller");
+        assertThat(contentUser).contains("gestellter Antrag wurde von Hugo Boss genehmigt");
+        assertThat(contentUser).contains(comment.getText());
+        assertThat(contentUser).contains(comment.getPerson().getNiceName());
+        assertThat(contentUser).contains("/web/application/1234");
+
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+
+        // check email office attributes
+        Message msgOffice = inboxOffice[0];
+        assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
+        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer genehmigter Antrag vor: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Hugo Boss zum Antrag: OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "----------------------------------------------------------------------------------------------" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Mitarbeiter: Lieschen Mueller" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK);
+    }
+
+    @Test
+    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithMultipleReplacements() throws Exception {
+
+        final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+
+        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
+        office.setPermissions(singletonList(OFFICE));
+        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
+        personService.save(office);
+
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setPermissions(singletonList(BOSS));
+
+        final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
+        holidayReplacementOneEntity.setPerson(holidayReplacementOne);
+
+        final HolidayReplacementEntity holidayReplacementTwoEntity = new HolidayReplacementEntity();
+        holidayReplacementTwoEntity.setPerson(holidayReplacementTwo);
+
+        final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setBoss(boss);
+        application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
+
+        final ApplicationComment comment = new ApplicationComment(boss, clock);
+        comment.setText("OK, Urlaub kann genommen werden");
+
+        sut.sendAllowedNotification(application, comment);
+
+        // were both emails sent?
+        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inboxOffice.length).isOne();
+
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
+
+        // check email user attributes
+        MimeMessage msg = inboxUser[0];
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of user email
+        String contentUser = readPlainContent(msg);
+        assertThat(contentUser).contains("Lieschen Mueller");
+        assertThat(contentUser).contains("gestellter Antrag wurde von Hugo Boss genehmigt");
+        assertThat(contentUser).contains(comment.getText());
+        assertThat(contentUser).contains(comment.getPerson().getNiceName());
+        assertThat(contentUser).contains("/web/application/1234");
+
+        final List<DataSource> attachments = getAttachments(msg);
+        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+
+        // check email office attributes
+        Message msgOffice = inboxOffice[0];
+        assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
+        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer genehmigter Antrag vor: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Hugo Boss zum Antrag: OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "----------------------------------------------------------------------------------------------" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Mitarbeiter: Lieschen Mueller" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK);
     }
 
     @Test
