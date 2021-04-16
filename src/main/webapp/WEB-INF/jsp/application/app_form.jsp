@@ -13,7 +13,14 @@
 
 <head>
     <title>
-        <spring:message code="application.data.new.header.title"/>
+        <c:choose>
+            <c:when test="${application.id == null}">
+                <spring:message code="application.data.header.title.new"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="application.data.header.title.edit"/>
+            </c:otherwise>
+        </c:choose>
     </title>
     <uv:custom-head/>
     <script>
