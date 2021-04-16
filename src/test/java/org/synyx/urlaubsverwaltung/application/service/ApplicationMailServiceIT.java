@@ -891,6 +891,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
         when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(singletonList(secondStage));
@@ -924,14 +926,164 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
-        String contentSecondStageMail = (String) msgSecondStage.getContent();
-        assertThat(contentSecondStageMail).contains("es liegt ein neuer zu genehmigender Antrag vor:");
-        assertThat(contentSecondStageMail).contains("/web/application/1234");
-        assertThat(contentSecondStageMail).contains("Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden");
-        assertThat(contentSecondStageMail).contains("Lieschen Müller");
-        assertThat(contentSecondStageMail).contains("Erholungsurlaub");
-        assertThat(contentSecondStageMail).contains(comment.getText());
-        assertThat(contentSecondStageMail).contains(comment.getPerson().getNiceName());
+        assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt zum Antrag: OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "----------------------------------------------------------------------------------------------" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Überschneidende Anträge in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+    }
+
+    @Test
+    void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPersonWithOneReplacement()
+        throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+
+        final ApplicationComment comment = new ApplicationComment(secondStage, clock);
+        comment.setText("OK, spricht von meiner Seite aus nix dagegen");
+
+        final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate()))
+            .thenReturn(singletonList(application));
+
+        when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(singletonList(secondStage));
+
+        sut.sendTemporaryAllowedNotification(application, comment);
+
+        // were both emails sent?
+        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        assertThat(inboxSecondStage.length).isOne();
+
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
+
+        // get email user
+        Message msg = inboxUser[0];
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // get email office
+        final Message msgSecondStage = inboxSecondStage[0];
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
+
+        // check content of office email
+        assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt zum Antrag: OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "----------------------------------------------------------------------------------------------" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Überschneidende Anträge in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+    }
+
+    @Test
+    void ensureNotificationAboutTemporaryAllowedApplicationIsSentToSecondStageAuthoritiesAndToPersonWithMultipleReplacements()
+        throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
+
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+
+        final ApplicationComment comment = new ApplicationComment(secondStage, clock);
+        comment.setText("OK, spricht von meiner Seite aus nix dagegen");
+
+        final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+
+        final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
+        holidayReplacementOneEntity.setPerson(holidayReplacementOne);
+
+        final HolidayReplacementEntity holidayReplacementTwoEntity = new HolidayReplacementEntity();
+        holidayReplacementTwoEntity.setPerson(holidayReplacementTwo);
+
+        application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate()))
+            .thenReturn(singletonList(application));
+
+        when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(singletonList(secondStage));
+
+        sut.sendTemporaryAllowedNotification(application, comment);
+
+        // were both emails sent?
+        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        assertThat(inboxSecondStage.length).isOne();
+
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
+
+        // get email user
+        Message msg = inboxUser[0];
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // get email office
+        final Message msgSecondStage = inboxSecondStage[0];
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
+
+        // check content of office email
+        assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Der Antrag wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt zum Antrag: OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "----------------------------------------------------------------------------------------------" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Überschneidende Anträge in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
