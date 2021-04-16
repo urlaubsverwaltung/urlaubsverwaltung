@@ -474,6 +474,48 @@ class ApplicationForLeaveFormViewControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"/web/application/new", "/web/application/21"})
+    void ensureAddingReplacementRemovesItFromSelectables(String url) throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        final Person leetPerson = new Person();
+        leetPerson.setId(1337);
+
+        final Person replacmentPerson = new Person();
+        replacmentPerson.setId(42);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getPersonByID(42)).thenReturn(Optional.of(replacmentPerson));
+        when(personService.getActivePersons()).thenReturn(List.of(replacmentPerson, signedInPerson, leetPerson));
+
+        final LocalDate now = LocalDate.now(clock);
+        final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
+        when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final ResultActions perform = perform(post(url)
+            .param("vacationType.category", "HOLIDAY")
+            .param("add-holiday-replacement", "")
+            .param("holidayReplacementToAdd", "42"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("application", allOf(
+                hasProperty("id", nullValue()),
+                hasProperty("holidayReplacements", contains(
+                    hasProperty("person", hasProperty("id", is(42)))
+                ))
+            )))
+            .andExpect(model().attribute("selectableHolidayReplacements", contains(
+                hasProperty("personId", is(1337))
+            )))
+
+            .andExpect(view().name("application/app_form"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/new", "/web/application/21"})
     void ensureReplacementDeletionForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
         final Person signedInUser = new Person();
         signedInUser.setId(42);
