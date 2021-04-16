@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
@@ -70,6 +71,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.A
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveFormViewControllerTest {
@@ -411,6 +413,31 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(redirectedUrl("/web/application/" + applicationId));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/new", "/web/application/21"})
+    void ensureReplacementAddingForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
+        final Person signedInUser = new Person();
+        signedInUser.setId(42);
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(1337);
+        when(personService.getPersonByID(1337)).thenReturn(Optional.of(person));
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+
+        assertThatThrownBy(() -> {
+            perform(post(url)
+                .param("holidayReplacementToAdd", "1")
+                .param("person", "1337")
+                .param("vacationType.category", "HOLIDAY")
+                .param("holidayReplacements[0].person.id", "42")
+                .param("holidayReplacements[1].person.id", "1337")
+                .param("add-holiday-replacement", ""));
+        }).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
     @Test
     void ensureAddingAnEmptyReplacementForNewApplicationDoesNotThrow() throws Exception {
 
@@ -443,6 +470,26 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(view().name("application/app_form"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/application/new", "/web/application/21"})
+    void ensureReplacementDeletionForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
+        final Person signedInUser = new Person();
+        signedInUser.setId(42);
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(1337);
+        when(personService.getPersonByID(1337)).thenReturn(Optional.of(person));
+
+        assertThatThrownBy(() -> {
+            perform(post(url)
+                .param("remove-holiday-replacement", "1")
+                .param("person", "1337")
+                .param("vacationType.category", "HOLIDAY"));
+        }).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
