@@ -70,7 +70,7 @@ public class DepartmentViewController {
     @GetMapping("/department/new")
     public String newDepartmentForm(Model model) {
 
-        final List<Person> persons = getActivePersons();
+        final List<Person> persons = personService.getActivePersons();
 
         model.addAttribute(DEPARTMENT, new DepartmentForm());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
@@ -156,7 +156,8 @@ public class DepartmentViewController {
 
     private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
-            final List<Person> persons = getActivePersons();
+
+            final List<Person> persons = personService.getActivePersons();
 
             model.addAttribute(DEPARTMENT, departmentForm);
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
@@ -164,11 +165,6 @@ public class DepartmentViewController {
             return true;
         }
         return false;
-    }
-
-    private List<Person> getActivePersons() {
-
-        return personService.getActivePersons();
     }
 
     private List<Person> getInactiveDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
