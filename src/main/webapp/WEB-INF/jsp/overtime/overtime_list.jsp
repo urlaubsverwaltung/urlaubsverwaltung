@@ -27,7 +27,7 @@
 
 <div class="content">
     <div class="container">
-        <div class="row tw-mb-4 lg:tw-mb-6">
+        <div class="row tw-mb-2">
             <div class="col-xs-12">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
@@ -45,39 +45,45 @@
                     </jsp:body>
                 </uv:section-heading>
             </div>
-
-            <div class="tw-space-y-4 lg:tw-space-y-0">
-                <div class="col-xs-12 col-sm-12 col-md-4">
-                    <uv:person person="${person}" cssClass="tw-h-32"/>
+        </div>
+        <div class="row lg:tw-mb-8">
+            <div class="sm:tw-flex">
+                <div class="sm:tw-flex-1 lg:tw-flex-none lg:tw-w-1/3">
+                    <uv:person person="${person}" cssClass="tw-h-24 lg:tw-h-32 tw-border-none"/>
                 </div>
-                <div class="col-xs-12 col-md-4">
-                    <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center"/>
-                </div>
-                <div class="col-xs-12 col-md-4">
-                    <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center"/>
+                <div class="sm:tw-flex-1 lg:tw-flex">
+                    <div class="tw-flex-1">
+                        <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center tw-border-none"/>
+                    </div>
+                    <div class="tw-flex-1">
+                        <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center tw-border-none"/>
+                    </div>
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-xs-12">
-                <uv:section-heading>
-                    <h2>
-                        <spring:message code="overtime.list"/>
-                    </h2>
-                </uv:section-heading>
                 <c:choose>
                     <c:when test="${empty records}">
-                        <p><spring:message code="overtime.none"/></p>
+                        <p class="tw-text-center tw-mt-4 lg:tw-mt-8"><spring:message code="overtime.none"/></p>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table bordered-table selectable-table">
+                        <table class="list-table selectable-table tw-text-sm">
+                            <caption class="tw-sr-only"><spring:message code="overtime.list.title"/></caption>
+                            <thead class="tw-sr-only">
+                                <tr>
+                                    <th scope="col"><spring:message code="overtime.list.col.icon"/></th>
+                                    <th scope="col"><spring:message code="overtime.list.col.date"/></th>
+                                    <th scope="col"><spring:message code="overtime.list.col.duration"/></th>
+                                    <th scope="col"><spring:message code="overtime.list.col.last-edited"/></th>
+                                </tr>
+                            </thead>
                             <tbody>
                             <c:forEach items="${records}" var="record">
                                 <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
                                     <td class="is-centered state">
                                         <span class="print:tw-hidden">
-                                            <icon:briefcase className="tw-w-4 tw-h-4"/>
+                                            <icon:briefcase className="tw-w-6 tw-h-6"/>
                                         </span>
                                     </td>
                                     <td>
@@ -87,14 +93,15 @@
                                         <a class="print:tw-hidden" href="${URL_PREFIX}/overtime/${record.id}">
                                             <h4><spring:message code="overtime.title"/></h4>
                                         </a>
-                                        <p><uv:date date="${record.startDate}"/> - <uv:date
-                                            date="${record.endDate}"/></p>
+                                        <p>
+                                            <uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/>
+                                        </p>
                                     </td>
-                                    <td class="is-centered hidden-xs">
+                                    <td class="is-centered">
                                         <uv:duration duration="${record.duration}"/>
                                     </td>
                                     <td class="print:tw-hidden is-centered hidden-xs">
-                                        <div class="tw-flex tw-items-center">
+                                        <div class="tw-flex tw-items-center tw-justify-end">
                                             <icon:clock className="tw-w-4 tw-h-4"/>
                                             &nbsp;<spring:message code="overtime.progress.lastEdited"/>
                                             <uv:date date="${record.lastModificationDate}"/>
