@@ -48,6 +48,7 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
@@ -266,15 +267,15 @@ public class ApplicationForLeaveFormViewController {
 
     @GetMapping("/application/{applicationId}/edit")
     public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, ApplicationForLeaveForm appForm,
-                                      Model model) throws UnknownApplicationForLeaveException {
+                                      Model model) {
 
+        return getAppFormFromFrontend(appForm).or(getAppFormFromDB(applicationId))
+            .map(applicationForLeaveForm -> this.editApplicationForm(applicationForLeaveForm, model))
+            .map(unused -> APP_FORM)
+            .orElse("application/app_notwaiting");
+    }
 
-        final ApplicationForLeaveForm applicationForLeaveForm = getAppFormFromFrontend(appForm)
-            .orElse(getAppFormFromDB(applicationId));
-
-        if (applicationForLeaveForm == null)
-            return "application/app_notwaiting";
-
+    private String editApplicationForm(ApplicationForLeaveForm applicationForLeaveForm, Model model) {
         final Person person = personService.getSignedInUser();
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
@@ -287,8 +288,8 @@ public class ApplicationForLeaveFormViewController {
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
-        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
 
+        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
         model.addAttribute("application", applicationForLeaveForm);
 
         return APP_FORM;
@@ -352,25 +353,16 @@ public class ApplicationForLeaveFormViewController {
         return () -> personService.getPersonByID(personId);
     }
 
-    private ApplicationForLeaveForm getAppFormFromDB(Integer applicationId) throws UnknownApplicationForLeaveException {
+    private Supplier<Optional<ApplicationForLeaveForm>> getAppFormFromDB(Integer applicationId) {
 
-        final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
-        if (maybeApplication.isEmpty()) {
-            throw new UnknownApplicationForLeaveException(applicationId);
-        }
-
-        final Application application = maybeApplication.get();
-        if (!WAITING.equals(application.getStatus())) {
-            return null;
-        }
-
-        return mapToApplicationForm(application);
+        return () -> applicationInteractionService.get(applicationId)
+            .filter(application -> WAITING.equals(application.getStatus()))
+            .map(ApplicationMapper::mapToApplicationForm);
     }
 
     private Optional<ApplicationForLeaveForm> getAppFormFromFrontend(ApplicationForLeaveForm appForm) {
-        if (appForm.getId() == null)
-            return Optional.empty();
-        else return Optional.of(appForm);
+
+        return appForm.getId() == null ? Optional.empty() : Optional.of(appForm);
     }
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
