@@ -27,7 +27,7 @@
 
 <div class="content">
     <div class="container">
-        <div class="row tw-mb-2 lg:tw-mb-4">
+        <div class="row tw-mb-2">
             <div class="col-xs-12">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
@@ -45,20 +45,22 @@
                     </jsp:body>
                 </uv:section-heading>
             </div>
-
-            <div class="tw-space-y-2 lg:tw-space-y-0">
-                <div class="col-xs-12 col-sm-12 col-md-4">
+        </div>
+        <div class="row lg:tw-mb-8">
+            <div class="sm:tw-flex">
+                <div class="sm:tw-flex-1 lg:tw-flex-none lg:tw-w-1/3">
                     <uv:person person="${person}" cssClass="tw-h-24 lg:tw-h-32 tw-border-none"/>
                 </div>
-                <div class="col-xs-12 col-md-4">
-                    <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center tw-border-none"/>
-                </div>
-                <div class="col-xs-12 col-md-4">
-                    <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center tw-border-none"/>
+                <div class="sm:tw-flex-1 lg:tw-flex">
+                    <div class="tw-flex-1">
+                        <uv:overtime-total hours="${overtimeTotal}" cssClass="tw-h-32 tw-items-center tw-border-none"/>
+                    </div>
+                    <div class="tw-flex-1">
+                        <uv:overtime-left hours="${overtimeLeft}" cssClass="tw-h-32 tw-items-center tw-border-none"/>
+                    </div>
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-xs-12">
                 <c:choose>
