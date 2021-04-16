@@ -12,7 +12,14 @@
 
 <head>
     <title>
-        <spring:message code="department.data.header.title"/>
+        <c:choose>
+            <c:when test="${department.id == null}">
+                <spring:message code="department.data.header.title.new"/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code="department.data.header.title.edit"/>
+            </c:otherwise>
+        </c:choose>
     </title>
     <uv:custom-head/>
     <script defer src="<asset:url value='department_form.js' />"></script>
