@@ -710,19 +710,17 @@ class ApplicationForLeaveFormViewControllerTest {
 
 
     @Test
-    void editApplicationFormUnknownApplication() {
+    void ensureUnknownApplicationEditingShowsNotEditablePage() throws Exception {
 
         when(applicationInteractionService.get(1)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() ->
-            perform(get("/web/application/1/edit"))
-        ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
+        perform(get("/web/application/1/edit"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("application/app_notwaiting"));
     }
 
     @Test
     void editApplicationFormNotWaiting() throws Exception {
-
-        when(applicationInteractionService.get(1)).thenReturn(Optional.empty());
 
         final Integer applicationId = 1;
         final Application application = new Application();

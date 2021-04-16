@@ -266,12 +266,12 @@ public class ApplicationForLeaveFormViewController {
     }
 
     @GetMapping("/application/{applicationId}/edit")
-    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, ApplicationForLeaveForm appForm,
-                                      Model model) {
+    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) {
 
-        return getAppFormFromFrontend(appForm).or(getAppFormFromDB(applicationId))
+        return applicationInteractionService.get(applicationId)
+            .filter(application -> WAITING.equals(application.getStatus()))
+            .map(ApplicationMapper::mapToApplicationForm)
             .map(applicationForLeaveForm -> this.editApplicationForm(applicationForLeaveForm, model))
-            .map(unused -> APP_FORM)
             .orElse("application/app_notwaiting");
     }
 
@@ -351,18 +351,6 @@ public class ApplicationForLeaveFormViewController {
             return Optional::empty;
         }
         return () -> personService.getPersonByID(personId);
-    }
-
-    private Supplier<Optional<ApplicationForLeaveForm>> getAppFormFromDB(Integer applicationId) {
-
-        return () -> applicationInteractionService.get(applicationId)
-            .filter(application -> WAITING.equals(application.getStatus()))
-            .map(ApplicationMapper::mapToApplicationForm);
-    }
-
-    private Optional<ApplicationForLeaveForm> getAppFormFromFrontend(ApplicationForLeaveForm appForm) {
-
-        return appForm.getId() == null ? Optional.empty() : Optional.of(appForm);
     }
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
