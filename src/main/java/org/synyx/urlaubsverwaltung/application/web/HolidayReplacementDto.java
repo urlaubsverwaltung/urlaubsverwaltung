@@ -2,17 +2,13 @@ package org.synyx.urlaubsverwaltung.application.web;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.List;
+
 public class HolidayReplacementDto {
 
     private Person person;
     private String note;
-
-    public HolidayReplacementDto() {
-    }
-
-    public HolidayReplacementDto(Person person) {
-        this.person = person;
-    }
+    private List<String> departments;
 
     public Person getPerson() {
         return person;
@@ -30,11 +26,20 @@ public class HolidayReplacementDto {
         this.note = note;
     }
 
+    public List<String> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<String> departments) {
+        this.departments = departments;
+    }
+
     @Override
     public String toString() {
         return "HolidayReplacementDto{" +
             ", person=" + person +
             ", note='" + note + '\'' +
+            ", departments='" + departments + '\'' +
             '}';
     }
 }

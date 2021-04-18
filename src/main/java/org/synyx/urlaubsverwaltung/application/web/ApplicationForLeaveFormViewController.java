@@ -24,6 +24,8 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -45,6 +47,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -75,6 +78,7 @@ public class ApplicationForLeaveFormViewController {
     private static final String APP_FORM = "application/app_form";
 
     private final PersonService personService;
+    private final DepartmentService departmentService;
     private final AccountService accountService;
     private final VacationTypeService vacationTypeService;
     private final ApplicationInteractionService applicationInteractionService;
@@ -84,13 +88,14 @@ public class ApplicationForLeaveFormViewController {
     private final Clock clock;
 
     @Autowired
-    public ApplicationForLeaveFormViewController(PersonService personService, AccountService accountService,
+    public ApplicationForLeaveFormViewController(PersonService personService, DepartmentService departmentService, AccountService accountService,
                                                  VacationTypeService vacationTypeService,
                                                  ApplicationInteractionService applicationInteractionService,
                                                  ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
                                                  SettingsService settingsService, DateFormatAware dateFormatAware,
                                                  Clock clock) {
         this.personService = personService;
+        this.departmentService = departmentService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
@@ -170,7 +175,8 @@ public class ApplicationForLeaveFormViewController {
                 addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
             } else {
                 // add replacementToAdd to the replacements list
-                final HolidayReplacementDto replacementDto = new HolidayReplacementDto(replacementPersonToAdd);
+                final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
+                replacementDto.setPerson(replacementPersonToAdd);
                 applicationForLeaveForm.getHolidayReplacements().add(replacementDto);
                 // reset holidayReplacement selection element
                 applicationForLeaveForm.setHolidayReplacementToAdd(null);
@@ -367,6 +373,7 @@ public class ApplicationForLeaveFormViewController {
         }
         model.addAttribute("vacationTypes", vacationTypes);
 
+        appendDepartmentsToReplacements(appForm);
         model.addAttribute("application", appForm);
 
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
@@ -415,9 +422,21 @@ public class ApplicationForLeaveFormViewController {
             .collect(toList());
     }
 
+    private void appendDepartmentsToReplacements(ApplicationForLeaveForm appForm) {
+        final List<Department> departments = departmentService.getAllDepartments();
+
+        for (HolidayReplacementDto replacementDto : appForm.getHolidayReplacements()) {
+            List<String> departmentNames = departmentNamesForPerson(replacementDto.getPerson(), departments);
+            replacementDto.setDepartments(departmentNames);
+        }
+    }
+
     private ApplicationForLeaveForm mapToApplicationForm(Application application) {
+
+        final List<Department> departments = departmentService.getAllDepartments();
+
         final List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
-            .map(this::toDto)
+            .map(holidayReplacementEntity -> toDto(holidayReplacementEntity, departments))
             .collect(toList());
 
         return new ApplicationForLeaveForm.Builder()
@@ -437,10 +456,18 @@ public class ApplicationForLeaveFormViewController {
             .build();
     }
 
-    private HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity) {
+    private List<String> departmentNamesForPerson(Person person, List<Department> departments) {
+        return departments.stream()
+            .filter(d -> d.getMembers().contains(person))
+            .map(Department::getName)
+            .collect(toList());
+    }
+
+    private HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity, List<Department> departments) {
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
         holidayReplacementDto.setPerson(holidayReplacementEntity.getPerson());
         holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
+        holidayReplacementDto.setDepartments(departmentNamesForPerson(holidayReplacementEntity.getPerson(), departments));
         return holidayReplacementDto;
     }
 }

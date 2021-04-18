@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -81,6 +82,8 @@ class ApplicationForLeaveFormViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
+    private DepartmentService departmentService;
+    @Mock
     private AccountService accountService;
     @Mock
     private VacationTypeService vacationTypeService;
@@ -98,7 +101,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveFormViewController(personService, accountService, vacationTypeService,
+        sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
             applicationInteractionService, applicationForLeaveFormValidator, settingsService, dateFormatAware, clock);
     }
 
