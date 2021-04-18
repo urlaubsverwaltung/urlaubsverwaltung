@@ -48,7 +48,6 @@ import java.util.function.Supplier;
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
@@ -57,7 +56,6 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
-import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplicationForm;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.merge;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
