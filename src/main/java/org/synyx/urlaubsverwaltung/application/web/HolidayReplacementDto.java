@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 public class HolidayReplacementDto {
 
-    private Integer id;
     private Person person;
     private String note;
 
@@ -15,15 +14,6 @@ public class HolidayReplacementDto {
 
     public HolidayReplacementDto(Person person) {
         this.person = person;
-    }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Person getPerson() {
@@ -51,7 +41,6 @@ public class HolidayReplacementDto {
     @Override
     public String toString() {
         return "HolidayReplacementDto{" +
-            "id=" + id +
             ", person=" + person +
             ", note='" + note + '\'' +
             '}';
