@@ -19,7 +19,7 @@ final class ApplicationMapper {
 
     static ApplicationForLeaveForm mapToApplicationForm(Application application) {
         List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
-            .map(HolidayReplacementDto::from)
+            .map(ApplicationMapper::toDto)
             .collect(toList());
         return new ApplicationForLeaveForm.Builder()
             .id(application.getId())
@@ -85,5 +85,12 @@ final class ApplicationMapper {
         newApplication.setHolidayReplacements(holidayReplacementEntities);
 
         return newApplication;
+    }
+
+    private static HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity) {
+        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
+        holidayReplacementDto.setPerson(holidayReplacementEntity.getPerson());
+        holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
+        return holidayReplacementDto;
     }
 }

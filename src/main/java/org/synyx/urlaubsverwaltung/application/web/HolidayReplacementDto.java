@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
-import org.springframework.beans.BeanUtils;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 public class HolidayReplacementDto {
@@ -30,12 +28,6 @@ public class HolidayReplacementDto {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public static HolidayReplacementDto from(HolidayReplacementEntity holidayReplacementEntity) {
-        HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
-        BeanUtils.copyProperties(holidayReplacementEntity, holidayReplacementDto);
-        return holidayReplacementDto;
     }
 
     @Override
