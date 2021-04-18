@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.BeanUtils;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
+import org.synyx.urlaubsverwaltung.application.domain.Application;
 
 import java.time.Duration;
 import java.util.List;
@@ -15,27 +15,6 @@ final class ApplicationMapper {
 
     private ApplicationMapper() {
         // prevents init
-    }
-
-    static ApplicationForLeaveForm mapToApplicationForm(Application application) {
-        List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
-            .map(ApplicationMapper::toDto)
-            .collect(toList());
-        return new ApplicationForLeaveForm.Builder()
-            .id(application.getId())
-            .address(application.getAddress())
-            .startDate(application.getStartDate())
-            .startTime(application.getStartTime())
-            .endDate(application.getEndDate())
-            .endTime(application.getEndTime())
-            .teamInformed(application.isTeamInformed())
-            .dayLength(application.getDayLength())
-            .hoursAndMinutes(application.getHours())
-            .person(application.getPerson())
-            .vacationType(application.getVacationType())
-            .reason(application.getReason())
-            .holidayReplacements(holidayReplacementDtos)
-            .build();
     }
 
     static Application mapToApplication(ApplicationForLeaveForm applicationForLeaveForm) {
@@ -85,12 +64,5 @@ final class ApplicationMapper {
         newApplication.setHolidayReplacements(holidayReplacementEntities);
 
         return newApplication;
-    }
-
-    private static HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity) {
-        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
-        holidayReplacementDto.setPerson(holidayReplacementEntity.getPerson());
-        holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
-        return holidayReplacementDto;
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
@@ -268,7 +269,7 @@ public class ApplicationForLeaveFormViewController {
 
         return applicationInteractionService.get(applicationId)
             .filter(application -> WAITING.equals(application.getStatus()))
-            .map(ApplicationMapper::mapToApplicationForm)
+            .map(this::mapToApplicationForm)
             .map(applicationForLeaveForm -> this.editApplicationForm(applicationForLeaveForm, model))
             .orElse("application/app_notwaiting");
     }
@@ -412,5 +413,34 @@ public class ApplicationForLeaveFormViewController {
             .orElse(emptyList()).stream()
             .map(HolidayReplacementDto::getPerson)
             .collect(toList());
+    }
+
+    private ApplicationForLeaveForm mapToApplicationForm(Application application) {
+        final List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
+            .map(this::toDto)
+            .collect(toList());
+
+        return new ApplicationForLeaveForm.Builder()
+            .id(application.getId())
+            .address(application.getAddress())
+            .startDate(application.getStartDate())
+            .startTime(application.getStartTime())
+            .endDate(application.getEndDate())
+            .endTime(application.getEndTime())
+            .teamInformed(application.isTeamInformed())
+            .dayLength(application.getDayLength())
+            .hoursAndMinutes(application.getHours())
+            .person(application.getPerson())
+            .vacationType(application.getVacationType())
+            .reason(application.getReason())
+            .holidayReplacements(holidayReplacementDtos)
+            .build();
+    }
+
+    private HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity) {
+        final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
+        holidayReplacementDto.setPerson(holidayReplacementEntity.getPerson());
+        holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
+        return holidayReplacementDto;
     }
 }
