@@ -81,6 +81,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         boss.setPermissions(singletonList(BOSS));
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setBoss(boss);
@@ -128,7 +129,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK);
     }
@@ -151,6 +152,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         holidayReplacementEntity.setPerson(holidayReplacement);
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setBoss(boss);
@@ -199,7 +201,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK);
@@ -227,6 +229,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         holidayReplacementTwoEntity.setPerson(holidayReplacementTwo);
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setBoss(boss);
@@ -275,7 +278,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK);
@@ -735,6 +738,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         holidayReplacementEntity.setPerson(holidayReplacement);
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
@@ -760,7 +764,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK +
@@ -783,6 +787,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         holidayReplacementTwoEntity.setPerson(holidayReplacementTwo);
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
@@ -808,7 +813,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
@@ -861,6 +866,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
@@ -890,7 +896,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK +
@@ -913,6 +919,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         holidayReplacementTwoEntity.setPerson(holidayReplacementTwo);
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
@@ -942,7 +949,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Antragsdatum: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Antragsdatum: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
@@ -1234,6 +1241,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setPermissions(singletonList(USER));
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
@@ -1260,7 +1268,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen M¨¨üller" + EMAIL_LINE_BREAK +
-            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK +
@@ -1282,6 +1290,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setPermissions(singletonList(USER));
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
@@ -1311,7 +1320,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen M¨¨üller" + EMAIL_LINE_BREAK +
-            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
@@ -1333,6 +1342,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
@@ -1380,7 +1390,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
-            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -1402,6 +1412,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
@@ -1447,7 +1458,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
-            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth" + EMAIL_LINE_BREAK +
@@ -1471,6 +1482,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
 
         final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 12));
         application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
@@ -1519,7 +1531,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zum Urlaubsantrag:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
-            "Datum der Antragsstellung: 16.04.2021" + EMAIL_LINE_BREAK +
+            "Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "Zeitraum des beantragten Urlaubs: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "Art des Urlaubs: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "Vertretung: Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
