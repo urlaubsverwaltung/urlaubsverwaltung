@@ -39,38 +39,4 @@ class DepartmentDepartmentOverviewDtoMapperTest {
         assertThat(departmentOverviewDto.getActiveMembersCount()).isEqualTo(1);
         assertThat(departmentOverviewDto.getInactiveMembersCount()).isEqualTo(2);
     }
-
-    @Test
-    void ensureEquals() {
-
-        DepartmentOverviewDto d1 = new DepartmentOverviewDto();
-        d1.setId(1);
-        d1.setName("d1");
-        DepartmentOverviewDto d2 = new DepartmentOverviewDto();
-        d2.setId(1);
-        d2.setName("d2");
-        DepartmentOverviewDto d3 = new DepartmentOverviewDto();
-        d3.setId(2);
-        d3.setName("d3");
-
-        assertThat(d1).isEqualTo(d2);
-        assertThat(d1).isNotEqualTo(d3);
-    }
-
-    @Test
-    void ensureHashCode() {
-
-        DepartmentOverviewDto d1 = new DepartmentOverviewDto();
-        d1.setId(1);
-        d1.setName("d1");
-        DepartmentOverviewDto d2 = new DepartmentOverviewDto();
-        d2.setId(1);
-        d2.setName("d2");
-        DepartmentOverviewDto d3 = new DepartmentOverviewDto();
-        d3.setId(2);
-        d3.setName("d3");
-
-        assertThat(d1.hashCode()).isEqualTo(d2.hashCode());
-        assertThat(d1.hashCode()).isNotEqualTo(d3.hashCode());
-    }
 }
