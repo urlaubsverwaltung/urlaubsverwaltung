@@ -165,8 +165,9 @@
                             <div class="col-md-9">
                                 <div class="department--members">
                                     <c:forEach items="${persons}" var="person">
+                                        <c:set var="IS_INACTIVE" value="${fn:contains(person.permissions, 'INACTIVE')}"/>
                                         <c:set var="IS_MEMBER" value="${fn:contains(department.members, person)}"/>
-                                        <c:set var="MEMBER_CSS_CLASS" value="${IS_MEMBER ? 'is-assigned' : ''}"/>
+                                        <c:set var="MEMBER_CSS_CLASS" value="${IS_MEMBER ? ( IS_INACTIVE ? 'is-inactive' : 'is-assigned') : ''}"/>
 
                                         <div class="department--member ${MEMBER_CSS_CLASS}">
                                             <div class="department--member-image">
@@ -183,6 +184,14 @@
                                                 <p class="department--member-info tw-mb-2">
                                                     <c:out value="${person.niceName}"/>
                                                 </p>
+                                                <c:choose>
+                                                    <c:when test="${IS_INACTIVE}">
+                                                    <div class="tw-flex tw-items-center">
+                                                        <icon:information-circle className="tw-text-yellow-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1" solid="true"/>
+                                                        <spring:message code="department.members.assigned.inactive"/>
+                                                    </div>
+                                                    </c:when>
+                                                </c:choose>
                                                 <div>
                                                     <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
                                                         <form:checkbox path="members" value="${person}" cssClass="tw-m-0 tw-mr-2" />

@@ -2,19 +2,10 @@ package org.synyx.urlaubsverwaltung.department.web;
 
 import org.synyx.urlaubsverwaltung.department.Department;
 
-import java.util.List;
+final class DepartmentDepartmentFormMapper {
 
-import static java.util.stream.Collectors.toList;
-
-final class DepartmentMapper {
-
-    private DepartmentMapper() {
+    private DepartmentDepartmentFormMapper() {
         // prevents init
-    }
-
-    static List<DepartmentForm> mapToDepartmentForm(List<Department> departments) {
-
-        return departments.stream().map(DepartmentMapper::mapToDepartmentForm).collect(toList());
     }
 
     static DepartmentForm mapToDepartmentForm(Department department) {

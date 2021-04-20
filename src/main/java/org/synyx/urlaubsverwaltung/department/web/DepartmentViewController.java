@@ -17,13 +17,16 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartment;
-import static org.synyx.urlaubsverwaltung.department.web.DepartmentMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -58,7 +61,7 @@ public class DepartmentViewController {
 
         final List<Department> departments = departmentService.getAllDepartments();
 
-        model.addAttribute("departments", mapToDepartmentForm(departments));
+        model.addAttribute("departments", mapToDepartmentOverviewDtos(departments));
 
         return "department/department_list";
     }
@@ -67,7 +70,7 @@ public class DepartmentViewController {
     @GetMapping("/department/new")
     public String newDepartmentForm(Model model) {
 
-        final List<Person> persons = getPersons();
+        final List<Person> persons = personService.getActivePersons();
 
         model.addAttribute(DEPARTMENT, new DepartmentForm());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
@@ -103,7 +106,7 @@ public class DepartmentViewController {
             .orElseThrow(() -> new UnknownDepartmentException(departmentId));
         model.addAttribute(DEPARTMENT, mapToDepartmentForm(department));
 
-        final List<Person> persons = getPersons();
+        final List<Person> persons = getInactiveDepartmentMembersAndAllActivePersons(department.getMembers());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DEPARTMENT_DEPARTMENT_FORM;
@@ -153,7 +156,8 @@ public class DepartmentViewController {
 
     private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
-            final List<Person> persons = getPersons();
+
+            final List<Person> persons = personService.getActivePersons();
 
             model.addAttribute(DEPARTMENT, departmentForm);
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
@@ -163,7 +167,14 @@ public class DepartmentViewController {
         return false;
     }
 
-    private List<Person> getPersons() {
-        return personService.getActivePersons();
+    private List<Person> getInactiveDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
+
+        final List<Person> persons = departmentMembers.stream()
+            .filter(person -> person.getPermissions().contains(Role.INACTIVE))
+            .collect(Collectors.toList());
+
+        persons.addAll(personService.getActivePersons());
+
+        return persons;
     }
 }
