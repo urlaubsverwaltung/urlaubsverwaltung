@@ -74,18 +74,12 @@ public class DepartmentOverviewDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DepartmentOverviewDto that = (DepartmentOverviewDto) o;
-        return twoStageApproval == that.twoStageApproval
-            && activeMembersCount == that.activeMembersCount
-            && inactiveMembersCount == that.inactiveMembersCount
-            && Objects.equals(id, that.id)
-            && Objects.equals(name, that.name)
-            && Objects.equals(description, that.description)
-            && Objects.equals(lastModification, that.lastModification);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, lastModification, twoStageApproval, activeMembersCount, inactiveMembersCount);
+        return Objects.hash(id);
     }
 
     @Override
