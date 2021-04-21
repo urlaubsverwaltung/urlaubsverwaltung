@@ -149,7 +149,7 @@ public class ApplicationForLeaveFormViewController {
         return APP_FORM;
     }
 
-    @PostMapping(value = { "/application/new", "/application/{applicationId}" }, params = "add-holiday-replacement")
+    @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "add-holiday-replacement")
     public String addHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -198,9 +198,9 @@ public class ApplicationForLeaveFormViewController {
         return APP_FORM;
     }
 
-    @PostMapping(value = { "/application/new", "/application/{applicationId}" }, params = "remove-holiday-replacement")
+    @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
     public String removeHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm,
-                                           @RequestParam(name="remove-holiday-replacement") Integer personIdToRemove,
+                                           @RequestParam(name = "remove-holiday-replacement") Integer personIdToRemove,
                                            Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -413,6 +413,7 @@ public class ApplicationForLeaveFormViewController {
         dto.setDisplayName(person.getNiceName());
         return dto;
     }
+
     private static List<Person> holidayReplacementPersonsOfApplication(ApplicationForLeaveForm applicationForLeaveForm) {
 
         return ofNullable(applicationForLeaveForm.getHolidayReplacements())

@@ -157,8 +157,8 @@ public class ApplicationForLeaveFormValidator implements Validator {
             }
         }
 
-        if (applicationForm.getDayLength() != DayLength.FULL && !settings.getApplicationSettings().isAllowHalfDays()){
-            errors.rejectValue(DAY_LENGTH, ERROR_HALF_DAYS_NOT_ALLOWED );
+        if (applicationForm.getDayLength() != DayLength.FULL && !settings.getApplicationSettings().isAllowHalfDays()) {
+            errors.rejectValue(DAY_LENGTH, ERROR_HALF_DAYS_NOT_ALLOWED);
         }
     }
 
@@ -327,7 +327,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_HOURS, ERROR_INVALID_HOURS);
         }
 
-        if (minutes != null && (minutes < 0 || (minutes == 0 && hoursNullOrZero)))  {
+        if (minutes != null && (minutes < 0 || (minutes == 0 && hoursNullOrZero))) {
             errors.rejectValue(ATTRIBUTE_MINUTES, ERROR_INVALID_HOURS);
         }
     }
