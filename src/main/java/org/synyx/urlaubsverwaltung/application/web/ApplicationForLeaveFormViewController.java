@@ -47,7 +47,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
