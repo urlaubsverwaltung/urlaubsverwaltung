@@ -651,9 +651,10 @@ $(function () {
 
         const isPersonalHoliday = assert.isPersonalHolidayFull(date);
         const isPersonalHolidayApproved = assert.isPersonalHolidayFullApproved(date);
+        const isPersonalHolidayCancellationRequest = assert.isPersonalHolidayFullCancellationRequest(date);
         const isSickDay = assert.isSickDayFull(date);
 
-        if (isPersonalHoliday || isPersonalHolidayApproved || isSickDay) {
+        if (isPersonalHoliday || isPersonalHolidayApproved || isPersonalHolidayCancellationRequest || isSickDay) {
           return true;
         }
 
