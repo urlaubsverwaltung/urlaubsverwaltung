@@ -42,6 +42,9 @@ class ApplicationMailService {
     private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
+    private static final String HOLIDAY_REPLACEMENT = "holidayReplacement";
+    private static final String HOLIDAY_REPLACEMENT_NOTE = "holidayReplacementNote";
+    private static final String RECIPIENT = "recipient";
 
     private final MailService mailService;
     private final DepartmentService departmentService;
@@ -136,7 +139,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("recipient", recipient);
+        model.put(RECIPIENT, recipient);
         model.put("sender", sender);
 
         final Mail mailToApplicant = Mail.builder()
@@ -159,7 +162,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("recipient", recipient);
+        model.put(RECIPIENT, recipient);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient)
@@ -261,8 +264,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("holidayReplacement", holidayReplacement.getPerson());
-        model.put("holidayReplacementNote", holidayReplacement.getNote());
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
@@ -284,12 +287,12 @@ class ApplicationMailService {
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final String calendarName = getTranslation("calendar.mail.holiday-replacement.name", application.getPerson().getNiceName());
-        final File calendarFile = generateCalendar(application, calendarName, HOLIDAY_REPLACEMENT);
+        final File calendarFile = generateCalendar(application, calendarName, AbsenceType.HOLIDAY_REPLACEMENT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("holidayReplacement", holidayReplacement.getPerson());
-        model.put("holidayReplacementNote", holidayReplacement.getNote());
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
@@ -315,7 +318,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("holidayReplacement", holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
@@ -339,8 +342,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("holidayReplacement", holidayReplacement.getPerson());
-        model.put("holidayReplacementNote", holidayReplacement.getNote());
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
@@ -617,7 +620,7 @@ class ApplicationMailService {
 
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);
-            model.put("recipient", recipient);
+            model.put(RECIPIENT, recipient);
 
             final Mail mailToRemindForWaiting = Mail.builder()
                 .withRecipient(recipient)
