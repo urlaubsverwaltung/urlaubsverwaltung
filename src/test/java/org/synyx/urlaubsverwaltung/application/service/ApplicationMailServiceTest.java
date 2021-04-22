@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -333,15 +334,21 @@ class ApplicationMailServiceTest {
         applicant.setFirstName("Theo");
         applicant.setLastName("Fritz");
 
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("awesome replacement note");
+
         final Application application = new Application();
         application.setPerson(applicant);
-        application.setHolidayReplacement(holidayReplacement);
+        application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(dayLength);
         application.setStartDate(LocalDate.of(2020, 3, 5));
         application.setEndDate(LocalDate.of(2020, 3, 6));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("holidayReplacement", holidayReplacement);
+        model.put("holidayReplacementNote", "awesome replacement note");
         model.put("dayLength", "FULL");
 
         final String calendarName = "Vertretung für ...";
@@ -350,7 +357,7 @@ class ApplicationMailServiceTest {
         final File file = new File("");
         when(iCalService.getCalendar(eq(calendarName), any(), any())).thenReturn(file);
 
-        sut.notifyHolidayReplacementAllow(application);
+        sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -371,15 +378,26 @@ class ApplicationMailServiceTest {
 
         final Person holidayReplacement = new Person();
 
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("awesome note");
+
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
+
         final Application application = new Application();
-        application.setHolidayReplacement(holidayReplacement);
+        application.setPerson(applicant);
+        application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(dayLength);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("holidayReplacement", holidayReplacement);
+        model.put("holidayReplacementNote", "awesome note");
         model.put("dayLength", "FULL");
 
-        sut.notifyHolidayReplacementAboutEdit(application);
+        sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -398,15 +416,26 @@ class ApplicationMailServiceTest {
 
         final Person holidayReplacement = new Person();
 
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("awesome note");
+
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
+
         final Application application = new Application();
-        application.setHolidayReplacement(holidayReplacement);
+        application.setPerson(applicant);
+        application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(dayLength);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("holidayReplacement", holidayReplacement);
+        model.put("holidayReplacementNote", "awesome note");
         model.put("dayLength", "FULL");
 
-        sut.notifyHolidayReplacementForApply(application);
+        sut.notifyHolidayReplacementForApply(replacementEntity, application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -434,18 +463,23 @@ class ApplicationMailServiceTest {
         applicant.setFirstName("Thomas");
         final Person holidayReplacement = new Person();
 
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("awesome note");
+
         final Application application = new Application();
         application.setPerson(applicant);
-        application.setHolidayReplacement(holidayReplacement);
+        application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(dayLength);
         application.setStartDate(LocalDate.of(2020,10,2));
         application.setEndDate(LocalDate.of(2020, 10, 3));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
+        model.put("holidayReplacement", holidayReplacement);
         model.put("dayLength", "FULL");
 
-        sut.notifyHolidayReplacementAboutCancellation(application);
+        sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());

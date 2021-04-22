@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -30,6 +31,7 @@ import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -558,17 +560,20 @@ class ApplicationInteractionServiceImplTest {
     void ensureAllowingApplicationForLeaveWithHolidayReplacementSendsNotificationToReplacement() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person replacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person boss = createPerson("boss", USER, Role.BOSS);
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(replacementPerson);
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
-        applicationForLeave.setHolidayReplacement(replacement);
+        applicationForLeave.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         sut.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(applicationMailService).notifyHolidayReplacementAllow(eq(applicationForLeave));
+        verify(applicationMailService).notifyHolidayReplacementAllow(replacementEntity, applicationForLeave);
     }
 
     @Test
@@ -579,30 +584,33 @@ class ApplicationInteractionServiceImplTest {
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
-        applicationForLeave.setHolidayReplacement(null);
+        applicationForLeave.setHolidayReplacements(emptyList());
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         sut.allow(applicationForLeave, boss, of("Foo"));
 
-        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(), any());
     }
 
     @Test
     void ensureTemporaryAllowingApplicationForLeaveWithHolidayReplacementDoesNotSendNotification() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person replacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(replacementPerson);
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
-        applicationForLeave.setHolidayReplacement(replacement);
+        applicationForLeave.setHolidayReplacements(List.of(replacementEntity));
         applicationForLeave.setTwoStageApproval(true);
 
         sut.allow(applicationForLeave, departmentHead, of("Foo"));
 
-        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(Application.class));
+        verify(applicationMailService, never()).notifyHolidayReplacementAllow(any(), any());
     }
 
     // REJECT APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
@@ -1064,10 +1072,13 @@ class ApplicationInteractionServiceImplTest {
         final Person newHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
         newHolidayReplacement.setId(1);
 
+        final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
+        newReplacementEntity.setPerson(newHolidayReplacement);
+
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
-        newApplication.setHolidayReplacement(newHolidayReplacement);
+        newApplication.setHolidayReplacements(List.of(newReplacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
         final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
@@ -1078,40 +1089,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementForApply(newApplication);
-        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
-        verifyNoMoreInteractions(applicationMailService);
-    }
-
-    @Test
-    void editApplicationForLeaveHolidayReplacementChanged() {
-
-        final Integer applicationId = 1;
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final Person newHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        newHolidayReplacement.setId(1);
-
-        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
-        newApplication.setStatus(WAITING);
-        newApplication.setId(applicationId);
-        newApplication.setHolidayReplacement(newHolidayReplacement);
-        when(applicationService.save(newApplication)).thenReturn(newApplication);
-
-        final Person oldHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        oldHolidayReplacement.setId(2);
-        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
-        oldApplication.setHolidayReplacement(oldHolidayReplacement);
-
-        final Optional<String> comment = of("Comment");
-
-        final Application editedApplication = sut.edit(oldApplication, newApplication, person, comment);
-        assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
-
-        verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementForApply(newApplication);
-        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(oldApplication);
+        verify(applicationMailService).notifyHolidayReplacementForApply(newReplacementEntity, newApplication);
         verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
@@ -1130,8 +1108,12 @@ class ApplicationInteractionServiceImplTest {
 
         final Person oldHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
         oldHolidayReplacement.setId(2);
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(oldHolidayReplacement);
+
         final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
-        oldApplication.setHolidayReplacement(oldHolidayReplacement);
+        oldApplication.setHolidayReplacements(List.of(replacementEntity));
 
         final Optional<String> comment = of("Comment");
 
@@ -1139,7 +1121,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(oldApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(replacementEntity, newApplication);
         verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
@@ -1151,19 +1133,22 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        holidayReplacement.setId(2);
+        final Person holidayReplacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        holidayReplacementPerson.setId(2);
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacementPerson);
 
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setStartDate(LocalDate.of(2020, 10, 3));
         newApplication.setEndDate(LocalDate.of(2020, 10, 3));
-        newApplication.setHolidayReplacement(holidayReplacement);
+        newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
         final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
-        oldApplication.setHolidayReplacement(holidayReplacement);
+        oldApplication.setHolidayReplacements(List.of(replacementEntity));
         oldApplication.setStartDate(LocalDate.of(2020, 10, 4));
         oldApplication.setEndDate(LocalDate.of(2020, 10, 4));
 
@@ -1173,30 +1158,33 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementAboutEdit(newApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication);
         verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
 
     @Test
-    void editApplicationForLeaveHolidayRelevantEntriesChangedDayLeng() {
+    void editApplicationForLeaveHolidayRelevantEntriesChangedDayLength() {
 
         final Integer applicationId = 1;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Person holidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        holidayReplacement.setId(2);
+        final Person holidayReplacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        holidayReplacementPerson.setId(2);
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacementPerson);
 
         final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setDayLength(DayLength.FULL);
-        newApplication.setHolidayReplacement(holidayReplacement);
+        newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
         final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
-        oldApplication.setHolidayReplacement(holidayReplacement);
+        oldApplication.setHolidayReplacements(List.of(replacementEntity));
         oldApplication.setDayLength(DayLength.NOON);
 
         final Optional<String> comment = of("Comment");
@@ -1205,7 +1193,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).notifyHolidayReplacementAboutEdit(newApplication);
+        verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication);
         verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
@@ -1264,12 +1252,17 @@ class ApplicationInteractionServiceImplTest {
     }
 
     private Application getDummyApplication(Person person) {
+
+        final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(replacementPerson);
+
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
         applicationForLeave.setStartDate(LocalDate.of(2013, 2, 1));
         applicationForLeave.setEndDate(LocalDate.of(2013, 2, 5));
         applicationForLeave.setDayLength(DayLength.FULL);
-        applicationForLeave.setHolidayReplacement(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+        applicationForLeave.setHolidayReplacements(List.of(replacementEntity));
 
         return applicationForLeave;
     }

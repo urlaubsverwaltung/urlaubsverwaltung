@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
+import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -27,9 +28,8 @@ import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
@@ -41,6 +41,9 @@ class ApplicationMailService {
     private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
+    private static final String HOLIDAY_REPLACEMENT = "holidayReplacement";
+    private static final String HOLIDAY_REPLACEMENT_NOTE = "holidayReplacementNote";
+    private static final String RECIPIENT = "recipient";
 
     private final MailService mailService;
     private final DepartmentService departmentService;
@@ -135,7 +138,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("recipient", recipient);
+        model.put(RECIPIENT, recipient);
         model.put("sender", sender);
 
         final Mail mailToApplicant = Mail.builder()
@@ -158,7 +161,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put("recipient", recipient);
+        model.put(RECIPIENT, recipient);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient)
@@ -256,15 +259,17 @@ class ApplicationMailService {
      *
      * @param application to inform the holiday replacement beforehand
      */
-    void notifyHolidayReplacementForApply(Application application) {
+    void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
-            .withRecipient(application.getHolidayReplacement())
-            .withSubject("subject.application.holidayReplacement.apply")
+            .withRecipient(holidayReplacement.getPerson())
+            .withSubject("subject.application.holidayReplacement.apply", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_apply", model)
             .build();
 
@@ -278,18 +283,20 @@ class ApplicationMailService {
      *
      * @param application to inform the holiday replacement
      */
-    void notifyHolidayReplacementAllow(Application application) {
+    void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final String calendarName = getTranslation("calendar.mail.holiday-replacement.name", application.getPerson().getNiceName());
-        final File calendarFile = generateCalendar(application, calendarName, HOLIDAY_REPLACEMENT);
+        final File calendarFile = generateCalendar(application, calendarName, AbsenceType.HOLIDAY_REPLACEMENT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
-            .withRecipient(application.getHolidayReplacement())
-            .withSubject("subject.application.holidayReplacement.allow")
+            .withRecipient(holidayReplacement.getPerson())
+            .withSubject("subject.application.holidayReplacement.allow", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_allow", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
@@ -304,17 +311,18 @@ class ApplicationMailService {
      *
      * @param application to inform the holiday replacement was cancelled
      */
-    void notifyHolidayReplacementAboutCancellation(Application application) {
+    void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT, CANCELLED);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
-            .withRecipient(application.getHolidayReplacement())
-            .withSubject("subject.application.holidayReplacement.cancellation")
+            .withRecipient(holidayReplacement.getPerson())
+            .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_cancellation", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
@@ -329,15 +337,17 @@ class ApplicationMailService {
      *
      * @param application to inform the holiday replacement was cancelled
      */
-    void notifyHolidayReplacementAboutEdit(Application application) {
+    void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
         final Mail mailToReplacement = Mail.builder()
-            .withRecipient(application.getHolidayReplacement())
-            .withSubject("subject.application.holidayReplacement.edit")
+            .withRecipient(holidayReplacement.getPerson())
+            .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_edit", model)
             .build();
 
@@ -609,7 +619,7 @@ class ApplicationMailService {
 
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);
-            model.put("recipient", recipient);
+            model.put(RECIPIENT, recipient);
 
             final Mail mailToRemindForWaiting = Mail.builder()
                 .withRecipient(recipient)

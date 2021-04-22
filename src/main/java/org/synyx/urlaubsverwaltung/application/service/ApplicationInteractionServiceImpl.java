@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -27,6 +28,8 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction.APPLIED;
@@ -121,8 +124,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         applicationMailService.sendNewApplicationNotification(savedApplication, createdComment);
 
         // send email to holiday replacement to inform beforehand the confirmation
-        if (savedApplication.getHolidayReplacement() != null) {
-            applicationMailService.notifyHolidayReplacementForApply(savedApplication);
+        for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+            applicationMailService.notifyHolidayReplacementForApply(holidayReplacement, savedApplication);
         }
 
         // update remaining vacation days (if there is already a holidays account for next year)
@@ -218,8 +221,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationMailService.sendAllowedNotification(savedApplication, createdComment);
 
-        if (savedApplication.getHolidayReplacement() != null) {
-            applicationMailService.notifyHolidayReplacementAllow(savedApplication);
+        for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+            applicationMailService.notifyHolidayReplacementAllow(holidayReplacement, savedApplication);
         }
 
         return savedApplication;
@@ -241,8 +244,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationMailService.sendRejectedNotification(savedApplication, createdComment);
 
-        if (savedApplication.getHolidayReplacement() != null) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(savedApplication);
+        for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
         }
 
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedApplication.getId(), VACATION);
@@ -290,8 +293,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         final ApplicationComment savedComment = commentService.create(savedApplication, REVOKED, comment, canceller);
         applicationMailService.sendRevokedNotifications(application, savedComment);
 
-        if (savedApplication.getHolidayReplacement() != null) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(savedApplication);
+        for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
         }
     }
 
@@ -312,8 +315,8 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
             final ApplicationComment savedComment = commentService.create(savedApplication, CANCELLED, comment, canceller);
             applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
 
-            if (savedApplication.getHolidayReplacement() != null) {
-                applicationMailService.notifyHolidayReplacementAboutCancellation(savedApplication);
+            for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+                applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
             }
         } else {
             /*
@@ -419,36 +422,54 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
 
         applicationMailService.sendEditedApplicationNotification(savedEditedApplication, person);
 
-        if (replacementAdded(oldApplication, savedEditedApplication)) {
-            applicationMailService.notifyHolidayReplacementForApply(savedEditedApplication);
-        } else if (replacementChanged(oldApplication, savedEditedApplication)) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(oldApplication);
-            applicationMailService.notifyHolidayReplacementForApply(savedEditedApplication);
-        } else if (replacementDeleted(oldApplication, savedEditedApplication)) {
-            applicationMailService.notifyHolidayReplacementAboutCancellation(oldApplication);
-        } else if (relevantEntriesChanged(oldApplication, savedEditedApplication)) {
-            applicationMailService.notifyHolidayReplacementAboutEdit(savedEditedApplication);
+        final List<HolidayReplacementEntity> addedReplacements = replacementAdded(oldApplication, savedEditedApplication);
+        final List<HolidayReplacementEntity> deletedReplacements = replacementDeleted(oldApplication, savedEditedApplication);
+
+        if (relevantEntriesChanged(oldApplication, savedEditedApplication)) {
+            final List<HolidayReplacementEntity> oldReplacements = oldApplication.getHolidayReplacements();
+            final List<HolidayReplacementEntity> stillExistingReplacements = savedEditedApplication.getHolidayReplacements()
+                .stream()
+                .filter(oldReplacements::contains)
+                .collect(toList());
+            for (HolidayReplacementEntity replacement : stillExistingReplacements) {
+                applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication);
+            }
+        }
+
+        for (HolidayReplacementEntity replacement : addedReplacements) {
+            applicationMailService.notifyHolidayReplacementForApply(replacement, savedEditedApplication);
+        }
+
+        for (HolidayReplacementEntity replacement : deletedReplacements) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(replacement, savedEditedApplication);
         }
 
         return savedEditedApplication;
     }
 
-    private boolean replacementAdded(Application oldApplication, Application savedEditedApplication) {
-        return oldApplication.getHolidayReplacement() == null && savedEditedApplication.getHolidayReplacement() != null;
+    private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {
+
+        final List<HolidayReplacementEntity> oldReplacements = oldApplication.getHolidayReplacements();
+
+        return savedEditedApplication.getHolidayReplacements()
+            .stream()
+            .filter(not(oldReplacements::contains))
+            .collect(toList());
     }
 
-    private boolean replacementChanged(Application oldApplication, Application savedEditedApplication) {
-        return oldApplication.getHolidayReplacement() != null && savedEditedApplication.getHolidayReplacement() != null
-            && !oldApplication.getHolidayReplacement().equals(savedEditedApplication.getHolidayReplacement());
-    }
+    private List<HolidayReplacementEntity> replacementDeleted(Application oldApplication, Application savedEditedApplication) {
 
-    private boolean replacementDeleted(Application oldApplication, Application savedEditedApplication) {
-        return oldApplication.getHolidayReplacement() != null && savedEditedApplication.getHolidayReplacement() == null;
+        final List<HolidayReplacementEntity> newReplacements = savedEditedApplication.getHolidayReplacements();
+
+        return oldApplication.getHolidayReplacements()
+            .stream()
+            .filter(not(newReplacements::contains))
+            .collect(toList());
     }
 
     private boolean relevantEntriesChanged(Application oldApplication, Application savedEditedApplication) {
-        return savedEditedApplication.getHolidayReplacement() != null && (!oldApplication.getStartDate().equals(savedEditedApplication.getStartDate())
+        return !oldApplication.getStartDate().equals(savedEditedApplication.getStartDate())
             || !oldApplication.getEndDate().equals(savedEditedApplication.getEndDate())
-            || !oldApplication.getDayLength().equals(savedEditedApplication.getDayLength()));
+            || !oldApplication.getDayLength().equals(savedEditedApplication.getDayLength());
     }
 }

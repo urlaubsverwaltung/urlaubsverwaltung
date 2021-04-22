@@ -156,23 +156,14 @@
         </td>
         <td>
             <c:choose>
-                <c:when test="${application.holidayReplacement != null}">
-                    <c:out value="${application.holidayReplacement.niceName}"/>
-                </c:when>
-                <c:otherwise>
-                    <spring:message code="application.data.furtherInformation.notSpecified"/>
-                </c:otherwise>
-            </c:choose>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <spring:message code='application.data.holidayReplacementNote'/>
-        </td>
-        <td class="tw-break-words">
-            <c:choose>
-                <c:when test="${fn:length(application.holidayReplacementNote) > 0}">
-                    <c:out value="${application.holidayReplacementNote}"/>
+                <c:when test="${not empty application.holidayReplacements}">
+                    <ul class="tw-list-none tw-m-0 tw-p-0">
+                        <c:forEach items="${application.holidayReplacements}" var="replacement">
+                        <li>
+                            <c:out value="${replacement.person.niceName}"/>
+                        </li>
+                        </c:forEach>
+                    </ul>
                 </c:when>
                 <c:otherwise>
                     <spring:message code="application.data.furtherInformation.notSpecified"/>

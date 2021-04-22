@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.domain;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -14,7 +15,6 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -169,6 +169,10 @@ class ApplicationTest {
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
 
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(person);
+        replacementEntity.setNote("hello myself");
+
         final VacationType vacationType = new VacationType();
         vacationType.setCategory(VacationCategory.HOLIDAY);
 
@@ -183,7 +187,7 @@ class ApplicationTest {
         application.setHours(Duration.ofHours(10));
         application.setApplicationDate(LocalDate.EPOCH);
         application.setTwoStageApproval(true);
-        application.setHolidayReplacement(person);
+        application.setHolidayReplacements(List.of(replacementEntity));
         application.setApplier(person);
         application.setRemindDate(LocalDate.MAX);
         application.setBoss(person);
@@ -201,9 +205,9 @@ class ApplicationTest {
             "boss=Person{id='10'}, canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
             "vacationType=VacationType{category=HOLIDAY, messageKey='null'}, dayLength=FULL, " +
-            "holidayReplacement=Person{id='10'}, address='Address', applicationDate=1970-01-01, " +
-            "cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, " +
-            "teamInformed=true, hours=PT10H}");
+            "holidayReplacements=[HolidayReplacement{, person=Person{id='10'}, note='hello myself'}], " +
+            "address='Address', applicationDate=1970-01-01, cancelDate=+999999999-12-31, " +
+            "editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, teamInformed=true, hours=PT10H}");
     }
 
     @Test

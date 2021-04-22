@@ -17,8 +17,8 @@ Art des Urlaubs: ${vacationType}
 <#if (application.reason)?has_content>
 Grund: ${application.reason}
 </#if>
-<#if (application.holidayReplacement.niceName)?has_content>
-Vertreter: ${application.holidayReplacement.niceName}
+<#if application.holidayReplacements?has_content >
+Vertretung: <#list application.holidayReplacements as replacement>${replacement.person.niceName}<#if !replacement?is_last>, </#if></#list>
 </#if>
 <#if (application.address)?has_content>
 Anschrift/Telefon während des Urlaubs: ${application.address}

@@ -388,8 +388,8 @@
                                 <tr class="active">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            src="<c:out value='${application.personGravatarURL}?d=mm&s=40'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.personName}"/>"
                                             class="gravatar tw-rounded-full"
                                             width="40px"
                                             height="40px"
@@ -398,9 +398,9 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.person.niceName}"/>
+                                            <c:out value="${application.personName}"/>
                                         </span>
-                                        <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
+                                        <c:if test="${application.pending}">
                                             <div>
                                                 <spring:message code="applications.holiday_replacement.pending"/>
                                             </div>
@@ -475,9 +475,7 @@
                                         </div>
                                     </td>
                                     <td class="tw-break-words tw-max-w-xs">
-                                        <c:if test="${application.holidayReplacementNote != null}">
-                                            <c:out value="${application.holidayReplacementNote}"/>
-                                        </c:if>
+                                        <c:out value="${application.note}"/>
                                     </td>
                                 </tr>
                             </c:forEach>
