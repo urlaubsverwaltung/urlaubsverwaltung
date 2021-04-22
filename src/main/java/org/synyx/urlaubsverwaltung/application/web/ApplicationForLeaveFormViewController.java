@@ -75,6 +75,8 @@ public class ApplicationForLeaveFormViewController {
     private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
+    private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
+    private static final String USER_HAS_NOT_THE_CORRECT_PERMISSIONS = "User '%s' has not the correct permissions to apply for leave for user '%s'";
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -129,7 +131,7 @@ public class ApplicationForLeaveFormViewController {
         boolean isApplyingForOneSelf = person.equals(signedInUser);
 
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
@@ -145,7 +147,7 @@ public class ApplicationForLeaveFormViewController {
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));
         }
 
-        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
+        model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
         return APP_FORM;
     }
 
@@ -160,7 +162,7 @@ public class ApplicationForLeaveFormViewController {
         boolean isApplyingForOneSelf = person.equals(signedInUser);
 
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
@@ -193,7 +195,7 @@ public class ApplicationForLeaveFormViewController {
             prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
         }
 
-        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
+        model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
         return APP_FORM;
     }
@@ -211,7 +213,7 @@ public class ApplicationForLeaveFormViewController {
         boolean isApplyingForOneSelf = person.equals(signedInUser);
 
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(format("User '%s' has not the correct permissions to apply for leave for user '%s'", signedInUser.getId(), person.getId()));
+            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
 
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
@@ -231,7 +233,7 @@ public class ApplicationForLeaveFormViewController {
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements);
         }
 
-        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
+        model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
         return APP_FORM;
     }
@@ -293,7 +295,7 @@ public class ApplicationForLeaveFormViewController {
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
 
-        model.addAttribute("noHolidaysAccount", holidaysAccount.isEmpty());
+        model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
         model.addAttribute("application", applicationForLeaveForm);
 
         return APP_FORM;
