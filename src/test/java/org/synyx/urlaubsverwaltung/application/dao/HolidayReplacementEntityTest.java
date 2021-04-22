@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.dao;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.web.HolidayReplacementDto;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import static org.assertj.core.api.Assertions.assertThat;
