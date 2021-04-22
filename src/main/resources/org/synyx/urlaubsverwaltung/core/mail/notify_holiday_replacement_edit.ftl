@@ -4,7 +4,7 @@ der Zeitraum für die Abwesenheit von ${application.person.niceName} bei dem du 
 Der neue Zeitraum ist von ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}.
 
 <#if holidayReplacementNote?has_content>
-Notiz von ${application.person.niceName} and dich:
+Notiz von ${application.person.niceName} an dich:
 ${holidayReplacementNote}
 </#if>
 
