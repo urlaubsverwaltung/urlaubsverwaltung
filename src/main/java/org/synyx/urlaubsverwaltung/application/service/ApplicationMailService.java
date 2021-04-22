@@ -4,15 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
+import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -28,9 +28,8 @@ import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
@@ -270,7 +269,7 @@ class ApplicationMailService {
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
-            .withSubject("subject.application.holidayReplacement.apply")
+            .withSubject("subject.application.holidayReplacement.apply", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_apply", model)
             .build();
 
@@ -297,7 +296,7 @@ class ApplicationMailService {
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
-            .withSubject("subject.application.holidayReplacement.allow")
+            .withSubject("subject.application.holidayReplacement.allow", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_allow", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
@@ -323,7 +322,7 @@ class ApplicationMailService {
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
-            .withSubject("subject.application.holidayReplacement.cancellation")
+            .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_cancellation", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
@@ -348,7 +347,7 @@ class ApplicationMailService {
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
-            .withSubject("subject.application.holidayReplacement.edit")
+            .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_edit", model)
             .build();
 

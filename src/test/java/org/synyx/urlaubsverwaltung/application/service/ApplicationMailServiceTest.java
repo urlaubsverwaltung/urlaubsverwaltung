@@ -382,7 +382,12 @@ class ApplicationMailServiceTest {
         replacementEntity.setPerson(holidayReplacement);
         replacementEntity.setNote("awesome note");
 
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
+
         final Application application = new Application();
+        application.setPerson(applicant);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(dayLength);
 
@@ -415,7 +420,12 @@ class ApplicationMailServiceTest {
         replacementEntity.setPerson(holidayReplacement);
         replacementEntity.setNote("awesome note");
 
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
+
         final Application application = new Application();
+        application.setPerson(applicant);
         application.setHolidayReplacements(List.of(replacementEntity));
         application.setDayLength(dayLength);
 

@@ -557,7 +557,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -592,7 +592,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         MimeMessage msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Urlaubsvertretung");
+        assertThat(msg.getSubject()).contains("Deine Urlaubsvertretung für Lieschen Müller wurde eingeplant");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -629,7 +629,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         MimeMessage msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung abgelehnt");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller wurde zurückgezogen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -667,7 +667,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Mögliche Urlaubsvertretung editiert");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller wurde angepasst");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
