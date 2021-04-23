@@ -44,7 +44,7 @@
     "postcss-loader": "4.2.0",
     "tablesorter": "2.31.3",
     "timepicker": "1.13.18",
-    "underscore": "1.12.1"
+    "underscore": "1.13.1"
   },
   "devDependencies": {
     "@babel/core": "7.13.15",
