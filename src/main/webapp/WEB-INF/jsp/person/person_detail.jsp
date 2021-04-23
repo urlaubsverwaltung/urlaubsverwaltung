@@ -37,78 +37,16 @@
             </c:if>
         </div>
 
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-6">
+        <div class="tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
+            <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
-                    <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                                <icon:pencil className="tw-w-5 tw-h-5" />
-                            </a>
-                        </sec:authorize>
-                    </jsp:attribute>
-                    <jsp:body>
-                        <h1>
-                            <spring:message code="person.details.masterData.title"/>
-                        </h1>
-                    </jsp:body>
+                    <h1>
+                        <spring:message code="person.details.masterData.title"/>
+                    </h1>
                 </uv:section-heading>
-
-                <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" />
-
-                <uv:box className="tw-mb-2 tw-border-none">
-                    <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
-                            <icon:key className="tw-w-8 tw-h-8" />
-                        </uv:box-icon>
-                    </jsp:attribute>
-                    <jsp:body>
-                        <ul class="tw-space-y-2 tw-text-sm">
-                            <c:forEach items="${person.permissions}" var="role">
-                                <li>
-                                    <spring:message code="person.form.permissions.roles.${role}.description"/>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                    </jsp:body>
-                </uv:box>
-
-                <uv:section-heading>
-                    <h2>
-                        <spring:message code="person.details.departments.title"/>
-                    </h2>
-                </uv:section-heading>
-                <uv:box className="tw-mb-2 tw-border-none">
-                    <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
-                            <icon:user-group className="tw-w-8 tw-h-8" />
-                        </uv:box-icon>
-                    </jsp:attribute>
-                    <jsp:body>
-                        <c:choose>
-                            <c:when test="${empty departments}">
-                                <spring:message code="person.details.departments.none"/>
-                            </c:when>
-                            <c:otherwise>
-                                <ul class="tw-text-base">
-                                <c:forEach items="${departments}" var="department">
-                                    <c:choose>
-                                        <c:when test="${departmentHeadOfDepartments.contains( department )}">
-                                            <li><c:out value="${department.name}"/> <spring:message code="person.details.departments.departmentHead"/></li>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <li><c:out value="${department.name}"/></li>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:forEach>
-                                </ul>
-                            </c:otherwise>
-                        </c:choose>
-                    </jsp:body>
-                </uv:box>
+                <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
             </div>
-
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            <div class="md:tw-col-start-1 md:grid-row-start-2">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -124,9 +62,9 @@
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
                     </jsp:body>
                 </uv:section-heading>
-
-                <uv:account-entitlement account="${account}" className="tw-mb-2 tw-border-none" />
-
+                <uv:account-entitlement account="${account}" className="tw-mb-2 tw-border-none" noPadding="true" />
+            </div>
+            <div class="md:tw-col-start-1 md:grid-row-start-3">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -141,68 +79,68 @@
                         </h2>
                     </jsp:body>
                 </uv:section-heading>
-
-                <uv:box className="tw-mb-2 tw-border-none">
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
                             <icon:clock className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <span class="tw-text-sm">
-                            <c:choose>
-                                <c:when test="${workingTime != null}">
-                                    <span class="tw-mb-2">
-                                        <spring:message code="person.details.workingTime.validity"/>
-                                        <span class="is-inline-block"><uv:date date="${workingTime.validFrom}"/></span>:
-                                    </span>
-                                    <ul class="tw-ml-2">
-                                    <c:if test="${workingTime.monday.duration > 0}">
-                                        <li>
-                                            <spring:message code="MONDAY"/>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${workingTime.tuesday.duration > 0}">
-                                        <li>
-                                            <spring:message code="TUESDAY"/>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${workingTime.wednesday.duration > 0}">
-                                        <li>
-                                            <spring:message code="WEDNESDAY"/>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${workingTime.thursday.duration > 0}">
-                                        <li>
-                                            <spring:message code="THURSDAY"/>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${workingTime.friday.duration > 0}">
-                                        <li>
-                                            <spring:message code="FRIDAY"/>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${workingTime.saturday.duration > 0}">
-                                        <li>
-                                            <spring:message code="SATURDAY"/>
-                                        </li>
-                                    </c:if>
-                                    <c:if test="${workingTime.sunday.duration > 0}">
-                                        <li>
-                                            <spring:message code="SUNDAY"/>
-                                        </li>
-                                    </c:if>
-                                    </ul>
-                                </c:when>
-                                <c:otherwise>
-                                    <spring:message code='person.details.workingTime.none'/>
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
+                    <span class="tw-text-sm">
+                        <c:choose>
+                            <c:when test="${workingTime != null}">
+                                <span class="tw-mb-2">
+                                    <spring:message code="person.details.workingTime.validity"/>
+                                    <span class="is-inline-block"><uv:date date="${workingTime.validFrom}"/></span>:
+                                </span>
+                                <ul class="tw-ml-2">
+                                <c:if test="${workingTime.monday.duration > 0}">
+                                    <li>
+                                        <spring:message code="MONDAY"/>
+                                    </li>
+                                </c:if>
+                                <c:if test="${workingTime.tuesday.duration > 0}">
+                                    <li>
+                                        <spring:message code="TUESDAY"/>
+                                    </li>
+                                </c:if>
+                                <c:if test="${workingTime.wednesday.duration > 0}">
+                                    <li>
+                                        <spring:message code="WEDNESDAY"/>
+                                    </li>
+                                </c:if>
+                                <c:if test="${workingTime.thursday.duration > 0}">
+                                    <li>
+                                        <spring:message code="THURSDAY"/>
+                                    </li>
+                                </c:if>
+                                <c:if test="${workingTime.friday.duration > 0}">
+                                    <li>
+                                        <spring:message code="FRIDAY"/>
+                                    </li>
+                                </c:if>
+                                <c:if test="${workingTime.saturday.duration > 0}">
+                                    <li>
+                                        <spring:message code="SATURDAY"/>
+                                    </li>
+                                </c:if>
+                                <c:if test="${workingTime.sunday.duration > 0}">
+                                    <li>
+                                        <spring:message code="SUNDAY"/>
+                                    </li>
+                                </c:if>
+                                </ul>
+                            </c:when>
+                            <c:otherwise>
+                                <spring:message code='person.details.workingTime.none'/>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
                     </jsp:body>
                 </uv:box>
-
-                <uv:box className="tw-mb-8 tw-border-none">
+            </div>
+            <div class="md:tw-col-start-1 md:grid-row-start-4">
+                <uv:box className="tw-mb-8 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
                             <icon:map className="tw-w-8 tw-h-8" />
@@ -216,7 +154,73 @@
                     </jsp:body>
                 </uv:box>
             </div>
-
+            <div class="md:tw-col-start-2 md:tw-row-start-1">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.details.departments.title"/>
+                    </h2>
+                </uv:section-heading>
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
+                            <icon:user-group className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <c:choose>
+                            <c:when test="${empty departments}">
+                                <spring:message code="person.details.departments.none"/>
+                            </c:when>
+                            <c:otherwise>
+                                <ul class="tw-text-base">
+                                    <c:forEach items="${departments}" var="department">
+                                        <c:choose>
+                                            <c:when test="${departmentHeadOfDepartments.contains( department )}">
+                                                <li><c:out value="${department.name}"/> <spring:message code="person.details.departments.departmentHead"/></li>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <li><c:out value="${department.name}"/></li>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                </ul>
+                            </c:otherwise>
+                        </c:choose>
+                    </jsp:body>
+                </uv:box>
+            </div>
+            <div class="md:tw-col-start-2 md:tw-row-start-2 md:tw-row-span-3">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="person.form.permissions.title"/>
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
+                            <icon:key className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <ul class="tw-space-y-2 tw-text-sm">
+                            <c:forEach items="${person.permissions}" var="role">
+                                <li>
+                                    <spring:message code="person.form.permissions.roles.${role}.description"/>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </jsp:body>
+                </uv:box>
+            </div>
         </div>
     </div>
 </div>
