@@ -2,7 +2,7 @@ name: Update assets-manifest
 
 on:
   workflow_run:
-    workflows: [ "Urlaubsverwaltung CI" ]
+    workflows: [ "Build" ]
     branches: [ "dependabot/npm_and_yarn/**" ]
     types:
       - completed
