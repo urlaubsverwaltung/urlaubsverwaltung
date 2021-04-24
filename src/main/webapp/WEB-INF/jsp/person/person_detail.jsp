@@ -172,7 +172,7 @@
                                 <spring:message code="person.details.departments.none"/>
                             </c:when>
                             <c:otherwise>
-                                <ul class="tw-text-base">
+                                <ul class="tw-space-y-0.5 tw-text-sm">
                                     <c:forEach items="${departments}" var="department">
                                         <c:choose>
                                             <c:when test="${departmentHeadOfDepartments.contains( department )}">
