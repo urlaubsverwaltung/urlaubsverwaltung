@@ -37,7 +37,7 @@
             </c:if>
         </div>
 
-        <div class="tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
+        <div class="tw-space-y-12 md:tw-space-y-0 md:tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
             <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
                     <h1>
@@ -46,7 +46,77 @@
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
             </div>
-            <div class="md:tw-col-start-1 md:grid-row-start-2">
+            <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="person.form.permissions.title"/>
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
+                            <icon:key className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <dl class="tw-m-0">
+                            <c:forEach items="${person.permissions}" var="role" varStatus="loop">
+                                <dt class="tw-mb-2 tw-font-medium">
+                                    <spring:message code="person.form.permissions.roles.${role}"/>
+                                </dt>
+                                <dd class="tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}">
+                                    <spring:message code="person.form.permissions.roles.${role}.description"/>
+                                </dd>
+                            </c:forEach>
+                        </dl>
+                    </jsp:body>
+                </uv:box>
+            </div>
+            <div class="md:tw-col-start-1 md:tw-row-start-2">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="person.details.departments.title"/>
+                    </h2>
+                </uv:section-heading>
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
+                            <icon:user-group className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <c:choose>
+                            <c:when test="${empty departments}">
+                                <spring:message code="person.details.departments.none"/>
+                            </c:when>
+                            <c:otherwise>
+                                <ul class="tw-space-y-0.5 tw-text-sm">
+                                    <c:forEach items="${departments}" var="department">
+                                        <c:choose>
+                                            <c:when test="${departmentHeadOfDepartments.contains( department )}">
+                                                <li><c:out value="${department.name}"/> <spring:message code="person.details.departments.departmentHead"/></li>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <li><c:out value="${department.name}"/></li>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                </ul>
+                            </c:otherwise>
+                        </c:choose>
+                    </jsp:body>
+                </uv:box>
+            </div>
+            <div class="md:tw-col-start-2 md:tw-row-start-1">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -64,7 +134,7 @@
                 </uv:section-heading>
                 <uv:account-entitlement account="${account}" className="tw-mb-2 tw-border-none" noPadding="true" />
             </div>
-            <div class="md:tw-col-start-1 md:grid-row-start-3">
+            <div class="md:tw-col-start-2 md:tw-row-start-3">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -192,7 +262,21 @@
                     </jsp:body>
                 </uv:box>
             </div>
-            <div class="md:tw-col-start-1 md:grid-row-start-4">
+            <div class="md:tw-col-start-2 md:tw-row-start-2">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="person.details.federalState.title"/>
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
                 <uv:box className="tw-mb-8 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
@@ -208,76 +292,6 @@
                                 <spring:message code="federalState.${federalState}"/>
                             </span>
                         </p>
-                    </jsp:body>
-                </uv:box>
-            </div>
-            <div class="md:tw-col-start-2 md:tw-row-start-1">
-                <uv:section-heading>
-                    <h2>
-                        <spring:message code="person.details.departments.title"/>
-                    </h2>
-                </uv:section-heading>
-                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
-                    <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
-                            <icon:user-group className="tw-w-8 tw-h-8" />
-                        </uv:box-icon>
-                    </jsp:attribute>
-                    <jsp:body>
-                        <c:choose>
-                            <c:when test="${empty departments}">
-                                <spring:message code="person.details.departments.none"/>
-                            </c:when>
-                            <c:otherwise>
-                                <ul class="tw-space-y-0.5 tw-text-sm">
-                                    <c:forEach items="${departments}" var="department">
-                                        <c:choose>
-                                            <c:when test="${departmentHeadOfDepartments.contains( department )}">
-                                                <li><c:out value="${department.name}"/> <spring:message code="person.details.departments.departmentHead"/></li>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <li><c:out value="${department.name}"/></li>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:forEach>
-                                </ul>
-                            </c:otherwise>
-                        </c:choose>
-                    </jsp:body>
-                </uv:box>
-            </div>
-            <div class="md:tw-col-start-2 md:tw-row-start-2 md:tw-row-span-3">
-                <uv:section-heading>
-                    <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
-                                <icon:pencil className="tw-w-5 tw-h-5" />
-                            </a>
-                        </sec:authorize>
-                    </jsp:attribute>
-                    <jsp:body>
-                        <h2>
-                            <spring:message code="person.form.permissions.title"/>
-                        </h2>
-                    </jsp:body>
-                </uv:section-heading>
-                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
-                    <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
-                            <icon:key className="tw-w-8 tw-h-8" />
-                        </uv:box-icon>
-                    </jsp:attribute>
-                    <jsp:body>
-                        <dl class="tw-m-0">
-                            <c:forEach items="${person.permissions}" var="role" varStatus="loop">
-                                <dt class="tw-mb-2 tw-font-medium">
-                                    <spring:message code="person.form.permissions.roles.${role}"/>
-                                </dt>
-                                <dd class="tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}">
-                                    <spring:message code="person.form.permissions.roles.${role}.description"/>
-                                </dd>
-                            </c:forEach>
-                        </dl>
                     </jsp:body>
                 </uv:box>
             </div>
