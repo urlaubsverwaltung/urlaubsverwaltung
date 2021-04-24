@@ -200,10 +200,14 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <div>
-                            <div class="tw-text-sm"><spring:message code="person.details.workingTime.federalState"/></div>
-                            <div class="tw-text-base tw-ml-2"><spring:message code="federalState.${federalState}"/></div>
-                        </div>
+                        <p>
+                            <span class="tw-block tw-mb-1 tw-text-sm">
+                                <spring:message code="person.details.workingTime.federalState"/>
+                            </span>
+                            <span class="tw-text-base tw-font-medium">
+                                <spring:message code="federalState.${federalState}"/>
+                            </span>
+                        </p>
                     </jsp:body>
                 </uv:box>
             </div>
