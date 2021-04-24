@@ -211,13 +211,16 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <ul class="tw-space-y-2 tw-text-sm">
-                            <c:forEach items="${person.permissions}" var="role">
-                                <li>
+                        <dl class="tw-m-0">
+                            <c:forEach items="${person.permissions}" var="role" varStatus="loop">
+                                <dt class="tw-mb-2 tw-font-medium">
+                                    <spring:message code="person.form.permissions.roles.${role}"/>
+                                </dt>
+                                <dd class="tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}">
                                     <spring:message code="person.form.permissions.roles.${role}.description"/>
-                                </li>
+                                </dd>
                             </c:forEach>
-                        </ul>
+                        </dl>
                     </jsp:body>
                 </uv:box>
             </div>
