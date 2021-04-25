@@ -21,8 +21,8 @@
 .input-group {
   @apply tw-rounded-md !important;
   @apply tw-border;
-  @apply tw-border-gray-400;
   @apply tw-transition;
+  border-color: #ccc;
 }
 
 .input-group.has-error {
@@ -41,7 +41,7 @@
   @apply tw-border-0 !important;
   /* however, left border should still be visible */
   @apply tw-border-l-2 !important;
-  @apply tw-border-gray-300 !important;
+  border-color: #ccc;
 }
 
 .input-group:focus-within {
