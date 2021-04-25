@@ -367,7 +367,7 @@
                                                 </uv:select>
                                                 <button
                                                     type="submit"
-                                                    class="tw-text-gray-700 tw-border tw-border-l-0 tw-border-gray-300 tw-font-medium tw-rounded-r tw-px-4 hover:tw-bg-gray-200 tw-text-sm"
+                                                    class="btn btn-default tw-border-l-0 tw-rounded-r tw-m-0 tw-px-4 tw-font-medium"
                                                     name="add-holiday-replacement"
                                                     formmethod="post"
                                                     formaction="${ADD_REPLACEMENT_ACTION}"
