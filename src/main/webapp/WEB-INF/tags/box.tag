@@ -4,8 +4,11 @@
 
 <%@attribute name="icon" fragment="true" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
+<%@attribute name="noPadding" type="java.lang.Boolean" required="false" %>
 
-<uv:box__ className="tw-p-5 ${className}">
+<c:set var="paddingCssClass" value="${noPadding ? 'tw-p-0' : 'tw-p-5'}" />
+
+<uv:box__ className="${paddingCssClass} ${className}">
     <jsp:attribute name="icon">
         <jsp:invoke fragment="icon" />
     </jsp:attribute>

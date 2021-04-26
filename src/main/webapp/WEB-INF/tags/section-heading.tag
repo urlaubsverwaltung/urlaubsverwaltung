@@ -7,7 +7,7 @@
 <div class="section-heading row tw-mb-4 lg:tw-mb-6">
     <div class="col-xs-12">
         <div class="tw-flex tw-items-baseline separator-bottom">
-            <div class="tw-flex-1 tw-text-2xl tw-leading-5 tw-flex tw-items-baseline tw-space-x-1">
+            <div class="tw-flex-1 tw-text-2xl tw-leading-5 tw-flex tw-items-baseline tw-flex-wrap tw-space-x-1">
                 <jsp:doBody />
             </div>
             <c:if test="${not empty actions}">
