@@ -43,3 +43,36 @@ duet-date-picker.error {
 .duet-date__day.is-today::before {
   border-radius: 0;
 }
+
+.duet-date__toggle {
+  /* use (nearly) same width like 'overtime minute input' */
+  min-width: 3.25rem;
+  /* disable duet box-shadow */
+  box-shadow: none;
+  height: 100%;
+  top: 0;
+  right: 0;
+}
+
+.duet-date__input-wrapper:focus-within .duet-date__toggle {
+  top: 1px;
+  right: 1px;
+  height: calc(100% - 2px);
+  min-width: calc(3.25rem - 1px);
+}
+
+.duet-date__input,
+.duet-date__toggle {
+  /* ring-0 is required to enable transition to ring-x of the focused element */
+  @apply tw-ring-0;
+  @apply tw-transition;
+  @apply tw-duration-150;
+  @apply tw-ease-in-out;
+}
+
+.duet-date__input:focus,
+.duet-date__toggle:focus {
+  box-shadow: none !important;
+  @apply tw-ring-2 !important;
+  @apply tw-ring-blue-300 !important;
+}
