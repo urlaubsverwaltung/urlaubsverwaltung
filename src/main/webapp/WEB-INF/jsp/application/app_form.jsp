@@ -377,92 +377,92 @@
                                             </div>
                                         </div>
                                     </div>
+                                </c:if>
 
-                                    <c:if test="${not empty application.holidayReplacements}">
-                                        <div class="tw-mb-12">
-                                        <c:forEach items="${application.holidayReplacements}" var="holidayReplacement" varStatus="loop">
-                                            <form:hidden path="holidayReplacements[${loop.index}].person" />
-                                            <div id="holidayReplacementNoteRow" class="form-group tw-mb-6">
-                                                <div class="col-md-push-3 col-md-9">
-                                                    <div>
-                                                        <div class="tw-flex">
-                                                            <img
-                                                                src="<c:out value='${holidayReplacement.person.gravatarURL}?d=mm&s=40'/>"
-                                                                alt="<spring:message code="gravatar.alt" arguments="${holidayReplacement.person.niceName}"/>"
-                                                                class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
-                                                                width="40px"
-                                                                height="40px"
-                                                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                                                            />
-                                                            <div>
-                                                                <div class="tw-flex tw-items-center tw-flex-wrap">
-                                                                    <span>
-                                                                        <c:out value="${holidayReplacement.person.niceName}" />
-                                                                    </span>
-                                                                    <c:if test="${not empty holidayReplacement.departments}">
-                                                                        <ul class="tw-m-0 tw-ml-1 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5">
-                                                                            <c:forEach items="${holidayReplacement.departments}" var="department">
-                                                                                <li class="tw-px-1.5 tw-rounded-full tw-bg-green-100 tw-text-green-800">
-                                                                                    <c:out value="${department}" />
-                                                                                </li>
-                                                                            </c:forEach>
-                                                                        </ul>
-                                                                    </c:if>
-                                                                </div>
-                                                                <div class="tw-flex">
-                                                                    <button
-                                                                        type="submit"
-                                                                        class="tw-p-0 tw-bg-transparent"
-                                                                        name="remove-holiday-replacement"
-                                                                        value="${holidayReplacement.person.id}"
-                                                                        formmethod="post"
-                                                                        formaction="${ADD_REPLACEMENT_ACTION}"
-                                                                    >
-                                                                        <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 tw-transition-colors">
-                                                                            <icon:trash className="tw-w-4 tw-h-4 tw-mr-0.5" />
-                                                                            <spring:message code="application.data.holidayReplacement.remove-button.text" />
-                                                                        </span>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tw-mt-2 md:tw-pl-14">
-                                                            <div class="tw-flex tw-justify-between tw-items-center">
-                                                                <label for="replacement-note-${loop.index}" class="tw-text-sm tw-text-black tw-text-opacity-50 tw-mb-0 tw-font-normal">
-                                                                    <spring:message code="application.data.holidayReplacementNote" arguments="${holidayReplacement.person.firstName}" />
-                                                                </label>
+                                <c:if test="${not empty application.holidayReplacements}">
+                                    <div class="tw-mb-12">
+                                    <c:forEach items="${application.holidayReplacements}" var="holidayReplacement" varStatus="loop">
+                                        <form:hidden path="holidayReplacements[${loop.index}].person" />
+                                        <div id="holidayReplacementNoteRow" class="form-group tw-mb-6">
+                                            <div class="col-md-push-3 col-md-9">
+                                                <div>
+                                                    <div class="tw-flex">
+                                                        <img
+                                                            src="<c:out value='${holidayReplacement.person.gravatarURL}?d=mm&s=40'/>"
+                                                            alt="<spring:message code="gravatar.alt" arguments="${holidayReplacement.person.niceName}"/>"
+                                                            class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
+                                                            width="40px"
+                                                            height="40px"
+                                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                                        />
+                                                        <div>
+                                                            <div class="tw-flex tw-items-center tw-flex-wrap">
                                                                 <span>
-                                                                    <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
-                                                                        <span class="tw-flex-grow"></span>
-                                                                        <span id="text-holiday-replacement-note-${loop.index}"></span>
-                                                                        <spring:message code="action.comment.maxChars"/>
-                                                                    </small>
+                                                                    <c:out value="${holidayReplacement.person.niceName}" />
                                                                 </span>
+                                                                <c:if test="${not empty holidayReplacement.departments}">
+                                                                    <ul class="tw-m-0 tw-ml-1 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5">
+                                                                        <c:forEach items="${holidayReplacement.departments}" var="department">
+                                                                            <li class="tw-px-1.5 tw-rounded-full tw-bg-green-100 tw-text-green-800">
+                                                                                <c:out value="${department}" />
+                                                                            </li>
+                                                                        </c:forEach>
+                                                                    </ul>
+                                                                </c:if>
                                                             </div>
-                                                            <div>
-                                                                <form:textarea
-                                                                    id="replacement-note-${loop.index}"
-                                                                    rows="1"
-                                                                    path="holidayReplacements[${loop.index}].note"
-                                                                    class="form-control"
-                                                                    cssErrorClass="form-control error"
-                                                                    onkeyup="count(this.value, 'text-holiday-replacement-note-${loop.index}');"
-                                                                    onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note-${loop.index}');"
-                                                                />
+                                                            <div class="tw-flex">
+                                                                <button
+                                                                    type="submit"
+                                                                    class="tw-p-0 tw-bg-transparent"
+                                                                    name="remove-holiday-replacement"
+                                                                    value="${holidayReplacement.person.id}"
+                                                                    formmethod="post"
+                                                                    formaction="${ADD_REPLACEMENT_ACTION}"
+                                                                >
+                                                                    <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 tw-transition-colors">
+                                                                        <icon:trash className="tw-w-4 tw-h-4 tw-mr-0.5" />
+                                                                        <spring:message code="application.data.holidayReplacement.remove-button.text" />
+                                                                    </span>
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <uv:error-text>
-                                                        <form:errors path="holidayReplacements[${loop.index}].note"/>
-                                                    </uv:error-text>
+                                                    <div class="tw-mt-2 md:tw-pl-14">
+                                                        <div class="tw-flex tw-justify-between tw-items-center">
+                                                            <label for="replacement-note-${loop.index}" class="tw-text-sm tw-text-black tw-text-opacity-50 tw-mb-0 tw-font-normal">
+                                                                <spring:message code="application.data.holidayReplacementNote" arguments="${holidayReplacement.person.firstName}" />
+                                                            </label>
+                                                            <span>
+                                                                <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
+                                                                    <span class="tw-flex-grow"></span>
+                                                                    <span id="text-holiday-replacement-note-${loop.index}"></span>
+                                                                    <spring:message code="action.comment.maxChars"/>
+                                                                </small>
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <form:textarea
+                                                                id="replacement-note-${loop.index}"
+                                                                rows="1"
+                                                                path="holidayReplacements[${loop.index}].note"
+                                                                class="form-control"
+                                                                cssErrorClass="form-control error"
+                                                                onkeyup="count(this.value, 'text-holiday-replacement-note-${loop.index}');"
+                                                                onkeydown="maxChars(this,200); count(this.value, 'text-holiday-replacement-note-${loop.index}');"
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                <uv:error-text>
+                                                    <form:errors path="holidayReplacements[${loop.index}].note"/>
+                                                </uv:error-text>
                                             </div>
-                                        </c:forEach>
                                         </div>
-                                    </c:if>
+                                    </c:forEach>
+                                    </div>
                                 </c:if>
 
-                                    <%-- Address and phone number--%>
+                                <%-- Address and phone number--%>
                                 <div class="form-group">
                                     <label class="control-label col-md-3" for="address">
                                         <spring:message code="application.data.furtherInformation.address"/>:
@@ -485,7 +485,7 @@
                                     </div>
                                 </div>
 
-                                    <%-- Comment --%>
+                                <%-- Comment --%>
                                 <div class="form-group">
                                     <label class="control-label col-md-3" for="comment">
                                         <spring:message code="application.data.furtherInformation.comment"/>:
