@@ -101,12 +101,28 @@
                             <c:otherwise>
                                 <ul class="tw-space-y-0.5 tw-text-sm">
                                     <c:forEach items="${departments}" var="department">
+
+                                        <sec:authorize access="hasAuthority('OFFICE')">
+                                            <c:set var="IS_OFFICE" value="${true}"/>
+                                        </sec:authorize>
+
+                                        <c:set var="departmentLink">
+                                            <c:choose>
+                                                <c:when test="${IS_OFFICE}">
+                                                    <a href="${URL_PREFIX}/department/${department.id}/edit"><c:out value="${department.name}"/></a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${department.name}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:set>
+
                                         <c:choose>
                                             <c:when test="${departmentHeadOfDepartments.contains( department )}">
-                                                <li><c:out value="${department.name}"/> <spring:message code="person.details.departments.departmentHead"/></li>
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.departmentHead"/></li>
                                             </c:when>
                                             <c:otherwise>
-                                                <li><c:out value="${department.name}"/></li>
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/></li>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
