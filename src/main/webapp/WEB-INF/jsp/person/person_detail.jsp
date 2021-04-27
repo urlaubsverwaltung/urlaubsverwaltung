@@ -208,9 +208,9 @@
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody class="tw-mr-1">
-                                        <tr>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                    <tbody class="tw-mr-1 tw-flex">
+                                        <tr class="tw-flex tw-flex-col">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.monday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
@@ -218,7 +218,7 @@
                                                     <spring:message code="${workingTime.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
                                                 </span>
                                             </td>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.tuesday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
@@ -226,7 +226,7 @@
                                                     <spring:message code="${workingTime.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
                                                 </span>
                                             </td>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.wednesday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
@@ -234,7 +234,7 @@
                                                     <spring:message code="${workingTime.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
                                                 </span>
                                             </td>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.thursday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
@@ -242,7 +242,7 @@
                                                     <spring:message code="${workingTime.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
                                                 </span>
                                             </td>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.friday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
@@ -250,7 +250,7 @@
                                                     <spring:message code="${workingTime.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
                                                 </span>
                                             </td>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.saturday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
@@ -258,7 +258,7 @@
                                                     <spring:message code="${workingTime.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
                                                 </span>
                                             </td>
-                                            <td class="tw-flex tw-items-center tw-py-0.5">
+                                            <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                                                 <c:if test="${workingTime.sunday.duration > 0}">
                                                     <icon:check-circle />
                                                 </c:if>
