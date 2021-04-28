@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.LegacyMail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -88,9 +88,9 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("updated_accounts");

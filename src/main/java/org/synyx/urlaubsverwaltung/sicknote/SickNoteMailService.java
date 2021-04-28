@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.LegacyMail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -50,19 +50,19 @@ public class SickNoteMailService {
             model.put("maximumSickPayDays", maximumSickPayDays);
             model.put("sickNote", sickNote);
 
-            final Mail toSickNotePerson = Mail.builder()
+            final LegacyMail toSickNotePerson = LegacyMail.builder()
                 .withRecipient(sickNote.getPerson())
                 .withSubject(subjectMessageKey)
                 .withTemplate(templateName, model)
                 .build();
-            mailService.send(toSickNotePerson);
+            mailService.legacySend(toSickNotePerson);
 
-            final Mail toOffice = Mail.builder()
+            final LegacyMail toOffice = LegacyMail.builder()
                 .withRecipient(NOTIFICATION_OFFICE)
                 .withSubject(subjectMessageKey)
                 .withTemplate(templateName, model)
                 .build();
-            mailService.send(toOffice);
+            mailService.legacySend(toOffice);
         }
     }
 }

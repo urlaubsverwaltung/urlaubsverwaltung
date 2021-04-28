@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class Mail {
+public class LegacyMail {
 
     private final List<Person> mailAddressRecipients;
     private final MailNotification mailNotificationRecipients;
@@ -24,9 +24,9 @@ public class Mail {
 
     private final List<MailAttachment> mailAttachments;
 
-    Mail(List<Person> mailAddressRecipients, MailNotification mailNotificationRecipients, boolean sendToTechnicalMail,
-         String templateName, Map<String, Object> templateModel, String subjectMessageKey,
-         Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
+    LegacyMail(List<Person> mailAddressRecipients, MailNotification mailNotificationRecipients, boolean sendToTechnicalMail,
+               String templateName, Map<String, Object> templateModel, String subjectMessageKey,
+               Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
         this.mailAddressRecipients = mailAddressRecipients;
         this.mailNotificationRecipients = mailNotificationRecipients;
         this.sendToTechnicalMail = sendToTechnicalMail;
@@ -69,8 +69,8 @@ public class Mail {
         return Optional.ofNullable(mailAttachments);
     }
 
-    public static Mail.Builder builder() {
-        return new Mail.Builder();
+    public static LegacyMail.Builder builder() {
+        return new LegacyMail.Builder();
     }
 
     /**
@@ -90,22 +90,22 @@ public class Mail {
 
         private List<MailAttachment> mailAttachments;
 
-        public Mail.Builder withTechnicalRecipient(boolean sendToTechnicalMail) {
+        public LegacyMail.Builder withTechnicalRecipient(boolean sendToTechnicalMail) {
             this.sendToTechnicalMail = sendToTechnicalMail;
             return this;
         }
 
-        public Mail.Builder withRecipient(MailNotification mailNotification) {
+        public LegacyMail.Builder withRecipient(MailNotification mailNotification) {
             this.mailNotificationRecipients = mailNotification;
             return this;
         }
 
-        public Mail.Builder withRecipient(Person recipient) {
+        public LegacyMail.Builder withRecipient(Person recipient) {
             withRecipient(List.of(recipient));
             return this;
         }
 
-        public Mail.Builder withRecipient(List<Person> recipients) {
+        public LegacyMail.Builder withRecipient(List<Person> recipients) {
             if (mailAddressRecipients == null) {
                 mailAddressRecipients = new ArrayList<>();
             }
@@ -114,19 +114,19 @@ public class Mail {
             return this;
         }
 
-        public Mail.Builder withTemplate(String templateName, Map<String, Object> templateModel) {
+        public LegacyMail.Builder withTemplate(String templateName, Map<String, Object> templateModel) {
             this.templateName = templateName;
             this.templateModel = templateModel;
             return this;
         }
 
-        public Mail.Builder withSubject(String subjectMessageKey, Object... subjectMessageArguments) {
+        public LegacyMail.Builder withSubject(String subjectMessageKey, Object... subjectMessageArguments) {
             this.subjectMessageKey = subjectMessageKey;
             this.subjectMessageArguments = subjectMessageArguments;
             return this;
         }
 
-        public Mail.Builder withAttachment(String name, File file) {
+        public LegacyMail.Builder withAttachment(String name, File file) {
             if (mailAttachments == null) {
                 mailAttachments = new ArrayList<>();
             }
@@ -135,8 +135,8 @@ public class Mail {
             return this;
         }
 
-        public Mail build() {
-            return new Mail(mailAddressRecipients, mailNotificationRecipients, sendToTechnicalMail,
+        public LegacyMail build() {
+            return new LegacyMail(mailAddressRecipients, mailNotificationRecipients, sendToTechnicalMail,
                 templateName, templateModel, subjectMessageKey, subjectMessageArguments,
                 mailAttachments);
         }

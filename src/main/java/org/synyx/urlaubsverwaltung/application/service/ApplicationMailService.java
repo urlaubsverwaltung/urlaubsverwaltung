@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.calendar.ICalType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.LegacyMail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -75,21 +75,21 @@ class ApplicationMailService {
         model.put(COMMENT, applicationComment);
 
         // Inform user that the application for leave has been allowed
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.allowed.user")
             .withTemplate("allowed_user", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
 
         // Inform office that there is a new allowed application for leave
-        final Mail mailToOffice = Mail.builder()
+        final LegacyMail mailToOffice = LegacyMail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject("subject.application.allowed.office")
             .withTemplate("allowed_office", model)
             .build();
-        mailService.send(mailToOffice);
+        mailService.legacySend(mailToOffice);
     }
 
     /**
@@ -107,22 +107,22 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
 
         // send reject information to the applicant
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.rejected")
             .withTemplate("rejected", model)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
 
         // send reject information to all other relevant
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
-        final Mail mailToRelevantRecipients = Mail.builder()
+        final LegacyMail mailToRelevantRecipients = LegacyMail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.rejected_information")
             .withTemplate("rejected_information", model)
             .build();
-        mailService.send(mailToRelevantRecipients);
+        mailService.legacySend(mailToRelevantRecipients);
 
     }
 
@@ -141,13 +141,13 @@ class ApplicationMailService {
         model.put(RECIPIENT, recipient);
         model.put("sender", sender);
 
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(recipient)
             .withSubject("subject.application.refer")
             .withTemplate("refer", model)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
     }
 
     /**
@@ -163,13 +163,13 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(RECIPIENT, recipient);
 
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(recipient)
             .withSubject("subject.application.edited", application.getPerson().getNiceName())
             .withTemplate("edited", model)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
     }
 
     /**
@@ -184,22 +184,22 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
 
         // send mail to applicant
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancellationRequest.declined.applicant", application.getPerson().getNiceName())
             .withTemplate("application_cancellation_request_declined_applicant", model)
             .build();
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
 
         // send cancelled cancellation request information to the office and relevant persons
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         relevantRecipientsToInform.addAll(applicationRecipientService.getRecipientsWithOfficeNotifications());
-        final Mail mailToOffice = Mail.builder()
+        final LegacyMail mailToOffice = LegacyMail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest.declined.management")
             .withTemplate("application_cancellation_request_declined_management", model)
             .build();
-        mailService.send(mailToOffice);
+        mailService.legacySend(mailToOffice);
     }
 
     /**
@@ -216,21 +216,21 @@ class ApplicationMailService {
         model.put(COMMENT, createdComment);
 
         // send mail to applicant
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancellationRequest.applicant")
             .withTemplate("application_cancellation_request_applicant", model)
             .build();
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
 
         // send reject information to the office
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsWithOfficeNotifications();
-        final Mail mailToOffice = Mail.builder()
+        final LegacyMail mailToOffice = LegacyMail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest")
             .withTemplate("application_cancellation_request", model)
             .build();
-        mailService.send(mailToOffice);
+        mailService.legacySend(mailToOffice);
     }
 
     /**
@@ -243,13 +243,13 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
 
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.sicknote.converted")
             .withTemplate("sicknote_converted", model)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
     }
 
     /**
@@ -267,13 +267,13 @@ class ApplicationMailService {
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
-        final Mail mailToReplacement = Mail.builder()
+        final LegacyMail mailToReplacement = LegacyMail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.apply", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_apply", model)
             .build();
 
-        mailService.send(mailToReplacement);
+        mailService.legacySend(mailToReplacement);
     }
 
     /**
@@ -294,14 +294,14 @@ class ApplicationMailService {
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
-        final Mail mailToReplacement = Mail.builder()
+        final LegacyMail mailToReplacement = LegacyMail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.allow", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_allow", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
-        mailService.send(mailToReplacement);
+        mailService.legacySend(mailToReplacement);
     }
 
     /**
@@ -320,14 +320,14 @@ class ApplicationMailService {
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
-        final Mail mailToReplacement = Mail.builder()
+        final LegacyMail mailToReplacement = LegacyMail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_cancellation", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
-        mailService.send(mailToReplacement);
+        mailService.legacySend(mailToReplacement);
     }
 
     /**
@@ -345,13 +345,13 @@ class ApplicationMailService {
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
 
-        final Mail mailToReplacement = Mail.builder()
+        final LegacyMail mailToReplacement = LegacyMail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
             .withTemplate("notify_holiday_replacement_edit", model)
             .build();
 
-        mailService.send(mailToReplacement);
+        mailService.legacySend(mailToReplacement);
     }
 
     /**
@@ -369,13 +369,13 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.applied.user")
             .withTemplate("confirm", model)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
     }
 
     /**
@@ -393,13 +393,13 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.appliedByOffice")
             .withTemplate("new_application_by_office", model)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
     }
 
     /**
@@ -416,33 +416,33 @@ class ApplicationMailService {
 
         if (application.getPerson().equals(application.getCanceller())) {
 
-            final Mail mailToApplicant = Mail.builder()
+            final LegacyMail mailToApplicant = LegacyMail.builder()
                 .withRecipient(application.getPerson())
                 .withSubject("subject.application.revoked.applicant")
                 .withTemplate("revoked_applicant", model)
                 .build();
 
-            mailService.send(mailToApplicant);
+            mailService.legacySend(mailToApplicant);
         } else {
 
-            final Mail mailToNotApplicant = Mail.builder()
+            final LegacyMail mailToNotApplicant = LegacyMail.builder()
                 .withRecipient(application.getPerson())
                 .withSubject("subject.application.revoked.notApplicant")
                 .withTemplate("revoked_not_applicant", model)
                 .build();
 
-            mailService.send(mailToNotApplicant);
+            mailService.legacySend(mailToNotApplicant);
         }
 
         // send reject information to all other relevant persons
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
-        final Mail mailToRelevantPersons = Mail.builder()
+        final LegacyMail mailToRelevantPersons = LegacyMail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.revoked.management")
             .withTemplate("revoked_management", model)
             .build();
 
-        mailService.send(mailToRelevantPersons);
+        mailService.legacySend(mailToRelevantPersons);
     }
 
     /**
@@ -460,26 +460,26 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
 
         // send cancelled by office information to the applicant
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelled.user")
             .withTemplate("cancelled_by_office", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
 
         // send cancelled by office information to all other relevant persons
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         relevantRecipientsToInform.addAll(applicationRecipientService.getRecipientsWithOfficeNotifications());
-        final Mail mailToRelevantPersons = Mail.builder()
+        final LegacyMail mailToRelevantPersons = LegacyMail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancelled.management")
             .withTemplate("cancelled_by_office_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
-        mailService.send(mailToRelevantPersons);
+        mailService.legacySend(mailToRelevantPersons);
     }
 
 
@@ -504,13 +504,13 @@ class ApplicationMailService {
         model.put("departmentVacations", applicationsForLeave);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
-        final Mail mailToAllowAndRemind = Mail.builder()
+        final LegacyMail mailToAllowAndRemind = LegacyMail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
             .withTemplate("new_applications", model)
             .build();
 
-        mailService.send(mailToAllowAndRemind);
+        mailService.legacySend(mailToAllowAndRemind);
     }
 
 
@@ -529,12 +529,12 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
-        final Mail mailToApplicant = Mail.builder()
+        final LegacyMail mailToApplicant = LegacyMail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.temporaryAllowed.user")
             .withTemplate("temporary_allowed_user", model)
             .build();
-        mailService.send(mailToApplicant);
+        mailService.legacySend(mailToApplicant);
 
         // Inform second stage authorities that there is an application for leave that must be allowed
         final List<Application> applicationsForLeave =
@@ -548,12 +548,12 @@ class ApplicationMailService {
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsForTemporaryAllow(application);
-        final Mail mailToTemporaryAllow = Mail.builder()
+        final LegacyMail mailToTemporaryAllow = LegacyMail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.temporaryAllowed.secondStage")
             .withTemplate("temporary_allowed_second_stage_authority", modelSecondStage)
             .build();
-        mailService.send(mailToTemporaryAllow);
+        mailService.legacySend(mailToTemporaryAllow);
     }
 
     /**
@@ -568,12 +568,12 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
-        final Mail mailToAllowAndRemind = Mail.builder()
+        final LegacyMail mailToAllowAndRemind = LegacyMail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.remind")
             .withTemplate("remind", model)
             .build();
-        mailService.send(mailToAllowAndRemind);
+        mailService.legacySend(mailToAllowAndRemind);
     }
 
     void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications, Integer daysBeforeUpcomingApplication){
@@ -582,12 +582,12 @@ class ApplicationMailService {
             model.put(APPLICATION, application);
             model.put("daysBeforeUpcomingApplication", daysBeforeUpcomingApplication);
 
-            final Mail mailToUpcomingApplicationsPersons = Mail.builder()
+            final LegacyMail mailToUpcomingApplicationsPersons = LegacyMail.builder()
                 .withRecipient(application.getPerson())
                 .withSubject("subject.application.remind.upcoming")
                 .withTemplate("remind_application_upcoming", model)
                 .build();
-            mailService.send(mailToUpcomingApplicationsPersons);
+            mailService.legacySend(mailToUpcomingApplicationsPersons);
         }
     }
 
@@ -621,13 +621,13 @@ class ApplicationMailService {
             model.put("applicationList", applications);
             model.put(RECIPIENT, recipient);
 
-            final Mail mailToRemindForWaiting = Mail.builder()
+            final LegacyMail mailToRemindForWaiting = LegacyMail.builder()
                 .withRecipient(recipient)
                 .withSubject("subject.application.cronRemind")
                 .withTemplate("cron_remind", model)
                 .build();
 
-            mailService.send(mailToRemindForWaiting);
+            mailService.legacySend(mailToRemindForWaiting);
         }
     }
 

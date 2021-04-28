@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.LegacyMail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 
 import java.time.Clock;
@@ -45,9 +45,9 @@ class OvertimeMailServiceTest {
 
         sut.sendOvertimeNotification(overtime, overtimeComment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mails = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mails = argument.getValue();
         assertThat(mails.getMailNotificationRecipients()).hasValue(OVERTIME_NOTIFICATION_OFFICE);
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created");
         assertThat(mails.getTemplateName()).isEqualTo("overtime_office");
