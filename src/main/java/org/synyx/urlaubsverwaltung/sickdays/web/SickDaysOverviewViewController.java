@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -100,8 +101,8 @@ public class SickDaysOverviewViewController {
             .filter(sickNote -> persons.contains(sickNote.getPerson()) && sickNote.isActive())
             .collect(toList());
 
-        Map<Person, SickDays> sickDays = new HashMap<>();
-        Map<Person, SickDays> childSickDays = new HashMap<>();
+        final Map<Person, SickDays> sickDays = new HashMap<>();
+        final Map<Person, SickDays> childSickDays = new HashMap<>();
 
         for (Person person : persons) {
             sickDays.put(person, new SickDays());
@@ -109,33 +110,36 @@ public class SickDaysOverviewViewController {
         }
 
         for (SickNote sickNote : sickNotesOfActivePersons) {
+
             final Person person = sickNote.getPerson();
-            final BigDecimal workDays = workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(),
-                sickNote.getEndDate(), person);
 
             if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
-                childSickDays.get(person).addDays(TOTAL, workDays);
-
-                if (sickNote.isAubPresent()) {
-                    final BigDecimal workDaysWithAUB = workDaysCountService.getWorkDaysCount(sickNote.getDayLength(),
-                        sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
-
-                    childSickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);
-                }
+                calculateSickDays(period, childSickDays, sickNote, person);
             } else {
-                sickDays.get(person).addDays(TOTAL, workDays);
-
-                if (sickNote.isAubPresent()) {
-                    BigDecimal workDaysWithAUB = workDaysCountService.getWorkDaysCount(sickNote.getDayLength(),
-                        sickNote.getAubStartDate(), sickNote.getAubEndDate(), person);
-
-                    sickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);
-                }
+                calculateSickDays(period, sickDays, sickNote, person);
             }
         }
 
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("childSickDays", childSickDays);
         model.addAttribute("persons", persons);
+    }
+
+    private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote, Person person) {
+
+        final DayLength dayLength = sickNote.getDayLength();
+
+        final LocalDate startDate = sickNote.getStartDate().isBefore(period.getStartDate()) ? period.getStartDate() : sickNote.getStartDate();
+        final LocalDate endDate = sickNote.getEndDate().isAfter(period.getEndDate()) ? period.getEndDate() : sickNote.getEndDate();
+        final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
+        sickDays.get(person).addDays(TOTAL, workDays);
+
+        if (sickNote.isAubPresent()) {
+            final LocalDate startDateAub = sickNote.getAubStartDate().isBefore(period.getStartDate()) ? period.getStartDate() : sickNote.getAubStartDate();
+            final LocalDate endDateAub = sickNote.getAubEndDate().isAfter(period.getEndDate()) ? period.getEndDate() : sickNote.getAubEndDate();
+
+            final BigDecimal workDaysWithAUB = workDaysCountService.getWorkDaysCount(dayLength, startDateAub, endDateAub, person);
+            sickDays.get(person).addDays(WITH_AUB, workDaysWithAUB);
+        }
     }
 }
