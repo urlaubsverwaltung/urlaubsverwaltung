@@ -68,13 +68,13 @@ class MailServiceImplTest {
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withRecipient(OVERTIME_NOTIFICATION_OFFICE)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
 
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("mail@example.org")), eq("subject"), eq("emailBody"));
     }
@@ -90,13 +90,13 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withRecipient(hans)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .build();
 
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("hans@example.org")), eq("subject"), eq("emailBody"));
     }
@@ -116,13 +116,13 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .build();
 
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("hans@example.org")), eq("subject"), eq("emailBody"));
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("franz@example.org")), eq("subject"), eq("emailBody"));
@@ -146,14 +146,14 @@ class MailServiceImplTest {
         final File iCal = new File("calendar.ics");
         iCal.deleteOnExit();
 
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .withAttachment("fileName", iCal)
             .build();
 
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("franz@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("hans@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
@@ -177,14 +177,14 @@ class MailServiceImplTest {
         final File iCal = new File("calendar.ics");
         iCal.deleteOnExit();
 
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .withAttachment("fileName", iCal)
             .build();
 
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("hans@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("franz@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
@@ -200,12 +200,12 @@ class MailServiceImplTest {
         String to = "admin@example.org";
         when(mailProperties.getAdministrator()).thenReturn(to);
 
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withTechnicalRecipient(true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .build();
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
     }
@@ -227,7 +227,7 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final Mail mail = Mail.builder()
+        final LegacyMail mail = LegacyMail.builder()
             .withTechnicalRecipient(true)
             .withRecipient(List.of(franz))
             .withRecipient(NOTIFICATION_USER)
@@ -235,7 +235,7 @@ class MailServiceImplTest {
             .withTemplate(templateName, new HashMap<>())
             .build();
 
-        sut.send(mail);
+        sut.legacySend(mail);
 
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("hans@example.org")), eq("subject"), eq("emailBody"));
         verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("franz@example.org")), eq("subject"), eq("emailBody"));

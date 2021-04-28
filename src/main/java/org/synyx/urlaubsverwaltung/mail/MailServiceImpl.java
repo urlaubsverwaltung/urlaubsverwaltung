@@ -39,7 +39,7 @@ class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void send(Mail mail) {
+    public void legacySend(LegacyMail mail) {
 
         final Map<String, Object> model = mail.getTemplateModel();
         model.put("baseLinkURL", getApplicationUrl());
@@ -58,7 +58,7 @@ class MailServiceImpl implements MailService {
         });
     }
 
-    private List<Person> getRecipients(Mail mail) {
+    private List<Person> getRecipients(LegacyMail mail) {
 
         final List<Person> recipients = new ArrayList<>();
         mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getPersonsWithNotificationType(mailNotification)));

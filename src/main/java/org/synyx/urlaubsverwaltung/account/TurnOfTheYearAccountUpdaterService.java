@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.account;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.LegacyMail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -95,19 +95,19 @@ public class TurnOfTheYearAccountUpdaterService {
         final String templateName = "updated_accounts";
 
         // send email to office for printing statistic
-        final Mail mailToOffice = Mail.builder()
+        final LegacyMail mailToOffice = LegacyMail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
-        mailService.send(mailToOffice);
+        mailService.legacySend(mailToOffice);
 
         // send email to manager to notify about update of accounts
-        final Mail mailToTechnical = Mail.builder()
+        final LegacyMail mailToTechnical = LegacyMail.builder()
             .withTechnicalRecipient(true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
-        mailService.send(mailToTechnical);
+        mailService.legacySend(mailToTechnical);
     }
 }

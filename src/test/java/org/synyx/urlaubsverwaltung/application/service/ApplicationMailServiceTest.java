@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.LegacyMail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -106,9 +106,9 @@ class ApplicationMailServiceTest {
 
         sut.sendAllowedNotification(application, applicationComment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("allowed_user");
@@ -152,9 +152,9 @@ class ApplicationMailServiceTest {
 
         sut.sendRejectedNotification(application, applicationComment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.rejected");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("rejected");
@@ -189,9 +189,9 @@ class ApplicationMailServiceTest {
 
         sut.sendReferApplicationNotification(application, recipient, sender);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.refer");
         assertThat(mail.getTemplateName()).isEqualTo("refer");
@@ -220,9 +220,9 @@ class ApplicationMailServiceTest {
 
         sut.sendEditedApplicationNotification(application, recipient);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.edited");
         assertThat(mail.getTemplateName()).isEqualTo("edited");
@@ -255,9 +255,9 @@ class ApplicationMailServiceTest {
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest.declined.applicant");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancellation_request_declined_applicant");
@@ -285,9 +285,9 @@ class ApplicationMailServiceTest {
 
         sut.sendCancellationRequest(application, applicationComment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancellationRequest.applicant");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancellation_request_applicant");
@@ -310,9 +310,9 @@ class ApplicationMailServiceTest {
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
         assertThat(mail.getTemplateName()).isEqualTo("sicknote_converted");
@@ -359,9 +359,9 @@ class ApplicationMailServiceTest {
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_allow");
@@ -399,9 +399,9 @@ class ApplicationMailServiceTest {
 
         sut.notifyHolidayReplacementAboutEdit(replacementEntity, application);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.edit");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_edit");
@@ -437,9 +437,9 @@ class ApplicationMailServiceTest {
 
         sut.notifyHolidayReplacementForApply(replacementEntity, application);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.apply");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_apply");
@@ -481,9 +481,9 @@ class ApplicationMailServiceTest {
 
         sut.notifyHolidayReplacementAboutCancellation(replacementEntity, application);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.cancellation");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_cancellation");
@@ -524,9 +524,9 @@ class ApplicationMailServiceTest {
 
         sut.sendConfirmation(application, comment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.user");
         assertThat(mail.getTemplateName()).isEqualTo("confirm");
@@ -563,9 +563,9 @@ class ApplicationMailServiceTest {
 
         sut.sendAppliedForLeaveByOfficeNotification(application, comment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.appliedByOffice");
         assertThat(mail.getTemplateName()).isEqualTo("new_application_by_office");
@@ -605,9 +605,9 @@ class ApplicationMailServiceTest {
 
         sut.sendCancelledByOfficeNotification(application, comment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("cancelled_by_office");
@@ -665,9 +665,9 @@ class ApplicationMailServiceTest {
 
         sut.sendNewApplicationNotification(application, comment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService).legacySend(argument.capture());
+        final LegacyMail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(recipients);
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.boss");
         assertThat(mail.getSubjectMessageArguments()[0]).isEqualTo("Lord Helmchen");
@@ -720,9 +720,9 @@ class ApplicationMailServiceTest {
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("temporary_allowed_user");
@@ -756,9 +756,9 @@ class ApplicationMailServiceTest {
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application, application), 1);
 
-        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
-        final List<Mail> mails = argument.getAllValues();
+        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
+        verify(mailService, times(2)).legacySend(argument.capture());
+        final List<LegacyMail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("remind_application_upcoming");
