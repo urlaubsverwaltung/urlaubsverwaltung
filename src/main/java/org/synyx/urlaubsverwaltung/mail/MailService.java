@@ -6,9 +6,11 @@ package org.synyx.urlaubsverwaltung.mail;
 public interface MailService {
 
     /**
-     * Send a mail to the given parameters from the given {@link LegacyMail}
+     * Send a mail to the given parameters from the given {@link Mail}
      *
      * @param mail that defines the parameters to send the mail
      */
     void legacySend(LegacyMail mail);
+
+    void send(Mail mail);
 }

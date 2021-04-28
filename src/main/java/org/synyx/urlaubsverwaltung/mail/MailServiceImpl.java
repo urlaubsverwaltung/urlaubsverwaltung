@@ -47,6 +47,25 @@ class MailServiceImpl implements MailService {
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
         final String sender = mailProperties.getSender();
 
+        getLegacyRecipients(mail).forEach(recipient -> {
+            model.put("recipient", recipient);
+            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+
+            mail.getMailAttachments().ifPresentOrElse(
+                mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
+                () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body)
+            );
+        });
+    }
+
+    @Override
+    public void send(Mail mail) {
+        final Map<String, Object> model = mail.getTemplateModel();
+        model.put("baseLinsasadsakURL", getApplicationUrl());
+
+        final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
+        final String sender = mailProperties.getSender();
+
         getRecipients(mail).forEach(recipient -> {
             model.put("recipient", recipient);
             final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
@@ -58,7 +77,19 @@ class MailServiceImpl implements MailService {
         });
     }
 
-    private List<Person> getRecipients(LegacyMail mail) {
+    private List<Recipient> getRecipients(Mail mail) {
+
+        final List<Recipient> recipients = new ArrayList<>();
+        mail.getRecipients().ifPresent(recipients::addAll);
+
+        if (mail.isSendToTechnicalMail()) {
+            recipients.add(new Recipient(mailProperties.getAdministrator(), "Administrator"));
+        }
+
+        return recipients;
+    }
+
+    private List<Person> getLegacyRecipients(LegacyMail mail) {
 
         final List<Person> recipients = new ArrayList<>();
         mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getPersonsWithNotificationType(mailNotification)));
