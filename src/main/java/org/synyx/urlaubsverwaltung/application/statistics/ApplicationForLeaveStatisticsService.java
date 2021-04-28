@@ -8,8 +8,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 
 @Service
@@ -30,7 +30,7 @@ class ApplicationForLeaveStatisticsService {
     List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
         return getRelevantPersons().stream()
             .map(person -> applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate()))
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private List<Person> getRelevantPersons() {
