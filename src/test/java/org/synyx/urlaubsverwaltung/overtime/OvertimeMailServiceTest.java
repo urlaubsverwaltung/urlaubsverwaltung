@@ -7,15 +7,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.mail.LegacyMail;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.mail.Recipient;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,10 +31,12 @@ class OvertimeMailServiceTest {
 
     @Mock
     private MailService mailService;
+    @Mock
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeMailService(mailService);
+        sut = new OvertimeMailService(mailService, personService);
     }
 
     @Test
@@ -43,14 +51,17 @@ class OvertimeMailServiceTest {
         model.put("overtimeDurationMinutes", "12 Min.");
         model.put("comment", overtimeComment);
 
+        Recipient recipient = new Recipient("officeson@office.org", "Offy McOfficeson");
+        when(personService.findRecipients(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(List.of(recipient));
+
         sut.sendOvertimeNotification(overtime, overtimeComment);
 
-        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
-        verify(mailService).legacySend(argument.capture());
-        final LegacyMail mails = argument.getValue();
-        assertThat(mails.getMailNotificationRecipients()).hasValue(OVERTIME_NOTIFICATION_OFFICE);
-        assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.overtime.created");
-        assertThat(mails.getTemplateName()).isEqualTo("overtime_office");
-        assertThat(mails.getTemplateModel()).isEqualTo(model);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getRecipients()).contains(List.of(recipient));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.overtime.created");
+        assertThat(mail.getTemplateName()).isEqualTo("overtime_office");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 }
