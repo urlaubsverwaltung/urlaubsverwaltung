@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.synyx.urlaubsverwaltung.mail.Recipient;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -93,6 +95,15 @@ public interface PersonService {
      * @return list of persons with the given notification type
      */
     List<Person> getPersonsWithNotificationType(MailNotification notification);
+
+    /**
+     * Finds all persons that should receive the given {@link MailNotification}
+     * and returns their recipient information
+     *
+     * @param notification by which the persons are filtered
+     * @return list of mail recipients for the given notification type
+     */
+    List<Recipient> findRecipients(final MailNotification notification);
 
     /**
      * returns all active persons ordered by first name.

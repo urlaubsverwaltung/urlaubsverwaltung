@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.mail.Recipient;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.util.ArrayList;
@@ -150,6 +151,14 @@ class PersonServiceImpl implements PersonService {
     public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
         return getActivePersons().stream()
             .filter(person -> person.hasNotificationType(notification))
+            .collect(toList());
+    }
+
+    @Override
+    public List<Recipient> findRecipients(final MailNotification notification) {
+        return getActivePersons().stream()
+            .filter(person -> person.hasNotificationType(notification))
+            .map(person -> new Recipient(person.getEmail(), person.getNiceName()))
             .collect(toList());
     }
 
