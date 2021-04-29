@@ -61,7 +61,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void send(Mail mail) {
         final Map<String, Object> model = mail.getTemplateModel();
-        model.put("baseLinsasadsakURL", getApplicationUrl());
+        model.put("baseLinkURL", getApplicationUrl());
 
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
         final String sender = mailProperties.getSender();
