@@ -17,10 +17,5 @@ if [ "$packageJsonUpdated" ]; then
   printf "Please wait a moment. I will update frontend modules for you 😽\n"
   printf "$COL_RESET"
 
-  # get directory of the git hook script
-  # to ensure maven wrapper binary path of our application root
-  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-  MVN_WRAPPER="$SCRIPT_DIR/../../mvnw"
-
-  $MVN_WRAPPER frontend:install-node-and-npm frontend:npm@npm-install
+  ./mvnw frontend:install-node-and-npm frontend:npm@npm-install
 fi
