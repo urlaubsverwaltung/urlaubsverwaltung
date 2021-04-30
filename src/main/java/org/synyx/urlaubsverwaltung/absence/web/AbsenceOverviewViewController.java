@@ -195,8 +195,8 @@ public class AbsenceOverviewViewController {
         final HashMap<String, List<Application>> byEmail = new HashMap<>();
 
         for (Person person : personList) {
-            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
-            byEmail.put(person.getEmail(), apps);
+            List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
+            byEmail.put(person.getEmail(), applications);
         }
 
         return byEmail;
