@@ -52,6 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/web/sicknote/**").hasAuthority(USER)
             .antMatchers("/web/person/**").hasAuthority(USER)
             .antMatchers("/web/overtime/**").hasAuthority(USER)
+            .antMatchers("/web/absences/**").hasAuthority(USER)
             .antMatchers("/web/department/**").hasAnyAuthority(BOSS, OFFICE)
             .antMatchers("/web/settings/**").hasAuthority(OFFICE)
             .antMatchers("/web/google-api-handshake/**").hasAuthority(OFFICE)
