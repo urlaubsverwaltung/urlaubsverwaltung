@@ -105,14 +105,35 @@ public class AbsenceOverviewViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final List<Department> departmentsOfUser = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
-        model.addAttribute("departments", departmentsOfUser);
+        final List<Person> overviewPersons;
+        if (!departmentService.getAllDepartments().isEmpty()) {
 
-        final String fallbackDepartment = departmentsOfUser.isEmpty() ? "" : departmentsOfUser.get(0).getName();
-        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
-        final List<String> selectedDepartmentNames = preparedSelectedDepartments.isEmpty() ?
-            List.of(fallbackDepartment) : preparedSelectedDepartments;
-        model.addAttribute("selectedDepartments", selectedDepartmentNames);
+            final List<Department> departments;
+            if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+                departments = departmentService.getAllDepartments();
+            } else {
+                departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
+            }
+            model.addAttribute("departments", departments);
+
+            if (departments.isEmpty()) {
+                overviewPersons = List.of(signedInUser);
+            } else {
+                final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
+                final List<String> selectedDepartmentNames = preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
+                model.addAttribute("selectedDepartments", selectedDepartmentNames);
+
+                overviewPersons = departments.stream()
+                    .filter(department -> selectedDepartmentNames.contains(department.getName()))
+                    .map(Department::getMembers)
+                    .flatMap(List::stream)
+                    .distinct()
+                    .sorted(comparing(Person::getFirstName))
+                    .collect(toList());
+            }
+        } else {
+            overviewPersons = personService.getActivePersons();
+        }
 
         final LocalDate startDate = getStartDate(year, month);
         final LocalDate endDate = getEndDate(year, month);
@@ -123,17 +144,16 @@ public class AbsenceOverviewViewController {
         final String selectedMonth = getSelectedMonth(month, startDate);
         model.addAttribute("selectedMonth", selectedMonth);
 
+        final boolean isPrivilegedUser = signedInUser.isPrivileged();
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<Person> overviewPersons = getOverviewPersonsForUser(signedInUser, departmentsOfUser, selectedDepartmentNames);
-
-        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(year, dateRange, overviewPersons, locale);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(year, dateRange, overviewPersons, locale, isPrivilegedUser);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "absences/absences_overview";
     }
 
-    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(Integer year, DateRange dateRange, List<Person> personList, Locale locale) {
+    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(Integer year, DateRange dateRange, List<Person> personList, Locale locale, boolean isPrivilegedUser) {
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
         final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(dateRange, personList);
@@ -176,7 +196,6 @@ public class AbsenceOverviewViewController {
                     .min(comparing(WorkingTime::getValidFrom))
                     .flatMap(WorkingTime::getFederalStateOverride).orElse(defaultFederalState);
 
-                final boolean isPrivilegedUser = person.isPrivileged();
                 final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications, personDateFederalStateOverride, isPrivilegedUser);
 
                 personView
@@ -263,21 +282,6 @@ public class AbsenceOverviewViewController {
             selectedMonth = month;
         }
         return selectedMonth;
-    }
-
-    private List<Person> getOverviewPersonsForUser(Person signedInUser, List<Department> departments, List<String> selectedDepartmentNames) {
-
-        if (departments.isEmpty() && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE))) {
-            return personService.getActivePersons();
-        }
-
-        return departments.stream()
-            .filter(department -> selectedDepartmentNames.contains(department.getName()))
-            .map(Department::getMembers)
-            .flatMap(List::stream)
-            .distinct()
-            .sorted(comparing(Person::getFirstName))
-            .collect(toList());
     }
 
     private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, FederalState defaultFederalState) {
