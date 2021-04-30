@@ -46,6 +46,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_FULL;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_MORNING;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_NOON;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_FULL;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_MORNING;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_NOON;
@@ -173,7 +176,8 @@ public class AbsenceOverviewViewController {
                     .min(comparing(WorkingTime::getValidFrom))
                     .flatMap(WorkingTime::getFederalStateOverride).orElse(defaultFederalState);
 
-                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications, personDateFederalStateOverride);
+                final boolean isPrivilegedUser = person.isPrivileged();
+                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications, personDateFederalStateOverride, isPrivilegedUser);
 
                 personView
                     .getDays()
@@ -222,7 +226,7 @@ public class AbsenceOverviewViewController {
             .collect(toMap(keySupplier, Function.identity()));
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications, FederalState personDateFederalStateOverride) {
+    private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications, FederalState personDateFederalStateOverride, boolean isPrivileged) {
 
         final DayLength publicHolidayDayLength = publicHolidayService.getAbsenceTypeOfDate(date, personDateFederalStateOverride);
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
@@ -232,11 +236,11 @@ public class AbsenceOverviewViewController {
                 .filter(application -> isDateInPeriod(date, application.getPeriod()))
                 .filter(application -> isAllowedOrPending(application.getStatus()))
                 .findFirst()
-                .map(this::getAbsenceOverviewDayType)
+                .map(application -> isPrivileged ? getAbsenceOverviewDayType(application) : getAnonymousAbsenceOverviewDayType(application.getDayLength()))
                 .orElse(null);
         }
 
-        return getAbsenceOverviewDayType(sickNote);
+        return isPrivileged ? getAbsenceOverviewDayType(sickNote) : getAnonymousAbsenceOverviewDayType(sickNote.getDayLength());
     }
 
     private AbsenceOverviewDayType getPublicHolidayType(DayLength dayLength) {
@@ -320,6 +324,17 @@ public class AbsenceOverviewViewController {
                 return "month.december";
             default:
                 throw new IllegalStateException("month value not in range of 1 to 12 cannot be mapped to a message key.");
+        }
+    }
+
+    private AbsenceOverviewDayType getAnonymousAbsenceOverviewDayType(DayLength dayLength) {
+        switch (dayLength) {
+            case MORNING:
+                return ABSENCE_MORNING;
+            case NOON:
+                return ABSENCE_NOON;
+            default:
+                return ABSENCE_FULL;
         }
     }
 

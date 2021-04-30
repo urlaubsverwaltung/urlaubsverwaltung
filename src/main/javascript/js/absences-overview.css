@@ -37,6 +37,18 @@
   padding: 2px 10px;
 }
 
+.vacationOverview-day-absence-status {
+  background: #ffeda0;
+}
+
+.vacationOverview-day-absence-status-morning {
+  background: linear-gradient(90deg, #ffeda0 50%, #e5e5e5 50%);
+}
+
+.vacationOverview-day-absence-status-noon {
+  background: linear-gradient(-90deg, #ffeda0 50%, #e5e5e5 50%);
+}
+
 .vacationOverview-day-personal-holiday-status-ALLOWED {
   background: #ffeda0;
 }
