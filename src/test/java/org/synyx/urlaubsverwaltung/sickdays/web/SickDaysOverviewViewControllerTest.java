@@ -26,8 +26,6 @@ import java.util.List;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
-import static java.time.LocalDate.parse;
-import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
@@ -64,11 +62,8 @@ class SickDaysOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-
-        final DateFormatAware dateFormatAware = new DateFormatAware();
-
         sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService,
-            dateFormatAware, clock);
+            new DateFormatAware(), clock);
     }
 
     @Test
@@ -79,9 +74,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate endDate = LocalDate.parse(year + "-12-31");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final ResultActions resultActions = perform(post("/web/sicknote/filter").flashAttr("period", filterPeriod));
-
-        resultActions
+        perform(post("/web/sicknote/filter").flashAttr("period", filterPeriod))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/sicknote?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
@@ -90,7 +83,6 @@ class SickDaysOverviewViewControllerTest {
     void filterSickNotesWithNullDates() throws Exception {
 
         final int year = Year.now(clock).getValue();
-
         final FilterPeriod filterPeriod = new FilterPeriod(null, null);
 
         perform(post("/web/sicknote/filter")
@@ -106,50 +98,41 @@ class SickDaysOverviewViewControllerTest {
         final List<Person> persons = singletonList(person);
         when(personService.getActivePersons()).thenReturn(persons);
 
-
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
         final SickNote childSickNote = new SickNote();
-        childSickNote.setStartDate(parse("01.02.2019", ofPattern("dd.MM.yyyy")));
-        childSickNote.setEndDate(parse("01.03.2019", ofPattern("dd.MM.yyyy")));
+        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
+        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
         childSickNote.setDayLength(FULL);
         childSickNote.setStatus(ACTIVE);
         childSickNote.setSickNoteType(childSickType);
         childSickNote.setPerson(person);
-        childSickNote.setAubStartDate(parse("10.02.2019", ofPattern("dd.MM.yyyy")));
-        childSickNote.setAubEndDate(parse("15.02.2019", ofPattern("dd.MM.yyyy")));
-        when(workDaysCountService.getWorkDaysCount(childSickNote.getDayLength(), childSickNote.getStartDate(), childSickNote.getEndDate(), person))
-            .thenReturn(ONE);
-        when(workDaysCountService.getWorkDaysCount(childSickNote.getDayLength(), childSickNote.getAubStartDate(), childSickNote.getAubEndDate(), person))
-            .thenReturn(BigDecimal.valueOf(5L));
+        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
+        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
         final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(parse("01.04.2019", ofPattern("dd.MM.yyyy")));
-        sickNote.setEndDate(parse("01.05.2019", ofPattern("dd.MM.yyyy")));
+        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
+        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
         sickNote.setDayLength(FULL);
         sickNote.setStatus(ACTIVE);
         sickNote.setSickNoteType(sickType);
         sickNote.setPerson(person);
-        sickNote.setAubStartDate(parse("10.04.2019", ofPattern("dd.MM.yyyy")));
-        sickNote.setAubEndDate(parse("20.04.2019", ofPattern("dd.MM.yyyy")));
-        when(workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getStartDate(), sickNote.getEndDate(), person))
-            .thenReturn(TEN);
-        when(workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), sickNote.getAubStartDate(), sickNote.getAubEndDate(), person))
-            .thenReturn(BigDecimal.valueOf(15L));
+        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
+        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
-        final String requestStartDateString = "05.01.2019";
-        final String requestEndDateString = "28.12.2019";
-        final LocalDate requestStartDate = parse(requestStartDateString, ofPattern("dd.MM.yyyy"));
-        final LocalDate requestEndDate = parse(requestEndDateString, ofPattern("dd.MM.yyyy"));
+        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
         when(sickNoteService.getByPeriod(requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
-        final ResultActions resultActions = perform(get("/web/sicknote")
-            .param("from", requestStartDateString)
-            .param("to", requestEndDateString));
-
-        resultActions
+        perform(get("/web/sicknote")
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
             .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
