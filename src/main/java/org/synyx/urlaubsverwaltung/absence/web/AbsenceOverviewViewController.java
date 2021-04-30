@@ -106,11 +106,12 @@ public class AbsenceOverviewViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         final List<Person> overviewPersons;
-        if (!departmentService.getAllDepartments().isEmpty()) {
+        final List<Department> allDepartments = departmentService.getAllDepartments();
+        if (!allDepartments.isEmpty()) {
 
             final List<Department> departments;
             if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-                departments = departmentService.getAllDepartments();
+                departments = allDepartments;
             } else {
                 departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
             }
