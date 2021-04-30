@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -47,6 +46,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_FULL;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_MORNING;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_NOON;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_FULL;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_MORNING;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_NOON;
@@ -64,7 +66,6 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.A
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 @RequestMapping("/web/absences")
 @Controller
@@ -96,14 +97,14 @@ public class AbsenceOverviewViewController {
         this.workingTimeService = workingTimeService;
     }
 
-    @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
     public String absenceOverview(
         @RequestParam(required = false) Integer year,
         @RequestParam(required = false) String month,
-        @RequestParam(name = "department", required = false, defaultValue = "") List<String> rawSelectedDepartments,
-        Model model, Locale locale) {
+        @RequestParam(name = "department", required = false, defaultValue = "") List<String> rawSelectedDepartments, Model model, Locale locale) {
+
         final Person signedInUser = personService.getSignedInUser();
+
         final List<Department> departmentsOfUser = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
         model.addAttribute("departments", departmentsOfUser);
 
@@ -175,7 +176,8 @@ public class AbsenceOverviewViewController {
                     .min(comparing(WorkingTime::getValidFrom))
                     .flatMap(WorkingTime::getFederalStateOverride).orElse(defaultFederalState);
 
-                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications, personDateFederalStateOverride);
+                final boolean isPrivilegedUser = person.isPrivileged();
+                final AbsenceOverviewDayType personViewDayType = getAbsenceOverviewDayType(date, sickNote, applications, personDateFederalStateOverride, isPrivilegedUser);
 
                 personView
                     .getDays()
@@ -193,8 +195,8 @@ public class AbsenceOverviewViewController {
         final HashMap<String, List<Application>> byEmail = new HashMap<>();
 
         for (Person person : personList) {
-            List<Application> apps = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
-            byEmail.put(person.getEmail(), apps);
+            List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
+            byEmail.put(person.getEmail(), applications);
         }
 
         return byEmail;
@@ -224,7 +226,7 @@ public class AbsenceOverviewViewController {
             .collect(toMap(keySupplier, Function.identity()));
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications, FederalState personDateFederalStateOverride) {
+    private AbsenceOverviewDayType getAbsenceOverviewDayType(LocalDate date, SickNote sickNote, List<Application> applications, FederalState personDateFederalStateOverride, boolean isPrivileged) {
 
         final DayLength publicHolidayDayLength = publicHolidayService.getAbsenceTypeOfDate(date, personDateFederalStateOverride);
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
@@ -234,11 +236,11 @@ public class AbsenceOverviewViewController {
                 .filter(application -> isDateInPeriod(date, application.getPeriod()))
                 .filter(application -> isAllowedOrPending(application.getStatus()))
                 .findFirst()
-                .map(this::getAbsenceOverviewDayType)
+                .map(application -> isPrivileged ? getAbsenceOverviewDayType(application) : getAnonymousAbsenceOverviewDayType(application.getDayLength()))
                 .orElse(null);
         }
 
-        return getAbsenceOverviewDayType(sickNote);
+        return isPrivileged ? getAbsenceOverviewDayType(sickNote) : getAnonymousAbsenceOverviewDayType(sickNote.getDayLength());
     }
 
     private AbsenceOverviewDayType getPublicHolidayType(DayLength dayLength) {
@@ -322,6 +324,17 @@ public class AbsenceOverviewViewController {
                 return "month.december";
             default:
                 throw new IllegalStateException("month value not in range of 1 to 12 cannot be mapped to a message key.");
+        }
+    }
+
+    private AbsenceOverviewDayType getAnonymousAbsenceOverviewDayType(DayLength dayLength) {
+        switch (dayLength) {
+            case MORNING:
+                return ABSENCE_MORNING;
+            case NOON:
+                return ABSENCE_NOON;
+            default:
+                return ABSENCE_FULL;
         }
     }
 

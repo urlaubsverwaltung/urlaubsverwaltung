@@ -52,7 +52,6 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
                 <sec:authorize access="hasAuthority('OFFICE')">
                 <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1"
                    data-title="<spring:message code="action.apply.vacation"/>">
@@ -63,6 +62,7 @@
                    data-title="<spring:message code="action.applications.absences_overview"/>">
                     <icon:calendar className="tw-w-5 tw-h-5"/>
                 </a>
+                <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')">
                 <a href="${URL_PREFIX}/application/statistics" class="icon-link tw-px-1"
                    data-title="<spring:message code="action.applications.statistics"/>">
                     <icon:presentation-chart-bar className="tw-w-5 tw-h-5"/>

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.overtime.Overtime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,6 +119,22 @@ class PersonTest {
 
         final Collection<MailNotification> notifications = person.getNotifications();
         assertThatThrownBy(() -> notifications.add(NOTIFICATION_BOSS_ALL)).isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void isPrivilegedAsUserIsFalse() {
+        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
+        person.setPermissions(List.of(USER));
+
+        assertThat(person.isPrivileged()).isFalse();
+    }
+
+    @Test
+    void isPrivilegedAsBossIsFalse() {
+        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
+        person.setPermissions(List.of(BOSS));
+
+        assertThat(person.isPrivileged()).isTrue();
     }
 
     @Test

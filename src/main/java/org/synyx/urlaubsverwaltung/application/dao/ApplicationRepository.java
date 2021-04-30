@@ -35,7 +35,6 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
     )
     List<Application> getApplicationsForACertainTimeAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
-
     @Query(
         "select x from Application x "
             + "where x.person = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
@@ -43,7 +42,6 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
             + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
-
 
     @Query(
         "select x from Application x "
@@ -53,7 +51,6 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
     )
     List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person,
                                                                       ApplicationStatus status);
-
 
     @Query(
         "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "

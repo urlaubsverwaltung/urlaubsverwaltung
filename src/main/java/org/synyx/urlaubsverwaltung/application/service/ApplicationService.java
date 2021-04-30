@@ -25,7 +25,6 @@ public interface ApplicationService {
      */
     Optional<Application> getApplicationById(Integer id);
 
-
     /**
      * Saves a new {@link Application}.
      *
@@ -44,7 +43,6 @@ public interface ApplicationService {
      */
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
                                                                 Person person);
-
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
@@ -80,7 +78,6 @@ public interface ApplicationService {
     List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate,
                                                                         Person person, ApplicationStatus status);
 
-
     /**
      * Get all {@link Application} with specific states
      *
@@ -109,7 +106,6 @@ public interface ApplicationService {
      */
     List<Application> getForStatesAndPersonSince(List<ApplicationStatus> statuses, List<Person> persons, LocalDate since);
 
-
     /**
      * Get the total hours of overtime reduction for a certain person.
      *
@@ -117,7 +113,6 @@ public interface ApplicationService {
      * @return the total overtime reduction of a person, never {@code null}
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
-
 
     /**
      * Get a list of all active holiday replacements of the given person and that are active at the given date

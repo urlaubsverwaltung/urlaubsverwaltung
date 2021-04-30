@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 public enum AbsenceOverviewDayType {
 
+    ABSENCE_FULL("absenceFull"),
+    ABSENCE_MORNING("absenceMorning"),
+    ABSENCE_NOON("absenceNoon"),
+
     WAITING_VACATION_FULL("waitingVacationFull"),
     WAITING_VACATION_MORNING("waitingVacationMorning"),
     WAITING_VACATION_NOON("waitingVacationNoon"),

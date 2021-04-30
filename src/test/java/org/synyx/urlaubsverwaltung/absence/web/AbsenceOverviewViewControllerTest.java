@@ -64,9 +64,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceOverviewViewControllerTest {
@@ -748,19 +750,23 @@ class AbsenceOverviewViewControllerTest {
 
     private static Stream<Arguments> dayLengthSickNoteTypeData() {
         return Stream.of(
-            Arguments.of(DayLength.FULL, "activeSickNoteFull"),
-            Arguments.of(DayLength.MORNING, "activeSickNoteMorning"),
-            Arguments.of(DayLength.NOON, "activeSickNoteNoon")
+            Arguments.of(BOSS, DayLength.FULL, "activeSickNoteFull"),
+            Arguments.of(BOSS, DayLength.MORNING, "activeSickNoteMorning"),
+            Arguments.of(BOSS, DayLength.NOON, "activeSickNoteNoon"),
+            Arguments.of(USER, DayLength.FULL, "absenceFull"),
+            Arguments.of(USER, DayLength.MORNING, "absenceMorning"),
+            Arguments.of(USER, DayLength.NOON, "absenceNoon")
         );
     }
 
     @ParameterizedTest
     @MethodSource("dayLengthSickNoteTypeData")
-    void ensureSickNoteOneDay(DayLength dayLength, String dtoDayTypeText) throws Exception {
+    void ensureSickNoteOneDay(Role role, DayLength dayLength, String dtoDayTypeText) throws Exception {
         final var person = new Person();
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
-        person.setEmail("boss@example.org");
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -793,24 +799,31 @@ class AbsenceOverviewViewControllerTest {
 
     private static Stream<Arguments> dayLengthVacationTypeData() {
         return Stream.of(
-            Arguments.of(ApplicationStatus.ALLOWED, DayLength.FULL, "allowedVacationFull"),
-            Arguments.of(ApplicationStatus.ALLOWED, DayLength.MORNING, "allowedVacationMorning"),
-            Arguments.of(ApplicationStatus.ALLOWED, DayLength.NOON, "allowedVacationNoon"),
-            Arguments.of(ApplicationStatus.WAITING, DayLength.FULL, "waitingVacationFull"),
-            Arguments.of(ApplicationStatus.WAITING, DayLength.MORNING, "waitingVacationMorning"),
-            Arguments.of(ApplicationStatus.WAITING, DayLength.NOON, "waitingVacationNoon")
+            Arguments.of(BOSS, ApplicationStatus.ALLOWED, DayLength.FULL, "allowedVacationFull"),
+            Arguments.of(BOSS, ApplicationStatus.ALLOWED, DayLength.MORNING, "allowedVacationMorning"),
+            Arguments.of(BOSS, ApplicationStatus.ALLOWED, DayLength.NOON, "allowedVacationNoon"),
+            Arguments.of(BOSS, ApplicationStatus.WAITING, DayLength.FULL, "waitingVacationFull"),
+            Arguments.of(BOSS, ApplicationStatus.WAITING, DayLength.MORNING, "waitingVacationMorning"),
+            Arguments.of(BOSS, ApplicationStatus.WAITING, DayLength.NOON, "waitingVacationNoon"),
+            Arguments.of(USER, ApplicationStatus.ALLOWED, DayLength.FULL, "absenceFull"),
+            Arguments.of(USER, ApplicationStatus.ALLOWED, DayLength.MORNING, "absenceMorning"),
+            Arguments.of(USER, ApplicationStatus.ALLOWED, DayLength.NOON, "absenceNoon"),
+            Arguments.of(USER, ApplicationStatus.WAITING, DayLength.FULL, "absenceFull"),
+            Arguments.of(USER, ApplicationStatus.WAITING, DayLength.MORNING, "absenceMorning"),
+            Arguments.of(USER, ApplicationStatus.WAITING, DayLength.NOON, "absenceNoon")
         );
     }
 
     @ParameterizedTest
     @MethodSource("dayLengthVacationTypeData")
-    void ensureVacationOneDay(ApplicationStatus applicationStatus, DayLength dayLength, String dtoDayTypeText) throws Exception {
+    void ensureVacationOneDay(Role role, ApplicationStatus applicationStatus, DayLength dayLength, String dtoDayTypeText) throws Exception {
         final LocalDate now = LocalDate.now(clock);
 
         final var person = new Person();
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
-        person.setEmail("boss@example.org");
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
@@ -848,6 +861,7 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate now = LocalDate.now();
 
         final var person = new Person();
+        person.setPermissions(List.of(BOSS));
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
