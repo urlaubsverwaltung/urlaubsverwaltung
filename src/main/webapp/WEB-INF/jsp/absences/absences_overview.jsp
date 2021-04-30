@@ -11,7 +11,7 @@
 
 <%@ page trimDirectiveWhitespaces="true" %>
 
-<sec:authorize access="hasAnyAuthority('USER', 'BOSS', 'DEPARTMENT_HEAD', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
+<sec:authorize access="hasAnyAuthority('BOSS', 'DEPARTMENT_HEAD', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
     <c:set var="IS_PRIVILEGED" value="${true}"/>
 </sec:authorize>
 
