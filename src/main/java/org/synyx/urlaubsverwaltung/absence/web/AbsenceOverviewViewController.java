@@ -178,16 +178,17 @@ public class AbsenceOverviewViewController {
             final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotesForDate(date, sickNotes,
                 sickNote -> sickNote.getPerson().getEmail());
 
-            final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream().collect(toMap(
-                person -> monthView.getPersons().stream()
-                    .filter(view ->
-                        view.getEmail().equals(person.getEmail()) &&
+            final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream()
+                .collect(
+                    toMap(person -> monthView.getPersons().stream()
+                        .filter(view -> view.getEmail().equals(person.getEmail()) &&
                             view.getFirstName().equals(person.getFirstName()) &&
                             view.getLastName().equals(person.getLastName())
+                        )
+                        .findFirst()
+                        .orElse(null),Function.identity()
                     )
-                    .findFirst().orElse(null),
-                Function.identity()
-            ));
+                );
 
             // create an absence day dto for every person of the department
             for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
@@ -197,8 +198,8 @@ public class AbsenceOverviewViewController {
                 final Person person = personByView.get(personView);
 
                 final FederalState personDateFederalStateOverride = workingTimes.stream()
-                    .filter(workingTime ->
-                        workingTime.getPerson().equals(person) && (workingTime.getValidFrom().isBefore(date) || workingTime.getValidFrom().equals(date)))
+                    .filter(workingTime -> workingTime.getPerson().equals(person) &&
+                        (workingTime.getValidFrom().isBefore(date) || workingTime.getValidFrom().equals(date)))
                     .min(comparing(WorkingTime::getValidFrom))
                     .flatMap(WorkingTime::getFederalStateOverride).orElse(defaultFederalState);
 
@@ -241,8 +242,9 @@ public class AbsenceOverviewViewController {
         final String firstName = person.getFirstName();
         final String lastName = person.getLastName();
         final String email = person.getEmail();
+        final String gravatarUrl = person.getGravatarURL();
 
-        return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, new ArrayList<>());
+        return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>());
     }
 
     private static Map<String, SickNote> sickNotesForDate(LocalDate date, List<SickNote> sickNotes, Function<SickNote, String> keySupplier) {
