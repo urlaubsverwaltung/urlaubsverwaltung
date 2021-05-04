@@ -11,10 +11,6 @@
 
 <%@ page trimDirectiveWhitespaces="true" %>
 
-<sec:authorize access="hasAnyAuthority('BOSS', 'DEPARTMENT_HEAD', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
-    <c:set var="IS_PRIVILEGED" value="${true}"/>
-</sec:authorize>
-
 <!DOCTYPE html>
 <html lang="${language}">
 
@@ -243,7 +239,7 @@
                         </td>
                     </tr>
                     <c:choose>
-                        <c:when test="${IS_PRIVILEGED}">
+                        <c:when test="${isPrivileged}">
                             <tr>
                                 <td class='vacationOverview-legend-colorbox vacationOverview-day-personal-holiday-status-ALLOWED'>
                                     <span class="tw-hidden print:tw-inline">
