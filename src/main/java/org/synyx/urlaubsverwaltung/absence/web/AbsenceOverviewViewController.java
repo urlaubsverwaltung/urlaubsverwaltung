@@ -146,6 +146,8 @@ public class AbsenceOverviewViewController {
         model.addAttribute("selectedMonth", selectedMonth);
 
         final boolean isPrivilegedUser = signedInUser.isPrivileged();
+        model.addAttribute("isPrivileged", isPrivilegedUser);
+
         final DateRange dateRange = new DateRange(startDate, endDate);
         final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(year, dateRange, overviewPersons, locale, isPrivilegedUser);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
