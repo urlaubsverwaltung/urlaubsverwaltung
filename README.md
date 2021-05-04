@@ -8,15 +8,6 @@ zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krank
 
 Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
 
-#### End-Of-Life: Version 3.x
-
-| Version 3.x wird nur noch bis zum **31.12.2020** mit Sicherheitsupdates unterstützt.|
-| --- |
-
-Du bist auf der Suche nach Version 3.x? Diese findest du diese auf dem [v3.x branch](https://github.com/synyx/urlaubsverwaltung/tree/v3.x).
-Wenn du wissen möchtest, was alles zu tun ist, um von 3.x auf 4.x umzusteigen?
-Dann wirf einen Blick in den [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-4.0-Migration-Guide).
-
 * [Demo-System](#demo-system)
 * [FAQ](#faq)
 * [Berechtigungen](#berechtigungen)
@@ -50,7 +41,7 @@ In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 * **Chef**: darf Urlaubsanträge aller Benutzer einsehen, genehmigen und ablehnen
 * **Office**: darf Einstellungen zur Anwendung vornehmen, Mitarbeiter verwalten, Urlaub für Mitarbeiter
 beantragen/stornieren und Krankmeldungen pflegen
-* **Admin**: Keine fachliche Rolle sondern nur für den Zugriff von Management Schnittstellen ([Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)).
+* **Admin**: Keine fachliche Rolle, sondern nur für den Zugriff von Management Schnittstellen ([Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)).
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
   
