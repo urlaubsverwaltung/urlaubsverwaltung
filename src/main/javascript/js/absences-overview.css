@@ -30,7 +30,8 @@
 }
 
 .vacationOverview-legend-colorbox {
-  width: 15px;
+  width: 23px;
+  border: 3pt solid #ffffff;
 }
 
 .vacationOverview-legend-text {
