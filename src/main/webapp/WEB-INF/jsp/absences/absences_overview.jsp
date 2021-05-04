@@ -147,6 +147,7 @@
                                aria-describedby="absence-table-${month.nameOfMonth}">
                             <thead>
                             <tr>
+                                <th scope="col">&nbsp;</th>
                                 <th scope="col" class="sortable-field">&nbsp;</th>
                                 <th scope="col" class="sortable-field">&nbsp;</th>
                                 <c:forEach items="${month.days}" var="day">
@@ -164,6 +165,16 @@
                             <tbody class="vacationOverview-tbody">
                             <c:forEach var="person" items="${month.persons}">
                                 <tr role="row">
+                                    <th scope="row">
+                                        <img
+                                            src="<c:out value='${person.gravatarUrl}?d=mm&s=30'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
+                                            class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                                            width="20px"
+                                            height="20px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
+                                    </th>
                                     <th scope="row"><c:out value="${person.firstName}"/></th>
                                     <th scope="row"><c:out value="${person.lastName}"/></th>
                                     <c:forEach var="absence" items="${person.days}">
