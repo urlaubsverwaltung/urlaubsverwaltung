@@ -35,6 +35,9 @@
                     <icon:plus-circle className="tw-w-5 tw-h-5" />
                 </a>
                 </sec:authorize>
+                <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
+                    <icon:calendar className="tw-w-5 tw-h-5" />
+                </a>
                 <uv:print/>
             </jsp:attribute>
             <jsp:body>
