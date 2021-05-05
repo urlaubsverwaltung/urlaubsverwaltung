@@ -7,4 +7,6 @@
 <%@attribute name="nameIsNoLink" type="java.lang.Boolean" required="false" %>
 <%@attribute name="noPadding" type="java.lang.Boolean" required="false" %>
 
+<c:set var="paddingCssClass" value="${noPadding ? 'tw-p-0' : 'tw-p-5'}" />
+
 <uv:person-box__ person="${person}" nameIsNoLink="${nameIsNoLink}" cssClass="${paddingCssClass} ${cssClass}" />
