@@ -757,6 +757,15 @@ class DepartmentServiceImplTest {
         assertThat(allowedDepartments).containsExactly(expectedDepartment);
     }
 
+    @Test
+    void getNumberOfDepartment() {
+
+        when(departmentRepository.count()).thenReturn(10L);
+
+        final long numberOfDepartments = sut.getNumberOfDepartments();
+        assertThat(numberOfDepartments).isEqualTo(10);
+    }
+
     private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {
         final Person person = new Person(username, firstname, lastname, email);
 
