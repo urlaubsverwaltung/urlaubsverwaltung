@@ -187,7 +187,7 @@ class AbsenceOverviewViewControllerTest {
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
-    void applicationForLeaveVacationOverviewSECONDSTAGE(Role role) throws Exception {
+    void ensureAbsenceOverviewForDepartmentHeadAndSecondStageAuthority(Role role) throws Exception {
 
         final Person person = new Person();
         person.setFirstName("firstname");
