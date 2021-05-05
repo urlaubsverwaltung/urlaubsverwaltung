@@ -119,8 +119,7 @@ public class AbsenceOverviewViewController {
             if (departments.isEmpty()) {
                 overviewPersons = List.of(signedInUser);
             } else {
-                final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
-                final List<String> selectedDepartmentNames = preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
+                final List<String> selectedDepartmentNames = getSelectedDepartmentNames(rawSelectedDepartments, departments);
                 model.addAttribute("selectedDepartments", selectedDepartmentNames);
 
                 overviewPersons = departments.stream()
@@ -153,6 +152,11 @@ public class AbsenceOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "absences/absences_overview";
+    }
+
+    private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {
+        final List<String> preparedSelectedDepartments = rawSelectedDepartments.stream().filter(StringUtils::hasText).collect(toList());
+        return preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(Integer year, DateRange dateRange, List<Person> personList, Locale locale, boolean isPrivilegedUser) {
