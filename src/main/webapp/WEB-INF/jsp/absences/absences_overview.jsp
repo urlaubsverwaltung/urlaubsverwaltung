@@ -104,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-                <c:if test="${not empty departments}">
+                <c:if test="${not empty visibleDepartments}">
                     <div class="form-group">
                         <div class="row">
                             <label class="control-label col-md-1" for="departmentSelect">
@@ -112,7 +112,7 @@
                             </label>
                             <div class="col-md-4">
                                 <uv:multi-select id="departmentSelect" name="department">
-                                    <c:forEach items="${departments}" var="department">
+                                    <c:forEach items="${visibleDepartments}" var="department">
                                         <uv:multi-select-item value="${department.name}"
                                                               selected="${selectedDepartments.contains(department.name)}">
                                             <c:out value="${department.name}"/>

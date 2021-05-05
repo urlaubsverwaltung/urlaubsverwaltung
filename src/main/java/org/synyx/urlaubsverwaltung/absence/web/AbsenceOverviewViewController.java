@@ -108,21 +108,21 @@ public class AbsenceOverviewViewController {
         final List<Person> overviewPersons;
         if (departmentService.getNumberOfDepartments() > 0) {
 
-            final List<Department> departments;
+            final List<Department> visibleDepartments;
             if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-                departments = departmentService.getAllDepartments();
+                visibleDepartments = departmentService.getAllDepartments();
             } else {
-                departments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
+                visibleDepartments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
             }
-            model.addAttribute("departments", departments);
+            model.addAttribute("visibleDepartments", visibleDepartments);
 
-            if (departments.isEmpty()) {
+            if (visibleDepartments.isEmpty()) {
                 overviewPersons = List.of(signedInUser);
             } else {
-                final List<String> selectedDepartmentNames = getSelectedDepartmentNames(rawSelectedDepartments, departments);
+                final List<String> selectedDepartmentNames = getSelectedDepartmentNames(rawSelectedDepartments, visibleDepartments);
                 model.addAttribute("selectedDepartments", selectedDepartmentNames);
 
-                overviewPersons = departments.stream()
+                overviewPersons = visibleDepartments.stream()
                     .filter(department -> selectedDepartmentNames.contains(department.getName()))
                     .map(Department::getMembers)
                     .flatMap(List::stream)

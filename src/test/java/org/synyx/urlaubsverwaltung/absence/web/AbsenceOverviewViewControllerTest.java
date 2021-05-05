@@ -122,7 +122,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", emptyList()))
+            .andExpect(model().attribute("visibleDepartments", emptyList()))
             .andExpect(model().attribute("selectedDepartments", nullValue()))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(31))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
@@ -148,7 +148,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", hasItem(department)))
+            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
             .andExpect(model().attribute("selectedDepartments", hasItem(department.getName())))
             .andExpect(view().name("absences/absences_overview"));
 
@@ -178,7 +178,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", nullValue()))
+            .andExpect(model().attribute("visibleDepartments", nullValue()))
             .andExpect(model().attribute("selectedDepartments", nullValue()))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(31))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
@@ -202,7 +202,7 @@ class AbsenceOverviewViewControllerTest {
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", hasItem(department)))
+            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
             .andExpect(view().name("absences/absences_overview"));
 
         verifyNoMoreInteractions(departmentService);
@@ -228,7 +228,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences")
             .param("department", departmentName))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", hasItem("superheroes")));
     }
 
@@ -250,7 +250,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences")
             .param("department", "villains"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", hasItem("villains")));
     }
 
@@ -273,7 +273,7 @@ class AbsenceOverviewViewControllerTest {
             .param("department", "villains")
             .param("department", "superheroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", allOf(hasItem("superheroes"), hasItem("villains"))));
     }
 
