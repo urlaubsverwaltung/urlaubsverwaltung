@@ -144,4 +144,11 @@ public interface DepartmentService {
      * @return List of departments which are accessible by the given person
      */
     List<Department> getAllowedDepartmentsOfPerson(Person person);
+
+    /**
+     * Returns the number of departments
+     *
+     * @return number of departments
+     */
+    long getNumberOfDepartments();
 }

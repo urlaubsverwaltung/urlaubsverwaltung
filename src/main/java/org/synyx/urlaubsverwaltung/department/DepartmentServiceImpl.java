@@ -250,6 +250,11 @@ class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
+    @Override
+    public long getNumberOfDepartments() {
+        return departmentRepository.count();
+    }
+
     private Predicate<Person> isNotSecondStageIn(Department department) {
         return person -> !department.getSecondStageAuthorities().contains(person);
     }

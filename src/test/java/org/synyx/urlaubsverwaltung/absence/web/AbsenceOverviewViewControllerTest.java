@@ -44,17 +44,17 @@ import java.util.stream.Stream;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -65,9 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,89 +107,102 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @Test
-    void applicationForLeaveVacationOverviewNoPermissions() throws Exception {
+    void ensureWithDepartmentsAndNotInDepartmentOnlyMyInformation() throws Exception {
 
         final var person = new Person();
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
-        person.setEmail("boss@example.org");
+        person.setId(1);
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of());
 
-        final var resultActions = perform(get("/web/absences"));
-
-        resultActions
+        perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", hasItem(department)))
+            .andExpect(model().attribute("visibleDepartments", emptyList()))
+            .andExpect(model().attribute("selectedDepartments", nullValue()))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(31))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
             .andExpect(view().name("absences/absences_overview"));
 
-        verifyNoMoreInteractions(departmentService);
+        verify(personService, never()).getActivePersons();
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
-    void applicationForLeaveVacationOverviewAllDepartments(Role role) throws Exception {
+    void ensureWithDepartmentsAndPrivilegedRolesForAllDepartments(Role role) throws Exception {
 
         final var person = new Person();
+        person.setPermissions(List.of(role));
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(role));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final var resultActions = perform(get("/web/absences"));
-
-        resultActions
+        perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", hasItem(department)))
+            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
+            .andExpect(model().attribute("selectedDepartments", hasItem(department.getName())))
             .andExpect(view().name("absences/absences_overview"));
 
-        verifyNoMoreInteractions(departmentService);
+        verify(personService, never()).getActivePersons();
     }
 
-    @Test
-    void applicationForLeaveVacationOverviewSECONDSTAGE() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS", "SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
+    void ensureNoDepartmentsAndNotInDepartmentGetAllActivePersons(Role role) throws Exception {
 
-        final Person ssa = new Person();
-        ssa.setFirstName("firstname");
-        ssa.setLastName("lastname");
-        ssa.setEmail("firstname.lastname@example.org");
-        ssa.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
-        when(personService.getSignedInUser()).thenReturn(ssa);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(ssa)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        final var resultActions = perform(get("/web/absences"));
+        final Person activePerson = new Person();
+        activePerson.setId(2);
+        activePerson.setFirstName("sandra");
+        activePerson.setLastName("smith");
+        activePerson.setEmail("sandra@example.org");
+        when(personService.getActivePersons()).thenReturn(List.of(activePerson));
 
-        resultActions
+        perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", hasItem(department)))
+            .andExpect(model().attribute("visibleDepartments", nullValue()))
+            .andExpect(model().attribute("selectedDepartments", nullValue()))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(31))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
             .andExpect(view().name("absences/absences_overview"));
-
-        verifyNoMoreInteractions(departmentService);
     }
 
-    @Test
-    void applicationForLeaveVacationOverviewDEPARTMENTHEAD() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
+    void ensureAbsenceOverviewForDepartmentHeadAndSecondStageAuthority(Role role) throws Exception {
 
-        final Person departmentHead = new Person();
-        departmentHead.setPermissions(singletonList(DEPARTMENT_HEAD));
-        when(personService.getSignedInUser()).thenReturn(departmentHead);
+        final Person person = new Person();
+        person.setFirstName("firstname");
+        person.setLastName("lastname");
+        person.setEmail("firstname.lastname@example.org");
+        person.setPermissions(List.of(USER, role));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(departmentHead)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final ResultActions resultActions = perform(get("/web/absences"));
-
-        resultActions
+        perform(get("/web/absences"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", hasItem(department)))
+            .andExpect(model().attribute("visibleDepartments", hasItem(department)))
             .andExpect(view().name("absences/absences_overview"));
 
         verifyNoMoreInteractions(departmentService);
@@ -206,19 +217,18 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
-        final var resultActions = perform(get("/web/absences")
-            .param("department", departmentName));
-
-        resultActions
+        perform(get("/web/absences")
+            .param("department", departmentName))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", hasItem("superheroes")));
     }
 
@@ -229,19 +239,18 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
-        final var resultActions = perform(get("/web/absences")
-            .param("department", "villains"));
-
-        resultActions
+        perform(get("/web/absences")
+            .param("department", "villains"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", hasItem("villains")));
     }
 
@@ -252,20 +261,19 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
-        final var resultActions = perform(get("/web/absences")
+        perform(get("/web/absences")
             .param("department", "villains")
-            .param("department", "superheroes"));
-
-        resultActions
+            .param("department", "superheroes"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("departments", allOf(hasItem(superheroes), hasItem(villains))))
+            .andExpect(model().attribute("visibleDepartments", allOf(hasItem(superheroes), hasItem(villains))))
             .andExpect(model().attribute("selectedDepartments", allOf(hasItem("superheroes"), hasItem("villains"))));
     }
 
@@ -280,16 +288,11 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
-
-        final var resultActions = perform(get("/web/absences")
-            .param("year", givenYearParam));
-
-        resultActions
+        perform(get("/web/absences")
+            .param("year", givenYearParam))
             .andExpect(status().isOk())
             .andExpect(model().attribute("currentYear", expectedCurrentYear))
             .andExpect(model().attribute("selectedYear", expectedCurrentYear));
@@ -305,16 +308,15 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final var resultActions = perform(get("/web/absences")
-            .param("year", String.valueOf(expectedSelectedYear)));
-
-        resultActions
+        perform(get("/web/absences")
+            .param("year", String.valueOf(expectedSelectedYear)))
             .andExpect(status().isOk())
             .andExpect(model().attribute("currentYear", expectedCurrentYear))
             .andExpect(model().attribute("selectedYear", expectedSelectedYear));
@@ -329,15 +331,12 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        final var resultActions = perform(get("/web/absences"));
-
-        resultActions
+        perform(get("/web/absences"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedMonth", String.valueOf(now.getMonthValue())));
     }
@@ -349,16 +348,13 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        final var resultActions = perform(get("/web/absences")
-            .param("month", ""));
-
-        resultActions
+        perform(get("/web/absences")
+            .param("month", ""))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedMonth", ""));
     }
@@ -370,16 +366,14 @@ class AbsenceOverviewViewControllerTest {
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
-        person.setPermissions(singletonList(OFFICE));
+        person.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/absences")
-            .param("month", "1"));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        resultActions
+        perform(get("/web/absences")
+            .param("month", "1"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedMonth", "1"));
     }
@@ -392,13 +386,9 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        final var resultActions = perform(get("/web/absences"));
-
-        resultActions
+        perform(get("/web/absences"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
@@ -431,15 +421,11 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var department = department();
-        department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        final var resultActions = perform(get("/web/absences")
+        perform(get("/web/absences")
             .param("year", "2018")
-            .locale(Locale.GERMANY));
-
-        resultActions
+            .locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedYear", 2018))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", hasSize(1))));
@@ -460,13 +446,12 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/absences")
+        perform(get("/web/absences")
             .param("month", "11")
-            .locale(Locale.GERMANY));
-
-        resultActions
+            .locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(allOf(
@@ -494,13 +479,12 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/absences")
+        perform(get("/web/absences")
             .param("month", "12")
-            .locale(Locale.GERMANY));
-
-        resultActions
+            .locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(allOf(
@@ -533,14 +517,13 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/absences")
+        perform(get("/web/absences")
             .param("year", "2018")
             .param("month", "10")
-            .locale(Locale.GERMANY));
-
-        resultActions
+            .locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(allOf(
@@ -573,12 +556,11 @@ class AbsenceOverviewViewControllerTest {
         final var villainsDepartment = department("villains");
         villainsDepartment.setMembers(List.of(joker, lex, harley));
 
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY)
-            .param("department", "villains"));
-
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY)
+            .param("department", "villains"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedDepartments", hasItem("villains")))
             .andExpect(model().attribute("absenceOverview",
@@ -604,74 +586,17 @@ class AbsenceOverviewViewControllerTest {
         final var villainsDepartment = department("villains");
         villainsDepartment.setMembers(List.of(joker, lex, harley, person));
 
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
         when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY)
+        perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "villains")
-            .param("department", "heroes")
-        );
-
-        resultActions
+            .param("department", "heroes"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedDepartments", allOf(hasItem("heroes"), hasItem("villains"))))
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
                     hasProperty("persons", hasSize(4))
-                )))));
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
-    void ensureOverviewShowsAllPersonsThereAreNoDepartmentsFor(Role role) throws Exception {
-        final var person = new Person();
-        person.setFirstName("bruce");
-        person.setLastName("wayne");
-        person.setEmail("batman@example.org");
-        person.setPermissions(singletonList(role));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(emptyList());
-
-        final var personTwo = new Person();
-        personTwo.setFirstName("aa");
-        personTwo.setLastName("person two lastname");
-        personTwo.setEmail("person2@company.org");
-
-        final var personThree = new Person();
-        personThree.setFirstName("AA");
-        personThree.setLastName("AA lastname");
-        personThree.setEmail("person3@company.org");
-
-        when(personService.getActivePersons()).thenReturn(List.of(person, personTwo, personThree));
-
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
-        resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", hasItem("")))
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(allOf(
-                    hasProperty("persons", hasSize(3))
-                )))));
-    }
-
-    @Test
-    void ensureOverviewIsEmptyWhenThereAreNoDepartmentsForADepartmentHead() throws Exception {
-        final var person = new Person();
-        person.setFirstName("department head");
-        person.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(emptyList());
-
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
-        resultActions
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("selectedDepartments", hasItem("")))
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", hasItem(allOf(
-                    hasProperty("persons", empty())
                 )))));
     }
 
@@ -692,11 +617,10 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(allOf(
@@ -732,11 +656,10 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person, personTwo, personThree));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", hasItem(allOf(
@@ -771,7 +694,7 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final var sickNote = new SickNote();
         sickNote.setStartDate(LocalDate.now(clock));
@@ -782,9 +705,7 @@ class AbsenceOverviewViewControllerTest {
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getAllActiveByYear(Year.now(clock).getValue())).thenReturn(sickNotes);
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
@@ -828,7 +749,7 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final var application = new Application();
         application.setStartDate(now);
@@ -841,9 +762,7 @@ class AbsenceOverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
             .thenReturn(applications);
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
@@ -869,7 +788,8 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         department.setMembers(List.of(person));
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(singletonList(department));
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         // create different applications with types that should not be considered in the overview
         final var revokedApplication = new Application();
@@ -907,10 +827,8 @@ class AbsenceOverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
             .thenReturn(applications);
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
-
         // confirm that type of correct application is returned
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
@@ -936,9 +854,9 @@ class AbsenceOverviewViewControllerTest {
         person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final var resultActions = perform(get("/web/absences").locale(Locale.GERMANY));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        resultActions
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
