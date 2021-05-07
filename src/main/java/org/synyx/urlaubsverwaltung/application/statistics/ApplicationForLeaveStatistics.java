@@ -75,12 +75,12 @@ public class ApplicationForLeaveStatistics {
     }
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
-        BigDecimal currentWaitingVacationDays = getWaitingVacationDays().get(vacationType);
+        final BigDecimal currentWaitingVacationDays = getWaitingVacationDays().get(vacationType);
         getWaitingVacationDays().put(vacationType, currentWaitingVacationDays.add(waitingVacationDays));
     }
 
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
-        BigDecimal currentAllowedVacationDays = getAllowedVacationDays().get(vacationType);
+        final BigDecimal currentAllowedVacationDays = getAllowedVacationDays().get(vacationType);
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 

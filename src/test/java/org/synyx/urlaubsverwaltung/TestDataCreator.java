@@ -100,12 +100,6 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application anyFullDayApplication(Person person) {
-        Application application = anyApplication();
-        application.setPerson(person);
-        return application;
-    }
-
     public static Application anyApplication() {
         Application application = new Application();
         application.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));

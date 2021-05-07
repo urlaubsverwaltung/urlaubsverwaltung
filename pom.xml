@@ -4,7 +4,7 @@
 
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
-  <version>4.17.0-SNAPSHOT</version>
+  <version>4.19.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>Urlaubsverwaltung</name>
@@ -218,7 +218,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
-      <version>v3-rev20210408-1.31.0</version>
+      <version>v3-rev20210429-1.31.0</version>
     </dependency>
 
     <!-- Security -->
@@ -549,7 +549,7 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.6</version>
+            <version>0.8.7</version>
             <executions>
               <execution>
                 <id>default-prepare-agent</id>
@@ -582,7 +582,7 @@
           <plugin>
             <groupId>org.sonarsource.scanner.maven</groupId>
             <artifactId>sonar-maven-plugin</artifactId>
-            <version>3.8.0.2131</version>
+            <version>3.9.0.2155</version>
           </plugin>
 
         </plugins>

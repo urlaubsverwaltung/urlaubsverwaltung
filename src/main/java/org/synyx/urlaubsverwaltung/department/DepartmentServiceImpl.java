@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -228,7 +227,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person) {
 
         final boolean isOwnData = person.getId().equals(signedInUser.getId());
-        final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
+        final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
         final boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
         final boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
 
@@ -249,6 +248,11 @@ class DepartmentServiceImpl implements DepartmentService {
         } else {
             return getAssignedDepartmentsOfMember(person);
         }
+    }
+
+    @Override
+    public long getNumberOfDepartments() {
+        return departmentRepository.count();
     }
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
