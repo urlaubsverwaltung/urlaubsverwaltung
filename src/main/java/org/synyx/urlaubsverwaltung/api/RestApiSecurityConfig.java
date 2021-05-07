@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
 
@@ -14,8 +14,8 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final boolean isOauth2Enabled;
 
-    public RestApiSecurityConfig(SecurityConfigurationProperties properties) {
-        isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+    public RestApiSecurityConfig(@Value("${uv.security.auth}") String authProvider) {
+        isOauth2Enabled = "oidc".equalsIgnoreCase(authProvider);
     }
 
     @Override
