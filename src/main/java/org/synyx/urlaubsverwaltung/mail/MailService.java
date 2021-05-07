@@ -10,7 +10,5 @@ public interface MailService {
      *
      * @param mail that defines the parameters to send the mail
      */
-    void legacySend(LegacyMail mail);
-
     void send(Mail mail);
 }
