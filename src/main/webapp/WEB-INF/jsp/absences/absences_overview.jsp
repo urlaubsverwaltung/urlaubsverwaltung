@@ -165,13 +165,13 @@
                             <tbody class="vacationOverview-tbody">
                             <c:forEach var="person" items="${month.persons}">
                                 <tr role="row">
-                                    <th scope="row">
+                                    <th scope="row" class="tw-py-0">
                                         <img
                                             src="<c:out value='${person.gravatarUrl}?d=mm&s=30'/>"
                                             alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
                                             class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
-                                            width="20px"
-                                            height="20px"
+                                            width="24px"
+                                            height="24px"
                                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </th>
