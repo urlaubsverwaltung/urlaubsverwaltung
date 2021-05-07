@@ -1214,6 +1214,25 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(commentService);
     }
 
+    @Test
+    void editApplicationWithDifferentPerson() {
+
+        final Person oldPerson = new Person();
+        final Application oldApplication = createApplication(oldPerson, createVacationType(HOLIDAY));
+        oldApplication.setStatus(WAITING);
+        final Person newPerson = new Person();
+        final Application newApplication = createApplication(newPerson, createVacationType(HOLIDAY));
+        newApplication.setStatus(WAITING);
+
+        final Optional<String> comment = of("Comment");
+
+        assertThatThrownBy(() -> sut.edit(oldApplication, newApplication, new Person(), comment))
+            .isInstanceOf(EditApplicationForLeaveNotAllowedException.class);
+
+        verifyNoInteractions(applicationMailService);
+        verifyNoInteractions(commentService);
+    }
+
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
                                                            Person person, Person privilegedUser) {
