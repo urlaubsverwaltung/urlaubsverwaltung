@@ -7,9 +7,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.mail.LegacyMail;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.mail.Recipient;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -19,10 +21,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,10 +35,12 @@ class SickNoteMailServiceTest {
     private SickNoteService sickNoteService;
     @Mock
     private MailService mailService;
+    @Mock
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteMailService(settingsService, sickNoteService, mailService);
+        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, personService);
     }
 
     @Test
@@ -47,6 +48,8 @@ class SickNoteMailServiceTest {
 
         final Person person = new Person();
         person.setUsername("Hulk");
+        person.setEmail("a@b.de");
+        person.setLastName("Spiderman");
 
         final SickNote sickNoteA = new SickNote();
         sickNoteA.setId(1);
@@ -68,24 +71,30 @@ class SickNoteMailServiceTest {
         modelB.put("maximumSickPayDays", 5);
         modelB.put("sickNote", sickNoteB);
 
+        Recipient applicantRecipient = new Recipient("a@b.de", "Spiderman");
+        Recipient officeRecipient = new Recipient("x@y.de", "Bertha Büro");
+        when(personService.findRecipients(NOTIFICATION_OFFICE))
+            .thenReturn(List.of(officeRecipient));
+
         sut.sendEndOfSickPayNotification();
 
-        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
-        verify(mailService, times(4)).legacySend(argument.capture());
-        final List<LegacyMail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(sickNoteA.getPerson()));
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(4)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+
+        assertThat(mails.get(0).getRecipients()).hasValue(List.of(applicantRecipient));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(modelA);
-        assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(1).getRecipients()).hasValue(List.of(officeRecipient));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelA);
-        assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(sickNoteB.getPerson()));
+        assertThat(mails.get(2).getRecipients()).hasValue(List.of(applicantRecipient));
         assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(2).getTemplateModel()).isEqualTo(modelB);
-        assertThat(mails.get(3).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(3).getRecipients()).hasValue(List.of(officeRecipient));
         assertThat(mails.get(3).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(3).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(3).getTemplateModel()).isEqualTo(modelB);

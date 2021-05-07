@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.account;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.mail.LegacyMail;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -11,11 +11,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -95,19 +91,19 @@ public class TurnOfTheYearAccountUpdaterService {
         final String templateName = "updated_accounts";
 
         // send email to office for printing statistic
-        final LegacyMail mailToOffice = LegacyMail.builder()
-            .withRecipient(NOTIFICATION_OFFICE)
+        final Mail mailToOffice = Mail.builder()
+            .withRecipient(personService.findRecipients(NOTIFICATION_OFFICE))
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
-        mailService.legacySend(mailToOffice);
+        mailService.send(mailToOffice);
 
         // send email to manager to notify about update of accounts
-        final LegacyMail mailToTechnical = LegacyMail.builder()
+        final Mail mailToTechnical = Mail.builder()
             .withTechnicalRecipient(true)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();
-        mailService.legacySend(mailToTechnical);
+        mailService.send(mailToTechnical);
     }
 }
