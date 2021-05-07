@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.mail.Recipient;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.util.List;
@@ -19,24 +20,14 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.*;
+import static org.synyx.urlaubsverwaltung.person.Role.*;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
@@ -430,4 +421,21 @@ class PersonServiceImplTest {
         final int numberOfActivePersons = sut.numberOfActivePersons();
         assertThat(numberOfActivePersons).isEqualTo(2);
     }
+
+    @Test
+    void findRecipients() {
+
+        final Person office = new Person("muster", "Office", "Olga", "office@example.org");
+        office.setNotifications(List.of(NOTIFICATION_OFFICE));
+
+        final Person boss = new Person("muster", "McBossface", "Bossy", "boss@example.org");
+        boss.setNotifications(List.of(NOTIFICATION_BOSS_ALL));
+
+        when(personRepository.findAll()).thenReturn(asList(boss, office));
+
+        List<Recipient> result = sut.findRecipients(NOTIFICATION_OFFICE);
+
+        assertThat(result).containsOnly(new Recipient("office@example.org", "Olga Office"));
+    }
+
 }
