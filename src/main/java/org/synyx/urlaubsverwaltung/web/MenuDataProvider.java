@@ -38,6 +38,8 @@ public class MenuDataProvider implements HandlerInterceptor {
             final Person user = Objects.requireNonNullElseGet(signedInUserInModel, personService::getSignedInUser);
             final String gravatarUrl = user.getGravatarURL();
 
+            modelAndView.addObject("userNiceName", user.getNiceName());
+            modelAndView.addObject("userId", user.getId());
             modelAndView.addObject("menuGravatarUrl", gravatarUrl);
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled());

@@ -222,6 +222,16 @@
                         >
                             <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
                                 <li role="none">
+                                    <a href="${URL_PREFIX}/person/${userId}" class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-text-white hover:tw-bg-gray-500">
+                                        <div class="tw-text-xs">
+                                            <spring:message code="nav.user.title"/>
+                                        </div>
+                                        <span class="tw-text-sm tw-font-bold">
+                                            ${userNiceName}
+                                        </span>
+                                    </a>
+                                </li>
+                                <li role="none">
                                     <form:form action="/logout" method="POST" cssClass="tw-ml-auto">
                                         <button
                                             role="menuitem"
