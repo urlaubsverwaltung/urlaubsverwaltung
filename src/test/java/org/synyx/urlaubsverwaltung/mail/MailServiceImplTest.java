@@ -9,13 +9,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -23,8 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class MailServiceImplTest {
@@ -39,8 +34,6 @@ class MailServiceImplTest {
     private MailSenderService mailSenderService;
     @Mock
     private MailProperties mailProperties;
-    @Mock
-    private PersonService personService;
 
     @BeforeEach
     void setUp() {
@@ -50,7 +43,7 @@ class MailServiceImplTest {
         when(mailProperties.getSender()).thenReturn("no-reply@example.org");
         when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
 
-        sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties, personService);
+        sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties);
     }
 
     @Test
