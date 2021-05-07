@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +23,15 @@ class MailServiceImpl implements MailService {
     private final MailContentBuilder mailContentBuilder;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
-    private final PersonService personService;
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailContentBuilder mailContentBuilder, MailSenderService mailSenderService,
-                    MailProperties mailProperties, PersonService personService) {
+                    MailProperties mailProperties) {
 
         this.messageSource = messageSource;
         this.mailContentBuilder = mailContentBuilder;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
-        this.personService = personService;
     }
 
     @Override
