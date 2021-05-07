@@ -2,11 +2,7 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.hibernate.annotations.LazyCollection;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -17,15 +13,13 @@ import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 
+
 /**
  * This class describes a person.
  */
-@Entity
-public class Person {
+@Entity public class Person {
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    @Id @GeneratedValue private Integer id;
 
     private String username;
     private String password;
@@ -47,7 +41,8 @@ public class Person {
         /* OK */
     }
 
-    public Person(String username, String lastName, String firstName, String email) {
+    public Person(String username, String lastName, String firstName,
+        String email) {
         this.username = username;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -107,6 +102,7 @@ public class Person {
     }
 
     public Collection<Role> getPermissions() {
+
         if (permissions == null) {
             return emptyList();
         }
@@ -115,8 +111,8 @@ public class Person {
     }
 
     public boolean hasRole(final Role role) {
-        return getPermissions().stream()
-            .anyMatch(permission -> permission.equals(role));
+        return getPermissions().stream().anyMatch(permission ->
+                    permission.equals(role));
     }
 
     public boolean isPrivileged() {
@@ -125,6 +121,7 @@ public class Person {
     }
 
     public Collection<MailNotification> getNotifications() {
+
         if (notifications == null) {
             notifications = emptyList();
         }
@@ -137,22 +134,25 @@ public class Person {
     }
 
     public boolean hasNotificationType(final MailNotification notification) {
-        return getNotifications().stream()
-            .anyMatch(element -> element.equals(notification));
+        return getNotifications().stream().anyMatch(element ->
+                    element.equals(notification));
     }
 
     public String getNiceName() {
 
         final StringBuilder builder = new StringBuilder();
+
         if (hasText(this.firstName)) {
             builder.append(this.firstName);
             builder.append(" ");
         }
+
         if (hasText(this.lastName)) {
             builder.append(this.lastName);
         }
 
         final String niceName = builder.toString().trim();
+
         if (!hasText(niceName)) {
             return "---";
         }
@@ -161,6 +161,7 @@ public class Person {
     }
 
     public String getGravatarURL() {
+
         if (hasText(this.email)) {
             return GravatarUtil.createImgURL(this.email);
         }
@@ -168,25 +169,26 @@ public class Person {
         return "";
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return "Person{id='" + getId() + "'}";
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+
+        if ((o == null) || (getClass() != o.getClass())) {
             return false;
         }
+
         final Person that = (Person) o;
-        return null != this.getId() && Objects.equals(id, that.id);
+
+        return (null != this.getId()) && Objects.equals(id, that.id);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hash(id);
     }
 }

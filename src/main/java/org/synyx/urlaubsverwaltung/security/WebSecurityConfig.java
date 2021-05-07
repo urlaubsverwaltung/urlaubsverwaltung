@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
@@ -26,8 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final boolean isOauth2Enabled;
     private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
 
-    public WebSecurityConfig(SecurityConfigurationProperties properties) {
-        isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+    public WebSecurityConfig(@Value("${uv.security.auth}") String authProvider) {
+        isOauth2Enabled = "oidc".equalsIgnoreCase(authProvider);
     }
 
     @Override
