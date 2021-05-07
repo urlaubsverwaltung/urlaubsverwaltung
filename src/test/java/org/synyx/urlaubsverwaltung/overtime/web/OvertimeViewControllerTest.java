@@ -92,7 +92,9 @@ class OvertimeViewControllerTest {
     @Test
     void postUpdateOvertimeShowsFormIfValidationFails() throws Exception {
 
-        final Overtime overtime = new Overtime(new Person(), LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        Person person = new Person();
+        person.setId(1);
+        final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(overtime));
 
         final Person signedInPerson = new Person();
@@ -106,7 +108,9 @@ class OvertimeViewControllerTest {
             return null;
         }).when(validator).validate(any(), any());
 
-        perform(post("/web/overtime/5"))
+
+
+        perform(post("/web/overtime/5").param("person.id", "1"))
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
             .andExpect(view().name("overtime/overtime_form"));
     }
@@ -322,11 +326,14 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(OFFICE));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final List<Person> activePersons = List.of(signedInPerson, new Person());
+        when(personService.getActivePersons()).thenReturn(activePersons);
 
         final ResultActions resultActions = perform(get("/web/overtime/new"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("overtime/overtime_form"));
         resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
+        resultActions.andExpect(model().attribute("persons", is(activePersons)));
     }
 
     @Test
@@ -580,6 +587,31 @@ class OvertimeViewControllerTest {
         resultActions.andExpect(status().is3xxRedirection());
         resultActions.andExpect(view().name("redirect:/web/overtime/2"));
         resultActions.andExpect(flash().attribute("overtimeRecord", "EDITED"));
+    }
+
+    @Test
+    void editOvertimeRecordAsOfficeChangingOvertimePerson() {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(List.of(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        overtime.setId(2);
+        when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
+
+        final String otherPersonId = "5";
+        assertThatThrownBy(() -> perform(
+            post("/web/overtime/2")
+                .param("id", "2")
+                .param("person.id", otherPersonId)
+                .param("startDate", "02.07.2019")
+                .param("endDate", "02.07.2019")
+                .param("hours", "8")
+                .param("comment", "To much work")
+        )).isInstanceOf(NestedServletException.class);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

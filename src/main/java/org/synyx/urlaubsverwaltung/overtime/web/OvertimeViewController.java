@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -44,6 +45,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 public class OvertimeViewController {
 
     private static final String PERSON_ATTRIBUTE = "person";
+    private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME = "overtime";
     private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
@@ -159,6 +161,9 @@ public class OvertimeViewController {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
+        } else {
+            final List<Person> persons = personService.getActivePersons();
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
         }
 
         model.addAttribute(OVERTIME, new OvertimeForm(person));
@@ -228,7 +233,7 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
+        if ((!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) || !person.equals(overtimeForm.getPerson())) {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));
