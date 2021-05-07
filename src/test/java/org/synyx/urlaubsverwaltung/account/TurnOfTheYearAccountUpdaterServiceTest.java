@@ -6,8 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.mail.LegacyMail;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.mail.Recipient;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -21,10 +22,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
@@ -72,6 +70,9 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
             .thenReturn(newAccount);
 
+        Recipient officeRecipient = new Recipient("a@b.de", "Olga Office");
+        when(personService.findRecipients(NOTIFICATION_OFFICE)).thenReturn(List.of(officeRecipient));
+
         sut.updateAccountsForNextPeriod();
 
         verify(personService).getActivePersons();
@@ -88,10 +89,10 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
 
-        final ArgumentCaptor<LegacyMail> argument = ArgumentCaptor.forClass(LegacyMail.class);
-        verify(mailService, times(2)).legacySend(argument.capture());
-        final List<LegacyMail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getRecipients()).hasValue(List.of(officeRecipient));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("updated_accounts");
         assertThat(mails.get(1).isSendToTechnicalMail()).isTrue();

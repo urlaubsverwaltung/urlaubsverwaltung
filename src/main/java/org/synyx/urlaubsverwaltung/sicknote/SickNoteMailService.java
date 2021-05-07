@@ -3,8 +3,10 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.mail.LegacyMail;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.mail.Recipient;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.HashMap;
@@ -23,12 +25,14 @@ public class SickNoteMailService {
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
     private final MailService mailService;
+    private final PersonService personService;
 
     @Autowired
-    public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
+    public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService, PersonService personService) {
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
+        this.personService = personService;
     }
 
     /**
@@ -50,19 +54,19 @@ public class SickNoteMailService {
             model.put("maximumSickPayDays", maximumSickPayDays);
             model.put("sickNote", sickNote);
 
-            final LegacyMail toSickNotePerson = LegacyMail.builder()
-                .withRecipient(sickNote.getPerson())
+            final Mail toSickNotePerson = Mail.builder()
+                .withRecipient(new Recipient(sickNote.getPerson().getEmail(), sickNote.getPerson().getNiceName()))
                 .withSubject(subjectMessageKey)
                 .withTemplate(templateName, model)
                 .build();
-            mailService.legacySend(toSickNotePerson);
+            mailService.send(toSickNotePerson);
 
-            final LegacyMail toOffice = LegacyMail.builder()
-                .withRecipient(NOTIFICATION_OFFICE)
+            final Mail toOffice = Mail.builder()
+                .withRecipient(personService.findRecipients(NOTIFICATION_OFFICE))
                 .withSubject(subjectMessageKey)
                 .withTemplate(templateName, model)
                 .build();
-            mailService.legacySend(toOffice);
+            mailService.send(toOffice);
         }
     }
 }
