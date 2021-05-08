@@ -128,14 +128,16 @@
         <div class="print:tw-hidden">
             <uv:section-heading>
                 <jsp:attribute name="actions">
-                    <a class="icon-link tw-text-base tw-flex tw-items-center" aria-hidden="true" href="${URL_PREFIX}/absences">
-                        <icon:calendar className="tw-w-5 tw-h-5" />
-                        &nbsp;<spring:message code="overview.absences.overview.link.text" />
-                    </a>
-                    <a class="icon-link tw-text-base tw-flex tw-items-center tw-ml-2" aria-hidden="true" href="${URL_PREFIX}/calendars/share">
-                        <icon:share className="tw-w-5 tw-h-5" />
-                        &nbsp;<spring:message code="overview.calendar.share.link.text" />
-                    </a>
+                    <div class="tw-flex tw-flex-wrap tw-justify-end tw-space-y-2 sm:tw-space-y-0 sm:tw-space-x-2">
+                        <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0" aria-hidden="true" href="${URL_PREFIX}/absences">
+                            <icon:calendar className="tw-w-5 tw-h-5" />
+                            &nbsp;<spring:message code="overview.absences.overview.link.text" />
+                        </a>
+                        <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row" aria-hidden="true" href="${URL_PREFIX}/calendars/share">
+                            <icon:share className="tw-w-5 tw-h-5" />
+                            &nbsp;<spring:message code="overview.calendar.share.link.text" />
+                        </a>
+                    </div>
                 </jsp:attribute>
                 <jsp:body>
                     <h2 id="calendar">
