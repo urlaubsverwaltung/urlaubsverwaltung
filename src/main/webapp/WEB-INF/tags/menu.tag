@@ -222,7 +222,7 @@
                         >
                             <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
                                 <li role="none" class="tw-mb-4">
-                                    <a href="${URL_PREFIX}/person/${userId}" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
+                                    <a href="${URL_PREFIX}/person/${userId}" role="menuitem" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
                                         <span class="tw-flex tw-items-center">
                                             <img
                                                 src="<c:out value='${menuGravatarUrl}?d=mm&s=128'/>"
