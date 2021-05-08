@@ -95,6 +95,20 @@
         right: 13px;
         content: "";
     }
+
+    .nav-popup-menu-inner {
+        background-color: rgba(31, 41, 55, 0.95);
+    }
+
+    @supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
+        .nav-popup-menu-inner {
+            --uv-backdrop-blur: 12px;
+            --uv-backdrop-saturate: 180%;
+            -webkit-backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
+            backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
+            background-color: rgba(31, 41, 55, 0.85);
+        }
+    }
 </style>
 
 <div class="navigation">
@@ -132,10 +146,7 @@
                                 aria-hidden="true"
                                 data-test-id="add-something-new-popupmenu"
                             >
-                                <div
-                                    class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
-                                    style="backdrop-filter: blur(2px)"
-                                >
+                                <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner">
                                     <ul
                                         class="tw-list-none tw-m-0 tw-p-0"
                                         role="menu"
@@ -144,7 +155,7 @@
                                             <a
                                                 href="${URL_PREFIX}/application/new"
                                                 role="menuitem"
-                                                class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
                                                 data-test-id="quick-add-new-application"
                                             >
                                                 <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
@@ -160,7 +171,7 @@
                                                 <a
                                                     href="${URL_PREFIX}/sicknote/new"
                                                     role="menuitem"
-                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
                                                     data-test-id="quick-add-new-sicknote"
                                                 >
                                                     <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
@@ -177,7 +188,7 @@
                                                 <a
                                                     href="${URL_PREFIX}/overtime/new"
                                                     role="menuitem"
-                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
                                                     data-test-id="quick-add-new-overtime"
                                                 >
                                                     <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
@@ -232,10 +243,9 @@
                         data-test-id="avatar-popupmenu"
                     >
                         <div
-                            class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
-                            style="backdrop-filter: blur(2px); max-width: 78%"
+                            class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner"
+                            style="max-width: 78%"
                         >
-<%--                            <span style="border: 8px solid transparent; border-bottom: 8px solid #3a424e; position: absolute; top: -16px; right: 12px;"></span>--%>
                             <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
                                 <li role="none" class="tw-mb-4">
                                     <a href="${URL_PREFIX}/person/${userId}/overview" role="menuitem" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
@@ -261,7 +271,7 @@
                                         <button
                                             role="menuitem"
                                             type="submit"
-                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-500"
+                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
                                             data-test-id="logout"
                                         >
                                             <span class="tw-flex tw-items-center">
