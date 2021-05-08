@@ -218,30 +218,41 @@
                     >
                         <div
                             class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
-                            style="backdrop-filter: blur(2px)"
+                            style="backdrop-filter: blur(2px); max-width: 78%"
                         >
-                            <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
-                                <li role="none">
-                                    <a href="${URL_PREFIX}/person/${userId}" class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-text-white hover:tw-bg-gray-500">
-                                        <div class="tw-text-xs">
-                                            <spring:message code="nav.user.title"/>
-                                        </div>
-                                        <span class="tw-text-sm tw-font-bold">
-                                            ${userNiceName}
+                            <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
+                                <li role="none" class="tw-mb-4">
+                                    <a href="${URL_PREFIX}/person/${userId}" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
+                                        <span class="tw-flex tw-items-center">
+                                            <img
+                                                src="<c:out value='${menuGravatarUrl}?d=mm&s=128'/>"
+                                                alt=""
+                                                class="gravatar tw-rounded-full"
+                                                width="64px"
+                                                height="64px"
+                                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                            />
+                                            <span class="tw-ml-6 tw-flex-1 tw-flex tw-flex-col tw-font-bold">
+                                                <span class="tw-sr-only"><spring:message code="nav.user.title" /></span>
+                                                <span>${userFirstName}</span>
+                                                <span>${userLastName}</span>
+                                            </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li role="none">
-                                    <form:form action="/logout" method="POST" cssClass="tw-ml-auto">
+                                <li role="none" class="tw-mb-1">
+                                    <form:form action="/logout" method="POST" cssClass="tw-ml-auto tw-w-full">
                                         <button
                                             role="menuitem"
                                             type="submit"
-                                            class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-500"
+                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-500"
                                             data-test-id="logout"
                                         >
                                             <span class="tw-flex tw-items-center">
-                                                <icon:logout className="tw-w-5 tw-h-5" />
-                                                <span class="tw-ml-2">
+                                                <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                                    <icon:logout className="tw-w-6 tw-h-6" />
+                                                </span>
+                                                <span class="tw-ml-4 tw-text-base">
                                                     <spring:message code="nav.signout.title"/>
                                                 </span>
                                             </span>

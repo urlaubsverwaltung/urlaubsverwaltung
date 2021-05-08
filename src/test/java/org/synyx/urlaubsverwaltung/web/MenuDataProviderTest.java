@@ -59,7 +59,8 @@ class MenuDataProviderTest {
         sut.postHandle(null, null, null, modelAndView);
         assertThat(modelAndView.getModelMap().get("menuGravatarUrl")).isEqualTo("https://gravatar.com/avatar/f651d5c5f6f68c5b13f2846da4ea544b");
         assertThat(modelAndView.getModelMap().get("userId")).isEqualTo(10);
-        assertThat(modelAndView.getModelMap().get("userNiceName")).isEqualTo("Marie Reichenbach");
+        assertThat(modelAndView.getModelMap().get("userFirstName")).isEqualTo("Marie");
+        assertThat(modelAndView.getModelMap().get("userLastName")).isEqualTo("Reichenbach");
     }
 
     @Test
