@@ -86,6 +86,15 @@
         bottom: 6.5px;
         background-color: transparent !important;
     }
+
+    .nav-popup-menu::before {
+        border: 8px solid transparent;
+        border-bottom: 8px solid #3a424e;
+        position: absolute;
+        top: -15px;
+        right: 13px;
+        content: "";
+    }
 </style>
 
 <div class="navigation">
@@ -112,14 +121,14 @@
                                 aria-haspopup="true"
                                 data-test-id="add-something-new"
                             >
-                                <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                                <icon:plus className="tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.button.text" />
                                 </span>
                             </button>
                             <div
                                 id="add-something-new-menu"
-                                class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                                class="nav-popup-menu tw-w-screen tw-absolute tw-right-0 tw-top-full tw-mt-1 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                                 aria-hidden="true"
                                 data-test-id="add-something-new-popupmenu"
                             >
@@ -218,7 +227,7 @@
                     </a>
                     <div
                         id="avatar-menu"
-                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                        class="nav-popup-menu tw-w-screen tw-absolute tw--right-2 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
@@ -226,6 +235,7 @@
                             class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
                             style="backdrop-filter: blur(2px); max-width: 78%"
                         >
+<%--                            <span style="border: 8px solid transparent; border-bottom: 8px solid #3a424e; position: absolute; top: -16px; right: 12px;"></span>--%>
                             <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
                                 <li role="none" class="tw-mb-4">
                                     <a href="${URL_PREFIX}/person/${userId}/overview" role="menuitem" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
