@@ -86,6 +86,29 @@
         bottom: 6.5px;
         background-color: transparent !important;
     }
+
+    .nav-popup-menu::before {
+        border: 8px solid transparent;
+        border-bottom: 8px solid #3a424e;
+        position: absolute;
+        top: -15px;
+        right: 13px;
+        content: "";
+    }
+
+    .nav-popup-menu-inner {
+        background-color: rgba(31, 41, 55, 0.95);
+    }
+
+    @supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
+        .nav-popup-menu-inner {
+            --uv-backdrop-blur: 12px;
+            --uv-backdrop-saturate: 180%;
+            -webkit-backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
+            backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
+            background-color: rgba(31, 41, 55, 0.85);
+        }
+    }
 </style>
 
 <div class="navigation">
@@ -112,21 +135,18 @@
                                 aria-haspopup="true"
                                 data-test-id="add-something-new"
                             >
-                                <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                                <icon:plus className="tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.button.text" />
                                 </span>
                             </button>
                             <div
                                 id="add-something-new-menu"
-                                class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                                class="nav-popup-menu tw-w-screen tw-absolute tw-right-0 tw-top-full tw-mt-1 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                                 aria-hidden="true"
                                 data-test-id="add-something-new-popupmenu"
                             >
-                                <div
-                                    class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
-                                    style="backdrop-filter: blur(2px)"
-                                >
+                                <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner">
                                     <ul
                                         class="tw-list-none tw-m-0 tw-p-0"
                                         role="menu"
@@ -135,10 +155,12 @@
                                             <a
                                                 href="${URL_PREFIX}/application/new"
                                                 role="menuitem"
-                                                class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
                                                 data-test-id="quick-add-new-application"
                                             >
-                                                <icon:document-text className="tw-h-5 tw-w-5" />
+                                                <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                    <icon:document-text className="tw-h-5 tw-w-5" />
+                                                </span>
                                                 <span class="tw-ml-3">
                                                     <spring:message code="nav.add.vacation" />
                                                 </span>
@@ -149,10 +171,12 @@
                                                 <a
                                                     href="${URL_PREFIX}/sicknote/new"
                                                     role="menuitem"
-                                                    class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
                                                     data-test-id="quick-add-new-sicknote"
                                                 >
-                                                    <icon:medkit className="tw-h-5 tw-w-5" />
+                                                    <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <icon:medkit className="tw-h-5 tw-w-5" />
+                                                    </span>
                                                     <span class="tw-ml-3">
                                                         <spring:message code="nav.add.sicknote" />
                                                     </span>
@@ -164,10 +188,12 @@
                                                 <a
                                                     href="${URL_PREFIX}/overtime/new"
                                                     role="menuitem"
-                                                    class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-500"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
                                                     data-test-id="quick-add-new-overtime"
                                                 >
-                                                    <icon:clock className="tw-h-5 tw-w-5" />
+                                                    <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <icon:clock className="tw-h-5 tw-w-5" />
+                                                    </span>
                                                     <span class="tw-ml-3">
                                                         <spring:message code="nav.add.overtime" />
                                                     </span>
@@ -212,26 +238,47 @@
                     </a>
                     <div
                         id="avatar-menu"
-                        class="tw-w-screen tw-absolute tw-right-0 tw-top-full tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                        class="nav-popup-menu tw-w-screen tw-absolute tw--right-2 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
                         <div
-                            class="tw-inline-block tw-py-1 tw-bg-gray-800 tw-bg-opacity-90 tw-rounded"
-                            style="backdrop-filter: blur(2px)"
+                            class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner"
+                            style="max-width: 78%"
                         >
-                            <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
-                                <li role="none">
-                                    <form:form action="/logout" method="POST" cssClass="tw-ml-auto">
+                            <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
+                                <li role="none" class="tw-mb-4">
+                                    <a href="${URL_PREFIX}/person/${userId}/overview" role="menuitem" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
+                                        <span class="tw-flex tw-items-center">
+                                            <img
+                                                src="<c:out value='${menuGravatarUrl}?d=mm&s=128'/>"
+                                                alt=""
+                                                class="gravatar tw-rounded-full"
+                                                width="64px"
+                                                height="64px"
+                                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                            />
+                                            <span class="tw-ml-6 tw-flex-1 tw-flex tw-flex-col tw-font-bold">
+                                                <span class="tw-sr-only"><spring:message code="nav.user.title" /></span>
+                                                <span>${userFirstName}</span>
+                                                <span>${userLastName}</span>
+                                            </span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li role="none" class="tw-mb-1">
+                                    <form:form action="/logout" method="POST" cssClass="tw-ml-auto tw-w-full">
                                         <button
                                             role="menuitem"
                                             type="submit"
-                                            class="tw-block tw-py-2 tw-px-3 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-500"
+                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
                                             data-test-id="logout"
                                         >
                                             <span class="tw-flex tw-items-center">
-                                                <icon:logout className="tw-w-5 tw-h-5" />
-                                                <span class="tw-ml-2">
+                                                <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                                    <icon:logout className="tw-w-6 tw-h-6" />
+                                                </span>
+                                                <span class="tw-ml-4 tw-text-base">
                                                     <spring:message code="nav.signout.title"/>
                                                 </span>
                                             </span>
