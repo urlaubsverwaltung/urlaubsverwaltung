@@ -64,9 +64,6 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="${true}"/>
-</sec:authorize>
 <c:set var="DATE_PATTERN">
     <spring:message code="pattern.date"/>
 </c:set>
@@ -124,25 +121,40 @@
                         </uv:section-heading>
 
                         <div class="row">
-                            <c:if test="${IS_OFFICE}">
+                            <c:if test="${isOffice}">
                                 <div class="col-md-8">
-                                        <%-- office applies for a user --%>
-                                    <div class="form-group">
-                                        <label class="control-label col-md-3">
-                                            <spring:message code="application.data.person"/>
-                                        </label>
-                                        <div class="col-md-9">
-                                            <uv:select id="person-select" name=""
-                                                       onchange="window.location.href=this.options[this.selectedIndex].value">
-                                                <c:forEach items="${persons}" var="p">
-                                                    <option
-                                                        value="${URL_PREFIX}/application/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
-                                                        <c:out value="${p.niceName}"/>
-                                                    </option>
-                                                </c:forEach>
-                                            </uv:select>
+                                <c:choose>
+                                    <c:when test="${application.id == null}">
+                                            <%-- office applies for a user --%>
+                                            <div class="form-group is-required">
+                                                <label class="control-label col-md-3">
+                                                    <spring:message code="application.data.person"/>
+                                                </label>
+                                                <div class="col-md-9">
+                                                    <uv:select id="person-select" name=""
+                                                               onchange="window.location.href=this.options[this.selectedIndex].value">
+                                                        <c:forEach items="${persons}" var="p">
+                                                            <option
+                                                                value="${URL_PREFIX}/application/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
+                                                                <c:out value="${p.niceName}"/>
+                                                            </option>
+                                                        </c:forEach>
+                                                    </uv:select>
+                                                </div>
+                                            </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <%-- office can not edit user --%>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">
+                                                <spring:message code="application.data.person"/>
+                                            </label>
+                                            <div class="col-md-9">
+                                                <p class="form-control-static"><c:out value="${application.person.niceName}"/></p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </c:otherwise>
+                                </c:choose>
                                 </div>
                             </c:if>
                         </div>

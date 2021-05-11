@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -38,12 +39,11 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
-
-<uv:menu/>
-
 <c:set var="DATE_PATTERN">
     <spring:message code="pattern.date"/>
 </c:set>
+
+<uv:menu/>
 
 <div class="content">
     <div class="container">
@@ -92,15 +92,37 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
-                        <c:if test="${signedInUser.id != overtime.person.id}">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">
-                                    <spring:message code="overtime.data.person"/>:
-                                </label>
-                                <div class="col-md-9">
-                                    <p class="form-control-static"><c:out value="${overtime.person.niceName}"/></p>
-                                </div>
-                            </div><%-- End of person form group --%>
+                        <c:if test="${isOffice}">
+                            <c:choose>
+                                <c:when test="${overtime.id == null}">
+                                    <div class="form-group is-required">
+                                        <label class="control-label col-md-3" for="person-select">
+                                            <spring:message code="overtime.data.person"/>
+                                        </label>
+                                        <div class="col-md-9">
+                                            <uv:select id="person-select" name=""
+                                                       onchange="window.location.href=this.options[this.selectedIndex].value">
+                                                <c:forEach items="${persons}" var="p">
+                                                    <option
+                                                        value="${URL_PREFIX}/overtime/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
+                                                        <c:out value="${p.niceName}"/>
+                                                    </option>
+                                                </c:forEach>
+                                            </uv:select>
+                                        </div>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">
+                                            <spring:message code="overtime.data.person"/>:
+                                        </label>
+                                        <div class="col-md-9">
+                                            <p class="form-control-static"><c:out value="${overtime.person.niceName}"/></p>
+                                        </div>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
                         </c:if>
                         <div class="form-group is-required">
                             <label class="control-label col-md-3" for="startDate">

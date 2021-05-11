@@ -73,6 +73,7 @@ public class ApplicationForLeaveFormViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
     private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
+    private static final String IS_OFFICE_ATTRIBUTE = "isOffice";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
@@ -282,15 +283,15 @@ public class ApplicationForLeaveFormViewController {
     }
 
     private String editApplicationForm(ApplicationForLeaveForm applicationForLeaveForm, Model model) {
-        final Person person = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
-        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInUser);
         if (holidaysAccount.isPresent()) {
-            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+            prepareApplicationForLeaveForm(signedInUser, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
-                    .and(not(isEqual(person)))
+                    .and(not(isEqual(signedInUser)))
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
@@ -364,6 +365,7 @@ public class ApplicationForLeaveFormViewController {
         final List<Person> persons = personService.getActivePersons();
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        model.addAttribute(IS_OFFICE_ATTRIBUTE, personService.getSignedInUser().hasRole(OFFICE));
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);

@@ -414,6 +414,10 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
                 "with id %d because the status is %s and not waiting.", oldApplication.getId(), oldApplication.getStatus()));
         }
 
+        if (!oldApplication.getPerson().equals(editedApplication.getPerson())) {
+            throw new EditApplicationForLeaveNotAllowedException("Cannot change person of exiting application during edit.");
+        }
+
         editedApplication.setStatus(WAITING);
         editedApplication.setEditedDate(LocalDate.now(clock));
         final Application savedEditedApplication = applicationService.save(editedApplication);
