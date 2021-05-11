@@ -246,6 +246,12 @@
                     </caption>
                     <tbody>
                     <tr>
+                        <td class='vacationOverview-legend-colorbox vacationOverview-day-today'></td>
+                        <td class='vacationOverview-legend-text'>
+                            <spring:message code="absences.overview.today"/>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class='vacationOverview-legend-colorbox vacationOverview-day-weekend'></td>
                         <td class='vacationOverview-legend-text'>
                             <spring:message code="absences.overview.weekend"/>
