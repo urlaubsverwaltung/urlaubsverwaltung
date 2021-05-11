@@ -39,9 +39,6 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="${true}"/>
-</sec:authorize>
 <c:set var="DATE_PATTERN">
     <spring:message code="pattern.date"/>
 </c:set>
@@ -95,7 +92,7 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
-                        <c:if test="${IS_OFFICE}">
+                        <c:if test="${isOffice}">
                             <c:choose>
                                 <c:when test="${overtime.id == null}">
                                     <div class="form-group is-required">

@@ -64,9 +64,6 @@
 <body>
 
 <spring:url var="URL_PREFIX" value="/web"/>
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="${true}"/>
-</sec:authorize>
 <c:set var="DATE_PATTERN">
     <spring:message code="pattern.date"/>
 </c:set>
@@ -124,7 +121,7 @@
                         </uv:section-heading>
 
                         <div class="row">
-                            <c:if test="${IS_OFFICE}">
+                            <c:if test="${isOffice}">
                                 <div class="col-md-8">
                                 <c:choose>
                                     <c:when test="${application.id == null}">

@@ -48,6 +48,7 @@ public class OvertimeViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME = "overtime";
+    private static final String IS_OFFICE_ATTRIBUTE = "isOffice";
     private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
 
     private final OvertimeService overtimeService;
@@ -163,14 +164,8 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        if (signedInUser.hasRole(OFFICE)) {
-            final List<Person> persons = personService.getActivePersons();
-            model.addAttribute(PERSONS_ATTRIBUTE, persons);
-        }
-
-        model.addAttribute(OVERTIME, new OvertimeForm(person));
-        model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
+        perpareModelForCreation(model, signedInUser, person, overtimeForm);
 
         return OVERTIME_OVERTIME_FORM;
     }
@@ -192,9 +187,8 @@ public class OvertimeViewController {
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute(OVERTIME, overtimeForm);
-            model.addAttribute(PERSON_ATTRIBUTE, person);
-            model.addAttribute(SIGNED_IN_USER, signedInUser);
+            perpareModelForCreation(model, signedInUser, person, overtimeForm);
+
             return OVERTIME_OVERTIME_FORM;
         }
 
@@ -219,9 +213,7 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute(OVERTIME, new OvertimeForm(overtime));
-        model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
+        prepareModelForEdit(model, signedInUser, person, new OvertimeForm(overtime));
 
         return OVERTIME_OVERTIME_FORM;
     }
@@ -244,8 +236,8 @@ public class OvertimeViewController {
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
-            model.addAttribute(OVERTIME, overtimeForm);
-            model.addAttribute(SIGNED_IN_USER, signedInUser);
+            prepareModelForEdit(model, signedInUser, person, overtimeForm);
+
             return OVERTIME_OVERTIME_FORM;
         }
 
@@ -254,5 +246,21 @@ public class OvertimeViewController {
 
         redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;
+    }
+
+    private void perpareModelForCreation(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
+        if (signedInUser.hasRole(OFFICE)) {
+            final List<Person> persons = personService.getActivePersons();
+            model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        }
+
+        prepareModelForEdit(model, signedInUser, person, overtimeForm);
+    }
+
+    private void prepareModelForEdit(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
+        model.addAttribute(OVERTIME, overtimeForm);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
+        model.addAttribute(IS_OFFICE_ATTRIBUTE, signedInUser.hasRole(OFFICE));
     }
 }

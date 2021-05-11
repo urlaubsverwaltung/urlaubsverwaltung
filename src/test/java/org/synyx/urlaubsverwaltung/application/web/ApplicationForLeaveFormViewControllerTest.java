@@ -373,6 +373,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void postNewApplicationFormShowFormIfValidationFails() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
+        when(personService.getSignedInUser()).thenReturn(new Person());
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -965,6 +966,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setId(applicationId);
         application.setStatus(WAITING);
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(personService.getSignedInUser()).thenReturn(new Person());
 
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
