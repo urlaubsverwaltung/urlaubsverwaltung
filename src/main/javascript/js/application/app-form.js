@@ -89,5 +89,9 @@ $(document).ready(async function () {
 });
 
 function compose(...functions) {
-  return functions.reduce((a, b) => (...arguments_) => a(b(...arguments_)));
+  return functions.reduce(
+    (a, b) =>
+      (...arguments_) =>
+        a(b(...arguments_)),
+  );
 }
