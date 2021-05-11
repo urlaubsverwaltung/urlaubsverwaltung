@@ -1,21 +1,17 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 ESC_SEQ="\x1b["
 COL_RESET=$ESC_SEQ"39;49;00m"
-COL_RED=$ESC_SEQ"31;01m"
-COL_GREEN=$ESC_SEQ"32;01m"
-COL_YELLOW=$ESC_SEQ"33;01m"
-COL_BLUE=$ESC_SEQ"34;01m"
 COL_MAGENTA=$ESC_SEQ"35;01m"
-COL_CYAN=$ESC_SEQ"36;01m"
 
 packageJsonUpdated=$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep package.json)
 
 if [ "$packageJsonUpdated" ]; then
-  printf "$COL_MAGENTA"
-  printf "package.json has been touched\n"
-  printf "Please wait a moment. I will update frontend modules for you 😽\n"
-  printf "$COL_RESET"
 
-  ./mvnw frontend:install-node-and-npm frontend:npm@npm-install
+    printf "%b" "$COL_MAGENTA"
+    printf "package.json has been touched\n"
+    printf "Please wait a moment. I will update frontend modules for you 😽\n"
+    printf "%b" "$COL_RESET"
+
+    ./mvnw frontend:install-node-and-npm frontend:npm@npm-install
 fi
