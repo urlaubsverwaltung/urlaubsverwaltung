@@ -165,7 +165,7 @@ public class OvertimeViewController {
         }
 
         final OvertimeForm overtimeForm = new OvertimeForm(person);
-        perpareModelForCreation(model, signedInUser, person, overtimeForm);
+        prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
         return OVERTIME_OVERTIME_FORM;
     }
@@ -187,7 +187,7 @@ public class OvertimeViewController {
         validator.validate(overtimeForm, errors);
 
         if (errors.hasErrors()) {
-            perpareModelForCreation(model, signedInUser, person, overtimeForm);
+            prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
             return OVERTIME_OVERTIME_FORM;
         }
@@ -248,7 +248,7 @@ public class OvertimeViewController {
         return "redirect:/web/overtime/" + id;
     }
 
-    private void perpareModelForCreation(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
+    private void prepareModelForCreation(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
         if (signedInUser.hasRole(OFFICE)) {
             final List<Person> persons = personService.getActivePersons();
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
