@@ -590,7 +590,7 @@ class OvertimeViewControllerTest {
     }
 
     @Test
-    void editOvertimeRecordAsOfficeChangingOvertimePerson() {
+    void updateOvertimeRecordAsOfficeChangingOvertimePerson() {
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(OFFICE));

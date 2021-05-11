@@ -161,7 +161,9 @@ public class OvertimeViewController {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
-        } else {
+        }
+
+        if (signedInUser.hasRole(OFFICE)) {
             final List<Person> persons = personService.getActivePersons();
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
         }
