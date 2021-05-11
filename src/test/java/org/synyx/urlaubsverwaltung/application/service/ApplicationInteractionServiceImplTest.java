@@ -10,13 +10,13 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -122,7 +122,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getApplicationDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), eq(comment), eq(applier));
+        verify(commentService).create(applicationForLeave, ApplicationCommentAction.APPLIED, comment, applier);
     }
 
     @Test
@@ -158,9 +158,9 @@ class ApplicationInteractionServiceImplTest {
 
         sut.apply(applicationForLeave, person, of("Foo"));
 
-        verify(applicationMailService).sendConfirmation(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService).sendConfirmation(applicationForLeave, applicationComment);
         verify(applicationMailService, never()).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService).sendNewApplicationNotification(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -181,8 +181,8 @@ class ApplicationInteractionServiceImplTest {
         sut.apply(applicationForLeave, applier, of("Foo"));
 
         verify(applicationMailService, never()).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), eq(applicationComment));
-        verify(applicationMailService).sendNewApplicationNotification(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService).sendAppliedForLeaveByOfficeNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService).sendNewApplicationNotification(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -314,7 +314,7 @@ class ApplicationInteractionServiceImplTest {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
 
         Optional<String> comment = of("Foo");
 
@@ -337,7 +337,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -361,7 +361,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -385,7 +385,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(person))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -410,7 +410,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -433,7 +433,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -457,7 +457,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStage), eq(person))).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -512,7 +512,7 @@ class ApplicationInteractionServiceImplTest {
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(secondStageAuthority))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, secondStageAuthority)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -529,7 +529,7 @@ class ApplicationInteractionServiceImplTest {
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        when(departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(secondStageAuthority))).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, secondStageAuthority)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -545,7 +545,7 @@ class ApplicationInteractionServiceImplTest {
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
-        when(departmentService.isDepartmentHeadOfPerson(eq(departmentHead), eq(departmentHead))).thenReturn(true);
+        when(departmentService.isDepartmentHeadOfPerson(departmentHead, departmentHead)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -634,7 +634,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getEditedDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.REJECTED), eq(comment), eq(boss));
+        verify(commentService).create(applicationForLeave, ApplicationCommentAction.REJECTED, comment, boss);
     }
 
     @Test
@@ -675,7 +675,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.reject(applicationForLeave, boss, optionalComment);
 
-        verify(applicationMailService).sendRejectedNotification(eq(applicationForLeave), eq(applicationComment));
+        verify(applicationMailService).sendRejectedNotification(applicationForLeave, applicationComment);
     }
 
     // CANCEL APPLICATION FOR LEAVE ------------------------------------------------------------------------------------
@@ -740,7 +740,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED);
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(CANCEL_REQUESTED), eq(comment), eq(person));
+        verify(commentService).create(applicationForLeave, CANCEL_REQUESTED, comment, person);
         verify(applicationMailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
@@ -794,7 +794,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(CANCELLED), eq(comment), eq(canceller));
+        verify(commentService).create(applicationForLeave, CANCELLED, comment, canceller);
         verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
@@ -822,7 +822,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.REVOKED), eq(comment), eq(canceller));
+        verify(commentService).create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, canceller);
         verify(applicationMailService).sendRevokedNotifications(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
@@ -850,7 +850,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(ApplicationCommentAction.REVOKED), eq(comment), eq(canceller));
+        verify(commentService).create(applicationForLeave, ApplicationCommentAction.REVOKED, comment, canceller);
         verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
     }
 
@@ -940,8 +940,8 @@ class ApplicationInteractionServiceImplTest {
         sut.createFromConvertedSickNote(applicationForLeave, creator);
 
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(CONVERTED), eq(Optional.empty()), eq(creator));
-        verify(applicationMailService).sendSickNoteConvertedToVacationNotification(eq(applicationForLeave));
+        verify(commentService).create(applicationForLeave, CONVERTED, Optional.empty(), creator);
+        verify(applicationMailService).sendSickNoteConvertedToVacationNotification(applicationForLeave);
 
         assertThat(applicationForLeave.getStatus()).isNotNull();
         assertThat(applicationForLeave.getApplier()).isNotNull();
@@ -995,8 +995,8 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getRemindDate()).isNotNull();
         assertThat(applicationForLeave.getRemindDate()).isEqualTo(LocalDate.now(UTC));
 
-        verify(applicationService).save(eq(applicationForLeave));
-        verify(applicationMailService).sendRemindBossNotification(eq(applicationForLeave));
+        verify(applicationService).save(applicationForLeave);
+        verify(applicationMailService).sendRemindBossNotification(applicationForLeave);
     }
 
     // REFER -----------------------------------------------------------------------------------------------------------
@@ -1226,7 +1226,8 @@ class ApplicationInteractionServiceImplTest {
 
         final Optional<String> comment = of("Comment");
 
-        assertThatThrownBy(() -> sut.edit(oldApplication, newApplication, new Person(), comment))
+        final Person otherPerson = new Person();
+        assertThatThrownBy(() -> sut.edit(oldApplication, newApplication, otherPerson, comment))
             .isInstanceOf(EditApplicationForLeaveNotAllowedException.class);
 
         verifyNoInteractions(applicationMailService);
@@ -1247,7 +1248,7 @@ class ApplicationInteractionServiceImplTest {
     private void assertApplicationForLeaveAndCommentAreSaved(Application applicationForLeave, ApplicationCommentAction action,
                                                              Optional<String> optionalComment, Person privilegedUser) {
         verify(applicationService).save(applicationForLeave);
-        verify(commentService).create(eq(applicationForLeave), eq(action), eq(optionalComment), eq(privilegedUser));
+        verify(commentService).create(applicationForLeave, action, optionalComment, privilegedUser);
     }
 
     private void assertNoCalendarSyncIsExecuted() {
