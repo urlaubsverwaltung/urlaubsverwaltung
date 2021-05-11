@@ -514,8 +514,7 @@ $(function () {
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
-      day:
-        '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>',
+      day: '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>',
     };
 
     // eslint-disable-next-line unicorn/consistent-function-scoping
