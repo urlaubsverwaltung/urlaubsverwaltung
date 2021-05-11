@@ -11,4 +11,4 @@ function copy() {
 
 copy "post-merge"
 
-echo "sucessfully installed git hooks for you 😽"
+echo "successfully installed git hooks for you 😽"
