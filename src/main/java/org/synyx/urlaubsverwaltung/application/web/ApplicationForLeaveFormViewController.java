@@ -282,15 +282,15 @@ public class ApplicationForLeaveFormViewController {
     }
 
     private String editApplicationForm(ApplicationForLeaveForm applicationForLeaveForm, Model model) {
-        final Person person = personService.getSignedInUser();
+        final Person signedInUser = personService.getSignedInUser();
 
-        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), person);
+        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInUser);
         if (holidaysAccount.isPresent()) {
-            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+            prepareApplicationForLeaveForm(signedInUser, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
-                    .and(not(isEqual(person)))
+                    .and(not(isEqual(signedInUser)))
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
