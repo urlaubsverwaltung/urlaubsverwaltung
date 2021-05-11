@@ -161,6 +161,8 @@ public class AbsenceOverviewViewController {
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(Integer year, DateRange dateRange, List<Person> personList, Locale locale, boolean isPrivilegedUser) {
 
+        final LocalDate today = LocalDate.now(clock);
+
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
         final HashMap<String, List<Application>> applicationsForLeaveByEmail = getApplicationForLeavesByEmail(dateRange, personList);
         final List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year == null ? Year.now(clock).getValue() : year);
@@ -172,7 +174,7 @@ public class AbsenceOverviewViewController {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
                 monthValue -> this.initializeAbsenceOverviewMonthDto(date, personList, locale));
 
-            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState);
+            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState, today);
             monthView.getDays().add(tableHeadDay);
 
             final Map<String, SickNote> sickNotesOnThisDayByEmail = sickNotesForDate(date, sickNotes,
@@ -292,7 +294,7 @@ public class AbsenceOverviewViewController {
         return selectedMonth;
     }
 
-    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, FederalState defaultFederalState) {
+    private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, FederalState defaultFederalState, LocalDate today) {
         final String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
         final DayLength publicHolidayDayLength = publicHolidayService.getAbsenceTypeOfDate(date, defaultFederalState);
 
@@ -301,7 +303,9 @@ public class AbsenceOverviewViewController {
             publicHolidayType = getPublicHolidayType(publicHolidayDayLength);
         }
 
-        return new AbsenceOverviewMonthDayDto(publicHolidayType, tableHeadDayText, isWeekend(date));
+        final boolean isToday = date.isEqual(today);
+
+        return new AbsenceOverviewMonthDayDto(publicHolidayType, tableHeadDayText, isWeekend(date), isToday);
     }
 
     private String getMonthText(LocalDate date, Locale locale) {
