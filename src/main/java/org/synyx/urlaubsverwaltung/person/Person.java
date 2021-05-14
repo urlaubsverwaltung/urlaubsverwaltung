@@ -2,7 +2,11 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.hibernate.annotations.LazyCollection;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -13,13 +17,15 @@ import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 
-
 /**
  * This class describes a person.
  */
-@Entity public class Person {
+@Entity
+public class Person {
 
-    @Id @GeneratedValue private Integer id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String username;
     private String password;
@@ -41,8 +47,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
         /* OK */
     }
 
-    public Person(String username, String lastName, String firstName,
-        String email) {
+    public Person(String username, String lastName, String firstName, String email) {
         this.username = username;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -102,7 +107,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
     }
 
     public Collection<Role> getPermissions() {
-
         if (permissions == null) {
             return emptyList();
         }
@@ -111,8 +115,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
     }
 
     public boolean hasRole(final Role role) {
-        return getPermissions().stream().anyMatch(permission ->
-                    permission.equals(role));
+        return getPermissions().stream()
+            .anyMatch(permission -> permission.equals(role));
     }
 
     public boolean isPrivileged() {
@@ -121,7 +125,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
     }
 
     public Collection<MailNotification> getNotifications() {
-
         if (notifications == null) {
             notifications = emptyList();
         }
@@ -134,25 +137,22 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
     }
 
     public boolean hasNotificationType(final MailNotification notification) {
-        return getNotifications().stream().anyMatch(element ->
-                    element.equals(notification));
+        return getNotifications().stream()
+            .anyMatch(element -> element.equals(notification));
     }
 
     public String getNiceName() {
 
         final StringBuilder builder = new StringBuilder();
-
         if (hasText(this.firstName)) {
             builder.append(this.firstName);
             builder.append(" ");
         }
-
         if (hasText(this.lastName)) {
             builder.append(this.lastName);
         }
 
         final String niceName = builder.toString().trim();
-
         if (!hasText(niceName)) {
             return "---";
         }
@@ -161,7 +161,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
     }
 
     public String getGravatarURL() {
-
         if (hasText(this.email)) {
             return GravatarUtil.createImgURL(this.email);
         }
@@ -169,26 +168,25 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
         return "";
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Person{id='" + getId() + "'}";
     }
 
-    @Override public boolean equals(Object o) {
-
+    @Override
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-
-        if ((o == null) || (getClass() != o.getClass())) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         final Person that = (Person) o;
-
-        return (null != this.getId()) && Objects.equals(id, that.id);
+        return null != this.getId() && Objects.equals(id, that.id);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hash(id);
     }
 }
