@@ -158,6 +158,7 @@
                                                 ${(day.type eq 'publicHolidayFull') ? ' vacationOverview-day-public-holiday' : ''}
                                                 ${(day.type eq 'publicHolidayMorning') ? ' vacationOverview-day-public-holiday-half-day-morning-headline' : ''}
                                                 ${(day.type eq 'publicHolidayNoon') ? ' vacationOverview-day-public-holiday-half-day-noon-headline' : ''}"
+                                        style="${day.today ? '--vacation-overview-rows: '.concat(1 + month.persons.size()) : ''}"
                                     >
                                         <c:out value="${day.dayOfMonth}"/>
                                     </th>
