@@ -19,7 +19,7 @@ th.vacationOverview-day-today::before {
 }
 th.vacationOverview-day-today::after {
   content: "";
-  @apply tw-border-3;
+  border-width: 3px;
   @apply tw-border-gray-500;
   @apply tw-border-opacity-40;
   position: absolute;
