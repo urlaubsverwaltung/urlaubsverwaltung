@@ -7,6 +7,16 @@ th.vacationOverview-day-today {
   --vacation-overview-rows: 1;
   position: relative;
 }
+th.vacationOverview-day-today::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  right: -1px;
+  @apply tw-border;
+  @apply tw-border-white;
+}
 th.vacationOverview-day-today::after {
   content: "";
   @apply tw-border-3;
