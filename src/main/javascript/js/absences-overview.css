@@ -3,6 +3,37 @@
   color: #6f6f6f;
 }
 
+.vacationOverview-day-today-legend {
+  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.5);
+}
+
+th.vacationOverview-day-today {
+  --vacation-overview-rows: 1;
+  position: relative;
+}
+th.vacationOverview-day-today::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  right: -1px;
+  @apply tw-border;
+  @apply tw-border-white;
+}
+th.vacationOverview-day-today::after {
+  content: "";
+  border-width: 3px;
+  @apply tw-border-gray-500;
+  @apply tw-border-opacity-40;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* td elements have a border of 1px -> add it to the height */
+  height: calc((var(--vacation-overview-rows) * 100%) + (var(--vacation-overview-rows) * 1px));
+}
+
 .vacationOverview-day-public-holiday,
 .vacationOverview-day-weekend {
   color: #fff;

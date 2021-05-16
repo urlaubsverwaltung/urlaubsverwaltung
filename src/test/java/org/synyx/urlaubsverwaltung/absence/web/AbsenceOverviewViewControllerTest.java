@@ -897,6 +897,62 @@ class AbsenceOverviewViewControllerTest {
             ));
     }
 
+    @Test
+    void ensureToday() throws Exception {
+        final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
+
+        sut = new AbsenceOverviewViewController(
+            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
+
+        final var person = new Person();
+        person.setFirstName("boss");
+        person.setLastName("the hoss");
+        person.setEmail("boss@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("days", contains(
+                        allOf(hasProperty("dayOfMonth", is("01")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("02")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("03")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("04")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("05")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("06")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("07")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("08")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("09")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("10")), hasProperty("today", is(true))),
+                        allOf(hasProperty("dayOfMonth", is("11")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("12")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("13")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("14")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("15")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("16")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("17")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("18")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("19")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("20")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("21")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("22")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("23")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("24")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("25")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("26")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("27")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("28")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("29")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("30")), hasProperty("today", is(false))),
+                        allOf(hasProperty("dayOfMonth", is("31")), hasProperty("today", is(false)))
+                    ))
+                ))
+            ));
+    }
+
     private static Department department() {
         return department("superheroes");
     }

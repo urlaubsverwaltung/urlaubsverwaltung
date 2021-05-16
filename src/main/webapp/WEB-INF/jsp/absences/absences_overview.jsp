@@ -152,10 +152,13 @@
                                 <th scope="col" class="sortable-field">&nbsp;</th>
                                 <c:forEach items="${month.days}" var="day">
                                     <th scope="col"
-                                        class="non-sortable text-gray-700 ${day.weekend ? 'vacationOverview-day-weekend' : ''}
+                                        class="non-sortable text-gray-700
+                                                ${day.weekend ? 'vacationOverview-day-weekend' : ''}
+                                                ${day.today ? ' vacationOverview-day-today' : ''}
                                                 ${(day.type eq 'publicHolidayFull') ? ' vacationOverview-day-public-holiday' : ''}
                                                 ${(day.type eq 'publicHolidayMorning') ? ' vacationOverview-day-public-holiday-half-day-morning-headline' : ''}
                                                 ${(day.type eq 'publicHolidayNoon') ? ' vacationOverview-day-public-holiday-half-day-noon-headline' : ''}"
+                                        style="${day.today ? '--vacation-overview-rows: '.concat(1 + month.persons.size()) : ''}"
                                     >
                                         <c:out value="${day.dayOfMonth}"/>
                                     </th>
@@ -243,6 +246,12 @@
                         <spring:message code="absences.overview.legendTitle"/>
                     </caption>
                     <tbody>
+                    <tr>
+                        <td class='vacationOverview-legend-colorbox vacationOverview-day-today-legend'></td>
+                        <td class='vacationOverview-legend-text'>
+                            <spring:message code="absences.overview.today"/>
+                        </td>
+                    </tr>
                     <tr>
                         <td class='vacationOverview-legend-colorbox vacationOverview-day-weekend'></td>
                         <td class='vacationOverview-legend-text'>
