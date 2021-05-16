@@ -3,6 +3,10 @@
   color: #6f6f6f;
 }
 
+.vacationOverview-day-today-legend {
+  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.5);
+}
+
 th.vacationOverview-day-today {
   --vacation-overview-rows: 1;
   position: relative;
