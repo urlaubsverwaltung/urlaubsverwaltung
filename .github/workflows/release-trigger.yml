@@ -50,10 +50,8 @@ jobs:
         uses: docker://decathlon/release-notes-generator-action:3.1.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OUTPUT_FOLDER: .chglog-tmp/
+          OUTPUT_FOLDER: .chglog/
           FILENAME: ${{ github.event.inputs.releaseVersion }}
-      - name: Move changelog to .chglog directory
-        run: mv .chglog-tmp/${{ github.event.inputs.releaseVersion }}.md .chglog/${{ github.event.inputs.releaseVersion }}.md
       - name: Setup git user
         uses: fregante/setup-git-user@v1
       - name: Commit Release Notes
