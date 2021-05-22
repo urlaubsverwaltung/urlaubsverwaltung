@@ -96,7 +96,7 @@ public class WorkingTimeService {
         return optionalFederalStateOverride.orElseGet(this::getSystemDefaultFederalState);
     }
 
-    private FederalState getSystemDefaultFederalState() {
+    public FederalState getSystemDefaultFederalState() {
         return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
     }
 

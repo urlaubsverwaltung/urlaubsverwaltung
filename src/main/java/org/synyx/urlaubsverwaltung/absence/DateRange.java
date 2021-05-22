@@ -1,30 +1,36 @@
-package org.synyx.urlaubsverwaltung.absence.web;
+package org.synyx.urlaubsverwaltung.absence;
 
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-final class DateRange implements Iterable<LocalDate> {
+public final class DateRange implements Iterable<LocalDate> {
 
     private final LocalDate startDate;
     private final LocalDate endDate;
 
-    DateRange(LocalDate startDate, LocalDate endDate) {
+    public DateRange(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    LocalDate getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    LocalDate getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
     @Override
     public Iterator<LocalDate> iterator() {
         return new DateRangeIterator(startDate, endDate);
+    }
+
+    public Stream<LocalDate> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     private static final class DateRangeIterator implements Iterator<LocalDate> {

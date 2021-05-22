@@ -27,6 +27,8 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
 
     List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate sinceStartDate);
 
+    List<Application> findByStatusInAndPersonInAndStartDateIsGreaterThanEqualAndEndDateIsLessThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
+
     @Query(
         "select x from Application x "
             + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "

@@ -15,9 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
+import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -27,23 +26,18 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.YearMonth;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -64,7 +58,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -79,17 +72,13 @@ class AbsenceOverviewViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
-    private ApplicationService applicationService;
-    @Mock
-    private SickNoteService sickNoteService;
-    @Mock
     private MessageSource messageSource;
     @Mock
-    private PublicHolidaysService publicHolidayService;
+    private PublicHolidaysService publicHolidaysService;
     @Mock
     private SettingsService settingsService;
     @Mock
-    private WorkingTimeService workingTimeService;
+    private AbsenceService absenceService;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -101,10 +90,10 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        when(publicHolidayService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
 
-        sut = new AbsenceOverviewViewController(personService, departmentService, applicationService, sickNoteService, messageSource, clock,
-            publicHolidayService, settingsService, workingTimeService);
+        sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, clock,
+            publicHolidaysService, settingsService, absenceService);
     }
 
     @Test
@@ -413,8 +402,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewForGivenYear() throws Exception {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
+        sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
+            publicHolidaysService, settingsService, absenceService);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -505,8 +494,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewForGivenYearAndGivenMonth() throws Exception {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
+        sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, clock,
+            publicHolidaysService, settingsService, absenceService);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -605,8 +594,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureOverviewDefaultCurrentYearAndMonth() throws Exception {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
+        sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
+            publicHolidaysService, settingsService, absenceService);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -674,19 +663,20 @@ class AbsenceOverviewViewControllerTest {
 
     private static Stream<Arguments> dayLengthSickNoteTypeData() {
         return Stream.of(
-            Arguments.of(BOSS, DayLength.FULL, "activeSickNoteFull"),
-            Arguments.of(BOSS, DayLength.MORNING, "activeSickNoteMorning"),
-            Arguments.of(BOSS, DayLength.NOON, "activeSickNoteNoon"),
-            Arguments.of(USER, DayLength.FULL, "absenceFull"),
-            Arguments.of(USER, DayLength.MORNING, "absenceMorning"),
-            Arguments.of(USER, DayLength.NOON, "absenceNoon")
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "activeSickNoteFull"),
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), null, "activeSickNoteMorning"),
+            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonSick(1), "activeSickNoteNoon"),
+            Arguments.of(USER, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "absenceFull"),
+            Arguments.of(USER, new AbsencePeriod.RecordMorningSick(1), null, "absenceMorning"),
+            Arguments.of(USER, null, new AbsencePeriod.RecordNoonSick(1), "absenceNoon")
         );
     }
 
     @ParameterizedTest
     @MethodSource("dayLengthSickNoteTypeData")
-    void ensureSickNoteOneDay(Role role, DayLength dayLength, String dtoDayTypeText) throws Exception {
+    void ensureSickNoteOneDay(Role role, AbsencePeriod.RecordMorning morning, AbsencePeriod.RecordNoon noon, String dtoDayTypeText) throws Exception {
         final var person = new Person();
+        person.setId(1);
         person.setPermissions(List.of(role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -697,14 +687,12 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final var sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(clock));
-        sickNote.setEndDate(LocalDate.now(clock));
-        sickNote.setDayLength(dayLength);
-        sickNote.setPerson(person);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodSick = new AbsencePeriod(person, List.of(record));
 
-        final List<SickNote> sickNotes = List.of(sickNote);
-        when(sickNoteService.getAllActiveByYear(Year.now(clock).getValue())).thenReturn(sickNotes);
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodSick));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -721,27 +709,26 @@ class AbsenceOverviewViewControllerTest {
 
     private static Stream<Arguments> dayLengthVacationTypeData() {
         return Stream.of(
-            Arguments.of(BOSS, ApplicationStatus.ALLOWED, DayLength.FULL, "allowedVacationFull"),
-            Arguments.of(BOSS, ApplicationStatus.ALLOWED, DayLength.MORNING, "allowedVacationMorning"),
-            Arguments.of(BOSS, ApplicationStatus.ALLOWED, DayLength.NOON, "allowedVacationNoon"),
-            Arguments.of(BOSS, ApplicationStatus.WAITING, DayLength.FULL, "waitingVacationFull"),
-            Arguments.of(BOSS, ApplicationStatus.WAITING, DayLength.MORNING, "waitingVacationMorning"),
-            Arguments.of(BOSS, ApplicationStatus.WAITING, DayLength.NOON, "waitingVacationNoon"),
-            Arguments.of(USER, ApplicationStatus.ALLOWED, DayLength.FULL, "absenceFull"),
-            Arguments.of(USER, ApplicationStatus.ALLOWED, DayLength.MORNING, "absenceMorning"),
-            Arguments.of(USER, ApplicationStatus.ALLOWED, DayLength.NOON, "absenceNoon"),
-            Arguments.of(USER, ApplicationStatus.WAITING, DayLength.FULL, "absenceFull"),
-            Arguments.of(USER, ApplicationStatus.WAITING, DayLength.MORNING, "absenceMorning"),
-            Arguments.of(USER, ApplicationStatus.WAITING, DayLength.NOON, "absenceNoon")
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationFull"),
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "allowedVacationMorning"),
+            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationNoon"),
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationFull"),
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "waitingVacationMorning"),
+            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationNoon"),
+            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceFull"),
+            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "absenceMorning"),
+            Arguments.of(USER, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceNoon"),
+            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceFull"),
+            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "absenceMorning"),
+            Arguments.of(USER, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceNoon")
         );
     }
 
     @ParameterizedTest
     @MethodSource("dayLengthVacationTypeData")
-    void ensureVacationOneDay(Role role, ApplicationStatus applicationStatus, DayLength dayLength, String dtoDayTypeText) throws Exception {
-        final LocalDate now = LocalDate.now(clock);
-
+    void ensureVacationOneDay(Role role, AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String dtoDayTypeText) throws Exception {
         final var person = new Person();
+        person.setId(1);
         person.setPermissions(List.of(role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -752,16 +739,12 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final var application = new Application();
-        application.setStartDate(now);
-        application.setEndDate(now);
-        application.setPerson(person);
-        application.setDayLength(dayLength);
-        application.setStatus(applicationStatus);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(person, List.of(record));
 
-        final List<Application> applications = List.of(application);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
-            .thenReturn(applications);
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -777,79 +760,14 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @Test
-    void ensureNonDisplayableApplicationsAreIgnored() throws Exception {
-        final LocalDate now = LocalDate.now();
-
-        final var person = new Person();
-        person.setPermissions(List.of(BOSS));
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
-        person.setEmail("boss@example.org");
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final var department = department();
-        department.setMembers(List.of(person));
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
-        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-
-        // create different applications with types that should not be considered in the overview
-        final var revokedApplication = new Application();
-        revokedApplication.setStartDate(now);
-        revokedApplication.setEndDate(now);
-        revokedApplication.setPerson(person);
-        revokedApplication.setDayLength(DayLength.FULL);
-        revokedApplication.setStatus(ApplicationStatus.REVOKED);
-
-        final var rejectedApplication = new Application();
-        rejectedApplication.setStartDate(now);
-        rejectedApplication.setEndDate(now);
-        rejectedApplication.setPerson(person);
-        rejectedApplication.setDayLength(DayLength.FULL);
-        rejectedApplication.setStatus(ApplicationStatus.REJECTED);
-
-        final var cancelledApplication = new Application();
-        cancelledApplication.setStartDate(now);
-        cancelledApplication.setEndDate(now);
-        cancelledApplication.setPerson(person);
-        cancelledApplication.setDayLength(DayLength.FULL);
-        cancelledApplication.setStatus(ApplicationStatus.CANCELLED);
-
-        // create application with type that should be displayed in the overview
-        final var application = new Application();
-        application.setStartDate(now);
-        application.setEndDate(now);
-        application.setPerson(person);
-        application.setDayLength(DayLength.FULL);
-        application.setStatus(ApplicationStatus.ALLOWED);
-
-        // "invalid" applications must come before the valid one in list, since the type determination for the overview
-        // takes the first matching application from the list after the filters are applied.
-        final List<Application> applications = List.of(revokedApplication, rejectedApplication, cancelledApplication, application);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(now.with(firstDayOfMonth()), now.with(lastDayOfMonth()), person))
-            .thenReturn(applications);
-
-        // confirm that type of correct application is returned
-        perform(get("/web/absences").locale(Locale.GERMANY))
-            .andExpect(status().isOk())
-            .andExpect(model().attribute("absenceOverview",
-                hasProperty("months", contains(
-                    hasProperty("persons", hasItem(
-                        hasProperty("days", hasItem(
-                            hasProperty("type", is(ALLOWED_VACATION_FULL.getIdentifier()))
-                        ))
-                    ))
-                ))
-            ));
-    }
-
-    @Test
     void ensureWeekendsAndHolidays() throws Exception {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
+        sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
+            publicHolidaysService, settingsService, absenceService);
 
         final var person = new Person();
+        person.setId(1);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -902,8 +820,8 @@ class AbsenceOverviewViewControllerTest {
     void ensureToday() throws Exception {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
-        sut = new AbsenceOverviewViewController(
-            personService, departmentService, applicationService, sickNoteService, messageSource, fixedClock, publicHolidayService, settingsService, workingTimeService);
+        sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
+            publicHolidaysService, settingsService, absenceService);
 
         final var person = new Person();
         person.setFirstName("boss");

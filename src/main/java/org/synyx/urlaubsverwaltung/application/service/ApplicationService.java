@@ -107,6 +107,17 @@ public interface ApplicationService {
     List<Application> getForStatesAndPersonSince(List<ApplicationStatus> statuses, List<Person> persons, LocalDate since);
 
     /**
+     * Get all {@link Application}s with specific states and persons for the given date range
+     *
+     * @param statuses {@link ApplicationStatus} to filter
+     * @param persons {@link Person}s to consider
+     * @param start start date (inclusive)
+     * @param end end date (inclusive)
+     * @return list of all matching {@link Application}s
+     */
+    List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
+
+    /**
      * Get the total hours of overtime reduction for a certain person.
      *
      * @param person to get the total hours of overtime reduction for
