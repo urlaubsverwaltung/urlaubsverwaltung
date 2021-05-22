@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.util.List;
 
@@ -9,12 +10,12 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
-class WorkingTimeSettingsTest {
+class WorkingTimeSettingsEmbeddableTest {
 
     @Test
     void ensureDefaultValues() {
 
-        final WorkingTimeSettings settings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable settings = new WorkingTimeSettingsEmbeddable();
         assertThat(settings.getWorkingDurationForChristmasEve()).isEqualTo(MORNING);
         assertThat(settings.getWorkingDurationForNewYearsEve()).isEqualTo(MORNING);
         assertThat(settings.getMonday()).isEqualTo(FULL);
@@ -28,7 +29,7 @@ class WorkingTimeSettingsTest {
 
     @Test
     void setWorkingDays() {
-        final WorkingTimeSettings settings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable settings = new WorkingTimeSettingsEmbeddable();
         settings.setWorkingDays(List.of(1, 2, 3, 4, 5, 6, 7));
         assertThat(settings.getWorkingDays()).isEqualTo(List.of(1, 2, 3, 4, 5, 6, 7));
     }

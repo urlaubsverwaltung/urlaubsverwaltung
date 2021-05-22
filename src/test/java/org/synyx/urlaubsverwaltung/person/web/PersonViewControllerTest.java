@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -322,10 +322,10 @@ class PersonViewControllerTest {
 
         Settings settings = new Settings();
 
-        WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(federalState);
+        WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable = new WorkingTimeSettingsEmbeddable();
+        workingTimeSettingsEmbeddable.setFederalState(federalState);
 
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        settings.setWorkingTimeSettings(workingTimeSettingsEmbeddable);
 
         return settings;
     }

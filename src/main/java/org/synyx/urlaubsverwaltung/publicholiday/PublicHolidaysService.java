@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -48,7 +48,7 @@ public class PublicHolidaysService {
     public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
 
         final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable = settings.getWorkingTimeSettings();
 
         return getHolidayDayLength(workingTimeSettings, date, federalState);
     }
@@ -70,9 +70,9 @@ public class PublicHolidaysService {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {
-                workingTime = workingTimeSettings.getWorkingDurationForChristmasEve();
+                workingTime = workingTimeSettingsEmbeddable.getWorkingDurationForChristmasEve();
             } else if (isNewYearsEve(date)) {
-                workingTime = workingTimeSettings.getWorkingDurationForNewYearsEve();
+                workingTime = workingTimeSettingsEmbeddable.getWorkingDurationForNewYearsEve();
             } else {
                 workingTime = ZERO;
             }

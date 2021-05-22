@@ -1,0 +1,49 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="add-globale-default-working-days">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="monday"/>
+      <columnExists tableName="settings" columnName="tuesday"/>
+      <columnExists tableName="settings" columnName="wednesday"/>
+      <columnExists tableName="settings" columnName="thursday"/>
+      <columnExists tableName="settings" columnName="friday"/>
+      <columnExists tableName="settings" columnName="saturday"/>
+      <columnExists tableName="settings" columnName="sunday"/>
+    </preConditions>
+
+    <createTable tableName="working_time_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="monday" type="VARCHAR(255)" />
+      <column name="tuesday" type="VARCHAR(255)" />
+      <column name="wednesday" type="VARCHAR(255)" />
+      <column name="thursday" type="VARCHAR(255)" />
+      <column name="friday" type="VARCHAR(255)" />
+      <column name="saturday" type="VARCHAR(255)" />
+      <column name="sunday" type="VARCHAR(255)" />
+      <column name="working_duration_for_new_years_eve" type="VARCHAR(255)"/>
+      <column name="working_duration_for_christmas_eve" type="VARCHAR(255)"/>
+      <column name="federal_state" type="VARCHAR(255)"/>
+    </createTable>
+
+    <insert tableName="working_time_settings">
+      <column name="monday" valueComputed="(SELECT monday FROM settings)"/>
+      <column name="tuesday" valueComputed="(SELECT tuesday FROM settings)"/>
+      <column name="wednesday" valueComputed="(SELECT wednesday FROM settings)"/>
+      <column name="thursday" valueComputed="(SELECT thursday FROM settings)"/>
+      <column name="friday" valueComputed="(SELECT friday FROM settings)"/>
+      <column name="saturday" valueComputed="(SELECT saturday FROM settings)"/>
+      <column name="sunday" valueComputed="(SELECT sunday FROM settings)"/>
+      <column name="working_duration_for_new_years_eve" valueComputed="(SELECT working_duration_for_new_years_eve FROM settings)"/>
+      <column name="working_duration_for_christmas_eve" valueComputed="(SELECT working_duration_for_christmas_eve FROM settings)"/>
+      <column name="federal_state" valueComputed="(SELECT federal_state FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

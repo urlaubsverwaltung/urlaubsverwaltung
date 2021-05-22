@@ -26,7 +26,10 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -86,8 +89,8 @@ class AbsenceOverviewViewControllerTest {
     void setUp() {
 
         final Settings settings = new Settings();
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
+        final WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable = new WorkingTimeSettingsEmbeddable();
+        settings.setWorkingTimeSettings(workingTimeSettingsEmbeddable);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);

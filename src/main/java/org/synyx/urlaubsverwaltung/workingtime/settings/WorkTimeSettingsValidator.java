@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung.workingtime.settings;
 
 import org.springframework.validation.Errors;
 
@@ -10,21 +10,21 @@ public class WorkTimeSettingsValidator {
         // private
     }
 
-    public static void validateWorkingTimeSettings(WorkingTimeSettings workingTimeSettings, Errors errors) {
+    public static void validateWorkingTimeSettings(WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, Errors errors) {
 
-        if (workingTimeSettings.getFederalState() == null) {
+        if (workingTimeSettingsEmbeddable.getFederalState() == null) {
             errors.rejectValue("workingTimeSettings.federalState", ERROR_MANDATORY_FIELD);
         }
 
-        if (workingTimeSettings.getWorkingDurationForChristmasEve() == null) {
+        if (workingTimeSettingsEmbeddable.getWorkingDurationForChristmasEve() == null) {
             errors.rejectValue("workingTimeSettings.workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
         }
 
-        if (workingTimeSettings.getWorkingDurationForNewYearsEve() == null) {
+        if (workingTimeSettingsEmbeddable.getWorkingDurationForNewYearsEve() == null) {
             errors.rejectValue("workingTimeSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
         }
 
-        if (workingTimeSettings.getWorkingDays() == null || workingTimeSettings.getWorkingDays().isEmpty()) {
+        if (workingTimeSettingsEmbeddable.getWorkingDays() == null || workingTimeSettingsEmbeddable.getWorkingDays().isEmpty()) {
             errors.rejectValue("workingTimeSettings.workingDays", ERROR_MANDATORY_FIELD);
         }
     }

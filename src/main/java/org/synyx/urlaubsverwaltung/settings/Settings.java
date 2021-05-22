@@ -6,7 +6,7 @@ import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +26,7 @@ public class Settings {
 
     private ApplicationSettings applicationSettings;
     private AccountSettings accountSettings;
-    private WorkingTimeSettings workingTimeSettings;
+    private WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable;
     private OvertimeSettings overtimeSettings;
     private TimeSettings timeSettings;
     private SickNoteSettings sickNoteSettings;
@@ -66,16 +66,16 @@ public class Settings {
         this.accountSettings = accountSettings;
     }
 
-    public WorkingTimeSettings getWorkingTimeSettings() {
-        if (workingTimeSettings == null) {
-            workingTimeSettings = new WorkingTimeSettings();
+    public WorkingTimeSettingsEmbeddable getWorkingTimeSettings() {
+        if (workingTimeSettingsEmbeddable == null) {
+            workingTimeSettingsEmbeddable = new WorkingTimeSettingsEmbeddable();
         }
 
-        return workingTimeSettings;
+        return workingTimeSettingsEmbeddable;
     }
 
-    public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
-        this.workingTimeSettings = workingTimeSettings;
+    public void setWorkingTimeSettings(WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable) {
+        this.workingTimeSettingsEmbeddable = workingTimeSettingsEmbeddable;
     }
 
     public OvertimeSettings getOvertimeSettings() {

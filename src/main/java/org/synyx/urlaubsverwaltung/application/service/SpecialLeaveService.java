@@ -4,8 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.dao.SpecialLeaveRepository;
 import org.synyx.urlaubsverwaltung.application.domain.SpecialLeaveDing;
+import org.synyx.urlaubsverwaltung.application.domain.SpecialLeaveDingMapper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class SpecialLeaveService {
@@ -19,7 +25,10 @@ public class SpecialLeaveService {
 
     // TODO Mapper
     public List<SpecialLeaveDing> getSpecialLeaves() {
-        return specialLeaveRepository.findAll();
+
+        return StreamSupport.stream(specialLeaveRepository.findAll().spliterator(), false)
+            .map(SpecialLeaveDingMapper::mapToSpecialLeaveDing)
+            .collect(toList());
     }
 
 

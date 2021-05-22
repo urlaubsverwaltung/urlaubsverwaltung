@@ -14,9 +14,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.util.stream.Stream;
 
@@ -56,17 +55,17 @@ class SettingsValidatorTest {
     void ensureWorkingTimeSettingsCanNotBeNull() {
 
         Settings settings = new Settings();
-        WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-        workingTimeSettings.setFederalState(null);
-        workingTimeSettings.setWorkingDurationForChristmasEve(null);
-        workingTimeSettings.setWorkingDurationForNewYearsEve(null);
-        workingTimeSettings.setMonday(ZERO);
-        workingTimeSettings.setTuesday(ZERO);
-        workingTimeSettings.setWednesday(ZERO);
-        workingTimeSettings.setThursday(ZERO);
-        workingTimeSettings.setFriday(ZERO);
-        workingTimeSettings.setSaturday(ZERO);
-        workingTimeSettings.setSunday(ZERO);
+        WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable = settings.getWorkingTimeSettings();
+        workingTimeSettingsEmbeddable.setFederalState(null);
+        workingTimeSettingsEmbeddable.setWorkingDurationForChristmasEve(null);
+        workingTimeSettingsEmbeddable.setWorkingDurationForNewYearsEve(null);
+        workingTimeSettingsEmbeddable.setMonday(ZERO);
+        workingTimeSettingsEmbeddable.setTuesday(ZERO);
+        workingTimeSettingsEmbeddable.setWednesday(ZERO);
+        workingTimeSettingsEmbeddable.setThursday(ZERO);
+        workingTimeSettingsEmbeddable.setFriday(ZERO);
+        workingTimeSettingsEmbeddable.setSaturday(ZERO);
+        workingTimeSettingsEmbeddable.setSunday(ZERO);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);

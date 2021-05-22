@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvide
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
 import java.util.List;
@@ -58,12 +59,14 @@ class SettingsViewControllerTest {
     @Mock
     private SettingsService settingsService;
     @Mock
+    private WorkingTimeSettingsService workingTimeSettingsService;
+    @Mock
     private SettingsValidator settingsValidator;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, clock);
+        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, workingTimeSettingsService, clock);
     }
 
     @Test

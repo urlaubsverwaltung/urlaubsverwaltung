@@ -1,64 +1,39 @@
-package org.synyx.urlaubsverwaltung.workingtime;
+package org.synyx.urlaubsverwaltung.workingtime.settings;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import javax.persistence.Embeddable;
 import javax.persistence.Enumerated;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.*;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 
-/**
- * Settings concerning working time of persons, like settings for public holidays.
- */
-@Embeddable
-public class WorkingTimeSettings {
+public class WorkingTimeSettingsDto {
 
-    @Enumerated(STRING)
-    private DayLength monday = FULL;
+    private Integer id;
+    private DayLength monday;
+    private DayLength tuesday;
+    private DayLength wednesday;
+    private DayLength thursday;
+    private DayLength friday;
+    private DayLength saturday;
+    private DayLength sunday;
+    private DayLength workingDurationForChristmasEve;
+    private DayLength workingDurationForNewYearsEve;
+    private FederalState federalState;
 
-    @Enumerated(STRING)
-    private DayLength tuesday = FULL;
+    public Integer getId() {
+        return id;
+    }
 
-    @Enumerated(STRING)
-    private DayLength wednesday = FULL;
-
-    @Enumerated(STRING)
-    private DayLength thursday = FULL;
-
-    @Enumerated(STRING)
-    private DayLength friday = FULL;
-
-    @Enumerated(STRING)
-    private DayLength saturday = ZERO;
-
-    @Enumerated(STRING)
-    private DayLength sunday = ZERO;
-
-    /**
-     * Defines the working duration for Christmas Eve and New Years Eve.
-     *
-     * <p>Options: {@link DayLength#FULL} means that the day is fully counted as work day, {@link DayLength#MORNING} and
-     * {@link DayLength#NOON} means that only half of the day is counted as work day, {@link DayLength#ZERO} means that
-     * the day is fully counted as public holiday</p>
-     */
-    @Enumerated(STRING)
-    private DayLength workingDurationForChristmasEve = MORNING;
-
-    @Enumerated(STRING)
-    private DayLength workingDurationForNewYearsEve = MORNING;
-
-    /**
-     * Defines the federal state of Germany to be able to check correctly if a day is a public holiday or not.
-     */
-    @Enumerated(STRING)
-    private FederalState federalState = BADEN_WUERTTEMBERG;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public DayLength getMonday() {
         return monday;

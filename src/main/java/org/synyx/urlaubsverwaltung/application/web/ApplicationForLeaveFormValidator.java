@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -162,9 +162,9 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private static void validateChristmasEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
+    private static void validateChristmasEve(DayLength applicationDayLength, WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, Errors errors) {
 
-        final DayLength workingDurationForChristmasEve = workingTimeSettings.getWorkingDurationForChristmasEve();
+        final DayLength workingDurationForChristmasEve = workingTimeSettingsEmbeddable.getWorkingDurationForChristmasEve();
 
         switch (workingDurationForChristmasEve) {
             case ZERO:
@@ -190,9 +190,9 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private static void validateNewYearsEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
+    private static void validateNewYearsEve(DayLength applicationDayLength, WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, Errors errors) {
 
-        final DayLength workingDurationForNewYearsEve = workingTimeSettings.getWorkingDurationForNewYearsEve();
+        final DayLength workingDurationForNewYearsEve = workingTimeSettingsEmbeddable.getWorkingDurationForNewYearsEve();
 
         switch (workingDurationForNewYearsEve) {
             case ZERO:
