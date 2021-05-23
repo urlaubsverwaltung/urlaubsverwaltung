@@ -200,32 +200,32 @@
                                                 ${(absence.weekend) ? ' weekend' : ''}"
                                         >
                                             <span class="tw-hidden print:tw-inline print:tw-font-mono">
-                                                <c:if test="${absence.type.waitingVacationFull}">
-                                                    <spring:message code="absences.overview.vacation.abbr"/>
-                                                </c:if>
                                                 <c:if test="${absence.type.waitingVacationMorning}">
-                                                    <spring:message code="absences.overview.vacation.noon.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.waitingVacationNoon}">
-                                                    <spring:message code="absences.overview.vacation.noon.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.allowedVacationFull}">
-                                                    <spring:message code="absences.overview.allowed.abbr"/>
+                                                    <spring:message code="absences.overview.vacation.morning.abbr"/>
                                                 </c:if>
                                                 <c:if test="${absence.type.allowedVacationMorning}">
                                                     <spring:message code="absences.overview.allowed.morning.abbr"/>
                                                 </c:if>
-                                                <c:if test="${absence.type.allowedVacationNoon}">
-                                                    <spring:message code="absences.overview.allowed.noon.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.sickNoteFull}">
-                                                    <spring:message code="absences.overview.sick.abbr"/>
-                                                </c:if>
                                                 <c:if test="${absence.type.sickNoteMorning}">
                                                     <spring:message code="absences.overview.sick.morning.abbr"/>
                                                 </c:if>
+                                                <c:if test="${absence.type.waitingVacationNoon}">
+                                                    <spring:message code="absences.overview.vacation.noon.abbr"/>
+                                                </c:if>
+                                                <c:if test="${absence.type.allowedVacationNoon}">
+                                                    <spring:message code="absences.overview.allowed.noon.abbr"/>
+                                                </c:if>
                                                 <c:if test="${absence.type.sickNoteNoon}">
                                                     <spring:message code="absences.overview.sick.noon.abbr"/>
+                                                </c:if>
+                                                <c:if test="${absence.type.allowedVacationFull}">
+                                                    <spring:message code="absences.overview.allowed.abbr"/>
+                                                </c:if>
+                                                <c:if test="${absence.type.waitingVacationFull}">
+                                                    <spring:message code="absences.overview.vacation.abbr"/>
+                                                </c:if>
+                                                <c:if test="${absence.type.sickNoteFull}">
+                                                    <spring:message code="absences.overview.sick.abbr"/>
                                                 </c:if>
                                             </span>
                                         </td>
