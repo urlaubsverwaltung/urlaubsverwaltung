@@ -239,9 +239,9 @@ public class AbsencePeriod {
         @Override
         public String toString() {
             return "AbstractRecordInfo{" +
-                "type=" + type +
+                "type=*****" +
                 ", id=" + id +
-                ", status=" + status +
+                ", status=****" +
                 '}';
         }
     }
