@@ -663,9 +663,9 @@ class AbsenceOverviewViewControllerTest {
 
     private static Stream<Arguments> dayLengthSickNoteTypeData() {
         return Stream.of(
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "activeSickNoteFull"),
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), null, "activeSickNoteMorning"),
-            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonSick(1), "activeSickNoteNoon"),
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "sickNoteFull"),
+            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), null, "sickNoteMorning"),
+            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonSick(1), "sickNoteNoon"),
             Arguments.of(USER, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "absenceFull"),
             Arguments.of(USER, new AbsencePeriod.RecordMorningSick(1), null, "absenceMorning"),
             Arguments.of(USER, null, new AbsencePeriod.RecordNoonSick(1), "absenceNoon")
@@ -674,7 +674,7 @@ class AbsenceOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dayLengthSickNoteTypeData")
-    void ensureSickNoteOneDay(Role role, AbsencePeriod.RecordMorning morning, AbsencePeriod.RecordNoon noon, String dtoDayTypeText) throws Exception {
+    void ensureSickNoteOneDay(Role role, AbsencePeriod.RecordMorning morning, AbsencePeriod.RecordNoon noon, String typeProperty) throws Exception {
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -700,7 +700,9 @@ class AbsenceOverviewViewControllerTest {
                 hasProperty("months", contains(
                     hasProperty("persons", hasItem(
                         hasProperty("days", hasItems(
-                            hasProperty("type", is(dtoDayTypeText))
+                            hasProperty("type",
+                                hasProperty(typeProperty, is(true))
+                            )
                         ))
                     ))
                 ))
@@ -726,7 +728,7 @@ class AbsenceOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dayLengthVacationTypeData")
-    void ensureVacationOneDay(Role role, AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String dtoDayTypeText) throws Exception {
+    void ensureVacationOneDay(Role role, AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String typeProperty) throws Exception {
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -752,7 +754,9 @@ class AbsenceOverviewViewControllerTest {
                 hasProperty("months", contains(
                     hasProperty("persons", hasItem(
                         hasProperty("days", hasItems(
-                            hasProperty("type", is(dtoDayTypeText))
+                            hasProperty("type",
+                                hasProperty(typeProperty, is(true))
+                            )
                         ))
                     ))
                 ))

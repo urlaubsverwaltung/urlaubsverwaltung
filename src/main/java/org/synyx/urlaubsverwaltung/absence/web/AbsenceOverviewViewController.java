@@ -43,22 +43,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_FULL;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_MORNING;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ABSENCE_NOON;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_FULL;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_MORNING;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ACTIVE_SICKNOTE_NOON;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_FULL;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_MORNING;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.ALLOWED_VACATION_NOON;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_FULL;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_MORNING;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.PUBLIC_HOLIDAY_NOON;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_FULL;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_MORNING;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayType.WAITING_VACATION_NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -198,16 +184,16 @@ public class AbsenceOverviewViewController {
 
                 final Person person = personByView.get(personView);
 
-                final AbsencePeriod.Record personAbsenceRecord = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
+                final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
                     .stream()
                     .flatMap(List::stream)
                     .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
-                    .findFirst()
-                    .orElse(null);
+                    .collect(toUnmodifiableList());
 
                 final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(holidaysByDate.get(date))
-                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecord, isPrivilegedUser, publicHoliday))
-                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecord, isPrivilegedUser));
+                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser, publicHoliday))
+                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser))
+                    .build();
 
                 personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
             }
@@ -235,59 +221,66 @@ public class AbsenceOverviewViewController {
         return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>());
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayType(AbsencePeriod.Record absenceRecord, boolean isPrivileged, PublicHoliday publicHoliday) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, boolean isPrivileged, PublicHoliday publicHoliday) {
+        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, isPrivileged);
         if (publicHoliday.getDayLength().equals(DayLength.MORNING)) {
-            return PUBLIC_HOLIDAY_MORNING;
+            builder = builder.publicHolidayMorning();
         }
         if (publicHoliday.getDayLength().equals(DayLength.NOON)) {
-            return PUBLIC_HOLIDAY_NOON;
+            builder = builder.publicHolidayNoon();
         }
         if (publicHoliday.getDayLength().equals(DayLength.FULL)) {
-            return PUBLIC_HOLIDAY_FULL;
+            builder = builder.publicHolidayFull();
         }
-        return getAbsenceOverviewDayType(absenceRecord, isPrivileged);
+        return builder;
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayType(AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
-        if (absenceRecord == null) {
-            return null;
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, boolean isPrivileged) {
+        if (absenceRecords.isEmpty()) {
+            return AbsenceOverviewDayType.builder();
         }
-        if (absenceRecord.isHalfDayAbsence()) {
-            return getAbsenceOverviewDayTypeForHalfDay(absenceRecord, isPrivileged);
+
+        AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
+
+        for (AbsencePeriod.Record absenceRecord : absenceRecords) {
+            if (absenceRecord.isHalfDayAbsence()) {
+                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, isPrivileged);
+            }
+            builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, isPrivileged);
         }
-        return getAbsenceOverviewDayTypeForFullDay(absenceRecord, isPrivileged);
+
+        return builder;
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayTypeForHalfDay(AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
         final AbsencePeriod.AbsenceType morningAbsenceType = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::getType).orElse(null);
         final AbsencePeriod.AbsenceType noonAbsenceType = absenceRecord.getNoon().map(AbsencePeriod.RecordInfo::getType).orElse(null);
 
         if (AbsencePeriod.AbsenceType.SICK.equals(morningAbsenceType)) {
-            return isPrivileged ? ACTIVE_SICKNOTE_MORNING : ABSENCE_MORNING;
+            return isPrivileged ? builder.sickNoteMorning() : builder.absenceMorning();
         }
         if (AbsencePeriod.AbsenceType.SICK.equals(noonAbsenceType)) {
-            return isPrivileged ? ACTIVE_SICKNOTE_NOON : ABSENCE_NOON;
+            return isPrivileged ? builder.sickNoteNoon() : builder.absenceNoon();
         }
 
         final boolean morningWaiting = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (morningWaiting) {
-            return isPrivileged ? WAITING_VACATION_MORNING : ABSENCE_MORNING;
+            return isPrivileged ? builder.waitingVacationMorning() : builder.absenceMorning();
         }
         final boolean morningAllowed = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::hasStatusAllowed).orElse(false);
         if (morningAllowed) {
-            return isPrivileged ? ALLOWED_VACATION_MORNING : ABSENCE_MORNING;
+            return isPrivileged ? builder.allowedVacationMorning() : builder.absenceMorning();
         }
 
         final boolean noonWaiting = absenceRecord.getNoon().map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
-            return isPrivileged ? WAITING_VACATION_NOON : ABSENCE_NOON;
+            return isPrivileged ? builder.waitingVacationNoon() : builder.absenceNoon();
         }
 
-        return isPrivileged ? ALLOWED_VACATION_NOON : ABSENCE_NOON;
+        return isPrivileged ? builder.allowedVacationNoon() : builder.absenceNoon();
     }
 
-    private AbsenceOverviewDayType getAbsenceOverviewDayTypeForFullDay(AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
-
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
         final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
@@ -298,13 +291,13 @@ public class AbsenceOverviewViewController {
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull) {
-            return isPrivileged ? ACTIVE_SICKNOTE_FULL : ABSENCE_FULL;
+            return isPrivileged ? builder.sickNoteFull() : builder.absenceFull();
         }
         if (sickMorning) {
-            return isPrivileged ? ACTIVE_SICKNOTE_MORNING : ABSENCE_MORNING;
+            return isPrivileged ? builder.sickNoteMorning() : builder.absenceMorning();
         }
         if (sickNoon) {
-            return isPrivileged ? ACTIVE_SICKNOTE_NOON : ABSENCE_NOON;
+            return isPrivileged ? builder.sickNoteNoon() : builder.absenceNoon();
         }
 
         final boolean vacationMorning = morningType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
@@ -315,31 +308,32 @@ public class AbsenceOverviewViewController {
 
         if (vacationFull) {
             if (!isPrivileged) {
-                return ABSENCE_FULL;
+                return builder.absenceFull();
             }
-            return morningWaiting ? WAITING_VACATION_FULL : ALLOWED_VACATION_FULL;
+            return morningWaiting ? builder.waitingVacationFull() : builder.allowedVacationFull();
         }
         if (vacationMorning) {
             if (!isPrivileged) {
-                return ABSENCE_MORNING;
+                return builder.absenceMorning();
             }
-            return morningWaiting ? WAITING_VACATION_MORNING : ALLOWED_VACATION_MORNING;
+            return morningWaiting ? builder.waitingVacationMorning() : builder.allowedVacationMorning();
         }
         if (isPrivileged) {
-            return ABSENCE_NOON;
+            return builder.absenceNoon();
         }
-        return noonWaiting ? WAITING_VACATION_NOON : ALLOWED_VACATION_NOON;
+        return noonWaiting ? builder.waitingVacationNoon() : builder.allowedVacationNoon();
     }
 
-    private AbsenceOverviewDayType getPublicHolidayType(DayLength dayLength) {
+    private AbsenceOverviewDayType.Builder getPublicHolidayType(DayLength dayLength) {
+        final AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
         switch (dayLength) {
             case MORNING:
-                return PUBLIC_HOLIDAY_MORNING;
+                return builder.publicHolidayMorning();
             case NOON:
-                return PUBLIC_HOLIDAY_NOON;
+                return builder.publicHolidayNoon();
             case FULL:
             default:
-                return PUBLIC_HOLIDAY_FULL;
+                return builder.publicHolidayFull();
         }
     }
 
@@ -359,7 +353,7 @@ public class AbsenceOverviewViewController {
 
         AbsenceOverviewDayType publicHolidayType = null;
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
-            publicHolidayType = getPublicHolidayType(publicHolidayDayLength);
+            publicHolidayType = getPublicHolidayType(publicHolidayDayLength).build();
         }
 
         final boolean isToday = date.isEqual(today);

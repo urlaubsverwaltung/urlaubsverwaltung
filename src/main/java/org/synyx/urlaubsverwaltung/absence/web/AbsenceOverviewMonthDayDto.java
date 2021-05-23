@@ -14,8 +14,8 @@ public class AbsenceOverviewMonthDayDto {
         this.isToday = isToday;
     }
 
-    public String getType() {
-        return type == null ? "" : type.getIdentifier();
+    public AbsenceOverviewDayType getType() {
+        return type;
     }
 
     public String getDayOfMonth() {
