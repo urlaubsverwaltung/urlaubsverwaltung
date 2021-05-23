@@ -12,7 +12,10 @@ import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMEN
 
 /**
  * Represents a period of time where a person is not at work.
+ *
+ * @deprecated in favor of {@link AbsencePeriod} which supports morning/noon absence state.
  */
+@Deprecated(since = "4.20.0")
 public class Absence {
 
     private final ZonedDateTime startDate;
