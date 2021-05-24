@@ -61,7 +61,7 @@
             <jsp:attribute name="below">
                 <p class="tw-text-sm">
                     <a href="#filterModal" data-toggle="modal">
-                        <spring:message code="filter.period"/>:&nbsp;<uv:date date="${from}"/> - <uv:date date="${to}"/>
+                        <spring:message code="filter.period"/>:&nbsp;<uv:date-range from="${from}" to="${to}" />
                     </a>
                 </p>
                 <p class="pull-right visible-print">

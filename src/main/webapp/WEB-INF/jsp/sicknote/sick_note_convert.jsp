@@ -77,9 +77,8 @@
                         </label>
 
                         <div class="col-md-7 tw-text-sm">
-                            <uv:date date="${sickNoteConvertForm.startDate}"/> - <uv:date
-                            date="${sickNoteConvertForm.endDate}"/>, <spring:message
-                            code="${sickNoteConvertForm.dayLength}"/>
+                            <uv:date-range from="${sickNoteConvertForm.startDate}" to="${sickNoteConvertForm.endDate}" />,
+                            <spring:message code="${sickNoteConvertForm.dayLength}"/>
                         </div>
                     </div>
 
@@ -187,7 +186,7 @@
                                 <c:choose>
                                     <c:when test="${sickNote.aubPresent}">
                                         <icon:check className="tw-w-4 tw-h-4" />
-                                        &nbsp;<uv:date date="${sickNote.aubStartDate}"/> - <uv:date date="${sickNote.aubEndDate}"/>
+                                        &nbsp;<uv:date-range from="${sickNote.aubStartDate}" to="${sickNote.aubEndDate}" />
                                     </c:when>
                                     <c:otherwise>
                                         <icon:x className="tw-w-4 tw-h-4" />

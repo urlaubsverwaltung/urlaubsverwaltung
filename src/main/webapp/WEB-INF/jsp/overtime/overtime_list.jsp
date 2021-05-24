@@ -94,7 +94,7 @@
                                             <h4><spring:message code="overtime.title"/></h4>
                                         </a>
                                         <p>
-                                            <uv:date date="${record.startDate}"/> - <uv:date date="${record.endDate}"/>
+                                            <uv:date-range from="${record.startDate}" to="${record.endDate}" />
                                         </p>
                                     </td>
                                     <td class="is-centered">
