@@ -37,6 +37,13 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 <c:set var="linkPrefix" value="${URL_PREFIX}/application"/>
 
+<c:set var="fromDate">
+    <uv:date date="${from}" pattern="yyyy-MM-dd" />
+</c:set>
+<c:set var="toDate">
+    <uv:date date="${to}" pattern="yyyy-MM-dd" />
+</c:set>
+
 <uv:menu/>
 
 <div class="content">
@@ -45,7 +52,9 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <uv:export/>
+                <a href="/web/application/statistics/download?from=${fromDate}&to=${toDate}" class="icon-link tw-px-1" data-title="<spring:message code='action.download' />">
+                    <icon:download className="tw-w-5 tw-h-5" />
+                </a>
                 <uv:print/>
             </jsp:attribute>
             <jsp:attribute name="below">
