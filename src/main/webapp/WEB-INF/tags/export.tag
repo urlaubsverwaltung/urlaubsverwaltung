@@ -4,10 +4,10 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:set var="fromDate">
-    <uv:date date="${from}" />
+    <uv:date date="${from}" pattern="yyyy-MM-dd" />
 </c:set>
 <c:set var="toDate">
-    <uv:date date="${to}" />
+    <uv:date date="${to}" pattern="yyyy-MM-dd" />
 </c:set>
 
 <a href="/web/application/statistics/download?from=${fromDate}&to=${toDate}" class="icon-link tw-px-1" data-title="<spring:message code='action.download' />">
