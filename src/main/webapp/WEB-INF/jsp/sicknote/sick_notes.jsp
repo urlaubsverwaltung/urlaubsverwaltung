@@ -139,7 +139,7 @@
                                     <span class="tw-text-green-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-4 tw-h-4" />
                                     </span>
-                                    &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDays[person].days['WITH_AUB']}"/>
+                                    &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${childSickDays[person].days['WITH_AUB']}"/>
                                 </p>
                             </c:if>
                         </td>
