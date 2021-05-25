@@ -146,9 +146,15 @@
                         <td class="visible-xs">
                             <div class="tw-flex tw-items-center">
                                 <icon:medkit className="tw-w-3 tw-h-3" />&nbsp;<uv:number number="${sickDays[person].days['TOTAL']}"/>
+                                <c:if test="${sickDays[person].days['WITH_AUB'] > 0}">
+                                    &nbsp;(&nbsp;<icon:check className="tw-w-4 tw-h-4 tw-text-green-500" /><uv:number number="${sickDays[person].days['WITH_AUB']}"/>)
+                                </c:if>
                             </div>
                             <div class="tw-flex tw-items-center">
                                 <icon:child className="tw-w-3 tw-h-3" />&nbsp;<uv:number number="${childSickDays[person].days['TOTAL']}"/>
+                                <c:if test="${childSickDays[person].days['WITH_AUB'] > 0}">
+                                    &nbsp;(&nbsp;<icon:check className="tw-w-4 tw-h-4 tw-text-green-500"/><uv:number number="${childSickDays[person].days['WITH_AUB']}"/>)
+                                </c:if>
                             </div>
                         </td>
                         </c:forEach>
