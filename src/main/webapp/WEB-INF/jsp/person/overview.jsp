@@ -110,13 +110,13 @@
 
             <div class="row tw-mb-12">
                 <div class="col-xs-12">
-                    <div class="tw-flex tw-flex-wrap">
+                    <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
                         <div class="tw-w-full lg:tw-w-1/3">
                         </div>
                         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
                             <uv:overtime-total-box-narrow hours="${overtimeTotal}" cssClass="tw-border-none" />
                         </div>
-                        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3 tw-mt-8 lg:tw-mt-0">
+                        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
                             <uv:overtime-left-box-narrow hours="${overtimeLeft}" cssClass="tw-border-none tw-p-0" />
                         </div>
                     </div>
@@ -189,7 +189,7 @@
             <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
 
             <div class="col-xs-12">
-                <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
+                <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
