@@ -37,9 +37,7 @@
                         <uv:date date="${sickNote.startDate}"/>, <spring:message code="${sickNote.dayLength}"/>
                     </c:when>
                     <c:otherwise>
-                        <spring:message code="${sickNote.weekDayOfStartDate}.short"/>, <uv:date date="${sickNote.startDate}"/>
-                        -
-                        <spring:message code="${sickNote.weekDayOfEndDate}.short"/>, <uv:date date="${sickNote.endDate}"/>
+                        <uv:date-range from="${sickNote.startDate}" to="${sickNote.endDate}" pattern="E, dd.MM.yyyy" />
                     </c:otherwise>
                 </c:choose>
 

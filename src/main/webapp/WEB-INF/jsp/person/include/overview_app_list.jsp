@@ -75,9 +75,7 @@
                             </c:choose>
                         </c:when>
                         <c:otherwise>
-                            <spring:message code="${app.weekDayOfStartDate}.short"/>, <uv:date date="${app.startDate}"/>
-                            -
-                            <spring:message code="${app.weekDayOfEndDate}.short"/>, <uv:date date="${app.endDate}"/>
+                            <uv:date-range from="${app.startDate}" to="${app.endDate}" pattern="E, dd.MM.yyyy" />
                         </c:otherwise>
                     </c:choose>
                 </div>
