@@ -12,6 +12,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,7 +30,6 @@ import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MariaDBContainer;
@@ -54,6 +54,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.util.Locale.ENGLISH;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
@@ -98,6 +99,8 @@ class ApplicationForLeaveCreateIT {
     private PublicHolidaysService publicHolidaysService;
     @Autowired
     private SettingsService settingsService;
+    @Autowired
+    private MessageSource messageSource;
 
     @Test
     @DisplayName("when USER is logged in and overtime feature is disabled then quick-add directly links to application-for-leave")
@@ -108,11 +111,11 @@ class ApplicationForLeaveCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver, messageSource, ENGLISH);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -156,11 +159,11 @@ class ApplicationForLeaveCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver, messageSource, ENGLISH);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -182,7 +185,7 @@ class ApplicationForLeaveCreateIT {
         loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
 
         wait.until(pageIsVisible(overviewPage));
-        assertThat(overviewPage.isVisibleForPerson("The Joker")).isTrue();
+        assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
@@ -203,11 +206,11 @@ class ApplicationForLeaveCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver, messageSource, ENGLISH);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, ENGLISH);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -216,7 +219,7 @@ class ApplicationForLeaveCreateIT {
 
         wait.until(pageIsVisible(navigationPage));
         wait.until(pageIsVisible(overviewPage));
-        assertThat(overviewPage.isVisibleForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
         navigationPage.quickAdd.click();
@@ -228,7 +231,7 @@ class ApplicationForLeaveCreateIT {
 
         wait.until(pageIsVisible(applicationDetailPage));
         wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
-        assertThat(applicationDetailPage.isVisibleForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
         // application created info vanishes sometime
         wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));

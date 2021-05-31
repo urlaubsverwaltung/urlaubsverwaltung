@@ -11,6 +11,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -48,6 +49,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
+import static java.util.Locale.ENGLISH;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -86,6 +88,8 @@ class SickNoteCreateIT {
     private AccountInteractionService accountInteractionService;
     @Autowired
     private WorkingTimeWriteService workingTimeWriteService;
+    @Autowired
+    private MessageSource messageSource;
 
     @Test
     void ensureSickNote() {
@@ -94,7 +98,7 @@ class SickNoteCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
@@ -105,29 +109,29 @@ class SickNoteCreateIT {
         wait.until(pageIsVisible(navigationPage));
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
-        sickNote(webDriver);
-        sickNoteWithIncapacityCertificate(webDriver);
-        childSickNote(webDriver);
-        childSickNoteWithIncapacityCertificate(webDriver);
+        sickNote(webDriver, person);
+        sickNoteWithIncapacityCertificate(webDriver, person);
+        childSickNote(webDriver, person);
+        childSickNoteWithIncapacityCertificate(webDriver, person);
 
-        sickNoteStatisticListView(webDriver);
+        sickNoteStatisticListView(webDriver, person);
 
         navigationPage.logout();
         wait.until(pageIsVisible(loginPage));
     }
 
-    private void sickNote(RemoteWebDriver webDriver) {
+    private void sickNote(RemoteWebDriver webDriver, Person person) {
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
         wait.until(pageIsVisible(sickNotePage));
 
-        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
@@ -139,23 +143,23 @@ class SickNoteCreateIT {
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
-        assertThat(sickNoteDetailPage.showsSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, FEBRUARY, 23))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
-    private void sickNoteWithIncapacityCertificate(RemoteWebDriver webDriver) {
+    private void sickNoteWithIncapacityCertificate(RemoteWebDriver webDriver, Person person) {
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
         wait.until(pageIsVisible(sickNotePage));
 
-        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
@@ -170,25 +174,25 @@ class SickNoteCreateIT {
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
-        assertThat(sickNoteDetailPage.showsSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, MARCH, 10))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, MARCH, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2021, MARCH, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2021, MARCH, 11))).isTrue();
     }
 
-    private void childSickNote(RemoteWebDriver webDriver) {
+    private void childSickNote(RemoteWebDriver webDriver, Person person) {
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
         wait.until(pageIsVisible(sickNotePage));
 
-        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
@@ -201,24 +205,24 @@ class SickNoteCreateIT {
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
-        assertThat(sickNoteDetailPage.showsChildSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, APRIL, 10))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, APRIL, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
-    private void childSickNoteWithIncapacityCertificate(RemoteWebDriver webDriver) {
+    private void childSickNoteWithIncapacityCertificate(RemoteWebDriver webDriver, Person person) {
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
         wait.until(pageIsVisible(sickNotePage));
 
-        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
@@ -234,24 +238,24 @@ class SickNoteCreateIT {
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
-        assertThat(sickNoteDetailPage.showsChildSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, MAY, 10))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, MAY, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2021, MAY, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2021, MAY, 11))).isTrue();
     }
 
-    private void sickNoteStatisticListView(RemoteWebDriver webDriver) {
+    private void sickNoteStatisticListView(RemoteWebDriver webDriver, Person person) {
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver);
+        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver, messageSource, ENGLISH);
 
         navigationPage.clickSickNotes();
         wait.until(pageIsVisible(sickNoteOverviewPage));
 
-        assertThat(sickNoteOverviewPage.showsSickNoteStatistic("Alfred", "Pennyworth", 3, 1)).isTrue();
-        assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic("Alfred", "Pennyworth", 4, 1)).isTrue();
+        assertThat(sickNoteOverviewPage.showsSickNoteStatistic(person.getFirstName(), person.getLastName(), 3, 1)).isTrue();
+        assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic(person.getFirstName(), person.getLastName(), 4, 1)).isTrue();
     }
 
     private Person createPerson() {

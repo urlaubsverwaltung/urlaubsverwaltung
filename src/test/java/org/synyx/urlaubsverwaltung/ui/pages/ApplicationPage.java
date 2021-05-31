@@ -2,9 +2,11 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 
@@ -14,9 +16,13 @@ public class ApplicationPage implements Page {
     private static final By SUBMIT_SELECTOR = By.cssSelector("button#apply-application");
 
     private final WebDriver driver;
+    private final MessageSource messageSource;
+    private final Locale locale;
 
-    public ApplicationPage(WebDriver driver) {
+    public ApplicationPage(WebDriver driver, MessageSource messageSource, Locale locale) {
         this.driver = driver;
+        this.messageSource = messageSource;
+        this.locale = locale;
     }
 
     @Override
@@ -33,8 +39,9 @@ public class ApplicationPage implements Page {
         driver.findElement(SUBMIT_SELECTOR).click();
     }
 
-    private static boolean title(WebDriver driver) {
-        return driver.getTitle().equals("New vacation request");
+    private boolean title(WebDriver driver) {
+        final String titleText = messageSource.getMessage("application.data.header.title.new", new Object[]{}, locale);
+        return driver.getTitle().equals(titleText);
     }
 
     private static boolean fromInputExists(WebDriver driver) {

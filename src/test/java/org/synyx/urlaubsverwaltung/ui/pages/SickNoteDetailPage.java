@@ -2,9 +2,11 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 
@@ -16,9 +18,13 @@ public class SickNoteDetailPage implements Page {
     private static final By AUB_DATE_SELECTOR = By.cssSelector("[data-test-id=sicknote-aub-date]");
 
     private final WebDriver driver;
+    private final MessageSource messageSource;
+    private final Locale locale;
 
-    public SickNoteDetailPage(WebDriver driver) {
+    public SickNoteDetailPage(WebDriver driver, MessageSource messageSource, Locale locale) {
         this.driver = driver;
+        this.messageSource = messageSource;
+        this.locale = locale;
     }
 
     @Override
@@ -27,13 +33,16 @@ public class SickNoteDetailPage implements Page {
     }
 
     public boolean showsSickNoteForPerson(String name) {
+        final String typeText = messageSource.getMessage("application.data.sicknotetype.sicknote", new Object[]{}, locale);
+
         return driver.findElement(PERSON_SELECTOR).getText().contains(name)
-            && driver.findElement(TYPE_SELECTOR).getText().contains("Sick note");
+            && driver.findElement(TYPE_SELECTOR).getText().contains(typeText);
     }
 
     public boolean showsChildSickNoteForPerson(String name) {
+        final String typeText = messageSource.getMessage("application.data.sicknotetype.sicknotechild", new Object[]{}, locale);
         return driver.findElement(PERSON_SELECTOR).getText().contains(name)
-            && driver.findElement(TYPE_SELECTOR).getText().contains("Child sick note");
+            && driver.findElement(TYPE_SELECTOR).getText().contains(typeText);
     }
 
     public boolean showsSickNoteDateFrom(LocalDate dateFrom) {
@@ -57,6 +66,7 @@ public class SickNoteDetailPage implements Page {
     }
 
     public boolean showsNoIncapacityCertificate() {
-        return driver.findElement(AUB_DATE_SELECTOR).getText().contains("No");
+        final String notPresentText = messageSource.getMessage("sicknote.data.aub.notPresent", new Object[]{}, locale);
+        return driver.findElement(AUB_DATE_SELECTOR).getText().contains(notPresentText);
     }
 }
