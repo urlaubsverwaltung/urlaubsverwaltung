@@ -11,7 +11,9 @@ public enum ApplicationStatus {
     WAITING,
 
     /**
-     * After the HeadOf has allowed the application in a two stage approval process.
+     * After the department head has allowed the application in a two stage approval process and before the
+     * second stage authority has rejected or allowed the application.
+     * This status is a special case of WAITING and needs to be handled as a waiting, not yet allowed, application for leave.
      *
      * @since 2.15.0
      */
