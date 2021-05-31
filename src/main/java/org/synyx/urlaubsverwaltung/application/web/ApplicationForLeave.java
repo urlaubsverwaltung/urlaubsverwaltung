@@ -15,7 +15,7 @@ public class ApplicationForLeave extends Application {
 
     private final BigDecimal workDays;
 
-    public ApplicationForLeave(Application application, WorkDaysCountService calendarService) {
+    public ApplicationForLeave(Application application, WorkDaysCountService workDaysCountService) {
 
         // copy all the properties from the given application for leave
         BeanUtils.copyProperties(application, this);
@@ -24,7 +24,7 @@ public class ApplicationForLeave extends Application {
         setId(application.getId());
 
         // calculate the work days
-        this.workDays = calendarService.getWorkDaysCount(getDayLength(), getStartDate(), getEndDate(), getPerson());
+        this.workDays = workDaysCountService.getWorkDaysCount(getDayLength(), getStartDate(), getEndDate(), getPerson());
     }
 
     public BigDecimal getWorkDays() {

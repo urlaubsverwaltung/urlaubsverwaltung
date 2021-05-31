@@ -15,7 +15,7 @@ public class ExtendedSickNote extends SickNote {
 
     private final BigDecimal workDays;
 
-    public ExtendedSickNote(SickNote sickNote, WorkDaysCountService calendarService) {
+    public ExtendedSickNote(SickNote sickNote, WorkDaysCountService workDaysCountService) {
 
         // copy all the properties from the given sick note
         BeanUtils.copyProperties(sickNote, this);
@@ -24,7 +24,7 @@ public class ExtendedSickNote extends SickNote {
         setId(sickNote.getId());
 
         // calculate the work days
-        this.workDays = calendarService.getWorkDaysCount(getDayLength(), getStartDate(), getEndDate(), getPerson());
+        this.workDays = workDaysCountService.getWorkDaysCount(getDayLength(), getStartDate(), getEndDate(), getPerson());
     }
 
     public BigDecimal getWorkDays() {
