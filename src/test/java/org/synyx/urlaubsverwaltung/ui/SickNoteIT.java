@@ -61,8 +61,8 @@ import static org.testcontainers.containers.MariaDBContainer.NAME;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ContextConfiguration(initializers = SickNoteCreateIT.Initializer.class)
-class SickNoteCreateIT {
+@ContextConfiguration(initializers = SickNoteIT.Initializer.class)
+class SickNoteIT {
 
     @LocalServerPort
     private int port;
