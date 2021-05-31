@@ -215,7 +215,7 @@
                             <div class="col-md-9">
                                 <form:input id="aubFrom" path="aubStartDate" class="form-control"
                                             cssErrorClass="form-control error" autocomplete="off"
-                                            placeholder="${DATE_PATTERN}"/>
+                                            placeholder="${DATE_PATTERN}" data-test-id="sicknote-aub-from"/>
                                 <uv:error-text>
                                     <form:errors path="aubStartDate" />
                                 </uv:error-text>
@@ -229,7 +229,7 @@
                             <div class="col-md-9">
                                 <form:input id="aubTo" path="aubEndDate" class="form-control"
                                             cssErrorClass="form-control error" autocomplete="off"
-                                            placeholder="${DATE_PATTERN}"/>
+                                            placeholder="${DATE_PATTERN}" data-test-id="sicknote-aub-to" />
                                 <uv:error-text>
                                     <form:errors path="aubEndDate" />
                                 </uv:error-text>

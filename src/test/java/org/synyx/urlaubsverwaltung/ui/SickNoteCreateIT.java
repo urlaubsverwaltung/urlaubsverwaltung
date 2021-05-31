@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
+import org.synyx.urlaubsverwaltung.ui.pages.SickNoteOverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNotePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
@@ -41,9 +42,12 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -84,7 +88,7 @@ class SickNoteCreateIT {
     private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
-    void ensureSickNoteCreation() {
+    void ensureSickNote() {
         final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
@@ -92,8 +96,6 @@ class SickNoteCreateIT {
 
         final LoginPage loginPage = new LoginPage(webDriver);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -101,8 +103,26 @@ class SickNoteCreateIT {
         loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
         wait.until(pageIsVisible(navigationPage));
-
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+
+        sickNote(webDriver);
+        sickNoteWithIncapacityCertificate(webDriver);
+        childSickNote(webDriver);
+        childSickNoteWithIncapacityCertificate(webDriver);
+
+        sickNoteStatisticListView(webDriver);
+
+        navigationPage.logout();
+        wait.until(pageIsVisible(loginPage));
+    }
+
+    private void sickNote(RemoteWebDriver webDriver) {
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final SickNotePage sickNotePage = new SickNotePage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
         wait.until(pageIsVisible(sickNotePage));
@@ -114,16 +134,124 @@ class SickNoteCreateIT {
         final int currentYear = LocalDate.now().getYear();
 
         sickNotePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
-        assertThat(sickNotePage.showsFromDate(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
+        assertThat(sickNotePage.showsToDate(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
 
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson("Alfred Pennyworth")).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, FEBRUARY, 23))).isTrue();
+        assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
+    }
 
-        navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+    private void sickNoteWithIncapacityCertificate(RemoteWebDriver webDriver) {
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final SickNotePage sickNotePage = new SickNotePage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newSickNote();
+        wait.until(pageIsVisible(sickNotePage));
+
+        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
+        assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
+
+        final int currentYear = LocalDate.now().getYear();
+
+        sickNotePage.startDate(LocalDate.of(currentYear, MARCH, 10));
+        sickNotePage.toDate(LocalDate.of(currentYear, MARCH, 11));
+
+        sickNotePage.aubStartDate(LocalDate.of(currentYear, MARCH, 11));
+        assertThat(sickNotePage.showsAubToDate(LocalDate.of(currentYear, MARCH, 11))).isTrue();
+
+        sickNotePage.submit();
+
+        wait.until(pageIsVisible(sickNoteDetailPage));
+        assertThat(sickNoteDetailPage.showsSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, MARCH, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2021, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2021, MARCH, 11))).isTrue();
+    }
+
+    private void childSickNote(RemoteWebDriver webDriver) {
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final SickNotePage sickNotePage = new SickNotePage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newSickNote();
+        wait.until(pageIsVisible(sickNotePage));
+
+        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
+        assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
+
+        final int currentYear = LocalDate.now().getYear();
+
+        sickNotePage.selectTypeChildSickNote();
+        sickNotePage.startDate(LocalDate.of(currentYear, APRIL, 10));
+        sickNotePage.toDate(LocalDate.of(currentYear, APRIL, 11));
+
+        sickNotePage.submit();
+
+        wait.until(pageIsVisible(sickNoteDetailPage));
+        assertThat(sickNoteDetailPage.showsChildSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, APRIL, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, APRIL, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
+    }
+
+    private void childSickNoteWithIncapacityCertificate(RemoteWebDriver webDriver) {
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final SickNotePage sickNotePage = new SickNotePage(webDriver);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver);
+
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newSickNote();
+        wait.until(pageIsVisible(sickNotePage));
+
+        assertThat(sickNotePage.personSelected("Alfred Pennyworth")).isTrue();
+        assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
+        assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
+
+        final int currentYear = LocalDate.now().getYear();
+
+        sickNotePage.selectTypeChildSickNote();
+        sickNotePage.startDate(LocalDate.of(currentYear, MAY, 10));
+        sickNotePage.toDate(LocalDate.of(currentYear, MAY, 11));
+
+        sickNotePage.aubStartDate(LocalDate.of(currentYear, MAY, 11));
+        assertThat(sickNotePage.showsAubToDate(LocalDate.of(currentYear, MAY, 11))).isTrue();
+
+        sickNotePage.submit();
+
+        wait.until(pageIsVisible(sickNoteDetailPage));
+        assertThat(sickNoteDetailPage.showsChildSickNoteForPerson("Alfred Pennyworth")).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, MAY, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2021, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2021, MAY, 11))).isTrue();
+    }
+
+    private void sickNoteStatisticListView(RemoteWebDriver webDriver) {
+        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver);
+
+        navigationPage.clickSickNotes();
+        wait.until(pageIsVisible(sickNoteOverviewPage));
+
+        assertThat(sickNoteOverviewPage.showsSickNoteStatistic("Alfred", "Pennyworth", 3, 1)).isTrue();
+        assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic("Alfred", "Pennyworth", 4, 1)).isTrue();
     }
 
     private Person createPerson() {
