@@ -142,6 +142,7 @@ public class VacationDaysService {
         // filter them since only WAITING, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
         final List<Application> applicationsForLeave = allApplicationsForLeave.stream()
             .filter(application -> HOLIDAY.equals(application.getVacationType().getCategory()) &&
+                // TODO and what is with the TEMPORARY_ALLOWED?
                 (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)))
             .collect(toList());
 
