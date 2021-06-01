@@ -36,6 +36,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
@@ -124,7 +125,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", emptyList()))
             .andExpect(model().attribute("selectedDepartments", nullValue()))
-            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(31))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
             .andExpect(view().name("absences/absences_overview"));
 
@@ -180,7 +181,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", nullValue()))
             .andExpect(model().attribute("selectedDepartments", nullValue()))
-            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(31))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
             .andExpect(view().name("absences/absences_overview"));
     }
