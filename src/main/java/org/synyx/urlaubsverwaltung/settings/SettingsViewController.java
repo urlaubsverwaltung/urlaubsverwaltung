@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
@@ -38,18 +39,20 @@ public class SettingsViewController {
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
     private final WorkingTimeSettingsService workingTimeSettingsService;
+    private final TimeSettingsService timeSettingsService;
     private final Clock clock;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService, Clock clock) {
+                                  SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService, TimeSettingsService timeSettingsService, Clock clock) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
         this.workingTimeSettingsService = workingTimeSettingsService;
+        this.timeSettingsService = timeSettingsService;
         this.clock = clock;
     }
 
@@ -89,6 +92,7 @@ public class SettingsViewController {
         }
 
         model.addAttribute("workingtimesettings", workingTimeSettingsService.getSettingsDto());
+        model.addAttribute("timesettings", timeSettingsService.getSettingsDto());
 
         return "settings/settings_overview";
     }

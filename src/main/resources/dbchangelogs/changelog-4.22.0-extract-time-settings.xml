@@ -1,0 +1,31 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="add-globale-default-working-time">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="timezoneid"/>
+      <columnExists tableName="settings" columnName="work_day_begin_hour"/>
+      <columnExists tableName="settings" columnName="work_day_end_hour"/>
+    </preConditions>
+
+    <createTable tableName="time_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="timezone_id" type="VARCHAR(255)" defaultValue="Europe/Berlin"/>
+      <column name="work_day_begin_hour" type="INT(10)" />
+      <column name="work_day_end_hour" type="INT(10)" />
+    </createTable>
+
+    <insert tableName="time_settings">
+      <column name="timezone_id" valueComputed="(SELECT timezoneid FROM settings)"/>
+      <column name="work_day_begin_hour" valueComputed="(SELECT work_day_begin_hour FROM settings)"/>
+      <column name="work_day_end_hour" valueComputed="(SELECT work_day_end_hour FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

@@ -14,7 +14,7 @@ public class WorkingTimeSettingsService {
 
     public WorkingTimeSettingsDto getSettingsDto() {
 
-        WorkingTimeSettingsEntity workingTimeSettingsEntity = Lists.newArrayList(workingTimeSettingsRepository.findAll()).get(0);
+        WorkingTimeSettingsEntity workingTimeSettingsEntity = workingTimeSettingsRepository.findFirstBy();
 
         return WorkingTimeSettingsDtoMapper.mapToWorkingTimeSettingsDto(workingTimeSettingsEntity);
     }

@@ -188,8 +188,9 @@
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
                     </jsp:body>
                 </uv:section-heading>
-                <uv:account-entitlement account="${account}" className="tw-mb-2 tw-border-none" noPadding="true" />
+
             </div>
+
             <div class="md:tw-col-start-2 md:tw-row-start-3">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
@@ -312,7 +313,7 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <a href="${URL_PREFIX}/time/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
@@ -330,14 +331,30 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <p>
-                            <span class="tw-block tw-mb-1 tw-text-sm">
-                                <spring:message code="person.details.workingTime.federalState"/>
-                            </span>
-                            <span class="tw-text-base tw-font-medium">
-                                <spring:message code="federalState.${federalState}"/>
-                            </span>
-                        </p>
+                            <div class="form-group tw-flex">
+                                <label class="control-label col-md-8">
+                                    <spring:message code="settings.time.timezone"/>:
+                                </label>
+                                <div class="col-md-8">
+                                    <c:out value="${timesettings.timeZoneId}"/>
+                                </div>
+                            </div>
+                            <div class="form-group tw-flex ">
+                                <label class="control-label col-md-8" >
+                                    <spring:message code='settings.time.workDay.begin'/>:
+                                </label>
+                                <div class="col-md-8">
+                                    <c:out value="${timesettings.workDayBeginHour}"/>
+                                </div>
+                            </div>
+                            <div class="form-group tw-flex">
+                                <label class="control-label col-md-8" >
+                                    <spring:message code='settings.time.workDay.end'/>:
+                                </label>
+                                <div class="col-md-8">
+                                    <c:out value="${timesettings.workDayEndHour}"/>
+                                </div>
+                            </div>
                     </jsp:body>
                 </uv:box>
             </div>

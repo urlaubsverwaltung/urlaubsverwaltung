@@ -3,15 +3,12 @@ package org.synyx.urlaubsverwaltung.workingtime.settings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import javax.persistence.Enumerated;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.EnumType.STRING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.*;
-import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 public class WorkingTimeSettingsDto {
 
