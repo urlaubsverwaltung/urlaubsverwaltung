@@ -155,7 +155,7 @@ public class AbsenceOverviewViewController {
                 .stream()
                 .collect(
                     toMap(
-                        publicHoliday -> publicHoliday.getHoliday().getDate(),
+                        PublicHoliday::getDate,
                         Function.identity()
                     )
                 );

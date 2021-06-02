@@ -99,6 +99,7 @@ public class AbsenceApiController {
 
         return new DayAbsencesDto(absences);
     }
+
     private List<DayAbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, DayAbsenceDto.Type type) {
         final Predicate<DayAbsenceDto> vacationAsked = dto -> type == null || type.equals(VACATION);
         final Predicate<DayAbsenceDto> sickAsked = dto -> type == null || type.equals(SICK_NOTE);
@@ -121,7 +122,7 @@ public class AbsenceApiController {
             .stream()
             .collect(
                 toMap(
-                    publicHoliday -> publicHoliday.getHoliday().getDate(),
+                    PublicHoliday::getDate,
                     Function.identity()
                 )
             );
@@ -219,9 +220,12 @@ public class AbsenceApiController {
 
     private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
         switch (absenceType) {
-            case VACATION: return Optional.of(DayAbsenceDto.Type.VACATION);
-            case SICK: return Optional.of(DayAbsenceDto.Type.SICK_NOTE);
-            default: return Optional.empty();
+            case VACATION:
+                return Optional.of(DayAbsenceDto.Type.VACATION);
+            case SICK:
+                return Optional.of(DayAbsenceDto.Type.SICK_NOTE);
+            default:
+                return Optional.empty();
         }
     }
 }

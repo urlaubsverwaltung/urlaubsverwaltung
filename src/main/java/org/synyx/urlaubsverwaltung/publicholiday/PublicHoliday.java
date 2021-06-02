@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.jollyday.Holiday;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -11,16 +11,16 @@ import java.util.Objects;
  */
 public final class PublicHoliday {
 
-    private final Holiday holiday;
+    private final LocalDate date;
     private final DayLength dayLength;
 
-    public PublicHoliday(Holiday holiday, DayLength dayLength) {
-        this.holiday = holiday;
+    public PublicHoliday(LocalDate date, DayLength dayLength) {
+        this.date = date;
         this.dayLength = dayLength;
     }
 
-    public Holiday getHoliday() {
-        return holiday;
+    public LocalDate getDate() {
+        return date;
     }
 
     public DayLength getDayLength() {
@@ -44,11 +44,11 @@ public final class PublicHoliday {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PublicHoliday that = (PublicHoliday) o;
-        return Objects.equals(holiday, that.holiday);
+        return Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(holiday);
+        return Objects.hash(date);
     }
 }

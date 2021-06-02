@@ -62,7 +62,7 @@ public class PublicHolidaysService {
         final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
         return getHolidays(from, to, federalState).stream()
-            .map(holiday -> new PublicHoliday(holiday, getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
+            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
             .collect(toUnmodifiableList());
     }
 

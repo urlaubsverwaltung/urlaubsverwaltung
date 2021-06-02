@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import de.jollyday.Holiday;
-import de.jollyday.HolidayType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -340,8 +338,8 @@ class AbsenceApiControllerTest {
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
-        final Holiday holiday = new Holiday(LocalDate.of(2016, Month.DECEMBER, 24), null, HolidayType.OFFICIAL_HOLIDAY);
-        final PublicHoliday christmasEve = new PublicHoliday(holiday, DayLength.NOON);
+        final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
@@ -377,8 +375,8 @@ class AbsenceApiControllerTest {
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
-        final Holiday holiday = new Holiday(LocalDate.of(2016, Month.DECEMBER, 24), null, HolidayType.OFFICIAL_HOLIDAY);
-        final PublicHoliday christmasEve = new PublicHoliday(holiday, DayLength.NOON);
+        final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
@@ -416,8 +414,8 @@ class AbsenceApiControllerTest {
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
-        final Holiday holiday = new Holiday(LocalDate.of(2016, Month.DECEMBER, 24), null, HolidayType.OFFICIAL_HOLIDAY);
-        final PublicHoliday christmasEve = new PublicHoliday(holiday, DayLength.NOON);
+        final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
@@ -453,8 +451,8 @@ class AbsenceApiControllerTest {
 
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
-        final Holiday holiday = new Holiday(LocalDate.of(2016, Month.DECEMBER, 24), null, HolidayType.OFFICIAL_HOLIDAY);
-        final PublicHoliday christmasEve = new PublicHoliday(holiday, DayLength.NOON);
+        final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
