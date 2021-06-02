@@ -1,7 +1,11 @@
 package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.LocalDate;
+
+import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ALLOWED;
@@ -165,5 +169,33 @@ class AbsencePeriodTest {
     void ensureVacationNoonHasNotStatusAllowed() {
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, TEMPORARY_ALLOWED);
         assertThat(noon.hasStatusAllowed()).isFalse();
+    }
+
+    @Test
+    void isHalfDayAbsenceIsFullDay() {
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning, noon);
+        assertThat(record.isHalfDayAbsence()).isFalse();
+    }
+
+    @Test
+    void isHalfDayAbsenceIsNoDay() {
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), null, null);
+        assertThat(record.isHalfDayAbsence()).isFalse();
+    }
+
+    @Test
+    void isHalfDayAbsenceIsMorning() {
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), morning);
+        assertThat(record.isHalfDayAbsence()).isTrue();
+    }
+
+    @Test
+    void isHalfDayAbsenceIsNoon() {
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.of(2013, NOVEMBER, 19), new Person(), noon);
+        assertThat(record.isHalfDayAbsence()).isTrue();
     }
 }

@@ -109,7 +109,7 @@ public class AbsencePeriod {
         }
 
         public boolean isHalfDayAbsence() {
-            return this.morning == null || this.noon == null;
+            return (this.morning == null && this.noon != null) || (this.morning != null && this.noon == null);
         }
 
         /**
