@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -180,6 +179,7 @@ public class AbsencePeriod {
      * Describes an absence record. (e.g. morning absence or noon absence)
      */
     public abstract static class AbstractRecordInfo implements RecordInfo {
+
         private final AbsenceType type;
         private final Integer id;
         private final AbsenceStatus status;
@@ -206,11 +206,11 @@ public class AbsencePeriod {
         }
 
         public boolean hasStatusOneOf(AbsenceStatus... status) {
-            return Arrays.asList(status).contains(this.status);
+            return List.of(status).contains(this.status);
         }
 
         public boolean hasStatusWaiting() {
-            return hasStatusOneOf(AbsenceStatus.WAITING, AbsenceStatus.TEMPORARY_ALLOWED, AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED);
+            return hasStatusOneOf(AbsenceStatus.WAITING, AbsenceStatus.TEMPORARY_ALLOWED);
         }
 
         public boolean hasStatusAllowed() {
@@ -248,7 +248,7 @@ public class AbsencePeriod {
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningSick(Integer sickNoteId) {
-            super(AbsenceType.SICK, sickNoteId, AbsencePeriod.AbsenceStatus.ACTIVE);
+            super(AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
         }
     }
 
