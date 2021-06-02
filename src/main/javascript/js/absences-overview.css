@@ -144,14 +144,14 @@ th.vacationOverview-cal-head.today::after {
   --bg-right-lightness: 81%;
 }
 
-.sick-full,
-.sick-morning {
+.sick-note-full,
+.sick-note-morning {
   --bg-left-hue: 6;
   --bg-left-saturation: 100%;
   --bg-left-lightness: 87%;
 }
-.sick-full,
-.sick-noon {
+.sick-note-full,
+.sick-note-noon {
   --bg-right-hue: 6;
   --bg-right-saturation: 100%;
   --bg-right-lightness: 87%;
