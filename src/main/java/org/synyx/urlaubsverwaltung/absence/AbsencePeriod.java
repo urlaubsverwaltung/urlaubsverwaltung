@@ -87,17 +87,11 @@ public class AbsencePeriod {
         private final RecordNoon noon;
 
         public Record(LocalDate date, Person person, RecordMorning morning) {
-            this.date = date;
-            this.person = person;
-            this.morning = morning;
-            this.noon = null;
+            this(date, person, morning, null);
         }
 
         public Record(LocalDate date, Person person, RecordNoon noon) {
-            this.date = date;
-            this.person = person;
-            this.morning = null;
-            this.noon = noon;
+            this(date, person, null, noon);
         }
 
         public Record(LocalDate date, Person person, RecordMorning morning, RecordNoon noon) {
