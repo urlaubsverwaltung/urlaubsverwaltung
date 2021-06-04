@@ -6,11 +6,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -61,7 +57,7 @@ import static org.testcontainers.containers.MariaDBContainer.NAME;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ContextConfiguration(initializers = SickNoteIT.Initializer.class)
+@ContextConfiguration(initializers = UITestInitializer.class)
 class SickNoteIT {
 
     @LocalServerPort
@@ -276,13 +272,5 @@ class SickNoteIT {
 
 
         return savedPerson;
-    }
-
-    public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        @Override
-        public void initialize(ConfigurableApplicationContext applicationContext) {
-            applicationContext.addApplicationListener((ApplicationListener<WebServerInitializedEvent>) event ->
-                org.testcontainers.Testcontainers.exposeHostPorts(event.getWebServer().getPort()));
-        }
     }
 }
