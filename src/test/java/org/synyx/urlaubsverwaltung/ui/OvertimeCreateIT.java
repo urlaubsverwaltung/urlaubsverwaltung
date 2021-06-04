@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -52,7 +51,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.ui.PageConditions.isTrue;
 import static org.synyx.urlaubsverwaltung.ui.PageConditions.pageIsVisible;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
-import static org.testcontainers.containers.MariaDBContainer.NAME;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -67,14 +65,12 @@ class OvertimeCreateIT {
         .withRecordingMode(RECORD_FAILING, new File("target"))
         .withCapabilities(new FirefoxOptions());
 
-    static final MariaDBContainer<?> mariaDB = new MariaDBContainer<>(NAME + ":10.5");
+    static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
 
     @DynamicPropertySource
     static void mariaDBProperties(DynamicPropertyRegistry registry) {
         mariaDB.start();
-        registry.add("spring.datasource.url", mariaDB::getJdbcUrl);
-        registry.add("spring.datasource.username", mariaDB::getUsername);
-        registry.add("spring.datasource.password", mariaDB::getPassword);
+        mariaDB.configureSpringDataSource(registry);
     }
 
     @Autowired
