@@ -234,7 +234,6 @@ class AbsenceServiceImplTest {
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
@@ -270,7 +269,6 @@ class AbsenceServiceImplTest {
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isEmpty();
@@ -305,7 +303,6 @@ class AbsenceServiceImplTest {
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
@@ -340,7 +337,6 @@ class AbsenceServiceImplTest {
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isEmpty();
@@ -387,7 +383,6 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences).hasSize(2);
 
         // vacation
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
@@ -396,7 +391,6 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
 
         // sick
-        assertThat(actualAbsences.get(1).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(1).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getMorning()).isEmpty();
@@ -431,7 +425,6 @@ class AbsenceServiceImplTest {
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
 
         final List<AbsencePeriod.Record> absenceRecords = actualAbsences.get(0).getAbsenceRecords();
         assertThat(absenceRecords).hasSize(1);
@@ -466,7 +459,6 @@ class AbsenceServiceImplTest {
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
 
         final List<AbsencePeriod.Record> absenceRecords = actualAbsences.get(0).getAbsenceRecords();
         assertThat(absenceRecords).hasSize(1);
@@ -503,7 +495,6 @@ class AbsenceServiceImplTest {
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
 
         final List<AbsencePeriod.Record> absenceRecords = actualAbsences.get(0).getAbsenceRecords();
         assertThat(absenceRecords).hasSize(30);
@@ -556,7 +547,6 @@ class AbsenceServiceImplTest {
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
 
         final List<AbsencePeriod.Record> absenceRecords = actualAbsences.get(0).getAbsenceRecords();
         assertThat(absenceRecords).hasSize(31);
@@ -612,7 +602,6 @@ class AbsenceServiceImplTest {
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
         assertThat(actualAbsences).hasSize(1);
-        assertThat(actualAbsences.get(0).getPerson()).isSameAs(batman);
 
         final List<AbsencePeriod.Record> absenceRecords = actualAbsences.get(0).getAbsenceRecords();
         assertThat(absenceRecords).hasSize(31);

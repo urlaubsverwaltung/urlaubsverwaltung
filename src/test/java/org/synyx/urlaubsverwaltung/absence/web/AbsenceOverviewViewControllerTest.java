@@ -688,7 +688,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodSick = new AbsencePeriod(person, List.of(record));
+        final AbsencePeriod absencePeriodSick = new AbsencePeriod(List.of(record));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
@@ -742,7 +742,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(person, List.of(record));
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());

@@ -131,8 +131,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod toAbsencePeriod(Application application, DateRange askedDateRange, List<WorkingTime> workingTimeList,
                                           FederalState systemDefaultFederalState) {
-        return new AbsencePeriod(application.getPerson(),
-            days(application, askedDateRange, workingTimeList, systemDefaultFederalState));
+        return new AbsencePeriod(days(application, askedDateRange, workingTimeList, systemDefaultFederalState));
     }
 
     private AbsencePeriod.AbsenceStatus toAbsenceStatus(ApplicationStatus applicationStatus) {
@@ -207,7 +206,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod toAbsencePeriod(SickNote sickNote, DateRange askedDateRange, List<WorkingTime> workingTimeList,
                                           FederalState systemDefaultFederalState) {
-        return new AbsencePeriod(sickNote.getPerson(), days(sickNote, askedDateRange, workingTimeList, systemDefaultFederalState));
+        return new AbsencePeriod(days(sickNote, askedDateRange, workingTimeList, systemDefaultFederalState));
     }
 
     private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, List<WorkingTime> workingTimeList,

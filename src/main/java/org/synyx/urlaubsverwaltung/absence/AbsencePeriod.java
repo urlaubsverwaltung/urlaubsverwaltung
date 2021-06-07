@@ -36,16 +36,10 @@ public class AbsencePeriod {
         ACTIVE,
     }
 
-    private final Person person;
     private final List<AbsencePeriod.Record> absenceRecords;
 
-    public AbsencePeriod(Person person, List<Record> absenceRecords) {
-        this.person = person;
+    public AbsencePeriod(List<Record> absenceRecords) {
         this.absenceRecords = absenceRecords;
-    }
-
-    public Person getPerson() {
-        return person;
     }
 
     public List<AbsencePeriod.Record> getAbsenceRecords() {
@@ -57,18 +51,17 @@ public class AbsencePeriod {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbsencePeriod that = (AbsencePeriod) o;
-        return Objects.equals(person, that.person) && Objects.equals(absenceRecords, that.absenceRecords);
+        return Objects.equals(absenceRecords, that.absenceRecords);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(person, absenceRecords);
+        return Objects.hash(absenceRecords);
     }
 
     @Override
     public String toString() {
         return "AbsencePeriod{" +
-            "person=" + person +
             ", absenceRecords=" + absenceRecords +
             '}';
     }
