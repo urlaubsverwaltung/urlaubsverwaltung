@@ -69,4 +69,15 @@ public interface SickNoteService {
      * @return all {@link SickNote} with specific states and persons
      */
     List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since);
+
+    /**
+     * Get all {@link SickNote}s with specific states and persons for the given date range
+     *
+     * @param sickNoteStatus {@link SickNoteStatus} to filter
+     * @param persons {@link Person}s to consider
+     * @param start start date (inclusive)
+     * @param end end date (inclusive)
+     * @return list of all matching {@link SickNote}s
+     */
+    List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
 }

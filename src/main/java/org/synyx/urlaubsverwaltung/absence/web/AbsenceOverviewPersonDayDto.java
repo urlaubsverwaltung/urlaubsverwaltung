@@ -10,8 +10,8 @@ public class AbsenceOverviewPersonDayDto {
         this.weekend = weekend;
     }
 
-    public String getType() {
-        return type == null ? "" : type.getIdentifier();
+    public AbsenceOverviewDayType getType() {
+        return type;
     }
 
     public boolean isWeekend() {

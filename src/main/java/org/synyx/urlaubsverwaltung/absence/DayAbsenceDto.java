@@ -24,11 +24,11 @@ public class DayAbsenceDto {
     private final String status;
     private final String href;
 
-    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
+    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Integer id) {
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
-        this.type = type.name();
+        this.type = type;
         this.status = status;
         this.href = id == null ? "" : id.toString();
     }

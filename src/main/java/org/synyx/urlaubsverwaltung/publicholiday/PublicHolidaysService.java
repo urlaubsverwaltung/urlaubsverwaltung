@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
@@ -49,6 +50,23 @@ public class PublicHolidaysService {
         final Settings settings = settingsService.getSettings();
         final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
 
+        return getHolidayDayLength(workingTimeSettings, date, federalState);
+    }
+
+    public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
+        return List.copyOf(manager.getHolidays(from, to, federalState.getCodes()));
+    }
+
+    public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
+        final Settings settings = settingsService.getSettings();
+        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+
+        return getHolidays(from, to, federalState).stream()
+            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
+            .collect(toUnmodifiableList());
+    }
+
+    private DayLength getHolidayDayLength(WorkingTimeSettings workingTimeSettings, LocalDate date, FederalState federalState) {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {
@@ -61,10 +79,6 @@ public class PublicHolidaysService {
         }
 
         return workingTime.getInverse();
-    }
-
-    public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
-        return List.copyOf(manager.getHolidays(from, to, federalState.getCodes()));
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
