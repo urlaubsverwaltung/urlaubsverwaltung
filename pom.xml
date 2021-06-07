@@ -4,7 +4,7 @@
 
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
-  <version>4.20.0</version>
+  <version>4.20.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>Urlaubsverwaltung</name>
