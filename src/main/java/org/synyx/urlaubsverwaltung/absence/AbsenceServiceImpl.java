@@ -264,8 +264,15 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
     private DayLength publicHolidayAbsence(LocalDate date, List<WorkingTime> workingTimeList,
                                            FederalState federalStateDefault) {
-        final WorkingTime workingTime = workingTime(date, workingTimeList).orElse(workingTimeList.get(0));
-        final FederalState federalState = workingTime.getFederalStateOverride().orElse(federalStateDefault);
+
+        final FederalState federalState = workingTime(date, workingTimeList)
+            .or(() -> workingTimeList.isEmpty()
+                ? Optional.empty()
+                : Optional.of(workingTimeList.get(0))
+            )
+            .flatMap(WorkingTime::getFederalStateOverride)
+            .orElse(federalStateDefault);
+
         return publicHolidaysService.getAbsenceTypeOfDate(date, federalState);
     }
 
