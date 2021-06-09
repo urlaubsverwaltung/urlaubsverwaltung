@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JUNE;
 import static java.time.Month.MAY;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -39,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.T
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceServiceImplTest {
@@ -279,6 +281,32 @@ class AbsenceServiceImplTest {
     }
 
     @Test
+    void ensureVacationWithEmptyWorkingTimeFallsBackToSystemDefaultFederalState() {
+
+        final LocalDate start = LocalDate.of(2021, MAY, 1);
+        final LocalDate end = LocalDate.of(2021, MAY, 31);
+
+        final Person batman = new Person();
+        batman.setId(1);
+
+        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(emptyList());
+        when(workingTimeService.getSystemDefaultFederalState()).thenReturn(BERLIN);
+
+        final Application application = new Application();
+        application.setId(42);
+        application.setPerson(batman);
+        application.setStartDate(start.plusDays(1));
+        application.setEndDate(start.plusDays(1));
+        application.setStatus(ALLOWED);
+
+        when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
+        when(publicHolidaysService.getAbsenceTypeOfDate(any(), eq(BERLIN))).thenReturn(DayLength.ZERO);
+
+        final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
+        assertThat(actualAbsences).hasSize(1);
+    }
+
+    @Test
     void ensureSickMorning() {
 
         final LocalDate start = LocalDate.of(2021, MAY, 1);
@@ -344,6 +372,32 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ACTIVE);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
+    }
+
+    @Test
+    void ensureSickWithEmptyWorkingTimeFallsBackToSystemDefaultFederalState() {
+
+        final LocalDate start = LocalDate.of(2021, MAY, 1);
+        final LocalDate end = LocalDate.of(2021, MAY, 31);
+
+        final Person batman = new Person();
+        batman.setId(1);
+
+        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(emptyList());
+        when(workingTimeService.getSystemDefaultFederalState()).thenReturn(BERLIN);
+        when(publicHolidaysService.getAbsenceTypeOfDate(any(), eq(BERLIN))).thenReturn(DayLength.ZERO);
+
+        final SickNote sickNote = new SickNote();
+        sickNote.setId(42);
+        sickNote.setPerson(batman);
+        sickNote.setStartDate(start.plusDays(1));
+        sickNote.setEndDate(start.plusDays(1));
+        sickNote.setDayLength(DayLength.NOON);
+
+        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
+
+        final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
+        assertThat(actualAbsences).hasSize(1);
     }
 
     @Test
