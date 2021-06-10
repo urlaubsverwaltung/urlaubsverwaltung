@@ -74,6 +74,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final String content = (String) msgUser.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("Die Krankmeldung von Lieschen Müller");
+        assertThat(content).contains("(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).");
         assertThat(content).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tag(e) Grenze");
 
         // check email of office
@@ -84,6 +85,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         String contentOfficeMail = (String) msgOffice.getContent();
         assertThat(contentOfficeMail).contains("Hallo Marlene Muster");
         assertThat(contentOfficeMail).contains("Die Krankmeldung von Lieschen Müller");
+        assertThat(contentOfficeMail).contains("(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).");
         assertThat(contentOfficeMail).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tag(e) Grenze");
 
     }
