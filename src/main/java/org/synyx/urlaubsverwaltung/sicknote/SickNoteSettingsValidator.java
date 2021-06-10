@@ -6,6 +6,8 @@ public class SickNoteSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
+    private static final String ERROR_ILLEGAL_MAXIMUM_SICKPAYDAYS = "sicknote.error.illegalMaximumSickPayDays";
+    public static final int LEGAL_MINIMUM_OF_MAXIMUM_SICK_PAY_DAYS = 42;
 
     private SickNoteSettingsValidator() {
         // private
@@ -18,8 +20,8 @@ public class SickNoteSettingsValidator {
 
         if (maximumSickPayDays == null) {
             errors.rejectValue("sickNoteSettings.maximumSickPayDays", ERROR_MANDATORY_FIELD);
-        } else if (maximumSickPayDays < 0) {
-            errors.rejectValue("sickNoteSettings.maximumSickPayDays", ERROR_INVALID_ENTRY);
+        } else if (maximumSickPayDays < LEGAL_MINIMUM_OF_MAXIMUM_SICK_PAY_DAYS) {
+            errors.rejectValue("sickNoteSettings.maximumSickPayDays", ERROR_ILLEGAL_MAXIMUM_SICKPAYDAYS);
         }
 
         if (daysBeforeEndOfSickPayNotification == null) {
