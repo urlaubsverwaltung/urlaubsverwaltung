@@ -82,7 +82,7 @@
                     </c:choose>
                 </div>
             </td>
-            <td class="is-centered hidden-xs">
+            <td class="is-centered">
                 <span>
                     <c:choose>
                         <c:when test="${app.vacationType.category == 'OVERTIME'}">

@@ -55,7 +55,7 @@
                 </div>
             </td>
 
-            <td class="is-centered hidden-xs">
+            <td class="is-centered">
                 <span><uv:number number="${sickNote.workDays}"/> <spring:message code="duration.days"/></span>
             </td>
 
