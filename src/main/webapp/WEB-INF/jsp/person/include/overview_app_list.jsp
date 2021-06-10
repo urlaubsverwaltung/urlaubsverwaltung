@@ -9,6 +9,7 @@
 <table class="list-table selectable-table tw-text-sm">
     <tbody>
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
+
         <c:choose>
             <c:when test="${app.status == 'CANCELLED' || app.status == 'REJECTED' || app.status == 'REVOKED'}">
                 <c:set var="CSS_CLASS" value="inactive"/>
@@ -17,6 +18,7 @@
                 <c:set var="CSS_CLASS" value="active"/>
             </c:otherwise>
         </c:choose>
+
         <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/application/${app.id}');">
             <td class="visible-print">
                 <span>
@@ -81,16 +83,16 @@
                 </div>
             </td>
             <td class="is-centered hidden-xs">
-            <span>
-                <c:choose>
-                    <c:when test="${app.vacationType.category == 'OVERTIME'}">
-                        <uv:duration duration="${app.hours}"/> <spring:message code="duration.overtime"/>
-                    </c:when>
-                    <c:otherwise>
-                        <uv:number number="${app.workDays}"/> <spring:message code="duration.days"/>
-                    </c:otherwise>
-                </c:choose>
-            </span>
+                <span>
+                    <c:choose>
+                        <c:when test="${app.vacationType.category == 'OVERTIME'}">
+                            <uv:duration duration="${app.hours}"/> <spring:message code="duration.overtime"/>
+                        </c:when>
+                        <c:otherwise>
+                            <uv:number number="${app.workDays}"/> <spring:message code="duration.days"/>
+                        </c:otherwise>
+                    </c:choose>
+                </span>
 
                 <c:if test="${app.startDate.year != app.endDate.year}">
                     <span class="days-${loopStatus.index}">
