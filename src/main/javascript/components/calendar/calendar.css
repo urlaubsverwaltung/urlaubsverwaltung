@@ -14,13 +14,7 @@
 }
 
 #datepicker {
-  display: -webkit-flex;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  cursor: default;
-  border-radius: 0;
-  min-height: 315px;
+  min-height: 19.688rem;
 }
 
 /* BUTTONS */
@@ -35,11 +29,11 @@
 }
 
 .datepicker-prev {
-  margin-right: 18px;
+  margin-right: 1.125rem;
 }
 
 .datepicker-next {
-  margin-left: 18px;
+  margin-left: 1.125rem;
 }
 
 .datepicker-prev:hover,
@@ -54,47 +48,47 @@
   /* months outside this div should not be visible */
   overflow: hidden;
   width: 100%;
-  height: 315px;
+  height: 19.688rem;
 }
 
 /* MONTH */
 
 .datepicker-month {
   position: absolute;
-  width: 320px;
+  width: 20rem;
   height: 100%;
   transition: left 0.4s ease-in-out;
 }
 
 .datepicker-month:nth-child(1) {
-  left: -960px;
+  left: -60rem;
 }
 .datepicker-month:nth-child(2) {
-  left: -640px;
+  left: -40rem;
 }
 .datepicker-month:nth-child(3) {
-  left: -320px;
+  left: -20rem;
 }
 .datepicker-month:nth-child(4) {
   left: 0;
 }
 .datepicker-month:nth-child(5) {
-  left: 320px;
+  left: 20rem;
 }
 .datepicker-month:nth-child(6) {
-  left: 640px;
+  left: 40rem;
 }
 .datepicker-month:nth-child(7) {
-  left: 960px;
+  left: 60rem;
 }
 .datepicker-month:nth-child(8) {
-  left: 1280px;
+  left: 80rem;
 }
 .datepicker-month:nth-child(9) {
-  left: 1600px;
+  left: 100rem;
 }
 .datepicker-month:nth-child(10) {
-  left: 1920px;
+  left: 120rem;
 }
 
 .datepicker-month h3 {
@@ -134,7 +128,7 @@
   --background-color-right: #e5e5e5;
   --font-color: #6f6f6f;
   display: block;
-  padding: 12px;
+  padding: 0.75rem;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
@@ -340,7 +334,7 @@ td.datepicker-day {
 /* Show only current month on small devices! */
 @media (max-width: 767px) {
   .datepicker-day {
-    padding: 9px;
+    padding: 0.563rem;
   }
 
   .datepicker-table {
@@ -354,12 +348,5 @@ td.datepicker-day {
     display: block;
     left: 0;
     width: 100%;
-  }
-}
-
-/* Hide calendar completely on very small devices! */
-@media (max-width: 359px) {
-  #datepicker {
-    display: none;
   }
 }
