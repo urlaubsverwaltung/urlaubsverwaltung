@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 
 import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.FRIDAY;
@@ -57,7 +59,6 @@ class WorkingTimeTest {
         assertThat(returnValue).isTrue();
     }
 
-
     @Test
     void testHasWorkingDaysDifferent() {
 
@@ -91,6 +92,30 @@ class WorkingTimeTest {
         workingNoDay.setWorkingDays(workingDays, ZERO);
 
         assertThat(workingNoDay.getWorkingDays()).isEmpty();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "1,FULL", "1,MORNING", "1,NOON",
+        "2,FULL", "2,MORNING", "2,NOON",
+        "3,FULL", "3,MORNING", "3,NOON",
+        "4,FULL", "4,MORNING", "4,NOON",
+        "5,FULL", "5,MORNING", "5,NOON",
+        "6,FULL", "6,MORNING", "6,NOON",
+        "7,FULL", "7,MORNING", "7,NOON"
+    })
+    void ensureIsWorkingDayIsTrue(int dayOfWeek, DayLength dayLength) {
+        final WorkingTime workingTime = new WorkingTime();
+        workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
+        assertThat(workingTime.isWorkingDay(DayOfWeek.of(dayOfWeek))).isTrue();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"1", "2", "3", "4", "5", "6", "7"})
+    void ensureIsWorkingDayIsFalseForDayLengthZero(int dayOfWeek) {
+        final WorkingTime workingTime = new WorkingTime();
+        workingTime.setDayLengthForWeekDay(dayOfWeek, ZERO);
+        assertThat(workingTime.isWorkingDay(DayOfWeek.of(dayOfWeek))).isFalse();
     }
 
     @Test

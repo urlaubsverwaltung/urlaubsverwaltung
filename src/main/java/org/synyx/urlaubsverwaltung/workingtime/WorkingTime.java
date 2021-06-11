@@ -132,6 +132,33 @@ public class WorkingTime {
         return true;
     }
 
+    /**
+     * checks if the given day of week is a working day or not.
+     * A working day can be FULL or MORNING or NOON, doesn't matter.
+     *
+     * @param dayOfWeek the day of week to check
+     * @return <code>false</code> when given day of week matches DayLength ZERO, <code>true</code> otherwise.
+     */
+    public boolean isWorkingDay(DayOfWeek dayOfWeek) {
+        switch (dayOfWeek) {
+            case MONDAY:
+                return this.monday != ZERO;
+            case TUESDAY:
+                return this.tuesday != ZERO;
+            case WEDNESDAY:
+                return this.wednesday != ZERO;
+            case THURSDAY:
+                return this.thursday != ZERO;
+            case FRIDAY:
+                return this.friday != ZERO;
+            case SATURDAY:
+                return this.saturday != ZERO;
+            case SUNDAY:
+                return this.sunday != ZERO;
+        }
+        return false;
+    }
+
     private void setAllDayLengthsToZero() {
         this.monday = ZERO;
         this.tuesday = ZERO;
