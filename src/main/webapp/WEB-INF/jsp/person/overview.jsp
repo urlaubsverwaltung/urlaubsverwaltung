@@ -250,6 +250,7 @@
             </div>
         </div>
 
+        <!-- sick note -->
         <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
 
             <uv:section-heading>
