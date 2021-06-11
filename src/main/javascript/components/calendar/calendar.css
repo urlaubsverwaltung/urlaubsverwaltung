@@ -14,12 +14,6 @@
 }
 
 #datepicker {
-  display: -webkit-flex;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  cursor: default;
-  border-radius: 0;
   min-height: 19.688rem;
 }
 
@@ -354,12 +348,5 @@ td.datepicker-day {
     display: block;
     left: 0;
     width: 100%;
-  }
-}
-
-/* Hide calendar completely on very small devices! */
-@media (max-width: 359px) {
-  #datepicker {
-    display: none;
   }
 }
