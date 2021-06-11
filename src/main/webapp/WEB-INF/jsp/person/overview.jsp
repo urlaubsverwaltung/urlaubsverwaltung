@@ -270,7 +270,7 @@
 
             <div class="row tw-mb-4 lg:tw-mb-6">
                 <div class="col-xs-12">
-                    <div class="tw-flex tw-flex-wrap sm:tw-justify-around tw-space-y-8 lg:tw-space-y-0">
+                    <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
                     <div class="tw-w-full sm:tw-w-1/2">
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
