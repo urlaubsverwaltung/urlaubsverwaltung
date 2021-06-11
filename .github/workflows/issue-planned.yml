@@ -14,8 +14,19 @@ jobs:
           github-token: ${{github.token}}
           script: |
             github.issues.addLabels({
+              ...context.repo,
               issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
               labels: ['status: planned']
             })
+            .catch(e => { console.log(e.message) })
+      - uses: actions/github-script@v4
+        name: Remove label 'status new' to issue when milestoned
+        with:
+          github-token: ${{github.token}}
+          script: |
+            github.issues.removeLabel({
+              ...context.repo,
+              issue_number: context.issue.number,
+              name: 'status: new'
+            })
+            .catch(e => { console.log(e.message) })
