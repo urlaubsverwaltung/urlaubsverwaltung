@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
@@ -28,6 +27,7 @@ public class WorkingTime {
 
     private final Person person;
     private final LocalDate validFrom;
+    private final FederalState federalState;
     private DayLength monday = ZERO;
     private DayLength tuesday = ZERO;
     private DayLength wednesday = ZERO;
@@ -36,14 +36,10 @@ public class WorkingTime {
     private DayLength saturday = ZERO;
     private DayLength sunday = ZERO;
 
-    /**
-     * If set, override the system-wide FederalState setting for this person.
-     */
-    private FederalState federalStateOverride;
-
-    public WorkingTime(Person person, LocalDate validFrom) {
+    public WorkingTime(Person person, LocalDate validFrom, FederalState federalState) {
         this.person = person;
         this.validFrom = validFrom;
+        this.federalState = federalState;
     }
 
     public Person getPerson() {
@@ -52,6 +48,10 @@ public class WorkingTime {
 
     public LocalDate getValidFrom() {
         return this.validFrom;
+    }
+
+    public FederalState getFederalState() {
+        return federalState;
     }
 
     public DayLength getMonday() {
@@ -80,14 +80,6 @@ public class WorkingTime {
 
     public DayLength getSunday() {
         return sunday;
-    }
-
-    public Optional<FederalState> getFederalStateOverride() {
-        return Optional.ofNullable(federalStateOverride);
-    }
-
-    public void setFederalStateOverride(FederalState federalState) {
-        this.federalStateOverride = federalState;
     }
 
     public void setWorkingDays(List<DayOfWeek> workingDays, DayLength dayLength) {
@@ -227,7 +219,7 @@ public class WorkingTime {
             ", saturday=" + saturday +
             ", sunday=" + sunday +
             ", validFrom=" + validFrom +
-            ", federalStateOverride=" + federalStateOverride +
+            ", federalState=" + federalState +
             '}';
     }
 

@@ -111,22 +111,22 @@ public class WorkingTimeViewController {
         final WorkingTime currentWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock)).orElse(null);
         final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
-        model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories, defaultFederalState));
+        model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories));
         model.addAttribute("weekDays", DayOfWeek.values());
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("defaultFederalState", defaultFederalState);
     }
 
-    private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes, FederalState defaultFederalState) {
+    private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes) {
         return workingTimes.stream()
-            .map(toWorkingTimeHistoryDto(currentWorkingTime, defaultFederalState))
+            .map(toWorkingTimeHistoryDto(currentWorkingTime))
             .collect(toList());
     }
 
-    private Function<WorkingTime, WorkingTimeHistoryDto> toWorkingTimeHistoryDto(WorkingTime currentWorkingTime, FederalState defaultFederalState) {
+    private Function<WorkingTime, WorkingTimeHistoryDto> toWorkingTimeHistoryDto(WorkingTime currentWorkingTime) {
         return workingTime -> {
             final boolean isValid = currentWorkingTime.equals(workingTime);
-            final FederalState federalState = workingTime.getFederalStateOverride().orElse(defaultFederalState);
+            final FederalState federalState = workingTime.getFederalState();
             final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
             return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.toString(), isValid);
         };

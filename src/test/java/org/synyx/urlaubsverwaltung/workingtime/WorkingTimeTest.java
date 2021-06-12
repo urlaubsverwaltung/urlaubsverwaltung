@@ -22,6 +22,7 @@ import static java.time.Month.JUNE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 
 
 /**
@@ -35,7 +36,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
         assertThat(workingTime.getMonday()).isEqualTo(ZERO);
         assertThat(workingTime.getTuesday()).isEqualTo(ZERO);
         assertThat(workingTime.getWednesday()).isEqualTo(ZERO);
@@ -43,7 +44,6 @@ class WorkingTimeTest {
         assertThat(workingTime.getFriday()).isEqualTo(ZERO);
         assertThat(workingTime.getSaturday()).isEqualTo(ZERO);
         assertThat(workingTime.getSunday()).isEqualTo(ZERO);
-        assertThat(workingTime.getFederalStateOverride()).isEmpty();
     }
 
     @Test
@@ -54,13 +54,13 @@ class WorkingTimeTest {
 
         final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
-        final WorkingTime workingEveryDay = new WorkingTime(person, LocalDate.MIN);
+        final WorkingTime workingEveryDay = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
         workingEveryDay.setWorkingDays(workingDays, FULL);
 
         assertThat(workingEveryDay.getWorkingDays())
             .containsExactly(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
-        final WorkingTime workingNoDay = new WorkingTime(person, LocalDate.MIN);
+        final WorkingTime workingNoDay = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
         workingNoDay.setWorkingDays(workingDays, ZERO);
 
         assertThat(workingNoDay.getWorkingDays()).isEmpty();
@@ -80,7 +80,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
         workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
         assertThat(workingTime.isWorkingDay(dayOfWeek)).isTrue();
     }
@@ -91,7 +91,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
         workingTime.setDayLengthForWeekDay(dayOfWeek, ZERO);
         assertThat(workingTime.isWorkingDay(dayOfWeek)).isFalse();
     }
@@ -104,8 +104,8 @@ class WorkingTimeTest {
         final Person robin = new Person();
         robin.setId(2);
 
-        final WorkingTime workingTimeBatman = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12));
-        final WorkingTime workingTimeRobin = new WorkingTime(robin, LocalDate.of(2021, JUNE, 12));
+        final WorkingTime workingTimeBatman = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), BADEN_WUERTTEMBERG);
+        final WorkingTime workingTimeRobin = new WorkingTime(robin, LocalDate.of(2021, JUNE, 12), BADEN_WUERTTEMBERG);
 
         assertThat(workingTimeBatman)
             .isEqualTo(workingTimeBatman)
@@ -117,8 +117,8 @@ class WorkingTimeTest {
         final Person batman = new Person();
         batman.setId(1);
 
-        final WorkingTime workingTimeOne = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12));
-        final WorkingTime workingTimeTwo = new WorkingTime(batman, LocalDate.of(2021, JUNE, 13));
+        final WorkingTime workingTimeOne = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), BADEN_WUERTTEMBERG);
+        final WorkingTime workingTimeTwo = new WorkingTime(batman, LocalDate.of(2021, JUNE, 13), BADEN_WUERTTEMBERG);
 
         assertThat(workingTimeOne)
             .isEqualTo(workingTimeOne)
@@ -130,7 +130,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2021, JUNE, 12));
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2021, JUNE, 12), BADEN_WUERTTEMBERG);
 
         assertThat(workingTime.hashCode()).isEqualTo(4141357);
     }

@@ -288,7 +288,7 @@ public class AbsenceServiceImpl implements AbsenceService {
                 ? Optional.empty()
                 : Optional.of(workingTimeList.get(0))
             )
-            .flatMap(WorkingTime::getFederalStateOverride)
+            .map(WorkingTime::getFederalState)
             .orElse(federalStateDefault);
 
         return publicHolidaysService.getAbsenceTypeOfDate(date, federalState);

@@ -13,6 +13,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -32,7 +33,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     private final Clock clock;
 
     @Autowired
-    public WorkingTimeServiceImpl(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository, SettingsService settingsService, Clock clock) {
+    public WorkingTimeServiceImpl(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository,
+                                  SettingsService settingsService, Clock clock) {
         this.workingTimeProperties = workingTimeProperties;
         this.workingTimeRepository = workingTimeRepository;
         this.settingsService = settingsService;
@@ -72,43 +74,30 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public List<WorkingTime> getByPerson(Person person) {
-        return workingTimeRepository.findByPersonOrderByValidFromDesc(person)
-            .stream()
-            .map(WorkingTimeServiceImpl::toDomain)
-            .collect(toList());
+        return toWorkingTime(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
     }
 
     @Override
     public List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end) {
-        return workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end)
-            .stream()
-            .map(WorkingTimeServiceImpl::toDomain)
-            .collect(toList());
+        return toWorkingTime(workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end));
     }
 
     @Override
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
-            .map(WorkingTimeServiceImpl::toDomain);
+            .map(entity -> toDomain(entity, this::getSystemDefaultFederalState));
     }
 
     @Override
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
-        Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
+        return getByPersonAndValidityDateEqualsOrMinorDate(person, date)
+            .map(WorkingTime::getFederalState)
+            .orElseGet(() -> {
+                LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
+                    person.getId(), date.format(ofPattern(DD_MM_YYYY)));
 
-        if (optionalWorkingTime.isEmpty()) {
-            LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                person.getId(), date.format(ofPattern(DD_MM_YYYY)));
-
-            return getSystemDefaultFederalState();
-        }
-
-        return getFederalState(optionalWorkingTime.get());
-    }
-
-    private FederalState getFederalState(WorkingTime workingTime) {
-        Optional<FederalState> optionalFederalStateOverride = workingTime.getFederalStateOverride();
-        return optionalFederalStateOverride.orElseGet(this::getSystemDefaultFederalState);
+                return getSystemDefaultFederalState();
+            });
     }
 
     @Override
@@ -128,6 +117,13 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
         final LocalDate today = LocalDate.now(clock);
         this.touch(defaultWorkingDays, today, person);
+    }
+
+    private List<WorkingTime> toWorkingTime(List<WorkingTimeEntity> entities) {
+        CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
+        return entities.stream()
+            .map(entity -> toDomain(entity, federalStateCachedSupplier))
+            .collect(toList());
     }
 
     private static void resetWorkDays(WorkingTimeEntity workingTimeEntity) {
@@ -166,6 +162,22 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         }
     }
 
+    private static WorkingTime toDomain(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
+
+        final FederalState federalState = workingTimeEntity.getFederalStateOverride() == null
+            ? defaultFederalStateProvider.get()
+            : workingTimeEntity.getFederalStateOverride();
+
+        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom(), federalState);
+
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            final DayLength dayLength = dayLengthForDayOfWeek(workingTimeEntity, dayOfWeek);
+            workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
+        }
+
+        return workingTime;
+    }
+
     private static DayLength dayLengthForDayOfWeek(WorkingTimeEntity workingTimeEntity, DayOfWeek dayOfWeek) {
         switch (dayOfWeek) {
             case MONDAY:
@@ -186,15 +198,20 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         return DayLength.ZERO;
     }
 
-    private static WorkingTime toDomain(WorkingTimeEntity workingTimeEntity) {
-        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom());
-        workingTime.setFederalStateOverride(workingTimeEntity.getFederalStateOverride());
+    private static class CachedSupplier<T> implements Supplier<T> {
+        private T cachedValue;
+        private final Supplier<T> supplier;
 
-        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-            final DayLength dayLength = dayLengthForDayOfWeek(workingTimeEntity, dayOfWeek);
-            workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
+        CachedSupplier(Supplier<T> supplier) {
+            this.supplier = supplier;
         }
 
-        return workingTime;
+        @Override
+        public T get() {
+            if (cachedValue == null) {
+                cachedValue = supplier.get();
+            }
+            return cachedValue;
+        }
     }
 }

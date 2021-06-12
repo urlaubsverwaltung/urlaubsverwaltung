@@ -31,7 +31,7 @@ public class WorkingTimeForm {
         }
 
         this.validFrom = workingTime.getValidFrom();
-        this.federalState = workingTime.getFederalStateOverride().orElse(null);
+        this.federalState = workingTime.getFederalState();
     }
 
     public String getValidFromIsoValue() {

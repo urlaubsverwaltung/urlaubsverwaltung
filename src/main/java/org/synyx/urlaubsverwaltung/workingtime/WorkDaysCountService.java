@@ -93,7 +93,7 @@ public class WorkDaysCountService {
         }
 
         final WorkingTime workingTime = optionalWorkingTime.get();
-        final FederalState federalState = getFederalState(workingTime);
+        final FederalState federalState = workingTime.getFederalState();
 
         BigDecimal vacationDays = BigDecimal.ZERO;
         LocalDate day = startDate;
@@ -116,10 +116,5 @@ public class WorkDaysCountService {
         }
 
         return vacationDays.multiply(dayLength.getDuration()).setScale(1, UNNECESSARY);
-    }
-
-    private FederalState getFederalState(WorkingTime workingTime) {
-        final Optional<FederalState> federalStateOverride = workingTime.getFederalStateOverride();
-        return federalStateOverride.orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
     }
 }
