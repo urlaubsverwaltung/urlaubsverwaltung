@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
-import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
@@ -44,6 +44,50 @@ public class WorkingTime {
     public WorkingTime(Person person, LocalDate validFrom) {
         this.person = person;
         this.validFrom = validFrom;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public LocalDate getValidFrom() {
+        return this.validFrom;
+    }
+
+    public DayLength getMonday() {
+        return monday;
+    }
+
+    public DayLength getTuesday() {
+        return tuesday;
+    }
+
+    public DayLength getWednesday() {
+        return wednesday;
+    }
+
+    public DayLength getThursday() {
+        return thursday;
+    }
+
+    public DayLength getFriday() {
+        return friday;
+    }
+
+    public DayLength getSaturday() {
+        return saturday;
+    }
+
+    public DayLength getSunday() {
+        return sunday;
+    }
+
+    public Optional<FederalState> getFederalStateOverride() {
+        return Optional.ofNullable(federalStateOverride);
+    }
+
+    public void setFederalStateOverride(FederalState federalState) {
+        this.federalStateOverride = federalState;
     }
 
     public void setWorkingDays(List<DayOfWeek> workingDays, DayLength dayLength) {
@@ -112,20 +156,6 @@ public class WorkingTime {
         return false;
     }
 
-    private void setAllDayLengthsToZero() {
-        this.monday = ZERO;
-        this.tuesday = ZERO;
-        this.wednesday = ZERO;
-        this.thursday = ZERO;
-        this.friday = ZERO;
-        this.saturday = ZERO;
-        this.sunday = ZERO;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
     public DayLength getDayLengthForWeekDay(DayOfWeek dayOfWeek) {
         switch (dayOfWeek) {
             case MONDAY:
@@ -175,44 +205,14 @@ public class WorkingTime {
         }
     }
 
-    public LocalDate getValidFrom() {
-        return this.validFrom;
-    }
-
-    public DayLength getMonday() {
-        return monday;
-    }
-
-    public DayLength getTuesday() {
-        return tuesday;
-    }
-
-    public DayLength getWednesday() {
-        return wednesday;
-    }
-
-    public DayLength getThursday() {
-        return thursday;
-    }
-
-    public DayLength getFriday() {
-        return friday;
-    }
-
-    public DayLength getSaturday() {
-        return saturday;
-    }
-
-    public DayLength getSunday() {
-        return sunday;
-    }
-
-    public Optional<FederalState> getFederalStateOverride() {
-        return Optional.ofNullable(federalStateOverride);
-    }
-
-    public void setFederalStateOverride(FederalState federalState) {
-        this.federalStateOverride = federalState;
+    private void setAllDayLengthsToZero() {
+        this.monday = ZERO;
+        this.tuesday = ZERO;
+        this.wednesday = ZERO;
+        this.thursday = ZERO;
+        this.friday = ZERO;
+        this.saturday = ZERO;
+        this.sunday = ZERO;
     }
 
     @Override
