@@ -15,12 +15,12 @@ import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -458,11 +458,8 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForHolidayReplacement(signedInUser, LocalDate.now(clock)))
             .thenReturn(List.of(application));
 
-        final WeekDay expectedWeekdayOfStartDate = WeekDay.getByDayOfWeek(
-            LocalDate.now(clock).plusDays(1).getDayOfWeek().getValue());
-
-        final WeekDay expectedWeekdayOfEndDate = WeekDay.getByDayOfWeek(
-            LocalDate.now(clock).plusDays(1).getDayOfWeek().getValue());
+        final DayOfWeek expectedWeekdayOfStartDate = LocalDate.now(clock).plusDays(1).getDayOfWeek();
+        final DayOfWeek expectedWeekdayOfEndDate = LocalDate.now(clock).plusDays(1).getDayOfWeek();
 
         perform(get("/web/application"))
             .andExpect(status().isOk())

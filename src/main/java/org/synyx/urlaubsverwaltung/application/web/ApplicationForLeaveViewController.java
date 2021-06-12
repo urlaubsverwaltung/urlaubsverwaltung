@@ -10,13 +10,13 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,12 +210,8 @@ public class ApplicationForLeaveViewController {
             .startDateWithTime(application.getStartDateWithTime())
             .endDateWithTime(application.getEndDateWithTime())
             .dayLength(dayLength)
-            .weekDayOfStartDate(toWeekDay(startDate))
-            .weekDayOfEndDate(toWeekDay(endDate))
+            .weekDayOfStartDate(startDate.getDayOfWeek())
+            .weekDayOfEndDate(endDate.getDayOfWeek())
             .build();
-    }
-
-    private static WeekDay toWeekDay(LocalDate localDate) {
-        return WeekDay.getByDayOfWeek(localDate.getDayOfWeek().getValue());
     }
 }

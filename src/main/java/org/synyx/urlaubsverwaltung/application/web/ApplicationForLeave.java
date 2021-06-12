@@ -2,10 +2,10 @@ package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 
 /**
  * Represents an extended {@link org.synyx.urlaubsverwaltung.application.domain.Application} with information about
@@ -31,11 +31,11 @@ public class ApplicationForLeave extends Application {
         return workDays;
     }
 
-    public WeekDay getWeekDayOfStartDate() {
-        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek().getValue());
+    public DayOfWeek getWeekDayOfStartDate() {
+        return getStartDate().getDayOfWeek();
     }
 
-    public WeekDay getWeekDayOfEndDate() {
-        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek().getValue());
+    public DayOfWeek getWeekDayOfEndDate() {
+        return getEndDate().getDayOfWeek();
     }
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.DayOfWeek;
@@ -79,7 +78,7 @@ class WorkingTimeTest {
         workingEveryDay.setWorkingDays(workingDays, FULL);
 
         assertThat(workingEveryDay.getWorkingDays())
-            .containsExactly(WeekDay.MONDAY, WeekDay.TUESDAY, WeekDay.WEDNESDAY, WeekDay.THURSDAY, WeekDay.FRIDAY, WeekDay.SATURDAY, WeekDay.SUNDAY);
+            .containsExactly(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
         final WorkingTime workingNoDay = new WorkingTime();
         workingNoDay.setWorkingDays(workingDays, ZERO);

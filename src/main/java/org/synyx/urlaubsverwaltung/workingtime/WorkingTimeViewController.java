@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -23,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -111,7 +111,7 @@ public class WorkingTimeViewController {
         final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
         model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories, defaultFederalState));
-        model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("weekDays", DayOfWeek.values());
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("defaultFederalState", defaultFederalState);
     }

@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.DayOfWeek;
@@ -11,15 +10,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.SATURDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.SUNDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 
 
 /**
@@ -53,8 +52,8 @@ public class WorkingTime {
         }
     }
 
-    public List<WeekDay> getWorkingDays() {
-        final List<WeekDay> workingDays = new ArrayList<>();
+    public List<DayOfWeek> getWorkingDays() {
+        final List<DayOfWeek> workingDays = new ArrayList<>();
 
         if (monday.equals(FULL)) {
             workingDays.add(MONDAY);

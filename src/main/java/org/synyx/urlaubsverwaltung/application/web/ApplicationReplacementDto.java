@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -24,15 +24,15 @@ public class ApplicationReplacementDto {
     private final ZonedDateTime startDateWithTime;
     private final ZonedDateTime endDateWithTime;
     private final DayLength dayLength;
-    private final WeekDay weekDayOfStartDate;
-    private final WeekDay weekDayOfEndDate;
+    private final DayOfWeek weekDayOfStartDate;
+    private final DayOfWeek weekDayOfEndDate;
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
     private ApplicationReplacementDto(String personGravatarURL, String personName, String note, boolean pending,
                                       Duration hours, BigDecimal workDays, LocalDate startDate, LocalDate endDate,
                                       Time startTime, Time endTime, ZonedDateTime startDateWithTime,
-                                      ZonedDateTime endDateWithTime, DayLength dayLength, WeekDay weekDayOfStartDate,
-                                      WeekDay weekDayOfEndDate) {
+                                      ZonedDateTime endDateWithTime, DayLength dayLength, DayOfWeek weekDayOfStartDate,
+                                      DayOfWeek weekDayOfEndDate) {
 
         this.personGravatarURL = personGravatarURL;
         this.personName = personName;
@@ -103,11 +103,11 @@ public class ApplicationReplacementDto {
         return dayLength;
     }
 
-    public WeekDay getWeekDayOfStartDate() {
+    public DayOfWeek getWeekDayOfStartDate() {
         return weekDayOfStartDate;
     }
 
-    public WeekDay getWeekDayOfEndDate() {
+    public DayOfWeek getWeekDayOfEndDate() {
         return weekDayOfEndDate;
     }
 
@@ -129,8 +129,8 @@ public class ApplicationReplacementDto {
         private ZonedDateTime startDateWithTime;
         private ZonedDateTime endDateWithTime;
         private DayLength dayLength;
-        private WeekDay weekDayOfStartDate;
-        private WeekDay weekDayOfEndDate;
+        private DayOfWeek weekDayOfStartDate;
+        private DayOfWeek weekDayOfEndDate;
 
         private Builder() {
             //
@@ -201,12 +201,12 @@ public class ApplicationReplacementDto {
             return this;
         }
 
-        public Builder weekDayOfStartDate(WeekDay weekDayOfStartDate) {
+        public Builder weekDayOfStartDate(DayOfWeek weekDayOfStartDate) {
             this.weekDayOfStartDate = weekDayOfStartDate;
             return this;
         }
 
-        public Builder weekDayOfEndDate(WeekDay weekDayOfEndDate) {
+        public Builder weekDayOfEndDate(DayOfWeek weekDayOfEndDate) {
             this.weekDayOfEndDate = weekDayOfEndDate;
             return this;
         }
