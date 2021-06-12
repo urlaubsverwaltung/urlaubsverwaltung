@@ -26,7 +26,8 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
  */
 public class WorkingTime {
 
-    private Person person;
+    private final Person person;
+    private final LocalDate validFrom;
     private DayLength monday = ZERO;
     private DayLength tuesday = ZERO;
     private DayLength wednesday = ZERO;
@@ -34,12 +35,16 @@ public class WorkingTime {
     private DayLength friday = ZERO;
     private DayLength saturday = ZERO;
     private DayLength sunday = ZERO;
-    private LocalDate validFrom;
 
     /**
      * If set, override the system-wide FederalState setting for this person.
      */
     private FederalState federalStateOverride;
+
+    public WorkingTime(Person person, LocalDate validFrom) {
+        this.person = person;
+        this.validFrom = validFrom;
+    }
 
     public void setWorkingDays(List<DayOfWeek> workingDays, DayLength dayLength) {
 
@@ -121,10 +126,6 @@ public class WorkingTime {
         return person;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
     public DayLength getDayLengthForWeekDay(DayOfWeek dayOfWeek) {
         switch (dayOfWeek) {
             case MONDAY:
@@ -176,10 +177,6 @@ public class WorkingTime {
 
     public LocalDate getValidFrom() {
         return this.validFrom;
-    }
-
-    public void setValidFrom(LocalDate validFrom) {
-        this.validFrom = validFrom;
     }
 
     public DayLength getMonday() {

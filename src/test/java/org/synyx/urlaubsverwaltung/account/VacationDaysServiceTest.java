@@ -88,7 +88,7 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
@@ -158,7 +158,7 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 

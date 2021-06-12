@@ -175,10 +175,7 @@ public class WorkingTimeService {
     }
 
     private static WorkingTime toDomain(WorkingTimeEntity workingTimeEntity) {
-        final WorkingTime workingTime = new WorkingTime();
-
-        workingTime.setPerson(workingTimeEntity.getPerson());
-        workingTime.setValidFrom(workingTimeEntity.getValidFrom());
+        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom());
         workingTime.setFederalStateOverride(workingTimeEntity.getFederalStateOverride());
 
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {

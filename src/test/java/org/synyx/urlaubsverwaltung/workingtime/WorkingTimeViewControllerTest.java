@@ -78,9 +78,7 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setPerson(person);
-        workingTime.setValidFrom(LocalDate.of(2020,10,2));
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2));
         workingTime.setFederalStateOverride(BERLIN);
         workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));

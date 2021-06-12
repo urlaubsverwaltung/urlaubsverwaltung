@@ -78,7 +78,7 @@ class CalculationServiceTest {
         final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
 
         // create working time object (MON-FRI)
-        final WorkingTime workingTime = new WorkingTime();
+        final WorkingTime workingTime = new WorkingTime(new Person(), LocalDate.MIN);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 

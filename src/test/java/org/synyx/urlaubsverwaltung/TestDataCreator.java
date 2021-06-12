@@ -170,7 +170,10 @@ public final class TestDataCreator {
 
     public static WorkingTime createWorkingTime() {
 
-        WorkingTime workingTime = new WorkingTime();
+        final Person person = new Person();
+        person.setId(1);
+
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
 
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);

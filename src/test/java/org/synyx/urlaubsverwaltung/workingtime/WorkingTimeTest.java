@@ -32,7 +32,10 @@ class WorkingTimeTest {
     @Test
     void testDefaultValues() {
 
-        final WorkingTime workingTime = new WorkingTime();
+        final Person person = new Person();
+        person.setId(1);
+
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
         assertThat(workingTime.getMonday()).isEqualTo(ZERO);
         assertThat(workingTime.getTuesday()).isEqualTo(ZERO);
         assertThat(workingTime.getWednesday()).isEqualTo(ZERO);
@@ -46,15 +49,18 @@ class WorkingTimeTest {
     @Test
     void ensureWorkingDaysInWorkingTimeList() {
 
+        final Person person = new Person();
+        person.setId(1);
+
         final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
-        final WorkingTime workingEveryDay = new WorkingTime();
+        final WorkingTime workingEveryDay = new WorkingTime(person, LocalDate.MIN);
         workingEveryDay.setWorkingDays(workingDays, FULL);
 
         assertThat(workingEveryDay.getWorkingDays())
             .containsExactly(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
-        final WorkingTime workingNoDay = new WorkingTime();
+        final WorkingTime workingNoDay = new WorkingTime(person, LocalDate.MIN);
         workingNoDay.setWorkingDays(workingDays, ZERO);
 
         assertThat(workingNoDay.getWorkingDays()).isEmpty();
@@ -71,7 +77,10 @@ class WorkingTimeTest {
         "SUNDAY,FULL", "SUNDAY,MORNING", "SUNDAY,NOON"
     })
     void ensureIsWorkingDayIsTrue(DayOfWeek dayOfWeek, DayLength dayLength) {
-        final WorkingTime workingTime = new WorkingTime();
+        final Person person = new Person();
+        person.setId(1);
+
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
         workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
         assertThat(workingTime.isWorkingDay(dayOfWeek)).isTrue();
     }
@@ -79,7 +88,10 @@ class WorkingTimeTest {
     @ParameterizedTest
     @EnumSource(DayOfWeek.class)
     void ensureIsWorkingDayIsFalseForDayLengthZero(DayOfWeek dayOfWeek) {
-        final WorkingTime workingTime = new WorkingTime();
+        final Person person = new Person();
+        person.setId(1);
+
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN);
         workingTime.setDayLengthForWeekDay(dayOfWeek, ZERO);
         assertThat(workingTime.isWorkingDay(dayOfWeek)).isFalse();
     }
@@ -92,13 +104,8 @@ class WorkingTimeTest {
         final Person robin = new Person();
         robin.setId(2);
 
-        final WorkingTime workingTimeBatman = new WorkingTime();
-        workingTimeBatman.setPerson(batman);
-        workingTimeBatman.setValidFrom(LocalDate.of(2021, JUNE, 12));
-
-        final WorkingTime workingTimeRobin = new WorkingTime();
-        workingTimeRobin.setPerson(robin);
-        workingTimeRobin.setValidFrom(LocalDate.of(2021, JUNE, 12));
+        final WorkingTime workingTimeBatman = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12));
+        final WorkingTime workingTimeRobin = new WorkingTime(robin, LocalDate.of(2021, JUNE, 12));
 
         assertThat(workingTimeBatman)
             .isEqualTo(workingTimeBatman)
@@ -110,13 +117,8 @@ class WorkingTimeTest {
         final Person batman = new Person();
         batman.setId(1);
 
-        final WorkingTime workingTimeOne = new WorkingTime();
-        workingTimeOne.setPerson(batman);
-        workingTimeOne.setValidFrom(LocalDate.of(2021, JUNE, 12));
-
-        final WorkingTime workingTimeTwo = new WorkingTime();
-        workingTimeTwo.setPerson(batman);
-        workingTimeTwo.setValidFrom(LocalDate.of(2021, JUNE, 13));
+        final WorkingTime workingTimeOne = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12));
+        final WorkingTime workingTimeTwo = new WorkingTime(batman, LocalDate.of(2021, JUNE, 13));
 
         assertThat(workingTimeOne)
             .isEqualTo(workingTimeOne)
@@ -128,9 +130,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setPerson(person);
-        workingTime.setValidFrom(LocalDate.of(2021, JUNE, 12));
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2021, JUNE, 12));
 
         assertThat(workingTime.hashCode()).isEqualTo(4141357);
     }
