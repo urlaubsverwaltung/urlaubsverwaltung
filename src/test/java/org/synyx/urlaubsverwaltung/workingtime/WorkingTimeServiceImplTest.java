@@ -15,7 +15,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
@@ -160,7 +159,7 @@ class WorkingTimeServiceTest {
     void ensureSetsFederalStateOverrideIfGiven() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        sut.touch(List.of(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
+        sut.touch(List.of(1, 2), LocalDate.now(UTC), person, BAYERN);
 
         final ArgumentCaptor<WorkingTimeEntity> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTimeEntity.class);
         verify(workingTimeRepository).save(workingTimeArgumentCaptor.capture());
@@ -179,7 +178,7 @@ class WorkingTimeServiceTest {
             .thenReturn(oldWorkingTimeEntity);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        sut.touch(List.of(1, 2), Optional.empty(), LocalDate.now(UTC), person);
+        sut.touch(List.of(1, 2), LocalDate.now(UTC), person);
 
         final ArgumentCaptor<WorkingTimeEntity> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTimeEntity.class);
         verify(workingTimeRepository).save(workingTimeArgumentCaptor.capture());

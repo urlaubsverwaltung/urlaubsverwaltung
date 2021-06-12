@@ -96,8 +96,7 @@ public class WorkingTimeViewController {
             return "workingtime/workingtime_form";
         }
 
-        workingTimeService.touch(workingTimeForm.getWorkingDays(),
-            Optional.ofNullable(workingTimeForm.getFederalState()), workingTimeForm.getValidFrom(), person);
+        workingTimeService.touch(workingTimeForm.getWorkingDays(), workingTimeForm.getValidFrom(), person, workingTimeForm.getFederalState());
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + personId;

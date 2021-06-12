@@ -23,7 +23,6 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
@@ -91,7 +90,7 @@ class PersonDataProvider {
         final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
 
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).stream().map(DayOfWeek::getValue).collect(toList());
-        workingTimeService.touch(workingDays, empty(), firstDayOfYear.minusYears(1), savedPerson);
+        workingTimeService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
         final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,

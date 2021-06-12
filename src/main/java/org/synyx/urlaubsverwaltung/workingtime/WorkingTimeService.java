@@ -8,7 +8,9 @@ import java.util.Optional;
 
 public interface WorkingTimeService {
 
-    void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom, Person person);
+    void touch(List<Integer> workingDays, LocalDate validFrom, Person person);
+
+    void touch(List<Integer> workingDays, LocalDate validFrom, Person person, FederalState federalState);
 
     List<WorkingTime> getByPerson(Person person);
 

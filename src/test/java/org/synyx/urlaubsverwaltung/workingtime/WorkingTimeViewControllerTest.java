@@ -152,7 +152,7 @@ class WorkingTimeViewControllerTest {
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"));
 
-        verify(workingTimeService).touch(any(), any(), any(), eq(person));
+        verify(workingTimeService).touch(any(), any(), eq(person), any());
     }
 
     @Test

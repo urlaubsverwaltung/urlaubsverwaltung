@@ -45,7 +45,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
-import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
@@ -154,7 +153,7 @@ class OvertimeCreateIT {
         final int currentYear = LocalDate.now().getYear();
         final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
-        workingTimeService.touch(workingDays, empty(), validFrom, savedPerson);
+        workingTimeService.touch(workingDays, validFrom, savedPerson);
 
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);

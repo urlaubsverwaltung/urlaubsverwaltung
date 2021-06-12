@@ -40,7 +40,12 @@ class WorkingTimeServiceImpl implements WorkingTimeService {
     }
 
     @Override
-    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom, Person person) {
+    public void touch(List<Integer> workingDays, LocalDate validFrom, Person person) {
+        touch(workingDays, validFrom, person, null);
+    }
+
+    @Override
+    public void touch(List<Integer> workingDays, LocalDate validFrom, Person person, FederalState federalState) {
 
         WorkingTimeEntity workingTimeEntity = workingTimeRepository.findByPersonAndValidityDate(person, validFrom);
 
@@ -59,7 +64,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService {
             setWorkDay(workingTimeEntity, DayOfWeek.of(workingDay), DayLength.FULL);
         }
 
-        workingTimeEntity.setFederalStateOverride(federalState.orElse(null));
+        workingTimeEntity.setFederalStateOverride(federalState);
 
         workingTimeRepository.save(workingTimeEntity);
         LOG.info("Created working time {} for person {}", workingTimeEntity, person);
@@ -122,7 +127,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService {
         }
 
         final LocalDate today = LocalDate.now(clock);
-        this.touch(defaultWorkingDays, Optional.empty(), today, person);
+        this.touch(defaultWorkingDays, today, person);
     }
 
     private static void resetWorkDays(WorkingTimeEntity workingTimeEntity) {
