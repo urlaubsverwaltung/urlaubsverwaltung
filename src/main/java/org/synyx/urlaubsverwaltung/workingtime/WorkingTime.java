@@ -4,11 +4,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static javax.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
@@ -31,43 +25,22 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 /**
  * Entity representing the working time of a person.
  */
-@Entity
 public class WorkingTime {
 
-    @Id
-    @GeneratedValue
     private Integer id;
-
-    @OneToOne
     private Person person;
-
-    @Enumerated(STRING)
     private DayLength monday = ZERO;
-
-    @Enumerated(STRING)
     private DayLength tuesday = ZERO;
-
-    @Enumerated(STRING)
     private DayLength wednesday = ZERO;
-
-    @Enumerated(STRING)
     private DayLength thursday = ZERO;
-
-    @Enumerated(STRING)
     private DayLength friday = ZERO;
-
-    @Enumerated(STRING)
     private DayLength saturday = ZERO;
-
-    @Enumerated(STRING)
     private DayLength sunday = ZERO;
-
     private LocalDate validFrom;
 
     /**
      * If set, override the system-wide FederalState setting for this person.
      */
-    @Enumerated(STRING)
     private FederalState federalStateOverride;
 
     public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {

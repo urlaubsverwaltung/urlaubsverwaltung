@@ -12,23 +12,23 @@ import java.util.List;
 /**
  * Repository for accessing {@link WorkingTime} entities.
  */
-interface WorkingTimeRepository extends CrudRepository<WorkingTime, Integer> {
+interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Integer> {
 
-    List<WorkingTime> findByPersonOrderByValidFromDesc(Person person);
+    List<WorkingTimeEntity> findByPersonOrderByValidFromDesc(Person person);
 
-    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = ?2")
-    WorkingTime findByPersonAndValidityDate(Person person, LocalDate date);
+    @Query("SELECT x FROM working_time x WHERE x.person = ?1 AND x.validFrom = ?2")
+    WorkingTimeEntity findByPersonAndValidityDate(Person person, LocalDate date);
 
-    @Query("SELECT x FROM WorkingTime x WHERE x.person IN (:persons)" +
-        "  AND x.validFrom >= (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person IN (:persons) AND w.validFrom <= :start)" +
+    @Query("SELECT x FROM working_time x WHERE x.person IN (:persons)" +
+        "  AND x.validFrom >= (SELECT MAX(w.validFrom) from working_time w WHERE w.person IN (:persons) AND w.validFrom <= :start)" +
         "  AND x.validFrom <= :end")
-    List<WorkingTime> findByPersonInAndValidFromForDateInterval(@Param("persons") List<Person> persons,
+    List<WorkingTimeEntity> findByPersonInAndValidFromForDateInterval(@Param("persons") List<Person> persons,
                                                                 @Param("start") LocalDate start,
                                                                 @Param("end") LocalDate end);
 
     @Query(
-        "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
-            + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
+        "SELECT x FROM working_time x WHERE x.person = ?1 "
+            + "AND x.validFrom = (SELECT MAX(w.validFrom) from working_time w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
-    WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
+    WorkingTimeEntity findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
 }

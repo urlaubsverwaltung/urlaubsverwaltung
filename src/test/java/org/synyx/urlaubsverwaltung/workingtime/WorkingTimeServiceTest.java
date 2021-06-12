@@ -17,18 +17,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
 
@@ -60,12 +55,19 @@ class WorkingTimeServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         sut.createDefaultWorkingTime(person);
 
-        final ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
+        final ArgumentCaptor<WorkingTimeEntity> argument = ArgumentCaptor.forClass(WorkingTimeEntity.class);
         verify(workingTimeRepository).save(argument.capture());
-        final WorkingTime workingTime = argument.getValue();
-        assertThat(workingTime.getPerson()).isEqualTo(person);
-        assertThat(workingTime.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
-        assertThat(workingTime.getWorkingDays()).isEqualTo(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY));
+
+        final WorkingTimeEntity persistedWorkingTimeEntity = argument.getValue();
+        assertThat(persistedWorkingTimeEntity.getPerson()).isEqualTo(person);
+        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
+        assertThat(persistedWorkingTimeEntity.getMonday()).isEqualTo(DayLength.FULL);
+        assertThat(persistedWorkingTimeEntity.getTuesday()).isEqualTo(DayLength.FULL);
+        assertThat(persistedWorkingTimeEntity.getWednesday()).isEqualTo(DayLength.FULL);
+        assertThat(persistedWorkingTimeEntity.getThursday()).isEqualTo(DayLength.FULL);
+        assertThat(persistedWorkingTimeEntity.getFriday()).isEqualTo(DayLength.FULL);
+        assertThat(persistedWorkingTimeEntity.getSaturday()).isEqualTo(DayLength.ZERO);
+        assertThat(persistedWorkingTimeEntity.getSunday()).isEqualTo(DayLength.ZERO);
     }
 
     @Test
@@ -86,12 +88,19 @@ class WorkingTimeServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         sut.createDefaultWorkingTime(person);
 
-        final ArgumentCaptor<WorkingTime> argument = ArgumentCaptor.forClass(WorkingTime.class);
+        final ArgumentCaptor<WorkingTimeEntity> argument = ArgumentCaptor.forClass(WorkingTimeEntity.class);
         verify(workingTimeRepository).save(argument.capture());
-        final WorkingTime workingTime = argument.getValue();
-        assertThat(workingTime.getPerson()).isEqualTo(person);
-        assertThat(workingTime.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
-        assertThat(workingTime.getWorkingDays()).isEqualTo(List.of(FRIDAY));
+
+        final WorkingTimeEntity persistedWorkingTimeEntity = argument.getValue();
+        assertThat(persistedWorkingTimeEntity.getPerson()).isEqualTo(person);
+        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
+        assertThat(persistedWorkingTimeEntity.getMonday()).isEqualTo(DayLength.ZERO);
+        assertThat(persistedWorkingTimeEntity.getTuesday()).isEqualTo(DayLength.ZERO);
+        assertThat(persistedWorkingTimeEntity.getWednesday()).isEqualTo(DayLength.ZERO);
+        assertThat(persistedWorkingTimeEntity.getThursday()).isEqualTo(DayLength.ZERO);
+        assertThat(persistedWorkingTimeEntity.getFriday()).isEqualTo(DayLength.FULL);
+        assertThat(persistedWorkingTimeEntity.getSaturday()).isEqualTo(DayLength.ZERO);
+        assertThat(persistedWorkingTimeEntity.getSunday()).isEqualTo(DayLength.ZERO);
     }
 
     @Test
@@ -100,10 +109,10 @@ class WorkingTimeServiceTest {
         final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
 
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setFederalStateOverride(BAYERN);
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setFederalStateOverride(BAYERN);
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
-            .thenReturn(workingTime);
+            .thenReturn(workingTimeEntity);
 
         final LocalDate now = LocalDate.now(UTC);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -121,9 +130,9 @@ class WorkingTimeServiceTest {
         settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setFederalStateOverride(null);
-        when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTime);
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setFederalStateOverride(null);
+        when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(workingTimeEntity);
 
         final LocalDate now = LocalDate.now(UTC);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -153,29 +162,30 @@ class WorkingTimeServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         sut.touch(List.of(1, 2), Optional.of(BAYERN), LocalDate.now(UTC), person);
 
-        final ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+        final ArgumentCaptor<WorkingTimeEntity> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTimeEntity.class);
         verify(workingTimeRepository).save(workingTimeArgumentCaptor.capture());
-        final WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
-        assertThat(workingTime.getFederalStateOverride()).hasValue(BAYERN);
+
+        final WorkingTimeEntity persistedWorkingTimeEntity = workingTimeArgumentCaptor.getValue();
+        assertThat(persistedWorkingTimeEntity.getFederalStateOverride()).isEqualTo(BAYERN);
     }
 
     @Test
     void ensureRemovesFederalStateOverrideIfNull() {
 
-        final WorkingTime existentWorkingTime = createWorkingTime();
-        existentWorkingTime.setFederalStateOverride(BAYERN);
+        final WorkingTimeEntity oldWorkingTimeEntity = new WorkingTimeEntity();
+        oldWorkingTimeEntity.setFederalStateOverride(BAYERN);
 
         when(workingTimeRepository.findByPersonAndValidityDate(any(Person.class), any(LocalDate.class)))
-            .thenReturn(existentWorkingTime);
+            .thenReturn(oldWorkingTimeEntity);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         sut.touch(List.of(1, 2), Optional.empty(), LocalDate.now(UTC), person);
 
-        final ArgumentCaptor<WorkingTime> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTime.class);
+        final ArgumentCaptor<WorkingTimeEntity> workingTimeArgumentCaptor = ArgumentCaptor.forClass(WorkingTimeEntity.class);
         verify(workingTimeRepository).save(workingTimeArgumentCaptor.capture());
 
-        final WorkingTime workingTime = workingTimeArgumentCaptor.getValue();
-        assertThat(workingTime.getFederalStateOverride()).isEmpty();
+        final WorkingTimeEntity persistedWorkingTimeEntity = workingTimeArgumentCaptor.getValue();
+        assertThat(persistedWorkingTimeEntity.getFederalStateOverride()).isNull();
     }
 
     @Test
@@ -197,12 +207,33 @@ class WorkingTimeServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime();
-        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTime));
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setValidFrom(LocalDate.of(2021, JUNE, 11));
+        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+        workingTimeEntity.setMonday(DayLength.FULL);
+        workingTimeEntity.setTuesday(DayLength.FULL);
+        workingTimeEntity.setWednesday(DayLength.FULL);
+        workingTimeEntity.setThursday(DayLength.FULL);
+        workingTimeEntity.setFriday(DayLength.FULL);
+        workingTimeEntity.setSaturday(DayLength.FULL);
+        workingTimeEntity.setSunday(DayLength.FULL);
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntity));
 
         final List<WorkingTime> workingTimes = sut.getByPerson(person);
-        assertThat(workingTimes)
-            .hasSize(1)
-            .contains(workingTime);
+        assertThat(workingTimes).hasSize(1);
+        assertThat(workingTimes.get(0).getId()).isEqualTo(1);
+        assertThat(workingTimes.get(0).getPerson()).isSameAs(person);
+        assertThat(workingTimes.get(0).getValidFrom()).isEqualTo(LocalDate.of(2021, JUNE, 11));
+        assertThat(workingTimes.get(0).getFederalStateOverride()).hasValue(BADEN_WUERTTEMBERG);
+        assertThat(workingTimes.get(0).getMonday()).isEqualTo(DayLength.FULL);
+        assertThat(workingTimes.get(0).getTuesday()).isEqualTo(DayLength.FULL);
+        assertThat(workingTimes.get(0).getWednesday()).isEqualTo(DayLength.FULL);
+        assertThat(workingTimes.get(0).getThursday()).isEqualTo(DayLength.FULL);
+        assertThat(workingTimes.get(0).getFriday()).isEqualTo(DayLength.FULL);
+        assertThat(workingTimes.get(0).getSaturday()).isEqualTo(DayLength.FULL);
+        assertThat(workingTimes.get(0).getSunday()).isEqualTo(DayLength.FULL);
     }
 }

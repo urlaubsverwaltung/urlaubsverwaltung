@@ -9,12 +9,14 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
@@ -39,43 +41,46 @@ public class WorkingTimeService {
 
     public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom, Person person) {
 
-        WorkingTime workingTime = workingTimeRepository.findByPersonAndValidityDate(person, validFrom);
+        WorkingTimeEntity workingTimeEntity = workingTimeRepository.findByPersonAndValidityDate(person, validFrom);
 
         /*
          * create a new WorkingTime object if no one existent for the given person and date
          */
-        if (workingTime == null) {
-            workingTime = new WorkingTime();
-            workingTime.setPerson(person);
-            workingTime.setValidFrom(validFrom);
+        if (workingTimeEntity == null) {
+            workingTimeEntity = new WorkingTimeEntity();
+            workingTimeEntity.setPerson(person);
+            workingTimeEntity.setValidFrom(validFrom);
         }
 
-        /*
-         * else just change the working days of the current working time object
-         */
-        workingTime.setWorkingDays(workingDays, DayLength.FULL);
+        resetWorkDays(workingTimeEntity);
 
-        if (federalState.isPresent()) {
-            workingTime.setFederalStateOverride(federalState.get());
-        } else {
-            // reset federal state override, use system default federal state for this user
-            workingTime.setFederalStateOverride(null);
+        for (Integer workingDay : workingDays) {
+            setWorkDay(workingTimeEntity, DayOfWeek.of(workingDay), DayLength.FULL);
         }
 
-        workingTimeRepository.save(workingTime);
-        LOG.info("Created working time {} for person {}", workingTime, person);
+        workingTimeEntity.setFederalStateOverride(federalState.orElse(null));
+
+        workingTimeRepository.save(workingTimeEntity);
+        LOG.info("Created working time {} for person {}", workingTimeEntity, person);
     }
 
     public List<WorkingTime> getByPerson(Person person) {
-        return workingTimeRepository.findByPersonOrderByValidFromDesc(person);
+        return workingTimeRepository.findByPersonOrderByValidFromDesc(person)
+            .stream()
+            .map(WorkingTimeService::toDomain)
+            .collect(toList());
     }
 
     public List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end) {
-        return workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end);
+        return workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end)
+            .stream()
+            .map(WorkingTimeService::toDomain)
+            .collect(toList());
     }
 
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
-        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
+        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
+            .map(WorkingTimeService::toDomain);
     }
 
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
@@ -111,5 +116,77 @@ public class WorkingTimeService {
 
         final LocalDate today = LocalDate.now(clock);
         this.touch(defaultWorkingDays, Optional.empty(), today, person);
+    }
+
+    private static void resetWorkDays(WorkingTimeEntity workingTimeEntity) {
+        workingTimeEntity.setMonday(DayLength.ZERO);
+        workingTimeEntity.setTuesday(DayLength.ZERO);
+        workingTimeEntity.setWednesday(DayLength.ZERO);
+        workingTimeEntity.setThursday(DayLength.ZERO);
+        workingTimeEntity.setFriday(DayLength.ZERO);
+        workingTimeEntity.setSaturday(DayLength.ZERO);
+        workingTimeEntity.setSunday(DayLength.ZERO);
+    }
+
+    private static void setWorkDay(WorkingTimeEntity workingTimeEntity, DayOfWeek dayOfWeek, DayLength dayLength) {
+        switch (dayOfWeek) {
+            case MONDAY:
+                workingTimeEntity.setMonday(dayLength);
+                break;
+            case TUESDAY:
+                workingTimeEntity.setTuesday(dayLength);
+                break;
+            case WEDNESDAY:
+                workingTimeEntity.setWednesday(dayLength);
+                break;
+            case THURSDAY:
+                workingTimeEntity.setThursday(dayLength);
+                break;
+            case FRIDAY:
+                workingTimeEntity.setFriday(dayLength);
+                break;
+            case SATURDAY:
+                workingTimeEntity.setSaturday(dayLength);
+                break;
+            case SUNDAY:
+                workingTimeEntity.setSunday(dayLength);
+                break;
+        }
+    }
+
+    private static DayLength dayLengthForDayOfWeek(WorkingTimeEntity workingTimeEntity, DayOfWeek dayOfWeek) {
+        switch (dayOfWeek) {
+            case MONDAY:
+                return workingTimeEntity.getMonday();
+            case TUESDAY:
+                return workingTimeEntity.getTuesday();
+            case WEDNESDAY:
+                return workingTimeEntity.getWednesday();
+            case THURSDAY:
+                return workingTimeEntity.getThursday();
+            case FRIDAY:
+                return workingTimeEntity.getFriday();
+            case SATURDAY:
+                return workingTimeEntity.getSaturday();
+            case SUNDAY:
+                return workingTimeEntity.getSunday();
+        }
+        return DayLength.ZERO;
+    }
+
+    private static WorkingTime toDomain(WorkingTimeEntity workingTimeEntity) {
+        final WorkingTime workingTime = new WorkingTime();
+
+        workingTime.setId(workingTimeEntity.getId());
+        workingTime.setPerson(workingTimeEntity.getPerson());
+        workingTime.setValidFrom(workingTimeEntity.getValidFrom());
+        workingTime.setFederalStateOverride(workingTimeEntity.getFederalStateOverride());
+
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            final DayLength dayLength = dayLengthForDayOfWeek(workingTimeEntity, dayOfWeek);
+            workingTime.setDayLengthForWeekDay(dayOfWeek.getValue(), dayLength);
+        }
+
+        return workingTime;
     }
 }
