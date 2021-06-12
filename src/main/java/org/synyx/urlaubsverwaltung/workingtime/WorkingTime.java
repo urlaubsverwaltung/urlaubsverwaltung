@@ -196,10 +196,6 @@ public class WorkingTime {
     }
 
     public LocalDate getValidFrom() {
-        if (this.validFrom == null) {
-            return null;
-        }
-
         return this.validFrom;
     }
 
