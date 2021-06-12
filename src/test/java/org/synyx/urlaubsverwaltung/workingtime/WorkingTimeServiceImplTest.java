@@ -43,7 +43,7 @@ class WorkingTimeServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeService(workingTimeProperties, workingTimeRepository, settingsService, fixedClock);
+        sut = new WorkingTimeServiceImpl(workingTimeProperties, workingTimeRepository, settingsService, fixedClock);
     }
 
     @Test
