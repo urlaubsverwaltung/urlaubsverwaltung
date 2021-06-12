@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ class PersonServiceImplTest {
     @Mock
     private AccountInteractionService accountInteractionService;
     @Mock
-    private WorkingTimeService workingTimeService;
+    private WorkingTimeWriteService workingTimeWriteService;
     @Mock
     private SecurityContext securityContext;
     @Mock
@@ -58,7 +58,7 @@ class PersonServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeService, applicationEventPublisher);
+        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher);
     }
 
     @AfterEach
@@ -72,7 +72,7 @@ class PersonServiceImplTest {
 
         sut.create("rick", "Grimes", "Rick", "rick@grimes.de", emptyList(), emptyList());
         verify(accountInteractionService).createDefaultAccount(any(Person.class));
-        verify(workingTimeService).createDefaultWorkingTime(any(Person.class));
+        verify(workingTimeWriteService).createDefaultWorkingTime(any(Person.class));
     }
 
     @Test
@@ -99,7 +99,7 @@ class PersonServiceImplTest {
             .contains(USER, BOSS);
 
         verify(accountInteractionService).createDefaultAccount(person);
-        verify(workingTimeService).createDefaultWorkingTime(person);
+        verify(workingTimeWriteService).createDefaultWorkingTime(person);
     }
 
     @Test

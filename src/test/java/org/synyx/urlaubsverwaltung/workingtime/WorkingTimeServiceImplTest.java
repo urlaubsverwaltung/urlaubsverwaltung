@@ -27,9 +27,9 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTE
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
 
 @ExtendWith(MockitoExtension.class)
-class WorkingTimeServiceTest {
+class WorkingTimeServiceImplTest {
 
-    private WorkingTimeService sut;
+    private WorkingTimeServiceImpl sut;
 
     @Mock
     private WorkingTimeProperties workingTimeProperties;

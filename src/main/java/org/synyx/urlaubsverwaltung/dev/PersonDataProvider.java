@@ -5,7 +5,7 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -43,14 +43,14 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 class PersonDataProvider {
 
     private final PersonService personService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
 
-    PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
+    PersonDataProvider(PersonService personService, WorkingTimeWriteService workingTimeWriteService,
                        AccountInteractionService accountInteractionService, Clock clock) {
         this.personService = personService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.accountInteractionService = accountInteractionService;
         this.clock = clock;
     }
@@ -90,7 +90,7 @@ class PersonDataProvider {
         final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
 
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).stream().map(DayOfWeek::getValue).collect(toList());
-        workingTimeService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
+        workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
         final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,

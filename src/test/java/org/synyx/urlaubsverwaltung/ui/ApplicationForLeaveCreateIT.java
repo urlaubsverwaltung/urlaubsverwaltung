@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -40,21 +41,19 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
-import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
-import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
@@ -94,7 +93,7 @@ class ApplicationForLeaveCreateIT {
     @Autowired
     private AccountInteractionService accountInteractionService;
     @Autowired
-    private WorkingTimeService workingTimeService;
+    private WorkingTimeWriteService workingTimeWriteService;
     @Autowired
     private PublicHolidaysService publicHolidaysService;
     @Autowired
@@ -249,7 +248,7 @@ class ApplicationForLeaveCreateIT {
         final int currentYear = LocalDate.now().getYear();
         final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
-        workingTimeService.touch(workingDays, validFrom, savedPerson);
+        workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);

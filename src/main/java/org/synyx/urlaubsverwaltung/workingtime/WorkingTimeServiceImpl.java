@@ -22,7 +22,7 @@ import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 @Service
 @Transactional
-class WorkingTimeServiceImpl implements WorkingTimeService {
+class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 

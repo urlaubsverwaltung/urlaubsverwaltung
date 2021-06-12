@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.Clock;
 
@@ -36,8 +36,8 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeService workingTimeService, AccountInteractionService accountInteractionService, Clock clock) {
-        return new PersonDataProvider(personService, workingTimeService, accountInteractionService, clock);
+    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeWriteService workingTimeWriteService, AccountInteractionService accountInteractionService, Clock clock) {
+        return new PersonDataProvider(personService, workingTimeWriteService, accountInteractionService, clock);
     }
 
     @Bean

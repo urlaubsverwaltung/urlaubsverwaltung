@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -84,7 +84,7 @@ class OvertimeCreateIT {
     @Autowired
     private AccountInteractionService accountInteractionService;
     @Autowired
-    private WorkingTimeService workingTimeService;
+    private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
     void ensureOvertimeCreation() {
@@ -153,7 +153,7 @@ class OvertimeCreateIT {
         final int currentYear = LocalDate.now().getYear();
         final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
-        workingTimeService.touch(workingDays, validFrom, savedPerson);
+        workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);

@@ -40,16 +40,18 @@ public class WorkingTimeViewController {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final SettingsService settingsService;
     private final WorkingTimeValidator validator;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
-                                     SettingsService settingsService, WorkingTimeValidator validator,
+                                     WorkingTimeWriteService workingTimeWriteService, SettingsService settingsService, WorkingTimeValidator validator,
                                      Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.settingsService = settingsService;
         this.validator = validator;
         this.clock = clock;
@@ -96,7 +98,7 @@ public class WorkingTimeViewController {
             return "workingtime/workingtime_form";
         }
 
-        workingTimeService.touch(workingTimeForm.getWorkingDays(), workingTimeForm.getValidFrom(), person, workingTimeForm.getFederalState());
+        workingTimeWriteService.touch(workingTimeForm.getWorkingDays(), workingTimeForm.getValidFrom(), person, workingTimeForm.getFederalState());
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + personId;

@@ -55,13 +55,15 @@ class WorkingTimeViewControllerTest {
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
+    private WorkingTimeWriteService workingTimeWriteService;
+    @Mock
     private SettingsService settingsService;
     @Mock
     private WorkingTimeValidator validator;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeViewController(personService, workingTimeService, settingsService, validator, Clock.systemUTC());
+        sut = new WorkingTimeViewController(personService, workingTimeService, workingTimeWriteService, settingsService, validator, Clock.systemUTC());
     }
 
     @Test
@@ -141,7 +143,7 @@ class WorkingTimeViewControllerTest {
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(view().name("workingtime/workingtime_form"));
 
-        verify(workingTimeService, never()).touch(any(), any(), any(), any());
+        verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());
     }
 
     @Test
@@ -152,7 +154,7 @@ class WorkingTimeViewControllerTest {
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"));
 
-        verify(workingTimeService).touch(any(), any(), eq(person), any());
+        verify(workingTimeWriteService).touch(any(), any(), eq(person), any());
     }
 
     @Test

@@ -8,10 +8,6 @@ import java.util.Optional;
 
 public interface WorkingTimeService {
 
-    void touch(List<Integer> workingDays, LocalDate validFrom, Person person);
-
-    void touch(List<Integer> workingDays, LocalDate validFrom, Person person, FederalState federalState);
-
     List<WorkingTime> getByPerson(Person person);
 
     List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end);
@@ -21,6 +17,4 @@ public interface WorkingTimeService {
     FederalState getFederalStateForPerson(Person person, LocalDate date);
 
     FederalState getSystemDefaultFederalState();
-
-    void createDefaultWorkingTime(Person person);
 }
