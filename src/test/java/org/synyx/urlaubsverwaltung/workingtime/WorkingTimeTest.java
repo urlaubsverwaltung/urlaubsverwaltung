@@ -44,32 +44,6 @@ class WorkingTimeTest {
     }
 
     @Test
-    void testHasWorkingDaysIdentical() {
-
-        final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
-        final List<DayOfWeek> workingDaysToCompare = List.of(FRIDAY, TUESDAY, WEDNESDAY, MONDAY, THURSDAY);
-
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setWorkingDays(workingDays, FULL);
-
-        final boolean returnValue = workingTime.hasWorkingDays(workingDaysToCompare);
-        assertThat(returnValue).isTrue();
-    }
-
-    @Test
-    void testHasWorkingDaysDifferent() {
-
-        final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
-        final List<DayOfWeek> workingDaysToCompare = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, SUNDAY);
-
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setWorkingDays(workingDays, FULL);
-
-        final boolean returnValue = workingTime.hasWorkingDays(workingDaysToCompare);
-        assertThat(returnValue).isFalse();
-    }
-
-    @Test
     void ensureWorkingDaysInWorkingTimeList() {
 
         final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);

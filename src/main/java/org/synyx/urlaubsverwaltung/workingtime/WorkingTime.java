@@ -80,27 +80,6 @@ public class WorkingTime {
         return workingDays;
     }
 
-    public boolean hasWorkingDays(List<DayOfWeek> workingDays) {
-
-        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-            final DayLength dayLength = getDayLengthForWeekDay(dayOfWeek);
-
-            if (dayLength == FULL) {
-                // has to be in the given list
-                if (!workingDays.contains(dayOfWeek)) {
-                    return false;
-                }
-            } else {
-                // must not be in the given list
-                if (workingDays.contains(dayOfWeek)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     /**
      * checks if the given day of week is a working day or not.
      * A working day can be FULL or MORNING or NOON, doesn't matter.
