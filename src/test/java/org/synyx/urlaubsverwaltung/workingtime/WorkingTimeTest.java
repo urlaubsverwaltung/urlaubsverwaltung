@@ -5,8 +5,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -18,6 +20,7 @@ import static java.time.DayOfWeek.SUNDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.Month.JUNE;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -119,29 +122,53 @@ class WorkingTimeTest {
     }
 
     @Test
-    void equals() {
-        final WorkingTime WorkingTimeOne = new WorkingTime();
-        WorkingTimeOne.setId(1);
+    void ensureEqualsConsidersPerson() {
+        final Person batman = new Person();
+        batman.setId(1);
 
-        final WorkingTime WorkingTimeOneOne = new WorkingTime();
-        WorkingTimeOneOne.setId(1);
+        final Person robin = new Person();
+        robin.setId(2);
 
-        final WorkingTime WorkingTimeTwo = new WorkingTime();
-        WorkingTimeTwo.setId(2);
+        final WorkingTime workingTimeBatman = new WorkingTime();
+        workingTimeBatman.setPerson(batman);
+        workingTimeBatman.setValidFrom(LocalDate.of(2021, JUNE, 12));
 
-        assertThat(WorkingTimeOne)
-            .isEqualTo(WorkingTimeOne)
-            .isEqualTo(WorkingTimeOneOne)
-            .isNotEqualTo(WorkingTimeTwo)
-            .isNotEqualTo(new Object())
-            .isNotEqualTo(null);
+        final WorkingTime workingTimeRobin = new WorkingTime();
+        workingTimeRobin.setPerson(robin);
+        workingTimeRobin.setValidFrom(LocalDate.of(2021, JUNE, 12));
+
+        assertThat(workingTimeBatman)
+            .isEqualTo(workingTimeBatman)
+            .isNotEqualTo(workingTimeRobin);
+    }
+
+    @Test
+    void ensureEqualsConsidersValidFrom() {
+        final Person batman = new Person();
+        batman.setId(1);
+
+        final WorkingTime workingTimeOne = new WorkingTime();
+        workingTimeOne.setPerson(batman);
+        workingTimeOne.setValidFrom(LocalDate.of(2021, JUNE, 12));
+
+        final WorkingTime workingTimeTwo = new WorkingTime();
+        workingTimeTwo.setPerson(batman);
+        workingTimeTwo.setValidFrom(LocalDate.of(2021, JUNE, 13));
+
+        assertThat(workingTimeOne)
+            .isEqualTo(workingTimeOne)
+            .isNotEqualTo(workingTimeTwo);
     }
 
     @Test
     void hashCodeTest() {
-        final WorkingTime WorkingTimeOne = new WorkingTime();
-        WorkingTimeOne.setId(1);
+        final Person person = new Person();
+        person.setId(1);
 
-        assertThat(WorkingTimeOne.hashCode()).isEqualTo(32);
+        final WorkingTime workingTime = new WorkingTime();
+        workingTime.setPerson(person);
+        workingTime.setValidFrom(LocalDate.of(2021, JUNE, 12));
+
+        assertThat(workingTime.hashCode()).isEqualTo(4141357);
     }
 }

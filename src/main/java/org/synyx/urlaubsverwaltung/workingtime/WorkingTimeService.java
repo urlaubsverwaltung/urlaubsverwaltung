@@ -177,7 +177,6 @@ public class WorkingTimeService {
     private static WorkingTime toDomain(WorkingTimeEntity workingTimeEntity) {
         final WorkingTime workingTime = new WorkingTime();
 
-        workingTime.setId(workingTimeEntity.getId());
         workingTime.setPerson(workingTimeEntity.getPerson());
         workingTime.setValidFrom(workingTimeEntity.getValidFrom());
         workingTime.setFederalStateOverride(workingTimeEntity.getFederalStateOverride());

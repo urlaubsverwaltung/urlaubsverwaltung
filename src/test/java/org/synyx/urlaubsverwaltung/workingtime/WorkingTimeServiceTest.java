@@ -224,7 +224,6 @@ class WorkingTimeServiceTest {
 
         final List<WorkingTime> workingTimes = sut.getByPerson(person);
         assertThat(workingTimes).hasSize(1);
-        assertThat(workingTimes.get(0).getId()).isEqualTo(1);
         assertThat(workingTimes.get(0).getPerson()).isSameAs(person);
         assertThat(workingTimes.get(0).getValidFrom()).isEqualTo(LocalDate.of(2021, JUNE, 11));
         assertThat(workingTimes.get(0).getFederalStateOverride()).hasValue(BADEN_WUERTTEMBERG);

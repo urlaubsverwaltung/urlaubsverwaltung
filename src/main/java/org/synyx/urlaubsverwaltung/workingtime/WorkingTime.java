@@ -27,7 +27,6 @@ import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
  */
 public class WorkingTime {
 
-    private Integer id;
     private Person person;
     private DayLength monday = ZERO;
     private DayLength tuesday = ZERO;
@@ -140,14 +139,6 @@ public class WorkingTime {
         this.friday = ZERO;
         this.saturday = ZERO;
         this.sunday = ZERO;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Person getPerson() {
@@ -273,18 +264,14 @@ public class WorkingTime {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final WorkingTime that = (WorkingTime) o;
-        return null != this.getId() && Objects.equals(id, that.id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkingTime that = (WorkingTime) o;
+        return Objects.equals(person, that.person) && Objects.equals(validFrom, that.validFrom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(person, validFrom);
     }
 }
