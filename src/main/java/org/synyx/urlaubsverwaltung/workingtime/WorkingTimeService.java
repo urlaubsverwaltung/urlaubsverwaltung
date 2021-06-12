@@ -183,7 +183,7 @@ public class WorkingTimeService {
 
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
             final DayLength dayLength = dayLengthForDayOfWeek(workingTimeEntity, dayOfWeek);
-            workingTime.setDayLengthForWeekDay(dayOfWeek.getValue(), dayLength);
+            workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
         }
 
         return workingTime;

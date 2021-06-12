@@ -19,7 +19,6 @@ import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -288,8 +287,7 @@ class WorkDaysCountServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.WEDNESDAY.getValue(),
-            DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
@@ -310,8 +308,7 @@ class WorkDaysCountServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        List<Integer> workingDays = List.of(DayOfWeek.MONDAY.getValue(), DayOfWeek.TUESDAY.getValue(),
-            DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);

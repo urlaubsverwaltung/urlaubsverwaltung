@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.DayOfWeek.MONDAY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -81,7 +82,7 @@ class WorkingTimeViewControllerTest {
         workingTime.setPerson(person);
         workingTime.setValidFrom(LocalDate.of(2020,10,2));
         workingTime.setFederalStateOverride(BERLIN);
-        workingTime.setWorkingDays(List.of(1), DayLength.FULL);
+        workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 

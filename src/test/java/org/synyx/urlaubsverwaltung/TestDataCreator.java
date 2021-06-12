@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -171,8 +172,7 @@ public final class TestDataCreator {
 
         WorkingTime workingTime = new WorkingTime();
 
-        List<Integer> workingDays = List.of(MONDAY.getValue(), TUESDAY.getValue(),
-            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         return workingTime;

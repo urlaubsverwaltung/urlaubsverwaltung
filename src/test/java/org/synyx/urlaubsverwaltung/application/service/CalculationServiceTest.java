@@ -27,6 +27,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -79,7 +79,7 @@ class CalculationServiceTest {
 
         // create working time object (MON-FRI)
         final WorkingTime workingTime = new WorkingTime();
-        List<Integer> workingDays = asList(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))

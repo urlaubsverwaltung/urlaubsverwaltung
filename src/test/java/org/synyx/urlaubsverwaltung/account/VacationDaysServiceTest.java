@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -88,7 +89,7 @@ class VacationDaysServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = new WorkingTime();
-        List<Integer> workingDays = List.of(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
@@ -158,7 +159,7 @@ class VacationDaysServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = new WorkingTime();
-        List<Integer> workingDays = List.of(MONDAY.getValue(), TUESDAY.getValue(), WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))

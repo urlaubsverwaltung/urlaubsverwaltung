@@ -3,15 +3,14 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
@@ -21,7 +20,6 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.JUNE;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
@@ -49,11 +47,8 @@ class WorkingTimeTest {
     @Test
     void testHasWorkingDaysIdentical() {
 
-        final  List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
-            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
-
-        final  List<Integer> workingDaysToCompare = Arrays.asList(FRIDAY.getValue(), TUESDAY.getValue(),
-            WEDNESDAY.getValue(), MONDAY.getValue(), THURSDAY.getValue());
+        final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        final List<DayOfWeek> workingDaysToCompare = List.of(FRIDAY, TUESDAY, WEDNESDAY, MONDAY, THURSDAY);
 
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, FULL);
@@ -65,11 +60,8 @@ class WorkingTimeTest {
     @Test
     void testHasWorkingDaysDifferent() {
 
-        final List<Integer> workingDays = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
-            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
-
-        final List<Integer> workingDaysToCompare = Arrays.asList(MONDAY.getValue(), TUESDAY.getValue(),
-            WEDNESDAY.getValue(), THURSDAY.getValue(), SUNDAY.getValue());
+        final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        final List<DayOfWeek> workingDaysToCompare = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, SUNDAY);
 
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setWorkingDays(workingDays, FULL);
@@ -81,9 +73,7 @@ class WorkingTimeTest {
     @Test
     void ensureWorkingDaysInWorkingTimeList() {
 
-        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)
-            .map(DayOfWeek::getValue)
-            .collect(toList());
+        final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
         final WorkingTime workingEveryDay = new WorkingTime();
         workingEveryDay.setWorkingDays(workingDays, FULL);
@@ -99,26 +89,26 @@ class WorkingTimeTest {
 
     @ParameterizedTest
     @CsvSource({
-        "1,FULL", "1,MORNING", "1,NOON",
-        "2,FULL", "2,MORNING", "2,NOON",
-        "3,FULL", "3,MORNING", "3,NOON",
-        "4,FULL", "4,MORNING", "4,NOON",
-        "5,FULL", "5,MORNING", "5,NOON",
-        "6,FULL", "6,MORNING", "6,NOON",
-        "7,FULL", "7,MORNING", "7,NOON"
+        "MONDAY,FULL", "MONDAY,MORNING", "MONDAY,NOON",
+        "TUESDAY,FULL", "TUESDAY,MORNING", "TUESDAY,NOON",
+        "WEDNESDAY,FULL", "WEDNESDAY,MORNING", "WEDNESDAY,NOON",
+        "THURSDAY,FULL", "THURSDAY,MORNING", "THURSDAY,NOON",
+        "FRIDAY,FULL", "FRIDAY,MORNING", "FRIDAY,NOON",
+        "SATURDAY,FULL", "SATURDAY,MORNING", "SATURDAY,NOON",
+        "SUNDAY,FULL", "SUNDAY,MORNING", "SUNDAY,NOON"
     })
-    void ensureIsWorkingDayIsTrue(int dayOfWeek, DayLength dayLength) {
+    void ensureIsWorkingDayIsTrue(DayOfWeek dayOfWeek, DayLength dayLength) {
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
-        assertThat(workingTime.isWorkingDay(DayOfWeek.of(dayOfWeek))).isTrue();
+        assertThat(workingTime.isWorkingDay(dayOfWeek)).isTrue();
     }
 
     @ParameterizedTest
-    @CsvSource({"1", "2", "3", "4", "5", "6", "7"})
-    void ensureIsWorkingDayIsFalseForDayLengthZero(int dayOfWeek) {
+    @EnumSource(DayOfWeek.class)
+    void ensureIsWorkingDayIsFalseForDayLengthZero(DayOfWeek dayOfWeek) {
         final WorkingTime workingTime = new WorkingTime();
         workingTime.setDayLengthForWeekDay(dayOfWeek, ZERO);
-        assertThat(workingTime.isWorkingDay(DayOfWeek.of(dayOfWeek))).isFalse();
+        assertThat(workingTime.isWorkingDay(dayOfWeek)).isFalse();
     }
 
     @Test

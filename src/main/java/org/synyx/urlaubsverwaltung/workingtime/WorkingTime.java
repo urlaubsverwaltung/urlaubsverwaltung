@@ -42,12 +42,12 @@ public class WorkingTime {
      */
     private FederalState federalStateOverride;
 
-    public void setWorkingDays(List<Integer> workingDays, DayLength dayLength) {
+    public void setWorkingDays(List<DayOfWeek> workingDays, DayLength dayLength) {
 
         setAllDayLengthsToZero();
 
         if (!workingDays.isEmpty()) {
-            for (Integer dayOfWeek : workingDays) {
+            for (DayOfWeek dayOfWeek : workingDays) {
                 setDayLengthForWeekDay(dayOfWeek, dayLength);
             }
         }
@@ -81,11 +81,9 @@ public class WorkingTime {
         return workingDays;
     }
 
-    public boolean hasWorkingDays(List<Integer> workingDays) {
+    public boolean hasWorkingDays(List<DayOfWeek> workingDays) {
 
-        for (WeekDay day : WeekDay.values()) {
-            int dayOfWeek = day.getDayOfWeek();
-
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
             final DayLength dayLength = getDayLengthForWeekDay(dayOfWeek);
 
             if (dayLength == FULL) {
@@ -149,8 +147,8 @@ public class WorkingTime {
         this.person = person;
     }
 
-    public DayLength getDayLengthForWeekDay(int weekDay) {
-        switch (DayOfWeek.of(weekDay)) {
+    public DayLength getDayLengthForWeekDay(DayOfWeek dayOfWeek) {
+        switch (dayOfWeek) {
             case MONDAY:
                 return this.monday;
             case TUESDAY:
@@ -170,8 +168,8 @@ public class WorkingTime {
         }
     }
 
-    public void setDayLengthForWeekDay(int weekDay, DayLength dayLength) {
-        switch (DayOfWeek.of(weekDay)) {
+    public void setDayLengthForWeekDay(DayOfWeek dayOfWeek, DayLength dayLength) {
+        switch (dayOfWeek) {
             case MONDAY:
                 this.monday = dayLength;
                 break;

@@ -101,8 +101,7 @@ public class WorkDaysCountService {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
             BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
 
-            int dayOfWeek = day.getDayOfWeek().getValue();
-            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
+            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);
 
