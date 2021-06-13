@@ -74,18 +74,18 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public List<WorkingTime> getByPerson(Person person) {
-        return toWorkingTime(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
+        return toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
     }
 
     @Override
     public List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end) {
-        return toWorkingTime(workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end));
+        return toWorkingTimes(workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end));
     }
 
     @Override
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
-            .map(entity -> toDomain(entity, this::getSystemDefaultFederalState));
+            .map(entity -> toWorkingTimes(entity, this::getSystemDefaultFederalState));
     }
 
     @Override
@@ -119,10 +119,10 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         this.touch(defaultWorkingDays, today, person);
     }
 
-    private List<WorkingTime> toWorkingTime(List<WorkingTimeEntity> entities) {
+    private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> entities) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
         return entities.stream()
-            .map(entity -> toDomain(entity, federalStateCachedSupplier))
+            .map(entity -> toWorkingTimes(entity, federalStateCachedSupplier))
             .collect(toList());
     }
 
@@ -162,7 +162,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         }
     }
 
-    private static WorkingTime toDomain(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
+    private static WorkingTime toWorkingTimes(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
 
         final FederalState federalState = workingTimeEntity.getFederalStateOverride() == null
             ? defaultFederalStateProvider.get()
