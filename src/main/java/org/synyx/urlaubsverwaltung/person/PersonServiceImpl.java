@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,16 +31,16 @@ class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
     private final AccountInteractionService accountInteractionService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     PersonServiceImpl(PersonRepository personRepository, AccountInteractionService accountInteractionService,
-                      WorkingTimeService workingTimeService, ApplicationEventPublisher applicationEventPublisher) {
+                      WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher) {
 
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -62,7 +62,7 @@ class PersonServiceImpl implements PersonService {
         LOG.info("Created person: {}", person);
 
         accountInteractionService.createDefaultAccount(person);
-        workingTimeService.createDefaultWorkingTime(person);
+        workingTimeWriteService.createDefaultWorkingTime(person);
 
         return createdPerson;
     }

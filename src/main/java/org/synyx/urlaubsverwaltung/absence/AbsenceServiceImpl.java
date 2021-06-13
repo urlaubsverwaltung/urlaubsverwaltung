@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -155,13 +156,30 @@ public class AbsenceServiceImpl implements AbsenceService {
         final LocalDate start = maxDate(application.getStartDate(), askedDateRange.getStartDate());
         final LocalDate end = minDate(application.getEndDate(), askedDateRange.getEndDate());
 
+        final Person person = application.getPerson();
+        final List<WorkingTime> personWorkingTimeList = workingTimeList
+            .stream()
+            .filter(workingTime -> workingTime.getPerson().equals(person))
+            .sorted(comparing(WorkingTime::getValidFrom).reversed())
+            .collect(toList());
+
         return new DateRange(start, end).stream()
             .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, workingTimeList, systemDefaultFederalState)))
             // ignore full public holiday since it is no "absence".
             // it could still be an official workday with an application for leave.
             .filter(tuple -> !tuple.publicHolidayDayLength.equals(DayLength.FULL))
+            .filter(tuple -> isWorkday(tuple.date, personWorkingTimeList))
             .map(tuple -> toVacationAbsencePeriodRecord(tuple, application))
             .collect(toList());
+    }
+
+    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
+        return workingTimeList
+            .stream()
+            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
+            .findFirst()
+            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
+            .orElse(false);
     }
 
     private AbsencePeriod.Record toVacationAbsencePeriodRecord(DateDayLengthTuple tuple, Application application) {
@@ -270,7 +288,7 @@ public class AbsenceServiceImpl implements AbsenceService {
                 ? Optional.empty()
                 : Optional.of(workingTimeList.get(0))
             )
-            .flatMap(WorkingTime::getFederalStateOverride)
+            .map(WorkingTime::getFederalState)
             .orElse(federalStateDefault);
 
         return publicHolidaysService.getAbsenceTypeOfDate(date, federalState);

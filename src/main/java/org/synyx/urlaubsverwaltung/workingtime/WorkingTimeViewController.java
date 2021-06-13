@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -23,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -40,16 +40,18 @@ public class WorkingTimeViewController {
 
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final SettingsService settingsService;
     private final WorkingTimeValidator validator;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
-                                     SettingsService settingsService, WorkingTimeValidator validator,
+                                     WorkingTimeWriteService workingTimeWriteService, SettingsService settingsService, WorkingTimeValidator validator,
                                      Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.settingsService = settingsService;
         this.validator = validator;
         this.clock = clock;
@@ -96,8 +98,7 @@ public class WorkingTimeViewController {
             return "workingtime/workingtime_form";
         }
 
-        workingTimeService.touch(workingTimeForm.getWorkingDays(),
-            Optional.ofNullable(workingTimeForm.getFederalState()), workingTimeForm.getValidFrom(), person);
+        workingTimeWriteService.touch(workingTimeForm.getWorkingDays(), workingTimeForm.getValidFrom(), person, workingTimeForm.getFederalState());
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + personId;
@@ -110,22 +111,22 @@ public class WorkingTimeViewController {
         final WorkingTime currentWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock)).orElse(null);
         final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
-        model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories, defaultFederalState));
-        model.addAttribute("weekDays", WeekDay.values());
+        model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories));
+        model.addAttribute("weekDays", DayOfWeek.values());
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("defaultFederalState", defaultFederalState);
     }
 
-    private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes, FederalState defaultFederalState) {
+    private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes) {
         return workingTimes.stream()
-            .map(toWorkingTimeHistoryDto(currentWorkingTime, defaultFederalState))
+            .map(toWorkingTimeHistoryDto(currentWorkingTime))
             .collect(toList());
     }
 
-    private Function<WorkingTime, WorkingTimeHistoryDto> toWorkingTimeHistoryDto(WorkingTime currentWorkingTime, FederalState defaultFederalState) {
+    private Function<WorkingTime, WorkingTimeHistoryDto> toWorkingTimeHistoryDto(WorkingTime currentWorkingTime) {
         return workingTime -> {
             final boolean isValid = currentWorkingTime.equals(workingTime);
-            final FederalState federalState = workingTime.getFederalStateOverride().orElse(defaultFederalState);
+            final FederalState federalState = workingTime.getFederalState();
             final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
             return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.toString(), isValid);
         };

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -25,15 +24,11 @@ public class WorkDaysCountService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
-    private final SettingsService settingsService;
 
     @Autowired
-    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService,
-                                SettingsService settingsService) {
-
+    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
-        this.settingsService = settingsService;
     }
 
     /**
@@ -93,7 +88,7 @@ public class WorkDaysCountService {
         }
 
         final WorkingTime workingTime = optionalWorkingTime.get();
-        final FederalState federalState = getFederalState(workingTime);
+        final FederalState federalState = workingTime.getFederalState();
 
         BigDecimal vacationDays = BigDecimal.ZERO;
         LocalDate day = startDate;
@@ -101,8 +96,7 @@ public class WorkDaysCountService {
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
             BigDecimal duration = publicHolidaysService.getWorkingDurationOfDate(day, federalState);
 
-            int dayOfWeek = day.getDayOfWeek().getValue();
-            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(dayOfWeek).getDuration();
+            BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();
 
             BigDecimal result = duration.multiply(workingDuration);
 
@@ -117,10 +111,5 @@ public class WorkDaysCountService {
         }
 
         return vacationDays.multiply(dayLength.getDuration()).setScale(1, UNNECESSARY);
-    }
-
-    private FederalState getFederalState(WorkingTime workingTime) {
-        final Optional<FederalState> federalStateOverride = workingTime.getFederalStateOverride();
-        return federalStateOverride.orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
     }
 }

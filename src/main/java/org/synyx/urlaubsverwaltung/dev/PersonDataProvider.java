@@ -5,10 +5,11 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
@@ -16,13 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -42,14 +43,14 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 class PersonDataProvider {
 
     private final PersonService personService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
 
-    PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
+    PersonDataProvider(PersonService personService, WorkingTimeWriteService workingTimeWriteService,
                        AccountInteractionService accountInteractionService, Clock clock) {
         this.personService = personService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.accountInteractionService = accountInteractionService;
         this.clock = clock;
     }
@@ -88,8 +89,8 @@ class PersonDataProvider {
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
 
-        final List<Integer> workingDays = asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek());
-        workingTimeService.touch(workingDays, empty(), firstDayOfYear.minusYears(1), savedPerson);
+        final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).stream().map(DayOfWeek::getValue).collect(toList());
+        workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
         final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,

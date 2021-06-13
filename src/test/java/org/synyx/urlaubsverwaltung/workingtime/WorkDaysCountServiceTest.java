@@ -19,7 +19,6 @@ import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +35,6 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HO
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN_AUGSBURG;
 
 @ExtendWith(MockitoExtension.class)
 class WorkDaysCountServiceTest {
@@ -51,7 +49,7 @@ class WorkDaysCountServiceTest {
     @BeforeEach
     void setUp() {
         final var publicHolidaysService = new PublicHolidaysService(settingsService, getHolidayManager());
-        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
+        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
     }
 
     @Test
@@ -288,8 +286,7 @@ class WorkDaysCountServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        List<Integer> workingDays = Arrays.asList(DayOfWeek.MONDAY.getValue(), DayOfWeek.WEDNESDAY.getValue(),
-            DayOfWeek.FRIDAY.getValue(), DayOfWeek.SATURDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
@@ -310,8 +307,7 @@ class WorkDaysCountServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        List<Integer> workingDays = List.of(DayOfWeek.MONDAY.getValue(), DayOfWeek.TUESDAY.getValue(),
-            DayOfWeek.WEDNESDAY.getValue(), DayOfWeek.THURSDAY.getValue(), DayOfWeek.FRIDAY.getValue());
+        List<DayOfWeek> workingDays = List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
@@ -480,44 +476,6 @@ class WorkDaysCountServiceTest {
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, from, to, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(2.5));
-    }
-
-    @Test
-    void ensureCorrectWorkDaysForAssumptionDayForSystemDefaultFederalState() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
-        final LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
-        final LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, from, to, person);
-        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ONE);
-    }
-
-    @Test
-    void ensureCorrectWorkDaysForAssumptionDayForOverriddenFederalState() {
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final LocalDate from = LocalDate.of(2016, Month.AUGUST, 15);
-        final LocalDate to = LocalDate.of(2016, Month.AUGUST, 15);
-
-        final WorkingTime workingTime = createWorkingTime();
-        workingTime.setFederalStateOverride(BAYERN_AUGSBURG);
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person),
-            any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, from, to, person);
-        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
     private HolidayManager getHolidayManager() {

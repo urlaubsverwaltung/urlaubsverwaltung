@@ -97,18 +97,13 @@ public class PersonViewController {
         model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
 
         final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
-        Optional<FederalState> optionalFederalState = Optional.empty();
 
-        if (workingTime.isPresent()) {
-            model.addAttribute("workingTime", workingTime.get());
-            optionalFederalState = workingTime.get().getFederalStateOverride();
-        }
+        final FederalState federalState = workingTime
+            .map(WorkingTime::getFederalState)
+            .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
 
-        if (optionalFederalState.isPresent()) {
-            model.addAttribute("federalState", optionalFederalState.get());
-        } else {
-            model.addAttribute("federalState", settingsService.getSettings().getWorkingTimeSettings().getFederalState());
-        }
+        model.addAttribute("workingTime", workingTime.orElse(null));
+        model.addAttribute("federalState", federalState);
 
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));

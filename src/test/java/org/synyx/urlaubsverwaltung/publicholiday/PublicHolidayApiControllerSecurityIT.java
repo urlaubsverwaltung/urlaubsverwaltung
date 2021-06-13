@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,13 +35,16 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;
-
     @MockBean
     private PersonService personService;
     @MockBean
     private WorkingTimeService workingTimeService;
     @MockBean
     private DepartmentService departmentService;
+
+    // WorkingTimeWriteService is required for personService
+    @MockBean
+    private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
     void getHolidaysWithoutAuthIsUnauthorized() throws Exception {

@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -17,10 +16,12 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.DayOfWeek.MONDAY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -54,13 +55,15 @@ class WorkingTimeViewControllerTest {
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
+    private WorkingTimeWriteService workingTimeWriteService;
+    @Mock
     private SettingsService settingsService;
     @Mock
     private WorkingTimeValidator validator;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeViewController(personService, workingTimeService, settingsService, validator, Clock.systemUTC());
+        sut = new WorkingTimeViewController(personService, workingTimeService, workingTimeWriteService, settingsService, validator, Clock.systemUTC());
     }
 
     @Test
@@ -77,11 +80,8 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime();
-        workingTime.setPerson(person);
-        workingTime.setValidFrom(LocalDate.of(2020,10,2));
-        workingTime.setFederalStateOverride(BERLIN);
-        workingTime.setWorkingDays(List.of(1), DayLength.FULL);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2), BERLIN);
+        workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
@@ -93,7 +93,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(FederalState.BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.values())))
-            .andExpect(model().attribute("weekDays", equalTo(WeekDay.values())));
+            .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
 
     }
 
@@ -142,7 +142,7 @@ class WorkingTimeViewControllerTest {
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(view().name("workingtime/workingtime_form"));
 
-        verify(workingTimeService, never()).touch(any(), any(), any(), any());
+        verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());
     }
 
     @Test
@@ -153,7 +153,7 @@ class WorkingTimeViewControllerTest {
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"));
 
-        verify(workingTimeService).touch(any(), any(), any(), eq(person));
+        verify(workingTimeWriteService).touch(any(), any(), eq(person), any());
     }
 
     @Test

@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.springframework.beans.BeanUtils;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 
 /**
  * Represents an extended {@link org.synyx.urlaubsverwaltung.sicknote.SickNote} with information about the number
@@ -31,11 +31,11 @@ public class ExtendedSickNote extends SickNote {
         return workDays;
     }
 
-    public WeekDay getWeekDayOfStartDate() {
-        return WeekDay.getByDayOfWeek(getStartDate().getDayOfWeek().getValue());
+    public DayOfWeek getWeekDayOfStartDate() {
+        return getStartDate().getDayOfWeek();
     }
 
-    public WeekDay getWeekDayOfEndDate() {
-        return WeekDay.getByDayOfWeek(getEndDate().getDayOfWeek().getValue());
+    public DayOfWeek getWeekDayOfEndDate() {
+        return getEndDate().getDayOfWeek();
     }
 }

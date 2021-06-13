@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,18 +21,17 @@ public class WorkingTimeForm {
 
     WorkingTimeForm(WorkingTime workingTime) {
 
-        for (WeekDay day : WeekDay.values()) {
-            Integer dayOfWeek = day.getDayOfWeek();
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
 
             DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);
 
             if (dayLength != DayLength.ZERO) {
-                workingDays.add(dayOfWeek);
+                workingDays.add(dayOfWeek.getValue());
             }
         }
 
         this.validFrom = workingTime.getValidFrom();
-        this.federalState = workingTime.getFederalStateOverride().orElse(null);
+        this.federalState = workingTime.getFederalState();
     }
 
     public String getValidFromIsoValue() {

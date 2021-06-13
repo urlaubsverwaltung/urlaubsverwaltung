@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -34,6 +35,7 @@ import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 
 public final class TestDataCreator {
 
@@ -169,10 +171,12 @@ public final class TestDataCreator {
 
     public static WorkingTime createWorkingTime() {
 
-        WorkingTime workingTime = new WorkingTime();
+        final Person person = new Person();
+        person.setId(1);
 
-        List<Integer> workingDays = List.of(MONDAY.getValue(), TUESDAY.getValue(),
-            WEDNESDAY.getValue(), THURSDAY.getValue(), FRIDAY.getValue());
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
+
+        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
         return workingTime;

@@ -4,14 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.TUESDAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -76,7 +78,7 @@ class ExtendedSickNoteTest {
 
         ExtendedSickNote extendedSickNote = new ExtendedSickNote(sickNote, workDaysCountService);
 
-        assertThat(extendedSickNote.getWeekDayOfStartDate()).isEqualTo(WeekDay.TUESDAY);
-        assertThat(extendedSickNote.getWeekDayOfEndDate()).isEqualTo(WeekDay.FRIDAY);
+        assertThat(extendedSickNote.getWeekDayOfStartDate()).isEqualTo(TUESDAY);
+        assertThat(extendedSickNote.getWeekDayOfEndDate()).isEqualTo(FRIDAY);
     }
 }

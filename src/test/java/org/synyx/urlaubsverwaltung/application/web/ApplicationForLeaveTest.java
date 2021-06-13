@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.period.WeekDay;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -14,6 +13,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static java.math.BigDecimal.TEN;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.TUESDAY;
 import static java.time.LocalDate.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +59,7 @@ class ApplicationForLeaveTest {
             .thenReturn(BigDecimal.valueOf(4));
 
         final ApplicationForLeave sut = new ApplicationForLeave(application, workDaysCountService);
-        assertThat(sut.getWeekDayOfStartDate()).isEqualTo(WeekDay.TUESDAY);
-        assertThat(sut.getWeekDayOfEndDate()).isEqualTo(WeekDay.FRIDAY);
+        assertThat(sut.getWeekDayOfStartDate()).isEqualTo(TUESDAY);
+        assertThat(sut.getWeekDayOfEndDate()).isEqualTo(FRIDAY);
     }
 }
