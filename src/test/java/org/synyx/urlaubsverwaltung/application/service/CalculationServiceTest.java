@@ -76,7 +76,7 @@ class CalculationServiceTest {
 
         final HolidayManager holidayManager = getHolidayManager();
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);
-        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
+        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
 
         // create working time object (MON-FRI)
         final WorkingTime workingTime = new WorkingTime(new Person(), LocalDate.MIN, BADEN_WUERTTEMBERG);

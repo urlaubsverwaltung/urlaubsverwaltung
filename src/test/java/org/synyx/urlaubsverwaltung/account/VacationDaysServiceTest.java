@@ -78,8 +78,7 @@ class VacationDaysServiceTest {
     @BeforeEach
     void setUp() {
 
-        workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, getHolidayManager()),
-            workingTimeService, settingsService);
+        workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, getHolidayManager()), workingTimeService);
 
         sut = new VacationDaysService(workDaysCountService, applicationService, Clock.systemUTC());
     }

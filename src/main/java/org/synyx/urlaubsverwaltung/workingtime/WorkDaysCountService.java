@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -25,15 +24,11 @@ public class WorkDaysCountService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
-    private final SettingsService settingsService;
 
     @Autowired
-    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService,
-                                SettingsService settingsService) {
-
+    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
-        this.settingsService = settingsService;
     }
 
     /**
