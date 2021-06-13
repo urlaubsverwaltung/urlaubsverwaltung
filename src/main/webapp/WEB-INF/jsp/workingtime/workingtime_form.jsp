@@ -121,7 +121,7 @@
                                     <div class="checkbox">
                                         <label for="${weekDay}">
                                             <form:checkbox id="${weekDay}" path="workingDays"
-                                                           value="${weekDay.dayOfWeek}"/>
+                                                           value="${weekDay.value}"/>
                                             <spring:message code='${weekDay}'/>
                                         </label>
                                     </div>
