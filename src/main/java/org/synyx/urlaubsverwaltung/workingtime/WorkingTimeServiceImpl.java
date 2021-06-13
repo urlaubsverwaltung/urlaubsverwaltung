@@ -120,7 +120,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     private List<WorkingTime> toWorkingTime(List<WorkingTimeEntity> entities) {
-        CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
+        final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
         return entities.stream()
             .map(entity -> toDomain(entity, federalStateCachedSupplier))
             .collect(toList());
