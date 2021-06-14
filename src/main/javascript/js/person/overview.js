@@ -26,6 +26,7 @@ $(document).ready(function () {
     const yearOfStartDate = getYear(startDate);
     const yearOfEndDate = getYear(endDate);
 
+    // TODO Performance reduce calls when yearOfStartDate === yearOfEndDate
     $.when(
       holidayService.fetchPublic(yearOfStartDate),
       holidayService.fetchPersonal(yearOfStartDate),
