@@ -62,7 +62,7 @@ public class AbsencePeriod {
     @Override
     public String toString() {
         return "AbsencePeriod{" +
-            ", absenceRecords=" + absenceRecords +
+            "absenceRecords=" + absenceRecords +
             '}';
     }
 

@@ -84,7 +84,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end) {
-        return applicationRepository.findByStatusInAndPersonInAndStartDateIsGreaterThanEqualAndEndDateIsLessThanEqual(statuses, persons, start, end);
+        return applicationRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, start, end);
     }
 
     @Override

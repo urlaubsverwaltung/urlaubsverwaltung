@@ -18,11 +18,24 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.*;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.*;
-import static org.synyx.urlaubsverwaltung.period.DayLength.*;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REVOKED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.UNPAIDLEAVE;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 
 @SpringBootTest
@@ -36,6 +49,44 @@ class ApplicationRepositoryIT extends TestContainersBase {
     private PersonService personService;
     @Autowired
     private VacationTypeRepository vacationTypeRepository;
+
+    @Test
+    void ensureApplicationForLeaveForStatusAndPersonAndWithinDateRange() {
+
+        final Person max = personService.save(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
+        final Person marlene = personService.save(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final VacationType vacationType = getVacationType(HOLIDAY);
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        // application for leave that should not be found
+        final Application appNotInPeriodBecausePast = createApplication(max, vacationType, askedStartDate.minusDays(12), askedStartDate.minusDays(10), FULL);
+        final Application appNotInPeriodBecauseFuture = createApplication(max, vacationType, askedEndDate.plusDays(10), askedEndDate.plusDays(12), FULL);
+
+        sut.save(appNotInPeriodBecausePast);
+        sut.save(appNotInPeriodBecauseFuture);
+
+        // application for leave that should be found
+        final Application appStartingBeforePeriod = createApplication(max, vacationType, askedStartDate.minusDays(5), askedStartDate.plusDays(1), FULL);
+        final Application appEndingAfterPeriod = createApplication(max, vacationType, askedEndDate.minusDays(1), askedEndDate.plusDays(1), FULL);
+        final Application appInBetween = createApplication(max, vacationType, askedStartDate.plusDays(10), askedStartDate.plusDays(12), FULL);
+        final Application appStartingAtPeriod = createApplication(marlene, vacationType, askedStartDate, askedStartDate.plusDays(2), FULL);
+        final Application appEndingAtPeriod = createApplication(marlene, vacationType, askedEndDate.minusDays(5), askedEndDate, FULL);
+
+        sut.save(appStartingBeforePeriod);
+        sut.save(appEndingAfterPeriod);
+        sut.save(appInBetween);
+        sut.save(appStartingAtPeriod);
+        sut.save(appEndingAtPeriod);
+
+        List<ApplicationStatus> statuses = List.of(WAITING);
+        List<Person> persons = List.of(max, marlene);
+
+        final List<Application> actualApplications = sut.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, askedStartDate, askedEndDate);
+
+        assertThat(actualApplications).contains(appStartingBeforePeriod, appEndingAfterPeriod, appInBetween, appStartingAtPeriod, appEndingAtPeriod);
+    }
 
     @Test
     void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
