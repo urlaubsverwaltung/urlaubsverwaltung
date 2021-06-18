@@ -10,7 +10,7 @@ public interface WorkingTimeService {
 
     List<WorkingTime> getByPerson(Person person);
 
-    List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end);
+    List<WorkingTime> getByPersons(List<Person> persons);
 
     Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
 

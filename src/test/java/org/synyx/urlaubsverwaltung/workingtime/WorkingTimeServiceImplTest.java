@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BREMEN;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.RHEINLAND_PFALZ;
 
 @ExtendWith(MockitoExtension.class)
 class WorkingTimeServiceImplTest {
@@ -194,81 +193,6 @@ class WorkingTimeServiceImplTest {
         assertThat(persistedWorkingTimeEntity.getFederalStateOverride()).isEqualTo(federalState);
     }
 
-    @Test
-    void ensureGetByPersonsAndDateInterval() {
-        final Person batman = new Person();
-        batman.setId(1);
-        final Person superman = new Person();
-        superman.setId(2);
-
-        final LocalDate start = LocalDate.now();
-        final LocalDate end = start.plusDays(1);
-
-        final WorkingTimeEntity workingTimeEntityBatman = new WorkingTimeEntity();
-        workingTimeEntityBatman.setId(1);
-        workingTimeEntityBatman.setPerson(batman);
-        workingTimeEntityBatman.setValidFrom(start);
-        workingTimeEntityBatman.setFederalStateOverride(BADEN_WUERTTEMBERG);
-
-        final WorkingTimeEntity workingTimeEntitySuperman = new WorkingTimeEntity();
-        workingTimeEntitySuperman.setId(2);
-        workingTimeEntitySuperman.setPerson(superman);
-        workingTimeEntitySuperman.setValidFrom(start.plusDays(7));
-        workingTimeEntitySuperman.setFederalStateOverride(RHEINLAND_PFALZ);
-
-        when(workingTimeRepository.findByPersonInAndValidFromForDateInterval(List.of(batman, superman), start, end))
-            .thenReturn(List.of(workingTimeEntityBatman, workingTimeEntitySuperman));
-
-        final List<WorkingTime> actualWorkingTimeList = sut.getByPersonsAndDateInterval(List.of(batman, superman), start, end);
-
-        assertThat(actualWorkingTimeList).hasSize(2);
-        assertThat(actualWorkingTimeList.get(0).getPerson()).isEqualTo(batman);
-        assertThat(actualWorkingTimeList.get(0).getValidFrom()).isEqualTo(start);
-        assertThat(actualWorkingTimeList.get(0).getFederalState()).isEqualTo(BADEN_WUERTTEMBERG);
-        assertThat(actualWorkingTimeList.get(1).getPerson()).isEqualTo(superman);
-        assertThat(actualWorkingTimeList.get(1).getValidFrom()).isEqualTo(start.plusDays(7));
-        assertThat(actualWorkingTimeList.get(1).getFederalState()).isEqualTo(RHEINLAND_PFALZ);
-    }
-
-    @Test
-    void ensureGetByPersonsAndDateIntervalCallsSystemDefaultFederalStateOnlyOnce() {
-        final Person batman = new Person();
-        batman.setId(1);
-        final Person superman = new Person();
-        superman.setId(2);
-
-        final LocalDate start = LocalDate.now();
-        final LocalDate end = start.plusDays(1);
-
-        final WorkingTimeEntity workingTimeEntityBatman = new WorkingTimeEntity();
-        workingTimeEntityBatman.setId(1);
-        workingTimeEntityBatman.setPerson(batman);
-        workingTimeEntityBatman.setValidFrom(start);
-
-        final WorkingTimeEntity workingTimeEntitySuperman = new WorkingTimeEntity();
-        workingTimeEntitySuperman.setId(2);
-        workingTimeEntitySuperman.setPerson(superman);
-        workingTimeEntitySuperman.setValidFrom(start.plusDays(7));
-
-        when(workingTimeRepository.findByPersonInAndValidFromForDateInterval(List.of(batman, superman), start, end))
-            .thenReturn(List.of(workingTimeEntityBatman, workingTimeEntitySuperman));
-
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(BREMEN);
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        final List<WorkingTime> actualWorkingTimeList = sut.getByPersonsAndDateInterval(List.of(batman, superman), start, end);
-
-        assertThat(actualWorkingTimeList).hasSize(2);
-        assertThat(actualWorkingTimeList.get(0).getPerson()).isEqualTo(batman);
-        assertThat(actualWorkingTimeList.get(0).getFederalState()).isEqualTo(BREMEN);
-        assertThat(actualWorkingTimeList.get(1).getPerson()).isEqualTo(superman);
-        assertThat(actualWorkingTimeList.get(1).getFederalState()).isEqualTo(BREMEN);
-        verify(settingsService).getSettings();
-    }
 
     @Test
     void getByPerson() {
