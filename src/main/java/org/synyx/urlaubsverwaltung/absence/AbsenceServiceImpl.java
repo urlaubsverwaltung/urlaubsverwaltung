@@ -64,7 +64,7 @@ public class AbsenceServiceImpl implements AbsenceService {
     @Override
     public List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end) {
         final DateRange askedDateRange = new DateRange(start, end);
-        final List<WorkingTime> workingTimeList = workingTimeService.getByPersonsAndDateInterval(persons, start, end);
+        final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(persons);
         final FederalState systemDefaultFederalState = workingTimeService.getSystemDefaultFederalState();
 
         final List<Application> openApplications = applicationService.getForStatesAndPerson(APPLICATION_STATUSES, persons, start, end);

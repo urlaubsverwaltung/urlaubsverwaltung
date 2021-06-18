@@ -151,7 +151,7 @@ class AbsenceServiceImplTest {
 
         sut.getOpenAbsences(List.of(batman, superman), start, end);
 
-        verify(workingTimeService).getByPersonsAndDateInterval(List.of(batman, superman), start, end);
+        verify(workingTimeService).getByPersons(List.of(batman, superman));
     }
 
     @Test
@@ -197,7 +197,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(person, start.minusDays(1), BADEN_WUERTTEMBERG);
 
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
         when(workingTimeService.getSystemDefaultFederalState()).thenReturn(BADEN_WUERTTEMBERG);
 
         final Application application = new Application();
@@ -228,7 +228,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start, BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);
@@ -263,7 +263,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);
@@ -296,7 +296,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1);
 
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(emptyList());
+        when(workingTimeService.getByPersons(any())).thenReturn(emptyList());
         when(workingTimeService.getSystemDefaultFederalState()).thenReturn(BERLIN);
 
         final Application application = new Application();
@@ -327,7 +327,7 @@ class AbsenceServiceImplTest {
         final WorkingTime workingTimeFuture = new WorkingTime(batman, start.plusDays(10), BADEN_WUERTTEMBERG);
         workingTimeFuture.setWorkingDays(List.of(WEDNESDAY, THURSDAY, FRIDAY), FULL);
 
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTimePastToNow, workingTimeFuture));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTimePastToNow, workingTimeFuture));
 
         final Application application = new Application();
         application.setId(42);
@@ -359,7 +359,7 @@ class AbsenceServiceImplTest {
         batman.setId(1);
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final SickNote sickNote = new SickNote();
         sickNote.setId(42);
@@ -392,7 +392,7 @@ class AbsenceServiceImplTest {
         batman.setId(1);
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final SickNote sickNote = new SickNote();
         sickNote.setId(42);
@@ -424,7 +424,7 @@ class AbsenceServiceImplTest {
         final Person batman = new Person();
         batman.setId(1);
 
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(emptyList());
+        when(workingTimeService.getByPersons(any())).thenReturn(emptyList());
         when(workingTimeService.getSystemDefaultFederalState()).thenReturn(BERLIN);
         when(publicHolidaysService.getAbsenceTypeOfDate(any(), eq(BERLIN))).thenReturn(DayLength.ZERO);
 
@@ -451,7 +451,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);
@@ -504,7 +504,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);
@@ -538,7 +538,7 @@ class AbsenceServiceImplTest {
         batman.setId(1);
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final SickNote sickNote = new SickNote();
         sickNote.setId(42);
@@ -572,7 +572,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);
@@ -623,7 +623,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);
@@ -678,7 +678,7 @@ class AbsenceServiceImplTest {
 
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
-        when(workingTimeService.getByPersonsAndDateInterval(any(), any(), any())).thenReturn(List.of(workingTime));
+        when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
         final Application application = new Application();
         application.setId(42);

@@ -78,8 +78,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
-    public List<WorkingTime> getByPersonsAndDateInterval(List<Person> persons, LocalDate start, LocalDate end) {
-        return toWorkingTimes(workingTimeRepository.findByPersonInAndValidFromForDateInterval(persons, start, end));
+    public List<WorkingTime> getByPersons(List<Person> persons) {
+        return toWorkingTimes(workingTimeRepository.findByPersonIn(persons));
     }
 
     @Override
