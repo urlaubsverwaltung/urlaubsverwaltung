@@ -26,6 +26,14 @@ th.vacationOverview-cal-head.today::after {
   z-index: 1;
 }
 
+@media print {
+  th.vacationOverview-cal-head.today::before,
+  th.vacationOverview-cal-head.today::after {
+    display: none;
+  }
+}
+
+
 .vacationOverview-table th,
 .vacationOverview-table td {
   color: #444444 !important;
