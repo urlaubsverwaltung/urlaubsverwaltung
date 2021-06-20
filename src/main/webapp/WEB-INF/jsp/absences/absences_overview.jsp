@@ -157,7 +157,7 @@
                                                 ${(day.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                                 ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                                 ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
-                                        style="${day.today ? '--vacation-overview-rows: '.concat(1 + month.persons.size()) : ''}"
+                                        style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                     >
                                         <c:out value="${day.dayOfMonth}"/>
                                     </th>
@@ -167,7 +167,7 @@
                         <tbody class="vacationOverview-tbody">
                         <c:forEach var="person" items="${month.persons}">
                             <tr role="row">
-                                <th scope="row" class="tw-py-0">
+                                <th scope="row" class="tw-py-0.5">
                                     <div class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1">
                                         <img
                                             src="<c:out value='${person.gravatarUrl}?d=mm&s=64'/>"
@@ -179,10 +179,11 @@
                                         />
                                     </div>
                                 </th>
-                                <th scope="row">
-                                    <span class="tw-pr-4">
-                                        <c:out value="${person.firstName}"/> <c:out value="${person.lastName}"/>
-                                    </span>
+                                <th scope="row" class="tw-py-0.5">
+                                    <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
+                                        <c:out value="${person.firstName}"/>&nbsp;
+                                        <span><c:out value="${person.lastName}"/></span>
+                                    </div>
                                 </th>
                                 <c:forEach var="absence" items="${person.days}">
                                     <td class="cal-day
