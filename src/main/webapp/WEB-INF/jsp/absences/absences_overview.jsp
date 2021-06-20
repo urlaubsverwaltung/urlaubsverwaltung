@@ -147,7 +147,7 @@
                            aria-describedby="absence-table-${month.nameOfMonth}">
                         <thead>
                             <tr>
-                                <th scope="col">&nbsp;</th>
+                                <th scope="col" class="print:tw-hidden">&nbsp;</th>
                                 <th scope="col" class="sortable-field">&nbsp;</th>
                                 <c:forEach items="${month.days}" var="day">
                                     <th scope="col"
@@ -167,7 +167,7 @@
                         <tbody class="vacationOverview-tbody">
                         <c:forEach var="person" items="${month.persons}">
                             <tr role="row">
-                                <th scope="row" class="tw-py-0.5">
+                                <th scope="row" class="tw-py-0.5 print:tw-hidden">
                                     <div class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1">
                                         <img
                                             src="<c:out value='${person.gravatarUrl}?d=mm&s=64'/>"
