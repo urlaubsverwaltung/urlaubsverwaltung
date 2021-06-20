@@ -31,7 +31,6 @@
 
 <div class="content">
     <div class="container">
-
         <uv:section-heading>
             <jsp:attribute name="actions">
                 <uv:print/>
@@ -44,7 +43,6 @@
         </uv:section-heading>
 
         <form:form method="GET" action="${URL_PREFIX}/absences" id="absenceOverviewForm" class="print:tw-hidden">
-
             <div class="col-md-12">
                 <div class="form-group">
                     <div class="row">
@@ -131,21 +129,23 @@
                 </c:if>
             </div>
         </form:form>
+    </div>
 
-        <div class="row">
-            <div class="col-xs-12">
-                <hr class="print:tw-hidden"/>
-
-                <c:forEach items="${absenceOverview.months}" var="month">
-                    <div class="tw-mb-10 print:tw-no-break-inside">
-                        <h2 id="absence-table-${month.nameOfMonth}"
-                            class="tw-text-2xl tw-m-0 tw-mb-5 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}">
-                            <c:out value="${month.nameOfMonth}"/>
-                            <span class="hidden print:tw-inline"> <c:out value="${selectedYear}"/></span>
-                        </h2>
-                        <table class="sortable vacationOverview-table tw-text-sm" role="grid"
-                               aria-describedby="absence-table-${month.nameOfMonth}">
-                            <thead>
+    <div class="tw-mx-auto tw-px-4 tw-min-w-max xl:tw-max-w-max">
+        <div class="">
+            <hr class="print:tw-hidden"/>
+            <c:forEach items="${absenceOverview.months}" var="month">
+                <div class="tw-mb-10 print:tw-no-break-inside">
+                    <h2
+                        id="absence-table-${month.nameOfMonth}"
+                        class="tw-text-2xl tw-m-0 tw-mb-5 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
+                    >
+                        <c:out value="${month.nameOfMonth}"/>
+                        <span class="hidden print:tw-inline"> <c:out value="${selectedYear}"/></span>
+                    </h2>
+                    <table class="sortable vacationOverview-table tw-text-sm" role="grid"
+                           aria-describedby="absence-table-${month.nameOfMonth}">
+                        <thead>
                             <tr>
                                 <th scope="col">&nbsp;</th>
                                 <th scope="col" class="sortable-field">&nbsp;</th>
@@ -164,83 +164,79 @@
                                     </th>
                                 </c:forEach>
                             </tr>
-                            </thead>
-                            <tbody class="vacationOverview-tbody">
-                            <c:forEach var="person" items="${month.persons}">
-                                <tr role="row">
-                                    <th scope="row" class="tw-py-0">
-                                        <img
-                                            src="<c:out value='${person.gravatarUrl}?d=mm&s=30'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
-                                            class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
-                                            width="24px"
-                                            height="24px"
-                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                                        />
-                                    </th>
-                                    <th scope="row"><c:out value="${person.firstName}"/></th>
-                                    <th scope="row"><c:out value="${person.lastName}"/></th>
-                                    <c:forEach var="absence" items="${person.days}">
-                                        <td class="cal-day
-                                                ${(absence.type.absenceFull) ? ' absence-full' : ''}
-                                                ${(absence.type.absenceMorning) ? ' absence-morning' : ''}
-                                                ${(absence.type.absenceNoon) ? ' absence-noon' : ''}
-                                                ${(absence.type.waitingVacationFull) ? ' vacation-full-waiting' : ''}
-                                                ${(absence.type.waitingVacationMorning) ? ' vacation-morning-waiting' : ''}
-                                                ${(absence.type.waitingVacationNoon) ? ' vacation-noon-waiting' : ''}
-                                                ${(absence.type.allowedVacationFull) ? ' vacation-full-approved' : ''}
-                                                ${(absence.type.allowedVacationMorning) ? ' vacation-morning-approved' : ''}
-                                                ${(absence.type.allowedVacationNoon) ? ' vacation-noon-approved' : ''}
-                                                ${(absence.type.sickNoteFull) ? ' sick-note-full' : ''}
-                                                ${(absence.type.sickNoteMorning) ? ' sick-note-morning' : ''}
-                                                ${(absence.type.sickNoteNoon) ? ' sick-note-noon' : ''}
-                                                ${(absence.type.publicHolidayFull) ? ' public-holiday-full' : ''}
-                                                ${(absence.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
-                                                ${(absence.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}
-                                                ${(absence.weekend) ? ' weekend' : ''}"
-                                        >
-                                            <span class="tw-hidden print:tw-inline print:tw-font-mono">
-                                                <c:if test="${absence.type.waitingVacationMorning}">
-                                                    <spring:message code="absences.overview.vacation.morning.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.allowedVacationMorning}">
-                                                    <spring:message code="absences.overview.allowed.morning.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.sickNoteMorning}">
-                                                    <spring:message code="absences.overview.sick.morning.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.waitingVacationNoon}">
-                                                    <spring:message code="absences.overview.vacation.noon.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.allowedVacationNoon}">
-                                                    <spring:message code="absences.overview.allowed.noon.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.sickNoteNoon}">
-                                                    <spring:message code="absences.overview.sick.noon.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.allowedVacationFull}">
-                                                    <spring:message code="absences.overview.allowed.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.waitingVacationFull}">
-                                                    <spring:message code="absences.overview.vacation.abbr"/>
-                                                </c:if>
-                                                <c:if test="${absence.type.sickNoteFull}">
-                                                    <spring:message code="absences.overview.sick.abbr"/>
-                                                </c:if>
-                                            </span>
-                                        </td>
-                                    </c:forEach>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                </c:forEach>
-            </div>
-        </div>
-
-        <div id="vacationOverviewLegend" class="row tw-mb-8 print:tw-no-break-inside">
-            <div class="col-md-10">
+                        </thead>
+                        <tbody class="vacationOverview-tbody">
+                        <c:forEach var="person" items="${month.persons}">
+                            <tr role="row">
+                                <th scope="row" class="tw-py-0">
+                                    <img
+                                        src="<c:out value='${person.gravatarUrl}?d=mm&s=30'/>"
+                                        alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
+                                        class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                                        width="24px"
+                                        height="24px"
+                                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                    />
+                                </th>
+                                <th scope="row"><c:out value="${person.firstName}"/></th>
+                                <th scope="row"><c:out value="${person.lastName}"/></th>
+                                <c:forEach var="absence" items="${person.days}">
+                                    <td class="cal-day
+                                            ${(absence.type.absenceFull) ? ' absence-full' : ''}
+                                            ${(absence.type.absenceMorning) ? ' absence-morning' : ''}
+                                            ${(absence.type.absenceNoon) ? ' absence-noon' : ''}
+                                            ${(absence.type.waitingVacationFull) ? ' vacation-full-waiting' : ''}
+                                            ${(absence.type.waitingVacationMorning) ? ' vacation-morning-waiting' : ''}
+                                            ${(absence.type.waitingVacationNoon) ? ' vacation-noon-waiting' : ''}
+                                            ${(absence.type.allowedVacationFull) ? ' vacation-full-approved' : ''}
+                                            ${(absence.type.allowedVacationMorning) ? ' vacation-morning-approved' : ''}
+                                            ${(absence.type.allowedVacationNoon) ? ' vacation-noon-approved' : ''}
+                                            ${(absence.type.sickNoteFull) ? ' sick-note-full' : ''}
+                                            ${(absence.type.sickNoteMorning) ? ' sick-note-morning' : ''}
+                                            ${(absence.type.sickNoteNoon) ? ' sick-note-noon' : ''}
+                                            ${(absence.type.publicHolidayFull) ? ' public-holiday-full' : ''}
+                                            ${(absence.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
+                                            ${(absence.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}
+                                            ${(absence.weekend) ? ' weekend' : ''}"
+                                    >
+                                        <span class="tw-hidden print:tw-inline print:tw-font-mono">
+                                            <c:if test="${absence.type.waitingVacationMorning}">
+                                                <spring:message code="absences.overview.vacation.morning.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.allowedVacationMorning}">
+                                                <spring:message code="absences.overview.allowed.morning.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.sickNoteMorning}">
+                                                <spring:message code="absences.overview.sick.morning.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.waitingVacationNoon}">
+                                                <spring:message code="absences.overview.vacation.noon.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.allowedVacationNoon}">
+                                                <spring:message code="absences.overview.allowed.noon.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.sickNoteNoon}">
+                                                <spring:message code="absences.overview.sick.noon.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.allowedVacationFull}">
+                                                <spring:message code="absences.overview.allowed.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.waitingVacationFull}">
+                                                <spring:message code="absences.overview.vacation.abbr"/>
+                                            </c:if>
+                                            <c:if test="${absence.type.sickNoteFull}">
+                                                <spring:message code="absences.overview.sick.abbr"/>
+                                            </c:if>
+                                        </span>
+                                    </td>
+                                </c:forEach>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </c:forEach>
+            <div id="vacationOverviewLegend" class="tw-mb-8 print:tw-no-break-inside">
                 <table aria-hidden="true" class="tw-text-sm print:tw-font-mono">
                     <caption>
                         <spring:message code="absences.overview.legendTitle"/>
