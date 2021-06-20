@@ -166,7 +166,7 @@
                     <tbody class="vacationOverview-tbody">
                     <c:forEach var="person" items="${month.persons}">
                         <tr role="row">
-                            <th scope="row" class="tw-py-0.5 print:tw-hidden tw-sticky tw-left-0.5">
+                            <th scope="row" class="tw-p-0.5 print:tw-hidden tw-sticky tw-left-0 tw-bg-gradient-to-r tw-from-white tw-border-l-0 tw-z-10">
                                 <uv:avatar
                                     url="${person.gravatarUrl}?d=mm&s=32}"
                                     username="${person.firstName} ${person.lastName}"
@@ -175,7 +175,7 @@
                                     border="true"
                                 />
                             </th>
-                            <th scope="row" class="tw-py-0.5 print:tw-py-1.5">
+                            <th scope="row" class="tw-py-0.5 tw-pl-2 print:tw-py-1.5">
                                 <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
                                     <c:out value="${person.firstName}"/>&nbsp;
                                     <span><c:out value="${person.lastName}"/></span>
