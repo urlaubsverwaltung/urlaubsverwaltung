@@ -149,7 +149,6 @@
                             <tr>
                                 <th scope="col">&nbsp;</th>
                                 <th scope="col" class="sortable-field">&nbsp;</th>
-                                <th scope="col" class="sortable-field">&nbsp;</th>
                                 <c:forEach items="${month.days}" var="day">
                                     <th scope="col"
                                         class="non-sortable text-gray-700 vacationOverview-cal-head
@@ -170,16 +169,19 @@
                             <tr role="row">
                                 <th scope="row" class="tw-py-0">
                                     <img
-                                        src="<c:out value='${person.gravatarUrl}?d=mm&s=30'/>"
+                                        src="<c:out value='${person.gravatarUrl}?d=mm&s=64'/>"
                                         alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
                                         class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
-                                        width="24px"
-                                        height="24px"
+                                        width="32px"
+                                        height="32px"
                                         onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                     />
                                 </th>
-                                <th scope="row"><c:out value="${person.firstName}"/></th>
-                                <th scope="row"><c:out value="${person.lastName}"/></th>
+                                <th scope="row">
+                                    <span class="tw-pr-4">
+                                        <c:out value="${person.firstName}"/> <c:out value="${person.lastName}"/>
+                                    </span>
+                                </th>
                                 <c:forEach var="absence" items="${person.days}">
                                     <td class="cal-day
                                             ${(absence.type.absenceFull) ? ' absence-full' : ''}
