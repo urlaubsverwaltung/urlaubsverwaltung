@@ -179,7 +179,7 @@
                                         />
                                     </div>
                                 </th>
-                                <th scope="row" class="tw-py-0.5">
+                                <th scope="row" class="tw-py-0.5 print:tw-py-1.5">
                                     <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
                                         <c:out value="${person.firstName}"/>&nbsp;
                                         <span><c:out value="${person.lastName}"/></span>
