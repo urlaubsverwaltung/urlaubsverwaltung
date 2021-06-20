@@ -171,13 +171,11 @@
 
                                         <div class="department--member ${MEMBER_CSS_CLASS}">
                                             <div class="department--member-image">
-                                                <img
-                                                    src="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"
-                                                    alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
-                                                    class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                                                <uv:avatar
+                                                    url="${person.gravatarURL}?d=mm&s=40}"
+                                                    username="${person.niceName}"
                                                     width="40px"
                                                     height="40px"
-                                                    onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                                 />
                                             </div>
                                             <div class="department--member-assignment">

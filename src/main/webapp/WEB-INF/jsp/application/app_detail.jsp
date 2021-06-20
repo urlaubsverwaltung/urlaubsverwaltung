@@ -167,13 +167,11 @@
                             <c:forEach items="${departmentApplications}" var="application">
                                 <tr>
                                     <td>
-                                        <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
-                                            class="gravatar tw-rounded-full ${cssClass}"
+                                        <uv:avatar
+                                            url="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
+                                            username="${application.person.niceName}"
                                             width="40px"
                                             height="40px"
-                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
                                     <td>

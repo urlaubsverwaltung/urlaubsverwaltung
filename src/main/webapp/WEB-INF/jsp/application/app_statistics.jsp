@@ -111,13 +111,12 @@
                             <c:forEach items="${statistics}" var="statistic">
                                 <tr>
                                     <td class="is-centered">
-                                        <img
-                                            src="<c:out value='${statistic.person.gravatarURL}?d=mm&s=60'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${statistic.person.niceName}"/>"
-                                            class="gravatar tw-rounded-full"
+                                        <uv:avatar
+                                            url="${statistic.person.gravatarURL}?d=mm&s=60}"
+                                            username="${statistic.person.firstName}"
                                             width="60px"
                                             height="60px"
-                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                            border="true"
                                         />
                                     </td>
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.firstName}"/></td>
