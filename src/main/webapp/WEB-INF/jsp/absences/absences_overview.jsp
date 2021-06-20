@@ -168,14 +168,16 @@
                         <c:forEach var="person" items="${month.persons}">
                             <tr role="row">
                                 <th scope="row" class="tw-py-0">
-                                    <img
-                                        src="<c:out value='${person.gravatarUrl}?d=mm&s=64'/>"
-                                        alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
-                                        class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
-                                        width="32px"
-                                        height="32px"
-                                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                                    />
+                                    <div class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1">
+                                        <img
+                                            src="<c:out value='${person.gravatarUrl}?d=mm&s=64'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${person.firstName} ${person.lastName}"/>"
+                                            class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+                                            width="32px"
+                                            height="32px"
+                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                        />
+                                    </div>
                                 </th>
                                 <th scope="row">
                                     <span class="tw-pr-4">
