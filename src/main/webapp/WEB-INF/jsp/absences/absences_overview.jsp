@@ -167,7 +167,7 @@
                         <tbody class="vacationOverview-tbody">
                         <c:forEach var="person" items="${month.persons}">
                             <tr role="row">
-                                <th scope="row" class="tw-py-0.5 print:tw-hidden">
+                                <th scope="row" class="tw-py-0.5 print:tw-hidden tw-sticky tw-left-0.5">
                                     <div class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1">
                                         <img
                                             src="<c:out value='${person.gravatarUrl}?d=mm&s=64'/>"
