@@ -95,13 +95,12 @@
                     <c:forEach items="${persons}" var="person">
                     <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered print:tw-hidden">
-                            <img
-                                src="<c:out value='${person.gravatarURL}?d=mm&s=40'/>"
-                                alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
-                                class="gravatar tw-rounded-full"
+                            <uv:avatar
+                                url="${person.gravatarURL}?d=mm&s=40}"
+                                username="${person.niceName}"
                                 width="40px"
                                 height="40px"
-                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                border="true"
                             />
                         </td>
                         <td class="hidden-xs">

@@ -1,5 +1,5 @@
 th.vacationOverview-cal-head.today {
-  --vacation-overview-rows: 1;
+  --vacation-overview-rows: 0;
   position: relative;
 }
 th.vacationOverview-cal-head.today::before {
@@ -21,10 +21,18 @@ th.vacationOverview-cal-head.today::after {
   top: 0;
   left: 0;
   right: 0;
-  /* td elements have a border of 1px -> add it to the height */
-  height: calc((var(--vacation-overview-rows) * 100%) + (var(--vacation-overview-rows) * 1px));
+  /* head row height + (x * person height)  */
+  height: calc(100% + (var(--vacation-overview-rows) * 2.8125rem));
   z-index: 1;
 }
+
+@media print {
+  th.vacationOverview-cal-head.today::before,
+  th.vacationOverview-cal-head.today::after {
+    display: none;
+  }
+}
+
 
 .vacationOverview-table th,
 .vacationOverview-table td {
