@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
-  <changeSet author="weigel" id="add-globale-default-working-days">
+  <changeSet author="weigel" id="extract-workingtime-settings">
 
     <preConditions>
       <tableExists tableName="settings"/>

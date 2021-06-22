@@ -1,0 +1,28 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="extract-sicknote-settings">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="maximum_sick_pay_days"/>
+      <columnExists tableName="settings" columnName="days_before_end_of_sick_pay_notification"/>
+    </preConditions>
+
+    <createTable tableName="sick_note_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="maximum_sick_pay_days" type="INT(10)" />
+      <column name="days_before_end_of_sick_pay_notification" type="INT(10)"/>
+    </createTable>
+
+    <insert tableName="sick_note_settings">
+      <column name="maximum_sick_pay_days" valueComputed="(SELECT maximum_sick_pay_days FROM settings)"/>
+      <column name="days_before_end_of_sick_pay_notification" valueComputed="(SELECT days_before_end_of_sick_pay_notification FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

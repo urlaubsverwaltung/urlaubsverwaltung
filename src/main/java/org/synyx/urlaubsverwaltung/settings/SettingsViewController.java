@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
@@ -40,12 +41,13 @@ public class SettingsViewController {
     private final SettingsValidator settingsValidator;
     private final WorkingTimeSettingsService workingTimeSettingsService;
     private final TimeSettingsService timeSettingsService;
+    private final SickNoteSettingsService sickNoteSettingsSerivce;
     private final Clock clock;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService, TimeSettingsService timeSettingsService, Clock clock) {
+                                  SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService, TimeSettingsService timeSettingsService, SickNoteSettingsService sickNoteSettingsSerivce, Clock clock) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
@@ -53,6 +55,7 @@ public class SettingsViewController {
         this.settingsValidator = settingsValidator;
         this.workingTimeSettingsService = workingTimeSettingsService;
         this.timeSettingsService = timeSettingsService;
+        this.sickNoteSettingsSerivce = sickNoteSettingsSerivce;
         this.clock = clock;
     }
 
@@ -93,6 +96,7 @@ public class SettingsViewController {
 
         model.addAttribute("workingtimesettings", workingTimeSettingsService.getSettingsDto());
         model.addAttribute("timesettings", timeSettingsService.getSettingsDto());
+        model.addAttribute("sicknotesettings", sickNoteSettingsSerivce.getSettingsDto());
 
         return "settings/settings_overview";
     }

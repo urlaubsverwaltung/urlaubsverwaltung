@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime.settings;
 
-import com.google.api.client.util.Lists;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +20,8 @@ public class WorkingTimeSettingsService {
 
     public void save(WorkingTimeSettingsDto workingTimeSettingsDto) {
 
-        WorkingTimeSettingsEntity workingTimeSettingsEntity = WorkingTimeSettingsDtoMapper.mapToWorkingTimeSettingsEntity(workingTimeSettingsDto);
+        WorkingTimeSettingsEntity workingTimeSettingsEntity =
+            WorkingTimeSettingsDtoMapper.mapToWorkingTimeSettingsEntity(workingTimeSettingsDto);
         workingTimeSettingsRepository.save(workingTimeSettingsEntity);
     }
 }

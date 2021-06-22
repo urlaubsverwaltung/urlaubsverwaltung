@@ -91,4 +91,5 @@
   <include file="dbchangelogs/changelog-4.22.0-add-special-leave.xml"/>
   <include file="dbchangelogs/changelog-4.22.0-extract-workingtime-settings.xml"/>
   <include file="dbchangelogs/changelog-4.22.0-extract-time-settings.xml"/>
+  <include file="dbchangelogs/changelog-4.22.0-extract-sicknote-settings.xml"/>
 </databaseChangeLog>
