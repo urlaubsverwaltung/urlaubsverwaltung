@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
@@ -67,12 +68,14 @@ class SettingsViewControllerTest {
     @Mock
     private SickNoteSettingsService sickNoteSettingsSerivce;
     @Mock
+    private OvertimeSettingsService overtimeSettingsSerivce;
+    @Mock
     private SettingsValidator settingsValidator;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, workingTimeSettingsService, timeSettingsService, sickNoteSettingsSerivce, clock);
+        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, workingTimeSettingsService, timeSettingsService, sickNoteSettingsSerivce, overtimeSettingsSerivce, clock);
     }
 
     @Test

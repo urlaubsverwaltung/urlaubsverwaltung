@@ -1,0 +1,33 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="extract-overtime-settings">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="overtime_active"/>
+      <columnExists tableName="settings" columnName="overtime_minimum"/>
+      <columnExists tableName="settings" columnName="overtime_maximum"/>
+    </preConditions>
+
+    <createTable tableName="overtime_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="overtime_active" type="BIT(1)" defaultValueBoolean="false">
+        <constraints nullable="false"/>
+      </column>
+      <column name="overtime_minimum" type="INT(10)" valueNumeric="100"/>
+      <column name="overtime_maximum" type="INT(10)" valueNumeric="100"/>
+    </createTable>
+
+    <insert tableName="overtime_settings">
+      <column name="overtime_active" valueComputed="(SELECT overtime_active FROM settings)"/>
+      <column name="overtime_minimum" valueComputed="(SELECT overtime_minimum FROM settings)"/>
+      <column name="overtime_maximum" valueComputed="(SELECT overtime_maximum FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

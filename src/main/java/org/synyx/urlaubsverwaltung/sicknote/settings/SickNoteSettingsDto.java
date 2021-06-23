@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.sicknote.settings;
 public class SickNoteSettingsDto {
 
     private Long id;
-    private Integer maximumSickPayDays = 42;
-    private Integer daysBeforeEndOfSickPayNotification = 7;
+    private Integer maximumSickPayDays;
+    private Integer daysBeforeEndOfSickPayNotification;
 
     public Long getId() {
         return id;

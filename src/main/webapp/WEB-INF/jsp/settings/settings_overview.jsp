@@ -78,7 +78,7 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <a href="${URL_PREFIX}/overtime/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
@@ -96,41 +96,30 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <c:choose>
-                            <c:when test="${empty departments}">
-                                <spring:message code="person.details.departments.none"/>
-                            </c:when>
-                            <c:otherwise>
-                                <ul class="tw-space-y-0.5 tw-text-sm">
-                                    <c:forEach items="${departments}" var="department">
-
-                                        <sec:authorize access="hasAuthority('OFFICE')">
-                                            <c:set var="IS_OFFICE" value="${true}"/>
-                                        </sec:authorize>
-
-                                        <c:set var="departmentLink">
-                                            <c:choose>
-                                                <c:when test="${IS_OFFICE}">
-                                                    <a href="${URL_PREFIX}/department/${department.id}/edit"><c:out value="${department.name}"/></a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:out value="${department.name}"/>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </c:set>
-
-                                        <c:choose>
-                                            <c:when test="${departmentHeadOfDepartments.contains( department )}">
-                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.departmentHead"/></li>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <li><c:out escapeXml="false" value="${departmentLink}"/></li>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:forEach>
-                                </ul>
-                            </c:otherwise>
-                        </c:choose>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.overtime.overtimeActive'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${overtimesettings.overtimeActive}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.overtime.maximum'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${overtimesettings.maximumOvertime}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.overtime.minimum'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${overtimesettings.minimumOvertime}" />
+                            </div>
+                        </div>
                     </jsp:body>
                 </uv:box>
             </div>
