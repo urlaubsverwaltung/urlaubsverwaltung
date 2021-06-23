@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BREMEN;
 
@@ -203,7 +203,7 @@ class WorkingTimeServiceImplTest {
         workingTimeEntity.setId(1);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2021, JUNE, 11));
-        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
         workingTimeEntity.setMonday(DayLength.FULL);
         workingTimeEntity.setTuesday(DayLength.FULL);
         workingTimeEntity.setWednesday(DayLength.FULL);
@@ -218,7 +218,7 @@ class WorkingTimeServiceImplTest {
         assertThat(workingTimes).hasSize(1);
         assertThat(workingTimes.get(0).getPerson()).isSameAs(person);
         assertThat(workingTimes.get(0).getValidFrom()).isEqualTo(LocalDate.of(2021, JUNE, 11));
-        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(BADEN_WUERTTEMBERG);
+        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
         assertThat(workingTimes.get(0).getMonday()).isEqualTo(DayLength.FULL);
         assertThat(workingTimes.get(0).getTuesday()).isEqualTo(DayLength.FULL);
         assertThat(workingTimes.get(0).getWednesday()).isEqualTo(DayLength.FULL);
@@ -272,7 +272,7 @@ class WorkingTimeServiceImplTest {
         workingTimeEntity.setId(1);
         workingTimeEntity.setPerson(batman);
         workingTimeEntity.setValidFrom(date);
-        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(batman, date))
             .thenReturn(workingTimeEntity);
@@ -282,7 +282,7 @@ class WorkingTimeServiceImplTest {
         assertThat(actualWorkingTime).isNotEmpty();
         assertThat(actualWorkingTime.get().getPerson()).isEqualTo(batman);
         assertThat(actualWorkingTime.get().getValidFrom()).isEqualTo(date);
-        assertThat(actualWorkingTime.get().getFederalState()).isEqualTo(BADEN_WUERTTEMBERG);
+        assertThat(actualWorkingTime.get().getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
     }
 
     @Test

@@ -22,7 +22,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class VacationOverviewServiceTest {
@@ -53,7 +53,7 @@ class VacationOverviewServiceTest {
         department.setMembers(List.of(person));
 
         when(departmentService.getAllDepartments()).thenReturn(singletonList(department));
-        when(workingTimeService.getFederalStateForPerson(ArgumentMatchers.eq(person), ArgumentMatchers.any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
+        when(workingTimeService.getFederalStateForPerson(ArgumentMatchers.eq(person), ArgumentMatchers.any(LocalDate.class))).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
         when(publicHolidayService.getWorkingDurationOfDate(ArgumentMatchers.any(LocalDate.class), ArgumentMatchers.any(FederalState.class))).thenReturn(DayLength.FULL.getDuration());
 
         final LocalDate localDate = LocalDate.parse("2017-09-01");

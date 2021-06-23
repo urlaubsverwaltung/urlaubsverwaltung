@@ -23,7 +23,7 @@ class FederalStateTest {
     @Test
     void ensureCorrectCodeForBadenWuerttemberg() {
 
-        String[] codes = FederalState.BADEN_WUERTTEMBERG.getCodes();
+        String[] codes = FederalState.GERMANY_BADEN_WUERTTEMBERG.getCodes();
 
         assertThat(codes).hasSize(1);
         assertThat(codes[0]).isEqualTo("bw");

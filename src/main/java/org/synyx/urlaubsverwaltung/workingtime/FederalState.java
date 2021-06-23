@@ -9,7 +9,8 @@ import java.util.Arrays;
  */
 public enum FederalState {
 
-    BADEN_WUERTTEMBERG("bw"),
+    BELGIUM("be"),
+    GERMANY_BADEN_WUERTTEMBERG("de", "bw"),
     BAYERN("by"),
     BAYERN_MUENCHEN("by", "mu"),
     BAYERN_AUGSBURG("by", "ag"),
@@ -39,10 +40,19 @@ public enum FederalState {
 
     public String[] getCodes() {
 
-        if (codes == null) {
+        if (codes == null || codes.length <= 1) {
             return new String[0];
         }
 
-        return Arrays.copyOf(codes, codes.length);
+        return Arrays.copyOfRange(codes, 1, codes.length);
+    }
+
+    public String getCountry() {
+
+        if (codes == null || codes.length == 0) {
+            return null;
+        }
+
+        return codes[0];
     }
 }

@@ -59,7 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OV
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.UNPAIDLEAVE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysServiceTest {
@@ -78,7 +78,7 @@ class VacationDaysServiceTest {
     @BeforeEach
     void setUp() {
 
-        workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, getHolidayManager()), workingTimeService);
+        workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService), workingTimeService);
 
         sut = new VacationDaysService(workDaysCountService, applicationService, Clock.systemUTC());
     }
@@ -88,7 +88,7 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
@@ -158,7 +158,7 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
@@ -464,12 +464,5 @@ class VacationDaysServiceTest {
                 return new BigDecimal(daysAfterApril);
             }
         };
-    }
-
-    private HolidayManager getHolidayManager() {
-        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        final URL url = cl.getResource("Holidays_de.xml");
-        final ManagerParameter managerParameter = ManagerParameters.create(url);
-        return HolidayManager.getInstance(managerParameter);
     }
 }

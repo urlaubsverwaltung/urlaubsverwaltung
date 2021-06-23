@@ -48,7 +48,7 @@ class WorkDaysCountServiceTest {
 
     @BeforeEach
     void setUp() {
-        final var publicHolidaysService = new PublicHolidaysService(settingsService, getHolidayManager());
+        final var publicHolidaysService = new PublicHolidaysService(settingsService);
         sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
     }
 

@@ -47,7 +47,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -124,7 +124,7 @@ class PersonViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID).param(YEAR_ATTRIBUTE, "1985"))
             .andExpect(model().attribute(YEAR_ATTRIBUTE, 1985));
@@ -136,7 +136,7 @@ class PersonViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         final int currentYear = Year.now(clock).getValue();
 
@@ -150,7 +150,7 @@ class PersonViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(model().attribute("account", nullValue()));
@@ -168,7 +168,7 @@ class PersonViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(BADEN_WUERTTEMBERG));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
             .andExpect(view().name("person/person_detail"));

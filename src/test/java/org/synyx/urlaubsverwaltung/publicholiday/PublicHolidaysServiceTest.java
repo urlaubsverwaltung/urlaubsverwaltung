@@ -19,16 +19,15 @@ import java.time.LocalDate;
 import java.time.Month;
 
 import static java.time.Month.AUGUST;
+import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN_MUENCHEN;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.*;
 
 @ExtendWith(MockitoExtension.class)
 class PublicHolidaysServiceTest {
 
-    private static final FederalState state = BADEN_WUERTTEMBERG;
+    private static final FederalState state = GERMANY_BADEN_WUERTTEMBERG;
 
     private PublicHolidaysService sut;
 
@@ -37,7 +36,7 @@ class PublicHolidaysServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidaysService(settingsService, getHolidayManager());
+        sut = new PublicHolidaysService(settingsService);
     }
 
     @Test
@@ -153,7 +152,7 @@ class PublicHolidaysServiceTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BADEN_WUERTTEMBERG);
+        final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
     }
 
@@ -166,13 +165,23 @@ class PublicHolidaysServiceTest {
     }
 
     @Test
+    void ensureCorrectWorkingDurationForAllSoulsDayBelgium() {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        var workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2021, NOVEMBER, 2), GERMANY_BADEN_WUERTTEMBERG);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
+        workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2021, NOVEMBER, 2), BELGIUM);
+        assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
     void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final LocalDate date = LocalDate.of(2019, 1, 2);
 
-        final DayLength actual = sut.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        final DayLength actual = sut.getAbsenceTypeOfDate(date, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(actual).isEqualTo(DayLength.ZERO);
     }
 
@@ -182,7 +191,7 @@ class PublicHolidaysServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
         final LocalDate corpusChristi = LocalDate.of(2019, Month.MAY, 30);
 
-        final DayLength actual = sut.getAbsenceTypeOfDate(corpusChristi, BADEN_WUERTTEMBERG);
+        final DayLength actual = sut.getAbsenceTypeOfDate(corpusChristi, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(actual).isEqualTo(DayLength.FULL);
     }
 
@@ -214,7 +223,7 @@ class PublicHolidaysServiceTest {
 
         final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
 
-        final DayLength actual = sut.getAbsenceTypeOfDate(assumptionDay, BADEN_WUERTTEMBERG);
+        final DayLength actual = sut.getAbsenceTypeOfDate(assumptionDay, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(actual).isEqualTo(DayLength.ZERO);
     }
 
@@ -225,7 +234,7 @@ class PublicHolidaysServiceTest {
 
         final LocalDate date = LocalDate.of(2019, 12, 24);
 
-        final DayLength actual = sut.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        final DayLength actual = sut.getAbsenceTypeOfDate(date, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(actual).isEqualTo(DayLength.NOON);
     }
 
@@ -236,16 +245,7 @@ class PublicHolidaysServiceTest {
 
         final LocalDate date = LocalDate.of(2019, 12, 31);
 
-        final DayLength actual = sut.getAbsenceTypeOfDate(date, BADEN_WUERTTEMBERG);
+        final DayLength actual = sut.getAbsenceTypeOfDate(date, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(actual).isEqualTo(DayLength.NOON);
-    }
-
-    private HolidayManager getHolidayManager() {
-        final HolidayManager holidayManager;
-        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        final URL url = cl.getResource("Holidays_de.xml");
-        final ManagerParameter managerParameter = ManagerParameters.create(url);
-        holidayManager = HolidayManager.getInstance(managerParameter);
-        return holidayManager;
     }
 }

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
+import de.jollyday.ManagerParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -23,13 +24,11 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 @Component
 public class PublicHolidaysService {
 
-    private final HolidayManager manager;
     private final SettingsService settingsService;
 
     @Autowired
-    public PublicHolidaysService(SettingsService settingsService, HolidayManager holidayManager) {
+    public PublicHolidaysService(SettingsService settingsService) {
         this.settingsService = settingsService;
-        this.manager = holidayManager;
     }
 
     /**
@@ -54,7 +53,8 @@ public class PublicHolidaysService {
     }
 
     public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
-        return List.copyOf(manager.getHolidays(from, to, federalState.getCodes()));
+        HolidayManager holidayManager = holidayManager(federalState.getCountry());
+        return List.copyOf(holidayManager.getHolidays(from, to, federalState.getCodes()));
     }
 
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
@@ -82,6 +82,11 @@ public class PublicHolidaysService {
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-        return manager.isHoliday(date, federalState.getCodes());
+        HolidayManager holidayManager = holidayManager(federalState.getCountry());
+        return holidayManager.isHoliday(date, federalState.getCodes());
+    }
+
+    private static HolidayManager holidayManager(String country) {
+        return HolidayManager.getInstance(ManagerParameters.create(country));
     }
 }

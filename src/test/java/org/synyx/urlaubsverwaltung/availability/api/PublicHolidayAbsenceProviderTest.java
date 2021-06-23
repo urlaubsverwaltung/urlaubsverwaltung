@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class PublicHolidayAbsenceProviderTest {
@@ -43,10 +43,10 @@ class PublicHolidayAbsenceProviderTest {
     void ensurePersonIsNotAvailableOnHolidays() {
 
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
-        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
+        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
+        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
@@ -61,10 +61,10 @@ class PublicHolidayAbsenceProviderTest {
     void ensurePersonIsHalfAvailableOnHolidays() {
 
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
-        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(BigDecimal.valueOf(0.5));
+        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(BigDecimal.valueOf(0.5));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
+        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
@@ -79,10 +79,10 @@ class PublicHolidayAbsenceProviderTest {
     void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
-        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
+        when(publicHolidaysService.getWorkingDurationOfDate(newYearsDay, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(0));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
+        when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
@@ -94,10 +94,10 @@ class PublicHolidayAbsenceProviderTest {
     void ensureCallsNextSickDayAbsenceProviderIfNotAbsentForHoliday() {
 
         final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
-        when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay, BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(1));
+        when(publicHolidaysService.getWorkingDurationOfDate(standardWorkingDay, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(new BigDecimal(1));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(workingTimeService.getFederalStateForPerson(person, standardWorkingDay)).thenReturn(BADEN_WUERTTEMBERG);
+        when(workingTimeService.getFederalStateForPerson(person, standardWorkingDay)).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
 
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
 
