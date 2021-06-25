@@ -43,16 +43,18 @@ public class CalculationService {
     private final AccountService accountService;
     private final WorkDaysCountService workDaysCountService;
     private final OverlapService overlapService;
+    private final ApplicationService applicationService;
 
     @Autowired
     public CalculationService(VacationDaysService vacationDaysService, AccountService accountService,
                               AccountInteractionService accountInteractionService, WorkDaysCountService workDaysCountService,
-                              OverlapService overlapService) {
+                              OverlapService overlapService, ApplicationService applicationService) {
         this.vacationDaysService = vacationDaysService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
         this.workDaysCountService = workDaysCountService;
         this.overlapService = overlapService;
+        this.applicationService = applicationService;
     }
 
     /**
@@ -72,15 +74,20 @@ public class CalculationService {
         final int yearOfStartDate = startDate.getYear();
         final int yearOfEndDate = endDate.getYear();
 
+        final Optional<Application> maybeSavedApplication = getSavedApplicationForEditing(application);
+
         if (yearOfStartDate == yearOfEndDate) {
-            final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
+            final BigDecimal oldWorkDays = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
+            final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person).subtract(oldWorkDays);
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
-            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, getLastDayOfYear(yearOfStartDate), person);
+            final BigDecimal oldWorkDaysInOldYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), savedApplication.getStartDate(), getLastDayOfYear(savedApplication.getStartDate().getYear()), savedApplication.getPerson())).orElse(ZERO);
+            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, getLastDayOfYear(yearOfStartDate), person).subtract(oldWorkDaysInOldYear);
 
             // ensure that applying for leave for the period in the new year is possible
-            final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, getFirstDayOfYear(yearOfEndDate), endDate, person);
+            final BigDecimal oldWorkDaysInNewYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), getFirstDayOfYear(savedApplication.getEndDate().getYear()), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
+            final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, getFirstDayOfYear(yearOfEndDate), endDate, person).subtract(oldWorkDaysInNewYear);
 
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear, application)
                 && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, workDaysInNewYear, application);
@@ -88,6 +95,10 @@ public class CalculationService {
     }
 
     private boolean accountHasEnoughVacationDaysLeft(Person person, int year, BigDecimal workDays, Application application) {
+
+        if (workDays.signum() <= 0) {
+            return true;
+        }
 
         final Optional<Account> account = getHolidaysAccount(year, person);
         if (account.isEmpty()) {
@@ -158,5 +169,13 @@ public class CalculationService {
 
         final Optional<Account> lastYearsHolidaysAccount = accountService.getHolidaysAccount(year - 1, person);
         return lastYearsHolidaysAccount.map(accountInteractionService::autoCreateOrUpdateNextYearsHolidaysAccount);
+    }
+
+    private Optional<Application> getSavedApplicationForEditing(Application application) {
+        Optional<Application> maybeSavedApplication = Optional.empty();
+        if (application.getId() != null) {
+            maybeSavedApplication = applicationService.getApplicationById(application.getId());
+        }
+        return maybeSavedApplication;
     }
 }
