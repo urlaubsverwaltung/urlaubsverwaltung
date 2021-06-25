@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -28,6 +27,7 @@ import static java.time.Month.MARCH;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfMonth;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * This service calculates if a {@link Person} may apply for leave, i.e. if he/she has enough vacation days to apply for
@@ -77,7 +77,7 @@ public class CalculationService {
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDays, application);
         } else {
             // ensure that applying for leave for the period in the old year is possible
-            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, DateUtil.getLastDayOfYear(yearOfStartDate), person);
+            final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, getLastDayOfYear(yearOfStartDate), person);
 
             // ensure that applying for leave for the period in the new year is possible
             final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, getFirstDayOfYear(yearOfEndDate), endDate, person);
