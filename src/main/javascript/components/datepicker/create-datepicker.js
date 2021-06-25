@@ -14,6 +14,24 @@ defineCustomElements(window);
 
 const noop = () => {};
 
+const datepickerClassnames = {
+  day: "datepicker-day",
+  today: "datepicker-day-today",
+  past: "datepicker-day-past",
+  publicHolidayFull: "datepicker-day-public-holiday-full",
+  publicHolidayMorning: "datepicker-day-public-holiday-morning",
+  publicHolidayNoon: "datepicker-day-public-holiday-noon",
+  personalHolidayFull: "datepicker-day-personal-holiday-full",
+  personalHolidayFullApproved: "datepicker-day-personal-holiday-full-approved",
+  personalHolidayMorning: "datepicker-day-personal-holiday-morning",
+  personalHolidayMorningApproved: "datepicker-day-personal-holiday-morning-approved",
+  personalHolidayNoon: "datepicker-day-personal-holiday-noon",
+  personalHolidayNoonApproved: "datepicker-day-personal-holiday-noon-approved",
+  sickNoteFull: "datepicker-day-sick-note-full",
+  sickNoteMorning: "datepicker-day-sick-note-morning",
+  sickNoteNoon: "datepicker-day-sick-note-noon",
+};
+
 export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
   const { localisation } = window.uv.datepicker;
 
@@ -28,9 +46,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
 
   const showAbsences = () => {
     // clear all days
-    [...duetDateElement.querySelectorAll(".duet-date__day")].forEach((element) =>
-      element.setAttribute("class", "duet-date__day"),
-    );
+    [...duetDateElement.querySelectorAll(".duet-date__day")].forEach((element) => {
+      element.classList.remove(...Object.values(datepickerClassnames));
+    });
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
     const lastDayOfMonth = formatISO(endOfMonth(parseISO(firstDayOfMonth)), { representation: "date" });
@@ -189,21 +207,21 @@ function getCssClassesForDate(date, publicHolidays, absences) {
     const isSickDayNoon = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "NOON" });
 
     return [
-      "datepicker-day",
-      isToday(date) && "datepicker-day-today",
-      isPast() && "datepicker-day-past",
-      isPublicHolidayFull() && "datepicker-day-public-holiday-full",
-      isPublicHolidayMorning() && "datepicker-day-public-holiday-morning",
-      isPublicHolidayNoon() && "datepicker-day-public-holiday-noon",
-      isPersonalHolidayFull() && "datepicker-day-personal-holiday-full",
-      isPersonalHolidayFullApproved() && "datepicker-day-personal-holiday-full-approved",
-      isPersonalHolidayMorning() && "datepicker-day-personal-holiday-morning",
-      isPersonalHolidayMorningApproved() && "datepicker-day-personal-holiday-morning-approved",
-      isPersonalHolidayNoon() && "datepicker-day-personal-holiday-noon",
-      isPersonalHolidayNoonApproved() && "datepicker-day-personal-holiday-noon-approved",
-      isSickDayFull() && "datepicker-day-sick-note-full",
-      isSickDayMorning() && "datepicker-day-sick-note-morning",
-      isSickDayNoon() && "datepicker-day-sick-note-noon",
+      datepickerClassnames.day,
+      isToday(date) && datepickerClassnames.today,
+      isPast() && datepickerClassnames.past,
+      isPublicHolidayFull() && datepickerClassnames.publicHolidayFull,
+      isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
+      isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
+      isPersonalHolidayFull() && datepickerClassnames.personalHolidayFull,
+      isPersonalHolidayFullApproved() && datepickerClassnames.personalHolidayFullApproved,
+      isPersonalHolidayMorning() && datepickerClassnames.personalHolidayMorning,
+      isPersonalHolidayMorningApproved() && datepickerClassnames.personalHolidayMorningApproved,
+      isPersonalHolidayNoon() && datepickerClassnames.personalHolidayNoon,
+      isPersonalHolidayNoonApproved() && datepickerClassnames.personalHolidayNoonApproved,
+      isSickDayFull() && datepickerClassnames.sickNoteFull,
+      isSickDayMorning() && datepickerClassnames.sickNoteMorning,
+      isSickDayNoon() && datepickerClassnames.sickNoteNoon,
     ].filter(Boolean);
   }
 }

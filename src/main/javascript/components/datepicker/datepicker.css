@@ -25,9 +25,27 @@ duet-date-picker.error {
   height: 100%;
 }
 
-.duet-date__day.datepicker-day {
+.duet-date__day.datepicker-day,
+.duet-date__day.datepicker-day:not(.is-month) {
   /* override padding of .datepicker-day */
   padding: 0;
+  /* override duet stuff */
+  opacity: 1;
+  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
+  color: var(--font-color);
+}
+
+.duet-date__day.datepicker-day-today {
+  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.3);
+}
+
+/* override styling for selected or currently focused day */
+.duet-date__day.datepicker-day:focus,
+.duet-date__day.datepicker-day[aria-pressed='true'] {
+  background: var(--duet-color-primary);
+  color: var(--duet-color-text-active);
+  box-shadow: 0 0 5px var(--duet-color-primary);
+  z-index: 200;
 }
 
 .duet-date__table-header {
