@@ -38,7 +38,7 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     @Query(value = "SELECT x " +
         "FROM SickNote x " +
         "WHERE DATEDIFF(x.endDate, x.startDate) > ?1 " +
-        "AND x.endDate = ?2 " +
+        "AND x.endDate <= ?2 " +
         "AND x.status = 'ACTIVE' " +
         "AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)"
     )

@@ -143,6 +143,38 @@ class SickNoteRepositoryIT extends TestContainersBase {
             .contains(sickNote);
     }
 
+    @Test
+    void findSickNoteIfEndDateIsEqualsOrSmallerThanSearchedEndDate() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNoteRepository.save(sickNote);
+
+        List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd)
+            .hasSize(1)
+            .contains(sickNote);
+
+        sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate.plusDays(1));
+        assertThat(sickNotesToNotifyForSickPayEnd)
+            .hasSize(1)
+            .contains(sickNote);
+    }
+
+    @Test
+    void findNoSickNoteIfEndDateIsBiggerThanEndDate() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate.minusDays(1));
+        assertThat(sickNotesToNotifyForSickPayEnd).isEmpty();
+    }
 
     @Test
     void findSickNotesOverlappingWithDateRange() {
