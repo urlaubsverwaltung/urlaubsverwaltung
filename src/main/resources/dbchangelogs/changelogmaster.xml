@@ -81,6 +81,7 @@
   <include file="dbchangelogs/changelog-4.15.0-add-upcoming-vacation-reminder.xml"/>
   <include file="dbchangelogs/changelog-4.15.0-add-to-allow-half-day-absences.xml"/>
   <include file="dbchangelogs/changelog-4.16.0-add-holiday-replacement.xml"/>
+<<<<<<< HEAD
   <include file="dbchangelogs/changelog-4.20.6-add-end-of-sickpay-notification-send.xml"/>
   <include file="dbchangelogs/changelog-4.20.7-no-end-of-sickpay-notification-for-old-sicknotes.xml"/>
   <include file="dbchangelogs/changelog-4.21.0-add-minimum-overtime-reduction-value.xml"/>
@@ -94,4 +95,6 @@
   <include file="dbchangelogs/changelog-4.22.0-extract-sicknote-settings.xml"/>
   <include file="dbchangelogs/changelog-4.22.0-extract-overtime-settings.xml"/>
   <include file="dbchangelogs/changelog-4.22.0-extract-account-settings.xml"/>
+  <include file="dbchangelogs/changelog-4.22.0-extract-application-settings.xml"/>
+>>>>>>> 857ae8033 (extract application settings)
 </databaseChangeLog>

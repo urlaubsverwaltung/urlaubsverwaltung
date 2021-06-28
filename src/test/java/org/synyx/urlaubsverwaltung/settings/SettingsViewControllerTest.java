@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
@@ -32,16 +33,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,12 +68,14 @@ class SettingsViewControllerTest {
     @Mock
     private AccountSettingsService accountSettingsService;
     @Mock
+    private ApplicationSettingsService applicationSettingsService;
+    @Mock
     private SettingsValidator settingsValidator;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, workingTimeSettingsService, timeSettingsService, sickNoteSettingsSerivce, overtimeSettingsSerivce, accountSettingsService, clock);
+        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, workingTimeSettingsService, timeSettingsService, sickNoteSettingsSerivce, overtimeSettingsSerivce, accountSettingsService, applicationSettingsService, clock);
     }
 
     @Test

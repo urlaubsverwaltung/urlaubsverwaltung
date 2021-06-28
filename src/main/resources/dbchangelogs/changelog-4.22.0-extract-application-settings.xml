@@ -1,0 +1,40 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="extract-application-settings">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="maximum_months_to_apply_for_leave_in_advance"/>
+      <columnExists tableName="settings" columnName="maximum_annual_vacation_days"/>
+      <columnExists tableName="settings" columnName="allow_half_days"/>
+      <columnExists tableName="settings" columnName="days_before_remind_for_waiting_applications"/>
+      <columnExists tableName="settings" columnName="remind_for_upcoming_applications"/>
+      <columnExists tableName="settings" columnName="days_before_remind_for_upcoming_applications"/>
+    </preConditions>
+
+    <createTable tableName="application_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="maximum_months_to_apply_for_leave_in_advance" type="INT(10)" />
+      <column name="remind_for_waiting_applications" type="BIT(1)" />
+      <column name="allow_half_days" type="BIT(1)" defaultValueBoolean="true" />
+      <column name="days_before_remind_for_waiting_applications" type="INT(10)" />
+      <column name="remind_for_upcoming_applications" type="BIT(1)" defaultValue="false" />
+      <column name="days_before_remind_for_upcoming_applications" type="INT(10)" defaultValue="3"/>
+    </createTable>
+
+    <insert tableName="application_settings">
+      <column name="maximum_months_to_apply_for_leave_in_advance" valueComputed="(SELECT maximum_months_to_apply_for_leave_in_advance FROM settings)"/>
+      <column name="remind_for_waiting_applications" valueComputed="(SELECT remind_for_waiting_applications FROM settings)"/>
+      <column name="allow_half_days" valueComputed="(SELECT allow_half_days FROM settings)"/>
+      <column name="days_before_remind_for_waiting_applications" valueComputed="(SELECT days_before_remind_for_waiting_applications FROM settings)"/>
+      <column name="remind_for_upcoming_applications" valueComputed="(SELECT remind_for_upcoming_applications FROM settings)"/>
+      <column name="days_before_remind_for_upcoming_applications" valueComputed="(SELECT days_before_remind_for_upcoming_applications FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

@@ -80,7 +80,80 @@
                     </jsp:body>
                 </uv:box>
             </div>
-            <div class="md:tw-col-start-1 md:tw-row-start-2">
+            <div class="md:tw-col-start-1 md:tw-row-start-2 ">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/application/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            Application settings
+                        </h2>
+                    </jsp:body>
+                </uv:section-heading>
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white">
+                            <icon:key className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.maximumMonthsToApplyForLeaveInAdvance'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.maximumMonthsToApplyForLeaveInAdvance}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.remindForWaitingApplications'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.remindForWaitingApplications}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.allowHalfDays'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.allowHalfDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.daysBeforeRemindForWaitingApplications'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.daysBeforeRemindForWaitingApplications}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.remindForUpcomingApplications'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.remindForUpcomingApplications}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.daysBeforeRemindForUpcomingApplications'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.daysBeforeRemindForUpcomingApplications}" />
+                            </div>
+                        </div>
+                    </jsp:body>
+                </uv:box>
+            </div>
+            <div class="md:tw-col-start-1 md:tw-row-start-3">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -130,7 +203,7 @@
                 </uv:box>
             </div>
 
-            <div class="md:tw-col-start-1 md:tw-row-start-3 ">
+            <div class="md:tw-col-start-1 md:tw-row-start-4 ">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
@@ -374,6 +447,33 @@
                             </tbody>
                         </table>
                         </span>
+                    </jsp:body>
+                </uv:box>
+            </div>
+            <div class="md:tw-col-start-2 md:tw-row-start-4">
+                <uv:section-heading>
+                    <jsp:attribute name="actions">
+                        <sec:authorize access="hasAuthority('OFFICE')">
+                            <a href="${URL_PREFIX}/sicknote/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </sec:authorize>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            Calendar settings
+                        </h2>
+                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
+                    </jsp:body>
+                </uv:section-heading>
+                <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
+                    <jsp:attribute name="icon">
+                        <uv:box-icon className="tw-bg-green-500 tw-text-white">
+                        <icon:clock className="tw-w-8 tw-h-8" />
+                        </uv:box-icon>
+                    </jsp:attribute>
+                    <jsp:body>
+                        
                     </jsp:body>
                 </uv:box>
             </div>
