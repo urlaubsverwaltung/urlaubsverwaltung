@@ -93,4 +93,5 @@
   <include file="dbchangelogs/changelog-4.22.0-extract-time-settings.xml"/>
   <include file="dbchangelogs/changelog-4.22.0-extract-sicknote-settings.xml"/>
   <include file="dbchangelogs/changelog-4.22.0-extract-overtime-settings.xml"/>
+  <include file="dbchangelogs/changelog-4.22.0-extract-account-settings.xml"/>
 </databaseChangeLog>

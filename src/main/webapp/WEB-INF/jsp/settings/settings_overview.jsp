@@ -43,7 +43,7 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <a href="${URL_PREFIX}/account/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
@@ -61,16 +61,22 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <dl class="tw-m-0">
-                            <c:forEach items="${person.permissions}" var="role" varStatus="loop">
-                                <dt class="tw-mb-2 tw-font-medium">
-                                    <spring:message code="person.form.permissions.roles.${role}"/>
-                                </dt>
-                                <dd class="tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}">
-                                    <spring:message code="person.form.permissions.roles.${role}.description"/>
-                                </dd>
-                            </c:forEach>
-                        </dl>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.defaultVacationDays'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${accountsettings.defaultVacationDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.maximumAnnualVacationDays'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${accountsettings.maximumAnnualVacationDays}" />
+                            </div>
+                        </div>
                     </jsp:body>
                 </uv:box>
             </div>

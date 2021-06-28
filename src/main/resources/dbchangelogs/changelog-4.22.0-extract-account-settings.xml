@@ -1,0 +1,28 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="extract-account-settings">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="default_vacation_days"/>
+      <columnExists tableName="settings" columnName="maximum_annual_vacation_days"/>
+    </preConditions>
+
+    <createTable tableName="account_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="default_vacation_days" type="INT(10)" />
+      <column name="maximum_annual_vacation_days" type="INT(10)" />
+    </createTable>
+
+    <insert tableName="account_settings">
+      <column name="default_vacation_days" valueComputed="(SELECT default_vacation_days FROM settings)"/>
+      <column name="maximum_annual_vacation_days" valueComputed="(SELECT maximum_annual_vacation_days FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

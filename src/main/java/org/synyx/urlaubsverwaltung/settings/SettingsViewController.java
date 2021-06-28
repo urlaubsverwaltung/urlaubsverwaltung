@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
@@ -44,12 +45,13 @@ public class SettingsViewController {
     private final TimeSettingsService timeSettingsService;
     private final SickNoteSettingsService sickNoteSettingsSerivce;
     private final OvertimeSettingsService overtimeSettingsSerivce;
+    private final AccountSettingsService accountSettingsService;
     private final Clock clock;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService, TimeSettingsService timeSettingsService, SickNoteSettingsService sickNoteSettingsSerivce, OvertimeSettingsService overtimeSettingsSerivce, Clock clock) {
+                                  SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService, TimeSettingsService timeSettingsService, SickNoteSettingsService sickNoteSettingsSerivce, OvertimeSettingsService overtimeSettingsSerivce, AccountSettingsService accountSettingsService, Clock clock) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
@@ -59,6 +61,7 @@ public class SettingsViewController {
         this.timeSettingsService = timeSettingsService;
         this.sickNoteSettingsSerivce = sickNoteSettingsSerivce;
         this.overtimeSettingsSerivce = overtimeSettingsSerivce;
+        this.accountSettingsService = accountSettingsService;
         this.clock = clock;
     }
 
@@ -101,6 +104,7 @@ public class SettingsViewController {
         model.addAttribute("timesettings", timeSettingsService.getSettingsDto());
         model.addAttribute("sicknotesettings", sickNoteSettingsSerivce.getSettingsDto());
         model.addAttribute("overtimesettings", overtimeSettingsSerivce.getSettingsDto());
+        model.addAttribute("accountsettings", accountSettingsService.getSettingsDto());
 
         return "settings/settings_overview";
     }
