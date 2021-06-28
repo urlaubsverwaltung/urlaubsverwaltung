@@ -12,8 +12,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
-
 /**
  * Implementation for {@link org.synyx.urlaubsverwaltung.sicknote.SickNoteService}.
  */
@@ -61,7 +59,7 @@ class SickNoteServiceImpl implements SickNoteService {
             .plusDays(sickNoteSettings.getDaysBeforeEndOfSickPayNotification())
             .toLocalDate();
 
-        return sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(sickNoteSettings.getMaximumSickPayDays(), endDate);
+        return sickNoteRepository.findSickNotesToNotifyForSickPayEnd(sickNoteSettings.getMaximumSickPayDays(), endDate);
     }
 
     @Override
