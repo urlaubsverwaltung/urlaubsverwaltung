@@ -3,17 +3,21 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,9 +36,11 @@ class SickNoteServiceImplTest {
     @Mock
     private SettingsService settingsService;
 
+    private final Clock fixedClock = Clock.fixed(Instant.parse("2021-06-28T00:00:00.00Z"), UTC);
+
     @BeforeEach
     void setUp() {
-        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, Clock.systemUTC());
+        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, fixedClock);
     }
 
     @Test
@@ -127,5 +133,16 @@ class SickNoteServiceImplTest {
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);
+    }
+
+    @Test
+    void setEndOfSickPayNotificationSend() {
+        final SickNote sickNote = new SickNote();
+
+        final ArgumentCaptor<SickNote> argument = ArgumentCaptor.forClass(SickNote.class);
+        sut.setEndOfSickPayNotificationSend(sickNote);
+
+        verify(sickNoteRepository).save(argument.capture());
+        assertThat(argument.getValue().getEndOfSickPayNotificationSend()).isEqualTo(LocalDate.now(fixedClock));
     }
 }

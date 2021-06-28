@@ -63,6 +63,7 @@ public class SickNoteMailService {
                 .withTemplate(templateName, model)
                 .build();
             mailService.send(toOffice);
+            sickNoteService.setEndOfSickPayNotificationSend(sickNote);
         }
     }
 }

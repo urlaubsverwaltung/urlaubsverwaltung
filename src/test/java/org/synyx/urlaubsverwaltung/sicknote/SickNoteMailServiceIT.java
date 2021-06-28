@@ -21,6 +21,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -88,5 +89,6 @@ class SickNoteMailServiceIT extends TestContainersBase {
         assertThat(contentOfficeMail).contains("(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).");
         assertThat(contentOfficeMail).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tag(e) Grenze");
 
+        verify(sickNoteService).setEndOfSickPayNotificationSend(sickNote);
     }
 }

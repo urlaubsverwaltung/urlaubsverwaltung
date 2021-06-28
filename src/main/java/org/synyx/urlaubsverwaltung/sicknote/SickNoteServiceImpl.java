@@ -12,6 +12,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.ZoneOffset.UTC;
+
 /**
  * Implementation for {@link org.synyx.urlaubsverwaltung.sicknote.SickNoteService}.
  */
@@ -85,5 +87,12 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end) {
         return sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(sickNoteStatus, persons, start, end);
+    }
+
+    @Override
+    public void setEndOfSickPayNotificationSend(SickNote sickNote) {
+
+        sickNote.setEndOfSickPayNotificationSend(LocalDate.now(clock));
+        sickNoteRepository.save(sickNote);
     }
 }
