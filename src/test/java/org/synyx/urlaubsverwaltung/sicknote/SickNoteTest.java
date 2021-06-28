@@ -109,7 +109,7 @@ class SickNoteTest {
     void nullsafeToString() {
         final SickNote sickNote = new SickNote();
         sickNote.setLastEdited(null);
-        assertThat(sickNote).hasToString("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, status=null}");
+        assertThat(sickNote).hasToString("SickNote{id=null, person=null, sickNoteType=null, startDate=null, endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null, endOfSickPayNotificationSend=null, status=null}");
     }
 
     @Test
@@ -131,11 +131,12 @@ class SickNoteTest {
         sickNote.setAubStartDate(LocalDate.MIN);
         sickNote.setAubEndDate(LocalDate.MAX);
         sickNote.setLastEdited(LocalDate.EPOCH);
+        sickNote.setEndOfSickPayNotificationSend(LocalDate.EPOCH);
         sickNote.setPerson(person);
 
         assertThat(sickNote).hasToString("SickNote{id=1, person=Person{id='1'}, " +
             "sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=-999999999-01-01, " +
             "endDate=+999999999-12-31, dayLength=FULL, aubStartDate=-999999999-01-01, aubEndDate=+999999999-12-31," +
-            " lastEdited=1970-01-01, status=ACTIVE}");
+            " lastEdited=1970-01-01, endOfSickPayNotificationSend=1970-01-01, status=ACTIVE}");
     }
 }

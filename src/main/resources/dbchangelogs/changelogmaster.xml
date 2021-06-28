@@ -81,4 +81,5 @@
   <include file="dbchangelogs/changelog-4.15.0-add-upcoming-vacation-reminder.xml"/>
   <include file="dbchangelogs/changelog-4.15.0-add-to-allow-half-day-absences.xml"/>
   <include file="dbchangelogs/changelog-4.16.0-add-holiday-replacement.xml"/>
+  <include file="dbchangelogs/changelog-4.22.0-add-end-of-sickpay-notification-send.xml"/>
 </databaseChangeLog>
