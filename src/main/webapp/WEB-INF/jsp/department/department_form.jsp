@@ -172,7 +172,7 @@
                                         <div class="department--member ${MEMBER_CSS_CLASS}">
                                             <div class="department--member-image">
                                                 <uv:avatar
-                                                    url="${person.gravatarURL}?d=mm&s=40}"
+                                                    url="${person.gravatarURL}?d=mm&s=40"
                                                     username="${person.niceName}"
                                                     width="40px"
                                                     height="40px"
