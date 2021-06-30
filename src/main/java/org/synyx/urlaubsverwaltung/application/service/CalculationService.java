@@ -94,34 +94,33 @@ public class CalculationService {
             return false;
         }
 
-        // we also need to look at the next year, because "remaining days" from this year
-        // may already have been booked then
-
+        // we also need to look at the next year, because "remaining days" from this year may already have been booked then
         // call accountService directly to avoid auto-creating a new account for next year
-        final Optional<Account> nextYear = accountService.getHolidaysAccount(year + 1, person);
-        final BigDecimal alreadyUsedNextYear = vacationDaysService.getRemainingVacationDaysAlreadyUsed(nextYear);
+        final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
+        final BigDecimal vacationDaysAlreadyUsedNextYear = vacationDaysService.getRemainingVacationDaysAlreadyUsed(accountNextYear);
 
-        final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), nextYear);
-        LOG.info("vacationDaysLeft: {} {}", year + 1, vacationDaysLeft);
+        final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear);
+        LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 
         // now we need to consider which remaining vacation days expire
-        final BigDecimal workDaysBeforeApril = getWorkdaysBeforeApril(year, application);
-
-        final BigDecimal leftUntilApril = vacationDaysLeft.getVacationDays()
+        final BigDecimal vacationDaysRequestedBeforeApril = getWorkdaysBeforeApril(year, application);
+        final BigDecimal vacationDaysLeftUntilApril = vacationDaysLeft.getVacationDays()
             .add(vacationDaysLeft.getRemainingVacationDays())
-            .subtract(workDaysBeforeApril)
-            .subtract(alreadyUsedNextYear);
+            .subtract(vacationDaysRequestedBeforeApril)
+            .subtract(vacationDaysAlreadyUsedNextYear);
 
-        final BigDecimal workDaysAfterApril = workDays.subtract(workDaysBeforeApril);
-        final BigDecimal leftAfterApril = vacationDaysLeft.getRemainingVacationDays()
-            .add(leftUntilApril)
-            .subtract(workDaysAfterApril)
-            .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        final BigDecimal vacationDaysRequestedAfterApril = workDays.subtract(vacationDaysRequestedBeforeApril);
+        final BigDecimal vacationDaysLeftAfterApril = vacationDaysLeftUntilApril
+            .subtract(vacationDaysRequestedAfterApril)
+            .subtract(vacationDaysLeft.getRemainingVacationDays())
+            .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
-        if (leftUntilApril.signum() < 0 || leftAfterApril.signum() < 0) {
-            if (alreadyUsedNextYear.signum() > 0) {
+        LOG.debug("vacation days left until april are {} and after april are {}", vacationDaysLeftUntilApril, vacationDaysLeftAfterApril);
+
+        if (vacationDaysLeftUntilApril.signum() < 0 || vacationDaysLeftAfterApril.signum() < 0) {
+            if (vacationDaysAlreadyUsedNextYear.signum() > 0) {
                 LOG.info("Rejecting application by {} for {} days in {} because {} remaining days " +
-                    "have already been used in {}", person, workDays, year, alreadyUsedNextYear, year + 1);
+                    "have already been used in {}", person, workDays, year, vacationDaysAlreadyUsedNextYear, year + 1);
             }
             return false;
         }

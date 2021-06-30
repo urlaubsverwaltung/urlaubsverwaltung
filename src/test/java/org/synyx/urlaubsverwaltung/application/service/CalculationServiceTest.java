@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -32,6 +31,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -100,7 +100,7 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
-        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+        applicationForLeaveToCheck.setDayLength(FULL);
 
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
@@ -130,7 +130,7 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
-        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+        applicationForLeaveToCheck.setDayLength(FULL);
 
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
@@ -160,7 +160,7 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
-        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+        applicationForLeaveToCheck.setDayLength(FULL);
 
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
@@ -214,6 +214,40 @@ class CalculationServiceTest {
                 .forUsedDaysBeforeApril(BigDecimal.valueOf(0))
                 .forUsedDaysAfterApril(BigDecimal.valueOf(10))
                 .build());
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(ZERO);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isFalse();
+    }
+
+    @Test
+    void testCheckApplicationRemainingVacationDaysLeftNotUsedAfterApril() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 6));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
+
+        final Optional<Account> account2013 = Optional.empty();
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
+
+        when(vacationDaysService.getVacationDaysLeft(account, account2013)).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(ONE)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(ZERO)
+                .build());
+
         when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(account2013)).thenReturn(ZERO);
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
@@ -277,7 +311,7 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
         applicationForLeaveToCheck.setPerson(person);
-        applicationForLeaveToCheck.setDayLength(DayLength.FULL);
+        applicationForLeaveToCheck.setDayLength(FULL);
 
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
