@@ -7,7 +7,7 @@ public class SickNoteSettingsValidator {
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_ENTRY = "error.entry.invalid";
     private static final String ERROR_ILLEGAL_MAXIMUM_SICKPAYDAYS = "sicknote.error.illegalMaximumSickPayDays";
-    public static final int LEGAL_MINIMUM_OF_MAXIMUM_SICK_PAY_DAYS = 42;
+    private static final int LEGAL_MINIMUM_OF_MAXIMUM_SICK_PAY_DAYS = 42;
 
     private SickNoteSettingsValidator() {
         // private
