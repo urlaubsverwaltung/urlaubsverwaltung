@@ -52,6 +52,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final SickNote sickNote = new SickNote();
+        sickNote.setId(1);
         sickNote.setPerson(person);
         sickNote.setStartDate(LocalDate.of(2020, 2, 1));
         sickNote.setEndDate(LocalDate.of(2020, 4, 1));
@@ -76,7 +77,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("Die Krankmeldung von Lieschen Müller");
         assertThat(content).contains("(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).");
-        assertThat(content).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tag(e) Grenze");
+        assertThat(content).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tage Grenze");
+        assertThat(content).contains("Für Details siehe:");
+        assertThat(content).contains("web/sicknote/1");
 
         // check email of office
         Message msgOffice = inboxOffice[0];
@@ -87,7 +90,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
         assertThat(contentOfficeMail).contains("Hallo Marlene Muster");
         assertThat(contentOfficeMail).contains("Die Krankmeldung von Lieschen Müller");
         assertThat(contentOfficeMail).contains("(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).");
-        assertThat(contentOfficeMail).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tag(e) Grenze");
+        assertThat(contentOfficeMail).contains("für den Zeitraum 01.02.2020 - 01.04.2020 erreicht in Kürze die 42 Tage Grenze");
+        assertThat(contentOfficeMail).contains("Für Details siehe:");
+        assertThat(contentOfficeMail).contains("web/sicknote/1");
 
         verify(sickNoteService).setEndOfSickPayNotificationSend(sickNote);
     }
