@@ -112,7 +112,7 @@
                                 <tr>
                                     <td class="is-centered">
                                         <uv:avatar
-                                            url="${statistic.person.gravatarURL}?d=mm&s=60}"
+                                            url="${statistic.person.gravatarURL}?d=mm&s=60"
                                             username="${statistic.person.firstName}"
                                             width="60px"
                                             height="60px"

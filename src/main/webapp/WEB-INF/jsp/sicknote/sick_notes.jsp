@@ -96,7 +96,7 @@
                     <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered print:tw-hidden">
                             <uv:avatar
-                                url="${person.gravatarURL}?d=mm&s=40}"
+                                url="${person.gravatarURL}?d=mm&s=40"
                                 username="${person.niceName}"
                                 width="40px"
                                 height="40px"
