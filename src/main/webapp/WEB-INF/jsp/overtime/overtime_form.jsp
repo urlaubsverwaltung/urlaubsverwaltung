@@ -168,6 +168,9 @@
                                         </label>
                                     </div>
                                 </c:if>
+                                <uv:error-text>
+                                    <form:errors path="reduce" />
+                                </uv:error-text>
                             </div>
                         </div>
 
