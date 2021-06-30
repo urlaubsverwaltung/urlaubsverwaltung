@@ -68,6 +68,8 @@ class CalculationServiceTest {
     private SettingsService settingsService;
     @Mock
     private WorkingTimeService workingTimeService;
+    @Mock
+    private ApplicationService applicationService;
 
     @BeforeEach
     void setUp() {
@@ -85,9 +87,204 @@ class CalculationServiceTest {
             .thenReturn(Optional.of(workingTime));
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,
-            new OverlapService(null, null, Clock.systemUTC()));
+            new OverlapService(null, null, Clock.systemUTC()), applicationService);
     }
 
+
+    @Test
+    void testCheckApplicationSameYearAndEnoughDaysLeftAreNegativeEditing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 21));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void testCheckApplicationSameYearAndEnoughDaysLeftAreNeutralEditing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 23));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 25));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 19));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 21));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void testCheckApplicationSameYearAndEnoughDaysLeftArePositiveEditing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, AUGUST, 20));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2012, AUGUST, 21));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
+
+        when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
+            VacationDaysLeft.builder()
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(BigDecimal.valueOf(20))
+                .notExpiring(TEN)
+                .forUsedDaysBeforeApril(TEN)
+                .forUsedDaysAfterApril(TEN)
+                .build());
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(any())).thenReturn(ZERO);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void testCheckApplicationDifferentYearAndEnoughDaysLeftAreNegativeEditing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, DECEMBER, 28));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2013, JANUARY, 4));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 29));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 3));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void testCheckApplicationDifferentYearAndEnoughDaysLeftAreNeutralEditing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, DECEMBER, 29));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2013, JANUARY, 4));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 30));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 5));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
+
+    @Test
+    void testCheckApplicationDifferentYearAndEnoughDaysLeftArePositiveEditing() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Application applicationForLeaveToCheckSaved = new Application();
+        applicationForLeaveToCheckSaved.setId(10);
+        applicationForLeaveToCheckSaved.setStartDate(LocalDate.of(2012, DECEMBER, 29));
+        applicationForLeaveToCheckSaved.setEndDate(LocalDate.of(2013, JANUARY, 4));
+        applicationForLeaveToCheckSaved.setPerson(person);
+        applicationForLeaveToCheckSaved.setDayLength(FULL);
+
+        when(applicationService.getApplicationById(10)).thenReturn(Optional.of(applicationForLeaveToCheckSaved));
+
+        final Application applicationForLeaveToCheck = new Application();
+        applicationForLeaveToCheck.setId(10);
+        applicationForLeaveToCheck.setStartDate(LocalDate.of(2012, DECEMBER, 28));
+        applicationForLeaveToCheck.setEndDate(LocalDate.of(2013, JANUARY, 7));
+        applicationForLeaveToCheck.setPerson(person);
+        applicationForLeaveToCheck.setDayLength(FULL);
+
+        final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
+        final Optional<Account> account = Optional.of(new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment"));
+        when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
+
+        final LocalDate validFromNextYear = LocalDate.of(2013, JANUARY, 1);
+        final LocalDate validToNextYear = LocalDate.of(2013, DECEMBER, 31);
+        final Optional<Account> accountNextYear = Optional.of(new Account(person, validFromNextYear, validToNextYear, TEN, TEN, TEN, "comment"));
+        when(accountService.getHolidaysAccount(2013, person)).thenReturn(accountNextYear);
+
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(accountNextYear)).thenReturn(ZERO);
+        when(vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear))
+            .thenReturn(VacationDaysLeft.builder()
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(BigDecimal.valueOf(20))
+                .notExpiring(TEN)
+                .forUsedDaysBeforeApril(TEN)
+                .forUsedDaysAfterApril(TEN)
+                .build());
+
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(Optional.empty())).thenReturn(ZERO);
+        when(vacationDaysService.getVacationDaysLeft(accountNextYear.get(), Optional.empty()))
+            .thenReturn(VacationDaysLeft.builder()
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(BigDecimal.valueOf(20))
+                .notExpiring(TEN)
+                .forUsedDaysBeforeApril(TEN)
+                .forUsedDaysAfterApril(TEN)
+                .build());
+
+        final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(enoughDaysLeft).isTrue();
+    }
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeft() {
