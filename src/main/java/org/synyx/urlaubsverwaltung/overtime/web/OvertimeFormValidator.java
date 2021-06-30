@@ -106,13 +106,13 @@ public class OvertimeFormValidator implements Validator {
     }
 
 
-    private void validateMaximumOvertimeNotReached(OvertimeSettings settings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final Duration numberOfHours = overtimeForm.getDuration();
 
         if (numberOfHours != null) {
-            final Duration maximumOvertime = Duration.ofHours(settings.getMaximumOvertime());
-            final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
+            final Duration maximumOvertime = Duration.ofHours(overtimeSettings.getMaximumOvertime());
+            final Duration minimumOvertime = Duration.ofHours(overtimeSettings.getMinimumOvertime());
 
             if (maximumOvertime.isZero()) {
                 errors.reject(ERROR_OVERTIME_DEACTIVATED);
