@@ -80,4 +80,11 @@ public interface SickNoteService {
      * @return list of all matching {@link SickNote}s
      */
     List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
+
+    /**
+     * Set end of sick pay notification send for given sicknote.
+     *
+     * @param sickNote to set sick pay notification send date
+     */
+    void setEndOfSickPayNotificationSend(SickNote sickNote);
 }

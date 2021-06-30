@@ -39,7 +39,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final SickNote sickNoteCancelled = createSickNote(null, LocalDate.of(2019, 5, 10), endDate, CANCELLED);
         sickNoteRepository.save(sickNoteCancelled);
 
-        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(2, endDate);
+        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(2, endDate);
         assertThat(sickNotesByMinimumLengthAndEndDate).isEmpty();
     }
 
@@ -47,7 +47,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
     void findSickNotesByMinimumLengthAndEndDateExactlyOnLimitAndWrongStatus() {
 
         final LocalDate startDate = LocalDate.of(2019, 5, 19);
-        final LocalDate endDate = LocalDate.of(2019, 5, 20);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
 
         final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(sickNote);
@@ -55,12 +55,26 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final SickNote sickNoteCancelled = createSickNote(null, startDate, endDate, CANCELLED);
         sickNoteRepository.save(sickNoteCancelled);
 
-        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(1, endDate);
-        assertThat(sickNotesByMinimumLengthAndEndDate)
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd)
             .hasSize(1)
             .contains(sickNote)
             .doesNotContain(sickNoteCancelled);
     }
+
+    @Test
+    void findNoSickNotesByMinimumLengthAndEndDateEqualsLimit() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 20);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd).isEmpty();
+    }
+
 
     @Test
     void findSickNotesByMinimumLengthAndEndDateMoreThanLimitAndWrongStatus() {
@@ -74,13 +88,93 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final SickNote sickNoteCancelled = createSickNote(null, startDate, endDate, CANCELLED);
         sickNoteRepository.save(sickNoteCancelled);
 
-        final List<SickNote> sickNotesByMinimumLengthAndEndDate = sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(1, endDate);
-        assertThat(sickNotesByMinimumLengthAndEndDate)
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd)
             .hasSize(1)
             .contains(sickNote)
             .doesNotContain(sickNoteCancelled);
     }
 
+    @Test
+    void findNoSickNoteIfAlreadyNotifiedAfterLastEdit() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNote.setLastEdited(startDate);
+        sickNote.setEndOfSickPayNotificationSend(endDate);
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd).isEmpty();
+    }
+
+    @Test
+    void findSickNoteIfNotYetNotified() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNote.setLastEdited(startDate);
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd)
+            .hasSize(1)
+            .contains(sickNote);
+    }
+
+    @Test
+    void findSickNoteIfCurrentEditStateNotNotifiedBefore() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNote.setLastEdited(endDate);
+        sickNote.setEndOfSickPayNotificationSend(startDate);
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd)
+            .hasSize(1)
+            .contains(sickNote);
+    }
+
+    @Test
+    void findSickNoteIfEndDateIsEqualsOrSmallerThanSearchedEndDate() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNoteRepository.save(sickNote);
+
+        List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate);
+        assertThat(sickNotesToNotifyForSickPayEnd)
+            .hasSize(1)
+            .contains(sickNote);
+
+        sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate.plusDays(1));
+        assertThat(sickNotesToNotifyForSickPayEnd)
+            .hasSize(1)
+            .contains(sickNote);
+    }
+
+    @Test
+    void findNoSickNoteIfEndDateIsBiggerThanEndDate() {
+
+        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        final LocalDate endDate = LocalDate.of(2019, 5, 21);
+
+        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNoteRepository.save(sickNote);
+
+        final List<SickNote> sickNotesToNotifyForSickPayEnd = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(1, endDate.minusDays(1));
+        assertThat(sickNotesToNotifyForSickPayEnd).isEmpty();
+    }
 
     @Test
     void findSickNotesOverlappingWithDateRange() {

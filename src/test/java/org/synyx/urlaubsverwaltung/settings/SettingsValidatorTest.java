@@ -264,21 +264,6 @@ class SettingsValidatorTest {
 
     // SickNote settings ------------------------------------------------------------------------------------------------
     @Test
-    void ensureThatSickNoteSettingsAreSmallerOrEqualsThanMaxInt() {
-
-        final Settings settings = new Settings();
-        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
-
-        sickNoteSettings.setDaysBeforeEndOfSickPayNotification(Integer.MAX_VALUE + 1);
-        sickNoteSettings.setMaximumSickPayDays(Integer.MAX_VALUE + 1);
-
-        final Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
-        verify(mockError).rejectValue("sickNoteSettings.maximumSickPayDays", "error.entry.invalid");
-    }
-
-    @Test
     void ensureSickNoteSettingsCanNotBeNull() {
 
         final Settings settings = new Settings();
@@ -294,17 +279,28 @@ class SettingsValidatorTest {
     }
 
     @Test
-    void ensureSickNoteSettingsCanNotBeNegative() {
+    void ensureSickNoteSettingsCanNotBeSmallerThanLegalMinimum() {
 
         final Settings settings = new Settings();
         final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
 
-        sickNoteSettings.setMaximumSickPayDays(-1);
+        sickNoteSettings.setMaximumSickPayDays(41);
+
+        Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+        verify(mockError).rejectValue("sickNoteSettings.maximumSickPayDays", "sicknote.error.illegalMaximumSickPayDays");
+    }
+
+    @Test
+    void ensureDaysBeforeEndOfSickPayNotificationCanNotBeNegative() {
+
+        final Settings settings = new Settings();
+        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+
         sickNoteSettings.setDaysBeforeEndOfSickPayNotification(-1);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("sickNoteSettings.maximumSickPayDays", "error.entry.invalid");
         verify(mockError).rejectValue("sickNoteSettings.daysBeforeEndOfSickPayNotification", "error.entry.invalid");
     }
 

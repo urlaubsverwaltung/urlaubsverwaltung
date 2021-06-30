@@ -61,6 +61,8 @@ public class SickNote {
 
     private LocalDate lastEdited;
 
+    private LocalDate endOfSickPayNotificationSend;
+
     @Enumerated(STRING)
     private SickNoteStatus status;
 
@@ -144,6 +146,14 @@ public class SickNote {
         this.lastEdited = lastEdited;
     }
 
+    public LocalDate getEndOfSickPayNotificationSend() {
+        return endOfSickPayNotificationSend;
+    }
+
+    public void setEndOfSickPayNotificationSend(LocalDate endOfSickPayNotificationSend) {
+        this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
+    }
+
     public boolean isActive() {
         return SickNoteStatus.ACTIVE.equals(getStatus());
     }
@@ -172,6 +182,7 @@ public class SickNote {
             ", aubStartDate=" + aubStartDate +
             ", aubEndDate=" + aubEndDate +
             ", lastEdited=" + lastEdited +
+            ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
             ", status=" + status +
             '}';
     }

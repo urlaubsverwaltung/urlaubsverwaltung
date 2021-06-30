@@ -55,11 +55,11 @@ class SickNoteServiceImpl implements SickNoteService {
         final Settings settings = settingsService.getSettings();
         final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
 
-        final LocalDate endDate = ZonedDateTime.now(clock)
+        final LocalDate endOfSickPayDate = ZonedDateTime.now(clock)
             .plusDays(sickNoteSettings.getDaysBeforeEndOfSickPayNotification())
             .toLocalDate();
 
-        return sickNoteRepository.findSickNotesByMinimumLengthAndEndDate(sickNoteSettings.getMaximumSickPayDays(), endDate);
+        return sickNoteRepository.findSickNotesToNotifyForSickPayEnd(sickNoteSettings.getMaximumSickPayDays(), endOfSickPayDate);
     }
 
     @Override
@@ -85,5 +85,12 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end) {
         return sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(sickNoteStatus, persons, start, end);
+    }
+
+    @Override
+    public void setEndOfSickPayNotificationSend(SickNote sickNote) {
+
+        sickNote.setEndOfSickPayNotificationSend(LocalDate.now(clock));
+        sickNoteRepository.save(sickNote);
     }
 }
