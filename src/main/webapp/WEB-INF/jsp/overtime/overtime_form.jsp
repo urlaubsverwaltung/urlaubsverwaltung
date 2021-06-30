@@ -160,12 +160,14 @@
                             </label>
                             <div class="col-md-9">
                                 <uv:hour-and-minute-input reductionFieldName="duration" />
-                                <div class="tw-mt-2">
-                                    <form:checkbox id="overtime-reduce" path="reduce" />
-                                    <label for="overtime-reduce" class="tw-font-normal">
-                                        <spring:message code="overtime.data.reduceOvertime"/>
-                                    </label>
-                                </div>
+                                <c:if test="${overtimeReductionPossible}">
+                                    <div class="tw-mt-2">
+                                        <form:checkbox id="overtime-reduce" path="reduce" />
+                                        <label for="overtime-reduce" class="tw-font-normal">
+                                            <spring:message code="overtime.data.reduceOvertime"/>
+                                        </label>
+                                    </div>
+                                </c:if>
                             </div>
                         </div>
 
