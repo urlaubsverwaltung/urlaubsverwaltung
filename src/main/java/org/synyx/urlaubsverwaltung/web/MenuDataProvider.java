@@ -32,7 +32,7 @@ public class MenuDataProvider implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
 
-        if (menuIsShown(modelAndView)) {
+        if (modelAndView != null && menuIsShown(modelAndView)) {
 
             final Person signedInUserInModel = (Person) modelAndView.getModelMap().get("signedInUser");
             final Person user = Objects.requireNonNullElseGet(signedInUserInModel, personService::getSignedInUser);
@@ -49,13 +49,12 @@ public class MenuDataProvider implements HandlerInterceptor {
 
     private boolean menuIsShown(ModelAndView modelAndView) {
 
-        if (modelAndView == null || modelAndView.getViewName() == null) {
+        final String viewName = modelAndView.getViewName();
+        if (viewName == null) {
             return false;
         }
 
-        final String viewName = modelAndView.getViewName();
-        return !viewName.startsWith("redirect:")
-            && !viewName.startsWith("login");
+        return !viewName.startsWith("redirect:") && !viewName.startsWith("login");
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
