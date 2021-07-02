@@ -105,7 +105,7 @@
                                 arguments="${sickNote.person.niceName}"
                             />
                         </span>
-                        <span class="tw-my-1 tw-text-lg tw-font-medium">
+                        <span class="tw-my-1 tw-text-lg tw-font-medium" data-test-id="sicknote-type">
                             <c:out value="${SICK_NOTE_MESSAGEKEY}" />
                         </span>
                         <span class="tw-text-sm tw-text-black tw-text-opacity-75" data-test-id="sicknote-date">
@@ -161,7 +161,7 @@
                     <tr>
                         <td><spring:message code="sicknote.data.aub.short"/></td>
                         <td>
-                            <div class="tw-flex tw-items-center">
+                            <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
                             <c:choose>
                                 <c:when test="${sickNote.aubPresent}">
                                     <icon:check className="tw-w-4 tw-h-4" />

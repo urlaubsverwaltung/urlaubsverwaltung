@@ -7,12 +7,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
-import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
 import static org.synyx.urlaubsverwaltung.ui.PageConditions.elementHasAttributeWithValue;
 
 public class NavigationPage implements Page {
 
     private static final By NEW_APPLICATION_SELECTOR = By.id("application-new-link");
+    private static final By SICK_NOTES_SELECTOR = By.cssSelector("[data-test-id=navigation-sick-notes-link]");
     private static final By SETTINGS_SELECTOR = By.cssSelector("[data-test-id=navigation-settings-link]");
 
     private final WebDriver driver;
@@ -32,6 +32,10 @@ public class NavigationPage implements Page {
 
     public void logout() {
         avatarMenu.logout();
+    }
+
+    public void clickSickNotes() {
+        driver.findElement(SICK_NOTES_SELECTOR).click();
     }
 
     public void clickSettings() {

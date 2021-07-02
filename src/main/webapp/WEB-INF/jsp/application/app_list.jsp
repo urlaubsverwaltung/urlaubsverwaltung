@@ -114,7 +114,7 @@
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <uv:avatar
-                                            url="${application.person.gravatarURL}?d=mm&s=40}"
+                                            url="${application.person.gravatarURL}?d=mm&s=40"
                                             username="${application.person.niceName}"
                                             width="40px"
                                             height="40px"

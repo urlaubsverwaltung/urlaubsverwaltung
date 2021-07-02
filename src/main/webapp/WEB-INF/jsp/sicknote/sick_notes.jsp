@@ -78,7 +78,7 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <table class="list-table selectable-table sortable tablesorter tw-text-sm">
+                <table class="list-table selectable-table sortable tablesorter tw-text-sm" data-test-id="sick-notes-table">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th scope="col" class="print:tw-hidden"></th>
@@ -96,7 +96,7 @@
                     <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview#anchorSickNotes');">
                         <td class="is-centered print:tw-hidden">
                             <uv:avatar
-                                url="${person.gravatarURL}?d=mm&s=40}"
+                                url="${person.gravatarURL}?d=mm&s=40"
                                 username="${person.niceName}"
                                 width="40px"
                                 height="40px"

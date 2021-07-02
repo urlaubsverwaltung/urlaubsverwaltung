@@ -168,7 +168,7 @@
                                 <tr>
                                     <td>
                                         <uv:avatar
-                                            url="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
+                                            url="${application.person.gravatarURL}?d=mm&s=40"
                                             username="${application.person.niceName}"
                                             width="40px"
                                             height="40px"

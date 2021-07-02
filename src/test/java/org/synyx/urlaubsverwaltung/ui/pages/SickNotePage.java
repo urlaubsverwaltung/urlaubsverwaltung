@@ -3,8 +3,7 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
+import org.openqa.selenium.support.ui.Select;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.time.LocalDate;
@@ -20,9 +19,22 @@ public class SickNotePage implements Page {
     private static final By DAY_TYPE_NOON_SELECTOR = By.cssSelector("[data-test-id=day-type-noon]");
     private static final By FROM_SELECTOR = By.cssSelector("[data-test-id=sicknote-from-date]");
     private static final By TO_SELECTOR = By.cssSelector("[data-test-id=sicknote-to-date]");
+    private static final By AUB_FROM_SELECTOR = By.cssSelector("[data-test-id=sicknote-aub-from]");
+    private static final By AUB_TO_SELECTOR = By.cssSelector("[data-test-id=sicknote-aub-from]");
     private static final By SUBMIT_SELECTOR = By.cssSelector("[data-test-id=sicknote-submit-button]");
 
     private final WebDriver driver;
+
+    private enum Type {
+        SICK_NOTE("1000"),
+        CHILD_SICK_NOTE("2000");
+
+        final String value;
+
+        Type(String value) {
+            this.value = value;
+        }
+    }
 
     public SickNotePage(WebDriver driver) {
         this.driver = driver;
@@ -34,8 +46,20 @@ public class SickNotePage implements Page {
     }
 
     public void startDate(LocalDate startDate) {
-        final String dateString = ofPattern("dd.MM.yyyy").format(startDate);
-        driver.findElement(FROM_SELECTOR).sendKeys(dateString);
+        setDate(startDate, FROM_SELECTOR);
+    }
+
+    public void toDate(LocalDate toDate) {
+        setDate(toDate, TO_SELECTOR);
+    }
+
+    public void selectTypeChildSickNote() {
+        final Select select = new Select(driver.findElement(SICKNOTE_TYPE_SELECTOR));
+        select.selectByValue(Type.CHILD_SICK_NOTE.value);
+    }
+
+    public void aubStartDate(LocalDate aubStartDate) {
+        setDate(aubStartDate, AUB_FROM_SELECTOR);
     }
 
     /**
@@ -52,11 +76,17 @@ public class SickNotePage implements Page {
 
     public boolean typeSickNoteSelected() {
         final String value = driver.findElement(SICKNOTE_TYPE_SELECTOR).getAttribute("value");
-        return "1000".equals(value); // 1000: sick note | 2000: Child sick note
+        return Type.SICK_NOTE.value.equals(value);
     }
 
-    public boolean showsFromDate(LocalDate fromDate) {
+    public boolean showsToDate(LocalDate fromDate) {
         final String value = driver.findElement(TO_SELECTOR).getAttribute("value");
+        final String expectedDateString = ofPattern("dd.MM.yyyy").format(fromDate);
+        return value.equals(expectedDateString);
+    }
+
+    public boolean showsAubToDate(LocalDate fromDate) {
+        final String value = driver.findElement(AUB_TO_SELECTOR).getAttribute("value");
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(fromDate);
         return value.equals(expectedDateString);
     }
@@ -72,5 +102,12 @@ public class SickNotePage implements Page {
         final String value = selectElement.getAttribute("value");
         final WebElement optionElement = selectElement.findElement(By.cssSelector("option[value=\"" + value + "\"]"));
         return optionElement.getText().strip().equals(name);
+    }
+
+    private void setDate(LocalDate date, By selector) {
+        final String dateString = ofPattern("dd.MM.yyyy").format(date);
+        final WebElement input = driver.findElement(selector);
+        input.clear();
+        input.sendKeys(dateString);
     }
 }
