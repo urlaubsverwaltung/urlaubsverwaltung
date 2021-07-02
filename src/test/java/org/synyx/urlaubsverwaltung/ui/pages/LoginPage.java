@@ -2,7 +2,10 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.ui.Page;
+
+import java.util.Locale;
 
 public class LoginPage implements Page {
 
@@ -11,9 +14,13 @@ public class LoginPage implements Page {
     private static final By SUBMIT_SELECTOR = By.cssSelector("button[type=submit]");
 
     private final WebDriver driver;
+    private final MessageSource messageSource;
+    private final Locale locale;
 
-    public LoginPage(WebDriver driver) {
+    public LoginPage(WebDriver driver, MessageSource messageSource, Locale locale) {
         this.driver = driver;
+        this.messageSource = messageSource;
+        this.locale = locale;
     }
 
     @Override
@@ -32,8 +39,9 @@ public class LoginPage implements Page {
         driver.findElement(SUBMIT_SELECTOR).click();
     }
 
-    private static boolean webpageTitleIsShown(WebDriver driver) {
-        return driver.getTitle().equals("Login");
+    private boolean webpageTitleIsShown(WebDriver driver) {
+        final String loginText = messageSource.getMessage("person.form.data.login", new Object[]{}, locale);
+        return driver.getTitle().equals(loginText);
     }
 
     private static boolean usernameElementExists(WebDriver driver) {
