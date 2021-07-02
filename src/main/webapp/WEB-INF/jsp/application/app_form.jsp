@@ -394,8 +394,8 @@
                                 <c:if test="${not empty application.holidayReplacements}">
                                     <div class="tw-mb-12">
                                     <c:forEach items="${application.holidayReplacements}" var="holidayReplacement" varStatus="loop">
-                                        <form:hidden path="holidayReplacements[${loop.index}].person" />
                                         <div class="form-group tw-mb-6">
+                                            <form:hidden path="holidayReplacements[${loop.index}].person" />
                                             <div class="col-md-push-3 col-md-9">
                                                 <div>
                                                     <div class="tw-flex">
