@@ -369,7 +369,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(eq(application), eq(recipientPerson), eq(signedInPerson));
+        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
     }
 
     @Test
@@ -389,7 +389,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(eq(application), eq(recipientPerson), eq(signedInPerson));
+        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
     }
 
     @Test

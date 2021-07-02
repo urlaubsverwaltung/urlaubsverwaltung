@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
@@ -60,7 +58,7 @@ class MailServiceImplTest {
 
         final Person person = new Person();
         person.setEmail("mail@example.org");
-        final List<Person> persons = singletonList(person);
+        final List<Person> persons = List.of(person);
         when(personService.getPersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
 
         final Map<String, Object> model = new HashMap<>();
@@ -76,7 +74,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("mail@example.org")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("mail@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -98,7 +96,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("hans@example.org")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -124,8 +122,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("hans@example.org")), eq("subject"), eq("emailBody"));
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("franz@example.org")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -155,8 +153,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("franz@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(List.of("hans@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -186,8 +184,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("hans@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("franz@example.org")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -207,7 +205,7 @@ class MailServiceImplTest {
             .build();
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of(to), "subject", "emailBody");
     }
 
     @Test
@@ -237,9 +235,9 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("hans@example.org")), eq("subject"), eq("emailBody"));
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("franz@example.org")), eq("subject"), eq("emailBody"));
-        verify(mailSenderService).sendEmail(eq("no-reply@example.org"), eq(singletonList("admin@example.org")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("admin@example.org"), "subject", "emailBody");
     }
 
     private void setupMockServletRequest() {

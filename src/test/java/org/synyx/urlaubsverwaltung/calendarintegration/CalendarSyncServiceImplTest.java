@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.when;
  */
 class CalendarSyncServiceImplTest {
 
-    private SettingsService settingsService;
     private CalendarService calendarService;
 
     private CalendarSyncService calendarSyncService;
@@ -28,7 +26,7 @@ class CalendarSyncServiceImplTest {
     @BeforeEach
     void setUp() {
 
-        settingsService = mock(SettingsService.class);
+        final SettingsService settingsService = mock(SettingsService.class);
         settings = new Settings();
         settings.setCalendarSettings(new CalendarSettings());
         when(settingsService.getSettings()).thenReturn(settings);
@@ -38,9 +36,7 @@ class CalendarSyncServiceImplTest {
         when(calendarService.getCalendarProvider()).thenReturn(mock(ExchangeCalendarProvider.class));
 
         calendarSyncService = new CalendarSyncServiceImpl(settingsService, calendarService);
-
     }
-
 
     @Test
     void ensureAddsAbsenceToExchangeCalendar() {
@@ -51,10 +47,8 @@ class CalendarSyncServiceImplTest {
 
         calendarSyncService.addAbsence(absence);
 
-        verify(calendarService.getCalendarProvider())
-            .add(eq(absence), eq(settings.getCalendarSettings()));
+        verify(calendarService.getCalendarProvider()).add(absence, settings.getCalendarSettings());
     }
-
 
     @Test
     void ensureUpdatesAbsenceInExchangeCalendar() {
@@ -66,10 +60,8 @@ class CalendarSyncServiceImplTest {
 
         calendarSyncService.update(absence, eventId);
 
-        verify(calendarService.getCalendarProvider())
-            .update(eq(absence), eq(eventId), eq(settings.getCalendarSettings()));
+        verify(calendarService.getCalendarProvider()).update(absence, eventId, settings.getCalendarSettings());
     }
-
 
     @Test
     void ensureDeletedAbsenceInExchangeCalendar() {
@@ -80,10 +72,8 @@ class CalendarSyncServiceImplTest {
 
         calendarSyncService.deleteAbsence(eventId);
 
-        verify(calendarService.getCalendarProvider())
-            .delete(eq(eventId), eq(settings.getCalendarSettings()));
+        verify(calendarService.getCalendarProvider()).delete(eventId, settings.getCalendarSettings());
     }
-
 
     @Test
     void ensureChecksExchangeCalendarSettings() {
@@ -92,9 +82,6 @@ class CalendarSyncServiceImplTest {
 
         calendarSyncService.checkCalendarSyncSettings();
 
-        verify(calendarService.getCalendarProvider())
-            .checkCalendarSyncSettings(any(CalendarSettings.class));
+        verify(calendarService.getCalendarProvider()).checkCalendarSyncSettings(any(CalendarSettings.class));
     }
-
-
 }
