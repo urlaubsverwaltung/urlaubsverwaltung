@@ -11,6 +11,7 @@ class OvertimeSettingsTest {
 
         final OvertimeSettings settings = new OvertimeSettings();
         assertThat(settings.isOvertimeActive()).isFalse();
+        assertThat(settings.isOvertimeWritePrivilegedOnly()).isFalse();
         assertThat(settings.isOvertimeReductionWithoutApplicationActive()).isTrue();
         assertThat(settings.getMaximumOvertime()).isEqualTo(100);
         assertThat(settings.getMinimumOvertime()).isEqualTo(5);
