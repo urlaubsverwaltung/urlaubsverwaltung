@@ -113,9 +113,6 @@ th.sortable-field .tablesorter-header-inner:after {
   background-size: cover;
   width: 16px;
   height: 16px;
-}
-
-th.sortable-field .tablesorter-header-inner:after {
   background-image: url("../icons/selector.svg");
 }
 
