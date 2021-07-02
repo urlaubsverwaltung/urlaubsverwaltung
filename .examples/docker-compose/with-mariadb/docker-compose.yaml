@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:10.6
     volumes:
       - mariadb_data:/var/lib/mysql
     environment:
@@ -15,6 +15,11 @@ services:
       interval: 3s
       timeout: 1s
       retries: 5
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - '1025:1025'
+      - '8025:8025'
   app:
     image: synyx/urlaubsverwaltung:latest
     ports:
