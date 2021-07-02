@@ -11,7 +11,6 @@ import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
@@ -54,7 +53,7 @@ class SickNoteCommentServiceImplTest {
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getText()).isEmpty();
 
-        verify(sickNoteCommentRepository).save(eq(comment));
+        verify(sickNoteCommentRepository).save(comment);
     }
 
     @Test
@@ -74,6 +73,6 @@ class SickNoteCommentServiceImplTest {
         assertThat(sickNoteComment.getPerson()).isEqualTo(givenAuthor);
         assertThat(sickNoteComment.getText()).isEqualTo(givenComment);
 
-        verify(sickNoteCommentRepository).save(eq(sickNoteComment));
+        verify(sickNoteCommentRepository).save(sickNoteComment);
     }
 }

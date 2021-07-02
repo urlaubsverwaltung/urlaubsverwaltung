@@ -248,7 +248,7 @@ class SickNoteInteractionServiceImplTest {
 
         verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
         verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).delete(eq(absenceMapping));
+        verify(absenceMappingService).delete(absenceMapping);
         verify(absenceMappingService).create(isNull(), eq(VACATION), anyString());
     }
 

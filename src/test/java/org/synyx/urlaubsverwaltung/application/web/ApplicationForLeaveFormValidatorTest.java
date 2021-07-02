@@ -32,7 +32,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -576,8 +575,7 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setEndDate(LocalDate.now(UTC));
         appForm.setVacationType(createVacationType(HOLIDAY));
 
-        when(workDaysCountService.getWorkDaysCount(eq(appForm.getDayLength()), eq(appForm.getStartDate()),
-            eq(appForm.getEndDate()), eq(appForm.getPerson())))
+        when(workDaysCountService.getWorkDaysCount(appForm.getDayLength(), appForm.getStartDate(), appForm.getEndDate(), appForm.getPerson()))
             .thenReturn(ONE);
 
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
