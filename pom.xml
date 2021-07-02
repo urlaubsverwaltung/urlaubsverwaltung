@@ -27,7 +27,7 @@
     <testcontainers.version>1.15.3</testcontainers.version>
     <selenium.version>3.141.59</selenium.version>
     <!-- Downgrade because of removed code in jasper in 9.0.47 - delete if tomcat fixed this -->
-    <tomcat.version>9.0.46</tomcat.version>
+    <tomcat.version>10.0.7</tomcat.version>
   </properties>
 
   <scm>
