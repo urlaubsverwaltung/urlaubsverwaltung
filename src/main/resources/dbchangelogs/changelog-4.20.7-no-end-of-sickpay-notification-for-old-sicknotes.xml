@@ -1,0 +1,24 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="honnel" id="add-end-of-sickpay-notification-send">
+    <preConditions>
+      <tableExists tableName="sick_note"/>
+      <columnExists tableName="sick_note" columnName="end_of_sick_pay_notification_send"/>
+      <columnExists tableName="sick_note" columnName="last_edited"/>
+      <columnExists tableName="sick_note" columnName="start_date"/>
+      <columnExists tableName="sick_note" columnName="end_date"/>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="maximum_sick_pay_days"/>
+      <columnExists tableName="settings" columnName="days_before_end_of_sick_pay_notification"/>
+    </preConditions>
+    <sql>
+      UPDATE sick_note SET sick_note.end_of_sick_pay_notification_send = sick_note.last_edited
+      WHERE DATEDIFF(sick_note.end_date, sick_note.start_date) > (SELECT maximum_sick_pay_days FROM settings WHERE id = 1)
+      AND DATEDIFF(sick_note.end_date, CURRENT_DATE) &lt;= (SELECT days_before_end_of_sick_pay_notification FROM settings WHERE id = 1)
+      AND sick_note.end_of_sick_pay_notification_send IS NULL;
+    </sql>
+  </changeSet>
+</databaseChangeLog>
