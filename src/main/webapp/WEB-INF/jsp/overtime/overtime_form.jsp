@@ -159,7 +159,7 @@
                                 <spring:message code="overtime.data.numberOfHours"/>:
                             </label>
                             <div class="col-md-9">
-                                <uv:hour-and-minute-input/>
+                                <uv:hour-and-minute-input reductionFieldName="duration" />
                                 <div class="tw-mt-2">
                                     <form:checkbox id="overtime-reduce" path="reduce" />
                                     <label for="overtime-reduce" class="tw-font-normal">

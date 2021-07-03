@@ -288,7 +288,7 @@
                                             <spring:message code="application.data.hours"/>:
                                         </label>
                                         <div class="col-md-9">
-                                            <uv:hour-and-minute-input/>
+                                            <uv:hour-and-minute-input reductionFieldName="overtimeReduction" />
                                         </div>
                                     </div>
                                 </div>

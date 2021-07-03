@@ -146,7 +146,7 @@ public class OvertimeForm {
     /**
      * @return the hours and minutes fields mapped to a {@link Duration}
      */
-    Duration getDuration() {
+    public Duration getDuration() {
 
         if (hours == null && minutes == null) {
             return null;

@@ -4,14 +4,19 @@
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <%@attribute name="status" type="org.springframework.validation.Errors" required="false" %>
+<%@attribute name="reductionFieldName" type="java.lang.String" required="true" %>
+
+<c:set var="durationError">
+    <form:errors path="${reductionFieldName}"/>
+</c:set>
 
 <div class="tw-flex tw-items-start">
     <span class="tw-flex-1">
         <spring:bind path="hours">
-            <uv:input-group hasError="${status.error}">
-            <jsp:attribute name="addon">
-                <spring:message code="hours.abbr"/>
-            </jsp:attribute>
+            <uv:input-group hasError="${not empty durationError or status.error}">
+                <jsp:attribute name="addon">
+                    <spring:message code="hours.abbr"/>
+                </jsp:attribute>
                 <jsp:body>
                     <spring:message var="hoursPlaceholder"
                                     code='input.hours.input.placeholder'/>
@@ -27,16 +32,18 @@
                 </jsp:body>
             </uv:input-group>
         </spring:bind>
-        <uv:error-text>
-            <form:errors path="hours"/>
-        </uv:error-text>
+        <c:if test="${empty durationError}">
+            <uv:error-text>
+                <form:errors path="hours"/>
+            </uv:error-text>
+        </c:if>
     </span>&nbsp;
     <span class="tw-flex-1">
         <spring:bind path="minutes">
-            <uv:input-group hasError="${status.error}">
-            <jsp:attribute name="addon">
-                <spring:message code="minutes.abbr"/>
-            </jsp:attribute>
+            <uv:input-group hasError="${not empty durationError or status.error}">
+                <jsp:attribute name="addon">
+                    <spring:message code="minutes.abbr"/>
+                </jsp:attribute>
                 <jsp:body>
                     <spring:message var="minutesPlaceholder"
                                     code='input.minutes.input.placeholder'/>
@@ -52,8 +59,17 @@
                 </jsp:body>
             </uv:input-group>
         </spring:bind>
-        <uv:error-text>
-            <form:errors path="minutes"/>
-        </uv:error-text>
+        <c:if test="${empty durationError}">
+            <uv:error-text>
+                <form:errors path="minutes"/>
+            </uv:error-text>
+        </c:if>
     </span>
 </div>
+<c:if test="${not empty durationError}">
+    <p>
+        <uv:error-text>
+            ${durationError}
+        </uv:error-text>
+    </p>
+</c:if>

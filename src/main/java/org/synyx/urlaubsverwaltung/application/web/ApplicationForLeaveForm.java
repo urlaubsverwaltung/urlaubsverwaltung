@@ -208,7 +208,7 @@ public class ApplicationForLeaveForm {
     /**
      * @return the hours and minutes fields mapped to a {@link Duration}
      */
-    Duration getOvertimeReduction() {
+    public Duration getOvertimeReduction() {
 
         if (hours == null && minutes == null) {
             return null;
