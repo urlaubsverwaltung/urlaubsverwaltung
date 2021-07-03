@@ -656,6 +656,20 @@
                                         </uv:error-text>
                                     </div>
                                 </div>
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="overtimeSettings.minimumOvertimeReduction">
+                                        <spring:message code="settings.overtime.minimumOvertimeReduction"/>:
+                                    </label>
+                                    <div class="col-md-8">
+                                        <form:input id="overtimeSettings.minimumOvertimeReduction"
+                                                    path="overtimeSettings.minimumOvertimeReduction" class="form-control"
+                                                    cssErrorClass="form-control error"
+                                                    type="number" step="1" />
+                                        <uv:error-text>
+                                            <form:errors path="overtimeSettings.minimumOvertimeReduction" />
+                                        </uv:error-text>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
