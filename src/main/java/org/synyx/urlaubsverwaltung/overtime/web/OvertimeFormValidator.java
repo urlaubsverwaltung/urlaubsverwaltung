@@ -53,9 +53,9 @@ public class OvertimeFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
 
         final OvertimeForm overtimeForm = (OvertimeForm) target;
-        final OvertimeSettings settings = settingsService.getSettings().getOvertimeSettings();
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 
-        if (!settings.isOvertimeActive()) {
+        if (!overtimeSettings.isOvertimeActive()) {
             errors.reject(ERROR_OVERTIME_DEACTIVATED);
 
             // if overtime management is deactivated, no need to execute further validation
@@ -64,7 +64,7 @@ public class OvertimeFormValidator implements Validator {
 
         validatePeriod(overtimeForm, errors);
         validateNumberOfHours(overtimeForm, errors);
-        validateMaximumOvertimeNotReached(settings, overtimeForm, errors);
+        validateMaximumOvertimeNotReached(overtimeSettings, overtimeForm, errors);
         validateComment(overtimeForm, errors);
     }
 
