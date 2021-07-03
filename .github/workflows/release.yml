@@ -52,20 +52,16 @@ jobs:
       - name: Publish docker image to Docker Hub
         run: >
           ./mvnw $MAVEN_CLI_OPTS
-          docker:build
-          docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung
-          -Ddocker.push.registry=registry.hub.docker.com
-          -Ddocker.push.username=${{ secrets.DOCKER_USERNAME }}
-          -Ddocker.push.password=${{ secrets.DOCKER_PASSWORD }}
+          spring-boot:build-image
+          -Dspring-boot.build-image.publish=true
+          -Ddocker-publish-registry=registry.hub.docker.com
+          -Ddocker-publish-registry-username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker-publish-registry-password=${{ secrets.DOCKER_PASSWORD }}
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw $MAVEN_CLI_OPTS
-          docker:build
-          docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung
-          -Ddocker.push.registry=ghcr.io
-          -Ddocker.push.username=${{ github.actor }}
-          -Ddocker.push.password=${{ secrets.CR_PAT }}
-          -Ddocker.pull.username=${{ secrets.DOCKER_USERNAME }}
-          -Ddocker.pull.password=${{ secrets.DOCKER_PASSWORD }}
+          spring-boot:build-image
+          -Dspring-boot.build-image.publish=true
+          -Ddocker-publish-registry=ghcr.io
+          -Ddocker-publish-registry-username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker-publish-registry-password=${{ secrets.DOCKER_PASSWORD }}
