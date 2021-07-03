@@ -129,8 +129,9 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final ResultActions resultActions = perform(get("/web/overtime"));
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/overtime?person=5"));
+        resultActions
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime?person=5"));
     }
 
     @Test
@@ -159,14 +160,16 @@ class OvertimeViewControllerTest {
             new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
 
         final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_list"));
-        resultActions.andExpect(model().attribute("year", is(year)));
-        resultActions.andExpect(model().attribute("person", is(person)));
-        resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_list"))
+            .andExpect(model().attribute("year", is(year)))
+            .andExpect(model().attribute("person", is(person)))
+            .andExpect(model().attribute("signedInUser", is(signedInPerson)))
+            .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
+
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
-        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -199,14 +202,17 @@ class OvertimeViewControllerTest {
                 .param("person", "5")
                 .param("year", "2012")
         );
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_list"));
-        resultActions.andExpect(model().attribute("year", is(year)));
-        resultActions.andExpect(model().attribute("person", is(person)));
-        resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_list"))
+            .andExpect(model().attribute("year", is(year)))
+            .andExpect(model().attribute("person", is(person)))
+            .andExpect(model().attribute("signedInUser", is(signedInPerson)))
+            .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
+
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
-        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -256,11 +262,13 @@ class OvertimeViewControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/2"));
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("record")).usingRecursiveComparison().isEqualTo(record);
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("comments")).usingRecursiveComparison().isEqualTo(commentDtos);
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_details"));
-        resultActions.andExpect(model().attribute("signedInUser", is(signedInPerson)));
-        resultActions.andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))));
-        resultActions.andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_details"))
+            .andExpect(model().attribute("signedInUser", is(signedInPerson)))
+            .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
     }
 
     @Test
@@ -294,11 +302,12 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "5"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
-        resultActions.andExpect(model().attribute("person", is(person)));
-        resultActions.andExpect(model().attribute("signedInUser", is(person)));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("person", is(person)))
+            .andExpect(model().attribute("signedInUser", is(person)));
     }
 
     @Test
@@ -310,9 +319,10 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         final ResultActions resultActions = perform(get("/web/overtime/new"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
     @Test
@@ -342,10 +352,11 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         final ResultActions resultActions = perform(get("/web/overtime/new"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
-        resultActions.andExpect(model().attribute("persons", is(activePersons)));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("persons", is(activePersons)));
     }
 
     @Test
@@ -363,11 +374,12 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_form"));
-        resultActions.andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
-        resultActions.andExpect(model().attribute("person", is(overtimePerson)));
-        resultActions.andExpect(model().attribute("signedInUser", is(overtimePerson)));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("person", is(overtimePerson)))
+            .andExpect(model().attribute("signedInUser", is(overtimePerson)));
     }
 
     @Test
@@ -406,8 +418,9 @@ class OvertimeViewControllerTest {
         mockSettings();
 
         final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("overtime/overtime_form"));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test
@@ -445,9 +458,10 @@ class OvertimeViewControllerTest {
                 .param("comment", "To much work")
         );
 
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/overtime/2"));
-        resultActions.andExpect(flash().attribute("overtimeRecord", "CREATED"));
+        resultActions
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime/2"))
+            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
@@ -568,9 +582,10 @@ class OvertimeViewControllerTest {
                 .param("comment", "To much work")
         );
 
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/overtime/2"));
-        resultActions.andExpect(flash().attribute("overtimeRecord", "CREATED"));
+        resultActions
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime/2"))
+            .andExpect(flash().attribute("overtimeRecord", "CREATED"));
     }
 
     @Test
@@ -596,9 +611,10 @@ class OvertimeViewControllerTest {
                 .param("comment", "To much work")
         );
 
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/overtime/2"));
-        resultActions.andExpect(flash().attribute("overtimeRecord", "EDITED"));
+        resultActions
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime/2"))
+            .andExpect(flash().attribute("overtimeRecord", "EDITED"));
     }
 
     @Test
@@ -701,9 +717,10 @@ class OvertimeViewControllerTest {
                 .param("comment", "To much work")
         );
 
-        resultActions.andExpect(status().is3xxRedirection());
-        resultActions.andExpect(view().name("redirect:/web/overtime/2"));
-        resultActions.andExpect(flash().attribute("overtimeRecord", "EDITED"));
+        resultActions
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/overtime/2"))
+            .andExpect(flash().attribute("overtimeRecord", "EDITED"));
     }
 
     @Test
