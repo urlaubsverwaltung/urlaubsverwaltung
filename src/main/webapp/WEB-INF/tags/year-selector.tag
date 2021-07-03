@@ -6,7 +6,7 @@
 
 <jsp:useBean id="date" class="java.util.Date" />
 
-<span id="year-selection" class="tw-leading-6 dropdown tw-inline-block">
+<div id="year-selection" class="tw-leading-6 dropdown tw-inline-block">
     <a
         id="dropdownLabel"
         href="#"
@@ -24,4 +24,4 @@
             <li><a href="${hrefPrefix.concat(y)}"><c:out value="${y}" /></a></li>
         </c:forEach>
     </ul>
-</span>
+</div>
