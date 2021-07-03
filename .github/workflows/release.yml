@@ -49,7 +49,7 @@ jobs:
             ./target/urlaubsverwaltung-*.war
             ./target/urlaubsverwaltung-*.jar
           prerelease: true
-      - name: Publish docker image to Docker Hub
+      - name: Publish docker image to Docker Hub synyx
         run: >
           ./mvnw $MAVEN_CLI_OPTS
           spring-boot:build-image

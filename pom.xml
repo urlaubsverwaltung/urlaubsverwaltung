@@ -26,7 +26,6 @@
     <uv-extension-api.version>0.8.1</uv-extension-api.version>
     <packaging.layout>jar</packaging.layout>
 
-    <docker.name>urlaubsverwaltung/urlaubsverwaltung</docker.name>
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-path>path/example</docker-publish-registry-path>
     <docker-publish-registry-username>username</docker-publish-registry-username>
@@ -454,30 +453,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-
-      <!-- Docker -->
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.43.2</version>
-        <configuration>
-          <images>
-            <image>
-              <name>${docker.name}</name>
-              <build>
-                <dockerFileDir>${project.basedir}</dockerFileDir>
-                <assembly>
-                  <descriptorRef>artifact</descriptorRef>
-                </assembly>
-                <tags>
-                  <tag>${project.version}</tag>
-                  <tag>latest</tag>
-                </tags>
-              </build>
-            </image>
-          </images>
-        </configuration>
       </plugin>
 
       <!-- Editorconfig -->
