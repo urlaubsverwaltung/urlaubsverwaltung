@@ -463,30 +463,6 @@
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
 
-      <!-- Docker -->
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.40.0</version>
-        <configuration>
-          <images>
-            <image>
-              <name>${docker.name}</name>
-              <build>
-                <dockerFileDir>${project.basedir}</dockerFileDir>
-                <assembly>
-                  <descriptorRef>artifact</descriptorRef>
-                </assembly>
-                <tags>
-                  <tag>${project.version}</tag>
-                  <tag>latest</tag>
-                </tags>
-              </build>
-            </image>
-          </images>
-        </configuration>
-      </plugin>
-
       <!-- Editorconfig -->
       <plugin>
         <groupId>org.ec4j.maven</groupId>
