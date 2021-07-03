@@ -22,10 +22,14 @@
     <java.version>17</java.version>
     <testcontainers.version>1.18.3</testcontainers.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
-    <docker.name>urlaubsverwaltung/urlaubsverwaltung</docker.name>
     <shedlock.version>4.43.0</shedlock.version>
     <uv-extension-api.version>0.8.1</uv-extension-api.version>
     <packaging.layout>jar</packaging.layout>
+
+    <docker.name>urlaubsverwaltung/urlaubsverwaltung</docker.name>
+    <docker-publish-registry>registry.example.com</docker-publish-registry>
+    <docker-publish-registry-username>username</docker-publish-registry-username>
+    <docker-publish-registry-password>password</docker-publish-registry-password>
   </properties>
 
   <scm>
@@ -362,6 +366,16 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <layout>ZIP</layout>
+          <image>
+            <name>urlaubsverwaltung/${project.artifactId}:${project.version}</name>
+          </image>
+          <docker>
+            <publishRegistry>
+              <username>${docker-publish-registry-username}</username>
+              <password>${docker-publish-registry-password}</password>
+              <url>${docker-publish-registry}</url>
+            </publishRegistry>
+          </docker>
         </configuration>
       </plugin>
 
