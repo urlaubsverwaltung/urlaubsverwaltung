@@ -40,23 +40,34 @@
                 <uv:print/>
             </jsp:attribute>
             <jsp:body>
-                <div class="legend-dropdown dropdown">
-                    <a id="active-state" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
-                        <c:choose>
-                            <c:when test="${param.active}">
-                                <c:choose>
-                                    <c:when test="${department != null}">
-                                        <c:out value="${department.name}"/><span class="caret"></span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <spring:message code="persons.active"/><span class="caret"></span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="persons.inactive"/><span class="caret"></span>
-                            </c:otherwise>
-                        </c:choose>
+                <c:set var="visiblePersonsDropdownText">
+                    <c:choose>
+                        <c:when test="${param.active}">
+                            <c:choose>
+                                <c:when test="${department != null}">
+                                    <c:out value="${department.name}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code="persons.active"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:when>
+                        <c:otherwise>
+                            <spring:message code="persons.inactive"/>
+                        </c:otherwise>
+                    </c:choose>
+                </c:set>
+                <div class="dropdown tw-inline-block">
+                    <a
+                        id="active-state"
+                        href="#"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        role="button"
+                        aria-expanded="false"
+                        class="tw-text-current tw-m-0"
+                    >
+                        ${visiblePersonsDropdownText}<span class="caret tw-opacity-70"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                         <li>
