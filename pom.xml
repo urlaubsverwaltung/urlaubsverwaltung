@@ -455,30 +455,6 @@
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
 
-      <!-- Docker -->
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.38.1</version>
-        <configuration>
-          <images>
-            <image>
-              <name>synyx/urlaubsverwaltung</name>
-              <build>
-                <dockerFileDir>${project.basedir}</dockerFileDir>
-                <assembly>
-                  <descriptorRef>artifact</descriptorRef>
-                </assembly>
-                <tags>
-                  <tag>${project.version}</tag>
-                  <tag>latest</tag>
-                </tags>
-              </build>
-            </image>
-          </images>
-        </configuration>
-      </plugin>
-
       <!-- Editorconfig -->
       <plugin>
         <groupId>org.ec4j.maven</groupId>
