@@ -22,9 +22,13 @@
     <java.version>17</java.version>
     <testcontainers.version>1.17.6</testcontainers.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
-    <docker.name>synyx/urlaubsverwaltung</docker.name>
     <shedlock.version>4.43.0</shedlock.version>
     <packaging.layout>jar</packaging.layout>
+
+    <docker.name>synyx/urlaubsverwaltung</docker.name>
+    <docker-publish-registry>registry.example.com</docker-publish-registry>
+    <docker-publish-registry-username>username</docker-publish-registry-username>
+    <docker-publish-registry-password>password</docker-publish-registry-password>
   </properties>
 
   <scm>
@@ -336,6 +340,18 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <image>
+            <name>urlaubsverwaltung/${project.artifactId}:${project.version}</name>
+          </image>
+          <docker>
+            <publishRegistry>
+              <username>${docker-publish-registry-username}</username>
+              <password>${docker-publish-registry-password}</password>
+              <url>${docker-publish-registry}</url>
+            </publishRegistry>
+          </docker>
+        </configuration>
       </plugin>
 
       <!-- Frontend assets -->
