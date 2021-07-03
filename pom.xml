@@ -19,9 +19,14 @@
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>17</java.version>
+
     <testcontainers.version>1.17.2</testcontainers.version>
+    <selenium.version>3.141.59</selenium.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
-    <docker.name>synyx/urlaubsverwaltung</docker.name>
+
+    <docker-publish-registry>registry.example.com</docker-publish-registry>
+    <docker-publish-registry-username>username</docker-publish-registry-username>
+    <docker-publish-registry-password>password</docker-publish-registry-password>
   </properties>
 
   <scm>
@@ -367,6 +372,18 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <image>
+            <name>synyx/${project.artifactId}:${project.version}</name>
+          </image>
+          <docker>
+            <publishRegistry>
+              <username>${docker-publish-registry-username}</username>
+              <password>${docker-publish-registry-password}</password>
+              <url>${docker-publish-registry}</url>
+            </publishRegistry>
+          </docker>
+        </configuration>
       </plugin>
 
       <!-- Frontend assets -->
