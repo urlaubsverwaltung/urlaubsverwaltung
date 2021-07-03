@@ -62,6 +62,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -443,6 +444,31 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void ensureAjaxReplacementAddingForOtherPersonIsNotAllowedWhenMyRoleIsUser() {
+        final Person signedInUser = new Person();
+        signedInUser.setId(42);
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(1337);
+        when(personService.getPersonByID(1337)).thenReturn(Optional.of(person));
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+
+        assertThatThrownBy(() -> {
+            perform(post("/web/application/new/replacements")
+                .header("X-Requested-With", "ajax")
+                .param("holidayReplacementToAdd", "1")
+                .param("person", "1337")
+                .param("vacationType.category", "HOLIDAY")
+                .param("holidayReplacements[0].person.id", "42")
+                .param("holidayReplacements[1].person.id", "1337")
+                .param("add-holiday-replacement", ""));
+        }).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
     void ensureAddingAnEmptyReplacementForNewApplicationDoesNotThrow() throws Exception {
 
         final Person signedInPerson = new Person();
@@ -474,6 +500,28 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void ensureAjaxAddingAnEmptyReplacementForNewApplicationReturnsEmptyTextResponse() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final ResultActions perform = perform(post("/web/application/new/replacements")
+            .header("X-Requested-With", "ajax")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("holidayReplacementToAdd", ""));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attributeDoesNotExist("holidayReplacement"))
+            .andExpect(view().name("thymeleaf/application/application-form :: replacement-item"))
+            .andExpect(content().string(""));
     }
 
     @ParameterizedTest
@@ -516,6 +564,65 @@ class ApplicationForLeaveFormViewControllerTest {
             )))
 
             .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void ensureAjaxAddingReplacementForNewApplication() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person replacementPerson = new Person();
+        replacementPerson.setId(42);
+        when(personService.getPersonByID(42)).thenReturn(Optional.of(replacementPerson));
+
+        final ResultActions perform = perform(post("/web/application/new/replacements")
+            .header("X-Requested-With", "ajax")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "1337")
+            .param("holidayReplacements[1].person.id", "21")
+            .param("holidayReplacementToAdd", "42"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("holidayReplacement", allOf(
+                hasProperty("person", hasProperty("id", is(42))),
+                hasProperty("note", nullValue())
+            )))
+            .andExpect(model().attribute("index", is(2)))
+            .andExpect(model().attribute("deleteButtonFormActionValue", is("/web/application/new")))
+            .andExpect(view().name("thymeleaf/application/application-form :: replacement-item"));
+    }
+
+    @Test
+    void ensureAjaxAddingReplacementForExistingApplication() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person replacementPerson = new Person();
+        replacementPerson.setId(42);
+        when(personService.getPersonByID(42)).thenReturn(Optional.of(replacementPerson));
+
+        final ResultActions perform = perform(post("/web/application/7/replacements")
+            .header("X-Requested-With", "ajax")
+            .param("id", "7")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "1337")
+            .param("holidayReplacements[1].person.id", "21")
+            .param("holidayReplacementToAdd", "42"));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("holidayReplacement", allOf(
+                hasProperty("person", hasProperty("id", is(42))),
+                hasProperty("note", nullValue())
+            )))
+            .andExpect(model().attribute("index", is(2)))
+            .andExpect(model().attribute("deleteButtonFormActionValue", is("/web/application/7")))
+            .andExpect(view().name("thymeleaf/application/application-form :: replacement-item"));
     }
 
     @ParameterizedTest
