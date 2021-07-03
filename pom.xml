@@ -27,6 +27,7 @@
 
     <docker.name>synyx/urlaubsverwaltung</docker.name>
     <docker-publish-registry>registry.example.com</docker-publish-registry>
+    <docker-publish-registry-path>path/example</docker-publish-registry-path>
     <docker-publish-registry-username>username</docker-publish-registry-username>
     <docker-publish-registry-password>password</docker-publish-registry-password>
   </properties>
@@ -342,13 +343,12 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <image>
-            <name>urlaubsverwaltung/${project.artifactId}:${project.version}</name>
+            <name>${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}</name>
           </image>
           <docker>
             <publishRegistry>
               <username>${docker-publish-registry-username}</username>
               <password>${docker-publish-registry-password}</password>
-              <url>${docker-publish-registry}</url>
             </publishRegistry>
           </docker>
         </configuration>
