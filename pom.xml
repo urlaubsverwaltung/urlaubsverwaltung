@@ -28,6 +28,7 @@
 
     <docker.name>urlaubsverwaltung/urlaubsverwaltung</docker.name>
     <docker-publish-registry>registry.example.com</docker-publish-registry>
+    <docker-publish-registry-path>path/example</docker-publish-registry-path>
     <docker-publish-registry-username>username</docker-publish-registry-username>
     <docker-publish-registry-password>password</docker-publish-registry-password>
   </properties>
@@ -367,13 +368,12 @@
         <configuration>
           <layout>ZIP</layout>
           <image>
-            <name>urlaubsverwaltung/${project.artifactId}:${project.version}</name>
+            <name>${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}</name>
           </image>
           <docker>
             <publishRegistry>
               <username>${docker-publish-registry-username}</username>
               <password>${docker-publish-registry-password}</password>
-              <url>${docker-publish-registry}</url>
             </publishRegistry>
           </docker>
         </configuration>
