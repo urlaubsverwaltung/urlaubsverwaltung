@@ -72,9 +72,9 @@
                     <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                         <li>
                             <a href="${URL_PREFIX}/person?active=true&year=${year}" class="tw-flex tw-items-center">
-                                    <span class="tw-w-5 tw-flex tw-items-center">
-                                        <icon:eye className="tw-w-4 tw-h-4" solid="true" />
-                                    </span>
+                                <span class="tw-w-5 tw-flex tw-items-center">
+                                    <icon:eye className="tw-w-4 tw-h-4" solid="true" />
+                                </span>
                                 &nbsp;<spring:message code="persons.active"/>
                             </a>
                         </li>
@@ -91,9 +91,9 @@
                         </c:if>
                         <li>
                             <a href="${URL_PREFIX}/person?active=false&year=${year}" class="tw-flex tw-items-center">
-                                    <span class="tw-w-5 tw-flex tw-items-center">
-                                        <icon:eye-off className="tw-w-4 tw-h-4" solid="true" />
-                                    </span>
+                                <span class="tw-w-5 tw-flex tw-items-center">
+                                    <icon:eye-off className="tw-w-4 tw-h-4" solid="true" />
+                                </span>
                                 &nbsp;<spring:message code="persons.inactive"/>
                             </a>
                         </li>
