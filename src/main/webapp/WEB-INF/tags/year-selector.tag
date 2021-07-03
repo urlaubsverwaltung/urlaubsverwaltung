@@ -6,14 +6,22 @@
 
 <jsp:useBean id="date" class="java.util.Date" />
 
-<span id="year-selection" class="tw-leading-6 dropdown legend-dropdown">
-    <a id="dropdownLabel" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false" class="">
-        <c:out value="${year}" /><span class="caret"></span>
+<div id="year-selection" class="tw-leading-6 dropdown tw-inline-block">
+    <a
+        id="year-selector-dropdown-link"
+        href="#"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        role="button"
+        aria-expanded="false"
+        class="tw-text-current"
+    >
+        <c:out value="${year}" /><span class="tw-opacity-70 caret"></span>
     </a>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel">
+    <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-link">
         <c:forEach begin="0" end="10" varStatus="loop">
             <c:set var="y" value="${date.year + 1900 + 2 - loop.count}" />
             <li><a href="${hrefPrefix.concat(y)}"><c:out value="${y}" /></a></li>
         </c:forEach>
     </ul>
-</span>
+</div>
