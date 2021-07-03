@@ -10,7 +10,7 @@
 <body>
 
 <ul>
-  <li th:fragment="replacement-item" th:if="${holidayReplacement != null}" class="form-group tw-mb-6">
+  <li th:fragment="replacement-item" th:if="${holidayReplacement != null}" class="form-group tw-mb-6" data-test-id="holiday-replacement-row">
     <input type="hidden" th:name="${'holidayReplacements[' + index + '].person'}" th:value="${holidayReplacement.person.id}" />
     <div class="col-md-push-3 col-md-9">
       <div>

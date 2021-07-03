@@ -194,6 +194,8 @@ class ApplicationForLeaveCreateIT {
     @Test
     void checkIfItIsPossibleToRequestAnApplicationForLeave() {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
+        final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
@@ -219,6 +221,14 @@ class ApplicationForLeaveCreateIT {
         wait.until(pageIsVisible(applicationPage));
 
         applicationPage.from(getNextWorkday());
+
+        applicationPage.selectReplacement(batman);
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1)));
+
+        applicationPage.selectReplacement(joker);
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1)));
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2)));
+
         applicationPage.submit();
 
         wait.until(pageIsVisible(applicationDetailPage));
@@ -249,7 +259,6 @@ class ApplicationForLeaveCreateIT {
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, ZERO, null);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), TEN, TEN, TEN, ZERO, null);
-
 
         return savedPerson;
     }

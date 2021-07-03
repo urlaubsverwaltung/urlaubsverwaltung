@@ -370,6 +370,7 @@
                                                     id="holiday-replacement-select"
                                                     name="holidayReplacementToAdd"
                                                     cssClass="tw-rounded-l tw-rounded-r-none"
+                                                    testId="holiday-replacement-select"
                                                 >
                                                     <option value=""></option>
                                                     <c:forEach items="${selectableHolidayReplacements}" var="person">
@@ -399,7 +400,7 @@
                                             <c:forEach items="${application.holidayReplacements}" varStatus="loop">
                                                 <c:set var="index" value="${holidayReplacementsStartIndex - loop.index - 1}"></c:set>
                                                 <c:set var="holidayReplacement" value="${application.holidayReplacements[index]}"></c:set>
-                                                <li class="form-group tw-mb-6">
+                                                <li class="form-group tw-mb-6" data-test-id="holiday-replacement-row">
                                                     <form:hidden path="holidayReplacements[${index}].person" />
                                                     <div class="col-md-push-3 col-md-9">
                                                         <div>
