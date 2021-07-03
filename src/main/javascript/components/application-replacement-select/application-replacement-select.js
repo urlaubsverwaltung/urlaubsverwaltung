@@ -18,7 +18,7 @@ selectElement.addEventListener("change", async function (event) {
     if (renderedHtml) {
       const template = document.createElement("template");
       template.innerHTML = renderedHtml;
-      document.querySelector("#replacement-section-container ul").append(template.content);
+      document.querySelector("#replacement-section-container ul").prepend(template.content);
 
       selectElement.querySelector('option[value="' + selectElement.value + '"]').remove();
       selectElement.blur();
