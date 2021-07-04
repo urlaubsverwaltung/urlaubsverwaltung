@@ -1,14 +1,14 @@
 const standardNumberOfRows = 1;
 const expandedNumberOfRows = 4;
 
-[...document.querySelectorAll("textarea")].forEach((textarea) => {
-  textarea.addEventListener("focus", () => {
-    textarea.rows = expandedNumberOfRows;
-  });
+document.addEventListener("focusin", function (event) {
+  if (event.target.tagName === "TEXTAREA") {
+    event.target.rows = expandedNumberOfRows;
+  }
+});
 
-  textarea.addEventListener("blur", () => {
-    if (textarea.value == "") {
-      textarea.rows = standardNumberOfRows;
-    }
-  });
+document.addEventListener("focusout", function (event) {
+  if (event.target.tagName === "TEXTAREA") {
+    event.target.rows = standardNumberOfRows;
+  }
 });
