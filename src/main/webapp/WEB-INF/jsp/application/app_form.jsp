@@ -168,7 +168,7 @@
                                         <spring:message code="application.data.vacationType"/>:
                                     </label>
                                     <div class="col-md-9">
-                                        <uv:select id="vacationType" name="vacationType"
+                                        <uv:select id="vacationType" testId="vacation-type-select" name="vacationType"
                                                    onchange="vacationTypeChanged(this.value);">
                                             <c:forEach items="${vacationTypes}" var="vacationType">
                                                 <c:choose>

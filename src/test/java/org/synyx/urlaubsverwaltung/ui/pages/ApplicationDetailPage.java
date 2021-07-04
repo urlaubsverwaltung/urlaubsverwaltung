@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.context.MessageSource;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.util.Locale;
@@ -34,6 +35,16 @@ public class ApplicationDetailPage implements Page {
     public boolean showsApplicationCreatedInfo() {
         final WebElement element = driver.findElement(ALERT_SUCCESS_SELECTOR);
         return element != null && element.isDisplayed();
+    }
+
+    public boolean showsReplacement(Person person) {
+        final WebElement holidayReplacementList = driver.findElement(By.cssSelector("[data-test-id=holiday-replacement-list]"));
+        return holidayReplacementList.getText().contains(person.getNiceName());
+    }
+
+    public void selectEdit() {
+        final WebElement button = driver.findElement(By.cssSelector("[data-test-id=application-edit-button]"));
+        button.click();
     }
 
     private String title(String username) {
