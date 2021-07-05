@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -43,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class OvertimeViewControllerTest {
@@ -135,6 +137,43 @@ class OvertimeViewControllerTest {
     }
 
     @Test
+    void showUsersOvertimeListAndIsAllowedToAddOvertime() throws Exception {
+
+        final int personId = 5;
+        final Person person = new Person();
+        person.setId(personId);
+        when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        mockSettings();
+
+        final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
+    }
+
+    @Test
+    void showUsersOvertimeListAndIsNotAllowedToAddOvertime() throws Exception {
+
+        final int personId = 5;
+        final Person person = new Person();
+        person.setId(personId);
+        when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(personService.getSignedInUser()).thenReturn(person);
+        mockSettingsWithOvertimeWritePrivilegedOnly();
+
+        final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(false)));
+    }
+
+    @Test
     void showOvertimeIsAllowed() throws Exception {
 
         final int year = Year.now(clock).getValue();
@@ -156,6 +195,8 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
+        mockSettings();
+
         final List<OvertimeListRecordDto> recordDtos = List.of(
             new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
 
@@ -167,7 +208,8 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(false)));
 
         assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
     }
@@ -193,6 +235,8 @@ class OvertimeViewControllerTest {
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
+
+        mockSettings();
 
         final List<OvertimeListRecordDto> recordDtos = List.of(
             new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
@@ -243,10 +287,9 @@ class OvertimeViewControllerTest {
         overtime.setId(overtimeId);
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
 
-        final Person signedInPerson = new Person();
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
-        when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, overtimePerson)).thenReturn(true);
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(overtimePerson, overtimePerson)).thenReturn(true);
 
         final OvertimeComment comment = new OvertimeComment(overtimePerson, overtime, CREATED, Clock.systemUTC());
         final List<OvertimeComment> overtimeComments = List.of(comment);
@@ -254,6 +297,8 @@ class OvertimeViewControllerTest {
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(Duration.ZERO);
+
+        mockSettings();
 
         final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL());
         final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate());
@@ -266,9 +311,10 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_details"))
-            .andExpect(model().attribute("signedInUser", is(signedInPerson)))
+            .andExpect(model().attribute("signedInUser", is(overtimePerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
     }
 
     @Test
@@ -308,6 +354,22 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("signedInUser", is(person)));
+    }
+
+    @Test
+    void recordOvertimeSignedInUserSameButOnlyPrivilegedAreAllowed() {
+
+        final int personId = 5;
+        final Person person = new Person();
+        person.setId(personId);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+        mockSettingsWithOvertimeWritePrivilegedOnly();
+
+        assertThatThrownBy(() -> perform(get("/web/overtime/new").param("person", "5")))
+            .isInstanceOf(NestedServletException.class);
     }
 
     @Test
@@ -383,6 +445,24 @@ class OvertimeViewControllerTest {
     }
 
     @Test
+    void editOvertimeSignedInUserSameButOnlyPrivilegedAreAllowed() {
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setPermissions(List.of(USER));
+
+        final int overtimeId = 2;
+        final LocalDate overtimeEndDate = LocalDate.MAX;
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, overtimeEndDate, Duration.ofHours(10));
+        overtime.setId(overtimeId);
+        when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        mockSettingsWithOvertimeWritePrivilegedOnly();
+
+        assertThatThrownBy(() -> perform(get("/web/overtime/2/edit")))
+            .isInstanceOf(NestedServletException.class);
+    }
+
+    @Test
     void editOvertimeDifferentPersons() {
 
         final Person overtimePerson = new Person();
@@ -448,6 +528,7 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+        mockSettings();
 
         final ResultActions resultActions = perform(
             post("/web/overtime")
@@ -491,6 +572,25 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("overtimeReductionPossible", is(false)));
+    }
+
+    @Test
+    void createOvertimeRecordButOnlyPrivilegedAreAllowed() {
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        overtimePerson.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+        mockSettingsWithOvertimeWritePrivilegedOnly();
+
+        assertThatThrownBy(() -> perform(
+            post("/web/overtime")
+                .param("person.id", "4")
+                .param("startDate", "02.07.2019")
+                .param("endDate", "02.07.2019")
+                .param("hours", "8")
+                .param("comment", "To much work")
+        )).isInstanceOf(NestedServletException.class);
     }
 
     @Test
@@ -570,8 +670,9 @@ class OvertimeViewControllerTest {
 
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
-
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        mockSettings();
 
         final ResultActions resultActions = perform(
             post("/web/overtime")
@@ -598,8 +699,9 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
-
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        mockSettings();
 
         final ResultActions resultActions = perform(
             post("/web/overtime/2")
@@ -671,6 +773,32 @@ class OvertimeViewControllerTest {
     }
 
     @Test
+    void updateOvertimeRecordButOnlyPrivilegedAreAllowed() {
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        overtimePerson.setPermissions(List.of(USER));
+
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        overtime.setId(2);
+        when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
+
+        mockSettingsWithOvertimeWritePrivilegedOnly();
+
+        assertThatThrownBy(() -> perform(
+            post("/web/overtime/2")
+                .param("id", "2")
+                .param("person.id", "4")
+                .param("startDate", "02.07.2019")
+                .param("endDate", "02.07.2019")
+                .param("hours", "8")
+                .param("comment", "To much work")
+        )).isInstanceOf(NestedServletException.class);
+    }
+
+    @Test
     void updateOvertimeIsNotSamePerson() {
 
         when(personService.getSignedInUser()).thenReturn(new Person());
@@ -704,8 +832,9 @@ class OvertimeViewControllerTest {
         final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
-
         when(overtimeService.record(any(Overtime.class), any(Optional.class), any(Person.class))).thenReturn(overtime);
+
+        mockSettings();
 
         final ResultActions resultActions = perform(
             post("/web/overtime/2")
@@ -756,6 +885,12 @@ class OvertimeViewControllerTest {
     private void mockSettingsWithOvertimeReductionDisabled() {
         final Settings settings = new Settings();
         settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+    }
+
+    private void mockSettingsWithOvertimeWritePrivilegedOnly() {
+        final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeWritePrivilegedOnly(true);
         when(settingsService.getSettings()).thenReturn(settings);
     }
 
