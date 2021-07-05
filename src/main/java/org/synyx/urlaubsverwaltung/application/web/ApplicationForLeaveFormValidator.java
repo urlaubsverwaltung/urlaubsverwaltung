@@ -330,6 +330,13 @@ public class ApplicationForLeaveFormValidator implements Validator {
         if (minutes != null && (minutes < 0 || (minutes == 0 && hoursNullOrZero))) {
             errors.rejectValue(ATTRIBUTE_MINUTES, ERROR_INVALID_HOURS);
         }
+
+        final int minimumOvertimeReduction = settings.getOvertimeSettings().getMinimumOvertimeReduction();
+        final Duration minimumDuration = Duration.ofHours(minimumOvertimeReduction);
+        final Duration overtimeReduction = applicationForLeave.getOvertimeReduction();
+        if (overtimeReduction != null && overtimeReduction.compareTo(minimumDuration) < 0) {
+            errors.rejectValue("overtimeReduction", "overtime.error.minimumReductionRequired", new Object[]{minimumOvertimeReduction}, null);
+        }
     }
 
     private void validateStringLength(String text, String field, Errors errors) {

@@ -31,6 +31,14 @@ public class OvertimeSettings {
     @Column(name = "overtime_minimum")
     private Integer minimumOvertime = 5;
 
+    /**
+     * Defines the minimum overtime reduction value a person has to use for an application.
+     *
+     * @since 4.21.0
+     */
+    @Column(name = "overtime_minimum_reduction")
+    private Integer minimumOvertimeReduction = 0;
+
 
     public boolean isOvertimeActive() {
         return overtimeActive;
@@ -54,5 +62,13 @@ public class OvertimeSettings {
 
     public void setMinimumOvertime(Integer minimumOvertime) {
         this.minimumOvertime = minimumOvertime;
+    }
+
+    public Integer getMinimumOvertimeReduction() {
+        return minimumOvertimeReduction;
+    }
+
+    public void setMinimumOvertimeReduction(Integer minimumOvertimeReduction) {
+        this.minimumOvertimeReduction = minimumOvertimeReduction;
     }
 }

@@ -746,6 +746,49 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
+    void ensureOvertimeDurationFailsWhenItIsLowerThanTheConfiguredMinimum() {
+
+        final Settings settings = setupOvertimeSettings();
+        settings.getOvertimeSettings().setMinimumOvertimeReduction(4);
+
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setCategory(OVERTIME);
+
+        appForm.setVacationType(overtimeVacationType);
+        appForm.setHours(BigDecimal.valueOf(3));
+
+        sut.validate(appForm, errors);
+
+        verify(errors).rejectValue("overtimeReduction", "overtime.error.minimumReductionRequired", new Object[]{4}, null);
+        verify(errors).hasErrors();
+        verifyNoMoreInteractions(errors);
+    }
+
+    @Test
+    void ensureOvertimeDurationSucceedsWhenItIsEqualToTheConfiguredMinimum() {
+
+        final Settings settings = setupOvertimeSettings();
+        settings.getOvertimeSettings().setMinimumOvertimeReduction(4);
+
+        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
+
+        final VacationType overtimeVacationType = new VacationType();
+        overtimeVacationType.setCategory(OVERTIME);
+
+        appForm.setVacationType(overtimeVacationType);
+        appForm.setHours(BigDecimal.valueOf(4));
+
+        sut.validate(appForm, errors);
+
+        verify(errors).hasErrors();
+        verifyNoMoreInteractions(errors);
+    }
+
+    @Test
     void ensureHoursCanNotBeNegative() {
 
         setupOvertimeSettings();

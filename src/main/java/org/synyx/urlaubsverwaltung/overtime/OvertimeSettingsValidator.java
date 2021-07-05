@@ -19,6 +19,11 @@ public class OvertimeSettingsValidator {
 
         validateOvertimeLimit(overtimeSettings.getMaximumOvertime(), "overtimeSettings.maximumOvertime", errors);
         validateOvertimeLimit(overtimeSettings.getMinimumOvertime(), "overtimeSettings.minimumOvertime", errors);
+
+        final Integer minimumOvertimeReduction = overtimeSettings.getMinimumOvertimeReduction();
+        if (minimumOvertimeReduction == null || minimumOvertimeReduction < 0) {
+            errors.rejectValue("overtimeSettings.minimumOvertimeReduction", "settings.overtime.minimumOvertimeReduction.error");
+        }
     }
 
     private static void validateOvertimeLimit(Integer limit, String field, Errors errors) {
