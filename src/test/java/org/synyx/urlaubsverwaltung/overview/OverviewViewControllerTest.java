@@ -18,9 +18,11 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
@@ -57,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.R
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class OverviewViewControllerTest {
@@ -132,6 +135,7 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         final int currentYear = Year.now(clock).getValue();
 
@@ -149,6 +153,7 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         final int expectedYear = 1987;
 
@@ -174,6 +179,8 @@ class OverviewViewControllerTest {
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
         when(vacationDaysService.getVacationDaysLeft(account, Optional.of(account))).thenReturn(vacationDaysLeft);
 
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
+
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("vacationDaysLeft", vacationDaysLeft))
             .andExpect(model().attribute("account", account));
@@ -189,6 +196,7 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("applications", nullValue()));
@@ -262,6 +270,7 @@ class OverviewViewControllerTest {
         sickNote2.setStartDate(LocalDate.now(UTC).minusDays(10L));
         sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
         final ResultActions resultActions = perform(builder);
@@ -270,6 +279,26 @@ class OverviewViewControllerTest {
         resultActions.andExpect(model().attribute("applications", hasSize(3)));
         resultActions.andExpect(model().attribute("sickNotes", hasSize(2)));
         resultActions.andExpect(model().attribute("signedInUser", person));
+        resultActions.andExpect(model().attribute("userIsAllowedToWriteOvertime", true));
+    }
+
+
+    @Test
+    void showUserPersonalOverviewAndIsNotAllowedToWriteOvertime() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(settingsService.getSettings()).thenReturn(overtimeSettings(true));
+
+        MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
+        final ResultActions resultActions = perform(builder);
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(model().attribute("userIsAllowedToWriteOvertime", false));
     }
 
     private Person somePerson() {
@@ -294,5 +323,15 @@ class OverviewViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
+    }
+
+    private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly) {
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        overtimeSettings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
+
+        final Settings settings = new Settings();
+        settings.setOvertimeSettings(overtimeSettings);
+
+        return settings;
     }
 }

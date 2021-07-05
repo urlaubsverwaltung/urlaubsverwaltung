@@ -92,7 +92,7 @@
 
             <uv:section-heading>
                 <jsp:attribute name="actions">
-                    <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
+                    <c:if test="${userIsAllowedToWriteOvertime}">
                         <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.new"/>">
                             <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>

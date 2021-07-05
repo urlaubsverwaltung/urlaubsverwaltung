@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -36,6 +37,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -124,6 +126,7 @@ public class OverviewViewController {
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
+        model.addAttribute("userIsAllowedToWriteOvertime", isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         return "person/overview";
     }
@@ -178,5 +181,11 @@ public class OverviewViewController {
 
     private void prepareSettings(Model model) {
         model.addAttribute("settings", settingsService.getSettings());
+    }
+
+    private boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
+        OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        return signedInUser.hasRole(OFFICE)
+            || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }
 }
