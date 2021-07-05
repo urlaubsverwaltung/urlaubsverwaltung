@@ -32,7 +32,7 @@ public class OvertimeSettings {
     private Integer minimumOvertime = 5;
 
     /**
-     * Defines the minimum overtime reduction value a person has to use.
+     * Defines the minimum overtime reduction value a person has to use for an application.
      *
      * @since 4.21.0
      */
