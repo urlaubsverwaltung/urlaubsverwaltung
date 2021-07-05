@@ -44,7 +44,7 @@ class MenuDataProviderTest {
 
     @Test
     void postHandleWithoutSignedInUserModel() {
-        mockOvertime(true);
+        mockOvertime(true, false);
 
         final Person person = new Person();
         person.setId(10);
@@ -65,7 +65,7 @@ class MenuDataProviderTest {
 
     @Test
     void postHandleWithSignedInUserModel() {
-        mockOvertime(true);
+        mockOvertime(true, false);
 
         final Person person = new Person();
         person.setEmail("person@example.org");
@@ -94,17 +94,21 @@ class MenuDataProviderTest {
 
     static Stream<Arguments> modelPropertiesNavigation() {
         return Stream.of(
-            Arguments.of("navigationOvertimeItemEnabled", true, true),
-            Arguments.of("navigationOvertimeItemEnabled", false, false),
-            Arguments.of("navigationRequestPopupEnabled", true, false),
-            Arguments.of("navigationRequestPopupEnabled", true, true)
+            Arguments.of("navigationOvertimeItemEnabled", true, true, true),
+            Arguments.of("navigationOvertimeItemEnabled", true, true, false),
+            Arguments.of("navigationOvertimeItemEnabled", false, false, true),
+            Arguments.of("navigationOvertimeItemEnabled", false, false, false),
+            Arguments.of("navigationRequestPopupEnabled", true, false, true),
+            Arguments.of("navigationRequestPopupEnabled", true, false, false),
+            Arguments.of("navigationRequestPopupEnabled", true, true, true),
+            Arguments.of("navigationRequestPopupEnabled", true, true, false)
         );
     }
 
     @ParameterizedTest
     @MethodSource("modelPropertiesNavigation")
-    void ensureForOvertimeAndRequestIsCorrectSetForOffice(String property, boolean propertyValue, boolean overtimeEnabled) {
-        mockOvertime(overtimeEnabled);
+    void ensureForOvertimeAndRequestIsCorrectSetForOffice(String property, boolean propertyValue, boolean overtimeEnabled, boolean overtimeWritePrivilegedOnly) {
+        mockOvertime(overtimeEnabled, overtimeWritePrivilegedOnly);
 
         final Person person = new Person();
         person.setPermissions(List.of(OFFICE));
@@ -120,7 +124,7 @@ class MenuDataProviderTest {
 
     @Test
     void ensureQuickAddPopupIsDisabledWhenUserIsLoggedInAndOvertimeIsDisabled() {
-        mockOvertime(false);
+        mockOvertime(false, false);
 
         final Person person = new Person();
         person.setPermissions(List.of(USER));
@@ -134,9 +138,26 @@ class MenuDataProviderTest {
         assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", false);
     }
 
-    private void mockOvertime(boolean overtimeFeatureActive) {
+    @Test
+    void ensureOvertimeItemIsNotEnabledWhenOvertimeIsRestrictedToPrivileged() {
+        mockOvertime(true, true);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModel()).containsEntry("navigationOvertimeItemEnabled", false);
+    }
+
+    private void mockOvertime(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly) {
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(overtimeFeatureActive);
+        overtimeSettings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
 
         final Settings settings = new Settings();
         settings.setOvertimeSettings(overtimeSettings);

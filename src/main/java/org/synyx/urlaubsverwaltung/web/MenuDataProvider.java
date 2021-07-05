@@ -43,7 +43,7 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("userId", user.getId());
             modelAndView.addObject("menuGravatarUrl", gravatarUrl);
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
-            modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled());
+            modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
         }
     }
 
@@ -58,11 +58,12 @@ public class MenuDataProvider implements HandlerInterceptor {
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
-        return signedInUser.hasRole(Role.OFFICE) || overtimeEnabled();
+        return signedInUser.hasRole(Role.OFFICE) || overtimeEnabled(signedInUser);
     }
 
-    private boolean overtimeEnabled() {
+    private boolean overtimeEnabled(Person signedInUser) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
-        return overtimeSettings.isOvertimeActive();
+        boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
+        return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime;
     }
 }
