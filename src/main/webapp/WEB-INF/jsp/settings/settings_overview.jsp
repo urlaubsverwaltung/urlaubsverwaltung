@@ -112,18 +112,23 @@
                         </div>
                         <div class="form-group tw-flex">
                             <label class="control-label col-md-8">
-                                <spring:message code='settings.vacation.remindForWaitingApplications'/>:
-                            </label>
-                            <div class="col-md-8">
-                                <c:out value="${applicationsettings.remindForWaitingApplications}" />
-                            </div>
-                        </div>
-                        <div class="form-group tw-flex">
-                            <label class="control-label col-md-8">
                                 <spring:message code='settings.vacation.allowHalfDays'/>:
                             </label>
                             <div class="col-md-8">
                                 <c:out value="${applicationsettings.allowHalfDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <h3 class="control-label col-md-8">
+                                <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
+                            </h3>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.vacation.remindForWaitingApplications'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${applicationsettings.remindForWaitingApplications}" />
                             </div>
                         </div>
                         <div class="form-group tw-flex">
@@ -133,6 +138,11 @@
                             <div class="col-md-8">
                                 <c:out value="${applicationsettings.daysBeforeRemindForWaitingApplications}" />
                             </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <h3 class="control-label col-md-8">
+                                <spring:message code="settings.vacation.remindForUpcomingApplications.title"/>
+                            </h3>
                         </div>
                         <div class="form-group tw-flex">
                             <label class="control-label col-md-8">

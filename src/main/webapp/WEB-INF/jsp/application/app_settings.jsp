@@ -102,8 +102,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+            </div>
 
+            <div class="form-section tw-mb-8">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="settings.vacation.remindForWaitingApplications.title"/>
+                    </h2>
+                </uv:section-heading>
+                <div class="row">
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
@@ -153,6 +160,14 @@
 
                     </div>
                 </div>
+            </div>
+
+            <div class="form-section tw-mb-8">
+                <uv:section-heading>
+                    <h2>
+                        <spring:message code="settings.vacation.remindForUpcomingApplications.title"/>
+                    </h2>
+                </uv:section-heading>
                 <div class="row">
 
                     <div class="col-md-4 col-md-push-8">
@@ -177,8 +192,7 @@
                                     <form:radiobutton id="applicationSettings.remindForUpcomingApplications.false"
                                                       path="remindForUpcomingApplications"
                                                       value="false"/>
-                                    <spring:message
-                                        code="settings.vacation.remindForUpcomingApplications.false"/>
+                                    <spring:message code="settings.vacation.remindForUpcomingApplications.false"/>
                                 </label>
                             </div>
                         </div>
@@ -202,6 +216,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-section">
                 <div class="row tw-mb-16">
                     <div class="col-xs-12">
