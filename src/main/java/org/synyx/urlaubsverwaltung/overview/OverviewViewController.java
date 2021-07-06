@@ -126,7 +126,7 @@ public class OverviewViewController {
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
-        model.addAttribute("userIsAllowedToWriteOvertime", isUserIsAllowedToWriteOvertime(signedInUser, person));
+        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         return "person/overview";
     }
@@ -181,11 +181,5 @@ public class OverviewViewController {
 
     private void prepareSettings(Model model) {
         model.addAttribute("settings", settingsService.getSettings());
-    }
-
-    private boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
-        OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
-        return signedInUser.hasRole(OFFICE)
-            || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }
 }

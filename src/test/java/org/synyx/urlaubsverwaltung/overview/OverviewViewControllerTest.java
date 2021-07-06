@@ -135,7 +135,6 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         final int currentYear = Year.now(clock).getValue();
 
@@ -153,7 +152,6 @@ class OverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         final int expectedYear = 1987;
 
@@ -179,8 +177,6 @@ class OverviewViewControllerTest {
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
         when(vacationDaysService.getVacationDaysLeft(account, Optional.of(account))).thenReturn(vacationDaysLeft);
 
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
-
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("vacationDaysLeft", vacationDaysLeft))
             .andExpect(model().attribute("account", account));
@@ -196,7 +192,6 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("applications", nullValue()));
@@ -234,6 +229,7 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
         final VacationType vacationType = new VacationType();
@@ -270,7 +266,6 @@ class OverviewViewControllerTest {
         sickNote2.setStartDate(LocalDate.now(UTC).minusDays(10L));
         sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
         final ResultActions resultActions = perform(builder);
@@ -293,7 +288,7 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(true));
+        when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(false);
 
         MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
         final ResultActions resultActions = perform(builder);
@@ -323,15 +318,5 @@ class OverviewViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
-    }
-
-    private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly) {
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        overtimeSettings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
-
-        final Settings settings = new Settings();
-        settings.setOvertimeSettings(overtimeSettings);
-
-        return settings;
     }
 }
