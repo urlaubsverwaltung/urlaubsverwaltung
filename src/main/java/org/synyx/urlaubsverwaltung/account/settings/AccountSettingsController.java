@@ -38,12 +38,13 @@ public class AccountSettingsController {
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String saveAccountSettings(@ModelAttribute("accountSettings") AccountSettingsDto accountSettingsDto,
-                                       Model model) {
+                                      Model model) {
 
         model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
 
         accountSettingsService.save(accountSettingsDto);
         model.addAttribute("accountSettings", accountSettingsDto);
+        model.addAttribute("success", true);
 
         return "account/account_settings";
     }

@@ -38,6 +38,7 @@ public class OvertimeSettingsController {
 
         overtimeSettingsService.save(overtimeSettingsDto);
         model.addAttribute("overtimeSettings", overtimeSettingsDto);
+        model.addAttribute("success", true);
 
         return "overtime/overtime_settings";
     }

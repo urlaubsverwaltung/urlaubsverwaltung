@@ -36,6 +36,7 @@ public class TimeSettingsController {
 
         timeSettingsService.save(timeSettingsDto);
         model.addAttribute("timeSettings", timeSettingsDto);
+        model.addAttribute("success", true);
 
         return "absences/absences_settings";
     }

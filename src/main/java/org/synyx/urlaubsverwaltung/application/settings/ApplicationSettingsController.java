@@ -33,10 +33,11 @@ public class ApplicationSettingsController {
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String saveApplicationSettings(@ModelAttribute("applicationSettings") ApplicationSettingsDto applicationSettingsDto,
-                                      Model model) {
+                                          Model model) {
 
         applicationSettingsService.save(applicationSettingsDto);
         model.addAttribute("applicationSettings", applicationSettingsDto);
+        model.addAttribute("success", true);
 
         return "application/app_settings";
     }

@@ -32,10 +32,12 @@ public class WorkingTimeSettingsController {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String saveWorkingTimeSettings(@ModelAttribute("workingTimeSettings") WorkingTimeSettingsDto workingTimeSettingsDto, Model model) {
+    public String saveWorkingTimeSettings(@ModelAttribute("workingTimeSettings") WorkingTimeSettingsDto workingTimeSettingsDto,
+                                          Model model) {
 
         workingTimeSettingsService.save(workingTimeSettingsDto);
         model.addAttribute("workingTimeSettings", workingTimeSettingsDto);
+        model.addAttribute("success", true);
 
         return "workingtime/workingtime_settings";
     }

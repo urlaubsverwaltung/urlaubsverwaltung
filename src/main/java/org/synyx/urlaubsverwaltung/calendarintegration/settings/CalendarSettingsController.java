@@ -4,11 +4,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsDto;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.TimeZone;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -46,6 +43,7 @@ public class CalendarSettingsController {
         }
 
         model.addAttribute("calendarSettings", newCalendarSettingsDto);
+        model.addAttribute("success", true);
 
         return "calendarintegration/calendar_settings";
     }

@@ -38,6 +38,7 @@ public class SickNoteSettingsController {
 
         sickNoteSettingsService.save(sickNoteSettingsDto);
         model.addAttribute("sickNoteSettings", sickNoteSettingsDto);
+        model.addAttribute("success", true);
 
         return "sicknote/sicknote_settings";
     }
