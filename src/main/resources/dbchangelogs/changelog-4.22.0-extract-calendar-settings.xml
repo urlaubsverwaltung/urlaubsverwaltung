@@ -1,0 +1,55 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="weigel" id="extract-calendar-settings">
+
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="calendar_provider"/>
+      <columnExists tableName="settings" columnName="calendar_google_client_id"/>
+      <columnExists tableName="settings" columnName="calendar_google_client_secret"/>
+      <columnExists tableName="settings" columnName="calendar_google_calendar_id"/>
+      <columnExists tableName="settings" columnName="calendar_google_refresh_token"/>
+      <columnExists tableName="settings" columnName="calendar_ews_email"/>
+      <columnExists tableName="settings" columnName="calendar_ews_password"/>
+      <columnExists tableName="settings" columnName="calendar_ews_calendar"/>
+      <columnExists tableName="settings" columnName="calendar_ews_send_invitation_active"/>
+      <columnExists tableName="settings" columnName="calendar_ews_timezoneid"/>
+      <columnExists tableName="settings" columnName="calendar_ews_url"/>
+    </preConditions>
+
+    <createTable tableName="calendar_settings">
+      <column autoIncrement="true" name="id" type="bigint(20)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="calendar_provider" type="VARCHAR(255)"/>
+      <column name="calendar_google_client_id" type="VARCHAR(255)"/>
+      <column name="calendar_google_client_secret" type="VARCHAR(255)"/>
+      <column name="calendar_google_calendar_id" type="VARCHAR(255)"/>
+      <column name="calendar_google_refresh_token" type="VARCHAR(255)"/>
+      <column name="calendar_ews_email" type="VARCHAR(255)"/>
+      <column name="calendar_ews_password" type="VARCHAR(255)"/>
+      <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
+      <column name="calendar_ews_send_invitation_active" type="BIT(1)"/>
+      <column name="calendar_ews_timezoneid" type="VARCHAR(255)"/>
+      <column name="calendar_ews_url" type="VARCHAR(255)"/>
+    </createTable>
+
+    <insert tableName="calendar_settings">
+      <column name="calendar_provider" valueComputed="(SELECT calendar_provider FROM settings)"/>
+      <column name="calendar_google_client_id" valueComputed="(SELECT calendar_google_client_id FROM settings)"/>
+      <column name="calendar_google_client_secret" valueComputed="(SELECT calendar_google_client_secret FROM settings)"/>
+      <column name="calendar_google_calendar_id" valueComputed="(SELECT calendar_google_calendar_id FROM settings)"/>
+      <column name="calendar_google_refresh_token" valueComputed="(SELECT calendar_google_refresh_token FROM settings)"/>
+      <column name="calendar_ews_email" valueComputed="(SELECT calendar_ews_email FROM settings)"/>
+      <column name="calendar_ews_password" valueComputed="(SELECT calendar_ews_password FROM settings)"/>
+      <column name="calendar_ews_calendar" valueComputed="(SELECT calendar_ews_calendar FROM settings)"/>
+      <column name="calendar_ews_send_invitation_active" valueComputed="(SELECT calendar_ews_send_invitation_active FROM settings)"/>
+      <column name="calendar_ews_timezoneid" valueComputed="(SELECT calendar_ews_timezoneid FROM settings)"/>
+      <column name="calendar_ews_url" valueComputed="(SELECT calendar_ews_url FROM settings)"/>
+    </insert>
+
+  </changeSet>
+</databaseChangeLog>

@@ -252,7 +252,6 @@
                         <h2>
                             <spring:message code="settings.sickDays.title"/>
                         </h2>
-                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
                     </jsp:body>
                 </uv:section-heading>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
@@ -454,7 +453,7 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/sicknote/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <a href="${URL_PREFIX}/calendar/settings" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>
@@ -463,9 +462,12 @@
                         <h2>
                             Calendar settings
                         </h2>
-                        <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
                     </jsp:body>
                 </uv:section-heading>
+                    <div class="alert alert-danger tw-flex tw-items-center tw-text-sm" role="alert">
+                        <icon:speakerphone className="tw-w-4 tw-h-4" solid="true" />
+                        &nbsp;Funktion ist deprecated
+                    </div>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
                         <uv:box-icon className="tw-bg-green-500 tw-text-white">
@@ -473,7 +475,14 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.calendar.provider'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <spring:message code="settings.calendar.provider.${calendarsettings.provider}"/>
+                            </div>
+                        </div>
                     </jsp:body>
                 </uv:box>
             </div>

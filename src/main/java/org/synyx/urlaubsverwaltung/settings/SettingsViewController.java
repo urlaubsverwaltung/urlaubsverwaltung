@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsService;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
@@ -44,6 +45,7 @@ public class SettingsViewController {
     private final OvertimeSettingsService overtimeSettingsSerivce;
     private final AccountSettingsService accountSettingsService;
     private final ApplicationSettingsService applicationSettingsService;
+    private final CalendarSettingsService calendarSettingsService;
     private final Clock clock;
 
     @Autowired
@@ -52,7 +54,8 @@ public class SettingsViewController {
                                   SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService,
                                   TimeSettingsService timeSettingsService, SickNoteSettingsService sickNoteSettingsSerivce,
                                   OvertimeSettingsService overtimeSettingsSerivce, AccountSettingsService accountSettingsService,
-                                  ApplicationSettingsService applicationSettingsService, Clock clock) {
+                                  ApplicationSettingsService applicationSettingsService, CalendarSettingsService calendarSettingsService, Clock clock) {
+
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
@@ -64,6 +67,7 @@ public class SettingsViewController {
         this.overtimeSettingsSerivce = overtimeSettingsSerivce;
         this.accountSettingsService = accountSettingsService;
         this.applicationSettingsService = applicationSettingsService;
+        this.calendarSettingsService = calendarSettingsService;
         this.clock = clock;
     }
 
@@ -108,6 +112,7 @@ public class SettingsViewController {
         model.addAttribute("overtimesettings", overtimeSettingsSerivce.getSettingsDto());
         model.addAttribute("accountsettings", accountSettingsService.getSettingsDto());
         model.addAttribute("applicationsettings", applicationSettingsService.getSettingsDto());
+        model.addAttribute("calendarsettings", calendarSettingsService.getSettingsDto(request));
 
         return "settings/settings_overview";
     }
