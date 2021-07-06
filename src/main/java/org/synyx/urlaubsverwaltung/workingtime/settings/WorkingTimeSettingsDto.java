@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime.settings;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
@@ -112,6 +113,16 @@ public class WorkingTimeSettingsDto {
         this.federalState = federalState;
     }
 
+    @JsonIgnore
+    public FederalState[] getFederalStateTypes() {
+        return FederalState.values();
+    }
+
+    @JsonIgnore
+    public DayLength[] getDayLengthTypes() {
+        return DayLength.values();
+    }
+
     public void setWorkingDays(List<Integer> workingDays) {
 
         setAllDayLengthsToZero();
@@ -147,6 +158,7 @@ public class WorkingTimeSettingsDto {
         }
     }
 
+    @JsonIgnore
     public List<Integer> getWorkingDays() {
         final List<Integer> workingDays = new ArrayList<>();
 

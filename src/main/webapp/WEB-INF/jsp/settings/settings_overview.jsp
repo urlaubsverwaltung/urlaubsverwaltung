@@ -353,99 +353,125 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                    <span class="tw-text-sm">
-
-                        <table class="tw-flex">
-                            <caption class="tw-sr-only">
-                                <spring:message code="person.details.workingTime.title"/>
-                            </caption>
-                            <thead class="tw-order-last">
-                                <tr>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="MONDAY"/>
-                                    </th>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="TUESDAY"/>
-                                    </th>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="WEDNESDAY"/>
-                                    </th>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="THURSDAY"/>
-                                    </th>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="FRIDAY"/>
-                                    </th>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="SATURDAY"/>
-                                    </th>
-                                    <th class="tw-block tw-font-medium" scope="col">
-                                        <spring:message code="SUNDAY"/>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="tw-mr-1 tw-flex">
-                                <tr class="tw-flex tw-flex-col">
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.monday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.tuesday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.wednesday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.thursday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.friday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.saturday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                    <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                                        <c:if test="${workingtimesettings.sunday.duration > 0}">
-                                            <icon:check-circle />
-                                        </c:if>
-                                        <span class="tw-sr-only">
-                                            <spring:message code="${workingtimesettings.sunday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="form-group tw-flex">
+                        <span class="tw-text-sm">
+                            <table class="tw-flex">
+                                <caption class="tw-sr-only">
+                                    <spring:message code="person.details.workingTime.title"/>
+                                </caption>
+                                <thead class="tw-order-last">
+                                    <tr>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="MONDAY"/>
+                                        </th>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="TUESDAY"/>
+                                        </th>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="WEDNESDAY"/>
+                                        </th>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="THURSDAY"/>
+                                        </th>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="FRIDAY"/>
+                                        </th>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="SATURDAY"/>
+                                        </th>
+                                        <th class="tw-block tw-font-medium" scope="col">
+                                            <spring:message code="SUNDAY"/>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tw-mr-1 tw-flex">
+                                    <tr class="tw-flex tw-flex-col">
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.monday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.tuesday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.wednesday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.thursday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.friday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.saturday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                        <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
+                                            <c:if test="${workingtimesettings.sunday.duration > 0}">
+                                                <icon:check-circle />
+                                            </c:if>
+                                            <span class="tw-sr-only">
+                                                <spring:message code="${workingtimesettings.sunday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}" />
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </span>
+                    </div>
+                    <div class="form-group tw-flex">
+                            <label class="control-label col-md-4">
+                            <spring:message code='settings.publicHolidays.workingDuration.christmasEve'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <spring:message code="${workingtimesettings.workingDurationForChristmasEve}"/>
+                        </div>
+                    </div>
+                    <div class="form-group tw-flex">
+                        <label class="control-label col-md-4">
+                            <spring:message code='settings.publicHolidays.workingDuration.newYearsEve'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <spring:message code="${workingtimesettings.workingDurationForNewYearsEve}"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group tw-flex">
+                        <label class="control-label col-md-4" >
+                            <spring:message code='settings.publicHolidays.federalState'/>:
+                        </label>
+                        <div class="col-md-8">
+                            <spring:message code="federalState.${workingtimesettings.federalState}"/>
+                        </div>
+                    </div>
                     </jsp:body>
                 </uv:box>
             </div>
