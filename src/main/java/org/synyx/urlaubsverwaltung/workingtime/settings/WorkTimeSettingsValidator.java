@@ -28,4 +28,23 @@ public class WorkTimeSettingsValidator {
             errors.rejectValue("workingTimeSettings.workingDays", ERROR_MANDATORY_FIELD);
         }
     }
+
+    public static void validateWorkingTimeSettings(WorkingTimeSettingsDto workingTimeSettingsDto, Errors errors) {
+
+        if (workingTimeSettingsDto.getFederalState() == null) {
+            errors.rejectValue("workingTimeSettings.federalState", ERROR_MANDATORY_FIELD);
+        }
+
+        if (workingTimeSettingsDto.getWorkingDurationForChristmasEve() == null) {
+            errors.rejectValue("workingTimeSettings.workingDurationForChristmasEve", ERROR_MANDATORY_FIELD);
+        }
+
+        if (workingTimeSettingsDto.getWorkingDurationForNewYearsEve() == null) {
+            errors.rejectValue("workingTimeSettings.workingDurationForNewYearsEve", ERROR_MANDATORY_FIELD);
+        }
+
+        if (workingTimeSettingsDto.getWorkingDays() == null || workingTimeSettingsDto.getWorkingDays().isEmpty()) {
+            errors.rejectValue("workingTimeSettings.workingDays", ERROR_MANDATORY_FIELD);
+        }
+    }
 }

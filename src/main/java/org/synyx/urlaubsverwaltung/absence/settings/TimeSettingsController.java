@@ -3,11 +3,13 @@ package org.synyx.urlaubsverwaltung.absence.settings;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsValidator.validateTimeSettings;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -32,12 +34,19 @@ public class TimeSettingsController {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String saveTimeSettings(@ModelAttribute("timeSettings") TimeSettingsDto timeSettingsDto, Model model) {
+    public String saveTimeSettings(@ModelAttribute("timeSettings") TimeSettingsDto timeSettingsDto, Model model,
+                                   Errors errors) {
 
-        timeSettingsService.save(timeSettingsDto);
+        Errors validationErrors = validateTimeSettings(timeSettingsDto, errors);
+
+        if(validationErrors.hasErrors()) {
+            model.addAttribute("errors", validationErrors);
+        } else {
+            timeSettingsService.save(timeSettingsDto);
+            model.addAttribute("success", true);
+        }
+
         model.addAttribute("timeSettings", timeSettingsDto);
-        model.addAttribute("success", true);
-
         return "absences/absences_settings";
     }
 }

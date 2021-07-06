@@ -4,12 +4,14 @@ package org.synyx.urlaubsverwaltung.sicknote.settings;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsValidator.validateSickNoteSettings;
 
 @Controller
 @RequestMapping("/web/sicknote/settings")
@@ -34,12 +36,18 @@ public class SickNoteSettingsController {
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String saveSickNoteSettings(@ModelAttribute("sickNoteSettings") SickNoteSettingsDto sickNoteSettingsDto,
-                                       Model model) {
+                                       Model model, Errors errors) {
 
-        sickNoteSettingsService.save(sickNoteSettingsDto);
+        Errors validationErrors = validateSickNoteSettings(sickNoteSettingsDto, errors);
+
+        if(validationErrors.hasErrors()) {
+            model.addAttribute("errors", errors);
+        } else {
+            sickNoteSettingsService.save(sickNoteSettingsDto);
+            model.addAttribute("success", true);
+        }
+
         model.addAttribute("sickNoteSettings", sickNoteSettingsDto);
-        model.addAttribute("success", true);
-
         return "sicknote/sicknote_settings";
     }
 }

@@ -3,10 +3,12 @@ package org.synyx.urlaubsverwaltung.calendarintegration.settings;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsValidator.validateCalendarSettings;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -33,17 +35,24 @@ public class CalendarSettingsController {
     @PreAuthorize(IS_OFFICE)
     public String saveCalendarSettings(@ModelAttribute("calendarSettings") CalendarSettingsDto calendarSettingsDto,
                                        @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
-                                       HttpServletRequest request,
-                                       Model model) {
+                                       HttpServletRequest request, Model model, Errors errors) {
 
-        final CalendarSettingsDto newCalendarSettingsDto = calendarSettingsService.save(request, calendarSettingsDto);
+        Errors validationErrors = validateCalendarSettings(calendarSettingsDto, errors);
+
+        if(validationErrors.hasErrors()) {
+
+            model.addAttribute("calendarSettings", calendarSettingsDto);
+            model.addAttribute("errors", validationErrors);
+        } else {
+
+            final CalendarSettingsDto newCalendarSettingsDto = calendarSettingsService.save(request, calendarSettingsDto);
+            model.addAttribute("calendarSettings", newCalendarSettingsDto);
+            model.addAttribute("success", true);
+        }
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
         }
-
-        model.addAttribute("calendarSettings", newCalendarSettingsDto);
-        model.addAttribute("success", true);
 
         return "calendarintegration/calendar_settings";
     }
