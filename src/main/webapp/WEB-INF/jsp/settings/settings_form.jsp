@@ -629,6 +629,26 @@
                                 </div>
 
                                 <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
+                                        <spring:message code='settings.overtime.overtimeReductionWithoutApplicationActive'/>:
+                                    </label>
+                                    <div class="col-md-8 radio">
+                                        <label class="halves">
+                                            <form:radiobutton id="overtimeSettings.overtimeReductionWithoutApplicationActive.true"
+                                                              path="overtimeSettings.overtimeReductionWithoutApplicationActive" value="true"
+                                                              data-test-id="setting-overtime-reduction-enabled" />
+                                            <spring:message code="settings.overtime.overtimeReductionWithoutApplicationActive.true"/>
+                                        </label>
+                                        <label class="halves">
+                                            <form:radiobutton id="overtimeSettings.overtimeReductionWithoutApplicationActive.false"
+                                                              path="overtimeSettings.overtimeReductionWithoutApplicationActive" value="false"
+                                                              data-test-id="setting-overtime-reduction-disabled" />
+                                            <spring:message code="settings.overtime.overtimeReductionWithoutApplicationActive.false"/>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group is-required">
                                     <label class="control-label col-md-4" for="overtimeSettings.maximumOvertime">
                                         <spring:message code="settings.overtime.maximum"/>:
                                     </label>

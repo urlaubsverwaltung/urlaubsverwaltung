@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -63,7 +64,7 @@ public class OvertimeFormValidator implements Validator {
         }
 
         validatePeriod(overtimeForm, errors);
-        validateNumberOfHours(overtimeForm, errors);
+        validateNumberOfHours(overtimeSettings, overtimeForm, errors);
         validateMaximumOvertimeNotReached(overtimeSettings, overtimeForm, errors);
         validateComment(overtimeForm, errors);
     }
@@ -89,22 +90,29 @@ public class OvertimeFormValidator implements Validator {
         }
     }
 
-    private void validateNumberOfHours(OvertimeForm overtimeForm, Errors errors) {
+    private void validateNumberOfHours(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
-        if (overtimeForm.getHours() == null && overtimeForm.getMinutes() == null) {
+        final BigDecimal hours = overtimeForm.getHours();
+        final Integer minutes = overtimeForm.getMinutes();
+
+        final boolean overtimeReductionEnabled = overtimeSettings.isOvertimeReductionWithoutApplicationActive();
+
+        if (hours == null && minutes == null) {
             errors.rejectValue("hours", "overtime.error.hoursOrMinutesRequired");
             errors.rejectValue("minutes", "overtime.error.hoursOrMinutesRequired");
+        } else if (!overtimeReductionEnabled && overtimeForm.isReduce()) {
+            errors.rejectValue("reduce", "overtime.error.overtimeReductionNotAllowed");
         }
     }
 
 
-    private void validateMaximumOvertimeNotReached(OvertimeSettings settings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final Duration numberOfHours = overtimeForm.getDuration();
 
         if (numberOfHours != null) {
-            final Duration maximumOvertime = Duration.ofHours(settings.getMaximumOvertime());
-            final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
+            final Duration maximumOvertime = Duration.ofHours(overtimeSettings.getMaximumOvertime());
+            final Duration minimumOvertime = Duration.ofHours(overtimeSettings.getMinimumOvertime());
 
             if (maximumOvertime.isZero()) {
                 errors.reject(ERROR_OVERTIME_DEACTIVATED);

@@ -14,6 +14,9 @@ public class OvertimeSettings {
     @Column(name = "overtime_active")
     private boolean overtimeActive = false;
 
+    @Column(name = "overtime_reduction_without_application_active")
+    private boolean overtimeReductionWithoutApplicationActive = true;
+
     /**
      * Defines the maximum number of overtime a person can have.
      *
@@ -46,6 +49,14 @@ public class OvertimeSettings {
 
     public void setOvertimeActive(boolean overtimeActive) {
         this.overtimeActive = overtimeActive;
+    }
+
+    public boolean isOvertimeReductionWithoutApplicationActive() {
+        return overtimeReductionWithoutApplicationActive;
+    }
+
+    public void setOvertimeReductionWithoutApplicationActive(boolean overtimeReductionWithoutApplicationActive) {
+        this.overtimeReductionWithoutApplicationActive = overtimeReductionWithoutApplicationActive;
     }
 
     public Integer getMaximumOvertime() {

@@ -250,6 +250,44 @@ class OvertimeFormValidatorTest {
         verifyNoInteractions(errors);
     }
 
+    @Test
+    void ensureOvertimeReductionIsAllowedWhenFeatureIsEnabled() {
+
+        final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        when(overtimeService.getLeftOvertimeForPerson(any())).thenReturn(Duration.ofHours(42));
+
+        final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
+        overtimeForm.setHours(BigDecimal.TEN);
+        overtimeForm.setMinutes(30);
+        overtimeForm.setReduce(true);
+
+        sut.validate(overtimeForm, errors);
+
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureOvertimeReductionIsNotAllowedWhenFeatureIsDisabled() {
+
+        final Settings settings = new Settings();
+        settings.getOvertimeSettings().setOvertimeActive(true);
+        settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
+        overtimeForm.setHours(BigDecimal.TEN);
+        overtimeForm.setMinutes(30);
+        overtimeForm.setReduce(true);
+
+        sut.validate(overtimeForm, errors);
+
+        verify(errors).rejectValue("reduce", "overtime.error.overtimeReductionNotAllowed");
+    }
+
     // Validate using overtime settings --------------------------------------------------------------------------------
     @Test
     void ensureCanNotRecordOvertimeIfOvertimeManagementIsDeactivated() {
