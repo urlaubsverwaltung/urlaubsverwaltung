@@ -24,6 +24,7 @@ public class WorkingTimeSettingsDto {
     private DayLength workingDurationForChristmasEve;
     private DayLength workingDurationForNewYearsEve;
     private FederalState federalState;
+    private boolean defaultWorkingDaysDeactivated;
 
     public Integer getId() {
         return id;
@@ -195,5 +196,13 @@ public class WorkingTimeSettingsDto {
         this.friday = ZERO;
         this.saturday = ZERO;
         this.sunday = ZERO;
+    }
+
+    public boolean isDefaultWorkingDaysDeactivated() {
+        return defaultWorkingDaysDeactivated;
+    }
+
+    public void setDefaultWorkingDaysDeactivated(boolean defaultWorkingDaysDeactivated) {
+        this.defaultWorkingDaysDeactivated = defaultWorkingDaysDeactivated;
     }
 }

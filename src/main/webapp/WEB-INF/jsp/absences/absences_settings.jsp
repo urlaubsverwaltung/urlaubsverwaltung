@@ -48,8 +48,6 @@
                 </div>
             </div>
 
-            <c:set var="hasPublicHolidayError" value="${not empty timeError }" />
-
             <div class="form-section tw-mb-8">
                 <uv:section-heading>
                     <h2>

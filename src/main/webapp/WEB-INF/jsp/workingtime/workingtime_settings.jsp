@@ -48,8 +48,6 @@
                 </div>
             </div>
 
-            <c:set var="hasPublicHolidayError" value="${not empty workingTimeError || not empty timeError || not empty overtimeError}" />
-
             <div class="form-section tw-mb-8">
                 <uv:section-heading>
                     <h2>
@@ -58,13 +56,15 @@
                 </uv:section-heading>
                 <div class="row">
 
-                    <div class="col-md-4 col-md-push-8">
-                        <span class="help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="settings.workingTime.description"/>
-                        </span>
-                    </div>
-                    <div class="col-md-8 col-md-pull-4">
+                    <c:if test="${workingTimeSettings.defaultWorkingDaysDeactivated}">
+
+                        <div class="col-md-4 col-md-push-8">
+                            <span class="help-block tw-text-sm">
+                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                <spring:message code="settings.workingTime.description"/>
+                            </span>
+                        </div>
+                        <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
                             <label class="control-label col-md-4 tw-mb-4">
                                 <spring:message code="settings.workingTime.weekdays"/>:
@@ -138,6 +138,8 @@
                             </div>
                         </div>
                     </div>
+
+                    </c:if>
                 </div>
             </div>
             <div class="form-section tw-mb-8">

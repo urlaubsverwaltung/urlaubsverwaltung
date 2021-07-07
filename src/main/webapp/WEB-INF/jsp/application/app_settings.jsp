@@ -48,8 +48,6 @@
                 </div>
             </div>
 
-            <c:set var="hasPublicHolidayError" value="${not empty timeError }" />
-
             <div class="form-section">
                 <uv:section-heading>
                     <h2>
@@ -135,8 +133,7 @@
                                     <form:radiobutton id="applicationSettings.remindForWaitingApplications.false"
                                                       path="remindForWaitingApplications"
                                                       value="false"/>
-                                    <spring:message
-                                        code="settings.vacation.remindForWaitingApplications.false"/>
+                                    <spring:message code="settings.vacation.remindForWaitingApplications.false"/>
                                 </label>
                             </div>
                         </div>
