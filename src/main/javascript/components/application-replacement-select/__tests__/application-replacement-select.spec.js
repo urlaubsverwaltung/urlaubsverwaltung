@@ -189,4 +189,64 @@ describe("application-replacement-select", function () {
 
     expect(document.body.querySelectorAll("#replacement-section-container ul li")).toHaveLength(1);
   });
+
+  it.each([[true], [false]])(
+    "toggles aria-disabled attribute on submit button for response.ok=%s",
+    async function (responseOk) {
+      http.post.mockReturnValue(
+        Promise.resolve({
+          ok: responseOk,
+          text: () => Promise.resolve(""),
+        }),
+      );
+
+      expect(submitButtonElement.getAttribute("aria-disabled")).toBeNull();
+
+      selectElement.value = "3";
+      selectElement.dispatchEvent(new Event("change"));
+
+      expect(submitButtonElement.getAttribute("aria-disabled")).toBe("true");
+
+      jest.advanceTimersToNextTimer();
+      // await allSettled POST
+      await Promise.resolve();
+      await Promise.resolve();
+      // await response.text
+      await Promise.resolve();
+
+      expect(submitButtonElement.getAttribute("aria-disabled")).toBeNull();
+    },
+  );
+
+  it.each([[true], [false]])(
+    "prevents submit button click while a request is running (for response.ok=%s)",
+    async function (responseOk) {
+      http.post.mockReturnValue(
+        Promise.resolve({
+          ok: responseOk,
+          text: () => Promise.resolve(""),
+        }),
+      );
+
+      const clickEvent = new Event("click");
+      jest.spyOn(clickEvent, "preventDefault");
+
+      selectElement.value = "3";
+      selectElement.dispatchEvent(new Event("change"));
+
+      submitButtonElement.dispatchEvent(clickEvent);
+      expect(clickEvent.preventDefault).toHaveBeenCalled();
+
+      jest.advanceTimersToNextTimer();
+      // await allSettled POST
+      await Promise.resolve();
+      await Promise.resolve();
+      // await response.text
+      await Promise.resolve();
+
+      clickEvent.preventDefault.mockClear();
+      submitButtonElement.dispatchEvent(clickEvent);
+      expect(clickEvent.preventDefault).not.toHaveBeenCalled();
+    },
+  );
 });

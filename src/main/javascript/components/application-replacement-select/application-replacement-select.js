@@ -19,7 +19,9 @@ export function initApplicationReplacementSelect() {
 
   selectElement.addEventListener("change", async function (event) {
     submitButton.firstElementChild.classList.add("tw-w-4", "tw-mr-2");
-    submitButton.setAttribute("disabled", "");
+
+    submitButton.addEventListener("click", preventDefault);
+    submitButton.setAttribute("aria-disabled", "true");
 
     const [{ value: response }] = await Promise.allSettled([
       post(`${formaction}/replacements`, {
@@ -44,7 +46,14 @@ export function initApplicationReplacementSelect() {
 
     submitButton.firstElementChild.classList.remove("tw-w-4", "tw-mr-2");
     submitButton.removeAttribute("disabled");
+
+    submitButton.removeEventListener("click", preventDefault);
+    submitButton.removeAttribute("aria-disabled");
   });
+}
+
+function preventDefault(event) {
+  event.preventDefault();
 }
 
 function wait(delay) {
