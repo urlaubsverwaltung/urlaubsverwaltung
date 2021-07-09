@@ -6,6 +6,7 @@ jest.mock("../../../js/fetch");
 describe("application-replacement-select", function () {
   let selectElement;
   let submitButtonElement;
+  let replacementListElement;
 
   beforeEach(async function () {
     document.body.innerHTML = `
@@ -29,6 +30,7 @@ describe("application-replacement-select", function () {
 
     selectElement = document.querySelector("select");
     submitButtonElement = document.querySelector("button");
+    replacementListElement = document.querySelector("ul");
 
     initApplicationReplacementSelect();
 
@@ -47,6 +49,19 @@ describe("application-replacement-select", function () {
 
   it("adds initially hidden loading indicator to the submit button", function () {
     expect(submitButtonElement.querySelectorAll("svg")).toHaveLength(1);
+  });
+
+  it("sets aria-controls attribute to link select element with region", function () {
+    expect(selectElement.getAttribute("aria-controls")).toBe("added-replacements-list-element");
+    expect(replacementListElement.getAttribute("id")).toBe("added-replacements-list-element");
+  });
+
+  it("sets aria-live attribute to be polite on change announcements", function () {
+    expect(replacementListElement.getAttribute("aria-live")).toBe("polite");
+  });
+
+  it("sets aria-relevant attribute to announce holiday-replacement additions", function () {
+    expect(replacementListElement.getAttribute("aria-relevant")).toBe("additions");
   });
 
   it("shows loading indicator when 'select' value has changed", function () {

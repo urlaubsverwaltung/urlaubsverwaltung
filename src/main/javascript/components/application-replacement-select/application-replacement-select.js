@@ -10,6 +10,14 @@ const spinner = `
 export function initApplicationReplacementSelect() {
   const selectElement = document.querySelector("#holiday-replacement-select");
   const submitButton = selectElement.parentNode.parentNode.querySelector("button");
+  const replacementListElement = document.querySelector("#replacement-section-container ul");
+
+  const listId = "added-replacements-list-element";
+  replacementListElement.setAttribute("id", listId);
+
+  selectElement.setAttribute("aria-controls", listId);
+  replacementListElement.setAttribute("aria-live", "polite");
+  replacementListElement.setAttribute("aria-relevant", "additions");
 
   const formaction = submitButton.getAttribute("formaction");
 
