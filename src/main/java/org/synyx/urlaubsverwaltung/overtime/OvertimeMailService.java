@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.commons.lang3.time.DurationFormatUtils.formatDuration;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @Service
