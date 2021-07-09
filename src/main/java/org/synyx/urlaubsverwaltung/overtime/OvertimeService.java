@@ -76,4 +76,12 @@ public interface OvertimeService {
      * @since 2.13.0
      */
     Duration getLeftOvertimeForPerson(Person person);
+
+    /**
+     * Is signedInUser allowed to write (create or update) overtime records of given personOfOvertime.
+     * @param signedInUser person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
+     */
+    boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime);
 }

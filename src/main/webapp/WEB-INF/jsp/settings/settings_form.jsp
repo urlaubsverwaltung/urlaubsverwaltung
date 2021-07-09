@@ -630,6 +630,26 @@
 
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
+                                        <spring:message code='settings.overtime.overtimeWritePrivilegedOnly'/>:
+                                    </label>
+                                    <div class="col-md-8 radio">
+                                        <label class="halves">
+                                            <form:radiobutton id="overtimeSettings.overtimeWritePrivilegedOnly.true"
+                                                              path="overtimeSettings.overtimeWritePrivilegedOnly" value="true"
+                                                              data-test-id="setting-overtime-write-privileged-only-enabled" />
+                                            <spring:message code="settings.overtime.overtimeWritePrivilegedOnly.true"/>
+                                        </label>
+                                        <label class="halves">
+                                            <form:radiobutton id="overtimeSettings.overtimeWritePrivilegedOnly.false"
+                                                              path="overtimeSettings.overtimeWritePrivilegedOnly" value="false"
+                                                              data-test-id="setting-overtime-write-privileged-only-disabled" />
+                                            <spring:message code="settings.overtime.overtimeWritePrivilegedOnly.false"/>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group is-required">
+                                    <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
                                         <spring:message code='settings.overtime.overtimeReductionWithoutApplicationActive'/>:
                                     </label>
                                     <div class="col-md-8 radio">

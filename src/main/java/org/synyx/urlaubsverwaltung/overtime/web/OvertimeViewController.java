@@ -57,8 +57,8 @@ public class OvertimeViewController {
     private final PersonService personService;
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
-    private final SettingsService settingsService;
     private final Clock clock;
+    private final SettingsService settingsService;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
@@ -115,6 +115,7 @@ public class OvertimeViewController {
         model.addAttribute("records", overtimeListDto.getRecords());
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
+        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         return "overtime/overtime_list";
     }
@@ -145,6 +146,7 @@ public class OvertimeViewController {
         model.addAttribute("comments", overtimeDetailsDto.getComments());
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
+        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         return "overtime/overtime_details";
     }
@@ -163,7 +165,7 @@ public class OvertimeViewController {
             person = signedInUser;
         }
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
@@ -183,7 +185,7 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtimeForm.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
@@ -212,7 +214,7 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));
@@ -232,7 +234,7 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
-        if ((!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) || !person.equals(overtimeForm.getPerson())) {
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
             throw new AccessDeniedException(String.format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));

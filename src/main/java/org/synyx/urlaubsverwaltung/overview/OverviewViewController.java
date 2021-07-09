@@ -124,6 +124,7 @@ public class OverviewViewController {
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
+        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         return "person/overview";
     }

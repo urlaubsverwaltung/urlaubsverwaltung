@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import javax.transaction.Transactional;
@@ -20,6 +21,7 @@ import static java.time.Duration.ZERO;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 /**
  * @since 2.11.0
@@ -34,17 +36,19 @@ class OvertimeServiceImpl implements OvertimeService {
     private final OvertimeCommentRepository overtimeCommentRepository;
     private final ApplicationService applicationService;
     private final OvertimeMailService overtimeMailService;
+    private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     public OvertimeServiceImpl(OvertimeRepository overtimeRepository, OvertimeCommentRepository overtimeCommentRepository,
                                ApplicationService applicationService, OvertimeMailService overtimeMailService,
-                               Clock clock) {
+                               SettingsService settingsService, Clock clock) {
 
         this.overtimeRepository = overtimeRepository;
         this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
         this.overtimeMailService = overtimeMailService;
+        this.settingsService = settingsService;
         this.clock = clock;
     }
 
@@ -111,6 +115,29 @@ class OvertimeServiceImpl implements OvertimeService {
         final Duration overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
         return totalOvertime.minus(overtimeReduction);
+    }
+
+    /**
+     * Is signedInUser person allowed to write (edit or update) the overtime record of personOfOvertime.
+     *
+     *  |                        | others | own   |  others | own  |
+     *  |------------------------|--------|-------|---------|------|
+     *  | PrivilegedOnly         | true   |       |  false  |      |
+     *  | OFFICE                 | true   | true  |  true   | true |
+     *  | BOSS                   | false  | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | false  | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | false  | true  |  false  | true |
+     *  | USER                   | false  | false |  false  | true |
+     *
+     * @param signedInUser person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return @code{true} if allowed, otherwise @code{false}
+     */
+    @Override
+    public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
+        OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        return signedInUser.hasRole(OFFICE)
+            || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }
 
     private Duration getTotalOvertimeForPerson(Person person) {

@@ -17,10 +17,6 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="true"/>
-</sec:authorize>
-
 <uv:menu/>
 
 <div class="content">
@@ -38,7 +34,7 @@
             <div class="col-xs-12 col-md-6">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${record.person.id == signedInUser.id || IS_OFFICE}">
+                        <c:if test="${userIsAllowedToWriteOvertime}">
                             <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>

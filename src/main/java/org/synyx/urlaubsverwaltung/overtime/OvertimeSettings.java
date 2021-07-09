@@ -18,6 +18,16 @@ public class OvertimeSettings {
     private boolean overtimeReductionWithoutApplicationActive = true;
 
     /**
+     * Activates or deactivates add, edit or delete of overtime records for privileged users only
+     * If this setting is set to true users are only allowed to see their overtime entries but
+     * not to allowed to add, edit or delete them.
+     *
+     * @since 4.21.0
+     */
+    @Column(name = "overtime_write_privileged_only")
+    private boolean overtimeWritePrivilegedOnly = false;
+
+    /**
      * Defines the maximum number of overtime a person can have.
      *
      * @since 2.13.0
@@ -81,5 +91,13 @@ public class OvertimeSettings {
 
     public void setMinimumOvertimeReduction(Integer minimumOvertimeReduction) {
         this.minimumOvertimeReduction = minimumOvertimeReduction;
+    }
+
+    public boolean isOvertimeWritePrivilegedOnly() {
+        return overtimeWritePrivilegedOnly;
+    }
+
+    public void setOvertimeWritePrivilegedOnly(boolean overtimeWritePrivilegedOnly) {
+        this.overtimeWritePrivilegedOnly = overtimeWritePrivilegedOnly;
     }
 }
