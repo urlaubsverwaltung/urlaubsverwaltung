@@ -1,1 +1,3 @@
-export * from "./application-replacement-select";
+import { initApplicationReplacementSelect } from "./application-replacement-select";
+
+initApplicationReplacementSelect();

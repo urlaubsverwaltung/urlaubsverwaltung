@@ -1,10 +1,5 @@
 import { post } from "../../js/fetch";
 
-const selectElement = document.querySelector("#holiday-replacement-select");
-const submitButton = selectElement.parentNode.parentNode.querySelector("button");
-
-const formaction = submitButton.getAttribute("formaction");
-
 const spinner = `
   <svg class="tw-animate-spin tw-transition-all tw-h-4 tw-w-0 tw-text-black" fill="none" viewBox="0 0 24 24" width="16px" height="16px" xmlns="http://www.w3.org/2000/svg">
     <circle class="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -12,38 +7,45 @@ const spinner = `
   </svg>
 `;
 
-const svg = htmlStringToNode(spinner);
-submitButton.prepend(svg);
-submitButton.classList.add("tw-flex", "tw-items-center");
+export function initApplicationReplacementSelect() {
+  const selectElement = document.querySelector("#holiday-replacement-select");
+  const submitButton = selectElement.parentNode.parentNode.querySelector("button");
 
-selectElement.addEventListener("change", async function (event) {
-  submitButton.firstElementChild.classList.add("tw-w-4", "tw-mr-2");
-  submitButton.setAttribute("disabled", "");
+  const formaction = submitButton.getAttribute("formaction");
 
-  const [{ value: response }] = await Promise.allSettled([
-    post(`${formaction}/replacements`, {
-      body: new FormData(event.target.closest("form")),
-      headers: {
-        Accept: "text/html",
-      },
-    }),
-    wait(300),
-  ]);
+  const svg = htmlStringToNode(spinner);
+  submitButton.prepend(svg);
+  submitButton.classList.add("tw-flex", "tw-items-center");
 
-  if (response.ok) {
-    const renderedHtml = await response.text();
-    if (renderedHtml) {
-      const li = htmlStringToNode(renderedHtml);
-      document.querySelector("#replacement-section-container ul").prepend(li);
+  selectElement.addEventListener("change", async function (event) {
+    submitButton.firstElementChild.classList.add("tw-w-4", "tw-mr-2");
+    submitButton.setAttribute("disabled", "");
 
-      selectElement.querySelector('option[value="' + selectElement.value + '"]').remove();
-      selectElement.blur();
+    const [{ value: response }] = await Promise.allSettled([
+      post(`${formaction}/replacements`, {
+        body: new FormData(event.target.closest("form")),
+        headers: {
+          Accept: "text/html",
+        },
+      }),
+      wait(300),
+    ]);
+
+    if (response.ok) {
+      const renderedHtml = await response.text();
+      if (renderedHtml) {
+        const li = htmlStringToNode(renderedHtml);
+        document.querySelector("#replacement-section-container ul").prepend(li);
+
+        selectElement.querySelector('option[value="' + selectElement.value + '"]').remove();
+        selectElement.blur();
+      }
     }
-  }
 
-  submitButton.firstElementChild.classList.remove("tw-w-4", "tw-mr-2");
-  submitButton.removeAttribute("disabled");
-});
+    submitButton.firstElementChild.classList.remove("tw-w-4", "tw-mr-2");
+    submitButton.removeAttribute("disabled");
+  });
+}
 
 function wait(delay) {
   return new Promise(function (resolve) {
