@@ -117,6 +117,22 @@ class OvertimeServiceImpl implements OvertimeService {
         return totalOvertime.minus(overtimeReduction);
     }
 
+    /**
+     * Is signedInUser person allowed to write (edit or update) the overtime record of personOfOvertime.
+     *
+     *  |                        | others | own   |  others | own  |
+     *  |------------------------|--------|-------|---------|------|
+     *  | PrivilegedOnly         | true   |       |  false  |      |
+     *  | OFFICE                 | true   | true  |  true   | true |
+     *  | BOSS                   | false  | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | false  | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | false  | true  |  false  | true |
+     *  | USER                   | false  | false |  false  | true |
+     *
+     * @param signedInUser person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return @code{true} if allowed, otherwise @code{false}
+     */
     @Override
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
         OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
