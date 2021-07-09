@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.List;
 
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
-import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.BASIC;
+import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -44,7 +44,7 @@ public class OidcSecurityConfiguration {
         builder.clientId(properties.getClientId());
 
         if (properties.getClientSecret() != null) {
-            builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(BASIC);
+            builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(CLIENT_SECRET_BASIC);
         }
 
         builder.authorizationGrantType(AUTHORIZATION_CODE);
