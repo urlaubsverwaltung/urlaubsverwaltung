@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 
 import java.time.Clock;
@@ -94,6 +95,8 @@ class ApplicationForLeaveFormViewControllerTest {
     private ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private SpecialLeaveSettingsService specialLeaveSettingsService;
 
     private final DateFormatAware dateFormatAware = new DateFormatAware();
 
@@ -103,7 +106,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
-            applicationInteractionService, applicationForLeaveFormValidator, settingsService, dateFormatAware, clock);
+            applicationInteractionService, applicationForLeaveFormValidator, settingsService, specialLeaveSettingsService, dateFormatAware, clock);
     }
 
     @Test

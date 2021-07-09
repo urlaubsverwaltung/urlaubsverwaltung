@@ -31,6 +31,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
@@ -78,6 +79,7 @@ public class ApplicationForLeaveFormViewController {
     private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
     private static final String USER_HAS_NOT_THE_CORRECT_PERMISSIONS = "User '%s' has not the correct permissions to apply for leave for user '%s'";
+    public static final String SPECIAL_LEAVE_SETTINGS_SERVICE = "specialLeaveSettingsService";
 
     private final PersonService personService;
     private final DepartmentService departmentService;
@@ -86,6 +88,7 @@ public class ApplicationForLeaveFormViewController {
     private final ApplicationInteractionService applicationInteractionService;
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
+    private final SpecialLeaveSettingsService specialLeaveSettingsService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
@@ -94,7 +97,7 @@ public class ApplicationForLeaveFormViewController {
                                                  VacationTypeService vacationTypeService,
                                                  ApplicationInteractionService applicationInteractionService,
                                                  ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
-                                                 SettingsService settingsService, DateFormatAware dateFormatAware,
+                                                 SettingsService settingsService, SpecialLeaveSettingsService specialLeaveSettingsService, DateFormatAware dateFormatAware,
                                                  Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -103,6 +106,7 @@ public class ApplicationForLeaveFormViewController {
         this.applicationInteractionService = applicationInteractionService;
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
+        this.specialLeaveSettingsService = specialLeaveSettingsService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
@@ -148,6 +152,7 @@ public class ApplicationForLeaveFormViewController {
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
+        model.addAttribute(SPECIAL_LEAVE_SETTINGS_SERVICE, specialLeaveSettingsService.getSettingsDto());
         return APP_FORM;
     }
 
@@ -196,7 +201,7 @@ public class ApplicationForLeaveFormViewController {
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
-
+        model.addAttribute(SPECIAL_LEAVE_SETTINGS_SERVICE, specialLeaveSettingsService.getSettingsDto());
         return APP_FORM;
     }
 
@@ -269,7 +274,7 @@ public class ApplicationForLeaveFormViewController {
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
-
+        model.addAttribute(SPECIAL_LEAVE_SETTINGS_SERVICE, specialLeaveSettingsService.getSettingsDto());
         return APP_FORM;
     }
 

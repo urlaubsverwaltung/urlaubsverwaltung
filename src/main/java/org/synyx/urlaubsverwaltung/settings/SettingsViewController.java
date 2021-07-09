@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettings
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
@@ -46,6 +47,7 @@ public class SettingsViewController {
     private final AccountSettingsService accountSettingsService;
     private final ApplicationSettingsService applicationSettingsService;
     private final CalendarSettingsService calendarSettingsService;
+    private final SpecialLeaveSettingsService specialLeaveSettingsService;
     private final Clock clock;
 
     @Autowired
@@ -54,7 +56,8 @@ public class SettingsViewController {
                                   SettingsValidator settingsValidator, WorkingTimeSettingsService workingTimeSettingsService,
                                   TimeSettingsService timeSettingsService, SickNoteSettingsService sickNoteSettingsSerivce,
                                   OvertimeSettingsService overtimeSettingsSerivce, AccountSettingsService accountSettingsService,
-                                  ApplicationSettingsService applicationSettingsService, CalendarSettingsService calendarSettingsService, Clock clock) {
+                                  ApplicationSettingsService applicationSettingsService, CalendarSettingsService calendarSettingsService,
+                                  SpecialLeaveSettingsService specialLeaveSettingsService, Clock clock) {
 
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
@@ -68,6 +71,7 @@ public class SettingsViewController {
         this.accountSettingsService = accountSettingsService;
         this.applicationSettingsService = applicationSettingsService;
         this.calendarSettingsService = calendarSettingsService;
+        this.specialLeaveSettingsService = specialLeaveSettingsService;
         this.clock = clock;
     }
 
@@ -95,17 +99,6 @@ public class SettingsViewController {
     public String settingsDetails(@RequestParam(value = "oautherrors", required = false) String googleOAuthError,
                                   HttpServletRequest request, Model model) {
 
-        final String requestURL = request.getRequestURL().toString();
-        final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
-
-        final Settings settings = settingsService.getSettings();
-        fillModel(model, settings, authorizedRedirectUrl);
-
-        if (shouldShowOAuthError(googleOAuthError, settings)) {
-            model.addAttribute("errors", googleOAuthError);
-            model.addAttribute("oautherrors", googleOAuthError);
-        }
-
         model.addAttribute("workingtimesettings", workingTimeSettingsService.getSettingsDto());
         model.addAttribute("timesettings", timeSettingsService.getSettingsDto());
         model.addAttribute("sicknotesettings", sickNoteSettingsSerivce.getSettingsDto());
@@ -113,6 +106,7 @@ public class SettingsViewController {
         model.addAttribute("accountsettings", accountSettingsService.getSettingsDto());
         model.addAttribute("applicationsettings", applicationSettingsService.getSettingsDto());
         model.addAttribute("calendarsettings", calendarSettingsService.getSettingsDto(request));
+        model.addAttribute("specialleavesettings", specialLeaveSettingsService.getSettingsDto());
 
         return "settings/settings_overview";
     }

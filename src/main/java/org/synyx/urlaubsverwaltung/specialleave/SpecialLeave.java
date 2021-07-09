@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.application.domain;
+package org.synyx.urlaubsverwaltung.specialleave;
 
 public enum SpecialLeave {
 

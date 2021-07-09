@@ -222,7 +222,46 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code="settings.special-leave.death-of-parent"/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${specialleavesettings.deathOfParentDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.special-leave.birth-of-a-child'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${specialleavesettings.birthOfChildDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.special-leave.death-of-spouse-or-child'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${specialleavesettings.deathOfSpuseOrChildDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.special-leave.own-wedding'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${specialleavesettings.ownWeddingDays}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.special-leave.relocation-for-operational-reasons'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${specialleavesettings.relocationForOperationalReasonsDays}" />
+                            </div>
+                        </div>
                     </jsp:body>
                 </uv:box>
             </div>

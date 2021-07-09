@@ -7,11 +7,11 @@
 
     <preConditions>
       <not>
-        <tableExists tableName="special_leave"/>
+        <tableExists tableName="special_leave_settings"/>
       </not>
     </preConditions>
 
-    <createTable tableName="special_leave">
+    <createTable tableName="special_leave_settings">
       <column autoIncrement="true" name="id" type="bigint(20)">
         <constraints primaryKey="true"/>
       </column>
@@ -22,6 +22,27 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
+
+    <insert tableName="special_leave_settings">
+      <column name="special_leave" value="OWN_WEDDING"/>
+      <column name="days" valueNumeric="1"/>
+    </insert>
+    <insert tableName="special_leave_settings">
+      <column name="special_leave" value="BIRTH_OF_A_CHILD"/>
+      <column name="days" valueNumeric="1"/>
+    </insert>
+    <insert tableName="special_leave_settings">
+      <column name="special_leave" value="DEATH_OF_SPOUSE_OR_CHILD"/>
+      <column name="days" valueNumeric="2"/>
+    </insert>
+    <insert tableName="special_leave_settings">
+      <column name="special_leave" value="DEATH_OF_PARENT"/>
+      <column name="days" valueNumeric="1"/>
+    </insert>
+    <insert tableName="special_leave_settings">
+      <column name="special_leave" value="RELOCATION_FOR_OPERATIONAL_REASONS"/>
+      <column name="days" valueNumeric="1"/>
+    </insert>
   </changeSet>
 
 

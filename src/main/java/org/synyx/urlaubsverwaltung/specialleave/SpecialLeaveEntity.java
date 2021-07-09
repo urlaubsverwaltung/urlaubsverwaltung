@@ -1,28 +1,23 @@
-package org.synyx.urlaubsverwaltung.application.dao;
-
-import org.synyx.urlaubsverwaltung.application.domain.SpecialLeave;
+package org.synyx.urlaubsverwaltung.specialleave;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 
-@Entity(name = "special_leave")
+@Entity(name = "special_leave_settings")
 public class SpecialLeaveEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @NotNull
     @Enumerated(STRING)
     private SpecialLeave specialLeave;
 
-    @NotNull
     private int days;
 
     public Integer getId() {

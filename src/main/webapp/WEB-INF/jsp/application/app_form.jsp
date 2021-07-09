@@ -319,10 +319,31 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-md-push-2">
-                            <span class="help-block tw-text-sm">
-                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
-                                <spring:message code="application.data.description"/>
-                            </span>
+                                <p class="help-block tw-text-sm">
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
+                                    <spring:message code="application.special-leaves.description"/>
+                                    <spring:message code="application.special-leaves"/>
+                                </p>
+                                <p class="help-block tw-text-sm">
+                                    <spring:message code="application.special-leave.death-of-parent"
+                                                    arguments="${specialLeaveSettingsService.deathOfParentDays}"/>
+                                </p>
+                                <p class="help-block tw-text-sm">
+                                    <spring:message code="application.special-leave.birth-of-a-child"
+                                                    arguments="${specialLeaveSettingsService.birthOfChildDays}"/>
+                                </p>
+                                <p class="help-block tw-text-sm">
+                                    <spring:message code="application.special-leave.death-of-spouse-or-child"
+                                                    arguments="${specialLeaveSettingsService.deathOfSpuseOrChildDays}"/>
+                                </p>
+                                <p class="help-block tw-text-sm">
+                                    <spring:message code="application.special-leave.own-wedding"
+                                                    arguments="${specialLeaveSettingsService.ownWeddingDays}"/>
+                                </p>
+                                <p class="help-block tw-text-sm">
+                                    <spring:message code="application.special-leave.relocation-for-operational-reasons"
+                                                    arguments="${specialLeaveSettingsService.relocationForOperationalReasonsDays}"/>
+                                </p>
                             </div>
                         </div>
                     </div>
