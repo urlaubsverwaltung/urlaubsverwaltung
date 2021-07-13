@@ -84,6 +84,46 @@
                         </div>
 
                         <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
+                                <spring:message code='settings.overtime.overtimeWritePrivilegedOnly'/>:
+                            </label>
+                            <div class="col-md-8 radio">
+                                <label class="halves">
+                                    <form:radiobutton id="overtimeSettings.overtimeWritePrivilegedOnly.true"
+                                                      path="overtimeWritePrivilegedOnly" value="true"
+                                                      data-test-id="setting-overtime-write-privileged-only-enabled" />
+                                    <spring:message code="settings.overtime.overtimeWritePrivilegedOnly.true"/>
+                                </label>
+                                <label class="halves">
+                                    <form:radiobutton id="overtimeSettings.overtimeWritePrivilegedOnly.false"
+                                                      path="overtimeWritePrivilegedOnly" value="false"
+                                                      data-test-id="setting-overtime-write-privileged-only-disabled" />
+                                    <spring:message code="settings.overtime.overtimeWritePrivilegedOnly.false"/>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="overtimeSettings.overtimeActive.true">
+                                <spring:message code='settings.overtime.overtimeReductionWithoutApplicationActive'/>:
+                            </label>
+                            <div class="col-md-8 radio">
+                                <label class="halves">
+                                    <form:radiobutton id="overtimeSettings.overtimeReductionWithoutApplicationActive.true"
+                                                      path="overtimeReductionWithoutApplicationActive" value="true"
+                                                      data-test-id="setting-overtime-reduction-enabled" />
+                                    <spring:message code="settings.overtime.overtimeReductionWithoutApplicationActive.true"/>
+                                </label>
+                                <label class="halves">
+                                    <form:radiobutton id="overtimeSettings.overtimeReductionWithoutApplicationActive.false"
+                                                      path="overtimeReductionWithoutApplicationActive" value="false"
+                                                      data-test-id="setting-overtime-reduction-disabled" />
+                                    <spring:message code="settings.overtime.overtimeReductionWithoutApplicationActive.false"/>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group is-required">
                             <label class="control-label col-md-4" for="overtimeSettings.maximumOvertime">
                                 <spring:message code="settings.overtime.maximum"/>:
                             </label>
@@ -108,6 +148,20 @@
                                             type="number" step="1"/>
                                 <uv:error-text>
                                     <form:errors path="minimumOvertime" />
+                                </uv:error-text>
+                            </div>
+                        </div>
+                        <div class="form-group is-required">
+                            <label class="control-label col-md-4" for="overtimeSettings.minimumOvertimeReduction">
+                                <spring:message code="settings.overtime.minimumOvertimeReduction"/>:
+                            </label>
+                            <div class="col-md-8">
+                                <form:input id="overtimeSettings.minimumOvertimeReduction"
+                                            path="minimumOvertimeReduction" class="form-control"
+                                            cssErrorClass="form-control error"
+                                            type="number" step="1" />
+                                <uv:error-text>
+                                    <form:errors path="minimumOvertimeReduction" />
                                 </uv:error-text>
                             </div>
                         </div>

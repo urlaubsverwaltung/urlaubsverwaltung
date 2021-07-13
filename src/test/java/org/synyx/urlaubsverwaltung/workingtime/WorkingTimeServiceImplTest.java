@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -136,7 +137,7 @@ class WorkingTimeServiceImplTest {
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date)).thenReturn(workingTimeEntity);
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
         workingTimeSettings.setFederalState(BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
@@ -153,7 +154,7 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(), any())).thenReturn(null);
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
         workingTimeSettings.setFederalState(BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
@@ -246,7 +247,7 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityOne, workingTimeEntityTwo));
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
         workingTimeSettings.setFederalState(BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
@@ -300,7 +301,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(batman, date))
             .thenReturn(workingTimeEntity);
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
         workingTimeSettings.setFederalState(BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
@@ -328,7 +329,7 @@ class WorkingTimeServiceImplTest {
     @Test
     void ensureGetSystemDefaultFederalState() {
 
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
         workingTimeSettings.setFederalState(BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);

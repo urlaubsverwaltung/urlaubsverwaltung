@@ -4,11 +4,13 @@ package org.synyx.urlaubsverwaltung.overtime.settings;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsValidator.validateOvertimeSettings;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
@@ -34,12 +36,18 @@ public class OvertimeSettingsController {
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String saveOvertimeSettings(@ModelAttribute("overtimeSettings") OvertimeSettingsDto overtimeSettingsDto,
-                                       Model model) {
+                                       Model model, Errors errors) {
 
-        overtimeSettingsService.save(overtimeSettingsDto);
+        final Errors validationErrors = validateOvertimeSettings(overtimeSettingsDto, errors);
+
+        if(validationErrors.hasErrors()) {
+            model.addAttribute("error", errors);
+        } else {
+            overtimeSettingsService.save(overtimeSettingsDto);
+            model.addAttribute("success", true);
+        }
+
         model.addAttribute("overtimeSettings", overtimeSettingsDto);
-        model.addAttribute("success", true);
-
         return "overtime/overtime_settings";
     }
 }

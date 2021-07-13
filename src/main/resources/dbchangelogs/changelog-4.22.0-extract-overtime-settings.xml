@@ -21,6 +21,13 @@
       </column>
       <column name="overtime_minimum" type="INT(10)" valueNumeric="100"/>
       <column name="overtime_maximum" type="INT(10)" valueNumeric="100"/>
+      <column name="overtime_minimum_reduction" type="INT(10)" defaultValueNumeric="0">
+        <constraints nullable="false"/>
+      </column>
+      <column name="overtime_reduction_without_application_active" type="BIT(1)" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="overtime_write_privileged_only" type="BIT(1)" defaultValueBoolean="false"/>
     </createTable>
 
     <insert tableName="overtime_settings">

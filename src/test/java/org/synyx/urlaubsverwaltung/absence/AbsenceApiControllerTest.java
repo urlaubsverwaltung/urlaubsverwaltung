@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -632,7 +632,7 @@ class AbsenceApiControllerTest {
     }
 
     private void mockFederalState(FederalState federalState) {
-        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
         workingTimeSettings.setFederalState(federalState);
 
         final Settings settings = new Settings();

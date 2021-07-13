@@ -182,6 +182,22 @@
                         </div>
                         <div class="form-group tw-flex">
                             <label class="control-label col-md-8">
+                                <spring:message code='settings.overtime.overtimeWritePrivilegedOnly'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${overtimesettings.overtimeWritePrivilegedOnly}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.overtime.overtimeReductionWithoutApplicationActive'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${overtimesettings.overtimeReductionWithoutApplicationActive}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
                                 <spring:message code='settings.overtime.maximum'/>:
                             </label>
                             <div class="col-md-8">
@@ -194,6 +210,14 @@
                             </label>
                             <div class="col-md-8">
                                 <c:out value="${overtimesettings.minimumOvertime}" />
+                            </div>
+                        </div>
+                        <div class="form-group tw-flex">
+                            <label class="control-label col-md-8">
+                                <spring:message code='settings.overtime.minimumOvertimeReduction'/>:
+                            </label>
+                            <div class="col-md-8">
+                                <c:out value="${overtimesettings.minimumOvertimeReduction}" />
                             </div>
                         </div>
                     </jsp:body>

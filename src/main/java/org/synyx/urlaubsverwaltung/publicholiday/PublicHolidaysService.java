@@ -48,7 +48,7 @@ public class PublicHolidaysService {
     public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
 
         final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable = settings.getWorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = settings.getWorkingTimeSettings();
 
         return getHolidayDayLength(workingTimeSettings, date, federalState);
     }
@@ -59,14 +59,14 @@ public class PublicHolidaysService {
 
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
         final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        final WorkingTimeSettingsEmbeddable workingTimeSettings = settings.getWorkingTimeSettings();
 
         return getHolidays(from, to, federalState).stream()
             .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
             .collect(toUnmodifiableList());
     }
 
-    private DayLength getHolidayDayLength(WorkingTimeSettings workingTimeSettings, LocalDate date, FederalState federalState) {
+    private DayLength getHolidayDayLength(WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, LocalDate date, FederalState federalState) {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {

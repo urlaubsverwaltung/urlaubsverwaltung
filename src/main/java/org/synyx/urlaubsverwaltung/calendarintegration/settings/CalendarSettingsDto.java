@@ -1,9 +1,13 @@
 package org.synyx.urlaubsverwaltung.calendarintegration.settings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.grpc.internal.NoopClientStream;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
 
 import java.util.List;
 import java.util.TimeZone;
+
+import static java.util.Optional.ofNullable;
 
 public class CalendarSettingsDto {
 
@@ -44,7 +48,7 @@ public class CalendarSettingsDto {
 
 
     public String getProvider() {
-        return provider;
+        return ofNullable(provider).orElse("NoopCalendarSyncProvider");
     }
 
     public void setProvider(String provider) {

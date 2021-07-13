@@ -4,11 +4,17 @@ public class OvertimeSettingsDto {
 
     private Long id;
 
-    private boolean overtimeActive;
+    private Boolean overtimeActive;
+
+    private Boolean overtimeReductionWithoutApplicationActive;
+
+    private Boolean overtimeWritePrivilegedOnly;
 
     private Integer maximumOvertime;
 
     private Integer minimumOvertime;
+
+    private Integer minimumOvertimeReduction;
 
     public Long getId() {
         return id;
@@ -18,11 +24,7 @@ public class OvertimeSettingsDto {
         this.id = id;
     }
 
-    public boolean isOvertimeActive() {
-        return overtimeActive;
-    }
-
-    public void setOvertimeActive(boolean overtimeActive) {
+    public void setOvertimeActive(Boolean overtimeActive) {
         this.overtimeActive = overtimeActive;
     }
 
@@ -40,5 +42,33 @@ public class OvertimeSettingsDto {
 
     public void setMinimumOvertime(Integer minimumOvertime) {
         this.minimumOvertime = minimumOvertime;
+    }
+
+    public Boolean getOvertimeActive() {
+        return overtimeActive;
+    }
+
+    public Boolean getOvertimeReductionWithoutApplicationActive() {
+        return overtimeReductionWithoutApplicationActive;
+    }
+
+    public void setOvertimeReductionWithoutApplicationActive(Boolean overtimeReductionWithoutApplicationActive) {
+        this.overtimeReductionWithoutApplicationActive = overtimeReductionWithoutApplicationActive;
+    }
+
+    public Boolean getOvertimeWritePrivilegedOnly() {
+        return overtimeWritePrivilegedOnly;
+    }
+
+    public void setOvertimeWritePrivilegedOnly(Boolean overtimeWritePrivilegedOnly) {
+        this.overtimeWritePrivilegedOnly = overtimeWritePrivilegedOnly;
+    }
+
+    public Integer getMinimumOvertimeReduction() {
+        return minimumOvertimeReduction;
+    }
+
+    public void setMinimumOvertimeReduction(Integer minimumOvertimeReduction) {
+        this.minimumOvertimeReduction = minimumOvertimeReduction;
     }
 }

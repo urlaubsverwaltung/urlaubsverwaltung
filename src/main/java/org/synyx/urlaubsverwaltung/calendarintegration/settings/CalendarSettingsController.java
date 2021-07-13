@@ -37,7 +37,7 @@ public class CalendarSettingsController {
                                        @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                        HttpServletRequest request, Model model, Errors errors) {
 
-        Errors validationErrors = validateCalendarSettings(calendarSettingsDto, errors);
+        final Errors validationErrors = validateCalendarSettings(calendarSettingsDto, errors);
 
         if(validationErrors.hasErrors()) {
 

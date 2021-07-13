@@ -20,6 +20,19 @@ public class OvertimeSettingsEntity {
     @Column(name = "overtime_active")
     private boolean overtimeActive = false;
 
+    @Column(name = "overtime_reduction_without_application_active")
+    private boolean overtimeReductionWithoutApplicationActive = true;
+
+    /**
+     * Activates or deactivates add, edit or delete of overtime records for privileged users only
+     * If this setting is set to true users are only allowed to see their overtime entries but
+     * not to allowed to add, edit or delete them.
+     *
+     * @since 4.21.0
+     */
+    @Column(name = "overtime_write_privileged_only")
+    private boolean overtimeWritePrivilegedOnly = false;
+
     /**
      * Defines the maximum number of overtime a person can have.
      *
@@ -36,6 +49,14 @@ public class OvertimeSettingsEntity {
      */
     @Column(name = "overtime_minimum")
     private Integer minimumOvertime = 5;
+
+    /**
+     * Defines the minimum overtime reduction value a person has to use for an application.
+     *
+     * @since 4.21.0
+     */
+    @Column(name = "overtime_minimum_reduction")
+    private Integer minimumOvertimeReduction = 0;
 
     public Long getId() {
         return id;
@@ -67,5 +88,29 @@ public class OvertimeSettingsEntity {
 
     public void setMinimumOvertime(Integer minimumOvertime) {
         this.minimumOvertime = minimumOvertime;
+    }
+
+    public boolean isOvertimeReductionWithoutApplicationActive() {
+        return overtimeReductionWithoutApplicationActive;
+    }
+
+    public void setOvertimeReductionWithoutApplicationActive(boolean overtimeReductionWithoutApplicationActive) {
+        this.overtimeReductionWithoutApplicationActive = overtimeReductionWithoutApplicationActive;
+    }
+
+    public boolean isOvertimeWritePrivilegedOnly() {
+        return overtimeWritePrivilegedOnly;
+    }
+
+    public void setOvertimeWritePrivilegedOnly(boolean overtimeWritePrivilegedOnly) {
+        this.overtimeWritePrivilegedOnly = overtimeWritePrivilegedOnly;
+    }
+
+    public Integer getMinimumOvertimeReduction() {
+        return minimumOvertimeReduction;
+    }
+
+    public void setMinimumOvertimeReduction(Integer minimumOvertimeReduction) {
+        this.minimumOvertimeReduction = minimumOvertimeReduction;
     }
 }
