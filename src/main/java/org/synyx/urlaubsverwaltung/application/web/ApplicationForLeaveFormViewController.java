@@ -204,11 +204,9 @@ public class ApplicationForLeaveFormViewController {
     public String ajaxAddHolidayReplacement(@ModelAttribute ApplicationForLeaveForm applicationForLeave, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
+        final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
 
-        Person person = ofNullable(applicationForLeave.getPerson())
-            .orElse(signedInUser);
-
-        boolean isApplyingForOneSelf = person.equals(signedInUser);
+        final boolean isApplyingForOneSelf = person.equals(signedInUser);
 
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
