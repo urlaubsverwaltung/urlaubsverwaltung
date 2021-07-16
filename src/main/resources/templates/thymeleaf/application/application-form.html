@@ -19,7 +19,7 @@
             src="#"
             th:src="${holidayReplacement.person.gravatarURL + '?d=mm&s=40'}"
             alt="avatar image"
-            th:alt="#{messages.msgWithParams('gravatar.alt', ${holidayReplacement.person.niceName})}"
+            th:alt="#{gravatar.alt(${holidayReplacement.person.niceName})}"
             class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
             width="40px"
             height="40px"
@@ -60,7 +60,7 @@
         <div class="tw-mt-2 md:tw-pl-14">
           <div class="tw-flex tw-justify-between tw-items-center">
             <label th:for="${'replacement-note-' + index}" class="tw-text-sm tw-text-black tw-text-opacity-50 tw-mb-0 tw-font-normal">
-              <th:block th:text="${#messages.msg('application.data.holidayReplacementNote', holidayReplacement.person.firstName)}"></th:block>
+              <th:block th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"></th:block>
             </label>
             <span>
               <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
