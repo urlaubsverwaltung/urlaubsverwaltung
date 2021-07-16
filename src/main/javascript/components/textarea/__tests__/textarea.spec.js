@@ -47,6 +47,23 @@ describe("textarea", function () {
     expect(textareaTwo.getAttribute("rows")).toBeNull();
   });
 
+  it("does not reset 'rows' attribute to textarea element is blurred but has a value", function () {
+    const textareaOne = renderTextArea();
+    const textareaTwo = renderTextArea();
+
+    expect(textareaOne.getAttribute("rows")).toBeNull();
+    expect(textareaTwo.getAttribute("rows")).toBeNull();
+
+    textareaOne.focus();
+
+    textareaOne.value = "awesome text";
+
+    textareaOne.blur();
+
+    expect(textareaOne.getAttribute("rows")).toBe("4");
+    expect(textareaTwo.getAttribute("rows")).toBeNull();
+  });
+
   function renderTextArea() {
     const textarea = document.createElement("textarea");
     document.body.append(textarea);
