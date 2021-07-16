@@ -1,5 +1,5 @@
 import fetchMock from "fetch-mock";
-import { getJSON } from "../fetch";
+import { getJSON, post } from "../fetch";
 
 describe("fetch", () => {
   afterEach(function () {
@@ -48,6 +48,72 @@ describe("fetch", () => {
           }),
         );
       }
+    });
+  });
+
+  describe("post", () => {
+    it("does a POST", async () => {
+      fetchMock.mock("https://awesome-stuff.com/api/post", {});
+
+      await post("https://awesome-stuff.com/api/post", {
+        body: 42,
+      });
+
+      expect(fetchMock.lastUrl()).toEqual("https://awesome-stuff.com/api/post");
+      expect(fetchMock.lastOptions()).toEqual(
+        expect.objectContaining({
+          method: "POST",
+          body: 42,
+        }),
+      );
+    });
+
+    it("includes credentials", async () => {
+      fetchMock.mock("https://awesome-stuff.com/api/post", {});
+
+      await post("https://awesome-stuff.com/api/post");
+
+      expect(fetchMock.lastUrl()).toEqual("https://awesome-stuff.com/api/post");
+      expect(fetchMock.lastOptions()).toEqual(
+        expect.objectContaining({
+          credentials: "include",
+        }),
+      );
+    });
+
+    it("includes 'X-Requested-Width=ajax' header", async () => {
+      fetchMock.mock("https://awesome-stuff.com/api/post", {});
+
+      await post("https://awesome-stuff.com/api/post");
+
+      expect(fetchMock.lastUrl()).toEqual("https://awesome-stuff.com/api/post");
+      expect(fetchMock.lastOptions()).toEqual(
+        expect.objectContaining({
+          headers: {
+            "X-Requested-With": "ajax",
+          },
+        }),
+      );
+    });
+
+    it("merges headers", async () => {
+      fetchMock.mock("https://awesome-stuff.com/api/post", {});
+
+      await post("https://awesome-stuff.com/api/post", {
+        headers: {
+          Accept: "text/html",
+        },
+      });
+
+      expect(fetchMock.lastUrl()).toEqual("https://awesome-stuff.com/api/post");
+      expect(fetchMock.lastOptions()).toEqual(
+        expect.objectContaining({
+          headers: {
+            "X-Requested-With": "ajax",
+            Accept: "text/html",
+          },
+        }),
+      );
     });
   });
 });

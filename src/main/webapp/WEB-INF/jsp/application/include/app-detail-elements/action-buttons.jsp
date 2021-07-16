@@ -82,7 +82,12 @@
 <%-- EDIT ACTION --%>
 <c:if test="${application.status == 'WAITING'}">
     <c:if test="${IS_OWN}">
-        <a href="${URL_PREFIX}/application/${application.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
+        <a
+            href="${URL_PREFIX}/application/${application.id}/edit"
+            class="icon-link tw-px-1"
+            data-title="<spring:message code="action.edit"/>"
+            data-test-id="application-edit-button"
+        >
             <icon:pencil className="tw-w-5 tw-h-5" />
         </a>
     </c:if>

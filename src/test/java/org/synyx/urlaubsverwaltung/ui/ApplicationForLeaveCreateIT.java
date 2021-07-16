@@ -107,7 +107,7 @@ class ApplicationForLeaveCreateIT {
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver, messageSource, ENGLISH);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -155,7 +155,7 @@ class ApplicationForLeaveCreateIT {
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver, messageSource, ENGLISH);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -194,6 +194,8 @@ class ApplicationForLeaveCreateIT {
     @Test
     void checkIfItIsPossibleToRequestAnApplicationForLeave() {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
+        final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
@@ -201,7 +203,7 @@ class ApplicationForLeaveCreateIT {
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver, messageSource, ENGLISH);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, ENGLISH);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
@@ -219,6 +221,16 @@ class ApplicationForLeaveCreateIT {
         wait.until(pageIsVisible(applicationPage));
 
         applicationPage.from(getNextWorkday());
+
+        applicationPage.selectReplacement(batman);
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1)));
+
+        applicationPage.selectReplacement(joker);
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1)));
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2)));
+
+        applicationPage.setCommentForReplacement(batman, "please be gentle!");
+
         applicationPage.submit();
 
         wait.until(pageIsVisible(applicationDetailPage));
@@ -227,6 +239,17 @@ class ApplicationForLeaveCreateIT {
 
         // application created info vanishes sometime
         wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
+
+        assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
+        assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
+
+        // ensure given information has been persisted successfully
+        // (currently the detail page hides some information like comments for holiday replacements)
+        applicationDetailPage.selectEdit();
+        wait.until(pageIsVisible(applicationPage));
+
+        assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
+        assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
         navigationPage.logout();
         wait.until(pageIsVisible(loginPage));
@@ -249,7 +272,6 @@ class ApplicationForLeaveCreateIT {
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, ZERO, null);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), TEN, TEN, TEN, ZERO, null);
-
 
         return savedPerson;
     }

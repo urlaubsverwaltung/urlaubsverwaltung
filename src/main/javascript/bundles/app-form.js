@@ -4,6 +4,7 @@ import "../components/timepicker";
 import "../js/application/app-form";
 import "../js/application/day-length-selector";
 import "../components/back-button";
+import "../components/application-replacement-select";
 
 import vacationTypeChanged from "../js/application/vacation-type-changed";
 

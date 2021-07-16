@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Application Form</title>
+</head>
+<body>
+
+<ul>
+  <li th:fragment="replacement-item" th:if="${holidayReplacement != null}" class="form-group tw-mb-6" data-test-id="holiday-replacement-row">
+    <input type="hidden" th:name="${'holidayReplacements[' + index + '].person'}" th:value="${holidayReplacement.person.id}" />
+    <div class="col-md-push-3 col-md-9">
+      <div>
+        <div class="tw-flex">
+          <img
+            src="#"
+            th:src="${holidayReplacement.person.gravatarURL + '?d=mm&s=40'}"
+            alt="avatar image"
+            th:alt="#{gravatar.alt(${holidayReplacement.person.niceName})}"
+            class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
+            width="40px"
+            height="40px"
+            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+          />
+          <div>
+            <div class="tw-flex tw-items-center tw-flex-wrap">
+              <span th:text="${holidayReplacement.person.niceName}"></span>
+              <ul
+                th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
+                class="tw-m-0 tw-ml-1 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5"
+              >
+                <li
+                  th:each="department : ${holidayReplacement.departments}"
+                  class="tw-px-1.5 tw-rounded-full tw-bg-green-100 tw-text-green-800"
+                  th:text="${department}"
+                >
+                </li>
+              </ul>
+            </div>
+            <div class="tw-flex">
+              <button
+                type="submit"
+                class="tw-p-0 tw-bg-transparent"
+                name="remove-holiday-replacement"
+                th:value="${holidayReplacement.person.id}"
+                formmethod="post"
+                th:formaction="${deleteButtonFormActionValue}"
+              >
+                <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 tw-transition-colors">
+                  <svg th:replace="icons/icon-trash :: svg(className='tw-w-4 tw-h-4 tw-mr-0.5')"></svg>
+                  <th:block th:text="#{application.data.holidayReplacement.remove-button.text}"></th:block>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="tw-mt-2 md:tw-pl-14">
+          <div class="tw-flex tw-justify-between tw-items-center">
+            <label th:for="${'replacement-note-' + index}" class="tw-text-sm tw-text-black tw-text-opacity-50 tw-mb-0 tw-font-normal">
+              <th:block th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"></th:block>
+            </label>
+            <span>
+              <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
+                <span class="tw-flex-grow"></span>
+                <span th:id="${'text-holiday-replacement-note-' + index}"></span>
+                <span th:text="#{action.comment.maxChars}"></span>
+              </small>
+            </span>
+          </div>
+          <div>
+            <textarea
+              th:id="${'replacement-note-' + index}"
+              th:name="${'holidayReplacements[' + index + '].note'}"
+              class="form-control"
+              onkeyup="count(this.value, this.dataset.countSelector);"
+              onkeydown="maxChars(this,200); count(this.value, this.dataset.countSelector);"
+              th:data-count-selector="${'text-holiday-replacement-note-' + index}"
+              rows="1"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>
+
+</body>
+</html>

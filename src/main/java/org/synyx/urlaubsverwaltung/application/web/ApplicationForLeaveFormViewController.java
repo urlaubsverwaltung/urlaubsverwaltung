@@ -116,7 +116,6 @@ public class ApplicationForLeaveFormViewController {
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-
     @GetMapping("/application/new")
     public String newApplicationForm(@RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
@@ -199,6 +198,41 @@ public class ApplicationForLeaveFormViewController {
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
         return APP_FORM;
+    }
+
+    @PostMapping(value = {"/application/new/replacements", "/application/{applicationId}/replacements"}, headers = {"X-Requested-With=ajax"})
+    public String ajaxAddHolidayReplacement(@ModelAttribute ApplicationForLeaveForm applicationForLeave, Model model) {
+
+        final Person signedInUser = personService.getSignedInUser();
+        final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
+
+        final boolean isApplyingForOneSelf = person.equals(signedInUser);
+
+        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
+            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
+        }
+
+        final Person replacementPersonToAdd = applicationForLeave.getHolidayReplacementToAdd();
+        if (replacementPersonToAdd != null) {
+            final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(replacementPersonToAdd);
+
+            final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
+            replacementDto.setPerson(replacementPersonToAdd);
+            replacementDto.setDepartments(departments.stream().map(Department::getName).collect(toList()));
+
+            model.addAttribute("holidayReplacement", replacementDto);
+        }
+
+        model.addAttribute("index", applicationForLeave.getHolidayReplacements().size());
+
+        final Integer applicationForLeaveId = applicationForLeave.getId();
+        if (applicationForLeaveId == null) {
+            model.addAttribute("deleteButtonFormActionValue", "/web/application/new");
+        } else {
+            model.addAttribute("deleteButtonFormActionValue", "/web/application/" + applicationForLeaveId);
+        }
+
+        return "thymeleaf/application/application-form :: replacement-item";
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
