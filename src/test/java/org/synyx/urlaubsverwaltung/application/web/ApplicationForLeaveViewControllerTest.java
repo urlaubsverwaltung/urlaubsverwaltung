@@ -8,13 +8,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -62,13 +65,15 @@ class ApplicationForLeaveViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private PersonService personService;
+    @Mock
+    private MessageSource messageSource;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService,
-            personService, clock);
+            personService, clock, messageSource);
     }
 
     @Test
@@ -78,6 +83,7 @@ class ApplicationForLeaveViewControllerTest {
         person.setFirstName("Atticus");
         final Application application = new Application();
         application.setId(1);
+        application.setVacationType(anyVacationType());
         application.setPerson(person);
         application.setStatus(WAITING);
         application.setStartDate(LocalDate.MAX);
@@ -88,6 +94,7 @@ class ApplicationForLeaveViewControllerTest {
         headPerson.setPermissions(List.of(DEPARTMENT_HEAD));
         final Application applicationOfHead = new Application();
         applicationOfHead.setId(2);
+        applicationOfHead.setVacationType(anyVacationType());
         applicationOfHead.setPerson(headPerson);
         when(personService.getSignedInUser()).thenReturn(headPerson);
 
@@ -95,6 +102,7 @@ class ApplicationForLeaveViewControllerTest {
         secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
+        applicationOfSecondStage.setVacationType(anyVacationType());
         applicationOfSecondStage.setPerson(secondStagePerson);
 
         final List<Person> members = List.of(headPerson, person, secondStagePerson);
@@ -104,6 +112,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
         applicationCancellationRequest.setPerson(headPerson);
         applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         applicationCancellationRequest.setStartDate(LocalDate.MAX);
@@ -116,8 +125,8 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
             .andExpect(model().attribute("applications", hasSize(1)))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("Atticus"))))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("Atticus"))))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
@@ -128,6 +137,7 @@ class ApplicationForLeaveViewControllerTest {
         final Person person = new Person();
         final Application application = new Application();
         application.setId(1);
+        application.setVacationType(anyVacationType());
         application.setPerson(person);
         application.setStatus(WAITING);
         application.setStartDate(LocalDate.MAX);
@@ -138,6 +148,7 @@ class ApplicationForLeaveViewControllerTest {
         bossPerson.setPermissions(List.of(BOSS));
         final Application applicationOfBoss = new Application();
         applicationOfBoss.setId(2);
+        applicationOfBoss.setVacationType(anyVacationType());
         applicationOfBoss.setPerson(bossPerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
@@ -148,6 +159,7 @@ class ApplicationForLeaveViewControllerTest {
         secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
+        applicationOfSecondStage.setVacationType(anyVacationType());
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
@@ -158,6 +170,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
         applicationCancellationRequest.setPerson(bossPerson);
         applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         applicationCancellationRequest.setStartDate(LocalDate.MAX);
@@ -170,7 +183,7 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
             .andExpect(model().attribute("applications", hasSize(3)))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
@@ -181,6 +194,7 @@ class ApplicationForLeaveViewControllerTest {
         final Person person = new Person();
         final Application application = new Application();
         application.setId(1);
+        application.setVacationType(anyVacationType());
         application.setPerson(person);
         application.setStatus(TEMPORARY_ALLOWED);
         application.setStartDate(LocalDate.MAX);
@@ -191,6 +205,7 @@ class ApplicationForLeaveViewControllerTest {
         officePerson.setPermissions(List.of(OFFICE));
         final Application applicationOfBoss = new Application();
         applicationOfBoss.setId(2);
+        applicationOfBoss.setVacationType(anyVacationType());
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
@@ -201,6 +216,7 @@ class ApplicationForLeaveViewControllerTest {
         secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
+        applicationOfSecondStage.setVacationType(anyVacationType());
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
@@ -211,6 +227,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
         applicationCancellationRequest.setPerson(person);
         applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         applicationCancellationRequest.setStartDate(LocalDate.MAX);
@@ -223,9 +240,9 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
             .andExpect(model().attribute("applications", hasSize(3)))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
-            .andExpect(model().attribute("applications_cancellation_request", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications_cancellation_request", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -236,6 +253,7 @@ class ApplicationForLeaveViewControllerTest {
         person.setFirstName("person");
         final Application application = new Application();
         application.setId(1);
+        application.setVacationType(anyVacationType());
         application.setPerson(person);
         application.setStatus(TEMPORARY_ALLOWED);
         application.setStartDate(LocalDate.MAX);
@@ -247,6 +265,7 @@ class ApplicationForLeaveViewControllerTest {
         officePerson.setPermissions(List.of(OFFICE));
         final Application applicationOfBoss = new Application();
         applicationOfBoss.setId(2);
+        applicationOfBoss.setVacationType(anyVacationType());
         applicationOfBoss.setPerson(officePerson);
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
@@ -256,6 +275,7 @@ class ApplicationForLeaveViewControllerTest {
         secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
+        applicationOfSecondStage.setVacationType(anyVacationType());
         applicationOfSecondStage.setPerson(secondStagePerson);
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
@@ -270,6 +290,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
         applicationCancellationRequest.setPerson(secondStagePerson);
         applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         applicationCancellationRequest.setStartDate(LocalDate.MAX);
@@ -282,9 +303,9 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
             .andExpect(model().attribute("applications", hasSize(2)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("office"))))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("office"))))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
@@ -302,6 +323,7 @@ class ApplicationForLeaveViewControllerTest {
         userOfDepartmentA.setPermissions(List.of(USER));
         final Application applicationOfUserA = new Application();
         applicationOfUserA.setId(1);
+        applicationOfUserA.setVacationType(anyVacationType());
         applicationOfUserA.setPerson(userOfDepartmentA);
         applicationOfUserA.setStatus(TEMPORARY_ALLOWED);
         applicationOfUserA.setStartDate(LocalDate.MAX);
@@ -312,6 +334,7 @@ class ApplicationForLeaveViewControllerTest {
         userOfDepartmentB.setPermissions(List.of(USER));
         final Application applicationOfUserB = new Application();
         applicationOfUserB.setId(2);
+        applicationOfUserB.setVacationType(anyVacationType());
         applicationOfUserB.setPerson(userOfDepartmentB);
         applicationOfUserB.setStatus(WAITING);
         applicationOfUserB.setStartDate(LocalDate.MAX);
@@ -327,6 +350,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
         applicationCancellationRequest.setPerson(departmentHeadAndSecondStageAuth);
         applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         applicationCancellationRequest.setStartDate(LocalDate.MAX);
@@ -340,9 +364,9 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
             .andExpect(model().attribute("applications", hasSize(2)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentA"))))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("userOfDepartmentB"))))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("userOfDepartmentA"))))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("userOfDepartmentB"))))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
@@ -361,6 +385,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application temporaryAllowedApplication = new Application();
         temporaryAllowedApplication.setId(1);
+        temporaryAllowedApplication.setVacationType(anyVacationType());
         temporaryAllowedApplication.setPerson(userOfDepartment);
         temporaryAllowedApplication.setStatus(TEMPORARY_ALLOWED);
         temporaryAllowedApplication.setStartDate(LocalDate.MAX);
@@ -368,6 +393,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application waitingApplication = new Application();
         waitingApplication.setId(2);
+        waitingApplication.setVacationType(anyVacationType());
         waitingApplication.setPerson(userOfDepartment);
         waitingApplication.setStatus(WAITING);
         waitingApplication.setStartDate(LocalDate.MAX);
@@ -384,11 +410,16 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
             .andExpect(model().attribute("applications", hasSize(2)))
             .andExpect(model().attribute("applications", hasItems(
-                hasProperty("person", hasProperty("firstName", equalTo("userOfDepartment"))),
-                hasProperty("status", equalTo(WAITING)),
-                hasProperty("person", hasProperty("firstName", equalTo("userOfDepartment"))),
-                hasProperty("status", equalTo(TEMPORARY_ALLOWED)))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+                allOf(
+                    hasProperty("person", hasProperty("name", equalTo("userOfDepartment"))),
+                    hasProperty("statusWaiting", equalTo(true))
+                ),
+                allOf(
+                    hasProperty("person", hasProperty("name", equalTo("userOfDepartment"))),
+                    hasProperty("statusWaiting", equalTo(false))
+                )
+            )))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(view().name("application/app_list"));
     }
 
@@ -400,6 +431,7 @@ class ApplicationForLeaveViewControllerTest {
         userPerson.setPermissions(List.of(USER));
         final Application applicationOfUser = new Application();
         applicationOfUser.setId(3);
+        applicationOfUser.setVacationType(anyVacationType());
         applicationOfUser.setPerson(userPerson);
         applicationOfUser.setStatus(WAITING);
         applicationOfUser.setStartDate(LocalDate.MAX);
@@ -411,6 +443,7 @@ class ApplicationForLeaveViewControllerTest {
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
         applicationCancellationRequest.setPerson(userPerson);
         applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         applicationCancellationRequest.setStartDate(LocalDate.MAX);
@@ -423,8 +456,8 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(userPerson)))
             .andExpect(model().attribute("applications", hasSize(1)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("firstName", equalTo("person"))))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeave.class))))
+            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
+            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("application/app_list"));
     }
@@ -548,6 +581,13 @@ class ApplicationForLeaveViewControllerTest {
                 hasProperty("pending", is(false))
             )))
             .andExpect(view().name("application/app_list"));
+    }
+
+    private static VacationType anyVacationType() {
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(VacationCategory.HOLIDAY);
+        vacationType.setMessageKey("vacationTypeMessageKey");
+        return vacationType;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

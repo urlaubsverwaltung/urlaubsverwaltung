@@ -1,12 +1,14 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -17,8 +19,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -47,37 +51,121 @@ public class ApplicationForLeaveViewController {
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final Clock clock;
+    private final MessageSource messageSource;
 
     @Autowired
     public ApplicationForLeaveViewController(ApplicationService applicationService, WorkDaysCountService workDaysCountService,
-                                             DepartmentService departmentService, PersonService personService, Clock clock) {
+                                             DepartmentService departmentService, PersonService personService, Clock clock,
+                                             MessageSource messageSource) {
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
         this.clock = clock;
+        this.messageSource = messageSource;
     }
 
     /*
      * Show waiting applications for leave.
      */
     @GetMapping("/application")
-    public String showWaiting(Model model) {
+    public String showWaiting(Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
         final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave(signedInUser);
-        model.addAttribute("applications", applicationsForLeave);
+        final List<ApplicationForLeaveDto> applicationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeave, signedInUser, locale);
+        model.addAttribute("applications", applicationDtoList);
 
         final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
-        model.addAttribute("applications_cancellation_request", applicationsForLeaveCancellationRequests);
+        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
+        model.addAttribute("applications_cancellation_request", cancellationDtoList);
 
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
         final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate);
         model.addAttribute("applications_holiday_replacements", replacements);
 
         return "application/app_list";
+    }
+
+    private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, Locale locale) {
+        return applications.stream()
+            .map(applicationForLeave -> toView(applicationForLeave, signedInUser, messageSource, locale))
+            .collect(toList());
+    }
+
+    private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, MessageSource messageSource, Locale locale) {
+        final Person person = application.getPerson();
+        final boolean isWaiting = application.hasStatus(WAITING);
+        final boolean twoStageApproval = application.isTwoStageApproval();
+
+        final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
+        final boolean canAllow = isBoss || isDepartmentHead || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+
+        ApplicationForLeaveDto.Builder builder = ApplicationForLeaveDto.builder()
+            .id(application.getId())
+            .person(toViewPerson(person))
+            .vacationType(toViewVacationType(application.getVacationType()))
+            .duration(toDurationString(application.getHours(), messageSource, locale))
+            .dayLength(application.getDayLength())
+            .workDays(application.getWorkDays())
+            .statusWaiting(isWaiting)
+            .editAllowed(isWaiting && person.equals(signedInUser))
+            .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
+            .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting)
+            .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)));
+
+
+        final ZonedDateTime startDateWithTime = application.getStartDateWithTime();
+        builder = startDateWithTime == null
+            ? builder.startDate(application.getStartDate())
+            : builder.startDateWithTime(startDateWithTime);
+
+        final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
+        builder = endDateWithTime == null
+            ? builder.endDate(application.getEndDate())
+            : builder.endDateWithTime(endDateWithTime);
+
+        return builder.build();
+    }
+
+    private static ApplicationForLeaveDto.Person toViewPerson(Person person) {
+        return new ApplicationForLeaveDto.Person(person.getNiceName(), person.getGravatarURL());
+    }
+
+    private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationType vacationType) {
+        return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey());
+    }
+
+    private static String toDurationString(java.time.Duration javaTimeDuration, MessageSource messageSource, Locale locale) {
+        if (javaTimeDuration == null) {
+            return "";
+        }
+
+        final boolean negative = javaTimeDuration.isNegative();
+        final int hours = javaTimeDuration.abs().toHoursPart();
+        final int minutes = javaTimeDuration.abs().toMinutesPart();
+
+        String value = "";
+
+        if (hours > 0) {
+            value += hours + " " + messageSource.getMessage("hours.abbr", new Object[]{}, locale);
+        }
+
+        if (minutes > 0) {
+            if (hours > 0) {
+                value += " ";
+            }
+            value += minutes + " " + messageSource.getMessage("minutes.abbr", new Object[]{}, locale);
+        }
+
+        if (hours == 0 && minutes == 0) {
+            value = messageSource.getMessage("overtime.person.zero", new Object[]{}, locale);
+        }
+
+        return negative ? "-" + value : value;
     }
 
     private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate) {

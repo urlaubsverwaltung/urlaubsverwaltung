@@ -114,8 +114,8 @@
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <uv:avatar
-                                            url="${application.person.gravatarURL}?d=mm&s=40"
-                                            username="${application.person.niceName}"
+                                            url="${application.person.avatarUrl}?d=mm&s=40"
+                                            username="${application.person.name}"
                                             width="40px"
                                             height="40px"
                                             border="true"
@@ -123,7 +123,7 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.person.niceName}"/>
+                                            <c:out value="${application.person.name}"/>
                                         </span>
                                         <span>
                                             <spring:message code="application.applier.applied"/>
@@ -133,8 +133,8 @@
                                         <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
                                            href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
-                                                <c:when test="${application.hours != null}">
-                                                    <uv:duration duration="${application.hours}"/>
+                                                <c:when test="${not empty application.duration}">
+                                                    <c:out value="${application.duration}" />
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
@@ -148,12 +148,11 @@
                                             <c:choose>
                                                 <c:when test="${application.startDate == application.endDate}">
                                                     <c:set var="APPLICATION_DATE">
-                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
+                                                        <uv:date date="${application.startDate}" pattern="E, dd.MM.yyyy"/>
                                                     </c:set>
                                                     <c:choose>
                                                         <c:when
-                                                            test="${application.startTime != null && application.endTime != null}">
+                                                            test="${application.startDateWithTime != null && application.endDateWithTime != null}">
                                                             <c:set var="APPLICATION_START_TIME">
                                                                 <uv:time dateTime="${application.startDateWithTime}"/>
                                                             </c:set>
@@ -181,12 +180,10 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <c:set var="APPLICATION_START_DATE">
-                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
+                                                        <uv:date date="${application.startDate}" pattern="E, dd.MM.yyyy"/>
                                                     </c:set>
                                                     <c:set var="APPLICATION_END_DATE">
-                                                        <spring:message code="${application.weekDayOfEndDate}.short"/>,
-                                                        <uv:date date="${application.endDate}"/>
+                                                        <uv:date date="${application.endDate}" pattern="E, dd.MM.yyyy"/>
                                                     </c:set>
                                                     <spring:message code="absence.period.multipleDays"
                                                                     arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
@@ -197,20 +194,19 @@
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                            <c:if test="${application.person.id == signedInUser.id && application.status == 'WAITING'}">
+                                            <c:if test="${application.editAllowed}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}/edit">
                                                     <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <spring:message code='action.edit'/>
                                                 </a>
                                             </c:if>
-                                            <c:if
-                                                test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <c:if test="${application.approveAllowed}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
                                                     <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <c:choose>
-                                                        <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                                                        <c:when test="${application.temporaryApproveAllowed}">
                                                             <spring:message code='action.temporary_allow'/>
                                                         </c:when>
                                                         <c:otherwise>
@@ -219,8 +215,7 @@
                                                     </c:choose>
                                                 </a>
                                             </c:if>
-                                            <c:if
-                                                test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <c:if test="${application.rejectAllowed}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
                                                     <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
@@ -260,8 +255,8 @@
                                     onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            src="<c:out value='${application.person.avatarUrl}?d=mm&s=40'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.name}"/>"
                                             class="gravatar tw-rounded-full"
                                             width="40px"
                                             height="40px"
@@ -270,7 +265,7 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.person.niceName}"/>
+                                            <c:out value="${application.person.name}"/>
                                         </span>
                                         <span>
                                             <spring:message code="application.applier.applied"/>
@@ -280,8 +275,8 @@
                                         <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
                                            href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
-                                                <c:when test="${application.hours != null}">
-                                                    <uv:duration duration="${application.hours}"/>
+                                                <c:when test="${not empty application.duration}">
+                                                    <c:out value="${application.duration}" />
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
@@ -295,13 +290,11 @@
                                             <c:choose>
                                                 <c:when test="${application.startDate == application.endDate}">
                                                     <c:set var="APPLICATION_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
+                                                        <uv:date date="${application.startDate}" pattern="E, dd.MM.yyyy" />
                                                     </c:set>
                                                     <c:choose>
                                                         <c:when
-                                                            test="${application.startTime != null && application.endTime != null}">
+                                                            test="${application.startDateWithTime != null && application.endDateWithTime != null}">
                                                             <c:set var="APPLICATION_START_TIME">
                                                                 <uv:time
                                                                     dateTime="${application.startDateWithTime}"/>
@@ -332,14 +325,10 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <c:set var="APPLICATION_START_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
+                                                        <uv:date date="${application.startDate}" pattern="E, dd.MM.yyyy" />
                                                     </c:set>
                                                     <c:set var="APPLICATION_END_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfEndDate}.short"/>,
-                                                        <uv:date date="${application.endDate}"/>
+                                                        <uv:date date="${application.endDate}" pattern="E, dd.MM.yyyy" />
                                                     </c:set>
                                                     <spring:message code="absence.period.multipleDays"
                                                                     arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
