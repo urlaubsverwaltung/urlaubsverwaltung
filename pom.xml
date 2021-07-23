@@ -26,8 +26,6 @@
     <java.version>11</java.version>
     <testcontainers.version>1.15.3</testcontainers.version>
     <selenium.version>3.141.59</selenium.version>
-    <!-- JSP fix in Tomcat - can be removed with Spring boot 2.5.3 -->
-    <tomcat.version>9.0.50</tomcat.version>
   </properties>
 
   <scm>
