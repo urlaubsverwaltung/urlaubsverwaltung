@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -1199,14 +1199,14 @@ class ApplicationForLeaveFormValidatorTest {
         verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.full");
     }
 
-    private static WorkingTimeSettingsEntity createSettingsForChristmasEveWithAbsence(DayLength absence) {
-        WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+    private static WorkingTimeSettings createSettingsForChristmasEveWithAbsence(DayLength absence) {
+        WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForChristmasEve(absence.getInverse());
         return settings;
     }
 
-    private static WorkingTimeSettingsEntity createSettingsForNewYearsEveWithAbsence(DayLength absence) {
-        WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+    private static WorkingTimeSettings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
+        WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForNewYearsEve(absence.getInverse());
         return settings;
     }

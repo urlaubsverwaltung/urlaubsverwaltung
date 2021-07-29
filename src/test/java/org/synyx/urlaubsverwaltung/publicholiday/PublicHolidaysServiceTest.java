@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -43,7 +43,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureCorrectWorkingDurationForWorkDay() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         LocalDate testDate = LocalDate.of(2013, Month.NOVEMBER, 27);
 
         final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
@@ -53,7 +53,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureCorrectWorkingDurationForPublicHoliday() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         final LocalDate testDate = LocalDate.of(2013, Month.DECEMBER, 25);
 
         final BigDecimal workingDuration = sut.getWorkingDurationOfDate(testDate, state);
@@ -63,7 +63,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForChristmasEve(DayLength.FULL);
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -77,7 +77,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfFullDay() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForNewYearsEve(DayLength.FULL);
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -90,7 +90,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfMorning() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForChristmasEve(DayLength.MORNING);
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -103,7 +103,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfNoon() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForNewYearsEve(DayLength.NOON);
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -116,7 +116,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureWorkingDurationForChristmasEveCanBeConfiguredToAWorkingDurationOfZero() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForChristmasEve(DayLength.ZERO);
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -129,7 +129,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureWorkingDurationForNewYearsEveCanBeConfiguredToAWorkingDurationOfZero() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDurationForNewYearsEve(DayLength.ZERO);
         when(settingsService.getSettings()).thenReturn(settings);
 
@@ -142,7 +142,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBerlin() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BERLIN);
         assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
@@ -151,7 +151,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBadenWuerttemberg() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BADEN_WUERTTEMBERG);
         assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ONE);
@@ -159,7 +159,7 @@ class PublicHolidaysServiceTest {
 
     @Test
     void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final BigDecimal workingDuration = sut.getWorkingDurationOfDate(LocalDate.of(2015, AUGUST, 15), BAYERN_MUENCHEN);
         assertThat(workingDuration).isEqualByComparingTo(BigDecimal.ZERO);
@@ -168,7 +168,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsZeroWhenDateIsNoPublicHoliday() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate date = LocalDate.of(2019, 1, 2);
 
@@ -179,7 +179,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsFullForCorpusChristi() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         final LocalDate corpusChristi = LocalDate.of(2019, Month.MAY, 30);
 
         final DayLength actual = sut.getAbsenceTypeOfDate(corpusChristi, BADEN_WUERTTEMBERG);
@@ -189,7 +189,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsFullForAssumptionDayInBayernMunich() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
 
         final DayLength actual = sut.getAbsenceTypeOfDate(assumptionDay, BAYERN_MUENCHEN);
@@ -199,7 +199,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsZeroForAssumptionDayInBerlin() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
 
@@ -210,7 +210,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsZeroForAssumptionDayInBadenWuerttemberg() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate assumptionDay = LocalDate.of(2019, AUGUST, 15);
 
@@ -221,7 +221,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsForChristmasEve() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate date = LocalDate.of(2019, 12, 24);
 
@@ -232,7 +232,7 @@ class PublicHolidaysServiceTest {
     @Test
     void ensureGetAbsenceTypeOfDateReturnsForNewYearsEve() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate date = LocalDate.of(2019, 12, 31);
 

@@ -19,18 +19,19 @@ public class WorkingTimeSettingsService {
 
         WorkingTimeSettingsEntity workingTimeSettingsEntity = workingTimeSettingsRepository.findFirstBy();
 
-        WorkingTimeSettingsDto workingTimeSettingsDto = WorkingTimeSettingsDtoMapper.mapToWorkingTimeSettingsDto(workingTimeSettingsEntity);
+        WorkingTimeSettingsDto workingTimeSettingsDto = WorkingTimeSettingsMapper.mapToWorkingTimeSettingsDto(workingTimeSettingsEntity);
         workingTimeSettingsDto.setDefaultWorkingDaysDeactivated(workingTimeProperties.isDefaultWorkingDaysDeactivated());
         return workingTimeSettingsDto;
     }
 
     public void save(WorkingTimeSettingsDto workingTimeSettingsDto) {
 
-        WorkingTimeSettingsEntity workingTimeSettingsEntity = WorkingTimeSettingsDtoMapper.mapToWorkingTimeSettingsEntity(workingTimeSettingsDto);
+        WorkingTimeSettingsEntity workingTimeSettingsEntity = WorkingTimeSettingsMapper.mapToWorkingTimeSettingsEntity(workingTimeSettingsDto);
         workingTimeSettingsRepository.save(workingTimeSettingsEntity);
     }
 
-    public WorkingTimeSettingsEntity getSettings() {
-        return workingTimeSettingsRepository.findFirstBy();
+    public WorkingTimeSettings getSettings() {
+        WorkingTimeSettingsEntity settingsEntity = workingTimeSettingsRepository.findFirstBy();
+        return WorkingTimeSettingsMapper.mapToWorkingTimeSettingsModel(settingsEntity);
     }
 }

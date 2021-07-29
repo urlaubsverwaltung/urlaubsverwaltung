@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -46,7 +46,7 @@ public class PublicHolidaysService {
 
     public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
 
-        final WorkingTimeSettingsEntity settings = settingsService.getSettings();
+        final WorkingTimeSettings settings = settingsService.getSettings();
         return getHolidayDayLength(settings, date, federalState);
     }
 
@@ -55,14 +55,14 @@ public class PublicHolidaysService {
     }
 
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
-        final WorkingTimeSettingsEntity workingTimeSettings = settingsService.getSettings();
+        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings();
 
         return getHolidays(from, to, federalState).stream()
             .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
             .collect(toUnmodifiableList());
     }
 
-    private DayLength getHolidayDayLength(WorkingTimeSettingsEntity workingTimeSettings, LocalDate date, FederalState federalState) {
+    private DayLength getHolidayDayLength(WorkingTimeSettings workingTimeSettings, LocalDate date, FederalState federalState) {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {

@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.LocalDate;
@@ -55,7 +55,7 @@ class PublicHolidayApiControllerTest {
     @Test
     void getPublicHolidays() throws Exception {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setFederalState(BADEN_WUERTTEMBERG);
         when(settingsService.getSettings()).thenReturn(settings);
 

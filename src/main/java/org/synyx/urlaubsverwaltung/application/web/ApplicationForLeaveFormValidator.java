@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -152,7 +152,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
 
         if (endDate == null || startDate.isEqual(endDate)) {
-            WorkingTimeSettingsEntity workingTimesSettings = workingTimeSettingsService.getSettings();
+            WorkingTimeSettings workingTimesSettings = workingTimeSettingsService.getSettings();
             if (isChristmasEve(startDate)) {
                 validateChristmasEve(dayLength, errors, workingTimesSettings);
             } else if (isNewYearsEve(startDate)) {
@@ -165,7 +165,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateChristmasEve(DayLength applicationDayLength, Errors errors, WorkingTimeSettingsEntity workingTimesSettings) {
+    private void validateChristmasEve(DayLength applicationDayLength, Errors errors, WorkingTimeSettings workingTimesSettings) {
 
         final DayLength workingDurationForChristmasEve = workingTimesSettings.getWorkingDurationForChristmasEve();
 
@@ -193,7 +193,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateNewYearsEve(DayLength applicationDayLength, Errors errors, WorkingTimeSettingsEntity workingTimesSettings) {
+    private void validateNewYearsEve(DayLength applicationDayLength, Errors errors, WorkingTimeSettings workingTimesSettings) {
 
         final DayLength workingDurationForNewYearsEve = workingTimesSettings.getWorkingDurationForNewYearsEve();
 

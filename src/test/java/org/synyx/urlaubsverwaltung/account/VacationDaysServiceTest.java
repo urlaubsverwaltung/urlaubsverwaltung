@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -95,7 +95,7 @@ class VacationDaysServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
@@ -165,7 +165,7 @@ class VacationDaysServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);

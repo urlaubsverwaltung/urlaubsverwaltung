@@ -1,19 +1,19 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.period.DayLength.*;
 
-class WorkingTimeSettingsEntityTest {
+class WorkingTimeSettingsTest {
 
     @Test
     void ensureDefaultValues() {
 
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         assertThat(settings.getWorkingDurationForChristmasEve()).isEqualTo(MORNING);
         assertThat(settings.getWorkingDurationForNewYearsEve()).isEqualTo(MORNING);
         assertThat(settings.getMonday()).isEqualTo(FULL);
@@ -27,7 +27,7 @@ class WorkingTimeSettingsEntityTest {
 
     @Test
     void setWorkingDays() {
-        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings settings = new WorkingTimeSettings();
         settings.setWorkingDays(List.of(1, 2, 3, 4, 5, 6, 7));
         assertThat(settings.getWorkingDays()).isEqualTo(List.of(1, 2, 3, 4, 5, 6, 7));
     }

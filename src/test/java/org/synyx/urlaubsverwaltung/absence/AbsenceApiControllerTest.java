@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.LocalDate;
@@ -631,7 +631,7 @@ class AbsenceApiControllerTest {
     }
 
     private void mockFederalState(FederalState federalState) {
-        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         workingTimeSettings.setFederalState(federalState);
 
         when(settingsService.getSettings()).thenReturn(workingTimeSettings);

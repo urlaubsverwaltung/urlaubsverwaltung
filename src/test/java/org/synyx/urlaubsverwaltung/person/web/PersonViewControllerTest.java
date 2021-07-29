@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -317,9 +317,9 @@ class PersonViewControllerTest {
         return standaloneSetup(sut).build().perform(builder);
     }
 
-    private static WorkingTimeSettingsEntity settingsWithFederalState(FederalState federalState) {
+    private static WorkingTimeSettings settingsWithFederalState(FederalState federalState) {
 
-        WorkingTimeSettingsEntity workingTimeSettingsEntity = new WorkingTimeSettingsEntity();
+        WorkingTimeSettings workingTimeSettingsEntity = new WorkingTimeSettings();
         workingTimeSettingsEntity.setFederalState(federalState);
 
         return workingTimeSettingsEntity;

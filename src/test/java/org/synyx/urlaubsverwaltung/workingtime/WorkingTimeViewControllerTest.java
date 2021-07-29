@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
@@ -75,7 +75,7 @@ class WorkingTimeViewControllerTest {
 
     @Test
     void editWorkingTimePresetsFormWithCorrectAttributes() throws Exception {
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
@@ -103,7 +103,7 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.empty());
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
@@ -113,7 +113,7 @@ class WorkingTimeViewControllerTest {
     @Test
     void editGetWorkingTimeUsesCorrectView() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
@@ -130,7 +130,7 @@ class WorkingTimeViewControllerTest {
     @Test
     void updatePostWorkingTimeShowsFormIfValidationFails() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         doAnswer(invocation -> {

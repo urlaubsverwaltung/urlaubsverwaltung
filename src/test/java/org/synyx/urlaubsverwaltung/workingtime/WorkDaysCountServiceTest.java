@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -65,7 +65,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithPublicHolidaysAndBothOnWeekend() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -93,7 +93,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithPublicHolidaysAndOneOnWeekend() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -121,7 +121,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDayMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person();
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -143,7 +143,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDaysMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -165,7 +165,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDayNoon() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person();
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -187,7 +187,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithHalfDaysNoon() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -209,7 +209,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithSundayToSaturday() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -232,7 +232,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithPublicHolidaysOverLabourDay() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -255,7 +255,7 @@ class WorkDaysCountServiceTest {
     @Test
     void getWorkDaysWithPublicHolidaysOverYears() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationType(HOLIDAY));
@@ -278,7 +278,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForTeilzeitPersons() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -299,7 +299,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForVollzeitPersons() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -320,7 +320,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysHalfDay() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -339,7 +339,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysZero() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -358,7 +358,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysHalfDayZero() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -377,7 +377,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEve() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -394,7 +394,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEveDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -411,7 +411,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForNewYearsEve() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -428,7 +428,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForNewYearsEveDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -445,7 +445,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEveAndNewYearsHoliday() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -463,7 +463,7 @@ class WorkDaysCountServiceTest {
     @Test
     void testGetWorkDaysForChristmasEveAndNewYearsHolidayDayLengthMorning() {
 
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 

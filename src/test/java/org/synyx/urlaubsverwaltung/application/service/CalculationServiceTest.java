@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettings;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
@@ -73,7 +73,7 @@ class CalculationServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettings());
 
         final HolidayManager holidayManager = getHolidayManager();
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);
