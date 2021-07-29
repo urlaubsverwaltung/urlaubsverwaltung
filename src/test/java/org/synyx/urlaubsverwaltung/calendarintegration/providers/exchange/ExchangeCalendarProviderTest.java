@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
-import microsoft.exchange.webservices.data.core.service.item.Item;
 import microsoft.exchange.webservices.data.property.complex.Attendee;
 import microsoft.exchange.webservices.data.property.complex.AttendeeCollection;
 import microsoft.exchange.webservices.data.property.complex.FolderId;
@@ -17,10 +16,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -28,10 +27,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion.Exchange2010_SP2;
 import static microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName.Calendar;
-import static microsoft.exchange.webservices.data.core.enumeration.service.MessageDisposition.SaveOnly;
-import static microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode.SendToNone;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,7 +41,7 @@ class ExchangeCalendarProviderTest {
     @Mock
     private CalendarMailService calendarMailService;
     @Mock
-    private CalendarSettings calendarSettings;
+    private CalendarSettingsEntity calendarSettings;
     @Mock
     private ExchangeCalendarSettings exchangeCalSettings;
     @Mock
@@ -77,7 +73,7 @@ class ExchangeCalendarProviderTest {
 
         final LocalDate start = LocalDate.of(2021, 1, 11);
         final LocalDate end = LocalDate.of(2021, 1, 12);
-        final TimeSettings timeSettings = new TimeSettings();
+        final TimeSettingsEntity timeSettings = new TimeSettingsEntity();
         timeSettings.setTimeZoneId("Etc/UTC");
         final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(timeSettings));
 
@@ -88,7 +84,7 @@ class ExchangeCalendarProviderTest {
         verify(appointment).setEndTimeZone(any(TimeZoneDefinition.class));
     }
 
-    private CalendarSettings getCalendarSettings() {
+    private CalendarSettingsEntity getCalendarSettings() {
         when(exchangeCalSettings.getTimeZoneId()).thenReturn("Europe/Berlin");
 
         when(calendarSettings.getExchangeCalendarSettings()).thenReturn(exchangeCalSettings);

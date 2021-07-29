@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.settings;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 
 public class SickNoteSettingsValidator {
 

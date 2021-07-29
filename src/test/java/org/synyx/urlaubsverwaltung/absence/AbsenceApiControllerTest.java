@@ -14,10 +14,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -48,7 +47,7 @@ class AbsenceApiControllerTest {
     private PublicHolidaysService publicHolidaysService;
 
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -632,13 +631,10 @@ class AbsenceApiControllerTest {
     }
 
     private void mockFederalState(FederalState federalState) {
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
+        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
         workingTimeSettings.setFederalState(federalState);
 
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(workingTimeSettings);
     }
 
     private static AbsencePeriod.Record anyVacationRecord(Person person, LocalDate date) {

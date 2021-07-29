@@ -9,8 +9,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,13 +26,13 @@ class AccountFormValidatorTest {
     private AccountFormValidator sut;
 
     @Mock
-    private SettingsService settingsService;
+    private AccountSettingsService accountSettingsService;
     @Mock
     private Errors errors;
 
     @BeforeEach
     void setUp() {
-        sut = new AccountFormValidator(settingsService);
+        sut = new AccountFormValidator(accountSettingsService);
     }
 
     @Test

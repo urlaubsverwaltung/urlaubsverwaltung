@@ -9,14 +9,14 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingType;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -54,7 +54,7 @@ class SickNoteInteractionServiceImplTest {
     @Mock
     private AbsenceMappingService absenceMappingService;
     @Mock
-    private SettingsService settingsService;
+    private TimeSettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -65,7 +65,7 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureCreatedSickNoteIsPersisted() {
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -83,7 +83,7 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureCreatedSickNoteHasComment() {
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final String comment = "test comment";
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
@@ -99,7 +99,7 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureCreatingSickNoteAddsEventToCalendar() {
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -115,7 +115,7 @@ class SickNoteInteractionServiceImplTest {
     void ensureUpdatedSickNoteIsPersisted() {
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -134,7 +134,7 @@ class SickNoteInteractionServiceImplTest {
     void ensureUpdatedSickHasComment() {
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final String comment = "test comment";
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
@@ -151,7 +151,7 @@ class SickNoteInteractionServiceImplTest {
     void ensureUpdatingSickNoteUpdatesCalendarEvent() {
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, AbsenceMappingType.VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -201,7 +201,7 @@ class SickNoteInteractionServiceImplTest {
     void ensureConvertedSickNoteIsPersisted() {
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -231,7 +231,7 @@ class SickNoteInteractionServiceImplTest {
     void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 

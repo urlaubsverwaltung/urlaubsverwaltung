@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendarintegration.providers;
 
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public interface CalendarProvider {
      * @param calendarSettings contains configuration for calendar provider
      * @return id of added absence event, may be empty if an error occurred during the calendar sync
      */
-    Optional<String> add(Absence absence, CalendarSettings calendarSettings);
+    Optional<String> add(Absence absence, CalendarSettingsEntity calendarSettings);
 
 
     /**
@@ -29,7 +29,7 @@ public interface CalendarProvider {
      * @param eventId          id of event to be updated
      * @param calendarSettings contains configuration for calendar provider
      */
-    void update(Absence absence, String eventId, CalendarSettings calendarSettings);
+    void update(Absence absence, String eventId, CalendarSettingsEntity calendarSettings);
 
 
     /**
@@ -38,7 +38,7 @@ public interface CalendarProvider {
      * @param eventId          id of absence event, which should be deleted
      * @param calendarSettings contains configuration for calendar provider
      */
-    void delete(String eventId, CalendarSettings calendarSettings);
+    void delete(String eventId, CalendarSettingsEntity calendarSettings);
 
 
     /**
@@ -46,5 +46,5 @@ public interface CalendarProvider {
      *
      * @param calendarSettings to be checked, containing configuration for calendar provider
      */
-    void checkCalendarSyncSettings(CalendarSettings calendarSettings);
+    void checkCalendarSyncSettings(CalendarSettingsEntity calendarSettings);
 }

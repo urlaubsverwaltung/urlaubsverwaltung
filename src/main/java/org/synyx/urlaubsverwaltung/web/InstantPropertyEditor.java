@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.util.StringUtils;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import java.beans.PropertyEditorSupport;
@@ -13,14 +13,14 @@ import java.time.format.DateTimeParseException;
 
 public class InstantPropertyEditor extends PropertyEditorSupport {
 
-    private final SettingsService settingsService;
+    private final TimeSettingsService timeSettingsService;
     private final Clock clock;
     private final DateTimeFormatter formatter;
 
-    public InstantPropertyEditor(Clock clock, SettingsService settingsService) {
+    public InstantPropertyEditor(Clock clock, TimeSettingsService timeSettingsService) {
 
         this.clock = clock;
-        this.settingsService = settingsService;
+        this.timeSettingsService = timeSettingsService;
         this.formatter = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
     }
 
@@ -33,7 +33,7 @@ public class InstantPropertyEditor extends PropertyEditorSupport {
         }
 
         Instant instant = (Instant) this.getValue();
-        ZoneId zoneId = ZoneId.of(settingsService.getSettings().getTimeSettings().getTimeZoneId());
+        ZoneId zoneId = ZoneId.of(timeSettingsService.getSettings().getTimeZoneId());
         return formatter.format(instant.atZone(zoneId));
     }
 

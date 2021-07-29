@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "time_settings")
-class TimeSettingsEntity {
+public class TimeSettingsEntity {
 
     @Id
     @GeneratedValue

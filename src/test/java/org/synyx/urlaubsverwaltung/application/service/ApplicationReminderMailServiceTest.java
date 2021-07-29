@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsEntity;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -40,7 +39,7 @@ class ApplicationReminderMailServiceTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private SettingsService settingsService;
+    private ApplicationSettingsService applicationSettingsService;
     @Mock
     private ApplicationMailService applicationMailService;
 
@@ -48,7 +47,7 @@ class ApplicationReminderMailServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationReminderMailService(applicationService, settingsService, applicationMailService, clock);
+        sut = new ApplicationReminderMailService(applicationService, applicationSettingsService, applicationMailService, clock);
     }
 
     @Test
@@ -99,7 +98,7 @@ class ApplicationReminderMailServiceTest {
     @Test
     void sendUpcomingApplicationsReminderNotification() {
 
-        final ApplicationSettings applicationSettings = prepareSettingsWithRemindForUpcomingApplications(true);
+        final ApplicationSettingsEntity applicationSettings = prepareSettingsWithRemindForUpcomingApplications(true);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final VacationType vacationType = createVacationType(HOLIDAY);
@@ -123,21 +122,18 @@ class ApplicationReminderMailServiceTest {
         verifyNoInteractions(applicationMailService);
     }
 
-    private ApplicationSettings prepareSettingsWithRemindForUpcomingApplications(boolean activateUpcomingNotification) {
-        final Settings settings = new Settings();
-        final ApplicationSettings applicationSettings = new ApplicationSettings();
+    private ApplicationSettingsEntity prepareSettingsWithRemindForUpcomingApplications(boolean activateUpcomingNotification) {
+        ApplicationSettingsEntity applicationSettings = new ApplicationSettingsEntity();
         applicationSettings.setRemindForUpcomingApplications(activateUpcomingNotification);
-        settings.setApplicationSettings(applicationSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+
+        when(applicationSettingsService.getSettings()).thenReturn(applicationSettings);
 
         return applicationSettings;
     }
 
     private void prepareSettingsWithRemindForWaitingApplications(boolean isActive) {
-        final Settings settings = new Settings();
-        final ApplicationSettings applicationSettings = new ApplicationSettings();
+        final ApplicationSettingsEntity applicationSettings = new ApplicationSettingsEntity();
         applicationSettings.setRemindForWaitingApplications(isActive);
-        settings.setApplicationSettings(applicationSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(applicationSettingsService.getSettings()).thenReturn(applicationSettings);
     }
 }

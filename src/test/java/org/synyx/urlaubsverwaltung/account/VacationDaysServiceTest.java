@@ -12,11 +12,11 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -71,7 +71,7 @@ class VacationDaysServiceTest {
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
 
     private WorkDaysCountService workDaysCountService;
 
@@ -95,7 +95,7 @@ class VacationDaysServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
 
         final LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
@@ -165,7 +165,7 @@ class VacationDaysServiceTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
 
         final LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);

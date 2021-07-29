@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,11 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class AbsenceTimeConfigurationTest {
 
-    private TimeSettings timeSettings;
+    private TimeSettingsEntity timeSettings;
 
     @BeforeEach
     void setUp() {
-        timeSettings = new TimeSettings();
+        timeSettings = new TimeSettingsEntity();
         timeSettings.setTimeZoneId("Etc/UTC");
         timeSettings.setWorkDayBeginHour(8);
         timeSettings.setWorkDayEndHour(16);

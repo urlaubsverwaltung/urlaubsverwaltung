@@ -17,15 +17,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +48,7 @@ class GoogleCalendarSyncProviderServiceTest {
     private static String CALENDAR_ID;
     private static String REFRESH_TOKEN;
 
-    private SettingsService settingsService;
+    private CalendarSettingsService settingsService;
     private CalendarMailService calendarMailService;
     private GoogleCalendarSyncProvider googleCalendarSyncProvider;
 
@@ -119,12 +118,12 @@ class GoogleCalendarSyncProviderServiceTest {
     @Test
     void addUpdateDeleteAbsence() throws GeneralSecurityException, IOException {
 
-        CalendarSettings calendarSettings = settingsService.getSettings().getCalendarSettings();
+        CalendarSettingsEntity calendarSettings = settingsService.getSettings();
 
         Person person = new Person("testUser", "Hans", "Wurst", "testUser@mail.test");
         Period period = new Period(LocalDate.now(UTC), LocalDate.now(UTC), DayLength.MORNING);
 
-        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(TimeSettings.class));
+        AbsenceTimeConfiguration config = new AbsenceTimeConfiguration(mock(TimeSettingsEntity.class));
         Absence absence = new Absence(person, period, config);
 
         int eventsBeforeAdd = getCalendarEventCount();
@@ -144,18 +143,16 @@ class GoogleCalendarSyncProviderServiceTest {
         assertThat(eventsAfterDelete).isEqualTo(eventsBeforeAdd);
     }
 
-    private SettingsService prepareSettingsServiceMock() {
-        SettingsService settingsService = mock(SettingsService.class);
-        Settings settings = new Settings();
-        CalendarSettings calendarSettings = new CalendarSettings();
+    private CalendarSettingsService prepareSettingsServiceMock() {
+        CalendarSettingsService settingsService = mock(CalendarSettingsService.class);
+        CalendarSettingsEntity calendarSettings = new CalendarSettingsEntity();
         GoogleCalendarSettings googleCalendarSettings = new GoogleCalendarSettings();
         googleCalendarSettings.setCalendarId(CALENDAR_ID);
         googleCalendarSettings.setClientId(CLIENT_ID);
         googleCalendarSettings.setClientSecret(CLIENT_SECRET);
         googleCalendarSettings.setRefreshToken(REFRESH_TOKEN);
         calendarSettings.setGoogleCalendarSettings(googleCalendarSettings);
-        settings.setCalendarSettings(calendarSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(calendarSettings);
         return settingsService;
     }
 }

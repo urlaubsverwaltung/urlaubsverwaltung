@@ -3,13 +3,14 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus;
@@ -40,18 +41,18 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
-    private final SettingsService settingsService;
+    private final TimeSettingsService timeSettingsService;
     private final WorkingTimeService workingTimeService;
     private final PublicHolidaysService publicHolidaysService;
 
     @Autowired
     public AbsenceServiceImpl(ApplicationService applicationService, SickNoteService sickNoteService,
-                              SettingsService settingsService, WorkingTimeService workingTimeService,
+                              TimeSettingsService timeSettingsService, WorkingTimeService workingTimeService,
                               PublicHolidaysService publicHolidaysService) {
 
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
-        this.settingsService = settingsService;
+        this.timeSettingsService = timeSettingsService;
         this.workingTimeService = workingTimeService;
         this.publicHolidaysService = publicHolidaysService;
     }
@@ -303,7 +304,7 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+        final TimeSettingsEntity timeSettings = timeSettingsService.getSettings();
         return new AbsenceTimeConfiguration(timeSettings);
     }
 

@@ -3,10 +3,10 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsEntity;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -27,12 +27,12 @@ class ApplicationReminderMailService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationService applicationService;
-    private final SettingsService settingsService;
+    private final ApplicationSettingsService settingsService;
     private final ApplicationMailService applicationMailService;
     private final Clock clock;
 
     @Autowired
-    ApplicationReminderMailService(ApplicationService applicationService, SettingsService settingsService, ApplicationMailService applicationMailService, Clock clock) {
+    ApplicationReminderMailService(ApplicationService applicationService, ApplicationSettingsService settingsService, ApplicationMailService applicationMailService, Clock clock) {
         this.applicationService = applicationService;
         this.settingsService = settingsService;
         this.applicationMailService = applicationMailService;
@@ -42,7 +42,7 @@ class ApplicationReminderMailService {
     void sendWaitingApplicationsReminderNotification() {
 
         boolean isRemindForWaitingApplicationsActive =
-            settingsService.getSettings().getApplicationSettings().isRemindForWaitingApplications();
+            settingsService.getSettings().isRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
             final List<Application> longWaitingApplications = applicationService.getForStates(List.of(WAITING)).stream()
@@ -68,7 +68,7 @@ class ApplicationReminderMailService {
 
     void sendUpcomingApplicationsReminderNotification() {
 
-        final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
+        final ApplicationSettingsEntity applicationSettings = settingsService.getSettings();
         if (applicationSettings.isRemindForUpcomingApplications()) {
             final LocalDate dateForUpcomingApplications = LocalDate.now(clock).plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
             final List<ApplicationStatus> allowedStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
@@ -84,7 +84,7 @@ class ApplicationReminderMailService {
             LocalDate remindDate = application.getRemindDate();
             if (remindDate == null) {
                 Integer daysBeforeRemindForWaitingApplications =
-                    settingsService.getSettings().getApplicationSettings().getDaysBeforeRemindForWaitingApplications();
+                    settingsService.getSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
                 LocalDate minDateForNotification = application.getApplicationDate()

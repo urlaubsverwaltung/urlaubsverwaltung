@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +20,13 @@ public class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final SettingsService settingsService;
+    private final SickNoteSettingsService sickNoteSettingsService;
     private final SickNoteService sickNoteService;
     private final MailService mailService;
 
     @Autowired
-    public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
-        this.settingsService = settingsService;
+    public SickNoteMailService(SickNoteSettingsService sickNoteSettingsService, SickNoteService sickNoteService, MailService mailService) {
+        this.sickNoteSettingsService = sickNoteSettingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
     }
@@ -42,7 +42,7 @@ public class SickNoteMailService {
 
         final String subjectMessageKey = "subject.sicknote.endOfSickPay";
         final String templateName = "sicknote_end_of_sick_pay";
-        final Integer maximumSickPayDays = settingsService.getSettings().getSickNoteSettings().getMaximumSickPayDays();
+        final Integer maximumSickPayDays = sickNoteSettingsService.getSettings().getMaximumSickPayDays();
 
         for (SickNote sickNote : sickNotes) {
 

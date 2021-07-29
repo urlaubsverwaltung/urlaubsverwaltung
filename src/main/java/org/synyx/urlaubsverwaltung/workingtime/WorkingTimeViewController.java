@@ -16,9 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -41,13 +41,13 @@ public class WorkingTimeViewController {
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final WorkingTimeWriteService workingTimeWriteService;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
     private final WorkingTimeValidator validator;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
-                                     WorkingTimeWriteService workingTimeWriteService, SettingsService settingsService, WorkingTimeValidator validator,
+                                     WorkingTimeWriteService workingTimeWriteService, WorkingTimeSettingsService settingsService, WorkingTimeValidator validator,
                                      Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
@@ -109,7 +109,7 @@ public class WorkingTimeViewController {
 
         final List<WorkingTime> workingTimeHistories = workingTimeService.getByPerson(person);
         final WorkingTime currentWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock)).orElse(null);
-        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState defaultFederalState = settingsService.getSettings().getFederalState();
 
         model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories));
         model.addAttribute("weekDays", DayOfWeek.values());

@@ -13,10 +13,10 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -59,7 +59,7 @@ class OvertimeViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
-    private SettingsService settingsService;
+    private OvertimeSettingsService settingsService;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -897,13 +897,13 @@ class OvertimeViewControllerTest {
     }
 
     private void mockSettings() {
-        final Settings settings = new Settings();
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
         when(settingsService.getSettings()).thenReturn(settings);
     }
 
     private void mockSettingsWithOvertimeReductionDisabled() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(false);
+        OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeReductionWithoutApplicationActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
     }
 

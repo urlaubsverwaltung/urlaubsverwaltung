@@ -4,8 +4,12 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsService;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -21,38 +25,49 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final SettingsService settingsService;
-    private final CalendarService calendarService;
+    private final CalendarSettingsService settingsService;
+    private final List<CalendarProvider> calendarProviders;
 
     @Autowired
-    public CalendarSyncServiceImpl(SettingsService settingsService, CalendarService calendarService) {
+    public CalendarSyncServiceImpl(CalendarSettingsService settingsService, List<CalendarProvider> calendarProviders) {
         this.settingsService = settingsService;
-        this.calendarService = calendarService;
+        this.calendarProviders = calendarProviders;
 
-        LOG.info("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
+        LOG.info("The following calendar provider is configured: {}", getCalendarProvider().getClass());
     }
 
     @Override
     public Optional<String> addAbsence(Absence absence) {
-        return calendarService.getCalendarProvider().add(absence, getCalendarSettings());
+        return getCalendarProvider().add(absence, getCalendarSettings());
     }
 
     @Override
     public void update(Absence absence, String eventId) {
-        calendarService.getCalendarProvider().update(absence, eventId, getCalendarSettings());
+        getCalendarProvider().update(absence, eventId, getCalendarSettings());
     }
 
     @Override
     public void deleteAbsence(String eventId) {
-        calendarService.getCalendarProvider().delete(eventId, getCalendarSettings());
+        getCalendarProvider().delete(eventId, getCalendarSettings());
     }
 
     @Override
     public void checkCalendarSyncSettings() {
-        calendarService.getCalendarProvider().checkCalendarSyncSettings(getCalendarSettings());
+        getCalendarProvider().checkCalendarSyncSettings(getCalendarSettings());
     }
 
-    private CalendarSettings getCalendarSettings() {
-        return this.settingsService.getSettings().getCalendarSettings();
+    private CalendarProvider getCalendarProvider() {
+        return getCalendarProviderClassByString(getCalendarSettings().getProvider());
+    }
+
+    private CalendarSettingsEntity getCalendarSettings() {
+        return this.settingsService.getSettings();
+    }
+
+    private CalendarProvider getCalendarProviderClassByString(String provider) {
+        return calendarProviders.stream()
+            .filter(calendarProvider -> calendarProvider.getClass().getSimpleName().equals(provider))
+            .findFirst()
+            .orElse(new NoopCalendarSyncProvider());
     }
 }

@@ -8,12 +8,12 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -42,20 +42,20 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final ApplicationInteractionService applicationInteractionService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
-    private final SettingsService settingsService;
+    private final TimeSettingsService timeSettingsService;
     private final Clock clock;
 
     @Autowired
     public SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
                                           ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                          AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
+                                          AbsenceMappingService absenceMappingService, TimeSettingsService timeSettingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
         this.applicationInteractionService = applicationInteractionService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
-        this.settingsService = settingsService;
+        this.timeSettingsService = timeSettingsService;
         this.clock = clock;
     }
 
@@ -111,7 +111,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {
             final String eventId = absenceMapping.get().getEventId();
-            final TimeSettings timeSettings = getTimeSettings();
+            final TimeSettingsEntity timeSettings = getTimeSettings();
 
             calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
                 new AbsenceTimeConfiguration(timeSettings)), eventId);
@@ -160,8 +160,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         maybeEventId.ifPresent(eventId -> absenceMappingService.create(sickNote.getId(), SICKNOTE, eventId));
     }
 
-    private TimeSettings getTimeSettings() {
-        return settingsService.getSettings().getTimeSettings();
+    private TimeSettingsEntity getTimeSettings() {
+        return timeSettingsService.getSettings();
     }
 
     private void saveSickNote(SickNote sickNote) {

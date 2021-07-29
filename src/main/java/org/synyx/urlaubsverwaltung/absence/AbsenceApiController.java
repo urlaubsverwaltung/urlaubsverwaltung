@@ -19,8 +19,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -49,11 +49,11 @@ public class AbsenceApiController {
     private final PersonService personService;
     private final AbsenceService absenceService;
     private final PublicHolidaysService publicHolidaysService;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
 
     @Autowired
     public AbsenceApiController(PersonService personService, AbsenceService absenceService,
-                                PublicHolidaysService publicHolidaysService, SettingsService settingsService) {
+                                PublicHolidaysService publicHolidaysService, WorkingTimeSettingsService settingsService) {
         this.personService = personService;
         this.absenceService = absenceService;
         this.publicHolidaysService = publicHolidaysService;
@@ -117,7 +117,7 @@ public class AbsenceApiController {
     }
 
     private Map<LocalDate, PublicHoliday> holidaysByDate(LocalDate start, LocalDate end) {
-        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState defaultFederalState = settingsService.getSettings().getFederalState();
         return publicHolidaysService.getPublicHolidays(start, end, defaultFederalState)
             .stream()
             .collect(

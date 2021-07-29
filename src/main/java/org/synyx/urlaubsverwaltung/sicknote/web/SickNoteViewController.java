@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentAction;
@@ -61,7 +61,7 @@ public class SickNoteViewController {
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
-    private final SettingsService settingsService;
+    private final TimeSettingsService timeSettingsService;
     private final Clock clock;
 
     @Autowired
@@ -69,7 +69,7 @@ public class SickNoteViewController {
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
                                   WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
-                                  SickNoteConvertFormValidator sickNoteConvertFormValidator, SettingsService settingsService, Clock clock) {
+                                  SickNoteConvertFormValidator sickNoteConvertFormValidator, TimeSettingsService timeSettingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
@@ -80,13 +80,13 @@ public class SickNoteViewController {
         this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
-        this.settingsService = settingsService;
+        this.timeSettingsService = timeSettingsService;
         this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder) {
-        binder.registerCustomEditor(Instant.class, new InstantPropertyEditor(clock, settingsService));
+        binder.registerCustomEditor(Instant.class, new InstantPropertyEditor(clock, timeSettingsService));
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }

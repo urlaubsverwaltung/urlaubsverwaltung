@@ -24,13 +24,14 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
@@ -87,7 +88,8 @@ public class ApplicationForLeaveFormViewController {
     private final VacationTypeService vacationTypeService;
     private final ApplicationInteractionService applicationInteractionService;
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
-    private final SettingsService settingsService;
+    private final ApplicationSettingsService applicationSettingsService;
+    private final OvertimeSettingsService overtimeSettingsService;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
@@ -97,7 +99,7 @@ public class ApplicationForLeaveFormViewController {
                                                  VacationTypeService vacationTypeService,
                                                  ApplicationInteractionService applicationInteractionService,
                                                  ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
-                                                 SettingsService settingsService, SpecialLeaveSettingsService specialLeaveSettingsService, DateFormatAware dateFormatAware,
+                                                 ApplicationSettingsService applicationSettingsService, OvertimeSettingsService overtimeSettingsService, SpecialLeaveSettingsService specialLeaveSettingsService, DateFormatAware dateFormatAware,
                                                  Clock clock) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -105,7 +107,8 @@ public class ApplicationForLeaveFormViewController {
         this.vacationTypeService = vacationTypeService;
         this.applicationInteractionService = applicationInteractionService;
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
-        this.settingsService = settingsService;
+        this.applicationSettingsService = applicationSettingsService;
+        this.overtimeSettingsService = overtimeSettingsService;
         this.specialLeaveSettingsService = specialLeaveSettingsService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
@@ -406,7 +409,7 @@ public class ApplicationForLeaveFormViewController {
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
         model.addAttribute(IS_OFFICE_ATTRIBUTE, personService.getSignedInUser().hasRole(OFFICE));
 
-        final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
+        final boolean overtimeActive = overtimeSettingsService.getSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
 
         List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
@@ -419,7 +422,7 @@ public class ApplicationForLeaveFormViewController {
         model.addAttribute("application", appForm);
 
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
-        final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
+        final boolean isHalfDaysActivated = applicationSettingsService.getSettings().isAllowHalfDays();
         model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
     }
 

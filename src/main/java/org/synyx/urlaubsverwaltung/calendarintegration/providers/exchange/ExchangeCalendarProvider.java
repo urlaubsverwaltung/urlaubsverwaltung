@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarMailService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarNotCreatedException;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.io.PrintWriter;
@@ -69,7 +69,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     }
 
     @Override
-    public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
+    public Optional<String> add(Absence absence, CalendarSettingsEntity calendarSettings) {
 
         final ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         final String calendarName = exchangeCalendarSettings.getCalendar();
@@ -213,7 +213,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     }
 
     @Override
-    public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
+    public void update(Absence absence, String eventId, CalendarSettingsEntity calendarSettings) {
 
         final ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         final String calendarName = exchangeCalendarSettings.getCalendar();
@@ -238,7 +238,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     }
 
     @Override
-    public void delete(String eventId, CalendarSettings calendarSettings) {
+    public void delete(String eventId, CalendarSettingsEntity calendarSettings) {
 
         final ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();
         final String calendarName = exchangeCalendarSettings.getCalendar();
@@ -261,7 +261,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     }
 
     @Override
-    public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
+    public void checkCalendarSyncSettings(CalendarSettingsEntity calendarSettings) {
         connectToExchange(calendarSettings.getExchangeCalendarSettings());
     }
 

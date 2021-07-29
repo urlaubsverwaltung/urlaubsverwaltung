@@ -2,9 +2,9 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -16,17 +16,17 @@ import java.util.Optional;
 class OvertimeRecordDataProvider {
 
     private final OvertimeService overtimeService;
-    private final SettingsService settingsService;
+    private final OvertimeSettingsService overtimeSettingsService;
 
-    OvertimeRecordDataProvider(OvertimeService overtimeService, SettingsService settingsService) {
+    OvertimeRecordDataProvider(OvertimeService overtimeService, OvertimeSettingsService overtimeSettingsService) {
         this.overtimeService = overtimeService;
-        this.settingsService = settingsService;
+        this.overtimeSettingsService = overtimeSettingsService;
     }
 
     void activateOvertime() {
-        final Settings settings = settingsService.getSettings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settingsService.save(settings);
+        final OvertimeSettingsEntity settings = overtimeSettingsService.getSettings();
+        settings.setOvertimeActive(true);
+        overtimeSettingsService.save(settings);
     }
 
     void createOvertimeRecord(Person person, LocalDate startDate, LocalDate endDate, Duration duration) {

@@ -6,8 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -37,12 +37,12 @@ public class OvertimeFormValidator implements Validator {
     private static final String ATTRIBUTE_COMMENT = "comment";
 
     private final OvertimeService overtimeService;
-    private final SettingsService settingsService;
+    private final OvertimeSettingsService overtimeSettingsService;
 
     @Autowired
-    public OvertimeFormValidator(OvertimeService overtimeService, SettingsService settingsService) {
+    public OvertimeFormValidator(OvertimeService overtimeService, OvertimeSettingsService overtimeSettingsService) {
         this.overtimeService = overtimeService;
-        this.settingsService = settingsService;
+        this.overtimeSettingsService = overtimeSettingsService;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class OvertimeFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
 
         final OvertimeForm overtimeForm = (OvertimeForm) target;
-        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        final OvertimeSettingsEntity overtimeSettings = overtimeSettingsService.getSettings();
 
         if (!overtimeSettings.isOvertimeActive()) {
             errors.reject(ERROR_OVERTIME_DEACTIVATED);
@@ -90,7 +90,7 @@ public class OvertimeFormValidator implements Validator {
         }
     }
 
-    private void validateNumberOfHours(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateNumberOfHours(OvertimeSettingsEntity overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final BigDecimal hours = overtimeForm.getHours();
         final Integer minutes = overtimeForm.getMinutes();
@@ -106,7 +106,7 @@ public class OvertimeFormValidator implements Validator {
     }
 
 
-    private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateMaximumOvertimeNotReached(OvertimeSettingsEntity overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final Duration numberOfHours = overtimeForm.getDuration();
 

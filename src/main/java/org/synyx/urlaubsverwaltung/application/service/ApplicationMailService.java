@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
@@ -16,7 +17,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.File;
 import java.util.AbstractMap;
@@ -50,18 +50,18 @@ class ApplicationMailService {
     private final ApplicationRecipientService applicationRecipientService;
     private final ICalService iCalService;
     private final MessageSource messageSource;
-    private final SettingsService settingsService;
+    private final TimeSettingsService timeSettingsService;
 
     @Autowired
     ApplicationMailService(MailService mailService, DepartmentService departmentService,
                            ApplicationRecipientService applicationRecipientService, ICalService iCalService,
-                           MessageSource messageSource, SettingsService settingsService) {
+                           MessageSource messageSource, TimeSettingsService timeSettingsService) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
         this.iCalService = iCalService;
         this.messageSource = messageSource;
-        this.settingsService = settingsService;
+        this.timeSettingsService = timeSettingsService;
     }
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
@@ -644,7 +644,7 @@ class ApplicationMailService {
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
-        final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
+        final TimeSettingsEntity timeSettings = timeSettingsService.getSettings();
         return new AbsenceTimeConfiguration(timeSettings);
     }
 }

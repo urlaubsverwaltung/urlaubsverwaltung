@@ -2,15 +2,9 @@ package org.synyx.urlaubsverwaltung.calendarintegration.settings;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsDtoMapper.mapToCalendarSettingsDto;
 import static org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsDtoMapper.mapToCalendarSettingsEntity;
 
@@ -18,11 +12,9 @@ import static org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarS
 public class CalendarSettingsService {
 
     private final CalendarSettingsRepository calendarSettingsRepository;
-    private final List<CalendarProvider> calendarProviders;
 
-    public CalendarSettingsService(CalendarSettingsRepository calendarSettingsRepository, List<CalendarProvider> calendarProviders) {
+    public CalendarSettingsService(CalendarSettingsRepository calendarSettingsRepository) {
         this.calendarSettingsRepository = calendarSettingsRepository;
-        this.calendarProviders = calendarProviders;
     }
 
     public CalendarSettingsDto getSettingsDto(HttpServletRequest request) {
@@ -72,15 +64,15 @@ public class CalendarSettingsService {
     }
 
     private CalendarSettingsDto initDto(CalendarSettingsDto calendarSettingsDto, HttpServletRequest request) {
-        calendarSettingsDto.setProviders(getAllProviders());
         calendarSettingsDto.getGoogleCalendarSettings().setAuthorizedRedirectUrl(getAuthorizedRedirectUrl(request));
         return calendarSettingsDto;
     }
 
-    private List<String> getAllProviders() {
-        return calendarProviders.stream()
-            .map(provider -> provider.getClass().getSimpleName())
-            .sorted(reverseOrder())
-            .collect(toList());
+    public CalendarSettingsEntity getSettings() {
+        return calendarSettingsRepository.findFirstBy();
+    }
+
+    public void save(CalendarSettingsEntity calendarSettingsEntity) {
+        calendarSettingsRepository.save(calendarSettingsEntity);
     }
 }

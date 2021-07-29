@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.Period;
@@ -41,7 +41,7 @@ class CalendarMailServiceTest {
         final String calendarName = "calendar name";
         final String exception = "Some exception";
 
-        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettings());
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettingsEntity());
 
         final LocalDate startDate = LocalDate.of(2019, 5, 5);
         final LocalDate endDate = LocalDate.of(2019, 5, 10);
@@ -73,7 +73,7 @@ class CalendarMailServiceTest {
         final String exception = "Some exception";
         final String eventId = "eventId";
 
-        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettings());
+        final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(new TimeSettingsEntity());
 
         final LocalDate startDate = LocalDate.of(2019, 5, 5);
         final LocalDate endDate = LocalDate.of(2019, 5, 10);

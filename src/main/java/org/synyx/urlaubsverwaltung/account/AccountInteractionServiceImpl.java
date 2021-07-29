@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -31,16 +31,16 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     private final AccountProperties accountProperties;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
-    private final SettingsService settingsService;
+    private final AccountSettingsService accountSettingsService;
     private final Clock clock;
 
     @Autowired
     AccountInteractionServiceImpl(AccountProperties accountProperties, AccountService accountService,
-                                  VacationDaysService vacationDaysService, SettingsService settingsService, Clock clock) {
+                                  VacationDaysService vacationDaysService, AccountSettingsService accountSettingsService, Clock clock) {
         this.accountProperties = accountProperties;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
-        this.settingsService = settingsService;
+        this.accountSettingsService = accountSettingsService;
         this.clock = clock;
     }
 
@@ -50,7 +50,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         final LocalDate today = LocalDate.now(clock);
 
         final Integer propertiesDefaultVacationDays = accountProperties.getDefaultVacationDays();
-        final Integer settingsDefaultVacationDays = settingsService.getSettings().getAccountSettings().getDefaultVacationDays();
+        final Integer settingsDefaultVacationDays = accountSettingsService.getSettings().getDefaultVacationDays();
 
         final Integer defaultVacationDays;
         if (propertiesDefaultVacationDays == -1) {

@@ -5,10 +5,9 @@ import de.jollyday.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,10 +23,10 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 public class PublicHolidaysService {
 
     private final HolidayManager manager;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
 
     @Autowired
-    public PublicHolidaysService(SettingsService settingsService, HolidayManager holidayManager) {
+    public PublicHolidaysService(WorkingTimeSettingsService settingsService, HolidayManager holidayManager) {
         this.settingsService = settingsService;
         this.manager = holidayManager;
     }
@@ -47,10 +46,8 @@ public class PublicHolidaysService {
 
     public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
 
-        final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = settings.getWorkingTimeSettings();
-
-        return getHolidayDayLength(workingTimeSettings, date, federalState);
+        final WorkingTimeSettingsEntity settings = settingsService.getSettings();
+        return getHolidayDayLength(settings, date, federalState);
     }
 
     public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
@@ -58,21 +55,20 @@ public class PublicHolidaysService {
     }
 
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
-        final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = settings.getWorkingTimeSettings();
+        final WorkingTimeSettingsEntity workingTimeSettings = settingsService.getSettings();
 
         return getHolidays(from, to, federalState).stream()
             .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
             .collect(toUnmodifiableList());
     }
 
-    private DayLength getHolidayDayLength(WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, LocalDate date, FederalState federalState) {
+    private DayLength getHolidayDayLength(WorkingTimeSettingsEntity workingTimeSettings, LocalDate date, FederalState federalState) {
         DayLength workingTime = FULL;
         if (isPublicHoliday(date, federalState)) {
             if (isChristmasEve(date)) {
-                workingTime = workingTimeSettingsEmbeddable.getWorkingDurationForChristmasEve();
+                workingTime = workingTimeSettings.getWorkingDurationForChristmasEve();
             } else if (isNewYearsEve(date)) {
-                workingTime = workingTimeSettingsEmbeddable.getWorkingDurationForNewYearsEve();
+                workingTime = workingTimeSettings.getWorkingDurationForNewYearsEve();
             } else {
                 workingTime = ZERO;
             }

@@ -18,4 +18,8 @@ public class AccountSettingsService {
     public void save(AccountSettingsDto accountSettingsDto) {
         accountSettingsRepository.save(AccountSettingsDtoMapper.mapToAccountSettingsEntity(accountSettingsDto));
     }
+
+    public AccountSettingsEntity getSettings() {
+        return accountSettingsRepository.findFirstBy();
+    }
 }

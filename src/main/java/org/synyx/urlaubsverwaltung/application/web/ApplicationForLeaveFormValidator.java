@@ -4,21 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsEntity;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -29,9 +30,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.*;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
@@ -85,21 +84,25 @@ public class ApplicationForLeaveFormValidator implements Validator {
     private final WorkDaysCountService workDaysCountService;
     private final OverlapService overlapService;
     private final CalculationService calculationService;
-    private final SettingsService settingsService;
     private final OvertimeService overtimeService;
+    private final OvertimeSettingsService overtimeSettingsService;
+    private final ApplicationSettingsService applicationSettingsService;
+    private final WorkingTimeSettingsService workingTimeSettingsService;
     private final Clock clock;
 
     @Autowired
     public ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysCountService workDaysCountService,
-                                            OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                            OvertimeService overtimeService, Clock clock) {
+                                            OverlapService overlapService, CalculationService calculationService, OvertimeSettingsService overtimeSettingsService,
+                                            OvertimeService overtimeService, ApplicationSettingsService applicationSettingsService, WorkingTimeSettingsService workingTimeSettingsService, Clock clock) {
 
         this.workingTimeService = workingTimeService;
         this.workDaysCountService = workDaysCountService;
         this.overlapService = overlapService;
         this.calculationService = calculationService;
-        this.settingsService = settingsService;
+        this.overtimeSettingsService = overtimeSettingsService;
         this.overtimeService = overtimeService;
+        this.applicationSettingsService = applicationSettingsService;
+        this.workingTimeSettingsService = workingTimeSettingsService;
         this.clock = clock;
     }
 
@@ -112,15 +115,14 @@ public class ApplicationForLeaveFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
 
         final ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
-        final Settings settings = settingsService.getSettings();
 
         // check if date fields are valid
-        validateDateFields(applicationForm, settings, errors);
+        validateDateFields(applicationForm, errors);
 
         // check overtime reduction
-        validateOvertimeReduction(applicationForm, settings, errors);
+        validateOvertimeReduction(applicationForm, errors);
 
-        validateDayLength(applicationForm, settings, errors);
+        validateDayLength(applicationForm, errors);
 
         // check if reason is not filled
         if (SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory()) && !hasText(applicationForm.getReason())) {
@@ -135,11 +137,11 @@ public class ApplicationForLeaveFormValidator implements Validator {
         if (!errors.hasErrors()) {
             // validate if applying for leave is possible
             // (check overlapping applications for leave, vacation days of the person etc.)
-            validateIfApplyingForLeaveIsPossible(applicationForm, settings, errors);
+            validateIfApplyingForLeaveIsPossible(applicationForm, errors);
         }
     }
 
-    private static void validateDayLength(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
+    private void validateDayLength(ApplicationForLeaveForm applicationForm, Errors errors) {
 
         final LocalDate startDate = applicationForm.getStartDate();
         final LocalDate endDate = applicationForm.getEndDate();
@@ -150,21 +152,22 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
 
         if (endDate == null || startDate.isEqual(endDate)) {
+            WorkingTimeSettingsEntity workingTimesSettings = workingTimeSettingsService.getSettings();
             if (isChristmasEve(startDate)) {
-                validateChristmasEve(dayLength, settings.getWorkingTimeSettings(), errors);
+                validateChristmasEve(dayLength, errors, workingTimesSettings);
             } else if (isNewYearsEve(startDate)) {
-                validateNewYearsEve(dayLength, settings.getWorkingTimeSettings(), errors);
+                validateNewYearsEve(dayLength, errors, workingTimesSettings);
             }
         }
 
-        if (applicationForm.getDayLength() != DayLength.FULL && !settings.getApplicationSettings().isAllowHalfDays()) {
+        if (applicationForm.getDayLength() != DayLength.FULL && ! applicationSettingsService.getSettings().isAllowHalfDays()) {
             errors.rejectValue(DAY_LENGTH, ERROR_HALF_DAYS_NOT_ALLOWED);
         }
     }
 
-    private static void validateChristmasEve(DayLength applicationDayLength, WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, Errors errors) {
+    private void validateChristmasEve(DayLength applicationDayLength, Errors errors, WorkingTimeSettingsEntity workingTimesSettings) {
 
-        final DayLength workingDurationForChristmasEve = workingTimeSettingsEmbeddable.getWorkingDurationForChristmasEve();
+        final DayLength workingDurationForChristmasEve = workingTimesSettings.getWorkingDurationForChristmasEve();
 
         switch (workingDurationForChristmasEve) {
             case ZERO:
@@ -190,9 +193,9 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private static void validateNewYearsEve(DayLength applicationDayLength, WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable, Errors errors) {
+    private void validateNewYearsEve(DayLength applicationDayLength, Errors errors, WorkingTimeSettingsEntity workingTimesSettings) {
 
-        final DayLength workingDurationForNewYearsEve = workingTimeSettingsEmbeddable.getWorkingDurationForNewYearsEve();
+        final DayLength workingDurationForNewYearsEve = workingTimesSettings.getWorkingDurationForNewYearsEve();
 
         switch (workingDurationForNewYearsEve) {
             case ZERO:
@@ -218,7 +221,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
+    private void validateDateFields(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
         final LocalDate startDate = applicationForLeave.getStartDate();
         final LocalDate endDate = applicationForLeave.getEndDate();
@@ -227,7 +230,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         validateNotNull(endDate, ATTRIBUTE_END_DATE, errors);
 
         if (startDate != null && endDate != null) {
-            validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), settings, errors);
+            validatePeriod(startDate, endDate, applicationForLeave.getDayLength(), errors);
             validateTime(applicationForLeave.getStartTime(), applicationForLeave.getEndTime(), errors);
         }
     }
@@ -240,13 +243,13 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, Settings settings, Errors errors) {
+    private void validatePeriod(LocalDate startDate, LocalDate endDate, DayLength dayLength, Errors errors) {
 
         // ensure that startDate < endDate
         if (startDate.isAfter(endDate)) {
             errors.reject(ERROR_PERIOD);
         } else {
-            final ApplicationSettings applicationSettings = settings.getApplicationSettings();
+            final ApplicationSettingsEntity applicationSettings = applicationSettingsService.getSettings();
 
             validateNotTooFarInTheFuture(endDate, applicationSettings, errors);
             validateNotTooFarInThePast(startDate, applicationSettings, errors);
@@ -254,7 +257,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateNotTooFarInTheFuture(LocalDate date, ApplicationSettings settings, Errors errors) {
+    private void validateNotTooFarInTheFuture(LocalDate date, ApplicationSettingsEntity settings, Errors errors) {
 
         final Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         final LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
@@ -264,7 +267,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateNotTooFarInThePast(LocalDate date, ApplicationSettings settings, Errors errors) {
+    private void validateNotTooFarInThePast(LocalDate date, ApplicationSettingsEntity settings, Errors errors) {
 
         final Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
         final LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();
@@ -304,7 +307,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
+    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Errors errors) {
 
         final boolean isOvertime = OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
         if (!isOvertime) {
@@ -313,7 +316,8 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
         final BigDecimal hours = applicationForLeave.getHours();
         final Integer minutes = applicationForLeave.getMinutes();
-        final boolean overtimeFunctionIsActive = settings.getOvertimeSettings().isOvertimeActive();
+        OvertimeSettingsEntity overTimeSettings = overtimeSettingsService.getSettings();
+        final boolean overtimeFunctionIsActive = overTimeSettings.isOvertimeActive();
         final boolean overtimeReductionInputRequiredButNotProvided = overtimeFunctionIsActive && (hours == null && minutes == null);
 
         if (overtimeReductionInputRequiredButNotProvided && !errors.hasFieldErrors(ATTRIBUTE_HOURS)) {
@@ -331,7 +335,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
             errors.rejectValue(ATTRIBUTE_MINUTES, ERROR_INVALID_HOURS);
         }
 
-        final int minimumOvertimeReduction = settings.getOvertimeSettings().getMinimumOvertimeReduction();
+        final int minimumOvertimeReduction = overTimeSettings.getMinimumOvertimeReduction();
         final Duration minimumDuration = Duration.ofHours(minimumOvertimeReduction);
         final Duration overtimeReduction = applicationForLeave.getOvertimeReduction();
         if (overtimeReduction != null && overtimeReduction.compareTo(minimumDuration) < 0) {
@@ -346,7 +350,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
+    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Errors errors) {
 
         /*
          * Ensure the person has a working time for the period of the application for leave
@@ -387,7 +391,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
          * Ensure that the person has enough overtime hours left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME}
          */
-        if (!enoughOvertimeHoursLeft(applicationForm, settings)) {
+        if (!enoughOvertimeHoursLeft(applicationForm)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
     }
@@ -428,25 +432,25 @@ public class ApplicationForLeaveFormValidator implements Validator {
         return true;
     }
 
-    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm, Settings settings) {
+    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm) {
 
         final boolean isOvertime = OVERTIME.equals(applicationForLeaveForm.getVacationType().getCategory());
 
         if (isOvertime) {
-            final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();
+            OvertimeSettingsEntity overtimeSettings = overtimeSettingsService.getSettings();
             final boolean overtimeActive = overtimeSettings.isOvertimeActive();
+            final Duration minimumOvertime = Duration.ofHours(overtimeSettings.getMinimumOvertime());
 
             if (overtimeActive && applicationForLeaveForm.getHours() != null) {
-                return checkOvertimeHours(applicationForLeaveForm, overtimeSettings);
+                return checkOvertimeHours(applicationForLeaveForm, minimumOvertime);
             }
         }
 
         return true;
     }
 
-    private boolean checkOvertimeHours(ApplicationForLeaveForm applicationForLeaveForm, OvertimeSettings settings) {
+    private boolean checkOvertimeHours(ApplicationForLeaveForm applicationForLeaveForm, Duration minimumOvertime) {
 
-        final Duration minimumOvertime = Duration.ofHours(settings.getMinimumOvertime());
         final Duration leftOvertimeForPerson = overtimeService.getLeftOvertimeForPerson(applicationForLeaveForm.getPerson());
         final Duration temporaryOvertimeForPerson = leftOvertimeForPerson.minus(Duration.ofHours(applicationForLeaveForm.getHours().longValue()));
 

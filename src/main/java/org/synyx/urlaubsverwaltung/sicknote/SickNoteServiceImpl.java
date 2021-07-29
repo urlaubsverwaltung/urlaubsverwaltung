@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.sicknote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsEntity;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -19,13 +19,13 @@ import java.util.Optional;
 class SickNoteServiceImpl implements SickNoteService {
 
     private final SickNoteRepository sickNoteRepository;
-    private final SettingsService settingsService;
+    private final SickNoteSettingsService sickNoteSettingsService;
     private final Clock clock;
 
     @Autowired
-    public SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService, Clock clock) {
+    public SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SickNoteSettingsService sickNoteSettingsService, Clock clock) {
         this.sickNoteRepository = sickNoteRepository;
-        this.settingsService = settingsService;
+        this.sickNoteSettingsService = sickNoteSettingsService;
         this.clock = clock;
     }
 
@@ -52,8 +52,7 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
-        final Settings settings = settingsService.getSettings();
-        final SickNoteSettings sickNoteSettings = settings.getSickNoteSettings();
+        final SickNoteSettingsEntity sickNoteSettings = sickNoteSettingsService.getSettings();
 
         final LocalDate endOfSickPayDate = ZonedDateTime.now(clock)
             .plusDays(sickNoteSettings.getDaysBeforeEndOfSickPayNotification())

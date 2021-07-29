@@ -88,7 +88,7 @@
         </div>
 
         <!-- Overtime -->
-        <c:if test="${settings.overtimeSettings.overtimeActive}">
+        <c:if test="${settings.overtimeActive}">
 
             <uv:section-heading>
                 <jsp:attribute name="actions">

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsEntity;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -46,13 +46,13 @@ class AccountInteractionServiceImplTest {
     @Mock
     private Clock clock;
     @Mock
-    private SettingsService settingsService;
+    private AccountSettingsService accountSettingsService;
     @Mock
     private AccountProperties accountProperties;
 
     @BeforeEach
     void setup() {
-        sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, settingsService, clock);
+        sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, accountSettingsService, clock);
     }
 
     @Test
@@ -65,7 +65,7 @@ class AccountInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(accountProperties.getDefaultVacationDays()).thenReturn(24);
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(accountSettingsService.getSettings()).thenReturn(new AccountSettingsEntity());
 
         sut.createDefaultAccount(person);
 
@@ -93,9 +93,9 @@ class AccountInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         when(accountProperties.getDefaultVacationDays()).thenReturn(-1);
-        final Settings settings = new Settings();
-        settings.getAccountSettings().setDefaultVacationDays(1);
-        when(settingsService.getSettings()).thenReturn(settings);
+        final AccountSettingsEntity settings = new AccountSettingsEntity();
+        settings.setDefaultVacationDays(1);
+        when(accountSettingsService.getSettings()).thenReturn(settings);
 
         sut.createDefaultAccount(person);
 

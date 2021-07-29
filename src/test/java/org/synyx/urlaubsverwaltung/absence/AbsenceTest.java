@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -14,7 +15,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -28,7 +28,7 @@ class AbsenceTest {
     private Person person;
     private AbsenceTimeConfiguration timeConfiguration;
     private final Clock clock = Clock.systemUTC();
-    private final TimeSettings timeSettings = new TimeSettings();
+    private final TimeSettingsEntity timeSettings = new TimeSettingsEntity();
 
     @BeforeEach
     void setUp() {
@@ -163,7 +163,7 @@ class AbsenceTest {
         // Date where daylight saving time is relevant
         LocalDate start = LocalDate.of(2015, 10, 23);
         LocalDate end = LocalDate.of(2015, 10, 25);
-        final TimeSettings timeSettings = new TimeSettings();
+        final TimeSettingsEntity timeSettings = new TimeSettingsEntity();
         timeSettings.setTimeZoneId("Etc/UTC");
         final Absence absence = new Absence(person, new Period(start, end, DayLength.FULL), new AbsenceTimeConfiguration(timeSettings));
 

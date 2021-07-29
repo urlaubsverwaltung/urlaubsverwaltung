@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence;
 
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -7,9 +9,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class AbsenceTimeConfiguration {
 
-    private final TimeSettings timeSettings;
+    private final TimeSettingsEntity timeSettings;
 
-    public AbsenceTimeConfiguration(TimeSettings timeSettings) {
+    public AbsenceTimeConfiguration(TimeSettingsEntity timeSettings) {
         this.timeSettings = timeSettings;
     }
 

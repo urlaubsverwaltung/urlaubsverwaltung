@@ -8,38 +8,30 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
@@ -62,21 +54,19 @@ class ApplicationMailServiceTest {
     @Mock
     private ICalService iCalService;
     @Mock
-    private SettingsService settingsService;
+    private TimeSettingsService timeSettingsService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService);
+        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, timeSettingsService);
     }
 
     @Test
     void ensureSendsAllowedNotificationToOffice() {
 
-        final Settings settings = new Settings();
-        settings.setApplicationSettings(new ApplicationSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(timeSettingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final File file = new File("");
         when(iCalService.getCalendar(any(), any(), any())).thenReturn(file);
@@ -322,9 +312,7 @@ class ApplicationMailServiceTest {
     @Test
     void notifyHolidayReplacementAllow() {
 
-        final Settings settings = new Settings();
-        settings.setApplicationSettings(new ApplicationSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(timeSettingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -449,9 +437,7 @@ class ApplicationMailServiceTest {
     @Test
     void notifyHolidayReplacementAboutCancellation() {
 
-        final Settings settings = new Settings();
-        settings.setTimeSettings(new TimeSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(timeSettingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final File file = new File("");
         when(iCalService.getCalendar(any(), any(), any())).thenReturn(file);
@@ -575,9 +561,7 @@ class ApplicationMailServiceTest {
     @Test
     void sendCancelledByOfficeNotification() {
 
-        final Settings settings = new Settings();
-        settings.setTimeSettings(new TimeSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(timeSettingsService.getSettings()).thenReturn(new TimeSettingsEntity());
 
         final File file = new File("");
         when(iCalService.getCalendar(any(), any(), any())).thenReturn(file);

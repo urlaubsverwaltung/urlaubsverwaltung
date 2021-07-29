@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsEntity;
+import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,11 +29,11 @@ class AccountFormValidator implements Validator {
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
     private static final String ATTRIBUTE_COMMENT = "comment";
 
-    private final SettingsService settingsService;
+    private final AccountSettingsService accountSettingsService;
 
     @Autowired
-    AccountFormValidator(SettingsService settingsService) {
-        this.settingsService = settingsService;
+    AccountFormValidator(AccountSettingsService accountSettingsService) {
+        this.accountSettingsService = accountSettingsService;
     }
 
     @Override
@@ -179,7 +180,7 @@ class AccountFormValidator implements Validator {
     }
 
     private BigDecimal getMaximumAnnualVacationDays() {
-        final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
+        final AccountSettingsEntity accountSettings = accountSettingsService.getSettings();
         return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
     }
 }

@@ -7,21 +7,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
-import org.synyx.urlaubsverwaltung.account.AccountProperties;
-import org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
 import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsService;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
@@ -35,7 +31,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,7 +55,7 @@ class SettingsViewControllerTest {
     private static final String SOME_GOOGLE_REFRESH_TOKEN = "0815-4711-242";
 
     @Mock
-    private SettingsService settingsService;
+    private CalendarSettingsService settingsService;
     @Mock
     private WorkingTimeSettingsService workingTimeSettingsService;
     @Mock
@@ -68,34 +65,25 @@ class SettingsViewControllerTest {
     @Mock
     private OvertimeSettingsService overtimeSettingsSerivce;
     @Mock
-    private AccountSettingsService accountSettingsService;
+    private org.synyx.urlaubsverwaltung.account.settings.AccountSettingsService accountSettingsService;
     @Mock
     private ApplicationSettingsService applicationSettingsService;
     @Mock
     private CalendarSettingsService calendarSettingsService;
     @Mock
     private SpecialLeaveSettingsService specialLeaveSettingsService;
-    @Mock
-    private SettingsValidator settingsValidator;
+
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, workingTimeSettingsService, timeSettingsService, sickNoteSettingsSerivce, overtimeSettingsSerivce, accountSettingsService, applicationSettingsService, calendarSettingsService, specialLeaveSettingsService, clock);
-    }
-
-    @Test
-    void getAuthorizedRedirectUrl() {
-
-        String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings", OATUH_REDIRECT_REL);
-        String expected = "http://localhost:8080/web" + OATUH_REDIRECT_REL;
-        assertThat(actual).isEqualTo(expected);
+        sut = new SettingsViewController(workingTimeSettingsService, timeSettingsService, sickNoteSettingsSerivce, overtimeSettingsSerivce, accountSettingsService, applicationSettingsService, calendarSettingsService, specialLeaveSettingsService);
     }
 
     @Test
     void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
-        final Settings settings = someSettings();
+        final CalendarSettingsEntity settings = someSettings();
         when(settingsService.getSettings()).thenReturn(settings);
 
         final String requestUrl = "/web/settings";
@@ -107,9 +95,7 @@ class SettingsViewControllerTest {
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("defaultVacationDaysFromSettings", is(false)))
-            .andExpect(model().attribute("defaultWorkingTimeFromSettings", is(false)))
-            .andExpect(model().attribute("authorizedRedirectUrl",
-                sut.getAuthorizedRedirectUrl("http://localhost" + requestUrl, OATUH_REDIRECT_REL)));
+            .andExpect(model().attribute("defaultWorkingTimeFromSettings", is(false)));
     }
 
     @Test
@@ -157,14 +143,14 @@ class SettingsViewControllerTest {
     @Test
     void ensureSettingsDetailsSetsDefaultExchangeTimeZoneIfNoneConfigured() throws Exception {
 
-        final Settings settings = someSettingsWithNoExchangeTimezone();
+        final CalendarSettingsEntity settings = someSettingsWithNoExchangeTimezone();
         when(settingsService.getSettings()).thenReturn(settings);
 
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isNull();
+        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId()).isNull();
 
         perform(get("/web/settings"));
 
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId())
+        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId())
             .isEqualTo(clock.getZone().getId());
     }
 
@@ -172,14 +158,14 @@ class SettingsViewControllerTest {
     void ensureSettingsDetailsDoesNotAlterExchangeTimeZoneIfAlreadyConfigured() throws Exception {
 
         final String timeZoneId = "XYZ";
-        final Settings settings = someSettingsWithExchangeTimeZone(timeZoneId);
+        final CalendarSettingsEntity settings = someSettingsWithExchangeTimeZone(timeZoneId);
         when(settingsService.getSettings()).thenReturn(someSettingsWithExchangeTimeZone(timeZoneId));
 
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
+        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
 
         perform(get("/web/settings"));
 
-        assertThat(settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
+        assertThat(settings.getExchangeCalendarSettings().getTimeZoneId()).isEqualTo(timeZoneId);
     }
 
     @Test
@@ -191,25 +177,12 @@ class SettingsViewControllerTest {
     }
 
     @Test
-    void ensureSettingsSavedShowsFormIfValidationFails() throws Exception {
-
-        doAnswer(invocation -> {
-            Errors errors = invocation.getArgument(1);
-            errors.rejectValue("applicationSettings", "error");
-            return null;
-        }).when(settingsValidator).validate(any(), any());
-
-        perform(post("/web/settings"))
-            .andExpect(view().name("settings/settings_form"));
-    }
-
-    @Test
     void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
         perform(post("/web/settings"));
-        verify(settingsService).save(any(Settings.class));
+        verify(settingsService).save(any(CalendarSettingsEntity.class));
     }
 
     @Test
@@ -224,33 +197,33 @@ class SettingsViewControllerTest {
             .andExpect(redirectedUrl("/web/settings"));
     }
 
-    private static Settings someSettings() {
+    private static CalendarSettingsEntity someSettings() {
 
-        return new Settings();
+        return new CalendarSettingsEntity();
     }
 
-    private static Settings someSettingsWithNoExchangeTimezone() {
+    private static CalendarSettingsEntity someSettingsWithNoExchangeTimezone() {
 
         return someSettings();
     }
 
-    private static Settings someSettingsWithExchangeTimeZone(String timeZoneId) {
+    private static CalendarSettingsEntity someSettingsWithExchangeTimeZone(String timeZoneId) {
 
-        Settings settings = someSettings();
-        settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(timeZoneId);
+        CalendarSettingsEntity settings = someSettings();
+        settings.getExchangeCalendarSettings().setTimeZoneId(timeZoneId);
 
         return settings;
     }
 
-    private static Settings someSettingsWithoutGoogleCalendarRefreshToken() {
+    private static CalendarSettingsEntity someSettingsWithoutGoogleCalendarRefreshToken() {
 
         return someSettings();
     }
 
-    private static Settings someSettingsWithGoogleCalendarRefreshToken() {
+    private static CalendarSettingsEntity someSettingsWithGoogleCalendarRefreshToken() {
 
-        Settings settings = someSettings();
-        settings.getCalendarSettings().getGoogleCalendarSettings().setRefreshToken(SOME_GOOGLE_REFRESH_TOKEN);
+        CalendarSettingsEntity settings = someSettings();
+        settings.getGoogleCalendarSettings().setRefreshToken(SOME_GOOGLE_REFRESH_TOKEN);
 
         return settings;
     }
@@ -262,22 +235,22 @@ class SettingsViewControllerTest {
     private static class SomeCalendarProvider implements CalendarProvider {
 
         @Override
-        public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
+        public Optional<String> add(Absence absence, CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
-        public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
+        public void update(Absence absence, String eventId, CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
-        public void delete(String eventId, CalendarSettings calendarSettings) {
+        public void delete(String eventId, CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
-        public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
+        public void checkCalendarSyncSettings(CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
     }
@@ -285,22 +258,22 @@ class SettingsViewControllerTest {
     private static class AnotherCalendarProvider implements CalendarProvider {
 
         @Override
-        public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
+        public Optional<String> add(Absence absence, CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
-        public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
+        public void update(Absence absence, String eventId, CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
-        public void delete(String eventId, CalendarSettings calendarSettings) {
+        public void delete(String eventId, CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
 
         @Override
-        public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
+        public void checkCalendarSyncSettings(CalendarSettingsEntity calendarSettings) {
             throw new UnsupportedOperationException("This is just a mock to have some named CalendarProvider impl.");
         }
     }

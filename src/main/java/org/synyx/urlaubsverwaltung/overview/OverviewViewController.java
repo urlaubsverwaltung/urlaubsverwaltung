@@ -16,10 +16,10 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.web.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.web.ExtendedSickNote;
@@ -57,7 +57,7 @@ public class OverviewViewController {
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteService sickNoteService;
     private final OvertimeService overtimeService;
-    private final SettingsService settingsService;
+    private final OvertimeSettingsService settingsService;
     private final DepartmentService departmentService;
     private final Clock clock;
 
@@ -66,7 +66,7 @@ public class OverviewViewController {
                                   VacationDaysService vacationDaysService,
                                   ApplicationService applicationService, WorkDaysCountService workDaysCountService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
-                                  SettingsService settingsService, DepartmentService departmentService, Clock clock) {
+                                  OvertimeSettingsService settingsService, DepartmentService departmentService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;

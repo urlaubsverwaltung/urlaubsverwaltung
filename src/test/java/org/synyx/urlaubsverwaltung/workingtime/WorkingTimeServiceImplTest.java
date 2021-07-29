@@ -11,9 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -42,7 +41,7 @@ class WorkingTimeServiceImplTest {
     @Mock
     private WorkingTimeRepository workingTimeRepository;
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), UTC);
 
@@ -80,14 +79,14 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeProperties.isDefaultWorkingDaysDeactivated()).thenReturn(true);
 
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setMonday(DayLength.ZERO);
-        settings.getWorkingTimeSettings().setTuesday(DayLength.ZERO);
-        settings.getWorkingTimeSettings().setWednesday(DayLength.ZERO);
-        settings.getWorkingTimeSettings().setThursday(DayLength.ZERO);
-        settings.getWorkingTimeSettings().setFriday(DayLength.FULL);
-        settings.getWorkingTimeSettings().setSaturday(DayLength.ZERO);
-        settings.getWorkingTimeSettings().setSunday(DayLength.ZERO);
+        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        settings.setMonday(DayLength.ZERO);
+        settings.setTuesday(DayLength.ZERO);
+        settings.setWednesday(DayLength.ZERO);
+        settings.setThursday(DayLength.ZERO);
+        settings.setFriday(DayLength.FULL);
+        settings.setSaturday(DayLength.ZERO);
+        settings.setSunday(DayLength.ZERO);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -137,12 +136,9 @@ class WorkingTimeServiceImplTest {
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date)).thenReturn(workingTimeEntity);
 
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
+        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
         workingTimeSettings.setFederalState(BREMEN);
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(workingTimeSettings);
 
         final FederalState federalState = sut.getFederalStateForPerson(person, date);
 
@@ -154,12 +150,9 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(), any())).thenReturn(null);
 
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
+        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
         workingTimeSettings.setFederalState(BREMEN);
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(workingTimeSettings);
 
         final FederalState federalState = sut.getFederalStateForPerson(new Person(), LocalDate.now(UTC));
 
@@ -247,12 +240,9 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityOne, workingTimeEntityTwo));
 
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
+        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
         workingTimeSettings.setFederalState(BREMEN);
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(workingTimeSettings);
 
         final List<WorkingTime> workingTimes = sut.getByPerson(person);
 
@@ -301,12 +291,9 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(batman, date))
             .thenReturn(workingTimeEntity);
 
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
+        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
         workingTimeSettings.setFederalState(BREMEN);
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(workingTimeSettings);
 
         final Optional<WorkingTime> actualWorkingTime = sut.getByPersonAndValidityDateEqualsOrMinorDate(batman, date);
 
@@ -329,12 +316,9 @@ class WorkingTimeServiceImplTest {
     @Test
     void ensureGetSystemDefaultFederalState() {
 
-        final WorkingTimeSettingsEmbeddable workingTimeSettings = new WorkingTimeSettingsEmbeddable();
+        final WorkingTimeSettingsEntity workingTimeSettings = new WorkingTimeSettingsEntity();
         workingTimeSettings.setFederalState(BREMEN);
-        final Settings settings = new Settings();
-        settings.setWorkingTimeSettings(workingTimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(workingTimeSettings);
 
         final FederalState defaultFederalState = sut.getSystemDefaultFederalState();
 

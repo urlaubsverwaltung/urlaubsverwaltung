@@ -11,6 +11,10 @@ public class ApplicationSettingsService {
         this.applicationSettingsRepository = applicationSettingsRepository;
     }
 
+    public ApplicationSettingsEntity getSettings(){
+        return applicationSettingsRepository.findFirstBy();
+    }
+
     public ApplicationSettingsDto getSettingsDto() {
         return ApplicationSettingsDtoMapper.mapToApplicationSettingsDto(applicationSettingsRepository.findFirstBy());
     }

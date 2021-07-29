@@ -29,4 +29,8 @@ public class WorkingTimeSettingsService {
         WorkingTimeSettingsEntity workingTimeSettingsEntity = WorkingTimeSettingsDtoMapper.mapToWorkingTimeSettingsEntity(workingTimeSettingsDto);
         workingTimeSettingsRepository.save(workingTimeSettingsEntity);
     }
+
+    public WorkingTimeSettingsEntity getSettings() {
+        return workingTimeSettingsRepository.findFirstBy();
+    }
 }

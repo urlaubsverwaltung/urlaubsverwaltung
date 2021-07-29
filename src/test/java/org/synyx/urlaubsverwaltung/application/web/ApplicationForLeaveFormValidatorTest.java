@@ -10,19 +10,22 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.CalculationService;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsEntity;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -79,7 +82,11 @@ class ApplicationForLeaveFormValidatorTest {
     @Mock
     private OvertimeService overtimeService;
     @Mock
-    private SettingsService settingsService;
+    private OvertimeSettingsService overtimeSettingsService;
+    @Mock
+    private ApplicationSettingsService applicationSettingsService;
+    @Mock
+    private WorkingTimeSettingsService workingTimeSettingsService;
     @Mock
     private Errors errors;
 
@@ -89,7 +96,7 @@ class ApplicationForLeaveFormValidatorTest {
     void setUp() {
 
         sut = new ApplicationForLeaveFormValidator(workingTimeService, workDaysCountService, overlapService, calculationService,
-            settingsService, overtimeService, Clock.systemUTC());
+            overtimeSettingsService, overtimeService, applicationSettingsService, workingTimeSettingsService, Clock.systemUTC());
 
         appForm = new ApplicationForLeaveForm();
         appForm.setVacationType(createVacationType(HOLIDAY));
@@ -178,7 +185,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureVeryFutureDateIsNotValid() {
 
-        final Settings settings = setupOvertimeSettings();
+        setupOvertimeSettings();
 
         final LocalDate futureDate = LocalDate.now(UTC).plusYears(10);
 
@@ -190,7 +197,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors)
             .reject("application.error.tooFarInTheFuture",
-                new Object[]{settings.getApplicationSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
+                new Object[]{applicationSettingsService.getSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
     }
 
     @Test
@@ -398,10 +405,9 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureHalfDayIsRejectedWhenDisabled() {
 
-        final var settings = setupOvertimeSettings();
-        final var appSettings = new ApplicationSettings();
+        final var appSettings = new ApplicationSettingsEntity();
         appSettings.setAllowHalfDays(false);
-        settings.setApplicationSettings(appSettings);
+        when(applicationSettingsService.getSettings()).thenReturn(appSettings);
 
         appForm.setDayLength(MORNING);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -661,9 +667,9 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(false);
-        when(settingsService.getSettings()).thenReturn(settings);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(false);
+        when(overtimeSettingsService.getSettings()).thenReturn(settings);
 
         appForm.setVacationType(createVacationType(OVERTIME));
         appForm.setHours(null);
@@ -748,8 +754,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureOvertimeDurationFailsWhenItIsLowerThanTheConfiguredMinimum() {
 
-        final Settings settings = setupOvertimeSettings();
-        settings.getOvertimeSettings().setMinimumOvertimeReduction(4);
+        final OvertimeSettingsEntity settings = setupOvertimeSettings();
+        settings.setMinimumOvertimeReduction(4);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -770,8 +776,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureOvertimeDurationSucceedsWhenItIsEqualToTheConfiguredMinimum() {
 
-        final Settings settings = setupOvertimeSettings();
-        settings.getOvertimeSettings().setMinimumOvertimeReduction(4);
+        final OvertimeSettingsEntity settings = setupOvertimeSettings();
+        settings.setMinimumOvertimeReduction(4);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -995,7 +1001,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(MORNING));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(MORNING));
 
         final int actualYear = Year.now().getValue();
 
@@ -1046,7 +1052,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(NOON));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(NOON));
 
         final int actualYear = Year.now().getValue();
 
@@ -1072,7 +1078,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(FULL));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(FULL));
 
         final int actualYear = Year.now().getValue();
 
@@ -1098,7 +1104,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(MORNING));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(MORNING));
 
         final int actualYear = Year.now().getValue();
 
@@ -1123,7 +1129,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(DayLength.ZERO));
 
         final int actualYear = Year.now().getValue();
 
@@ -1147,7 +1153,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(NOON));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(NOON));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
 
         final int actualYear = Year.now().getValue();
@@ -1174,7 +1180,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
-        when(settingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(FULL));
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForNewYearsEveWithAbsence(FULL));
 
         final int actualYear = Year.now().getValue();
 
@@ -1193,15 +1199,15 @@ class ApplicationForLeaveFormValidatorTest {
         verify(errors).rejectValue("dayLength", "application.error.alreadyAbsentOn.newYearsEve.full");
     }
 
-    private static Settings createSettingsForChristmasEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(absence.getInverse());
+    private static WorkingTimeSettingsEntity createSettingsForChristmasEveWithAbsence(DayLength absence) {
+        WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        settings.setWorkingDurationForChristmasEve(absence.getInverse());
         return settings;
     }
 
-    private static Settings createSettingsForNewYearsEveWithAbsence(DayLength absence) {
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(absence.getInverse());
+    private static WorkingTimeSettingsEntity createSettingsForNewYearsEveWithAbsence(DayLength absence) {
+        WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        settings.setWorkingDurationForNewYearsEve(absence.getInverse());
         return settings;
     }
 
@@ -1219,18 +1225,18 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setHours(hours);
         appForm.setVacationType(vacationType);
 
-        final Settings settings = setupOvertimeSettings();
-        settings.getOvertimeSettings().setMinimumOvertime(5);
+        final OvertimeSettingsEntity settings = setupOvertimeSettings();
+        settings.setMinimumOvertime(5);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
         sut.validate(appForm, errors);
     }
 
-    private Settings setupOvertimeSettings() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        when(settingsService.getSettings()).thenReturn(settings);
+    private OvertimeSettingsEntity setupOvertimeSettings() {
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        when(overtimeSettingsService.getSettings()).thenReturn(settings);
 
         return settings;
     }

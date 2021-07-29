@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,10 +21,10 @@ import java.util.Objects;
 public class MenuDataProvider implements HandlerInterceptor {
 
     private final PersonService personService;
-    private final SettingsService settingsService;
+    private final OvertimeSettingsService settingsService;
 
     @Autowired
-    public MenuDataProvider(PersonService personService, SettingsService settingsService) {
+    public MenuDataProvider(PersonService personService, OvertimeSettingsService settingsService) {
         this.personService = personService;
         this.settingsService = settingsService;
     }
@@ -62,7 +62,7 @@ public class MenuDataProvider implements HandlerInterceptor {
     }
 
     private boolean overtimeEnabled(Person signedInUser) {
-        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        final OvertimeSettingsEntity overtimeSettings = settingsService.getSettings();
         boolean userIsAllowedToWriteOvertime = !overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged();
         return overtimeSettings.isOvertimeActive() && userIsAllowedToWriteOvertime;
     }

@@ -8,7 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
@@ -20,8 +21,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -84,7 +83,7 @@ class ApplicationInteractionServiceImplTest {
     @Mock
     private AbsenceMappingService absenceMappingService;
     @Mock
-    private SettingsService settingsService;
+    private TimeSettingsService timeSettingsService;
     @Mock
     private DepartmentService departmentService;
 
@@ -93,12 +92,11 @@ class ApplicationInteractionServiceImplTest {
     @BeforeEach
     void setUp() {
 
-        final Settings settings = new Settings();
-        settings.setTimeSettings(new TimeSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
+        final TimeSettingsEntity settings = new TimeSettingsEntity();
+        when(timeSettingsService.getSettings()).thenReturn(settings);
 
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, clock);
+            applicationMailService, calendarSyncService, absenceMappingService, timeSettingsService, departmentService, clock);
     }
 
     // APPLY FOR LEAVE -------------------------------------------------------------------------------------------------

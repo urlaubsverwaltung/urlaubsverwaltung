@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.settings;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 
 public class ApplicationSettingsValidator {
 

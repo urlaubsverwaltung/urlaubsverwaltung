@@ -18,12 +18,12 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -58,17 +58,17 @@ public class OvertimeViewController {
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
     private final Clock clock;
-    private final SettingsService settingsService;
+    private final OvertimeSettingsService settingsService;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
                                   OvertimeFormValidator validator, DepartmentService departmentService,
-                                  SettingsService settingsService, Clock clock) {
+                                  OvertimeSettingsService overtimeSettingsService, Clock clock) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;
         this.departmentService = departmentService;
-        this.settingsService = settingsService;
+        this.settingsService = overtimeSettingsService;
         this.clock = clock;
     }
 
@@ -270,7 +270,7 @@ public class OvertimeViewController {
         model.addAttribute(SIGNED_IN_USER, signedInUser);
         model.addAttribute(IS_OFFICE_ATTRIBUTE, signedInUser.hasRole(OFFICE));
 
-        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        final OvertimeSettingsEntity overtimeSettings = settingsService.getSettings();
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
     }
 }

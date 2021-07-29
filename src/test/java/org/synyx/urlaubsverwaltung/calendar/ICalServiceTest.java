@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.AbsenceType;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -195,7 +195,7 @@ class ICalServiceTest {
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
-        final TimeSettings timeSettings = new TimeSettings();
+        final TimeSettingsEntity timeSettings = new TimeSettingsEntity();
         timeSettings.setTimeZoneId("Etc/UTC");
         final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(timeSettings);
 

@@ -23,4 +23,8 @@ public class SickNoteSettingsService {
 
         sickNoteRepository.save(sickNoteSettingsEntity);
     }
+
+    public SickNoteSettingsEntity getSettings() {
+        return sickNoteRepository.findFirstBy();
+    }
 }

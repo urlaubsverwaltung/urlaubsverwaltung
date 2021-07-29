@@ -21,9 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsService;
 import org.synyx.urlaubsverwaltung.security.SecurityRules;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -44,13 +44,13 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
     private static HttpTransport httpTransport;
 
-    private final SettingsService settingsService;
+    private final CalendarSettingsService settingsService;
     private final CalendarSyncService calendarSyncService;
 
     private GoogleAuthorizationCodeFlow flow;
 
     @Autowired
-    public GoogleCalendarOAuthHandshakeViewController(SettingsService settingsService, CalendarSyncService calendarSyncService)
+    public GoogleCalendarOAuthHandshakeViewController(CalendarSettingsService settingsService, CalendarSyncService calendarSyncService)
         throws GeneralSecurityException, IOException {
 
         this.settingsService = settingsService;
@@ -79,7 +79,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
                 new com.google.api.services.calendar.Calendar.Builder(httpTransport, JSON_FACTORY, credential)
                     .setApplicationName(APPLICATION_NAME).build();
 
-            Settings settings = settingsService.getSettings();
+            CalendarSettingsEntity settings = settingsService.getSettings();
             HttpResponse httpResponse = checkGoogleCalendar(client, settings);
 
             if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
@@ -89,7 +89,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
                 } else {
                     LOG.info("OAuth Handshake was successful!");
                 }
-                settings.getCalendarSettings().getGoogleCalendarSettings()
+                settings.getGoogleCalendarSettings()
                     .setRefreshToken(refreshToken);
                 settingsService.save(settings);
                 calendarSyncService.checkCalendarSyncSettings();
@@ -104,8 +104,8 @@ public class GoogleCalendarOAuthHandshakeViewController {
         return "redirect:/web/settings#calendar";
     }
 
-    private static HttpResponse checkGoogleCalendar(Calendar client, Settings settings) throws IOException {
-        String calendarId = settings.getCalendarSettings().getGoogleCalendarSettings().getCalendarId();
+    private static HttpResponse checkGoogleCalendar(Calendar client, CalendarSettingsEntity settings) throws IOException {
+        String calendarId = settings.getGoogleCalendarSettings().getCalendarId();
         Calendar.Calendars.Get metadata = client.calendars().get(calendarId);
         return metadata.buildHttpRequestUsingHead().execute();
     }
@@ -115,7 +115,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
         Details web = new Details();
         GoogleCalendarSettings googleCalendarSettings =
-            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
+            settingsService.getSettings().getGoogleCalendarSettings();
 
         web.setClientId(googleCalendarSettings.getClientId());
         web.setClientSecret(googleCalendarSettings.getClientSecret());

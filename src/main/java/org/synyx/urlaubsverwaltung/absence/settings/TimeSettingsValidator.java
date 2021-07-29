@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence.settings;
 
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 
 public class TimeSettingsValidator {
 

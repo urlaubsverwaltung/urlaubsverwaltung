@@ -8,9 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -38,7 +38,7 @@ class OvertimeFormValidatorTest {
     @Mock
     private OvertimeService overtimeService;
     @Mock
-    private SettingsService settingsService;
+    private OvertimeSettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -61,8 +61,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureNoErrorsIfValid() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -77,8 +77,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureStartDateIsMandatory() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
@@ -94,8 +94,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureEndDateIsMandatory() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
@@ -110,8 +110,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureStartAndEndDateCanBeEquals() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -130,8 +130,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureStartDateCanNotBeAfterEndDate() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -147,8 +147,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureNoErrorMessageForMandatoryIfStartDateIsNullBecauseOfTypeMismatch() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(errors.hasFieldErrors("startDate")).thenReturn(true);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -165,8 +165,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureNoErrorMessageForMandatoryIfEndDateIsNullBecauseOfTypeMismatch() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
         when(errors.hasFieldErrors("endDate")).thenReturn(true);
@@ -184,8 +184,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureHoursOrMinutesIsMandatory() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
@@ -201,8 +201,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureNumberOfHoursCanBeNegative() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -219,8 +219,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureNumberOfHoursCanBeZero() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -236,8 +236,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureMinutes() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -253,9 +253,9 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureOvertimeReductionIsAllowedWhenFeatureIsEnabled() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setOvertimeReductionWithoutApplicationActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any())).thenReturn(Duration.ofHours(42));
@@ -273,9 +273,9 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureOvertimeReductionIsNotAllowedWhenFeatureIsDisabled() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setOvertimeReductionWithoutApplicationActive(false);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setOvertimeReductionWithoutApplicationActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
@@ -292,8 +292,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureCanNotRecordOvertimeIfOvertimeManagementIsDeactivated() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(false);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
@@ -304,9 +304,9 @@ class OvertimeFormValidatorTest {
 
     @Test
     void ensureCanNotRecordOvertimeIfMaximumOvertimeIsZero() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMaximumOvertime(0);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMaximumOvertime(0);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
@@ -324,9 +324,9 @@ class OvertimeFormValidatorTest {
 
     @Test
     void ensureCanRecordOvertimeIfMaximumOvertimeReachedButNotExceeded() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMaximumOvertime(16);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMaximumOvertime(16);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(8));
@@ -344,9 +344,9 @@ class OvertimeFormValidatorTest {
 
     @Test
     void ensureCanNotRecordOvertimeIfMaximumOvertimeExceeded() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMaximumOvertime(16);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMaximumOvertime(16);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofDays(8));
@@ -364,9 +364,9 @@ class OvertimeFormValidatorTest {
 
     @Test
     void ensureCanNotRecordOvertimeIfMinimumOvertimeExceeded() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMinimumOvertime(10);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMinimumOvertime(10);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofHours(-9));
@@ -385,9 +385,9 @@ class OvertimeFormValidatorTest {
     // Validate changes in existing overtime record --------------------------------------------------------------------
     @Test
     void foo() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMaximumOvertime(100);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMaximumOvertime(100);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ofMinutes(5970));
@@ -411,9 +411,9 @@ class OvertimeFormValidatorTest {
 
     @Test
     void ensureCanEditOvertimeRecordChangingPositiveHours() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMaximumOvertime(4);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMaximumOvertime(4);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
@@ -438,9 +438,9 @@ class OvertimeFormValidatorTest {
 
     @Test
     void ensureCanEditOvertimeRecordChangingNegativeHours() {
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
-        settings.getOvertimeSettings().setMinimumOvertime(4);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
+        settings.setMinimumOvertime(4);
         when(settingsService.getSettings()).thenReturn(settings);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class)))
@@ -469,8 +469,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureCommentInsideMaximumCharacterLength() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
@@ -487,8 +487,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureCommentIsNotMandatory() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 
@@ -509,8 +509,8 @@ class OvertimeFormValidatorTest {
     @Test
     void ensureCommentHasMaximumCharacterLength() {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeActive(true);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeActive(true);
         when(settingsService.getSettings()).thenReturn(settings);
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
 

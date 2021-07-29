@@ -6,12 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsEntity;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,7 @@ class SickNoteMailServiceTest {
     private SickNoteMailService sut;
 
     @Mock
-    private SettingsService settingsService;
+    private SickNoteSettingsService sickNoteSettingsService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock
@@ -39,7 +38,7 @@ class SickNoteMailServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteMailService(settingsService, sickNoteService, mailService);
+        sut = new SickNoteMailService(sickNoteSettingsService, sickNoteService, mailService);
     }
 
     @Test
@@ -97,27 +96,13 @@ class SickNoteMailServiceTest {
     @Test
     void ensureNoSendWhenDeactivated() {
 
-        boolean isInactive = false;
-        prepareSettingsWithRemindForWaitingApplications(isInactive);
-
         sut.sendEndOfSickPayNotification();
         verifyNoInteractions(mailService);
     }
 
-
-    private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
-        Settings settings = new Settings();
-        ApplicationSettings applicationSettings = new ApplicationSettings();
-        applicationSettings.setRemindForWaitingApplications(isActive);
-        settings.setApplicationSettings(applicationSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
-    }
-
     private void prepareSettingsWithMaximumSickPayDays(Integer sickPayDays) {
-        final Settings settings = new Settings();
-        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        final SickNoteSettingsEntity sickNoteSettings = new SickNoteSettingsEntity();
         sickNoteSettings.setMaximumSickPayDays(sickPayDays);
-        settings.setSickNoteSettings(sickNoteSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(sickNoteSettingsService.getSettings()).thenReturn(sickNoteSettings);
     }
 }

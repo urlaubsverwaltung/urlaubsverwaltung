@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsService;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -58,7 +58,7 @@ class AbsenceServiceImplTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private SettingsService settingsService;
+    private TimeSettingsService timeSettingsService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock
@@ -68,17 +68,15 @@ class AbsenceServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new AbsenceServiceImpl(applicationService, sickNoteService, settingsService, workingTimeService, publicHolidaysService);
+        sut = new AbsenceServiceImpl(applicationService, sickNoteService, timeSettingsService, workingTimeService, publicHolidaysService);
     }
 
     @Test
     void getOpenAbsencesSinceForPersons() {
 
-        final Settings settings = new Settings();
-        final TimeSettings timeSettings = new TimeSettings();
+        final TimeSettingsEntity timeSettings = new TimeSettingsEntity();
         timeSettings.setTimeZoneId("Etc/UTC");
-        settings.setTimeSettings(timeSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(timeSettingsService.getSettings()).thenReturn(timeSettings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -107,11 +105,9 @@ class AbsenceServiceImplTest {
     @Test
     void getOpenAbsencesSince() {
 
-        final Settings settings = new Settings();
-        final TimeSettings timeSettings = new TimeSettings();
+        final TimeSettingsEntity timeSettings = new TimeSettingsEntity();
         timeSettings.setTimeZoneId("Etc/UTC");
-        settings.setTimeSettings(timeSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(timeSettingsService.getSettings()).thenReturn(timeSettings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 

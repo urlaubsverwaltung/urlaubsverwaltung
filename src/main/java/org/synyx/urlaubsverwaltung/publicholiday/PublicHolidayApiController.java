@@ -18,9 +18,9 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,11 +42,11 @@ public class PublicHolidayApiController {
     private final PublicHolidaysService publicHolidaysService;
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
 
     @Autowired
     public PublicHolidayApiController(PublicHolidaysService publicHolidaysService, PersonService personService,
-                                      WorkingTimeService workingTimeService, SettingsService settingsService) {
+                                      WorkingTimeService workingTimeService, WorkingTimeSettingsService settingsService) {
 
         this.publicHolidaysService = publicHolidaysService;
         this.personService = personService;
@@ -73,7 +73,7 @@ public class PublicHolidayApiController {
 
         checkValidPeriod(startDate, endDate);
 
-        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState federalState = settingsService.getSettings().getFederalState();
 
         final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
         return new PublicHolidaysDto(publicHolidays);

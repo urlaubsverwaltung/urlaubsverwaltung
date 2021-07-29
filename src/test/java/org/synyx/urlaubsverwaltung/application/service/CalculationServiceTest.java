@@ -17,11 +17,11 @@ import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -65,7 +65,7 @@ class CalculationServiceTest {
     @Mock
     private AccountService accountService;
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
@@ -73,7 +73,7 @@ class CalculationServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(settingsService.getSettings()).thenReturn(new WorkingTimeSettingsEntity());
 
         final HolidayManager holidayManager = getHolidayManager();
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);

@@ -11,11 +11,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,7 +34,7 @@ class MenuDataProviderTest {
     private PersonService personService;
 
     @Mock
-    private SettingsService settingsService;
+    private OvertimeSettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -155,13 +154,9 @@ class MenuDataProviderTest {
     }
 
     private void mockOvertime(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly) {
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        final OvertimeSettingsEntity overtimeSettings = new OvertimeSettingsEntity();
         overtimeSettings.setOvertimeActive(overtimeFeatureActive);
         overtimeSettings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
-
-        final Settings settings = new Settings();
-        settings.setOvertimeSettings(overtimeSettings);
-
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(overtimeSettings);
     }
 }

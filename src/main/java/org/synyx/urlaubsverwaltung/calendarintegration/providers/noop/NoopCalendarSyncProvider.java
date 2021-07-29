@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.calendarintegration.providers.noop;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ public class NoopCalendarSyncProvider implements CalendarProvider {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @Override
-    public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
+    public Optional<String> add(Absence absence, CalendarSettingsEntity calendarSettings) {
 
         LOG.info("No calendar provider configured to add event: {}", absence);
 
@@ -26,18 +26,18 @@ public class NoopCalendarSyncProvider implements CalendarProvider {
     }
 
     @Override
-    public void update(Absence absence, String eventId, CalendarSettings calendarSettings) {
+    public void update(Absence absence, String eventId, CalendarSettingsEntity calendarSettings) {
 
         LOG.info("No calendar provider configured to update event: {}, eventId {}", absence, eventId);
     }
 
     @Override
-    public void delete(String eventId, CalendarSettings calendarSettings) {
+    public void delete(String eventId, CalendarSettingsEntity calendarSettings) {
         LOG.info("No calendar provider configured to delete event '{}'", eventId);
     }
 
     @Override
-    public void checkCalendarSyncSettings(CalendarSettings calendarSettings) {
+    public void checkCalendarSyncSettings(CalendarSettingsEntity calendarSettings) {
         LOG.info("No calendar provider configured to check calendarSettings '{}'", calendarSettings);
     }
 }

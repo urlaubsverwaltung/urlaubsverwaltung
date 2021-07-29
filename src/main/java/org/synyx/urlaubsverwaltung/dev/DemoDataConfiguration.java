@@ -9,8 +9,8 @@ import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionSer
 import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -41,7 +41,7 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    OvertimeRecordDataProvider overtimeRecordDataProvider(OvertimeService overtimeService, SettingsService settingsService) {
+    OvertimeRecordDataProvider overtimeRecordDataProvider(OvertimeService overtimeService, OvertimeSettingsService settingsService) {
         return new OvertimeRecordDataProvider(overtimeService, settingsService);
     }
 

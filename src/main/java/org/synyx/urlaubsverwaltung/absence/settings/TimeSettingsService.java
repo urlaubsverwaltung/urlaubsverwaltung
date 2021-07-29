@@ -13,11 +13,15 @@ public class TimeSettingsService {
 
     public TimeSettingsDto getSettingsDto() {
 
-        TimeSettingsEntity timeSettingsEntity = timeSettingsRepository.findFirstBy();
+        final TimeSettingsEntity timeSettingsEntity = timeSettingsRepository.findFirstBy();
         return TimeSettingsDtoMapper.mapToWorkingTimeSettingsDto(timeSettingsEntity);
     }
 
     public void save(TimeSettingsDto timeSettingsDto) {
         timeSettingsRepository.save(TimeSettingsDtoMapper.mapToWorkingTimeSettingsEntity(timeSettingsDto));
+    }
+
+    public TimeSettingsEntity getSettings() {
+        return timeSettingsRepository.findFirstBy();
     }
 }

@@ -18,11 +18,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
-import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEmbeddable;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -74,7 +73,7 @@ class PersonViewControllerTest {
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
 
     private Person person;
 
@@ -318,16 +317,12 @@ class PersonViewControllerTest {
         return standaloneSetup(sut).build().perform(builder);
     }
 
-    private static Settings settingsWithFederalState(FederalState federalState) {
+    private static WorkingTimeSettingsEntity settingsWithFederalState(FederalState federalState) {
 
-        Settings settings = new Settings();
+        WorkingTimeSettingsEntity workingTimeSettingsEntity = new WorkingTimeSettingsEntity();
+        workingTimeSettingsEntity.setFederalState(federalState);
 
-        WorkingTimeSettingsEmbeddable workingTimeSettingsEmbeddable = new WorkingTimeSettingsEmbeddable();
-        workingTimeSettingsEmbeddable.setFederalState(federalState);
-
-        settings.setWorkingTimeSettings(workingTimeSettingsEmbeddable);
-
-        return settings;
+        return workingTimeSettingsEntity;
     }
 
     private static Account accountForPerson(Person person) {

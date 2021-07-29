@@ -2,15 +2,16 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsEntity;
+import org.synyx.urlaubsverwaltung.calendarintegration.settings.CalendarSettingsService;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -18,70 +19,61 @@ import static org.mockito.Mockito.when;
  */
 class CalendarSyncServiceImplTest {
 
-    private CalendarService calendarService;
-
     private CalendarSyncService calendarSyncService;
-    private Settings settings;
+    @Mock
+    private CalendarSettingsService calendarSettingsService;
+    @Mock
+    private ExchangeCalendarProvider exchangeCalendarProvider;
+
+    CalendarSettingsEntity calendarSettingsEntity = new CalendarSettingsEntity();
 
     @BeforeEach
     void setUp() {
 
-        final SettingsService settingsService = mock(SettingsService.class);
-        settings = new Settings();
-        settings.setCalendarSettings(new CalendarSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
+        calendarSettingsEntity.setProvider(ExchangeCalendarProvider.class.getSimpleName());
+        when(calendarSettingsService.getSettings()).thenReturn(calendarSettingsEntity);
 
-        calendarService = mock(CalendarService.class);
 
-        when(calendarService.getCalendarProvider()).thenReturn(mock(ExchangeCalendarProvider.class));
-
-        calendarSyncService = new CalendarSyncServiceImpl(settingsService, calendarService);
+        exchangeCalendarProvider = mock(ExchangeCalendarProvider.class);
+        calendarSyncService = new CalendarSyncServiceImpl(calendarSettingsService, List.of(exchangeCalendarProvider));
     }
 
     @Test
     void ensureAddsAbsenceToExchangeCalendar() {
 
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-
         Absence absence = mock(Absence.class);
 
         calendarSyncService.addAbsence(absence);
 
-        verify(calendarService.getCalendarProvider()).add(absence, settings.getCalendarSettings());
+        verify(exchangeCalendarProvider).add(absence, calendarSettingsService.getSettings());
     }
 
     @Test
     void ensureUpdatesAbsenceInExchangeCalendar() {
-
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
 
         Absence absence = mock(Absence.class);
         String eventId = "event-1";
 
         calendarSyncService.update(absence, eventId);
 
-        verify(calendarService.getCalendarProvider()).update(absence, eventId, settings.getCalendarSettings());
+        verify(exchangeCalendarProvider).update(absence, eventId, calendarSettingsService.getSettings());
     }
 
     @Test
     void ensureDeletedAbsenceInExchangeCalendar() {
 
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-
         String eventId = "event-1";
 
         calendarSyncService.deleteAbsence(eventId);
 
-        verify(calendarService.getCalendarProvider()).delete(eventId, settings.getCalendarSettings());
+        verify(exchangeCalendarProvider).delete(eventId, calendarSettingsService.getSettings());
     }
 
     @Test
     void ensureChecksExchangeCalendarSettings() {
 
-        ExchangeCalendarSettings calendarSettings = settings.getCalendarSettings().getExchangeCalendarSettings();
-
         calendarSyncService.checkCalendarSyncSettings();
 
-        verify(calendarService.getCalendarProvider()).checkCalendarSyncSettings(any(CalendarSettings.class));
+        verify(exchangeCalendarProvider).checkCalendarSyncSettings(any(CalendarSettingsEntity.class));
     }
 }

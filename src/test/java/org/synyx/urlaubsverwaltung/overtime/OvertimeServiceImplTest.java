@@ -11,10 +11,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -47,11 +47,11 @@ class OvertimeServiceImplTest {
     @Mock
     private OvertimeMailService overtimeMailService;
     @Mock
-    private SettingsService settingsService;
+    private OvertimeSettingsService overtimeSettingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, settingsService, Clock.systemUTC());
+        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, overtimeSettingsService, Clock.systemUTC());
     }
 
     // Record overtime -------------------------------------------------------------------------------------------------
@@ -304,7 +304,7 @@ class OvertimeServiceImplTest {
         final Person signedInUser = new Person();
         signedInUser.setPermissions(List.of(OFFICE));
         final Person personOfOvertime = new Person();
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly));
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings(overtimeWritePrivilegedOnly));
 
         assertThat(sut.isUserIsAllowedToWriteOvertime(signedInUser, personOfOvertime)).isTrue();
     }
@@ -315,7 +315,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setPermissions(List.of(USER));
 
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(true));
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings(true));
 
         assertThat(sut.isUserIsAllowedToWriteOvertime(person, person)).isFalse();
     }
@@ -327,7 +327,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setPermissions(List.of(role));
 
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(true));
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings(true));
 
         assertThat(sut.isUserIsAllowedToWriteOvertime(person, person)).isTrue();
     }
@@ -339,7 +339,7 @@ class OvertimeServiceImplTest {
         final Person person = new Person();
         person.setPermissions(List.of(role));
 
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         assertThat(sut.isUserIsAllowedToWriteOvertime(person, person)).isTrue();
     }
@@ -352,7 +352,7 @@ class OvertimeServiceImplTest {
         person.setPermissions(List.of(role));
         final Person other = new Person();
 
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(false));
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings(false));
 
         assertThat(sut.isUserIsAllowedToWriteOvertime(person, other)).isFalse();
     }
@@ -365,15 +365,15 @@ class OvertimeServiceImplTest {
         person.setPermissions(List.of(role));
         final Person other = new Person();
 
-        when(settingsService.getSettings()).thenReturn(overtimeSettings(true));
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings(true));
 
         assertThat(sut.isUserIsAllowedToWriteOvertime(person, other)).isFalse();
     }
 
-    private Settings overtimeSettings(boolean overtimeWritePrivilegedOnly) {
+    private OvertimeSettingsEntity overtimeSettings(boolean overtimeWritePrivilegedOnly) {
 
-        final Settings settings = new Settings();
-        settings.getOvertimeSettings().setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
+        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        settings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
 
         return settings;
     }

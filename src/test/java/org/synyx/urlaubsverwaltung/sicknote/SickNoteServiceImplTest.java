@@ -7,8 +7,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsEntity;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -33,7 +33,7 @@ class SickNoteServiceImplTest {
     @Mock
     private SickNoteRepository sickNoteRepository;
     @Mock
-    private SettingsService settingsService;
+    private SickNoteSettingsService settingsService;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2021-06-28T00:00:00.00Z"), UTC);
 
@@ -89,12 +89,9 @@ class SickNoteServiceImplTest {
     @Test
     void getSickNotesReachingEndOfSickPay() {
 
-        final SickNoteSettings sickNoteSettings = new SickNoteSettings();
+        final SickNoteSettingsEntity sickNoteSettings = new SickNoteSettingsEntity();
         sickNoteSettings.setMaximumSickPayDays(5);
-
-        final Settings settings = new Settings();
-        settings.setSickNoteSettings(sickNoteSettings);
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(sickNoteSettings);
 
         final SickNote sickNote = new SickNote();
         when(sickNoteRepository.findSickNotesToNotifyForSickPayEnd(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));

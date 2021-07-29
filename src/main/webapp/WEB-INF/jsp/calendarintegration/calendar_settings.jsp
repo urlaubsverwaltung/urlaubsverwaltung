@@ -74,7 +74,7 @@
                                     </label>
                                     <div class="col-md-8">
                                         <uv:select id="calendarSettingsProvider" name="provider">
-                                            <c:forEach items="${calendarSettings.providers}" var="provider">
+                                            <c:forEach items="${calendarProviders}" var="provider">
                                                 <option value="${provider}" ${calendarSettings.provider == provider ? 'selected="selected"' : ''}>
                                                     <spring:message code="settings.calendar.provider.${provider}"/>
                                                 </option>

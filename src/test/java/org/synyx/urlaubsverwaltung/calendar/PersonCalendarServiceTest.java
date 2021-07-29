@@ -9,7 +9,7 @@ import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.absence.settings.TimeSettingsEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -300,7 +300,7 @@ class PersonCalendarServiceTest {
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
+        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettingsEntity());
 
         return new Absence(person, period, timeConfig);
     }

@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
@@ -27,6 +26,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -90,7 +90,7 @@ class ApplicationForLeaveCreateIT {
     @Autowired
     private PublicHolidaysService publicHolidaysService;
     @Autowired
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
     @Autowired
     private MessageSource messageSource;
 
@@ -278,7 +278,7 @@ class ApplicationForLeaveCreateIT {
 
     private LocalDate getNextWorkday() {
 
-        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState federalState = settingsService.getSettings().getFederalState();
 
         LocalDate nextWorkDay = now();
         while (DayLength.ZERO.compareTo(publicHolidaysService.getAbsenceTypeOfDate(nextWorkDay, federalState)) != 0) {

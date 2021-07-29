@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
@@ -29,12 +29,12 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     private final WorkingTimeProperties workingTimeProperties;
     private final WorkingTimeRepository workingTimeRepository;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeServiceImpl(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository,
-                                  SettingsService settingsService, Clock clock) {
+                                  WorkingTimeSettingsService settingsService, Clock clock) {
         this.workingTimeProperties = workingTimeProperties;
         this.workingTimeRepository = workingTimeRepository;
         this.settingsService = settingsService;
@@ -102,7 +102,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public FederalState getSystemDefaultFederalState() {
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        return settingsService.getSettings().getFederalState();
     }
 
     @Override
@@ -110,7 +110,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         final List<Integer> defaultWorkingDays;
 
         if (workingTimeProperties.isDefaultWorkingDaysDeactivated()) {
-            defaultWorkingDays = settingsService.getSettings().getWorkingTimeSettings().getWorkingDays();
+            defaultWorkingDays = settingsService.getSettings().getWorkingDays();
         } else {
             defaultWorkingDays = workingTimeProperties.getDefaultWorkingDays();
         }

@@ -12,9 +12,9 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,7 +45,7 @@ class PublicHolidayApiControllerTest {
     @Mock
     private WorkingTimeService workingTimeService;
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeSettingsService settingsService;
 
     @BeforeEach
     void setUp() {
@@ -55,8 +55,8 @@ class PublicHolidayApiControllerTest {
     @Test
     void getPublicHolidays() throws Exception {
 
-        final Settings settings = new Settings();
-        settings.getWorkingTimeSettings().setFederalState(BADEN_WUERTTEMBERG);
+        final WorkingTimeSettingsEntity settings = new WorkingTimeSettingsEntity();
+        settings.setFederalState(BADEN_WUERTTEMBERG);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final LocalDate from = LocalDate.of(2016, 5, 19);

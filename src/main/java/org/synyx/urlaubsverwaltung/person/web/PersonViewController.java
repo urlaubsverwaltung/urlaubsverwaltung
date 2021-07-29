@@ -19,10 +19,10 @@ import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -60,13 +60,13 @@ public class PersonViewController {
     private final VacationDaysService vacationDaysService;
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     public PersonViewController(PersonService personService, AccountService accountService,
                                 VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                WorkingTimeService workingTimeService, SettingsService settingsService, Clock clock) {
+                                WorkingTimeService workingTimeService, WorkingTimeSettingsService settingsService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -100,7 +100,7 @@ public class PersonViewController {
         final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
 
         final FederalState federalState = workingTime.map(WorkingTime::getFederalState)
-            .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
+            .orElseGet(() -> settingsService.getSettings().getFederalState());
 
         model.addAttribute("workingTime", workingTime.orElse(null));
         model.addAttribute("federalState", federalState);

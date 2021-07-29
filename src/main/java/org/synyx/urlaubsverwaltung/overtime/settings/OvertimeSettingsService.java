@@ -18,4 +18,12 @@ public class OvertimeSettingsService {
     public void save(OvertimeSettingsDto overtimeSettingsDto) {
         overtimeSettingsRepository.save(OvertimeSettingsDtoMapper.mapToOvertimeSettingsEntiy(overtimeSettingsDto));
     }
+
+    public OvertimeSettingsEntity getSettings() {
+        return overtimeSettingsRepository.findFirstBy();
+    }
+
+    public void save(OvertimeSettingsEntity overtimeSettingsEntity) {
+        overtimeSettingsRepository.save(overtimeSettingsEntity);
+    }
 }

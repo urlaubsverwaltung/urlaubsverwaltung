@@ -18,8 +18,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.settings.WorkingTimeSettingsService;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
@@ -27,12 +27,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,10 +35,7 @@ import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -57,13 +49,13 @@ public class AbsenceOverviewViewController {
     private final MessageSource messageSource;
     private final Clock clock;
     private final PublicHolidaysService publicHolidaysService;
-    private final SettingsService settingsService;
+    private final WorkingTimeSettingsService settingsService;
     private final AbsenceService absenceService;
 
     @Autowired
     public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
                                          MessageSource messageSource, Clock clock,
-                                         PublicHolidaysService publicHolidaysService, SettingsService settingsService,
+                                         PublicHolidaysService publicHolidaysService, WorkingTimeSettingsService settingsService,
                                          AbsenceService absenceService) {
         this.personService = personService;
         this.departmentService = departmentService;
@@ -143,7 +135,7 @@ public class AbsenceOverviewViewController {
         final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.getStartDate(), dateRange.getEndDate());
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
-        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final FederalState defaultFederalState = settingsService.getSettings().getFederalState();
 
         final Map<Person, List<AbsencePeriod.Record>> absencePeriodRecordsByPerson = openAbsences.stream()
             .map(AbsencePeriod::getAbsenceRecords)
