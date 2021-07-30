@@ -53,6 +53,7 @@ public class SettingsViewController {
         this.specialLeaveSettingsService = specialLeaveSettingsService;
     }
 
+    // TODO: What happens with googleOAuthError param?
     @GetMapping
     @PreAuthorize(IS_OFFICE)
     public String settingsDetails(@RequestParam(value = "oautherrors", required = false) String googleOAuthError,
