@@ -21,6 +21,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -117,11 +119,37 @@ public class ApplicationForLeaveViewController {
             .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
             .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting)
             .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
-            .startDate(application.getStartDate())
-            .startDateWithTime(application.getStartDateWithTime())
-            .endDate(application.getEndDate())
-            .endDateWithTime(application.getEndDateWithTime())
+            .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();
+    }
+
+    private static String toDurationOfAbsenceDescription(Application application, MessageSource messageSource, Locale locale) {
+        final String timePattern = messageSource.getMessage("pattern.time", new Object[]{}, locale);
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("E, dd.MM.yyyy", locale);
+        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(timePattern, locale);
+
+        final LocalDate startDate = application.getStartDate();
+        final LocalDate endDate = application.getEndDate();
+
+        final String dateStartString = startDate.format(dateFormatter);
+
+        if (startDate.isEqual(endDate)) {
+            final ZonedDateTime startDateWithTime = application.getStartDateWithTime();
+            final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
+
+            if (startDateWithTime != null && endDateWithTime != null) {
+                final String startTime = startDateWithTime.format(timeFormatter);
+                final String endTime = endDateWithTime.format(timeFormatter);
+                return messageSource.getMessage("absence.period.singleDay.withStartAndEndTime", new Object[]{dateStartString, startTime, endTime}, locale);
+            }
+
+            final DayLength dayLength = application.getDayLength();
+            final String dayLengthText = dayLength == null ? "" : messageSource.getMessage(dayLength.name(), new Object[]{}, locale);
+            return messageSource.getMessage("absence.period.singleDay", new Object[]{dateStartString, dayLengthText}, locale);
+        }
+
+        final String dateEndString = endDate.format(dateFormatter);
+        return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
     }
 
     private static ApplicationForLeaveDto.Person toViewPerson(Person person) {
@@ -172,8 +200,8 @@ public class ApplicationForLeaveViewController {
     private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate, Locale locale) {
         return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate)
             .stream()
+            .sorted(comparing(Application::getStartDate))
             .map(application -> toApplicationReplacementDto(application, holidayReplacement, locale))
-            .sorted(comparing(ApplicationReplacementDto::getStartDate))
             .collect(toList());
     }
 
@@ -291,12 +319,9 @@ public class ApplicationForLeaveViewController {
             .pending(pending)
             .hours(application.getHours())
             .workDays(decimalToString(workDays, locale))
-            .startDate(startDate)
-            .endDate(endDate)
             .startTime(application.getStartTime())
             .endTime(application.getEndTime())
-            .startDateWithTime(application.getStartDateWithTime())
-            .endDateWithTime(application.getEndDateWithTime())
+            .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .dayLength(dayLength)
             .build();
     }

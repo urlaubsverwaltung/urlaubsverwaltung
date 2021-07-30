@@ -4,8 +4,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.sql.Time;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 public class ApplicationReplacementDto {
 
@@ -15,19 +13,15 @@ public class ApplicationReplacementDto {
     private final boolean pending;
     private final Duration hours;
     private final String workDays;
-    private final LocalDate startDate;
-    private final LocalDate endDate;
     private final Time startTime;
     private final Time endTime;
-    private final ZonedDateTime startDateWithTime;
-    private final ZonedDateTime endDateWithTime;
+    private final String durationOfAbsenceDescription;
     private final DayLength dayLength;
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
     private ApplicationReplacementDto(String personGravatarURL, String personName, String note, boolean pending,
-                                      Duration hours, String workDays, LocalDate startDate, LocalDate endDate,
-                                      Time startTime, Time endTime, ZonedDateTime startDateWithTime,
-                                      ZonedDateTime endDateWithTime, DayLength dayLength) {
+                                      Duration hours, String workDays, Time startTime, Time endTime,
+                                      String durationOfAbsenceDescription, DayLength dayLength) {
 
         this.personGravatarURL = personGravatarURL;
         this.personName = personName;
@@ -35,12 +29,9 @@ public class ApplicationReplacementDto {
         this.pending = pending;
         this.hours = hours;
         this.workDays = workDays;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.startDateWithTime = startDateWithTime;
-        this.endDateWithTime = endDateWithTime;
+        this.durationOfAbsenceDescription = durationOfAbsenceDescription;
         this.dayLength = dayLength;
     }
 
@@ -68,14 +59,6 @@ public class ApplicationReplacementDto {
         return workDays;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
     public Time getStartTime() {
         return startTime;
     }
@@ -84,12 +67,8 @@ public class ApplicationReplacementDto {
         return endTime;
     }
 
-    public ZonedDateTime getStartDateWithTime() {
-        return startDateWithTime;
-    }
-
-    public ZonedDateTime getEndDateWithTime() {
-        return endDateWithTime;
+    public String getDurationOfAbsenceDescription() {
+        return durationOfAbsenceDescription;
     }
 
     public DayLength getDayLength() {
@@ -107,12 +86,9 @@ public class ApplicationReplacementDto {
         private boolean pending;
         private Duration hours;
         private String workDays;
-        private LocalDate startDate;
-        private LocalDate endDate;
         private Time startTime;
         private Time endTime;
-        private ZonedDateTime startDateWithTime;
-        private ZonedDateTime endDateWithTime;
+        private String durationOfAbsenceDescription;
         private DayLength dayLength;
 
         private Builder() {
@@ -149,16 +125,6 @@ public class ApplicationReplacementDto {
             return this;
         }
 
-        public Builder startDate(LocalDate startDate) {
-            this.startDate = startDate;
-            return this;
-        }
-
-        public Builder endDate(LocalDate endDate) {
-            this.endDate = endDate;
-            return this;
-        }
-
         public Builder startTime(Time startTime) {
             this.startTime = startTime;
             return this;
@@ -169,13 +135,8 @@ public class ApplicationReplacementDto {
             return this;
         }
 
-        public Builder startDateWithTime(ZonedDateTime startDateWithTime) {
-            this.startDateWithTime = startDateWithTime;
-            return this;
-        }
-
-        public Builder endDateWithTime(ZonedDateTime endDateWithTime) {
-            this.endDateWithTime = endDateWithTime;
+        public Builder durationOfAbsenceDescription(String durationOfAbsenceDescription) {
+            this.durationOfAbsenceDescription = durationOfAbsenceDescription;
             return this;
         }
 
@@ -186,7 +147,7 @@ public class ApplicationReplacementDto {
 
         public ApplicationReplacementDto build() {
             return new ApplicationReplacementDto(personGravatarURL, personName, note, pending, hours, workDays,
-                startDate, endDate, startTime, endTime, startDateWithTime, endDateWithTime, dayLength);
+                startTime, endTime, durationOfAbsenceDescription, dayLength);
         }
     }
 }

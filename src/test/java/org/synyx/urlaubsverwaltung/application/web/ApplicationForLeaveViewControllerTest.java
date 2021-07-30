@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -71,6 +72,8 @@ class ApplicationForLeaveViewControllerTest {
 
     @BeforeEach
     void setUp() {
+        when(messageSource.getMessage(any(), any(), any())).thenReturn("");
+
         sut = new ApplicationForLeaveViewController(applicationService, workDaysCountService, departmentService,
             personService, clock, messageSource);
     }
@@ -496,9 +499,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("applications_holiday_replacements", contains(
                 allOf(
                     hasProperty("personName", is("Alfred Pennyworth")),
-                    hasProperty("note", is("awesome, thanks dude!")),
-                    hasProperty("startDate", is(LocalDate.now(clock).plusDays(1))),
-                    hasProperty("endDate", is(LocalDate.now(clock).plusDays(1)))
+                    hasProperty("note", is("awesome, thanks dude!"))
                 )
             )))
             .andExpect(view().name("application/app_list"));
