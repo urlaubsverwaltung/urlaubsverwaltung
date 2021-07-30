@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.application.web;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.sql.Time;
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -23,15 +22,12 @@ public class ApplicationReplacementDto {
     private final ZonedDateTime startDateWithTime;
     private final ZonedDateTime endDateWithTime;
     private final DayLength dayLength;
-    private final DayOfWeek weekDayOfStartDate;
-    private final DayOfWeek weekDayOfEndDate;
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
     private ApplicationReplacementDto(String personGravatarURL, String personName, String note, boolean pending,
                                       Duration hours, String workDays, LocalDate startDate, LocalDate endDate,
                                       Time startTime, Time endTime, ZonedDateTime startDateWithTime,
-                                      ZonedDateTime endDateWithTime, DayLength dayLength, DayOfWeek weekDayOfStartDate,
-                                      DayOfWeek weekDayOfEndDate) {
+                                      ZonedDateTime endDateWithTime, DayLength dayLength) {
 
         this.personGravatarURL = personGravatarURL;
         this.personName = personName;
@@ -46,8 +42,6 @@ public class ApplicationReplacementDto {
         this.startDateWithTime = startDateWithTime;
         this.endDateWithTime = endDateWithTime;
         this.dayLength = dayLength;
-        this.weekDayOfStartDate = weekDayOfStartDate;
-        this.weekDayOfEndDate = weekDayOfEndDate;
     }
 
     public String getPersonGravatarURL() {
@@ -102,14 +96,6 @@ public class ApplicationReplacementDto {
         return dayLength;
     }
 
-    public DayOfWeek getWeekDayOfStartDate() {
-        return weekDayOfStartDate;
-    }
-
-    public DayOfWeek getWeekDayOfEndDate() {
-        return weekDayOfEndDate;
-    }
-
     public static Builder builder() {
         return new Builder();
     }
@@ -128,8 +114,6 @@ public class ApplicationReplacementDto {
         private ZonedDateTime startDateWithTime;
         private ZonedDateTime endDateWithTime;
         private DayLength dayLength;
-        private DayOfWeek weekDayOfStartDate;
-        private DayOfWeek weekDayOfEndDate;
 
         private Builder() {
             //
@@ -200,20 +184,9 @@ public class ApplicationReplacementDto {
             return this;
         }
 
-        public Builder weekDayOfStartDate(DayOfWeek weekDayOfStartDate) {
-            this.weekDayOfStartDate = weekDayOfStartDate;
-            return this;
-        }
-
-        public Builder weekDayOfEndDate(DayOfWeek weekDayOfEndDate) {
-            this.weekDayOfEndDate = weekDayOfEndDate;
-            return this;
-        }
-
         public ApplicationReplacementDto build() {
             return new ApplicationReplacementDto(personGravatarURL, personName, note, pending, hours, workDays,
-                startDate, endDate, startTime, endTime, startDateWithTime, endDateWithTime, dayLength,
-                weekDayOfStartDate, weekDayOfEndDate);
+                startDate, endDate, startTime, endTime, startDateWithTime, endDateWithTime, dayLength);
         }
     }
 }

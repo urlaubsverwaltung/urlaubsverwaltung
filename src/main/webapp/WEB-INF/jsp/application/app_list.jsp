@@ -417,8 +417,7 @@
                                             <c:choose>
                                                 <c:when test="${application.startDate == application.endDate}">
                                                     <c:set var="APPLICATION_DATE">
-                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
+                                                        <uv:date date="${application.startDate}" pattern="E, dd.MM.yyyy" />
                                                     </c:set>
                                                     <c:choose>
                                                         <c:when
@@ -453,14 +452,10 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <c:set var="APPLICATION_START_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
+                                                        <uv:date date="${application.startDate}" pattern="E, dd.MM.yyyy" />
                                                     </c:set>
                                                     <c:set var="APPLICATION_END_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfEndDate}.short"/>,
-                                                        <uv:date date="${application.endDate}"/>
+                                                        <uv:date date="${application.endDate}" pattern="E, dd.MM.yyyy" />
                                                     </c:set>
                                                     <spring:message code="absence.period.multipleDays"
                                                                     arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"

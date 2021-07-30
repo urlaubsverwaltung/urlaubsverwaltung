@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -491,9 +490,6 @@ class ApplicationForLeaveViewControllerTest {
         when(applicationService.getForHolidayReplacement(signedInUser, LocalDate.now(clock)))
             .thenReturn(List.of(application));
 
-        final DayOfWeek expectedWeekdayOfStartDate = LocalDate.now(clock).plusDays(1).getDayOfWeek();
-        final DayOfWeek expectedWeekdayOfEndDate = LocalDate.now(clock).plusDays(1).getDayOfWeek();
-
         perform(get("/web/application"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(signedInUser)))
@@ -501,8 +497,8 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     hasProperty("personName", is("Alfred Pennyworth")),
                     hasProperty("note", is("awesome, thanks dude!")),
-                    hasProperty("weekDayOfStartDate", is(expectedWeekdayOfStartDate)),
-                    hasProperty("weekDayOfEndDate", is(expectedWeekdayOfEndDate))
+                    hasProperty("startDate", is(LocalDate.now(clock).plusDays(1))),
+                    hasProperty("endDate", is(LocalDate.now(clock).plusDays(1)))
                 )
             )))
             .andExpect(view().name("application/app_list"));

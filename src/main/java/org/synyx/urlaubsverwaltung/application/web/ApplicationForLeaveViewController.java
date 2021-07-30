@@ -307,8 +307,6 @@ public class ApplicationForLeaveViewController {
             .startDateWithTime(application.getStartDateWithTime())
             .endDateWithTime(application.getEndDateWithTime())
             .dayLength(dayLength)
-            .weekDayOfStartDate(startDate.getDayOfWeek())
-            .weekDayOfEndDate(endDate.getDayOfWeek())
             .build();
     }
 }
