@@ -288,12 +288,12 @@
                     <c:otherwise>
                         <table class="list-table list-table-bt-0 tw-text-sm">
                             <tbody>
-                            <c:forEach items="${applications_holiday_replacements}" var="application" varStatus="loopStatus">
+                            <c:forEach items="${applications_holiday_replacements}" var="replacementInfo" varStatus="loopStatus">
                                 <tr class="active">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.personGravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.personName}"/>"
+                                            src="<c:out value='${replacementInfo.person.avatarUrl}?d=mm&s=40'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${replacementInfo.person.name}"/>"
                                             class="gravatar tw-rounded-full"
                                             width="40px"
                                             height="40px"
@@ -302,9 +302,9 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.personName}"/>
+                                            <c:out value="${replacementInfo.person.name}"/>
                                         </span>
-                                        <c:if test="${application.pending}">
+                                        <c:if test="${replacementInfo.pending}">
                                             <div>
                                                 <spring:message code="applications.holiday_replacement.pending"/>
                                             </div>
@@ -313,21 +313,21 @@
                                     <td class="halves">
                                         <span class="tw-block tw-mb-1 tw-text-lg">
                                             <c:choose>
-                                                <c:when test="${application.hours != null}">
-                                                    <uv:duration duration="${application.hours}"/>
+                                                <c:when test="${replacementInfo.hours != null}">
+                                                    <uv:duration duration="${replacementInfo.hours}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:out value="${application.workDays}" />
+                                                    <c:out value="${replacementInfo.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                 </c:otherwise>
                                             </c:choose>
                                         </span>
                                         <div>
-                                            <c:out value="${application.durationOfAbsenceDescription}" />
+                                            <c:out value="${replacementInfo.durationOfAbsenceDescription}" />
                                         </div>
                                     </td>
                                     <td class="tw-break-words tw-max-w-xs">
-                                        <c:out value="${application.note}"/>
+                                        <c:out value="${replacementInfo.note}"/>
                                     </td>
                                 </tr>
                             </c:forEach>

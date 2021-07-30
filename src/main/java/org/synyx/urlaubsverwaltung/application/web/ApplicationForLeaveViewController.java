@@ -313,8 +313,7 @@ public class ApplicationForLeaveViewController {
         final boolean pending = WAITING.equals(application.getStatus()) || TEMPORARY_ALLOWED.equals(application.getStatus());
 
         return ApplicationReplacementDto.builder()
-            .personGravatarURL(applicationPerson.getGravatarURL())
-            .personName(applicationPerson.getNiceName())
+            .person(new ApplicationReplacementDto.Person(applicationPerson.getNiceName(), applicationPerson.getGravatarURL()))
             .note(note)
             .pending(pending)
             .hours(application.getHours())

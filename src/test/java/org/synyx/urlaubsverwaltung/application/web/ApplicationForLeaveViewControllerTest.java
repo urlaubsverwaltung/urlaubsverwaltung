@@ -498,7 +498,9 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("signedInUser", is(signedInUser)))
             .andExpect(model().attribute("applications_holiday_replacements", contains(
                 allOf(
-                    hasProperty("personName", is("Alfred Pennyworth")),
+                    hasProperty("person",
+                        hasProperty("name", is("Alfred Pennyworth"))
+                    ),
                     hasProperty("note", is("awesome, thanks dude!"))
                 )
             )))

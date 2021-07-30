@@ -7,8 +7,7 @@ import java.time.Duration;
 
 public class ApplicationReplacementDto {
 
-    private final String personGravatarURL;
-    private final String personName;
+    private final Person person;
     private final String note;
     private final boolean pending;
     private final Duration hours;
@@ -19,12 +18,11 @@ public class ApplicationReplacementDto {
     private final DayLength dayLength;
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
-    private ApplicationReplacementDto(String personGravatarURL, String personName, String note, boolean pending,
+    private ApplicationReplacementDto(Person person, String note, boolean pending,
                                       Duration hours, String workDays, Time startTime, Time endTime,
                                       String durationOfAbsenceDescription, DayLength dayLength) {
 
-        this.personGravatarURL = personGravatarURL;
-        this.personName = personName;
+        this.person = person;
         this.note = note;
         this.pending = pending;
         this.hours = hours;
@@ -35,12 +33,8 @@ public class ApplicationReplacementDto {
         this.dayLength = dayLength;
     }
 
-    public String getPersonGravatarURL() {
-        return personGravatarURL;
-    }
-
-    public String getPersonName() {
-        return personName;
+    public Person getPerson() {
+        return person;
     }
 
     public String getNote() {
@@ -80,8 +74,7 @@ public class ApplicationReplacementDto {
     }
 
     public static class Builder {
-        private String personGravatarURL;
-        private String personName;
+        private Person person;
         private String note;
         private boolean pending;
         private Duration hours;
@@ -95,13 +88,8 @@ public class ApplicationReplacementDto {
             //
         }
 
-        public Builder personGravatarURL(String personGravatarURL) {
-            this.personGravatarURL = personGravatarURL;
-            return this;
-        }
-
-        public Builder personName(String personName) {
-            this.personName = personName;
+        public Builder person(Person person) {
+            this.person = person;
             return this;
         }
 
@@ -146,8 +134,26 @@ public class ApplicationReplacementDto {
         }
 
         public ApplicationReplacementDto build() {
-            return new ApplicationReplacementDto(personGravatarURL, personName, note, pending, hours, workDays,
+            return new ApplicationReplacementDto(person, note, pending, hours, workDays,
                 startTime, endTime, durationOfAbsenceDescription, dayLength);
+        }
+    }
+
+    public static class Person {
+        private final String name;
+        private final String avatarUrl;
+
+        public Person(String name, String avatarUrl) {
+            this.name = name;
+            this.avatarUrl = avatarUrl;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getAvatarUrl() {
+            return avatarUrl;
         }
     }
 }
