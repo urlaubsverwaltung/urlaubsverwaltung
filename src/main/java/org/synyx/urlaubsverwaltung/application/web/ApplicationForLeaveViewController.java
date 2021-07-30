@@ -316,7 +316,7 @@ public class ApplicationForLeaveViewController {
             .person(toViewPerson(applicationPerson))
             .note(note)
             .pending(pending)
-            .hours(application.getHours())
+            .duration(toDurationString(application.getHours(), messageSource, locale))
             .workDays(decimalToString(workDays, locale))
             .startTime(application.getStartTime())
             .endTime(application.getEndTime())

@@ -313,8 +313,8 @@
                                     <td class="halves">
                                         <span class="tw-block tw-mb-1 tw-text-lg">
                                             <c:choose>
-                                                <c:when test="${replacementInfo.hours != null}">
-                                                    <uv:duration duration="${replacementInfo.hours}"/>
+                                                <c:when test="${replacementInfo.duration != null}">
+                                                    <c:out value="${replacementInfo.duration}" />
                                                 </c:when>
                                                 <c:otherwise>
                                                     <c:out value="${replacementInfo.workDays}" />
