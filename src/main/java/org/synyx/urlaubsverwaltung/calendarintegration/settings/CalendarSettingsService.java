@@ -24,10 +24,10 @@ public class CalendarSettingsService {
 
     public CalendarSettingsDto save(HttpServletRequest request, CalendarSettingsDto calendarSettingsDto) {
 
-        final CalendarSettingsDto refreshedcalendarSettingsDto = processGoogleRefreshToken(calendarSettingsDto);
+        final CalendarSettingsDto refreshedCalendarSettingsDto = processGoogleRefreshToken(calendarSettingsDto);
 
         final CalendarSettingsEntity savedCalendarSettings =
-            calendarSettingsRepository.save(mapToCalendarSettingsEntity(refreshedcalendarSettingsDto));
+            calendarSettingsRepository.save(mapToCalendarSettingsEntity(refreshedCalendarSettingsDto));
 
         final CalendarSettingsDto newCalendarSettingsDto = mapToCalendarSettingsDto(savedCalendarSettings);
         return initDto(newCalendarSettingsDto, request);
