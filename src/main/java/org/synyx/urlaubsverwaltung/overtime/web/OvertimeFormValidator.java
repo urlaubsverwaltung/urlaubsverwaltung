@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 
 import java.math.BigDecimal;
@@ -54,7 +54,7 @@ public class OvertimeFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
 
         final OvertimeForm overtimeForm = (OvertimeForm) target;
-        final OvertimeSettingsEntity overtimeSettings = overtimeSettingsService.getSettings();
+        final OvertimeSettings overtimeSettings = overtimeSettingsService.getSettings();
 
         if (!overtimeSettings.isOvertimeActive()) {
             errors.reject(ERROR_OVERTIME_DEACTIVATED);
@@ -90,7 +90,7 @@ public class OvertimeFormValidator implements Validator {
         }
     }
 
-    private void validateNumberOfHours(OvertimeSettingsEntity overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateNumberOfHours(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final BigDecimal hours = overtimeForm.getHours();
         final Integer minutes = overtimeForm.getMinutes();
@@ -106,7 +106,7 @@ public class OvertimeFormValidator implements Validator {
     }
 
 
-    private void validateMaximumOvertimeNotReached(OvertimeSettingsEntity overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
+    private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final Duration numberOfHours = overtimeForm.getDuration();
 

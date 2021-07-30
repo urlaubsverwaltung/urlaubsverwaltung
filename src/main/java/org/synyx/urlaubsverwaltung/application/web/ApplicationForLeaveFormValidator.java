@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsServi
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.util.CalcUtil;
@@ -316,7 +316,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
 
         final BigDecimal hours = applicationForLeave.getHours();
         final Integer minutes = applicationForLeave.getMinutes();
-        OvertimeSettingsEntity overTimeSettings = overtimeSettingsService.getSettings();
+        final OvertimeSettings overTimeSettings = overtimeSettingsService.getSettings();
         final boolean overtimeFunctionIsActive = overTimeSettings.isOvertimeActive();
         final boolean overtimeReductionInputRequiredButNotProvided = overtimeFunctionIsActive && (hours == null && minutes == null);
 
@@ -437,7 +437,7 @@ public class ApplicationForLeaveFormValidator implements Validator {
         final boolean isOvertime = OVERTIME.equals(applicationForLeaveForm.getVacationType().getCategory());
 
         if (isOvertime) {
-            OvertimeSettingsEntity overtimeSettings = overtimeSettingsService.getSettings();
+            final OvertimeSettings overtimeSettings = overtimeSettingsService.getSettings();
             final boolean overtimeActive = overtimeSettings.isOvertimeActive();
             final Duration minimumOvertime = Duration.ofHours(overtimeSettings.getMinimumOvertime());
 

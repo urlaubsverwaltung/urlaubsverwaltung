@@ -23,7 +23,7 @@ import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsEntity;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -126,7 +126,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
 
-        final OvertimeSettingsEntity overtimeSettings = new OvertimeSettingsEntity();
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(true);
 
         final ApplicationSettingsEntity settings = new ApplicationSettingsEntity();
@@ -154,7 +154,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
 
-        final OvertimeSettingsEntity overtimeSettings = new OvertimeSettingsEntity();
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
 
         final ApplicationSettingsEntity settings = new ApplicationSettingsEntity();
@@ -182,7 +182,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
 
-        final OvertimeSettingsEntity overtimeSettings = new OvertimeSettingsEntity();
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
 
         final var appSettings = new ApplicationSettingsEntity();

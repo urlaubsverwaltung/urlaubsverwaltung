@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +10,7 @@ class OvertimeSettingsTest {
     @Test
     void ensureDefaultValues() {
 
-        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        final OvertimeSettings settings = new OvertimeSettings();
         assertThat(settings.isOvertimeActive()).isFalse();
         assertThat(settings.isOvertimeWritePrivilegedOnly()).isFalse();
         assertThat(settings.isOvertimeReductionWithoutApplicationActive()).isTrue();

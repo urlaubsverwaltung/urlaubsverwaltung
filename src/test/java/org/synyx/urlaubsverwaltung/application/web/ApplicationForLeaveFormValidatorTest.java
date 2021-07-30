@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsServi
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -667,7 +667,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        final OvertimeSettings settings = new OvertimeSettings();
         settings.setOvertimeActive(false);
         when(overtimeSettingsService.getSettings()).thenReturn(settings);
 
@@ -754,7 +754,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureOvertimeDurationFailsWhenItIsLowerThanTheConfiguredMinimum() {
 
-        final OvertimeSettingsEntity settings = setupOvertimeSettings();
+        final OvertimeSettings settings = setupOvertimeSettings();
         settings.setMinimumOvertimeReduction(4);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -776,7 +776,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureOvertimeDurationSucceedsWhenItIsEqualToTheConfiguredMinimum() {
 
-        final OvertimeSettingsEntity settings = setupOvertimeSettings();
+        final OvertimeSettings settings = setupOvertimeSettings();
         settings.setMinimumOvertimeReduction(4);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -1225,7 +1225,7 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setHours(hours);
         appForm.setVacationType(vacationType);
 
-        final OvertimeSettingsEntity settings = setupOvertimeSettings();
+        final OvertimeSettings settings = setupOvertimeSettings();
         settings.setMinimumOvertime(5);
 
         when(overtimeService.getLeftOvertimeForPerson(any(Person.class))).thenReturn(Duration.ZERO);
@@ -1233,8 +1233,8 @@ class ApplicationForLeaveFormValidatorTest {
         sut.validate(appForm, errors);
     }
 
-    private OvertimeSettingsEntity setupOvertimeSettings() {
-        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+    private OvertimeSettings setupOvertimeSettings() {
+        final OvertimeSettings settings = new OvertimeSettings();
         settings.setOvertimeActive(true);
         when(overtimeSettingsService.getSettings()).thenReturn(settings);
 

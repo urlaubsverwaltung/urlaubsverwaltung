@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
@@ -136,7 +136,7 @@ class OvertimeServiceImpl implements OvertimeService {
      */
     @Override
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
-        OvertimeSettingsEntity overtimeSettings = overtimeSettingsService.getSettings();
+        final OvertimeSettings overtimeSettings = overtimeSettingsService.getSettings();
         return signedInUser.hasRole(OFFICE)
             || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }

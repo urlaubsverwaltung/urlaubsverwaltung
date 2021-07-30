@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -370,9 +370,9 @@ class OvertimeServiceImplTest {
         assertThat(sut.isUserIsAllowedToWriteOvertime(person, other)).isFalse();
     }
 
-    private OvertimeSettingsEntity overtimeSettings(boolean overtimeWritePrivilegedOnly) {
+    private OvertimeSettings overtimeSettings(boolean overtimeWritePrivilegedOnly) {
 
-        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        final OvertimeSettings settings = new OvertimeSettings();
         settings.setOvertimeWritePrivilegedOnly(overtimeWritePrivilegedOnly);
 
         return settings;

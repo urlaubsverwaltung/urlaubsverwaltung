@@ -18,7 +18,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -270,7 +270,7 @@ public class OvertimeViewController {
         model.addAttribute(SIGNED_IN_USER, signedInUser);
         model.addAttribute(IS_OFFICE_ATTRIBUTE, signedInUser.hasRole(OFFICE));
 
-        final OvertimeSettingsEntity overtimeSettings = settingsService.getSettings();
+        final OvertimeSettings overtimeSettings = settingsService.getSettings();
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
     }
 }

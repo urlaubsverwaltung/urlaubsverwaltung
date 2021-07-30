@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -24,7 +24,7 @@ class OvertimeRecordDataProvider {
     }
 
     void activateOvertime() {
-        final OvertimeSettingsEntity settings = overtimeSettingsService.getSettings();
+        final OvertimeSettings settings = overtimeSettingsService.getSettings();
         settings.setOvertimeActive(true);
         overtimeSettingsService.save(settings);
     }

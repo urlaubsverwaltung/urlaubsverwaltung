@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsEntity;
+import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.overtime.settings.OvertimeSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -897,12 +897,12 @@ class OvertimeViewControllerTest {
     }
 
     private void mockSettings() {
-        final OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        final OvertimeSettings settings = new OvertimeSettings();
         when(settingsService.getSettings()).thenReturn(settings);
     }
 
     private void mockSettingsWithOvertimeReductionDisabled() {
-        OvertimeSettingsEntity settings = new OvertimeSettingsEntity();
+        OvertimeSettings settings = new OvertimeSettings();
         settings.setOvertimeReductionWithoutApplicationActive(false);
         when(settingsService.getSettings()).thenReturn(settings);
     }
