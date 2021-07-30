@@ -3,7 +3,12 @@ const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   purge: {
-    content: ["./src/main/webapp/**/*.jsp", "./src/main/webapp/**/*.tag", "./src/main/javascript/**/*.js"],
+    content: [
+      "./src/main/webapp/**/*.jsp",
+      "./src/main/webapp/**/*.tag",
+      "./src/main/javascript/**/*.js",
+      "./src/main/resources/templates/**/*.html",
+    ],
   },
   // use a prefix to not conflict with bootstrap
   prefix: "tw-",
