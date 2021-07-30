@@ -21,7 +21,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -106,7 +105,7 @@ public class ApplicationForLeaveViewController {
         final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
         final boolean canAllow = isBoss || isDepartmentHead || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
 
-        ApplicationForLeaveDto.Builder builder = ApplicationForLeaveDto.builder()
+        return ApplicationForLeaveDto.builder()
             .id(application.getId())
             .person(toViewPerson(person))
             .vacationType(toViewVacationType(application.getVacationType()))
@@ -117,20 +116,12 @@ public class ApplicationForLeaveViewController {
             .editAllowed(isWaiting && person.equals(signedInUser))
             .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
             .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting)
-            .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)));
-
-
-        final ZonedDateTime startDateWithTime = application.getStartDateWithTime();
-        builder = startDateWithTime == null
-            ? builder.startDate(application.getStartDate())
-            : builder.startDateWithTime(startDateWithTime);
-
-        final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
-        builder = endDateWithTime == null
-            ? builder.endDate(application.getEndDate())
-            : builder.endDateWithTime(endDateWithTime);
-
-        return builder.build();
+            .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
+            .startDate(application.getStartDate())
+            .startDateWithTime(application.getStartDateWithTime())
+            .endDate(application.getEndDate())
+            .endDateWithTime(application.getEndDateWithTime())
+            .build();
     }
 
     private static ApplicationForLeaveDto.Person toViewPerson(Person person) {

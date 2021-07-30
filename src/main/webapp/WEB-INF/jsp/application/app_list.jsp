@@ -159,13 +159,8 @@
                                                             <c:set var="APPLICATION_END_TIME">
                                                                 <uv:time dateTime="${application.endDateWithTime}"/>
                                                             </c:set>
-                                                            <c:set var="APPLICATION_TIME">
-                                                                <spring:message code="absence.period.time"
-                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                                                                argumentSeparator=";"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
+                                                            <spring:message code="absence.period.singleDay.withStartAndEndTime"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
                                                                             argumentSeparator=";"/>
                                                         </c:when>
                                                         <c:otherwise>
@@ -303,13 +298,8 @@
                                                                 <uv:time
                                                                     dateTime="${application.endDateWithTime}"/>
                                                             </c:set>
-                                                            <c:set var="APPLICATION_TIME">
-                                                                <spring:message code="absence.period.time"
-                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                                                                argumentSeparator=";"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
+                                                            <spring:message code="absence.period.singleDay.withStartAndEndTime"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
                                                                             argumentSeparator=";"/>
                                                         </c:when>
                                                         <c:otherwise>
@@ -423,20 +413,13 @@
                                                         <c:when
                                                             test="${application.startTime != null && application.endTime != null}">
                                                             <c:set var="APPLICATION_START_TIME">
-                                                                <uv:time
-                                                                    dateTime="${application.startDateWithTime}"/>
+                                                                <uv:time dateTime="${application.startDateWithTime}"/>
                                                             </c:set>
                                                             <c:set var="APPLICATION_END_TIME">
-                                                                <uv:time
-                                                                    dateTime="${application.endDateWithTime}"/>
+                                                                <uv:time dateTime="${application.endDateWithTime}"/>
                                                             </c:set>
-                                                            <c:set var="APPLICATION_TIME">
-                                                                <spring:message code="absence.period.time"
-                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                                                                argumentSeparator=";"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
+                                                            <spring:message code="absence.period.singleDay.withStartAndEndTime"
+                                                                            arguments="${APPLICATION_DATE};${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
                                                                             argumentSeparator=";"/>
                                                         </c:when>
                                                         <c:otherwise>
