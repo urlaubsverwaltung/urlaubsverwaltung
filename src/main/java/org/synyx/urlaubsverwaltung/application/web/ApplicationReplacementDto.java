@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.web;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
-import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -16,7 +15,7 @@ public class ApplicationReplacementDto {
     private final String note;
     private final boolean pending;
     private final Duration hours;
-    private final BigDecimal workDays;
+    private final String workDays;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final Time startTime;
@@ -29,7 +28,7 @@ public class ApplicationReplacementDto {
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
     private ApplicationReplacementDto(String personGravatarURL, String personName, String note, boolean pending,
-                                      Duration hours, BigDecimal workDays, LocalDate startDate, LocalDate endDate,
+                                      Duration hours, String workDays, LocalDate startDate, LocalDate endDate,
                                       Time startTime, Time endTime, ZonedDateTime startDateWithTime,
                                       ZonedDateTime endDateWithTime, DayLength dayLength, DayOfWeek weekDayOfStartDate,
                                       DayOfWeek weekDayOfEndDate) {
@@ -71,7 +70,7 @@ public class ApplicationReplacementDto {
         return hours;
     }
 
-    public BigDecimal getWorkDays() {
+    public String getWorkDays() {
         return workDays;
     }
 
@@ -121,7 +120,7 @@ public class ApplicationReplacementDto {
         private String note;
         private boolean pending;
         private Duration hours;
-        private BigDecimal workDays;
+        private String workDays;
         private LocalDate startDate;
         private LocalDate endDate;
         private Time startTime;
@@ -161,7 +160,7 @@ public class ApplicationReplacementDto {
             return this;
         }
 
-        public Builder workDays(BigDecimal workDays) {
+        public Builder workDays(String workDays) {
             this.workDays = workDays;
             return this;
         }

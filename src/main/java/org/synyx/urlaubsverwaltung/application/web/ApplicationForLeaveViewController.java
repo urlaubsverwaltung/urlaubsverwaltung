@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -83,7 +85,7 @@ public class ApplicationForLeaveViewController {
         model.addAttribute("applications_cancellation_request", cancellationDtoList);
 
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
-        final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate);
+        final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, locale);
         model.addAttribute("applications_holiday_replacements", replacements);
 
         return "application/app_list";
@@ -110,7 +112,7 @@ public class ApplicationForLeaveViewController {
             .vacationType(toViewVacationType(application.getVacationType()))
             .duration(toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
-            .workDays(application.getWorkDays())
+            .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
             .editAllowed(isWaiting && person.equals(signedInUser))
             .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
@@ -168,10 +170,18 @@ public class ApplicationForLeaveViewController {
         return negative ? "-" + value : value;
     }
 
-    private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate) {
+    private static String decimalToString(BigDecimal decimal, Locale locale) {
+        if (decimal == null) {
+            return "";
+        }
+        final DecimalFormatSymbols symbol = new DecimalFormatSymbols(locale);
+        return new DecimalFormat("#0.##", symbol).format(decimal);
+    }
+
+    private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate, Locale locale) {
         return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate)
             .stream()
-            .map(application -> toApplicationReplacementDto(application, holidayReplacement))
+            .map(application -> toApplicationReplacementDto(application, holidayReplacement, locale))
             .sorted(comparing(ApplicationReplacementDto::getStartDate))
             .collect(toList());
     }
@@ -268,7 +278,7 @@ public class ApplicationForLeaveViewController {
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
-    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson) {
+    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson, Locale locale) {
         final DayLength dayLength = application.getDayLength();
         final LocalDate startDate = application.getStartDate();
         final LocalDate endDate = application.getEndDate();
@@ -289,7 +299,7 @@ public class ApplicationForLeaveViewController {
             .note(note)
             .pending(pending)
             .hours(application.getHours())
-            .workDays(workDays)
+            .workDays(decimalToString(workDays, locale))
             .startDate(startDate)
             .endDate(endDate)
             .startTime(application.getStartTime())

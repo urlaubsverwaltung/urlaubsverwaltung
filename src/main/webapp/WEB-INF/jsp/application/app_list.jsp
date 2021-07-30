@@ -138,7 +138,7 @@
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <uv:number number="${application.workDays}"/>
+                                                    <c:out value="${application.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:otherwise>
@@ -280,7 +280,7 @@
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <uv:number number="${application.workDays}"/>
+                                                    <c:out value="${application.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:otherwise>
@@ -408,7 +408,7 @@
                                                     <uv:duration duration="${application.hours}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <uv:number number="${application.workDays}"/>
+                                                    <c:out value="${application.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                 </c:otherwise>
                                             </c:choose>
