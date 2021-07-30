@@ -127,8 +127,6 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureStartDateIsMandatory() {
 
-        setupOvertimeSettings();
-
         appForm.setDayLength(FULL);
         appForm.setStartDate(null);
 
@@ -139,8 +137,6 @@ class ApplicationForLeaveFormValidatorTest {
 
     @Test
     void ensureEndDateIsMandatory() {
-
-        setupOvertimeSettings();
 
         appForm.setDayLength(FULL);
         appForm.setEndDate(null);
@@ -155,8 +151,6 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureStartDateMustBeBeforeEndDate() {
 
-        setupOvertimeSettings();
-
         appForm.setDayLength(FULL);
         appForm.setStartDate(LocalDate.of(2012, 1, 17));
         appForm.setEndDate(LocalDate.of(2012, 1, 12));
@@ -169,7 +163,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureVeryPastDateIsNotValid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         final LocalDate pastDate = LocalDate.now(UTC).minusYears(10);
 
@@ -185,7 +179,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureVeryFutureDateIsNotValid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         final LocalDate futureDate = LocalDate.now(UTC).plusYears(10);
 
@@ -203,7 +197,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureMorningApplicationForLeaveMustBeOnSameDate() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         appForm.setDayLength(MORNING);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -217,7 +211,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureNoonApplicationForLeaveMustBeOnSameDate() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         appForm.setDayLength(NOON);
         appForm.setStartDate(LocalDate.now(UTC));
@@ -231,7 +225,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureSameDateAsStartAndEndDateIsValidForFullDayPeriod() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -253,7 +247,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureSameDateAsStartAndEndDateIsValidForMorningPeriod() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -275,7 +269,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureSameDateAsStartAndEndDateIsValidForNoonPeriod() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -298,7 +292,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureTimeIsNotMandatory() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -317,7 +311,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureProvidingStartTimeWithoutEndTimeIsInvalid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -336,7 +330,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureProvidingEndTimeWithoutStartTimeIsInvalid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -355,7 +349,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureStartTimeMustBeBeforeEndTime() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -379,7 +373,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureStartTimeAndEndTimeMustNotBeEquals() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -423,7 +417,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureReasonIsNotMandatoryForHoliday() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -445,7 +439,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureReasonIsNotMandatoryForUnpaidLeave() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -467,6 +461,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureReasonIsNotMandatoryForOvertime() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -487,7 +482,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureReasonIsMandatoryForSpecialLeave() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -508,7 +503,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureThereIsAMaximumCharLength() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -530,7 +525,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureApplicationForLeaveWithZeroVacationDaysIsNotValid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
@@ -549,7 +544,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureApplyingForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -571,7 +566,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureApplyingHalfDayForLeaveWithNotEnoughVacationDaysIsNotValid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -596,7 +591,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureOverlappingApplicationForLeaveIsNotValid() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -616,6 +611,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureHoursIsMandatoryForOvertime() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -633,7 +629,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureHoursIsNotMandatoryForOtherTypesOfVacation() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -662,6 +658,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureHoursIsNotMandatoryForOvertimeIfOvertimeFunctionIsDeactivated() {
 
+        setupApplicationSettings();
+
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -683,6 +681,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureHoursCanNotBeZeroIfNoMinutesAreSet() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -705,6 +704,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureMinutesCanBeZeroIfHoursAreSet() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -735,7 +735,7 @@ class ApplicationForLeaveFormValidatorTest {
     @MethodSource("overtimeReductionInput")
     void ensureHoursEmptyIfMinutesAreSet(BigDecimal hours, Integer minutes) {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -754,8 +754,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureOvertimeDurationFailsWhenItIsLowerThanTheConfiguredMinimum() {
 
-        final OvertimeSettings settings = setupOvertimeSettings();
-        settings.setMinimumOvertimeReduction(4);
+        setupOvertimeSettings().setMinimumOvertimeReduction(4);
+        setupApplicationSettings();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -778,6 +778,8 @@ class ApplicationForLeaveFormValidatorTest {
 
         final OvertimeSettings settings = setupOvertimeSettings();
         settings.setMinimumOvertimeReduction(4);
+        setupOvertimeSettings().setMinimumOvertimeReduction(4);
+        setupApplicationSettings();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -798,6 +800,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureHoursCanNotBeNegative() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -819,6 +822,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureMinutesCanNotBeNegative() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -840,6 +844,7 @@ class ApplicationForLeaveFormValidatorTest {
     void ensureDecimalHoursAreValid() {
 
         setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
@@ -858,12 +863,14 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureNoErrorMessageForMandatoryIfHoursIsNullBecauseOfTypeMismatch() {
 
+        setupOvertimeSettings();
+        setupApplicationSettings();
+
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
 
-        setupOvertimeSettings();
 
         appForm.setVacationType(createVacationType(OVERTIME));
         appForm.setHours(null);
@@ -880,7 +887,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureWorkingTimeConfigurationMustExistForPeriodOfApplicationForLeave() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
@@ -899,7 +906,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureWorkingTimeConfigurationMustExistForHalfDayApplicationForLeave() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
 
         appForm.setStartDate(LocalDate.now(UTC));
         appForm.setEndDate(LocalDate.now(UTC));
@@ -932,6 +939,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureErrorDueToMinimumOvertimeReached() {
 
+        setupApplicationSettings();
+
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -952,6 +961,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureNoErrorDueToExactMinimumOvertimeReached() {
 
+        setupApplicationSettings();
+
         when(errors.hasErrors()).thenReturn(FALSE);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -967,7 +978,8 @@ class ApplicationForLeaveFormValidatorTest {
 
     @Test
     void ensureOvertimeIsNotValidatedForApplicationForLeave() {
-        setupOvertimeSettings();
+
+        setupApplicationSettings();
 
         final Person person = new Person();
         person.setId(1);
@@ -997,6 +1009,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureAlreadyAbsentOnChristmasEveMorning() {
 
+        setupApplicationSettings();
+
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
@@ -1022,7 +1036,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureAlreadyAbsentOnChristmasEveMorningIsNotTriggered() {
 
-        setupOvertimeSettings();
+        setupApplicationSettings();
+        when(workingTimeSettingsService.getSettings()).thenReturn(createSettingsForChristmasEveWithAbsence(NOON));
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -1047,6 +1062,8 @@ class ApplicationForLeaveFormValidatorTest {
 
     @Test
     void ensureAlreadyAbsentOnChristmasEveNoon() {
+
+        setupApplicationSettings();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -1074,6 +1091,8 @@ class ApplicationForLeaveFormValidatorTest {
     @EnumSource(value = DayLength.class, names = {"FULL", "NOON", "MORNING"})
     void ensureAlreadyAbsentOnChristmasEveForGivenDayLengthRequest(final DayLength dayLength) {
 
+        setupApplicationSettings();
+
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
@@ -1100,6 +1119,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureAlreadyAbsentOnNewYearsEveMorning() {
 
+        setupApplicationSettings();
+
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
@@ -1124,6 +1145,8 @@ class ApplicationForLeaveFormValidatorTest {
 
     @Test
     void ensureAlreadyAbsentOnNewYearsEveMorningIsNotTriggered() {
+
+        setupApplicationSettings();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -1150,6 +1173,8 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureAlreadyAbsentOnNewYearsEveNoon() {
 
+        setupApplicationSettings();
+
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
@@ -1175,6 +1200,8 @@ class ApplicationForLeaveFormValidatorTest {
     @ParameterizedTest
     @EnumSource(value = DayLength.class, names = {"FULL", "NOON", "MORNING"})
     void ensureAlreadyAbsentOnNewYearsEveForGivenDayLengthRequest(final DayLength dayLength) {
+
+        setupApplicationSettings();
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenReturn(ONE);
@@ -1239,5 +1266,9 @@ class ApplicationForLeaveFormValidatorTest {
         when(overtimeSettingsService.getSettings()).thenReturn(settings);
 
         return settings;
+    }
+
+    private void setupApplicationSettings() {
+        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
     }
 }

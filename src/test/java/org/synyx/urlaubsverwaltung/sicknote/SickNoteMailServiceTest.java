@@ -57,7 +57,7 @@ class SickNoteMailServiceTest {
 
         when(sickNoteService.getSickNotesReachingEndOfSickPay()).thenReturn(asList(sickNoteA, sickNoteB));
 
-        prepareSettingsWithMaximumSickPayDays(5);
+        setupSickNoteSettings().setMaximumSickPayDays(5);
 
         Map<String, Object> modelA = new HashMap<>();
         modelA.put("maximumSickPayDays", 5);
@@ -96,13 +96,14 @@ class SickNoteMailServiceTest {
     @Test
     void ensureNoSendWhenDeactivated() {
 
+        setupSickNoteSettings();
         sut.sendEndOfSickPayNotification();
         verifyNoInteractions(mailService);
     }
 
-    private void prepareSettingsWithMaximumSickPayDays(Integer sickPayDays) {
+    private SickNoteSettingsEntity setupSickNoteSettings() {
         final SickNoteSettingsEntity sickNoteSettings = new SickNoteSettingsEntity();
-        sickNoteSettings.setMaximumSickPayDays(sickPayDays);
         when(sickNoteSettingsService.getSettings()).thenReturn(sickNoteSettings);
+        return sickNoteSettings;
     }
 }

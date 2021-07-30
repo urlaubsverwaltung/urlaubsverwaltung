@@ -126,11 +126,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
 
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        overtimeSettings.setOvertimeActive(true);
-
-        final ApplicationSettingsEntity settings = new ApplicationSettingsEntity();
-        when(applicationSettingsService.getSettings()).thenReturn(settings);
+        setupApplicationSettings();
+        setupOvertimeSettings().setOvertimeActive(true);
 
         final ResultActions resultActions = perform(get("/web/application/new"));
         resultActions.andExpect(status().isOk());
@@ -154,11 +151,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
 
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        overtimeSettings.setOvertimeActive(false);
-
-        final ApplicationSettingsEntity settings = new ApplicationSettingsEntity();
-        when(applicationSettingsService.getSettings()).thenReturn(settings);
+        setupApplicationSettings();
+        setupOvertimeSettings().setOvertimeActive(false);
 
         final ResultActions resultActions = perform(get("/web/application/new"));
         resultActions.andExpect(status().isOk());
@@ -182,12 +176,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
 
-        final OvertimeSettings overtimeSettings = new OvertimeSettings();
-        overtimeSettings.setOvertimeActive(false);
-
-        final var appSettings = new ApplicationSettingsEntity();
-        appSettings.setAllowHalfDays(false);
-        when(applicationSettingsService.getSettings()).thenReturn(appSettings);
+        setupApplicationSettings().setAllowHalfDays(false);
+        setupOvertimeSettings();
 
         final ResultActions resultActions = perform(get("/web/application/new"));
         resultActions.andExpect(status().isOk());
@@ -206,7 +196,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final Account account = new Account(signedInPerson, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(signedInPerson))).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         perform(get("/web/application/new"))
             .andExpect(model().attribute("person", signedInPerson));
@@ -225,7 +216,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         perform(get("/web/application/new")
             .param("person", "1"))
@@ -243,7 +235,8 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Account account = new Account(signedInUser, LocalDate.now(clock), LocalDate.now(clock), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), signedInUser)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         perform(get("/web/application/new").param("person", "1"))
             .andExpect(model().attribute("person", hasProperty("id", is(1337))));
@@ -300,7 +293,9 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         final LocalDate givenDateFrom = LocalDate.now(clock).withMonth(SEPTEMBER.getValue()).withDayOfMonth(30);
@@ -342,7 +337,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions resultActions = perform(get("/web/application/new")
             .param("person", Integer.toString(PERSON_ID))
@@ -373,7 +369,8 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void postNewApplicationFormShowFormIfValidationFails() throws Exception {
 
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
         when(personService.getSignedInUser()).thenReturn(new Person());
 
         doAnswer(invocation -> {
@@ -479,7 +476,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions perform = perform(post("/web/application/new")
             .param("vacationType.category", "HOLIDAY")
@@ -544,7 +542,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions perform = perform(post(url)
             .param("vacationType.category", "HOLIDAY")
@@ -648,6 +647,8 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void ensureReplacementDeletionForNewApplicationRemovesPersonFromHolidayReplacements() throws Exception {
 
+        setupOvertimeSettings();
+
         final Person signedInPerson = new Person();
         signedInPerson.setId(1);
 
@@ -656,7 +657,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
 
         final ResultActions perform = perform(post("/web/application/new")
             .param("vacationType.category", "HOLIDAY")
@@ -698,7 +699,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions perform = perform(post("/web/application/new")
             .param("vacationType.category", "HOLIDAY")
@@ -729,7 +731,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
@@ -760,9 +763,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final var appSettings = new ApplicationSettingsEntity();
-        appSettings.setAllowHalfDays(false);
-        when(applicationSettingsService.getSettings()).thenReturn(appSettings);
+        setupApplicationSettings().setAllowHalfDays(false);
+        setupOvertimeSettings();
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
@@ -793,9 +795,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final var appSettings = new ApplicationSettingsEntity();
-        appSettings.setAllowHalfDays(false);
-        when(applicationSettingsService.getSettings()).thenReturn(appSettings);
+        setupApplicationSettings().setAllowHalfDays(false);
+        setupOvertimeSettings();
 
         final VacationType vacationType = new VacationType();
         when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
@@ -871,7 +872,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions perform = perform(post("/web/application/7")
             .param("vacationType.category", "HOLIDAY")
@@ -906,7 +908,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions perform = perform(post("/web/application/7")
             .param("vacationType.category", "HOLIDAY")
@@ -949,7 +952,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final ResultActions perform = perform(post("/web/application/7")
             .param("vacationType.category", "HOLIDAY")
@@ -1070,7 +1074,8 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
         when(personService.getSignedInUser()).thenReturn(new Person());
 
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         doAnswer(invocation -> {
             final Errors errors = invocation.getArgument(1);
@@ -1114,7 +1119,8 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
 
-        when(applicationSettingsService.getSettings()).thenReturn(new ApplicationSettingsEntity());
+        setupApplicationSettings();
+        setupOvertimeSettings();
 
         final Application application = new Application();
         application.setId(7);
@@ -1167,5 +1173,17 @@ class ApplicationForLeaveFormViewControllerTest {
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
+    }
+
+    private OvertimeSettings setupOvertimeSettings() {
+        var overtimeSettings = new OvertimeSettings();
+        when(overtimeSettingsService.getSettings()).thenReturn(overtimeSettings);
+        return overtimeSettings;
+    }
+
+    private ApplicationSettingsEntity setupApplicationSettings() {
+        var applicationSettings = new ApplicationSettingsEntity();
+        when(applicationSettingsService.getSettings()).thenReturn(applicationSettings);
+        return applicationSettings;
     }
 }

@@ -91,10 +91,6 @@ class ApplicationInteractionServiceImplTest {
 
     @BeforeEach
     void setUp() {
-
-        final TimeSettingsEntity settings = new TimeSettingsEntity();
-        when(timeSettingsService.getSettings()).thenReturn(settings);
-
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
             applicationMailService, calendarSyncService, absenceMappingService, timeSettingsService, departmentService, clock);
     }
@@ -103,6 +99,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureApplyForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
 
+        setupTimeSettings();
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -126,6 +123,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureApplyingForLeaveAddsCalendarEvent() {
 
+        setupTimeSettings();
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -144,6 +142,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureSendsConfirmationEmailToPersonAndNotificationEmailToBossesWhenApplyingForOneself() {
 
+        setupTimeSettings();
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -164,6 +163,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureSendsNotificationToPersonIfApplicationForLeaveNotAppliedByOneself() {
 
+        setupTimeSettings();
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -186,6 +186,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
 
+        setupTimeSettings();
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -1283,5 +1284,9 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setHolidayReplacements(List.of(replacementEntity));
 
         return applicationForLeave;
+    }
+
+    private void setupTimeSettings() {
+        when(timeSettingsService.getSettings()).thenReturn(new TimeSettingsEntity());
     }
 }
