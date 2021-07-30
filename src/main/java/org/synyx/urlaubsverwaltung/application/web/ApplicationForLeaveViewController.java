@@ -152,8 +152,8 @@ public class ApplicationForLeaveViewController {
         return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
     }
 
-    private static ApplicationForLeaveDto.Person toViewPerson(Person person) {
-        return new ApplicationForLeaveDto.Person(person.getNiceName(), person.getGravatarURL());
+    private static ApplicationPersonDto toViewPerson(Person person) {
+        return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL());
     }
 
     private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationType vacationType) {
@@ -313,7 +313,7 @@ public class ApplicationForLeaveViewController {
         final boolean pending = WAITING.equals(application.getStatus()) || TEMPORARY_ALLOWED.equals(application.getStatus());
 
         return ApplicationReplacementDto.builder()
-            .person(new ApplicationReplacementDto.Person(applicationPerson.getNiceName(), applicationPerson.getGravatarURL()))
+            .person(toViewPerson(applicationPerson))
             .note(note)
             .pending(pending)
             .hours(application.getHours())

@@ -5,7 +5,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 public class ApplicationForLeaveDto {
 
     private final int id;
-    private final Person person;
+    private final ApplicationPersonDto person;
     private final VacationType vacationType;
     private final String duration;
     private final DayLength dayLength;
@@ -18,7 +18,7 @@ public class ApplicationForLeaveDto {
     private final boolean rejectAllowed;
 
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
-    private ApplicationForLeaveDto(int id, Person person, VacationType vacationType, String duration,
+    private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, String duration,
                                    DayLength dayLength, String workDays, String durationOfAbsenceDescription,
                                    boolean statusWaiting, boolean editAllowed, boolean approveAllowed,
                                    boolean temporaryApproveAllowed, boolean rejectAllowed) {
@@ -40,7 +40,7 @@ public class ApplicationForLeaveDto {
         return id;
     }
 
-    public Person getPerson() {
+    public ApplicationPersonDto getPerson() {
         return person;
     }
 
@@ -90,7 +90,7 @@ public class ApplicationForLeaveDto {
 
     static class Builder {
         private int id;
-        private Person person;
+        private ApplicationPersonDto person;
         private VacationType vacationType;
         private String duration;
         private DayLength dayLength;
@@ -107,7 +107,7 @@ public class ApplicationForLeaveDto {
             return this;
         }
 
-        Builder person(Person person) {
+        Builder person(ApplicationPersonDto person) {
             this.person = person;
             return this;
         }
@@ -177,24 +177,6 @@ public class ApplicationForLeaveDto {
                 temporaryApproveAllowed,
                 rejectAllowed
             );
-        }
-    }
-
-    public static class Person {
-        private final String name;
-        private final String avatarUrl;
-
-        public Person(String name, String avatarUrl) {
-            this.name = name;
-            this.avatarUrl = avatarUrl;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAvatarUrl() {
-            return avatarUrl;
         }
     }
 

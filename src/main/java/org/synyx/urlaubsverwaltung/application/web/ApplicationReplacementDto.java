@@ -7,7 +7,7 @@ import java.time.Duration;
 
 public class ApplicationReplacementDto {
 
-    private final Person person;
+    private final ApplicationPersonDto person;
     private final String note;
     private final boolean pending;
     private final Duration hours;
@@ -18,7 +18,7 @@ public class ApplicationReplacementDto {
     private final DayLength dayLength;
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
-    private ApplicationReplacementDto(Person person, String note, boolean pending,
+    private ApplicationReplacementDto(ApplicationPersonDto person, String note, boolean pending,
                                       Duration hours, String workDays, Time startTime, Time endTime,
                                       String durationOfAbsenceDescription, DayLength dayLength) {
 
@@ -33,7 +33,7 @@ public class ApplicationReplacementDto {
         this.dayLength = dayLength;
     }
 
-    public Person getPerson() {
+    public ApplicationPersonDto getPerson() {
         return person;
     }
 
@@ -74,7 +74,7 @@ public class ApplicationReplacementDto {
     }
 
     public static class Builder {
-        private Person person;
+        private ApplicationPersonDto person;
         private String note;
         private boolean pending;
         private Duration hours;
@@ -88,7 +88,7 @@ public class ApplicationReplacementDto {
             //
         }
 
-        public Builder person(Person person) {
+        public Builder person(ApplicationPersonDto person) {
             this.person = person;
             return this;
         }
@@ -136,24 +136,6 @@ public class ApplicationReplacementDto {
         public ApplicationReplacementDto build() {
             return new ApplicationReplacementDto(person, note, pending, hours, workDays,
                 startTime, endTime, durationOfAbsenceDescription, dayLength);
-        }
-    }
-
-    public static class Person {
-        private final String name;
-        private final String avatarUrl;
-
-        public Person(String name, String avatarUrl) {
-            this.name = name;
-            this.avatarUrl = avatarUrl;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAvatarUrl() {
-            return avatarUrl;
         }
     }
 }
