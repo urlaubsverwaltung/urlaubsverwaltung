@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>avatar</title>
+</head>
+<body>
+
+<img
+  th:fragment="avatar(url,username,width,height)"
+  src="#"
+  th:src="${url}"
+  alt=""
+  th:alt="#{gravatar.alt(${username})}"
+  class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+  th:width="${width == null ? '32px' : width}"
+  th:height="${height == null ? '32px' : height}"
+  onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+/>
+
+<span
+  th:fragment="avatar-bordered(url,username,width,height)"
+  class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1 tw-inline-block"
+>
+  <img src="#" alt="" th:replace="::avatar(${url},${username},${width},${height})" />
+</span>
+
+</body>
+</html>

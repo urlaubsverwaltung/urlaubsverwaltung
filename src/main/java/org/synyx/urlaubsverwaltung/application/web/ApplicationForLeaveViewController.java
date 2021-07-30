@@ -89,7 +89,7 @@ public class ApplicationForLeaveViewController {
         final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, locale);
         model.addAttribute("applications_holiday_replacements", replacements);
 
-        return "application/app_list";
+        return "thymeleaf/application/application-overview";
     }
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, Locale locale) {
