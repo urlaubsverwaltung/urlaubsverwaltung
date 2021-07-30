@@ -318,8 +318,6 @@ public class ApplicationForLeaveViewController {
             .pending(pending)
             .duration(toDurationString(application.getHours(), messageSource, locale))
             .workDays(decimalToString(workDays, locale))
-            .startTime(application.getStartTime())
-            .endTime(application.getEndTime())
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .dayLength(dayLength)
             .build();
