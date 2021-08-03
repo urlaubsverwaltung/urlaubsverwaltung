@@ -12,20 +12,20 @@ public class OvertimeSettingsService {
     }
 
     public OvertimeSettingsDto getSettingsDto() {
-        return OvertimeSettingsDtoMapper.mapToOvertimeSettingsDto(overtimeSettingsRepository.findFirstBy());
+        return OvertimeSettingsMapper.mapToOvertimeSettingsDto(overtimeSettingsRepository.findFirstBy());
     }
 
     public void save(OvertimeSettingsDto overtimeSettingsDto) {
-        overtimeSettingsRepository.save(OvertimeSettingsDtoMapper.mapToOvertimeSettingsEntiy(overtimeSettingsDto));
+        overtimeSettingsRepository.save(OvertimeSettingsMapper.mapToOvertimeSettingsEntity(overtimeSettingsDto));
     }
 
     public OvertimeSettings getSettings() {
         OvertimeSettingsEntity settingsEntity = overtimeSettingsRepository.findFirstBy();
-        return OvertimeSettingsDtoMapper.mapToOvertimeSettingsModel(settingsEntity);
+        return OvertimeSettingsMapper.mapToOvertimeSettingsModel(settingsEntity);
     }
 
     public void save(OvertimeSettings overtimeSettings) {
-        OvertimeSettingsEntity overtimeSettingsEntity = OvertimeSettingsDtoMapper.mapToOvertimeSettingsEntiy(overtimeSettings);
+        OvertimeSettingsEntity overtimeSettingsEntity = OvertimeSettingsMapper.mapToOvertimeSettingsEntity(overtimeSettings);
         overtimeSettingsRepository.save(overtimeSettingsEntity);
     }
 }
