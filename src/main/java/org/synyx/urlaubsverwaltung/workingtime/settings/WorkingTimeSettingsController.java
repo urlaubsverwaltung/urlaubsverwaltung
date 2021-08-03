@@ -46,7 +46,11 @@ public class WorkingTimeSettingsController {
             model.addAttribute("success", true);
         }
 
-        model.addAttribute("workingTimeSettings", workingTimeSettingsDto);
+        // TODO: Retrieving the hole dto again from service because request dto has not set defaultWorkingDays property
+        // This can be removed after removal of deprecated defaultWorkingDays property
+        WorkingTimeSettingsDto settingsDto = workingTimeSettingsService.getSettingsDto();
+        model.addAttribute("workingTimeSettings", settingsDto);
+
         return "workingtime/workingtime_settings";
     }
 }
