@@ -113,7 +113,7 @@ class AccountViewControllerTest {
     }
 
     @Test
-    void updateAccountShowsFormIfValidationFails() throws Exception {
+    void updateAccountShowsFormIfValidationFailsOnFieldError() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
@@ -124,7 +124,24 @@ class AccountViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
-            .andExpect(view().name("account/account_form"));
+            .andExpect(view().name("account/account_form"))
+            .andExpect(model().attributeDoesNotExist("errors"));
+    }
+
+    @Test
+    void updateAccountShowGlobalError() throws Exception {
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.reject("errors");
+            return null;
+        }).when(validator).validate(any(), any());
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
+            .andExpect(view().name("account/account_form"))
+            .andExpect(model().attributeExists("errors"));
     }
 
     @Test
