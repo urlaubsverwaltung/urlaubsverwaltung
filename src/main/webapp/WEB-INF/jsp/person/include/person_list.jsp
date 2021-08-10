@@ -105,13 +105,10 @@
                             <uv:number number="${vacationDaysLeftMap[person].vacationDays}"/>
                             <c:choose>
                                 <c:when test="${beforeApril}">
-                                    +
-                                    <uv:number number="${vacationDaysLeftMap[person].remainingVacationDays}"/>
+                                    + <uv:number number="${vacationDaysLeftMap[person].remainingVacationDays}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    +
-                                    <uv:number
-                                        number="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}"/>
+                                    + <uv:number number="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}"/>
                                 </c:otherwise>
                             </c:choose>
                         </c:when>
