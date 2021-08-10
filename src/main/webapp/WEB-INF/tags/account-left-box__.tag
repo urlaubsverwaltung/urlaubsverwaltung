@@ -32,9 +32,7 @@
                     <spring:message code="person.account.vacation.left.2" arguments="${vacationDaysLeft.vacationDays + remainingVacationDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
-                    <spring:message
-                        code="person.account.vacation.left.remaining"
-                        arguments="${remainingVacationDays}"
+                    <spring:message code="person.account.vacation.left.remaining" arguments="${remainingVacationDays}"
                     />
                 </span>
                 <c:if test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
