@@ -102,15 +102,15 @@
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
                         <c:when test="${vacationDaysLeftMap[person] != null}">
-                            <uv:number number="${vacationDaysLeftMap[person].vacationDays}"/>
                             <c:choose>
                                 <c:when test="${beforeApril}">
-                                    + <uv:number number="${vacationDaysLeftMap[person].remainingVacationDays}"/>
+                                    <c:set var="remainingVacationDays" value="${vacationDaysLeftMap[person].remainingVacationDays}" />
                                 </c:when>
                                 <c:otherwise>
-                                    + <uv:number number="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}"/>
+                                    <c:set var="remainingVacationDays" value="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}" />
                                 </c:otherwise>
                             </c:choose>
+                            <uv:number number="${vacationDaysLeftMap[person].vacationDays + remainingVacationDays}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
