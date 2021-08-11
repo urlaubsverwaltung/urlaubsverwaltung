@@ -62,15 +62,15 @@
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}/account?year="/>
                 </uv:section-heading>
 
-                <c:if test="${not empty errors.globalErrors}">
-                <div class="row tw-mb-8">
-                    <div class="col-xs-12">
-                        <div class="alert alert-danger tw-text-red-800">
-                            <form:errors />
+                <spring:hasBindErrors name="account">
+                    <div class="row tw-mb-8">
+                        <div class="col-xs-12">
+                            <div class="alert alert-danger tw-text-red-800">
+                                <form:errors />
+                            </div>
                         </div>
                     </div>
-                </div>
-                </c:if>
+                </spring:hasBindErrors>
 
                 <div class="row tw-mb-16">
                     <div class="col-md-4 col-md-push-8">
