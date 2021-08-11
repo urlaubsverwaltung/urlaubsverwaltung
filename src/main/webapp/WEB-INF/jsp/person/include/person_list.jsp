@@ -28,16 +28,27 @@
         <thead class="hidden-xs hidden-sm print:tw-table-header-group">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
-            <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
-            <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
-            <th scope="col" class="sortable-field is-centered"><spring:message
-                code='persons.account.vacation.entitlement.year'/></th>
-            <th scope="col" class="sortable-field is-centered"><spring:message
-                code='persons.account.vacation.entitlement.actual'/></th>
-            <th scope="col" class="sortable-field is-centered"><spring:message
-                code='persons.account.vacation.entitlement.remaining'/></th>
-            <th scope="col" class="sortable-field is-centered"><spring:message
-                code="persons.account.vacation.vacationDaysLeft"/></th>
+            <th scope="col" class="sortable-field">
+                <spring:message code="person.data.firstName"/>
+            </th>
+            <th scope="col" class="sortable-field">
+                <spring:message code="person.data.lastName"/>
+            </th>
+            <th scope="col" class="sortable-field is-centered">
+                <spring:message code='persons.account.vacation.entitlement.year'/>
+            </th>
+            <th scope="col" class="sortable-field is-centered">
+                <spring:message code='persons.account.vacation.entitlement.actual'/>
+            </th>
+            <th scope="col" class="sortable-field is-centered">
+                <spring:message code='persons.account.vacation.entitlement.remaining'/>
+            </th>
+            <th scope="col" class="sortable-field is-centered">
+                <spring:message code="persons.account.vacation.vacationDaysLeft"/>
+            </th>
+            <th scope="col" class="sortable-field is-centered">
+                <spring:message code="persons.account.vacation.vacationDaysLeft.remaining"/>
+            </th>
             <sec:authorize access="hasAuthority('OFFICE')">
                 <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
             </sec:authorize>
@@ -102,6 +113,16 @@
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
                         <c:when test="${vacationDaysLeftMap[person] != null}">
+                            <uv:number number="${vacationDaysLeftMap[person].vacationDays}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <spring:message code='person.account.vacation.noInformation'/>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <c:choose>
+                        <c:when test="${vacationDaysLeftMap[person] != null}">
                             <c:choose>
                                 <c:when test="${beforeApril}">
                                     <c:set var="remainingVacationDays" value="${vacationDaysLeftMap[person].remainingVacationDays}" />
@@ -110,7 +131,7 @@
                                     <c:set var="remainingVacationDays" value="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}" />
                                 </c:otherwise>
                             </c:choose>
-                            <uv:number number="${vacationDaysLeftMap[person].vacationDays + remainingVacationDays}"/>
+                            <uv:number number="${remainingVacationDays}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
