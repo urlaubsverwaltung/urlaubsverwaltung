@@ -87,8 +87,16 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="holidaysAccountValidFrom" path="holidaysAccountValidFrom" data-iso-value="${account.holidaysAccountValidFromIsoValue}"
-                                            class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
+                                <form:input
+                                    id="holidaysAccountValidFrom"
+                                    path="holidaysAccountValidFrom"
+                                    data-iso-value="${account.holidaysAccountValidFromIsoValue}"
+                                    data-min="${year}-01-01"
+                                    data-max="${year}-12-31"
+                                    placeholder="${DATE_PATTERN}"
+                                    class="form-control"
+                                    cssErrorClass="form-control error"
+                                />
                                 <uv:error-text>
                                     <form:errors path="holidaysAccountValidFrom" />
                                 </uv:error-text>

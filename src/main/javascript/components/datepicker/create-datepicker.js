@@ -118,6 +118,15 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
   duetDateElement.setAttribute("value", dateElement.dataset.isoValue || "");
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
+
+  if (dateElement.dataset.min) {
+    duetDateElement.setAttribute("min", dateElement.dataset.min);
+  }
+
+  if (dateElement.dataset.max) {
+    duetDateElement.setAttribute("max", dateElement.dataset.max);
+  }
+
   dateElement.replaceWith(duetDateElement);
 
   await waitForDatePickerHydration(duetDateElement);
