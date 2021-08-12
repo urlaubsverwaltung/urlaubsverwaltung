@@ -19,7 +19,7 @@
                     <spring:message code="person.account.vacation.entitlement.1" />
                 </span>
                 <span class="tw-my-1 tw-text-lg tw-font-medium">
-                    <spring:message code="person.account.vacation.entitlement.2" arguments="${account.vacationDays}" />
+                    <spring:message code="person.account.vacation.entitlement.2" arguments="${account.vacationDays + account.remainingVacationDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message code="person.account.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}"/>
