@@ -94,10 +94,6 @@ public class AccountViewController {
             model.addAttribute("person", person);
             model.addAttribute("year", accountForm.getHolidaysAccountYear());
 
-            if (errors.hasGlobalErrors()) {
-                model.addAttribute("errors", errors);
-            }
-
             return "account/account_form";
         }
 

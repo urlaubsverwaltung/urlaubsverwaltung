@@ -125,7 +125,7 @@ class AccountViewControllerTest {
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(view().name("account/account_form"))
-            .andExpect(model().attributeDoesNotExist("errors"));
+            .andExpect(model().attributeHasErrors("account"));
     }
 
     @Test
@@ -141,7 +141,7 @@ class AccountViewControllerTest {
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(view().name("account/account_form"))
-            .andExpect(model().attributeExists("errors"));
+            .andExpect(model().attributeHasErrors("account"));
     }
 
     @Test
