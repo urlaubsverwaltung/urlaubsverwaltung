@@ -241,13 +241,22 @@ class DepartmentServiceImpl implements DepartmentService {
 
         if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
             return getAllDepartments();
-        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            return getManagedDepartmentsOfSecondStageAuthority(person);
-        } else if (person.hasRole(DEPARTMENT_HEAD)) {
-            return getManagedDepartmentsOfDepartmentHead(person);
-        } else {
-            return getAssignedDepartmentsOfMember(person);
         }
+
+        final List<Department> departments = new ArrayList<>();
+        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments.addAll(getManagedDepartmentsOfSecondStageAuthority(person));
+        }
+
+        if (person.hasRole(DEPARTMENT_HEAD)) {
+            departments.addAll(getManagedDepartmentsOfDepartmentHead(person));
+        }
+
+        departments.addAll(getAssignedDepartmentsOfMember(person));
+
+        return departments.stream()
+            .distinct()
+            .collect(toList());
     }
 
     @Override

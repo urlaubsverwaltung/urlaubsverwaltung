@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -39,6 +38,7 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.A
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -536,7 +536,7 @@ class DepartmentServiceImplTest {
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setId(2);
-        boss.setPermissions(asList(USER, Role.BOSS));
+        boss.setPermissions(asList(USER, BOSS));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(boss, person);
         assertThat(isAllowed).isTrue();
@@ -553,7 +553,7 @@ class DepartmentServiceImplTest {
 
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
         final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
 
@@ -577,7 +577,7 @@ class DepartmentServiceImplTest {
 
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
         final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
 
@@ -597,13 +597,13 @@ class DepartmentServiceImplTest {
 
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setId(1);
-        secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
         final DepartmentMemberEmbeddable secondStageAuthorityMember = departmentMemberEmbeddable(secondStageAuthority);
 
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
+        departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
         final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
 
@@ -624,13 +624,13 @@ class DepartmentServiceImplTest {
 
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setId(1);
-        secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY, Role.DEPARTMENT_HEAD));
+        secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY, DEPARTMENT_HEAD));
 
         final DepartmentMemberEmbeddable secondStageAuthorityMember = departmentMemberEmbeddable(secondStageAuthority);
 
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setId(2);
-        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+        departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable(departmentHead);
 
@@ -676,7 +676,7 @@ class DepartmentServiceImplTest {
     @Test
     void ensureBossHasAccessToAllDepartments() {
         Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        boss.setPermissions(asList(USER, Role.BOSS));
+        boss.setPermissions(asList(USER, BOSS));
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
         departmentEntity.setName("dep");
@@ -708,37 +708,72 @@ class DepartmentServiceImplTest {
     @Test
     void ensureSecondStageAuthorityHasAccessToAllowedDepartments() {
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        secondStageAuthority.setPermissions(asList(USER, Role.SECOND_STAGE_AUTHORITY));
+        secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        final DepartmentEntity departmentEntity = new DepartmentEntity();
-        departmentEntity.setName("dep");
+        final DepartmentEntity departmentEntityWithSecondStageRole = new DepartmentEntity();
+        departmentEntityWithSecondStageRole.setId(1);
+        final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setId(2);
 
-        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority))
-            .thenReturn(singletonList(departmentEntity));
+        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(singletonList(departmentEntityWithSecondStageRole));
+        when(departmentRepository.findByMembersPerson(secondStageAuthority)).thenReturn(singletonList(departmentEntityWithMemberRole));
 
+        final Department expectedDepartmentWithSecondStageRole = new Department();
+        expectedDepartmentWithSecondStageRole.setId(1);
         final Department expectedDepartment = new Department();
-        expectedDepartment.setName("dep");
+        expectedDepartment.setId(2);
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(secondStageAuthority);
-        assertThat(allowedDepartments).containsExactly(expectedDepartment);
+        assertThat(allowedDepartments).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartment);
     }
 
     @Test
     void ensureDepartmentHeadHasAccessToAllowedDepartments() {
-        Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        departmentHead.setPermissions(asList(USER, Role.DEPARTMENT_HEAD));
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
-        final DepartmentEntity departmentEntity = new DepartmentEntity();
-        departmentEntity.setName("dep");
+        final DepartmentEntity departmentEntityWithDepartmentHeadRole = new DepartmentEntity();
+        departmentEntityWithDepartmentHeadRole.setId(1);
+        final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setId(2);
 
-        when(departmentRepository.findByDepartmentHeads(departmentHead))
-            .thenReturn(singletonList(departmentEntity));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(singletonList(departmentEntityWithDepartmentHeadRole));
+        when(departmentRepository.findByMembersPerson(departmentHead)).thenReturn(singletonList(departmentEntityWithMemberRole));
 
+        final Department expectedDepartmentWithDepartmentHeadRole = new Department();
+        expectedDepartmentWithDepartmentHeadRole.setId(1);
         final Department expectedDepartment = new Department();
-        expectedDepartment.setName("dep");
+        expectedDepartment.setId(2);
 
         var allowedDepartments = sut.getAllowedDepartmentsOfPerson(departmentHead);
-        assertThat(allowedDepartments).containsExactly(expectedDepartment);
+        assertThat(allowedDepartments).containsExactly(expectedDepartmentWithDepartmentHeadRole, expectedDepartment);
+    }
+
+    @Test
+    void ensurePersonWithSecondStageAuthorityAndDepartmentHeadHasAccessToAllowedDepartments() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(asList(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final DepartmentEntity departmentEntityWithSecondStageRole = new DepartmentEntity();
+        departmentEntityWithSecondStageRole.setId(3);
+        final DepartmentEntity departmentEntityWithDepartmentHeadRole = new DepartmentEntity();
+        departmentEntityWithDepartmentHeadRole.setId(1);
+        final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setId(2);
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(singletonList(departmentEntityWithSecondStageRole));
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(singletonList(departmentEntityWithDepartmentHeadRole));
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(singletonList(departmentEntityWithMemberRole));
+
+        final Department expectedDepartmentWithSecondStageRole = new Department();
+        expectedDepartmentWithSecondStageRole.setId(3);
+        final Department expectedDepartmentWithDepartmentHeadRole = new Department();
+        expectedDepartmentWithDepartmentHeadRole.setId(1);
+        final Department expectedDepartment = new Department();
+        expectedDepartment.setId(2);
+
+        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(person);
+        assertThat(allowedDepartments).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartmentWithDepartmentHeadRole, expectedDepartment);
     }
 
     @Test
