@@ -118,8 +118,14 @@
                                         </c:set>
 
                                         <c:choose>
+                                            <c:when test="${departmentHeadOfDepartments.contains( department ) && secondStageAuthorityOfDepartments.contains( department )}">
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.departmentHeadAndSecondStageAuthority"/></li>
+                                            </c:when>
                                             <c:when test="${departmentHeadOfDepartments.contains( department )}">
                                                 <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.departmentHead"/></li>
+                                            </c:when>
+                                            <c:when test="${secondStageAuthorityOfDepartments.contains( department )}">
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.secondStageAuthority"/></li>
                                             </c:when>
                                             <c:otherwise>
                                                 <li><c:out escapeXml="false" value="${departmentLink}"/></li>
