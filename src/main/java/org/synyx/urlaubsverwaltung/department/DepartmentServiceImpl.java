@@ -268,6 +268,7 @@ class DepartmentServiceImpl implements DepartmentService {
         department.setDepartmentHeads(departmentEntity.getDepartmentHeads());
         department.setSecondStageAuthorities(departmentEntity.getSecondStageAuthorities());
         department.setTwoStageApproval(departmentEntity.isTwoStageApproval());
+        department.setCreatedAt(departmentEntity.getCreatedAt());
         department.setLastModification(departmentEntity.getLastModification());
 
         final List<Person> members = departmentEntity.getMembers().stream()

@@ -98,7 +98,10 @@ class DepartmentCalendarService {
 
         final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);
 
-        final LocalDate sinceDate = LocalDate.now(clock).minus(departmentCalendar.getCalendarPeriod());
+        final LocalDate chosenCalendarPeriodSinceDate = LocalDate.now(clock).minus(departmentCalendar.getCalendarPeriod());
+        final LocalDate departmentExistsSinceDate = department.getCreatedAt();
+        final LocalDate sinceDate = departmentExistsSinceDate.isAfter(chosenCalendarPeriodSinceDate) ? departmentExistsSinceDate : chosenCalendarPeriodSinceDate;
+
         final List<Absence> absences = absenceService.getOpenAbsencesSince(department.getMembers(), sinceDate);
 
         return iCalService.getCalendar(title, absences);
