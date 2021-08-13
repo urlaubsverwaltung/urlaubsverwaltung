@@ -16,20 +16,13 @@ import static java.time.ZoneOffset.UTC;
 public class Department {
 
     private Integer id;
-
     private String name;
-
     private String description;
-
+    private LocalDate createdAt;
     private LocalDate lastModification;
-
-    // flag for two stage approval process
     private boolean twoStageApproval;
-
     private List<Person> members = new ArrayList<>();
-
     private List<Person> departmentHeads = new ArrayList<>();
-
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
     public Department() {
@@ -58,6 +51,14 @@ public class Department {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDate getLastModification() {
@@ -111,6 +112,7 @@ public class Department {
     public void setSecondStageAuthorities(List<Person> secondStageAuthorities) {
         this.secondStageAuthorities = secondStageAuthorities;
     }
+
 
     @Override
     public String toString() {
