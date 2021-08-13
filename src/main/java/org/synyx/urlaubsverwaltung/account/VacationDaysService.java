@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
@@ -119,7 +120,7 @@ public class VacationDaysService {
                 return remainingUsed;
             }
         }
-        return BigDecimal.ZERO;
+        return ZERO;
     }
 
     BigDecimal getUsedDaysBeforeApril(Account account) {
@@ -146,7 +147,7 @@ public class VacationDaysService {
                 (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)))
             .collect(toList());
 
-        BigDecimal usedDays = BigDecimal.ZERO;
+        BigDecimal usedDays = ZERO;
         for (Application applicationForLeave : applicationsForLeave) {
             LocalDate startDate = applicationForLeave.getStartDate();
             LocalDate endDate = applicationForLeave.getEndDate();
