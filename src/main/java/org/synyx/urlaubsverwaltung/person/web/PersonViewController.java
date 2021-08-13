@@ -95,6 +95,7 @@ public class PersonViewController {
 
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
         model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
+        model.addAttribute("secondStageAuthorityOfDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
         final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
 
