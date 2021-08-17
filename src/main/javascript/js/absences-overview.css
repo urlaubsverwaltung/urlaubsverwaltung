@@ -126,6 +126,20 @@ th.vacationOverview-cal-head.today::after {
   background-color: var(--absence-bar-color-noon);
 }
 
+@media print {
+  .cal-day {
+    --bg-left-lightness: 100%;
+    --bg-right-lightness: 100%;
+  }
+}
+
+.no-workday {
+  --absence-bar-color: #000000;
+}
+
+.absence-full {
+  --absence-bar-color: #facc15;
+}
 .absence-morning {
   --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }

@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -156,6 +157,8 @@ public class AbsenceOverviewViewController {
 
         final LocalDate today = LocalDate.now(clock);
 
+        final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
+
         final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.getStartDate(), dateRange.getEndDate());
 
         final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
@@ -195,6 +198,12 @@ public class AbsenceOverviewViewController {
 
                 final Person person = personByView.get(personView);
 
+                final List<WorkingTime> personWorkingTimeList = workingTimeList
+                    .stream()
+                    .filter(workingTime -> workingTime.getPerson().equals(person))
+                    .sorted(comparing(WorkingTime::getValidFrom).reversed())
+                    .collect(toList());
+
                 final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
                     .stream()
                     .flatMap(List::stream)
@@ -206,11 +215,20 @@ public class AbsenceOverviewViewController {
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members))
                     .build();
 
-                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
+                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date), isWorkday(date, personWorkingTimeList)));
             }
         }
 
         return new ArrayList<>(monthsByNr.values());
+    }
+
+    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
+        return workingTimeList
+            .stream()
+            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
+            .findFirst()
+            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
+            .orElse(false);
     }
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
