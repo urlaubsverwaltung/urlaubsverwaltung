@@ -50,7 +50,8 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForOneFullDay() {
 
-        final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
         final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
 
@@ -72,7 +73,8 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayMorning() {
 
-        final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
         final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence));
 
@@ -94,7 +96,8 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForMultipleFullDays() {
 
-        final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
         final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
@@ -117,7 +120,8 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonForHalfDayNoon() {
 
-        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
         assertThat(fileToString(calendar))
