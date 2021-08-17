@@ -8,6 +8,7 @@ import net.fortuna.ical4j.model.ParameterList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Cn;
 import net.fortuna.ical4j.model.property.Attendee;
+import net.fortuna.ical4j.model.property.Name;
 import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RefreshInterval;
@@ -72,8 +73,11 @@ public class ICalService {
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
+        calendar.getProperties().add(new Name(title));
+        if (absences.size() > 1) {
+            calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
+        }
         calendar.getProperties().add(GREGORIAN);
-        calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
         calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 

@@ -59,7 +59,7 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("NAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
@@ -81,7 +81,7 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("NAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
@@ -103,7 +103,7 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("NAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
@@ -125,7 +125,7 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("NAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("SUMMARY:Marlene Muster abwesend")
@@ -150,7 +150,7 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("NAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
 
             .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
@@ -176,7 +176,6 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
             .contains("METHOD:CANCEL")
 
@@ -188,6 +187,37 @@ class ICalServiceTest {
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+    }
+
+    @Test
+    void getCalendarNameForOneEvent() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sut = new ICalService(calendarProperties);
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        assertThat(fileToString(calendar))
+            .contains("NAME:Abwesenheitskalender")
+            .doesNotContain("X-WR-CALNAME:Abwesenheitskalender");
+    }
+
+    @Test
+    void getCalendarNameForMoreThanOneEvent() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sut = new ICalService(calendarProperties);
+        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence, morningAbsence));
+        assertThat(fileToString(calendar))
+            .contains("NAME:Abwesenheitskalender")
+            .contains("X-WR-CALNAME:Abwesenheitskalender");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
