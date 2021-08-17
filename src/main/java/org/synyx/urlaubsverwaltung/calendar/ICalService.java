@@ -57,23 +57,39 @@ public class ICalService {
     }
 
     public File getCalendar(String title, List<Absence> absences) {
-        return getCalendar(title, absences, PUBLISHED);
-    }
-
-    public File getCalendar(String title, List<Absence> absences, ICalType method) {
 
         final File file = generateCalenderFile(title);
-        final Calendar calendar = generateCalendar(title, absences, method);
+        final Calendar calendar = generateCalendar(title, absences);
 
         return writeCalenderIntoFile(calendar, file);
     }
 
-    private Calendar generateCalendar(String title, List<Absence> absences, ICalType method) {
+    public File getSingleAppointment(Absence absence, ICalType method) {
+        final File file = generateCalenderFile("appointment");
+        final Calendar calendar = generateForSingleAppointment(absence, method);
+
+        return writeCalenderIntoFile(calendar, file);
+    }
+
+    private Calendar generateCalendar(String title, List<Absence> absences) {
+
+        final Calendar calendar = prepareCalendar(absences, PUBLISHED);
+
+        calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
+
+        return calendar;
+    }
+
+    private Calendar generateForSingleAppointment(Absence absence, ICalType method) {
+
+        return prepareCalendar(List.of(absence), method);
+    }
+
+    private Calendar prepareCalendar(List<Absence> absences, ICalType method) {
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
         calendar.getProperties().add(GREGORIAN);
-        calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
         calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 
@@ -150,7 +166,7 @@ public class ICalService {
         return DigestUtils.md5Hex(data).toUpperCase();
     }
 
-    private File generateCalenderFile(String title) {
+    File generateCalenderFile(String title) {
         final File file;
         try {
             file = File.createTempFile("calendar-", ".ics");
@@ -160,7 +176,7 @@ public class ICalService {
         return file;
     }
 
-    private File writeCalenderIntoFile(Calendar calendar, File file) {
+    File writeCalenderIntoFile(Calendar calendar, File file) {
         try (final FileWriter calendarFileWriter = new FileWriter(file)) {
             final CalendarOutputter calendarOutputter = new CalendarOutputter();
             calendarOutputter.output(calendar, calendarFileWriter);

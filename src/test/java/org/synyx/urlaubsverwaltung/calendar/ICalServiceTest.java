@@ -170,13 +170,13 @@ class ICalServiceTest {
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
-        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), CANCELLED);
+
+        final File calendar = sut.getSingleAppointment(noonAbsence, CANCELLED);
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
             .contains("METHOD:CANCEL")
 
