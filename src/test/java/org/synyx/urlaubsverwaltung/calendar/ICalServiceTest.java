@@ -20,6 +20,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
@@ -162,7 +163,7 @@ class ICalServiceTest {
     }
 
     @Test
-    void getCalendarCancelledEvent() {
+    void cancelSingleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
@@ -184,6 +185,33 @@ class ICalServiceTest {
             .contains("DTEND:20190526T160000Z")
             .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
             .contains("SEQUENCE:1")
+
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+    }
+
+    @Test
+    void singleAppointment() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sut = new ICalService(calendarProperties);
+
+        final File calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED);
+        assertThat(fileToString(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("DTSTART:20190526T120000Z")
+            .contains("DTEND:20190526T160000Z")
+            .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
+            .contains("X-MICROSOFT-CDO-BUSYSTATUS:OOF")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");

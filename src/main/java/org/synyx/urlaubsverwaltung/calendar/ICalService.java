@@ -39,6 +39,7 @@ import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Method.CANCEL;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 
 
@@ -93,7 +94,7 @@ public class ICalService {
         calendar.getProperties().add(GREGORIAN);
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
 
-        if (method == ICalType.CANCELLED) {
+        if (method == CANCELLED) {
             calendar.getProperties().add(CANCEL);
         }
 
@@ -140,7 +141,7 @@ public class ICalService {
         event.getProperties().add(new Uid(generateUid(absence)));
         event.getProperties().add(generateAttendee(absence));
 
-        if (method == ICalType.CANCELLED) {
+        if (method == CANCELLED) {
             event.getProperties().add(new Sequence(1));
         }
 
@@ -166,7 +167,7 @@ public class ICalService {
         return DigestUtils.md5Hex(data).toUpperCase();
     }
 
-    File generateCalenderFile(String title) {
+    private File generateCalenderFile(String title) {
         final File file;
         try {
             file = File.createTempFile("calendar-", ".ics");
@@ -176,7 +177,7 @@ public class ICalService {
         return file;
     }
 
-    File writeCalenderIntoFile(Calendar calendar, File file) {
+    private File writeCalenderIntoFile(Calendar calendar, File file) {
         try (final FileWriter calendarFileWriter = new FileWriter(file)) {
             final CalendarOutputter calendarOutputter = new CalendarOutputter();
             calendarOutputter.output(calendar, calendarFileWriter);
