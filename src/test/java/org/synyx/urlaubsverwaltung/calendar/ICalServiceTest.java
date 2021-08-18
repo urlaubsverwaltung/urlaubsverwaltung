@@ -177,7 +177,6 @@ class ICalServiceTest {
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("REFRESH-INTERVAL:P1D")
             .contains("METHOD:CANCEL")
 
             .contains("SUMMARY:Marlene Muster abwesend")

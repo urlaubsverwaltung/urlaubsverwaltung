@@ -76,6 +76,7 @@ public class ICalService {
         final Calendar calendar = prepareCalendar(absences, PUBLISHED);
 
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
+        calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 
         return calendar;
     }
@@ -91,7 +92,6 @@ public class ICalService {
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
         calendar.getProperties().add(GREGORIAN);
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
-        calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 
         if (method == ICalType.CANCELLED) {
             calendar.getProperties().add(CANCEL);
