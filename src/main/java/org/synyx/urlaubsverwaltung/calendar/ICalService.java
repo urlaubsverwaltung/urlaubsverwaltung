@@ -33,7 +33,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Date.from;
-import static java.util.stream.Collectors.toList;
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Method.CANCEL;
@@ -91,12 +90,11 @@ public class ICalService {
             calendar.getProperties().add(CANCEL);
         }
 
-        final List<VEvent> absencesVEvents = absences.stream()
+        absences.stream()
             .map(absence -> this.toVEvent(absence, method))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(toList());
-        calendar.getComponents().addAll(absencesVEvents);
+            .forEach(event -> calendar.getComponents().add(event));
 
         return calendar;
     }
