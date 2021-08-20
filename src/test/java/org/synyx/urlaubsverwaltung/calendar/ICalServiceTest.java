@@ -211,7 +211,6 @@ class ICalServiceTest {
             .contains("DTSTART:20190526T120000Z")
             .contains("DTEND:20190526T160000Z")
             .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
-            .contains("X-MICROSOFT-CDO-BUSYSTATUS:OOF")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
