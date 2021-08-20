@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
@@ -40,12 +41,14 @@ class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final ApplicationService applicationService;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final Clock clock;
 
     @Autowired
-    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, Clock clock) {
+    DepartmentServiceImpl(DepartmentRepository departmentRepository, ApplicationService applicationService, ApplicationEventPublisher applicationEventPublisher, Clock clock) {
         this.departmentRepository = departmentRepository;
         this.applicationService = applicationService;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
     }
 
@@ -101,6 +104,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final DepartmentEntity updatedDepartmentEntity = departmentRepository.save(departmentEntity);
         final Department updatedDepartment = mapToDepartment(updatedDepartmentEntity);
+        sendMemberLeftDepartmentEvent(department, currentDepartmentEntity);
 
         LOG.info("Updated department: {}", updatedDepartment);
 
@@ -325,5 +329,12 @@ class DepartmentServiceImpl implements DepartmentService {
         }
 
         return list;
+    }
+
+    private void sendMemberLeftDepartmentEvent(Department department, DepartmentEntity currentDepartmentEntity) {
+        currentDepartmentEntity.getMembers().stream()
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .filter(oldMember -> !department.getMembers().contains(oldMember))
+            .forEach(person -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, person.getId(), department.getId())));
     }
 }
