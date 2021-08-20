@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -15,11 +16,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -53,12 +55,14 @@ class DepartmentServiceImplTest {
     private DepartmentRepository departmentRepository;
     @Mock
     private ApplicationService applicationService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
     @BeforeEach
     void setUp() {
-        sut = new DepartmentServiceImpl(departmentRepository, applicationService, clock);
+        sut = new DepartmentServiceImpl(departmentRepository, applicationService, applicationEventPublisher, clock);
     }
 
     @Test
@@ -151,8 +155,8 @@ class DepartmentServiceImplTest {
         department.setName("department");
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
-        departmentEntity.setCreatedAt(LocalDate.of(2020, Month.DECEMBER, 4));
-        departmentEntity.setLastModification(LocalDate.of(2020, Month.DECEMBER, 4));
+        departmentEntity.setCreatedAt(LocalDate.of(2020, DECEMBER, 4));
+        departmentEntity.setLastModification(LocalDate.of(2020, DECEMBER, 4));
 
         when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
         when(departmentRepository.save(any())).thenReturn(new DepartmentEntity());
@@ -163,7 +167,7 @@ class DepartmentServiceImplTest {
         verify(departmentRepository).save(departmentEntityArgumentCaptor.capture());
 
         final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
-        assertThat(savedDepartmentEntity.getCreatedAt()).isEqualTo(LocalDate.of(2020, Month.DECEMBER, 4));
+        assertThat(savedDepartmentEntity.getCreatedAt()).isEqualTo(LocalDate.of(2020, DECEMBER, 4));
         assertThat(savedDepartmentEntity.getLastModification()).isEqualTo(LocalDate.now(clock));
     }
 
@@ -179,11 +183,11 @@ class DepartmentServiceImplTest {
 
         final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
         existingPersonMember.setPerson(existingPerson);
-        existingPersonMember.setAccessionDate(Instant.now(clock).minus(1, ChronoUnit.DAYS));
+        existingPersonMember.setAccessionDate(Instant.now(clock).minus(1, DAYS));
 
         final DepartmentEntity departmentEntity = new DepartmentEntity();
-        departmentEntity.setCreatedAt(LocalDate.of(2020, Month.DECEMBER, 4));
-        departmentEntity.setLastModification(LocalDate.of(2020, Month.DECEMBER, 4));
+        departmentEntity.setCreatedAt(LocalDate.of(2020, DECEMBER, 4));
+        departmentEntity.setLastModification(LocalDate.of(2020, DECEMBER, 4));
         departmentEntity.setMembers(List.of(existingPersonMember));
 
         when(departmentRepository.findById(42)).thenReturn(Optional.of(departmentEntity));
@@ -197,9 +201,47 @@ class DepartmentServiceImplTest {
         final DepartmentEntity savedDepartmentEntity = departmentEntityArgumentCaptor.getValue();
 
         assertThat(savedDepartmentEntity.getMembers().get(0).getPerson()).isEqualTo(existingPerson);
-        assertThat(savedDepartmentEntity.getMembers().get(0).getAccessionDate()).isEqualTo(Instant.now(clock).minus(1, ChronoUnit.DAYS));
+        assertThat(savedDepartmentEntity.getMembers().get(0).getAccessionDate()).isEqualTo(Instant.now(clock).minus(1, DAYS));
         assertThat(savedDepartmentEntity.getMembers().get(1).getPerson()).isEqualTo(person);
         assertThat(savedDepartmentEntity.getMembers().get(1).getAccessionDate()).isEqualTo(Instant.now(clock));
+    }
+
+    @Test
+    void ensureRemovingMembersInDepartmentAlsoSentDepartmentLeftEvent() {
+        final Person existingPerson = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+        final Person personThatWillLeft = new Person("batman", "Wayne", "Bruce", "wayne@example.org");
+        personThatWillLeft.setId(1);
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(existingPerson);
+        existingPersonMember.setAccessionDate(Instant.now(clock).minus(1, DAYS));
+
+        final DepartmentMemberEmbeddable willLeftPersonMember = new DepartmentMemberEmbeddable();
+        willLeftPersonMember.setPerson(personThatWillLeft);
+        willLeftPersonMember.setAccessionDate(Instant.now(clock).minus(1, DAYS));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setCreatedAt(LocalDate.of(2020, DECEMBER, 4));
+        departmentEntity.setLastModification(LocalDate.of(2020, DECEMBER, 4));
+        departmentEntity.setMembers(List.of(existingPersonMember, willLeftPersonMember));
+
+        when(departmentRepository.findById(42)).thenReturn(Optional.of(departmentEntity));
+        when(departmentRepository.save(any())).then(returnsFirstArg());
+
+        final Department department = new Department();
+        department.setId(42);
+        department.setName("department");
+        department.setMembers(List.of(existingPerson));
+
+        final Department updatedDepartment = sut.update(department);
+        assertThat(updatedDepartment.getMembers()).contains(existingPerson);
+
+        final ArgumentCaptor<PersonLeftDepartmentEvent> personLeftDepartmentEventCaptor = ArgumentCaptor.forClass(PersonLeftDepartmentEvent.class);
+        verify(applicationEventPublisher).publishEvent(personLeftDepartmentEventCaptor.capture());
+        final PersonLeftDepartmentEvent departmentLeftEvent = personLeftDepartmentEventCaptor.getValue();
+
+        assertThat(departmentLeftEvent.getDepartmentId()).isEqualTo(42);
+        assertThat(departmentLeftEvent.getPersonId()).isEqualTo(1);
     }
 
     @Test
