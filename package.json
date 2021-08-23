@@ -52,7 +52,7 @@
     "@babel/preset-env": "7.15.0",
     "@types/jest": "27.0.1",
     "@urlaubsverwaltung/eslint-plugin": "1.2.0",
-    "autoprefixer": "10.3.1",
+    "autoprefixer": "10.3.2",
     "babel-eslint": "10.1.0",
     "babel-jest": "27.0.6",
     "babel-loader": "8.2.2",
