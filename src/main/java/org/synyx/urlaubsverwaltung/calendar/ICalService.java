@@ -33,12 +33,12 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Date.from;
-import static java.util.stream.Collectors.toList;
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Method.CANCEL;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 
 
@@ -57,36 +57,44 @@ public class ICalService {
     }
 
     public File getCalendar(String title, List<Absence> absences) {
-        return getCalendar(title, absences, PUBLISHED);
-    }
-
-    public File getCalendar(String title, List<Absence> absences, ICalType method) {
-
         final File file = generateCalenderFile(title);
-        final Calendar calendar = generateCalendar(title, absences, method);
-
+        final Calendar calendar = generateCalendar(title, absences);
         return writeCalenderIntoFile(calendar, file);
     }
 
-    private Calendar generateCalendar(String title, List<Absence> absences, ICalType method) {
+    public File getSingleAppointment(Absence absence, ICalType method) {
+        final File file = generateCalenderFile("appointment");
+        final Calendar calendar = generateForSingleAppointment(absence, method);
+        return writeCalenderIntoFile(calendar, file);
+    }
+
+    private Calendar generateCalendar(String title, List<Absence> absences) {
+        final Calendar calendar = prepareCalendar(absences, PUBLISHED);
+        calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
+        calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
+        return calendar;
+    }
+
+    private Calendar generateForSingleAppointment(Absence absence, ICalType method) {
+        return prepareCalendar(List.of(absence), method);
+    }
+
+    private Calendar prepareCalendar(List<Absence> absences, ICalType method) {
         final Calendar calendar = new Calendar();
         calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
         calendar.getProperties().add(GREGORIAN);
-        calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
         calendar.getProperties().add(new XProperty("X-MICROSOFT-CALSCALE", GREGORIAN.getValue()));
-        calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
 
-        if (method == ICalType.CANCELLED) {
+        if (method == CANCELLED) {
             calendar.getProperties().add(CANCEL);
         }
 
-        final List<VEvent> absencesVEvents = absences.stream()
+        absences.stream()
             .map(absence -> this.toVEvent(absence, method))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(toList());
-        calendar.getComponents().addAll(absencesVEvents);
+            .forEach(event -> calendar.getComponents().add(event));
 
         return calendar;
     }
@@ -124,7 +132,7 @@ public class ICalService {
         event.getProperties().add(new Uid(generateUid(absence)));
         event.getProperties().add(generateAttendee(absence));
 
-        if (method == ICalType.CANCELLED) {
+        if (method == CANCELLED) {
             event.getProperties().add(new Sequence(1));
         }
 

@@ -10,13 +10,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -30,7 +30,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
@@ -79,7 +78,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final File file = new File("");
-        when(iCalService.getCalendar(any(), any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -351,11 +350,8 @@ class ApplicationMailServiceTest {
         model.put("holidayReplacementNote", "awesome replacement note");
         model.put("dayLength", "FULL");
 
-        final String calendarName = "Vertretung für ...";
-        when(messageSource.getMessage("calendar.mail.holiday-replacement.name", new Object[]{"Theo Fritz"}, Locale.GERMAN)).thenReturn(calendarName);
-
         final File file = new File("");
-        when(iCalService.getCalendar(eq(calendarName), any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
@@ -454,7 +450,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final File file = new File("");
-        when(iCalService.getCalendar(any(), any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -580,7 +576,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final File file = new File("");
-        when(iCalService.getCalendar(any(), any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
 
         final Person person = new Person();
         final Person office = new Person();

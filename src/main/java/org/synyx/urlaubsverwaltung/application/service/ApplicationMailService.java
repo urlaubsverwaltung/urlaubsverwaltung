@@ -66,7 +66,7 @@ class ApplicationMailService {
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
-        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT);
+        final File calendarFile = generateCalendar(application, DEFAULT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -285,8 +285,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final String calendarName = getTranslation("calendar.mail.holiday-replacement.name", application.getPerson().getNiceName());
-        final File calendarFile = generateCalendar(application, calendarName, AbsenceType.HOLIDAY_REPLACEMENT);
+        final File calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -313,7 +312,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT, CANCELLED);
+        final File calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -453,7 +452,7 @@ class ApplicationMailService {
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
-        final File calendarFile = generateCalendar(application, application.getPerson().getNiceName(), DEFAULT, CANCELLED);
+        final File calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -635,12 +634,12 @@ class ApplicationMailService {
         return messageSource.getMessage(key, args, GERMAN);
     }
 
-    private File generateCalendar(Application application, String calendarName, AbsenceType absenceType) {
-        return generateCalendar(application, calendarName, absenceType, PUBLISHED);
+    private File generateCalendar(Application application, AbsenceType absenceType) {
+        return generateCalendar(application, absenceType, PUBLISHED);
     }
-    private File generateCalendar(Application application, String calendarName, AbsenceType absenceType, ICalType iCalType) {
+    private File generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType) {
         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
-        return iCalService.getCalendar(calendarName, List.of(absence), iCalType);
+        return iCalService.getSingleAppointment(absence, iCalType);
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
