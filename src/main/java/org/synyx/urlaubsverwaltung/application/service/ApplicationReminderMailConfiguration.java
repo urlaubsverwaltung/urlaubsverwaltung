@@ -22,5 +22,6 @@ class ApplicationReminderMailConfiguration implements SchedulingConfigurer {
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         scheduledTaskRegistrar.addCronTask(applicationReminderMailService::sendWaitingApplicationsReminderNotification, applicationProperties.getReminderNotification().getCron());
         scheduledTaskRegistrar.addCronTask(applicationReminderMailService::sendUpcomingApplicationsReminderNotification, applicationProperties.getUpcomingNotification().getCron());
+        scheduledTaskRegistrar.addCronTask(applicationReminderMailService::sendUpcomingHolidayReplacementReminderNotification, applicationProperties.getUpcomingHolidayReplacementNotification().getCron());
     }
 }

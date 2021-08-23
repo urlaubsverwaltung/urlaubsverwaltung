@@ -58,6 +58,11 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> getApplicationsWithStartDateAndStateAndHolidayReplacementIsNotEmpty(LocalDate startDate, List<ApplicationStatus> statuses) {
+        return applicationRepository.findByStatusInAndStartDateAndHolidayReplacementsIsNotEmpty(statuses, startDate);
+    }
+
+    @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status) {
         return applicationRepository.getApplicationsForACertainTimeAndPersonAndState(startDate, endDate, person, status);
     }

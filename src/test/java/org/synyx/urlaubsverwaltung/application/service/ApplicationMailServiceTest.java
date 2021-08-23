@@ -764,4 +764,60 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(1).getTemplateName()).isEqualTo("remind_application_upcoming");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
     }
+
+
+    @Test
+    void sendRemindForUpcomingHolidayReplacement() {
+
+        final Person holidayReplacement = new Person();
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+        holidayReplacementEntity.setNote("Note");
+
+        final Person holidayReplacementTwo = new Person();
+        final HolidayReplacementEntity holidayReplacementEntityTwo = new HolidayReplacementEntity();
+        holidayReplacementEntityTwo.setPerson(holidayReplacementTwo);
+        holidayReplacementEntityTwo.setNote("Note 2");
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setCategory(HOLIDAY);
+
+        final Person applicant = new Person();
+        applicant.setFirstName("Senior");
+        applicant.setLastName("Thomas");
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(applicant);
+        application.setDayLength(FULL);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(ALLOWED);
+        application.setHolidayReplacements(List.of(holidayReplacementEntity, holidayReplacementEntityTwo));
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("daysBeforeUpcomingHolidayReplacement", 1);
+        model.put("replacementNote", "Note");
+
+        final Map<String, Object> modelTwo = new HashMap<>();
+        modelTwo.put("application", application);
+        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 1);
+        modelTwo.put("replacementNote", "Note 2");
+
+        sut.sendRemindForUpcomingHolidayReplacement(List.of(application), 1);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming.holiday_replacement");
+        assertThat(mails.get(0).getSubjectMessageArguments()[0]).isEqualTo("Senior Thomas");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("remind_holiday_replacement_upcoming");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(holidayReplacementTwo));
+        assertThat(mails.get(1).getSubjectMessageArguments()[0]).isEqualTo("Senior Thomas");
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming.holiday_replacement");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("remind_holiday_replacement_upcoming");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelTwo);
+    }
 }

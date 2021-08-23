@@ -65,6 +65,15 @@ public interface ApplicationService {
     List<Application> getApplicationsWithStartDateAndState(LocalDate startDate, List<ApplicationStatus> statuses);
 
     /**
+     * Gets all {@link Application}s that have the given start date and the given state and at least one holiday replacement
+     *
+     * @param startDate {@link LocalDate}
+     * @param statuses  {@link ApplicationStatus}
+     * @return all {@link Application}s with the given states and startDate and at least one holiday replacement
+     */
+    List<Application> getApplicationsWithStartDateAndStateAndHolidayReplacementIsNotEmpty(LocalDate startDate, List<ApplicationStatus> statuses);
+
+    /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
      * state.
      *

@@ -13,7 +13,13 @@ import javax.validation.Valid;
 public class ApplicationProperties {
 
     /*
-     * Checks every day at 07:00 am if remind mails for upcoming applications can be send
+     * Checks every day at 07:00 am if remind mails for upcoming holiday replacement applications can be sent
+     */
+    @Valid
+    private ReminderNotification upcomingHolidayReplacementNotification = new ReminderNotification();
+
+    /*
+     * Checks every day at 07:00 am if remind mails for upcoming applications can be sent
      */
     @Valid
     private ReminderNotification upcomingNotification = new ReminderNotification();
@@ -23,6 +29,14 @@ public class ApplicationProperties {
      */
     @Valid
     private ReminderNotification reminderNotification = new ReminderNotification();
+
+    public ReminderNotification getUpcomingHolidayReplacementNotification() {
+        return upcomingHolidayReplacementNotification;
+    }
+
+    public void setUpcomingHolidayReplacementNotification(ReminderNotification upcomingHolidayReplacementNotification) {
+        this.upcomingHolidayReplacementNotification = upcomingHolidayReplacementNotification;
+    }
 
     public ReminderNotification getUpcomingNotification() {
         return upcomingNotification;

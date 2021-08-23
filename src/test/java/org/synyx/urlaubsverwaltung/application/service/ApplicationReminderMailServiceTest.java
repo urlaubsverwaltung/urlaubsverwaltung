@@ -123,6 +123,42 @@ class ApplicationReminderMailServiceTest {
         verifyNoInteractions(applicationMailService);
     }
 
+    @Test
+    void sendUpcomingHolidayReplacementApplicationsReminderNotification() {
+
+        final ApplicationSettings applicationSettings = prepareSettingsWithRemindForUpcomingHolidayReplacements(true);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate localDate = LocalDate.now(clock).plusDays(applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
+
+        final Application tomorrowApplication = createApplication(person, createVacationType(HOLIDAY));
+        tomorrowApplication.setApplicationDate(localDate);
+
+        when(applicationService.getApplicationsWithStartDateAndStateAndHolidayReplacementIsNotEmpty(localDate, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
+
+        sut.sendUpcomingHolidayReplacementReminderNotification();
+        verify(applicationMailService).sendRemindForUpcomingHolidayReplacement(List.of(tomorrowApplication), applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+    }
+
+    @Test
+    void sendUpcomingHolidayReplacementApplicationsReminderNotificationIsDisabled() {
+
+        prepareSettingsWithRemindForUpcomingHolidayReplacements(false);
+
+        sut.sendUpcomingHolidayReplacementReminderNotification();
+        verifyNoInteractions(applicationMailService);
+    }
+
+    private ApplicationSettings prepareSettingsWithRemindForUpcomingHolidayReplacements(boolean activateUpcomingHolidayReplacements) {
+        final Settings settings = new Settings();
+        final ApplicationSettings applicationSettings = new ApplicationSettings();
+        applicationSettings.setRemindForUpcomingHolidayReplacement(activateUpcomingHolidayReplacements);
+        settings.setApplicationSettings(applicationSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        return applicationSettings;
+    }
+
     private ApplicationSettings prepareSettingsWithRemindForUpcomingApplications(boolean activateUpcomingNotification) {
         final Settings settings = new Settings();
         final ApplicationSettings applicationSettings = new ApplicationSettings();
