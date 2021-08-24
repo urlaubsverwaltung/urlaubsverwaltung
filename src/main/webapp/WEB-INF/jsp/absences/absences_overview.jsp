@@ -238,7 +238,7 @@
             </div>
         </c:forEach>
         <div id="vacationOverviewLegend" class="tw-mb-8 print:tw-no-break-inside">
-            <table aria-hidden="true" class="tw-text-sm print:tw-font-mono">
+            <table aria-hidden="true" class="tw-sticky tw-left-4 tw-text-sm print:tw-font-mono">
                 <caption>
                     <spring:message code="absences.overview.legendTitle"/>
                 </caption>
