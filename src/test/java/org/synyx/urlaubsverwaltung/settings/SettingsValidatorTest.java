@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -145,11 +144,13 @@ class SettingsValidatorTest {
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(null);
+        applicationSettings.setDaysBeforeRemindForUpcomingApplications(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
+        verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.mandatory");
     }
 
     @Test
@@ -160,11 +161,13 @@ class SettingsValidatorTest {
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(-1);
+        applicationSettings.setDaysBeforeRemindForUpcomingApplications(-1);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");
     }
 
     @Test
