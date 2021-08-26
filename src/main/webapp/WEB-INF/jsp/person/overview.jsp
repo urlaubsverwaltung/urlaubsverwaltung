@@ -30,6 +30,7 @@
         <spring:message code="overview.header.title" arguments="${person.niceName}, ${displayYear}"/>
     </title>
     <uv:custom-head/>
+    <link rel="stylesheet" type="text/css" href="<asset:url value='absences_overview.css' />"/>
     <link rel="stylesheet" type="text/css" href="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css' />" />
     <script>
         window.uv = {};
@@ -145,13 +146,14 @@
                     </h2>
                 </jsp:body>
             </uv:section-heading>
-            <div class="row tw-mb-4 lg:tw-mb-12">
+            <div class="row">
                 <div class="col-xs-12">
                     <div id="datepicker" class="tw-flex tw-justify-center tw-items-center">
                         <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
                     </div>
                 </div>
             </div>
+            <uv:color-legend isPrivileged="true" hiddenOnLoad="true" cssClass="tw-mb-4 lg:tw-mb-12"/>
         </div>
 
         <!-- Vacation -->
