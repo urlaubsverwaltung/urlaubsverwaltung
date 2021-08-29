@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
@@ -14,7 +15,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -145,37 +145,54 @@ class SettingsValidatorTest {
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(null);
+        applicationSettings.setDaysBeforeRemindForUpcomingApplications(null);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
+        verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.mandatory");
     }
 
-    @Test
-    void ensureAbsenceSettingsCanNotBeNegative() {
-
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void ensureApplicationSettingsMaximumMonthsToApplyForLeaveInAdvanceIsInvalid(int invalidValue) {
         Settings settings = new Settings();
         ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
-        applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(-1);
-        applicationSettings.setDaysBeforeRemindForWaitingApplications(-1);
+        applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(invalidValue);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
+
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void ensureApplicationSettingsDaysBeforeRemindForWaitingApplicationsIsInvalid(int invalidValue) {
+        Settings settings = new Settings();
+        ApplicationSettings applicationSettings = settings.getApplicationSettings();
+
+        applicationSettings.setDaysBeforeRemindForWaitingApplications(invalidValue);
+
+        Errors mockError = mock(Errors.class);
+        settingsValidator.validate(settings, mockError);
+
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
     }
 
-    @Test
-    void ensureThatMaximumMonthsToApplyForLeaveInAdvanceNotZero() {
-
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void ensureApplicationSettingsDaysBeforeRemindForUpcomingApplicationsIsInvalid(int invalidValue) {
         Settings settings = new Settings();
-        settings.getApplicationSettings().setMaximumMonthsToApplyForLeaveInAdvance(0);
+        ApplicationSettings applicationSettings = settings.getApplicationSettings();
+        applicationSettings.setDaysBeforeRemindForUpcomingApplications(invalidValue);
 
         Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
-        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+
+        verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");
     }
 
     @Test
