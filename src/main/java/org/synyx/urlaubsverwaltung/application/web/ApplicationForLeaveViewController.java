@@ -67,12 +67,25 @@ public class ApplicationForLeaveViewController {
         this.messageSource = messageSource;
     }
 
-    /*
-     * Show waiting applications for leave.
-     */
     @GetMapping("/application")
-    public String showWaiting(Model model, Locale locale) {
+    public String showApplication(Model model, Locale locale) {
 
+        prepareApplicationModels(model, locale);
+        model.addAttribute("activeContent", "application");
+
+        return "thymeleaf/application/application-overview";
+    }
+
+    @GetMapping("/application/replacement")
+    public String showApplicationWithReplacementContent(Model model, Locale locale) {
+
+        prepareApplicationModels(model, locale);
+        model.addAttribute("activeContent", "replacement");
+
+        return "thymeleaf/application/application-overview";
+    }
+
+    private void prepareApplicationModels(Model model, Locale locale) {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
@@ -91,8 +104,6 @@ public class ApplicationForLeaveViewController {
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
         final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, locale);
         model.addAttribute("applications_holiday_replacements", replacements);
-
-        return "thymeleaf/application/application-overview";
     }
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, Locale locale) {
@@ -128,7 +139,7 @@ public class ApplicationForLeaveViewController {
 
     private static String toDurationOfAbsenceDescription(Application application, MessageSource messageSource, Locale locale) {
         final String timePattern = messageSource.getMessage("pattern.time", new Object[]{}, locale);
-        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("E, dd.MM.yyyy", locale);
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", locale);
         final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(timePattern, locale);
 
         final LocalDate startDate = application.getStartDate();

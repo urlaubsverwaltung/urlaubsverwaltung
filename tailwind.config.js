@@ -32,6 +32,9 @@ module.exports = {
       margin: {
         25: "6.25rem",
       },
+      colors: {
+        "black-almost": "#444444",
+      },
     },
     screens: {
       // cannot use 'extend' as `xs` would override other screens

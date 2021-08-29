@@ -3,8 +3,7 @@
   <head th:replace="_layout::head(~{::title}, ~{::scripts})">
     <title th:text="#{calendar.share.header.title}"></title>
     <th:block th:fragment="scripts">
-      <script defer asset:src="copy_to_clipboard_input.js"></script>
-      <script defer asset:src="tabs.js"></script>
+      <script defer asset:src="app_list.js"></script>
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
@@ -55,11 +54,47 @@
           <a href="#" th:replace="fragments/print::button"></a>
         </th:block>
         <th:block th:ref="user-applications-heading-body">
-          <h2 th:text="#{applications.myself.waiting}"></h2>
+          <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-space-x-8" is="uv-nav-tabs">
+            <li
+              class="tw-border-b-4"
+              th:classappend="${activeContent == 'application' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
+              data-content="#user-applications-block"
+              th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
+            >
+              <a
+                href="#user-applications-block"
+                th:href="@{/web/application}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost"
+                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
+                th:text="#{applications.myself.waiting}"
+              >
+              </a>
+            </li>
+            <li
+              class="tw-border-b-4"
+              th:classappend="${activeContent == 'replacement' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
+              data-content="#user-replacements-block"
+              th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
+            >
+              <a
+                href="#user-replacements-block"
+                th:href="@{/web/application/replacement}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost"
+                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
+              >
+                Meine anstehenden Vertretungen
+              </a>
+            </li>
+          </ul>
         </th:block>
       </div>
 
-      <div class="tw-mb-10">
+      <div
+        id="user-applications-block"
+        class="tw-mb-10"
+        th:hidden="${activeContent != 'application'}"
+      >
+        <h2 class="tw-sr-only" th:text="#{applications.myself.waiting}"></h2>
         <p th:if="${#lists.isEmpty(userApplications)}" th:text="#{applications.none}"></p>
         <div class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
           <div
@@ -164,6 +199,91 @@
                   </a>
                 </div>
               </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        id="user-replacements-block"
+        class="tw-mb-10"
+        th:hidden="${activeContent != 'replacement'}"
+      >
+        <h2 class="tw-sr-only" th:text="#{applications.holiday_replacement}"></h2>
+        <p
+          th:if="${#lists.isEmpty(applications_holiday_replacements)}"
+          th:text="#{applications.holiday_replacement.none}"
+        ></p>
+        <div th:if="${!#lists.isEmpty(applications_holiday_replacements)}" class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
+          <div
+            class="
+              tw-sticky tw-py-2 tw-w-full
+              md:tw-w-auto
+              lg:tw-w-1/4
+              tw-bg-gradient-to-b tw-from-white tw-via-white
+              tw-z-10
+            "
+            style="top: 3.25rem"
+          >
+            <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
+              <img
+                th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+              />
+              <span class="tw-flex tw-flex-wrap md:tw-flex-col">
+                <span class="tw-text-lg">
+                  <th:block th:text="${signedInUser.niceName}"></th:block>&nbsp;
+                </span>
+                <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.represents}"></span>
+              </span>
+            </div>
+          </div>
+          <ul
+            class="
+              tw-flex-1 tw-list-none tw-m-0 tw-p-0 tw-mt-4
+              md:tw-pl-0
+              tw-space-y-6
+              lg:tw-gap-2
+              md:tw-mt-2
+              md:tw-transform md:tw-translate-y-0.5
+            "
+          >
+            <li
+              class="tw-flex tw-flex-col tw-gap-4 xs:tw-pl-20 md:tw-pl-0"
+              th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}"
+            >
+              <div class="tw-flex tw-flex-row-reverse tw-gap-4">
+                <div class="tw-self-center print:tw-hidden">
+                  <img
+                    th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=mm&s=104'},username=${replacementInfo.person.name},width='52px',height='52px')"
+                  />
+                </div>
+                <div class="tw-flex-1">
+                  <div>
+                    <span class="tw-text-lg" th:text="${replacementInfo.person.name}"></span>
+                  </div>
+                  <div class="tw-text-sm">
+                    <th:block th:if="${replacementInfo.pending}" th:text="#{applications.holiday_replacement.pending}"></th:block>
+                    <span th:text="${replacementInfo.durationOfAbsenceDescription}" class="tw-font-bold"></span>
+                    <span class="tw-whitespace-nowrap">
+                      (<th:block th:switch="${#strings.isEmpty(replacementInfo.duration)}">
+                        <th:block th:case="true">
+                          <th:block th:text="${replacementInfo.workDays}" />
+                          <th:block th:text="#{duration.days}" />
+                        </th:block>
+                        <th:block th:case="false">
+                          <th:block th:text="${replacementInfo.duration}" />
+                        </th:block>
+                      </th:block>)
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                th:if="${!#strings.isEmpty(replacementInfo.note)}"
+                class="text-bubble text-bubble--triangle-top-right tw-self-end lg:text-bubble--triangle-top-left tw-mr-7 lg:tw-ml-7 sm:tw-max-w-md"
+              >
+                <p class="tw-italic tw-text-sm tw-m-0" th:text="${replacementInfo.note}"></p>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
@@ -321,54 +441,6 @@
                     <th:block th:text="#{action.cancellationRequest}" />
                   </a>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div
-        th:replace="fragments/section-heading::section-heading(~{::holiday-replacements-heading-body}, ~{::holiday-replacements-heading-actions}, ~{::holiday-replacements-heading-below})"
-      >
-        <th:block th:ref="holiday-replacements-heading-body">
-          <h1 id="holiday-replacements" th:text="#{applications.holiday_replacement}"></h1>
-        </th:block>
-      </div>
-
-      <div class="tw-mb-10">
-        <p
-          th:if="${#lists.isEmpty(applications_holiday_replacements)}"
-          th:text="#{applications.holiday_replacement.none}"
-        ></p>
-        <table
-          th:if="${not #lists.isEmpty(applications_holiday_replacements)}"
-          class="list-table list-table-bt-0 tw-text-sm"
-        >
-          <tbody>
-            <tr th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}" class="active">
-              <td class="print:tw-hidden is-centered">
-                <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=mm&s=40'},username=${replacementInfo.person.name},width='40px',height='40px')"
-                />
-              </td>
-              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-                <span class="tw-block tw-text-lg tw-mb-1" th:text="${replacementInfo.person.name}"></span>
-                <div th:if="${replacementInfo.pending}" th:text="#{applications.holiday_replacement.pending}"></div>
-              </td>
-              <td class="halves">
-                <span class="tw-block tw-mb-1 tw-text-lg" th:switch="${#strings.isEmpty(replacementInfo.duration)}">
-                  <th:block th:case="true">
-                    <th:block th:text="${replacementInfo.workDays}" />
-                    <th:block th:text="#{duration.days}" />
-                  </th:block>
-                  <th:block th:case="false">
-                    <th:block th:text="${replacementInfo.duration}" />
-                  </th:block>
-                </span>
-                <div th:text="${replacementInfo.durationOfAbsenceDescription}"></div>
-              </td>
-              <td class="tw-break-words tw-max-w-xs">
-                <th:block th:text="${replacementInfo.note}" />
               </td>
             </tr>
           </tbody>
