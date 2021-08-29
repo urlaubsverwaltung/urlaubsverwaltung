@@ -82,6 +82,7 @@ class ApplicationForLeaveViewControllerTest {
     void getApplicationForDepartmentHead() throws Exception {
 
         final Person person = new Person();
+        person.setId(1);
         person.setFirstName("Atticus");
         final Application application = new Application();
         application.setId(1);
@@ -93,23 +94,35 @@ class ApplicationForLeaveViewControllerTest {
         application.setDayLength(FULL);
 
         final Person headPerson = new Person();
+        headPerson.setId(2);
         headPerson.setPermissions(List.of(DEPARTMENT_HEAD));
         final Application applicationOfHead = new Application();
         applicationOfHead.setId(2);
         applicationOfHead.setVacationType(anyVacationType());
         applicationOfHead.setPerson(headPerson);
+        applicationOfHead.setStartDate(LocalDate.MAX);
+        applicationOfHead.setEndDate(LocalDate.MAX);
+
         when(personService.getSignedInUser()).thenReturn(headPerson);
 
         final Person secondStagePerson = new Person();
+        secondStagePerson.setId(3);
         secondStagePerson.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         final Application applicationOfSecondStage = new Application();
         applicationOfSecondStage.setId(3);
         applicationOfSecondStage.setVacationType(anyVacationType());
         applicationOfSecondStage.setPerson(secondStagePerson);
+        applicationOfSecondStage.setStartDate(LocalDate.MAX);
+        applicationOfSecondStage.setEndDate(LocalDate.MAX);
 
-        final List<Person> members = List.of(headPerson, person, secondStagePerson);
-        when(departmentService.getManagedMembersOfDepartmentHead(headPerson)).thenReturn(members);
-        when(applicationService.getForStatesAndPerson(List.of(WAITING), members))
+        when(departmentService.getManagedMembersOfDepartmentHead(headPerson))
+            .thenReturn(List.of(headPerson, person, secondStagePerson));
+
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(headPerson)))
+            .thenReturn(List.of(applicationOfHead));
+
+        when(applicationService.getForStatesAndPerson(List.of(WAITING), List.of(headPerson, person, secondStagePerson)))
             .thenReturn(List.of(application, applicationOfHead, applicationOfSecondStage));
 
         final Application applicationCancellationRequest = new Application();
@@ -126,9 +139,10 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
-            .andExpect(model().attribute("applications", hasSize(1)))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("Atticus"))))))
+            .andExpect(model().attribute("userApplications", hasSize(1)))
+            .andExpect(model().attribute("otherApplications", hasSize(1)))
+            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("Atticus"))))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
@@ -155,6 +169,7 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfBoss.setStatus(WAITING);
         applicationOfBoss.setStartDate(LocalDate.MAX);
         applicationOfBoss.setEndDate(LocalDate.MAX);
+
         when(personService.getSignedInUser()).thenReturn(bossPerson);
 
         final Person secondStagePerson = new Person();
@@ -167,9 +182,6 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
 
-        when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
-            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
-
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
         applicationCancellationRequest.setVacationType(anyVacationType());
@@ -179,13 +191,23 @@ class ApplicationForLeaveViewControllerTest {
         applicationCancellationRequest.setEndDate(LocalDate.MAX);
         applicationCancellationRequest.setDayLength(FULL);
 
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(bossPerson)))
+            .thenReturn(List.of());
+
+        // other applications
+        when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
+            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
+
+        // cancellation requests
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(bossPerson)))
             .thenReturn(List.of(applicationCancellationRequest));
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
-            .andExpect(model().attribute("applications", hasSize(3)))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("userApplications", hasSize(0)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
@@ -205,13 +227,14 @@ class ApplicationForLeaveViewControllerTest {
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
-        final Application applicationOfBoss = new Application();
-        applicationOfBoss.setId(2);
-        applicationOfBoss.setVacationType(anyVacationType());
-        applicationOfBoss.setPerson(officePerson);
-        applicationOfBoss.setStatus(WAITING);
-        applicationOfBoss.setStartDate(LocalDate.MAX);
-        applicationOfBoss.setEndDate(LocalDate.MAX);
+        final Application applicationOfOfficePerson = new Application();
+        applicationOfOfficePerson.setId(2);
+        applicationOfOfficePerson.setVacationType(anyVacationType());
+        applicationOfOfficePerson.setPerson(officePerson);
+        applicationOfOfficePerson.setStatus(WAITING);
+        applicationOfOfficePerson.setStartDate(LocalDate.MAX);
+        applicationOfOfficePerson.setEndDate(LocalDate.MAX);
+
         when(personService.getSignedInUser()).thenReturn(officePerson);
 
         final Person secondStagePerson = new Person();
@@ -224,8 +247,13 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
 
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(officePerson)))
+            .thenReturn(List.of(applicationOfOfficePerson));
+
+        // other applications
         when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
-            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
+            .thenReturn(List.of(application, applicationOfOfficePerson, applicationOfSecondStage));
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
@@ -241,8 +269,9 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
-            .andExpect(model().attribute("applications", hasSize(3)))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("userApplications", hasSize(1)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(model().attribute("applications_cancellation_request", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(view().name("thymeleaf/application/application-overview"));
@@ -282,12 +311,18 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfSecondStage.setStatus(WAITING);
         applicationOfSecondStage.setStartDate(LocalDate.MAX);
         applicationOfSecondStage.setEndDate(LocalDate.MAX);
+
         when(personService.getSignedInUser()).thenReturn(secondStagePerson);
 
-        final List<Person> members = List.of(secondStagePerson, person, officePerson);
-        when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson)).thenReturn(members);
+        when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson))
+            .thenReturn(List.of(secondStagePerson, person, officePerson));
 
-        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members))
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(secondStagePerson)))
+            .thenReturn(List.of());
+
+        // other applications
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(secondStagePerson, person, officePerson)))
             .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
 
         final Application applicationCancellationRequest = new Application();
@@ -304,10 +339,11 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
-            .andExpect(model().attribute("applications", hasSize(2)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("office"))))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("userApplications", hasSize(0)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("office"))))))
+            .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
+            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
@@ -316,11 +352,14 @@ class ApplicationForLeaveViewControllerTest {
     void departmentHeadAndSecondStageAuthorityOfDifferentDepartmentsGrantsApplications() throws Exception {
 
         final Person departmentHeadAndSecondStageAuth = new Person();
+        departmentHeadAndSecondStageAuth.setId(1);
         departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
         departmentHeadAndSecondStageAuth.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
 
         final Person userOfDepartmentA = new Person();
+        userOfDepartmentA.setId(2);
         userOfDepartmentA.setFirstName("userOfDepartmentA");
         userOfDepartmentA.setPermissions(List.of(USER));
         final Application applicationOfUserA = new Application();
@@ -332,6 +371,7 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfUserA.setEndDate(LocalDate.MAX);
 
         final Person userOfDepartmentB = new Person();
+        userOfDepartmentB.setId(3);
         userOfDepartmentB.setFirstName("userOfDepartmentB");
         userOfDepartmentB.setPermissions(List.of(USER));
         final Application applicationOfUserB = new Application();
@@ -342,13 +382,17 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfUserB.setStartDate(LocalDate.MAX);
         applicationOfUserB.setEndDate(LocalDate.MAX);
 
-        final List<Person> membersSecondStage = List.of(departmentHeadAndSecondStageAuth);
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(membersSecondStage);
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
+            .thenReturn(List.of(departmentHeadAndSecondStageAuth));
+
         final List<Person> membersDepartment = List.of(userOfDepartmentA);
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
 
-        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), membersSecondStage)).thenReturn(List.of(applicationOfUserB));
-        when(applicationService.getForStatesAndPerson(List.of(WAITING), membersDepartment)).thenReturn(List.of(applicationOfUserA));
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(departmentHeadAndSecondStageAuth)))
+            .thenReturn(List.of());
+
+        when(applicationService.getForStatesAndPerson(List.of(WAITING), membersDepartment))
+            .thenReturn(List.of(applicationOfUserA, applicationOfUserB));
 
         final Application applicationCancellationRequest = new Application();
         applicationCancellationRequest.setId(10);
@@ -365,10 +409,11 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
-            .andExpect(model().attribute("applications", hasSize(2)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("userOfDepartmentA"))))))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("userOfDepartmentB"))))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("userApplications", hasSize(0)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("userOfDepartmentA"))))))
+            .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("userOfDepartmentB"))))))
+            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
@@ -405,13 +450,20 @@ class ApplicationForLeaveViewControllerTest {
         when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(members);
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(members);
 
-        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members)).thenReturn(List.of(waitingApplication, temporaryAllowedApplication));
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(departmentHeadAndSecondStageAuth)))
+            .thenReturn(List.of());
+
+        // other applications
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(departmentHeadAndSecondStageAuth, userOfDepartment)))
+            .thenReturn(List.of(waitingApplication, temporaryAllowedApplication));
 
         perform(get("/web/application"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
-            .andExpect(model().attribute("applications", hasSize(2)))
-            .andExpect(model().attribute("applications", hasItems(
+            .andExpect(model().attribute("userApplications", hasSize(0)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItems(
                 allOf(
                     hasProperty("person", hasProperty("name", equalTo("userOfDepartment"))),
                     hasProperty("statusWaiting", equalTo(true))
@@ -421,7 +473,7 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("statusWaiting", equalTo(false))
                 )
             )))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
 
@@ -457,9 +509,10 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(userPerson)))
-            .andExpect(model().attribute("applications", hasSize(1)))
-            .andExpect(model().attribute("applications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
-            .andExpect(model().attribute("applications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("userApplications", hasSize(1)))
+            .andExpect(model().attribute("userApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
+            .andExpect(model().attribute("userApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("otherApplications", hasSize(0)))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }

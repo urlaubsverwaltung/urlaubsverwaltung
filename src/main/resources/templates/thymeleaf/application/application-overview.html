@@ -1,274 +1,379 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="_layout::head(~{::title}, ~{::scripts})">
-  <title th:text="#{calendar.share.header.title}"></title>
-  <th:block th:fragment="scripts">
-    <script defer asset:src="copy_to_clipboard_input.js"></script>
-    <script defer asset:src="tabs.js"></script>
-  </th:block>
-</head>
-<body th:replace="_layout::body(~{::main}, ~{})">
-
-<main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
-  <div th:replace="fragments/section-heading::section-heading(~{::waiting-applications-heading-body}, ~{::waiting-applications-heading-actions}, ~{::waiting-applications-heading-below})">
-    <th:block th:ref="waiting-applications-heading-actions">
-      <a
-        href="#"
-        th:href="@{/web/application/new}"
-        class="icon-link tw-px-1"
-        th:data-title="#{action.apply.vacation}"
-        sec:authorize="hasAuthority('OFFICE')"
-      >
-        <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-      </a>
-      <a
-        href="#"
-        th:href="@{/web/absences}"
-        class="icon-link tw-px-1"
-        th:data-title="#{action.applications.absences_overview}"
-      >
-        <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
-      </a>
-      <a
-        href="#"
-        th:href="@{/web/application/statistics}"
-        class="icon-link tw-px-1"
-        th:data-title="#{action.applications.statistics}"
-        sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')"
-      >
-        <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')"></svg>
-      </a>
-      <a href="#" th:replace="fragments/print::button"></a>
+  <head th:replace="_layout::head(~{::title}, ~{::scripts})">
+    <title th:text="#{calendar.share.header.title}"></title>
+    <th:block th:fragment="scripts">
+      <script defer asset:src="copy_to_clipboard_input.js"></script>
+      <script defer asset:src="tabs.js"></script>
     </th:block>
-    <th:block th:ref="waiting-applications-heading-body">
-      <h1 th:text="#{applications.waiting}"></h1>
-    </th:block>
-  </div>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+      <h1 class="tw-sr-only" th:text="#{applications.title}"></h1>
 
-  <div class="feedback" th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess)}">
-    <div class="alert alert-success">
-      <th:block th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></th:block>
-      <th:block th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></th:block>
-      <th:block th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></th:block>
-    </div>
-  </div>
+      <div
+        class="feedback"
+        th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess)}"
+      >
+        <div class="alert alert-success">
+          <th:block th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></th:block>
+          <th:block th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></th:block>
+          <th:block th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></th:block>
+        </div>
+      </div>
 
-  <div class="tw-mb-10">
-    <p
-      th:if="${#lists.isEmpty(applications)}"
-      th:text="#{applications.none}"
-    ></p>
-    <table
-      th:if="${not #lists.isEmpty(applications)}"
-      class="list-table selectable-table list-table-bt-0 tw-text-sm"
-    >
-      <tbody>
-        <tr
-          th:each="requestForLeave,loopStatus : ${applications}"
-          th:onclick="|navigate('/web/application/${requestForLeave.id}');|"
-          class="active"
-        >
-          <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 print:tw-hidden is-centered">
-            <img
-              th:replace="fragments/avatar::avatar-bordered(url=${requestForLeave.person.avatarUrl + '?d=mm&s=40'},username=${requestForLeave.person.name},width='40px',height='40px')"
-            />
-          </td>
-          <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 tw-hidden md:tw-table-cell print:tw-table-cell">
-            <span class="tw-block tw-text-lg tw-mb-1" th:text="${requestForLeave.person.name}"></span>
-            <span th:text="#{application.applier.applied}"></span>
-          </td>
-          <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 halves">
-            <a
-              href="#"
-              th:href="@{/web/application/{applicationId}(applicationId=${requestForLeave.id})}"
-              class="tw-block tw-mb-1 tw-text-lg print:no-link"
-              th:classappend="${requestForLeave.vacationType.category}"
-              th:switch="${#strings.isEmpty(requestForLeave.duration)}"
-            >
-              <th:block th:case="true">
-                <th:block th:text="${requestForLeave.workDays}" />
-                <th:block th:text="#{duration.days}" />
-              </th:block>
-              <th:block th:case="false">
-                <th:block th:text="${requestForLeave.duration}" />
-              </th:block>
-              <th:block th:text="${#messages.msg(requestForLeave.vacationType.messageKey)}" />
-            </a>
-            <div th:text="${requestForLeave.durationOfAbsenceDescription}"></div>
-          </td>
-          <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 tw-hidden lg:tw-table-cell text-right print:tw-hidden">
-            <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-              <a
-                th:if="${requestForLeave.editAllowed}"
-                class="action-link tw-text-gray-900 tw-text-opacity-50"
-                href="#"
-                th:href="@{/web/application/{applicationId}/edit (applicationId=${requestForLeave.id})}"
-              >
-                <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                <th:block th:text="#{action.edit}" />
-              </a>
-              <a
-                th:if="${requestForLeave.approveAllowed}"
-                class="action-link tw-text-gray-900 tw-text-opacity-50"
-                href="#"
-                th:href="@{/web/application/{applicationId} (applicationId=${requestForLeave.id}, action='allow', shortcut=true)}"
-              >
-                <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                <th:block th:text="${requestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
-              </a>
-              <a
-                th:if="${requestForLeave.rejectAllowed}"
-                class="action-link tw-text-gray-900 tw-text-opacity-50"
-                href="#"
-                th:href="@{/web/application/{applicationId} (applicationId=${requestForLeave.id}, action='reject', shortcut=true)}"
-              >
-                <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                <th:block th:text="#{action.reject}" />
-              </a>
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions}, ~{::user-applications-heading-below})"
+      >
+        <th:block th:ref="user-applications-heading-actions">
+          <a
+            href="#"
+            th:href="@{/web/application/new}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.apply.vacation}"
+            sec:authorize="hasAuthority('OFFICE')"
+          >
+            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+          </a>
+          <a
+            href="#"
+            th:href="@{/web/absences}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.applications.absences_overview}"
+          >
+            <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
+          </a>
+          <a
+            href="#"
+            th:href="@{/web/application/statistics}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.applications.statistics}"
+            sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')"
+          >
+            <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')"></svg>
+          </a>
+          <a href="#" th:replace="fragments/print::button"></a>
+        </th:block>
+        <th:block th:ref="user-applications-heading-body">
+          <h2 th:text="#{applications.myself.waiting}"></h2>
+        </th:block>
+      </div>
+
+      <div class="tw-mb-10">
+        <p th:if="${#lists.isEmpty(userApplications)}" th:text="#{applications.none}"></p>
+        <div class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
+          <div
+            class="
+              tw-sticky tw-py-2 tw-w-full
+              md:tw-w-auto
+              lg:tw-w-1/4
+              tw-bg-gradient-to-b tw-from-white tw-via-white
+            "
+            style="top: 3.25rem"
+          >
+            <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
+              <img
+                th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+              />
+              <span class="tw-flex tw-flex-wrap lg:tw-flex-col">
+                <span class="tw-text-lg">
+                  <th:block th:text="${signedInUser.niceName}"></th:block>&nbsp;
+                </span>
+                <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.applied}"></span>
+              </span>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions}, ~{::cancellation-requests-heading-below})">
-    <th:block th:ref="cancellation-requests-heading-body">
-      <h1 id="cancellation-requests" th:text="#{applications.cancellation_request}"></h1>
-    </th:block>
-  </div>
-
-  <div class="tw-mb-10">
-    <p
-      th:if="${#lists.isEmpty(applications_cancellation_request)}"
-      th:text="#{applications.cancellation_request.none}"
-    ></p>
-    <table
-      th:if="${not #lists.isEmpty(applications_cancellation_request)}"
-      class="list-table selectable-table list-table-bt-0 tw-text-sm"
-    >
-      <tbody>
-        <tr
-          th:each="cancellationRequest,loopStatus : ${applications_cancellation_request}"
-          th:onclick="|navigate('/web/application/${applicationId} (applicationId=${cancellationRequest.id})');|"
-          class="active"
-        >
-          <td class="print:tw-hidden is-centered">
-            <img
-              th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=mm&s=40'},username=${cancellationRequest.person.name},width='40px',height='40px')"
-            />
-          </td>
-          <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-            <span
-              class="tw-block tw-text-lg tw-mb-1"
-              th:text="${cancellationRequest.person.name}"
-            ></span>
-            <span th:text="#{application.applier.applied}"></span>
-          </td>
-          <td class="halves">
-            <a
-              class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
-              href="#"
-              th:href="@{/web/application/{applicationId} (applicationId=cancellationRequest.id)}"
-              th:switch="${#strings.isEmpty(cancellationRequest.duration)}"
-            >
-              <th:block th:case="true">
-                <th:block th:text="${cancellationRequest.workDays}" />
-                <th:block th:text="#{duration.days}" />
-              </th:block>
-              <th:block th:case="false">
-                <th:block th:text="${cancellationRequest.duration}" />
-              </th:block>
-              <th:block th:text="${#messages.msg(cancellationRequest.vacationType.messageKey)}" />
-            </a>
-            <div th:text="${cancellationRequest.durationOfAbsenceDescription}"></div>
-          </td>
-          <td class="tw-hidden md:tw-table-cell text-right print:tw-hidden">
-            <div
-              sec:authorize="hasAuthority('OFFICE')"
-              class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden"
-            >
-              <a
-                class="action-link tw-text-gray-900 tw-text-opacity-50"
-                href="#"
-                th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', shortcut=true)}"
+          </div>
+          <ul
+            class="
+              tw-flex-1 tw-list-none tw-m-0 tw-p-0 tw-pl-20
+              md:tw-pl-0
+              tw-space-y-6
+              lg:tw-space-y-2
+              md:tw-mt-2
+              lg:tw-mt-0
+              md:tw-transform md:tw-translate-y-0.5
+              tw-text-sm
+            "
+          >
+              <li
+                class="
+                  sm:tw-flex sm:tw-items-end sm:tw-space-x-4
+                  md:tw-space-x-0 md:tw-block
+                  lg:tw-p-2 lg:tw-flex lg:tw-items-end lg:hover:tw-bg-gray-50
+                "
+                th:each="userRequestForLeave,loopStatus: ${userApplications}"
               >
-                <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4 tw-mr-1')" />
-                <th:block th:text="#{action.delete}" />
-              </a>
-              <a
-                class="action-link tw-text-gray-900 tw-text-opacity-50"
-                href="#"
-                th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
-              >
-                <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')" />
-                <th:block th:text="#{action.cancellationRequest}" />
-              </a>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+                <a
+                  href="#"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id})}"
+                  class="tw-block tw-flex-1 tw-no-underline print:no-link"
+                >
+                  <span
+                    class="hover:tw-underline tw-mb-1 tw-text-lg"
+                    th:classappend="${userRequestForLeave.vacationType.category}"
+                    th:switch="${#strings.isEmpty(userRequestForLeave.duration)}"
+                  >
+                    <th:block th:case="true">
+                      <th:block th:text="${userRequestForLeave.workDays}" />
+                      <th:block th:text="#{duration.days}" />
+                    </th:block>
+                    <th:block th:case="false">
+                      <th:block th:text="${userRequestForLeave.duration}" />
+                    </th:block>
+                    <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
+                  </span>
+                  <span
+                    class="tw-block"
+                    style="color: #444444"
+                    th:text="${userRequestForLeave.durationOfAbsenceDescription}"
+                  ></span>
+                </a>
+                <div
+                  class="
+                    tw-mt-4
+                    lg:tw-mt-0
+                    tw-space-y-4
+                    xs:tw-space-y-0 xs:tw-flex xs:tw-space-x-4
+                    lg:tw-justify-end
+                    print:tw-hidden
+                  "
+                >
+                  <a
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="${URL_PREFIX}/application/${application.id}/edit"
+                    th:if="${userRequestForLeave.editAllowed}"
+                  >
+                    <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                    <th:block th:text="#{action.edit}"></th:block>
+                  </a>
+                  <a
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                    th:if="${userRequestForLeave.approveAllowed}"
+                  >
+                    <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                    <th:block th:text="${userRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
+                  </a>
+                  <a
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                    th:if="${userRequestForLeave.rejectAllowed}"
+                  >
+                    <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                    <th:block th:text="#{action.reject}"></th:block>
+                  </a>
+                </div>
+              </li>
+          </ul>
+        </div>
+      </div>
 
-  <div th:replace="fragments/section-heading::section-heading(~{::holiday-replacements-heading-body}, ~{::holiday-replacements-heading-actions}, ~{::holiday-replacements-heading-below})">
-    <th:block th:ref="holiday-replacements-heading-body">
-      <h1 id="holiday-replacements" th:text="#{applications.holiday_replacement}"></h1>
-    </th:block>
-  </div>
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions}, ~{::other-applications-heading-below})"
+      >
+        <th:block th:ref="other-applications-heading-body">
+          <h2 th:text="#{applications.other.waiting}"></h2>
+        </th:block>
+      </div>
 
-  <div class="tw-mb-10">
-    <p
-      th:if="${#lists.isEmpty(applications_holiday_replacements)}"
-      th:text="#{applications.holiday_replacement.none}"
-    ></p>
-    <table
-      th:if="${not #lists.isEmpty(applications_holiday_replacements)}"
-      class="list-table list-table-bt-0 tw-text-sm"
-    >
-      <tbody>
-        <tr
-          th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}"
-          class="active"
+      <div class="tw-mb-10">
+        <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
+        <table
+          th:if="${not #lists.isEmpty(otherApplications)}"
+          class="list-table selectable-table list-table-bt-0 tw-text-sm"
         >
-          <td class="print:tw-hidden is-centered">
-            <img
-              th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=mm&s=40'},username=${replacementInfo.person.name},width='40px',height='40px')"
-            />
-          </td>
-          <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-            <span
-              class="tw-block tw-text-lg tw-mb-1"
-              th:text="${replacementInfo.person.name}"
-            ></span>
-            <div
-              th:if="${replacementInfo.pending}"
-              th:text="#{applications.holiday_replacement.pending}"
-            ></div>
-          </td>
-          <td class="halves">
-            <span
-              class="tw-block tw-mb-1 tw-text-lg"
-              th:switch="${#strings.isEmpty(replacementInfo.duration)}"
+          <tbody>
+            <tr
+              th:each="otherRequestForLeave,loopStatus : ${otherApplications}"
+              th:onclick="|navigate('/web/application/${otherRequestForLeave.id}');|"
+              class="active"
             >
-              <th:block th:case="true">
-                <th:block th:text="${replacementInfo.workDays}" />
-                <th:block th:text="#{duration.days}" />
-              </th:block>
-              <th:block th:case="false">
-                <th:block th:text="${replacementInfo.duration}" />
-              </th:block>
-            </span>
-            <div th:text="${replacementInfo.durationOfAbsenceDescription}"></div>
-          </td>
-          <td class="tw-break-words tw-max-w-xs">
-            <th:block th:text="${replacementInfo.note}" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</main>
+              <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 print:tw-hidden is-centered">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=mm&s=40'},username=${otherRequestForLeave.person.name},width='40px',height='40px')"
+                />
+              </td>
+              <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 tw-hidden md:tw-table-cell print:tw-table-cell">
+                <span class="tw-block tw-text-lg tw-mb-1" th:text="${otherRequestForLeave.person.name}"></span>
+                <span th:text="#{application.applier.applied}"></span>
+              </td>
+              <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 halves">
+                <a
+                  href="#"
+                  th:href="@{/web/application/{applicationId}(applicationId=${otherRequestForLeave.id})}"
+                  class="tw-block tw-mb-1 tw-text-lg print:no-link"
+                  th:classappend="${otherRequestForLeave.vacationType.category}"
+                  th:switch="${#strings.isEmpty(otherRequestForLeave.duration)}"
+                >
+                  <th:block th:case="true">
+                    <th:block th:text="${otherRequestForLeave.workDays}" />
+                    <th:block th:text="#{duration.days}" />
+                  </th:block>
+                  <th:block th:case="false">
+                    <th:block th:text="${otherRequestForLeave.duration}" />
+                  </th:block>
+                  <th:block th:text="${#messages.msg(otherRequestForLeave.vacationType.messageKey)}" />
+                </a>
+                <div th:text="${otherRequestForLeave.durationOfAbsenceDescription}"></div>
+              </td>
+              <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 tw-hidden lg:tw-table-cell text-right print:tw-hidden">
+                <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                  <a
+                    th:if="${otherRequestForLeave.editAllowed}"
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="#"
+                    th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
+                  >
+                    <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                    <th:block th:text="#{action.edit}" />
+                  </a>
+                  <a
+                    th:if="${otherRequestForLeave.approveAllowed}"
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="#"
+                    th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
+                  >
+                    <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                    <th:block th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
+                  </a>
+                  <a
+                    th:if="${otherRequestForLeave.rejectAllowed}"
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="#"
+                    th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
+                  >
+                    <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                    <th:block th:text="#{action.reject}" />
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-</body>
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions}, ~{::cancellation-requests-heading-below})"
+      >
+        <th:block th:ref="cancellation-requests-heading-body">
+          <h1 id="cancellation-requests" th:text="#{applications.cancellation_request}"></h1>
+        </th:block>
+      </div>
+
+      <div class="tw-mb-10">
+        <p
+          th:if="${#lists.isEmpty(applications_cancellation_request)}"
+          th:text="#{applications.cancellation_request.none}"
+        ></p>
+        <table
+          th:if="${not #lists.isEmpty(applications_cancellation_request)}"
+          class="list-table selectable-table list-table-bt-0 tw-text-sm"
+        >
+          <tbody>
+            <tr
+              th:each="cancellationRequest,loopStatus : ${applications_cancellation_request}"
+              th:onclick="|navigate('/web/application/${applicationId} (applicationId=${cancellationRequest.id})');|"
+              class="active"
+            >
+              <td class="print:tw-hidden is-centered">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=mm&s=40'},username=${cancellationRequest.person.name},width='40px',height='40px')"
+                />
+              </td>
+              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                <span class="tw-block tw-text-lg tw-mb-1" th:text="${cancellationRequest.person.name}"></span>
+                <span th:text="#{application.applier.applied}"></span>
+              </td>
+              <td class="halves">
+                <a
+                  class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
+                  href="#"
+                  th:href="@{/web/application/{applicationId} (applicationId=cancellationRequest.id)}"
+                  th:switch="${#strings.isEmpty(cancellationRequest.duration)}"
+                >
+                  <th:block th:case="true">
+                    <th:block th:text="${cancellationRequest.workDays}" />
+                    <th:block th:text="#{duration.days}" />
+                  </th:block>
+                  <th:block th:case="false">
+                    <th:block th:text="${cancellationRequest.duration}" />
+                  </th:block>
+                  <th:block th:text="${#messages.msg(cancellationRequest.vacationType.messageKey)}" />
+                </a>
+                <div th:text="${cancellationRequest.durationOfAbsenceDescription}"></div>
+              </td>
+              <td class="tw-hidden md:tw-table-cell text-right print:tw-hidden">
+                <div sec:authorize="hasAuthority('OFFICE')" class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                  <a
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="#"
+                    th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', shortcut=true)}"
+                  >
+                    <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4 tw-mr-1')" />
+                    <th:block th:text="#{action.delete}" />
+                  </a>
+                  <a
+                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    href="#"
+                    th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
+                  >
+                    <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')" />
+                    <th:block th:text="#{action.cancellationRequest}" />
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::holiday-replacements-heading-body}, ~{::holiday-replacements-heading-actions}, ~{::holiday-replacements-heading-below})"
+      >
+        <th:block th:ref="holiday-replacements-heading-body">
+          <h1 id="holiday-replacements" th:text="#{applications.holiday_replacement}"></h1>
+        </th:block>
+      </div>
+
+      <div class="tw-mb-10">
+        <p
+          th:if="${#lists.isEmpty(applications_holiday_replacements)}"
+          th:text="#{applications.holiday_replacement.none}"
+        ></p>
+        <table
+          th:if="${not #lists.isEmpty(applications_holiday_replacements)}"
+          class="list-table list-table-bt-0 tw-text-sm"
+        >
+          <tbody>
+            <tr th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}" class="active">
+              <td class="print:tw-hidden is-centered">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=mm&s=40'},username=${replacementInfo.person.name},width='40px',height='40px')"
+                />
+              </td>
+              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                <span class="tw-block tw-text-lg tw-mb-1" th:text="${replacementInfo.person.name}"></span>
+                <div th:if="${replacementInfo.pending}" th:text="#{applications.holiday_replacement.pending}"></div>
+              </td>
+              <td class="halves">
+                <span class="tw-block tw-mb-1 tw-text-lg" th:switch="${#strings.isEmpty(replacementInfo.duration)}">
+                  <th:block th:case="true">
+                    <th:block th:text="${replacementInfo.workDays}" />
+                    <th:block th:text="#{duration.days}" />
+                  </th:block>
+                  <th:block th:case="false">
+                    <th:block th:text="${replacementInfo.duration}" />
+                  </th:block>
+                </span>
+                <div th:text="${replacementInfo.durationOfAbsenceDescription}"></div>
+              </td>
+              <td class="tw-break-words tw-max-w-xs">
+                <th:block th:text="${replacementInfo.note}" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
 </html>

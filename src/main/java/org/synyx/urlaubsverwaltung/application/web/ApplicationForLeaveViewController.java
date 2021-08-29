@@ -40,7 +40,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Controller for showing applications for leave in a certain state.
@@ -77,9 +76,13 @@ public class ApplicationForLeaveViewController {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
-        final List<ApplicationForLeave> applicationsForLeave = getAllRelevantApplicationsForLeave(signedInUser);
-        final List<ApplicationForLeaveDto> applicationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeave, signedInUser, locale);
-        model.addAttribute("applications", applicationDtoList);
+        final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
+        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, locale);
+        model.addAttribute("userApplications", userApplicationsDtos);
+
+        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser);
+        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, locale);
+        model.addAttribute("otherApplications", otherApplicationsDtos);
 
         final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
         final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
@@ -222,11 +225,13 @@ public class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private List<ApplicationForLeave> getAllRelevantApplicationsForLeave(Person signedInUser) {
+    private List<ApplicationForLeave> getOtherRelevantApplicationsForLeave(Person signedInUser) {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
-            return getApplicationsForLeaveForBossOrOffice();
+            return getApplicationsForLeaveForBossOrOffice().stream()
+                .filter(applicationForLeave -> !applicationForLeave.getPerson().equals(signedInUser))
+                .collect(toList());
         }
 
         final List<ApplicationForLeave> applicationsForLeave = new ArrayList<>();
@@ -239,11 +244,6 @@ public class ApplicationForLeaveViewController {
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // Department head can see only waiting applications for leave of certain department(s)
             applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(signedInUser));
-        }
-
-        if (signedInUser.hasRole(USER)) {
-            // Department head can see only waiting applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForUser(signedInUser));
         }
 
         return applicationsForLeave.stream()
