@@ -78,7 +78,7 @@
                                 &nbsp;<spring:message code="persons.active"/>
                             </a>
                         </li>
-                        <c:if test="${departments.size() > 1}">
+                        <c:if test="${departments.size() > 0}">
                             <c:forEach items="${departments}" var="department">
                                 <li>
                                     <a href='${URL_PREFIX}/person?active=true&year=${year}&department=${department.id}'>
