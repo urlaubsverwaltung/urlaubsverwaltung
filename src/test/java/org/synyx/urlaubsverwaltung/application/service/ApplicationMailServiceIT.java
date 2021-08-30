@@ -100,7 +100,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email user attributes
         MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -116,7 +116,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neuer genehmigter Antrag");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -172,7 +172,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email user attributes
         MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -188,7 +188,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neuer genehmigter Antrag");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -249,7 +249,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email user attributes
         MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde bewilligt");
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -265,7 +265,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neuer bewilligter Antrag");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neuer genehmigter Antrag");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -1360,7 +1360,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email user
         Message msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -1374,7 +1374,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email office
         Message msgSecondStage = inboxSecondStage[0];
-        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
@@ -1437,12 +1437,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email user
         Message msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // get email office
         final Message msgSecondStage = inboxSecondStage[0];
-        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
@@ -1510,12 +1510,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email user
         Message msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // get email office
         final Message msgSecondStage = inboxSecondStage[0];
-        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig bewilligt");
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
