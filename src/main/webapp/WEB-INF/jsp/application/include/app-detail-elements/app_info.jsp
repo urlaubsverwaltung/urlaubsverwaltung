@@ -28,24 +28,24 @@
             <span class="state ${application.status} pull-right print:tw-hidden hidden-xs" title="<spring:message code='${application.status}' />">
                 <c:choose>
                     <c:when test="${application.status == 'WAITING'}">
-                        <icon:question-mark-circle className="tw-w-5 tw-h-5" />
+                        <icon:question-mark-circle className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${application.status == 'TEMPORARY_ALLOWED'}">
-                        <icon:check className="tw-w-5 tw-h-5" />
+                        <icon:check-circle className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${application.status == 'ALLOWED'}">
-                        <icon:check className="tw-w-5 tw-h-5" />
+                        <icon:check-circle className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
-                        <icon:check className="tw-w-5 tw-h-5" />
-                        <icon:arrow-narrow-right className="tw-w-5 tw-h-5" />
-                        <icon:trash className="tw-w-5 tw-h-5" />
+                        <icon:check-circle className="tw-w-6 tw-h-6" />
+                        <icon:arrow-narrow-right className="tw-w-6 tw-h-6" />
+                        <icon:trash className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${application.status == 'REJECTED'}">
-                        <icon:ban className="tw-w-5 tw-h-5" />
+                        <icon:ban className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:when test="${application.status == 'CANCELLED' || application.status == 'REVOKED'}">
-                        <icon:trash className="tw-w-5 tw-h-5" />
+                        <icon:trash className="tw-w-6 tw-h-6" />
                     </c:when>
                     <c:otherwise>
                         &nbsp;
