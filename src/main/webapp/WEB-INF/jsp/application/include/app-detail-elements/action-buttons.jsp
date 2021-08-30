@@ -43,7 +43,21 @@
 <%-- ALLOW ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' }">
     <c:if test="${CAN_ALLOW &&(!IS_OWN || IS_BOSS) && !(IS_SECOND_STAGE_AUTHORITY_APPLICATION && IS_DEPARTMENT_HEAD)}">
-        <a href="#" class="icon-link tw-px-1 hover:tw-text-green-500" data-title="<spring:message code='action.allow'/>"
+
+        <c:choose>
+            <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                <c:set var="ALLOW_DATA_TITLE">
+                    <spring:message code='action.temporary_allow'/>
+                </c:set>
+            </c:when>
+            <c:otherwise>
+                <c:set var="ALLOW_DATA_TITLE">
+                    <spring:message code='action.allow'/>
+                </c:set>
+            </c:otherwise>
+        </c:choose>
+
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-green-500" data-title="${ALLOW_DATA_TITLE}"
            onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
             <icon:check className="tw-w-5 tw-h-5" solid="true" />
         </a>
