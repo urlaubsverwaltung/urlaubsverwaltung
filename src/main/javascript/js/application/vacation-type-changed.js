@@ -6,14 +6,14 @@ function vacationTypeChanged(value) {
   const specialLeave = document.querySelector("#special-leave");
 
   if (value === SPECIAL_LEAVE) {
-    if (overtime) overtime.classList.add("hidden");
-    if (specialLeave) specialLeave.classList.remove("hidden");
+    overtime?.classList.add("hidden");
+    specialLeave?.classList.remove("hidden");
   } else if (value === OVERTIME) {
-    if (overtime) overtime.classList.remove("hidden");
-    if (specialLeave) specialLeave.classList.add("hidden");
+    overtime?.classList.remove("hidden");
+    specialLeave?.classList.add("hidden");
   } else {
-    if (overtime) overtime.classList.add("hidden");
-    if (specialLeave) specialLeave.classList.add("hidden");
+    overtime?.classList.add("hidden");
+    specialLeave?.classList.add("hidden");
   }
 }
 
