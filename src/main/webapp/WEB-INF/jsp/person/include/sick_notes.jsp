@@ -19,7 +19,7 @@
 
         <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/sicknote/${sickNote.id}');">
 
-            <td class="is-centered print:tw-hidden state ${sickNote.sickNoteType}">
+            <td class="is-centered print:tw-hidden state ${sickNote.status}">
                 <c:choose>
                     <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                         <icon:child className="tw-w-6 tw-h-6" />
