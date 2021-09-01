@@ -58,7 +58,14 @@
 
     <div class="form-group is-sticky row">
         <button type="submit" class="btn btn-success col-xs-12 col-sm-5">
-            <spring:message code='action.allow'/>
+            <c:choose>
+                <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                    <spring:message code='action.temporary_allow'/>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code='action.allow'/>
+                </c:otherwise>
+            </c:choose>
         </button>
         <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#allow').hide();">
             <spring:message code="action.cancel"/>

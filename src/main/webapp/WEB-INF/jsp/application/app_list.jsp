@@ -209,7 +209,14 @@
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
                                                     <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
-                                                    <spring:message code='action.allow'/>
+                                                    <c:choose>
+                                                        <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                                                            <spring:message code='action.temporary_allow'/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <spring:message code='action.allow'/>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </a>
                                             </c:if>
                                             <c:if
