@@ -25,7 +25,7 @@
                     <spring:message code="${app.status}"/>
                 </span>
             </td>
-            <td class="is-centered state ${app.status} print:tw-hidden">
+            <td class="is-centered state ${app.status} print:tw-hidden" title="<spring:message code='${app.status}' />">
                 <c:choose>
                     <c:when test="${app.status == 'WAITING'}">
                         <icon:question-mark-circle className="tw-w-6 tw-h-6" />
@@ -47,7 +47,9 @@
                     <c:when test="${app.status == 'CANCELLED'  || app.status == 'REVOKED'}">
                         <icon:trash className="tw-w-6 tw-h-6" />
                     </c:when>
-                    <c:otherwise>&nbsp;</c:otherwise>
+                    <c:otherwise>
+                        &nbsp;
+                    </c:otherwise>
                 </c:choose>
             </td>
             <td class="tw-py-6">
