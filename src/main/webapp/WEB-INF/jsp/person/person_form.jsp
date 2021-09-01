@@ -51,6 +51,7 @@
                             <div class="col-md-9">
                                 <form:input path="username" class="form-control" disabled="true"/>
                                 <form:hidden path="username" value="${person.username}"/>
+                                <form:errors path="username"/>
                             </div>
                         </div>
 
@@ -61,6 +62,7 @@
                             <div class="col-md-9">
                                 <form:input path="firstName" class="form-control" disabled="true"/>
                                 <form:hidden path="firstName" value="${person.firstName}"/>
+                                <form:errors path="firstName"/>
                             </div>
                         </div>
 
@@ -71,6 +73,7 @@
                             <div class="col-md-9">
                                 <form:input path="lastName" class="form-control" disabled="true"/>
                                 <form:hidden path="lastName" value="${person.lastName}"/>
+                                <form:errors path="lastName"/>
                             </div>
                         </div>
 
@@ -81,6 +84,7 @@
                             <div class="col-md-9">
                                 <form:input path="email" class="form-control" disabled="true"/>
                                 <form:hidden path="email" value="${person.email}"/>
+                                <form:errors path="email"/>
                             </div>
                         </div>
                     </div>
