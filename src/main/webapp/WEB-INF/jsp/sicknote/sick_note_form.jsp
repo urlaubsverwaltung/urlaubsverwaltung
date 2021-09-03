@@ -203,7 +203,7 @@
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
-                            <spring:message code="sicknote.data.person"/>
+                            <spring:message code="sicknote.data.aub.description"/>
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
