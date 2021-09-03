@@ -64,11 +64,7 @@ public class SickNoteForm {
     }
 
     public String getStartDateIsoValue() {
-        if (startDate == null) {
-            return "";
-        }
-
-        return startDate.format(ISO_DATE);
+        return startDate == null ? "" : startDate.format(ISO_DATE);
     }
 
     public LocalDate getStartDate() {
@@ -80,11 +76,7 @@ public class SickNoteForm {
     }
 
     public String getEndDateIsoValue() {
-        if (endDate == null) {
-            return "";
-        }
-
-        return endDate.format(ISO_DATE);
+        return endDate == null ? "" : endDate.format(ISO_DATE);
     }
 
     public LocalDate getEndDate() {
@@ -108,11 +100,7 @@ public class SickNoteForm {
     }
 
     public String getAubStartDateIsoValue() {
-        if (aubStartDate == null) {
-            return "";
-        }
-
-        return aubStartDate.format(ISO_DATE);
+        return aubStartDate == null ? "" : aubStartDate.format(ISO_DATE);
     }
 
     public void setAubStartDate(LocalDate aubStartDate) {
@@ -124,11 +112,7 @@ public class SickNoteForm {
     }
 
     public String getAubEndDateIsoValue() {
-        if (aubEndDate == null) {
-            return "";
-        }
-
-        return aubEndDate.format(ISO_DATE);
+        return aubEndDate == null ? "" : aubEndDate.format(ISO_DATE);
     }
 
     public void setAubEndDate(LocalDate aubEndDate) {
