@@ -213,8 +213,8 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="aubFrom" path="aubStartDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"
+                                <form:input id="aubFrom" path="aubStartDate" data-iso-value="${sickNote.aubStartDateIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}" data-test-id="sicknote-aub-from"/>
                                 <uv:error-text>
                                     <form:errors path="aubStartDate" />
@@ -227,8 +227,8 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="aubTo" path="aubEndDate" class="form-control"
-                                            cssErrorClass="form-control error" autocomplete="off"
+                                <form:input id="aubTo" path="aubEndDate" data-iso-value="${sickNote.aubEndDateIsoValue}"
+                                            class="form-control" cssErrorClass="form-control error" autocomplete="off"
                                             placeholder="${DATE_PATTERN}" data-test-id="sicknote-aub-to" />
                                 <uv:error-text>
                                     <form:errors path="aubEndDate" />

@@ -6,7 +6,8 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
+import static java.time.format.DateTimeFormatter.ISO_DATE;
 
 /**
  * View class representing an sick note.
@@ -63,11 +64,7 @@ public class SickNoteForm {
     }
 
     public String getStartDateIsoValue() {
-        if (startDate == null) {
-            return "";
-        }
-
-        return startDate.format(DateTimeFormatter.ISO_DATE);
+        return startDate == null ? "" : startDate.format(ISO_DATE);
     }
 
     public LocalDate getStartDate() {
@@ -79,11 +76,7 @@ public class SickNoteForm {
     }
 
     public String getEndDateIsoValue() {
-        if (endDate == null) {
-            return "";
-        }
-
-        return endDate.format(DateTimeFormatter.ISO_DATE);
+        return endDate == null ? "" : endDate.format(ISO_DATE);
     }
 
     public LocalDate getEndDate() {
@@ -106,12 +99,20 @@ public class SickNoteForm {
         return aubStartDate;
     }
 
+    public String getAubStartDateIsoValue() {
+        return aubStartDate == null ? "" : aubStartDate.format(ISO_DATE);
+    }
+
     public void setAubStartDate(LocalDate aubStartDate) {
         this.aubStartDate = aubStartDate;
     }
 
     public LocalDate getAubEndDate() {
         return aubEndDate;
+    }
+
+    public String getAubEndDateIsoValue() {
+        return aubEndDate == null ? "" : aubEndDate.format(ISO_DATE);
     }
 
     public void setAubEndDate(LocalDate aubEndDate) {
