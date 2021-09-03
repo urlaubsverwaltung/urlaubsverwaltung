@@ -54,6 +54,42 @@ class SickNoteFormTest {
     }
 
     @Test
+    void ensureEmptyAubStartDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setAubStartDate(null);
+
+        assertThat(sut.getAubStartDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureAubStartDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setAubStartDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(sut.getAubStartDateIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
+    void ensureEmptyAubEndDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setAubEndDate(null);
+
+        assertThat(sut.getAubEndDateIsoValue()).isEmpty();
+    }
+
+    @Test
+    void ensureAubEndDateValidFromIsoValue() {
+
+        final SickNoteForm sut = new SickNoteForm();
+        sut.setAubEndDate(LocalDate.parse("2020-10-30"));
+
+        assertThat(sut.getAubEndDateIsoValue()).isEqualTo("2020-10-30");
+    }
+
+    @Test
     void checkGeneratedSickNote() {
 
         final SickNoteForm sut = new SickNoteForm();
@@ -81,7 +117,7 @@ class SickNoteFormTest {
     }
 
     @Test
-    void checkCopyConstructur() {
+    void checkCopyConstructure() {
 
         final SickNoteForm sut = new SickNoteForm();
         sut.setId(id);
