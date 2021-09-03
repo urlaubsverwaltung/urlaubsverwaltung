@@ -1958,6 +1958,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -1977,8 +1979,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("morgen beginnt deine Urlaubsvertretung für Lieschen Müller");
-        assertThat(content).contains("Notiz: \"Some notes\"");
+        assertThat(content).contains("deine Urlaubsvertretung für Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 beginnt morgen.");
+        assertThat(content).contains("Notiz:");
+        assertThat(content).contains("Some notes");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
     }
@@ -1990,6 +1993,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("Some notes");
@@ -2008,8 +2014,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("in 3 Tagen beginnt deine Urlaubsvertretung für Lieschen Müller");
-        assertThat(content).contains("Notiz: \"Some notes\"");
+        assertThat(content).contains("deine Urlaubsvertretung für Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 beginnt in 3 Tagen.");
+        assertThat(content).contains("Notiz:");
+        assertThat(content).contains("Some notes");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
     }
@@ -2021,6 +2028,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -2039,7 +2048,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo replacement holiday");
-        assertThat(content).contains("morgen beginnt deine Urlaubsvertretung für Lieschen Müller");
+        assertThat(content).contains("deine Urlaubsvertretung für Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 beginnt morgen.");
         assertThat(content).doesNotContain("Notiz:");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application#holiday-replacement");
