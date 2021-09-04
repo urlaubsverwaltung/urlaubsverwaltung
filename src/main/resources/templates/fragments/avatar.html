@@ -18,11 +18,10 @@
   onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
 />
 
-<span
-  th:fragment="avatar-bordered(url,username,width,height)"
-  class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1 tw-inline-block"
->
-  <img src="#" alt="" th:replace="::avatar(${url},${username},${width},${height})" />
+<span th:fragment="avatar-bordered(url,username,width,height)">
+  <span class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1 tw-inline-block">
+    <img src="#" alt="" th:replace="::avatar(${url},${username},${width},${height})" />
+  </span>
 </span>
 
 </body>
