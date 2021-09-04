@@ -10,18 +10,16 @@
   th:fragment="section-heading(headingBody, headingActions, headingBelow)"
   class="section-heading tw-mb-4 lg:tw-mb-6"
 >
-  <div class="">
-    <div class="tw-flex tw-items-baseline tw-border-b">
-      <div class="tw-flex-1 tw-text-2xl tw-leading-5 tw-flex tw-items-baseline tw-flex-wrap tw-space-x-1">
-        <th:block th:replace="${headingBody}"></th:block>
-      </div>
-      <div class="section-heading-actions print:tw-hidden tw-flex" th:if="${headingActions}">
-        <th:block th:replace="${headingActions}"></th:block>
-      </div>
+  <div class="tw-flex tw-flex-col-reverse tw-gap-4 sm:tw-flex-row tw-items-baseline tw-border-b">
+    <div class="tw-flex-1 tw-text-2xl tw-leading-5 tw-flex tw-items-baseline tw-flex-wrap tw-space-x-1">
+      <th:block th:replace="${headingBody}"></th:block>
     </div>
-    <div class="tw-mt-2" th:if="${headingBelow}">
-      <th:block th:replace="${headingBelow}"></th:block>
+    <div class="tw-self-end sm:tw-self-auto print:tw-hidden tw-flex tw-gap-2" th:if="${headingActions}">
+      <th:block th:replace="${headingActions}"></th:block>
     </div>
+  </div>
+  <div class="tw-mt-2" th:if="${headingBelow}">
+    <th:block th:replace="${headingBelow}"></th:block>
   </div>
 </div>
 

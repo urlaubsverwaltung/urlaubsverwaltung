@@ -54,9 +54,9 @@
           <a href="#" th:replace="fragments/print::button"></a>
         </th:block>
         <th:block th:ref="user-applications-heading-body">
-          <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-space-x-8" is="uv-nav-tabs">
+          <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0" is="uv-nav-tabs">
             <li
-              class="tw-border-b-4"
+              class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'application' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
               data-content="#user-applications-block"
               th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
@@ -71,7 +71,7 @@
               </a>
             </li>
             <li
-              class="tw-border-b-4"
+              class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'replacement' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
               data-content="#user-replacements-block"
               th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
@@ -79,11 +79,11 @@
               <a
                 href="#user-replacements-block"
                 th:href="@{/web/application/replacement}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost tw-flex tw-items-center tw-gap-2"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost tw-gap-2"
                 th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
               >
                 <th:block th:text="#{applications.holiday_replacement}" />
-                <span class="tw-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5">
+                <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw-transform tw--translate-y-0.5">
                   <th:block th:text="${#lists.size(applications_holiday_replacements)}" />
                 </span>
               </a>

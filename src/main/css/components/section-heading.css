@@ -8,7 +8,3 @@
   @apply tw-font-normal;
   @apply tw-m-0;
 }
-
-.section-heading-actions a:not(:last-of-type) {
-  @apply tw-mr-2;
-}
