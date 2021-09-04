@@ -112,6 +112,7 @@
             <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
               <img
                 th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+                alt=""
               />
               <span class="tw-flex tw-flex-wrap lg:tw-flex-col">
                 <span class="tw-text-lg">
@@ -230,6 +231,7 @@
             <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
               <img
                 th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+                alt=""
               />
               <span class="tw-flex tw-flex-wrap md:tw-flex-col">
                 <span class="tw-text-lg">
@@ -257,6 +259,7 @@
                 <div class="tw-self-center print:tw-hidden">
                   <img
                     th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=mm&s=104'},username=${replacementInfo.person.name},width='52px',height='52px')"
+                    alt=""
                   />
                 </div>
                 <div class="tw-flex-1">
@@ -314,6 +317,7 @@
               <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 print:tw-hidden is-centered">
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=mm&s=40'},username=${otherRequestForLeave.person.name},width='40px',height='40px')"
+                  alt=""
                 />
               </td>
               <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 tw-hidden md:tw-table-cell print:tw-table-cell">
@@ -401,6 +405,7 @@
               <td class="print:tw-hidden is-centered">
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=mm&s=40'},username=${cancellationRequest.person.name},width='40px',height='40px')"
+                  alt=""
                 />
               </td>
               <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
