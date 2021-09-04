@@ -10,17 +10,17 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 @Component
-class AssetFilenameHashMapper {
+public class AssetFilenameHashMapper {
 
     private static final String ASSETS_MANIFEST_FILE = "WEB-INF/assets-manifest.json";
 
     private final ResourceLoader resourceLoader;
 
-    AssetFilenameHashMapper(ResourceLoader resourceLoader) {
+    public AssetFilenameHashMapper(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    String getHashedAssetFilename(String assetNameWithoutHash) {
+    public String getHashedAssetFilename(String assetNameWithoutHash) {
 
         InputStream manifestFileStream = getManifestFile();
         HashMap<String, String> assets = getAssets(manifestFileStream);

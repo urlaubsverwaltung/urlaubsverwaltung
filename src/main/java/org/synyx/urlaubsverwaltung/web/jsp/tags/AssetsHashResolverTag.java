@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.web.jsp.tags;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 import org.springframework.web.servlet.tags.UrlTag;
+import org.synyx.urlaubsverwaltung.web.thymeleaf.AssetFilenameHashMapper;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
