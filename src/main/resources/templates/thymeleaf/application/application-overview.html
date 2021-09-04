@@ -82,7 +82,7 @@
                 class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost tw-flex tw-items-center tw-gap-2"
                 th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
               >
-                Meine anstehenden Vertretungen
+                <th:block th:text="#{applications.holiday_replacement}" />
                 <span class="tw-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5">
                   <th:block th:text="${#lists.size(applications_holiday_replacements)}" />
                 </span>
