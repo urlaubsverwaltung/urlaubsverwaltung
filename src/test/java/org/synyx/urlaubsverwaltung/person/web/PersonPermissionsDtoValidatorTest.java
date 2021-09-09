@@ -103,7 +103,7 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setPermissions(asList(USER, OFFICE, DEPARTMENT_HEAD));
 
         sut.validatePermissions(personPermissionsDto, errors);
-        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination.departmentHead");
     }
 
     @Test
@@ -113,7 +113,7 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setPermissions(asList(USER, OFFICE, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
-        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination.secondStage");
     }
 
     @Test
@@ -123,7 +123,7 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setPermissions(asList(USER, BOSS, DEPARTMENT_HEAD));
 
         sut.validatePermissions(personPermissionsDto, errors);
-        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination.departmentHead");
     }
 
     @Test
@@ -133,7 +133,7 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setPermissions(asList(USER, BOSS, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
-        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination");
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination.secondStage");
     }
 
     @Test
