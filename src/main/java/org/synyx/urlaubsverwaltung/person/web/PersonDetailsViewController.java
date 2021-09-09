@@ -49,7 +49,7 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
  */
 @Controller
 @RequestMapping("/web")
-public class PersonViewController {
+public class PersonDetailsViewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String PERSONS_ATTRIBUTE = "persons";
@@ -64,9 +64,9 @@ public class PersonViewController {
     private final Clock clock;
 
     @Autowired
-    public PersonViewController(PersonService personService, AccountService accountService,
-                                VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                WorkingTimeService workingTimeService, SettingsService settingsService, Clock clock) {
+    public PersonDetailsViewController(PersonService personService, AccountService accountService,
+                                       VacationDaysService vacationDaysService, DepartmentService departmentService,
+                                       WorkingTimeService workingTimeService, SettingsService settingsService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
