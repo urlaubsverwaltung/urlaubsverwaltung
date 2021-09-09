@@ -67,6 +67,16 @@ class PersonPermissionsDtoValidatorTest {
     }
 
     @Test
+    void ensureAtLeastOneRoleMustBeSelectedButNull() {
+
+        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
+        personPermissionsDto.setPermissions(null);
+
+        sut.validatePermissions(personPermissionsDto, errors);
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.mandatory");
+    }
+
+    @Test
     void ensureIfSelectedInactiveAsRoleNoOtherRoleCanBeSelected() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
@@ -173,6 +183,16 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setPermissions(asList(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureNoErrorInNotificationsIfPermissionsNotGiven() {
+
+        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
+        personPermissionsDto.setPermissions(null);
+
+        sut.validateNotifications(personPermissionsDto, errors);
         verifyNoInteractions(errors);
     }
 
