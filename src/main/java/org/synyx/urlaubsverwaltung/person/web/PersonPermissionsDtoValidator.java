@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Collection;
@@ -23,7 +22,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
 /**
- * This class validate if master data of a {@link Person} is filled correctly.
+ * This class validate if permissions and notifications of a {@link PersonPermissionsDto} is filled correctly.
  */
 @Component
 class PersonPermissionsDtoValidator implements Validator {
