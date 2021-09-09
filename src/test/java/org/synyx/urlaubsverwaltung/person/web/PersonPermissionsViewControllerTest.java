@@ -59,14 +59,14 @@ class PersonPermissionsViewControllerTest {
         final Person personWithGivenId = personWithId(PERSON_ID);
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithGivenId));
 
-        perform(get("/web/person/" + PERSON_ID + "/edit"))
+        perform(get("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(model().attribute("person", hasProperty("id", is(PERSON_ID))));
     }
 
     @Test
     void showPersonPermissionsAndNotificationsForUnknownIdThrowsUnknownPersonException() {
         assertThatThrownBy(() ->
-            perform(get("/web/person/" + UNKNOWN_PERSON_ID + "/edit"))
+            perform(get("/web/person/" + UNKNOWN_PERSON_ID + "/permissions"))
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
@@ -81,7 +81,7 @@ class PersonPermissionsViewControllerTest {
         when(departmentService.getManagedDepartmentsOfDepartmentHead(any())).thenReturn(departments);
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(any())).thenReturn(secondStageDepartments);
 
-        perform(get("/web/person/" + PERSON_ID + "/edit"))
+        perform(get("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(model().attribute("departments", departments))
             .andExpect(model().attribute("secondStageDepartments", secondStageDepartments));
     }
@@ -90,8 +90,14 @@ class PersonPermissionsViewControllerTest {
     void showPersonPermissionsAndNotificationsUsesNewPersonUsesCorrectView() throws Exception {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
+        perform(get("/web/person/" + PERSON_ID + "/permissions"))
+            .andExpect(view().name("person/person_permissions"));
+    }
+
+    @Test
+    void showPersonPermissionsAndNotificationsUsesRedirectFromEdit() throws Exception {
         perform(get("/web/person/" + PERSON_ID + "/edit"))
-            .andExpect(view().name("person/person_form"));
+            .andExpect(view().name("redirect:/web/person/1/permissions"));
     }
 
     @Test
@@ -100,7 +106,7 @@ class PersonPermissionsViewControllerTest {
         final Person person = new Person("username", "Meier", "Nina", "nina@inter.net");
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
 
-        perform(post("/web/person/" + PERSON_ID + "/edit")
+        perform(post("/web/person/" + PERSON_ID + "/permissions")
             .param("id", "1")
             .param("permissions[0]", "USER")
             .param("permissions[1]", "OFFICE")
@@ -118,15 +124,15 @@ class PersonPermissionsViewControllerTest {
             return null;
         }).when(validator).validate(any(), any());
 
-        perform(post("/web/person/" + PERSON_ID + "/edit"))
-            .andExpect(view().name("person/person_form"));
+        perform(post("/web/person/" + PERSON_ID + "/permissions"))
+            .andExpect(view().name("person/person_permissions"));
     }
 
     @Test
     void editPersonPermissionsAndNotificationsAddsFlashAttribute() throws Exception {
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
 
-        perform(post("/web/person/" + PERSON_ID + "/edit"))
+        perform(post("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(flash().attribute("updateSuccess", true));
     }
 
@@ -135,7 +141,7 @@ class PersonPermissionsViewControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
 
-        perform(post("/web/person/" + PERSON_ID + "/edit"))
+        perform(post("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/person/" + PERSON_ID));
     }
@@ -146,7 +152,7 @@ class PersonPermissionsViewControllerTest {
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
-            perform(post("/web/person/" + PERSON_ID + "/edit"))
+            perform(post("/web/person/" + PERSON_ID + "/permissions"))
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 

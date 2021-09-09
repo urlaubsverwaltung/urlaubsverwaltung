@@ -37,6 +37,13 @@ public class PersonPermissionsViewController {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/edit")
+    @Deprecated(forRemoval = true)
+    public String redirectFromEditToPermissions(@PathVariable("personId") Integer personId) {
+        return "redirect:/web/person/" + personId + "/permissions";
+    }
+
+    @PreAuthorize(IS_OFFICE)
+    @GetMapping("/person/{personId}/permissions")
     public String showPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -45,18 +52,18 @@ public class PersonPermissionsViewController {
         model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
-        return "person/person_form";
+        return "person/person_permissions";
     }
 
     @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person/{personId}/edit")
+    @PostMapping("/person/{personId}/permissions")
     public String editPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId,
-                             @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                                        @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         validator.validate(personPermissionsDto, errors);
 
         if (errors.hasErrors()) {
-            return "person/person_form";
+            return "person/person_permissions";
         }
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));

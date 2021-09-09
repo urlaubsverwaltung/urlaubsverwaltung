@@ -50,7 +50,7 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <sec:authorize access="hasAuthority('OFFICE')">
-                            <a href="${URL_PREFIX}/person/${person.id}/edit" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <a href="${URL_PREFIX}/person/${person.id}/permissions" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </sec:authorize>

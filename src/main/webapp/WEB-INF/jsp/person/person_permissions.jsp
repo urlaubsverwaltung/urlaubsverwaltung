@@ -25,7 +25,7 @@
 <div class="content">
     <div class="container">
 
-        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/edit" modelAttribute="person" class="form-horizontal">
+        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/permissions" modelAttribute="person" class="form-horizontal">
             <form:hidden path="id"/>
 
             <div class="form-section tw-mb-16">
