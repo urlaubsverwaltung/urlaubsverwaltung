@@ -27,75 +27,11 @@
 
         <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/edit" modelAttribute="person" class="form-horizontal">
             <form:hidden path="id"/>
-            <form:hidden path="password"/>
-
-            <div class="form-section tw-mb-8">
-                <uv:section-heading>
-                    <h1>
-                        <spring:message code="person.form.data.title"/>
-                    </h1>
-                </uv:section-heading>
-
-                <div class="row">
-                    <div class="col-md-4 col-md-push-8">
-                        <span class="help-block tw-text-sm">
-                            <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
-                            <spring:message code="person.form.data.description"/>
-                        </span>
-                    </div>
-                    <div class="col-md-8 col-md-pull-4">
-                        <div class="form-group">
-                            <label class="control-label col-md-3" for="username">
-                                <spring:message code="person.form.data.login"/>:
-                            </label>
-                            <div class="col-md-9">
-                                <form:input path="username" class="form-control" disabled="true"/>
-                                <form:hidden path="username" value="${person.username}"/>
-                                <form:errors path="username"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="firstName">
-                                <spring:message code="person.form.data.firstName"/>:
-                            </label>
-                            <div class="col-md-9">
-                                <form:input path="firstName" class="form-control" disabled="true"/>
-                                <form:hidden path="firstName" value="${person.firstName}"/>
-                                <form:errors path="firstName"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="lastName">
-                                <spring:message code="person.form.data.lastName"/>:
-                            </label>
-                            <div class="col-md-9">
-                                <form:input path="lastName" class="form-control" disabled="true"/>
-                                <form:hidden path="lastName" value="${person.lastName}"/>
-                                <form:errors path="lastName"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group is-required">
-                            <label class="control-label col-md-3" for="email">
-                                <spring:message code="person.form.data.email"/>:
-                            </label>
-                            <div class="col-md-9">
-                                <form:input path="email" class="form-control" disabled="true"/>
-                                <form:hidden path="email" value="${person.email}"/>
-                                <form:errors path="email"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
             <div class="form-section tw-mb-16">
                 <uv:section-heading>
                     <h2>
-                        <spring:message code="person.form.permissions.title"/>
+                        <spring:message code="person.form.permissions.title" arguments="${person.niceName}"/>
                     </h2>
                 </uv:section-heading>
 

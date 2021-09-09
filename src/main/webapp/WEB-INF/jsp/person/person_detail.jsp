@@ -57,7 +57,7 @@
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
-                            <spring:message code="person.form.permissions.title"/>
+                            <spring:message code="person.details.permissions.title"/>
                         </h2>
                     </jsp:body>
                 </uv:section-heading>
