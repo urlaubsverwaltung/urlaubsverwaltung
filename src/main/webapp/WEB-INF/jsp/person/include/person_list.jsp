@@ -141,7 +141,7 @@
                 <td class="hidden-xs">
                     <div class="print:tw-hidden">
                         <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/person/${person.id}">
-                            <icon:document-text className="tw-w-5 tw-h-5 tw-mr-1" />
+                            <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1" />
                             <spring:message code="action.details" />
                         </a>
                     </div>
