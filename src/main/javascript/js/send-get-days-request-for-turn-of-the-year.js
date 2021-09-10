@@ -15,7 +15,7 @@ export default async function sendGetDaysRequestForTurnOfTheYear(
   const element = document.querySelector(elementSelector);
   element.innerHTML = "";
 
-  if ((!startDate && !toDate) || isAfter(startDate, toDate)) {
+  if ((!personId && !startDate && !toDate) || isAfter(startDate, toDate)) {
     return;
   }
 
