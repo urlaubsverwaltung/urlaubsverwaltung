@@ -41,7 +41,7 @@ duet-date-picker.error {
 
 /* override styling for selected or currently focused day */
 .duet-date__day.datepicker-day:focus,
-.duet-date__day.datepicker-day[aria-pressed='true'] {
+.duet-date__day.datepicker-day[aria-pressed="true"] {
   background: var(--duet-color-primary);
   color: var(--duet-color-text-active);
   box-shadow: 0 0 5px var(--duet-color-primary);
