@@ -13,15 +13,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
     return;
   }
 
-  const startDateString = format(startDate, "yyyy-MM-dd");
-  const toDateString = format(toDate, "yyyy-MM-dd");
-  let url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDateString + "&to=" + toDateString;
-  if (dayLength) {
-    url = url + "&length=" + dayLength;
-  }
-
-  const data = await getJSON(url);
-  const workDays = data.workDays;
+  const workDays = await getWorkdaysForDateRange(urlPrefix, dayLength, personId, startDate, toDate);
 
   let text;
 
@@ -50,4 +42,16 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
       `${elementSelector} .days-turn-of-the-year`,
     );
   }
+}
+
+async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate, toDate) {
+  const startDate = format(fromDate, "yyyy-MM-dd");
+  const endDate = format(toDate, "yyyy-MM-dd");
+  let url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDate + "&to=" + endDate;
+  if (dayLength) {
+    url = url + "&length=" + dayLength;
+  }
+
+  const json = await getJSON(url);
+  return json.workDays;
 }
