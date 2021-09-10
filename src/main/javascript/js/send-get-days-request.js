@@ -15,16 +15,10 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
 
   const startDateString = format(startDate, "yyyy-MM-dd");
   const toDateString = format(toDate, "yyyy-MM-dd");
-  const url =
-    urlPrefix +
-    "/persons/" +
-    personId +
-    "/workdays?from=" +
-    startDateString +
-    "&to=" +
-    toDateString +
-    "&length=" +
-    dayLength;
+  let url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDateString + "&to=" + toDateString;
+  if (dayLength) {
+    url = url + "&length=" + dayLength;
+  }
 
   const data = await getJSON(url);
   const workDays = data.workDays;
