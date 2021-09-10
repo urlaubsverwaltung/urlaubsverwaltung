@@ -9,11 +9,7 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
   const element = document.querySelector(elementSelector);
   element.innerHTML = "";
 
-  if (!startDate && !toDate) {
-    return;
-  }
-
-  if (isAfter(startDate, toDate)) {
+  if ((!startDate && !toDate) || isAfter(startDate, toDate)) {
     return;
   }
 

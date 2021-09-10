@@ -49,15 +49,8 @@ $(document).ready(async function () {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);
 
-    sendGetDaysRequest(
-      urlPrefix,
-      startDate,
-      endDate,
-      $("input:radio[name=dayLength]:checked").val(),
-      personId,
-      ".days",
-    );
-
+    let dayLength = $("input:radio[name=dayLength]:checked").val();
+    sendGetDaysRequest(urlPrefix, startDate, endDate, dayLength, personId, ".days");
     sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
   }
 
