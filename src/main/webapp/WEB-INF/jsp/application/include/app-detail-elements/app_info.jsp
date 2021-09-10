@@ -90,10 +90,10 @@
                 <uv:number number="${application.workDays}"/> <spring:message code="duration.days"/>
             </strong>
             <c:if test="${application.startDate.year != application.endDate.year}">
-            <span class="text-muted days">
-                <%-- filled by javascript --%>
-                <%-- see app_info.js --%>
-            </span>
+                <span class="text-muted days">
+                    <%-- filled by javascript --%>
+                    <%-- see app_info.js --%>
+                </span>
             </c:if>
             <c:if test="${application.vacationType.category == 'OVERTIME' && application.hours != null}">
                 <span class="text-muted">
