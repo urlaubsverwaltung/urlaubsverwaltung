@@ -274,7 +274,7 @@
                                             <icon:user-circle className="tw-h-6 tw-w-6" />
                                         </span>
                                         <span class="tw-ml-4 tw-text-base">
-                                            <spring:message code="nav.details.title" />
+                                            <spring:message code="nav.account.title" />
                                         </span>
                                     </a>
                                 </li>
