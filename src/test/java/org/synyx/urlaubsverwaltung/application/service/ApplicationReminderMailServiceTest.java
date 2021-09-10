@@ -4,6 +4,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
@@ -129,15 +130,20 @@ class ApplicationReminderMailServiceTest {
         final ApplicationSettings applicationSettings = prepareSettingsWithRemindForUpcomingHolidayReplacements(true);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate localDate = LocalDate.now(clock).plusDays(applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
+        final LocalDate now = LocalDate.now(clock);
+        final LocalDate to = now.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
 
         final Application tomorrowApplication = createApplication(person, createVacationType(HOLIDAY));
-        tomorrowApplication.setApplicationDate(localDate);
+        tomorrowApplication.setApplicationDate(to);
 
-        when(applicationService.getApplicationsWithStartDateAndStateAndHolidayReplacementIsNotEmpty(localDate, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
+        when(applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(now, to, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
 
         sut.sendUpcomingHolidayReplacementReminderNotification();
         verify(applicationMailService).sendRemindForUpcomingHolidayReplacement(List.of(tomorrowApplication), applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+
+        final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
+        verify(applicationService).save(applicationArgumentCaptor.capture());
+        assertThat(applicationArgumentCaptor.getAllValues().get(0).getUpcomingHolidayReplacementNotificationSend()).isEqualTo(now);
     }
 
     @Test

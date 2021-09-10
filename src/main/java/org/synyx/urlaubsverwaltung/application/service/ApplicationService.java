@@ -65,13 +65,14 @@ public interface ApplicationService {
     List<Application> getApplicationsWithStartDateAndState(LocalDate startDate, List<ApplicationStatus> statuses);
 
     /**
-     * Gets all {@link Application}s that have the given start date and the given state and at least one holiday replacement
+     * Gets all {@link Application}s where the holiday replacement should be notified.
      *
-     * @param startDate {@link LocalDate}
-     * @param statuses  {@link ApplicationStatus}
-     * @return all {@link Application}s with the given states and startDate and at least one holiday replacement
+     * @param from defines the start as {@link LocalDate} of a period that should be considered
+     * @param to defines the end as {@link LocalDate} of a period that should be considered
+     * @param statuses  {@link ApplicationStatus} that should be filtered for
+     * @return all {@link Application}s where the given params match and
      */
-    List<Application> getApplicationsWithStartDateAndStateAndHolidayReplacementIsNotEmpty(LocalDate startDate, List<ApplicationStatus> statuses);
+    List<Application> getApplicationsWhereHolidayReplacementShouldBeNotified(LocalDate from, LocalDate to, List<ApplicationStatus> statuses);
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and

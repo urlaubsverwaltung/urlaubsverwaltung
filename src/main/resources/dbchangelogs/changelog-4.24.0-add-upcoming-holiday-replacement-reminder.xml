@@ -4,7 +4,6 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
 
   <changeSet author="schneider" id="upcoming-holiday-replacement-reminder">
-
     <preConditions>
       <tableExists tableName="settings"/>
       <not>
@@ -24,6 +23,18 @@
         <constraints nullable="false"/>
       </column>
     </addColumn>
+  </changeSet>
 
+  <changeSet author="schneider" id="add_upcoming_holiday_replacement_notification_send">
+    <preConditions>
+      <tableExists tableName="application"/>
+      <not>
+        <columnExists tableName="application" columnName="upcoming_holiday_replacement_notification_send"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="application">
+      <column name="upcoming_holiday_replacement_notification_send" type="date"/>
+    </addColumn>
   </changeSet>
 </databaseChangeLog>

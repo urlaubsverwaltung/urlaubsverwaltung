@@ -21,7 +21,7 @@ public interface ApplicationRepository extends CrudRepository<Application, Integ
 
     List<Application> findByStatusInAndStartDate(List<ApplicationStatus> statuses, LocalDate startDate);
 
-    List<Application> findByStatusInAndStartDateAndHolidayReplacementsIsNotEmpty(List<ApplicationStatus> statuses, LocalDate startDate);
+    List<Application> findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(List<ApplicationStatus> statuses, LocalDate from, LocalDate to);
 
     List<Application> findByStatusInAndEndDateGreaterThanEqual(List<ApplicationStatus> statuses, LocalDate since);
 

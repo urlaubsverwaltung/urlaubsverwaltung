@@ -500,6 +500,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         // yesterday
         final LocalDate yesterdayDates = LocalDate.of(2020, 5, 3);
         final Application yesterdayApplication = createApplication(savedPerson, getVacationType(HOLIDAY), yesterdayDates, yesterdayDates, FULL);
+        yesterdayApplication.setHolidayReplacements(List.of(holidayReplacement));
         yesterdayApplication.setStatus(ALLOWED);
         sut.save(yesterdayApplication);
 
@@ -531,13 +532,28 @@ class ApplicationRepositoryIT extends TestContainersBase {
         tomorrowTemporaryAllowedDateApplication.setHolidayReplacements(List.of(holidayReplacement));
         sut.save(tomorrowTemporaryAllowedDateApplication);
 
+        final Application tomorrowDateApplicationAlreadySend = createApplication(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
+        tomorrowDateApplicationAlreadySend.setStatus(TEMPORARY_ALLOWED);
+        tomorrowDateApplicationAlreadySend.setHolidayReplacements(List.of(holidayReplacement));
+        tomorrowDateApplicationAlreadySend.setUpcomingHolidayReplacementNotificationSend(tomorrowAllowedDates);
+        sut.save(tomorrowDateApplicationAlreadySend);
+
         final Application tomorrowWaitingDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), tomorrowAllowedDates, tomorrowAllowedDates, FULL);
         tomorrowWaitingDateApplication.setStatus(WAITING);
         sut.save(tomorrowWaitingDateApplication);
 
-        final LocalDate requestedStartDate = LocalDate.of(2020, 5, 5);
+        // day after tomorrow
+        final LocalDate dayAfterTomorrowAllowedDates = LocalDate.of(2020, 5, 6);
+
+        final Application dayAfterTomorrowDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), dayAfterTomorrowAllowedDates, dayAfterTomorrowAllowedDates, FULL);
+        dayAfterTomorrowDateApplication.setHolidayReplacements(List.of(holidayReplacement));
+        dayAfterTomorrowDateApplication.setStatus(ALLOWED);
+        sut.save(dayAfterTomorrowDateApplication);
+
+        final LocalDate requestedStartDateFrom = LocalDate.of(2020, 5, 4);
+        final LocalDate requestedStartDateTo = LocalDate.of(2020, 5, 5);
         final List<ApplicationStatus> requestStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
-        final List<Application> applications = sut.findByStatusInAndStartDateAndHolidayReplacementsIsNotEmpty(requestStatuses, requestedStartDate);
+        final List<Application> applications = sut.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(requestStatuses, requestedStartDateFrom, requestedStartDateTo);
         assertThat(applications)
             .containsOnly(tomorrowDateApplication, tomorrowCancellationRequestDateApplication, tomorrowTemporaryAllowedDateApplication);
     }
