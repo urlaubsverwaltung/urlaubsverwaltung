@@ -159,7 +159,7 @@
                                                 data-test-id="quick-add-new-application"
                                             >
                                                 <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
-                                                    <icon:document-text className="tw-h-5 tw-w-5" />
+                                                    <icon:calendar className="tw-h-5 tw-w-5" />
                                                 </span>
                                                 <span class="tw-ml-3">
                                                     <spring:message code="nav.add.vacation" />
@@ -192,7 +192,7 @@
                                                     data-test-id="quick-add-new-overtime"
                                                 >
                                                     <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
-                                                        <icon:clock className="tw-h-5 tw-w-5" />
+                                                        <icon:briefcase className="tw-h-5 tw-w-5" />
                                                     </span>
                                                     <span class="tw-ml-3">
                                                         <spring:message code="nav.add.overtime" />
