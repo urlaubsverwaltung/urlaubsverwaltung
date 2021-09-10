@@ -3,7 +3,7 @@
 import { isAfter, format, getYear } from "date-fns";
 import formatNumber from "./format-number";
 import sendGetDaysRequestForTurnOfTheYear from "./send-get-days-request-for-turn-of-the-year";
-import { getJSON } from "../js/fetch";
+import { getJSON } from "./fetch";
 
 export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
   const element = document.querySelector(elementSelector);

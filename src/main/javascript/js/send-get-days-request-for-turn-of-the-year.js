@@ -2,7 +2,7 @@
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import { isAfter, getYear, format, endOfYear, startOfYear } from "date-fns";
 import formatNumber from "./format-number";
-import { getJSON } from "../js/fetch";
+import { getJSON } from "./fetch";
 
 export default async function sendGetDaysRequestForTurnOfTheYear(
   urlPrefix,
@@ -55,6 +55,5 @@ async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate,
     urlPrefix + "/persons/" + personId + "/workdays?from=" + startDate + "&to=" + endDate + "&length=" + dayLength;
 
   const json = await getJSON(url);
-
   return json.workDays;
 }
