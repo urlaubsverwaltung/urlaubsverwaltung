@@ -27,6 +27,7 @@
 
         <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/permissions" modelAttribute="person" class="form-horizontal">
             <form:hidden path="id"/>
+            <form:hidden path="niceName"/>
 
             <div class="form-section tw-mb-16">
                 <uv:section-heading>
