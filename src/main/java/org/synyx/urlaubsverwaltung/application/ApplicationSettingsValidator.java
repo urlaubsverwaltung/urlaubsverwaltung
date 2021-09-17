@@ -27,6 +27,13 @@ public class ApplicationSettingsValidator {
             errors.rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", ERROR_INVALID_ENTRY);
         }
 
+        final Integer daysBeforeRemindForUpcomingHolidayReplacement = applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement();
+        if (daysBeforeRemindForUpcomingHolidayReplacement == null) {
+            errors.rejectValue("applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement", ERROR_MANDATORY_FIELD);
+        } else if (daysBeforeRemindForUpcomingHolidayReplacement <= 0) {
+            errors.rejectValue("applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement", ERROR_INVALID_ENTRY);
+        }
+
         final Integer daysBeforeRemindForUpcomingApplications = applicationSettings.getDaysBeforeRemindForUpcomingApplications();
         if (daysBeforeRemindForUpcomingApplications == null) {
             errors.rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", ERROR_MANDATORY_FIELD);

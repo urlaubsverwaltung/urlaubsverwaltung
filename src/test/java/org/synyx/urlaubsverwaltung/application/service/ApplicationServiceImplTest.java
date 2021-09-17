@@ -146,4 +146,17 @@ class ApplicationServiceImplTest {
         final List<Application> holidayReplacementApplications = sut.getApplicationsWithStartDateAndState(startDate, statuses);
         assertThat(holidayReplacementApplications).hasSize(1).contains(application);
     }
+
+    @Test
+    void getApplicationsWhereHolidayReplacementShouldBeNotified() {
+        final LocalDate from = LocalDate.of(2020, 10, 1);
+        final LocalDate to = LocalDate.of(2020, 10, 3);
+
+        final Application application = new Application();
+        final List<ApplicationStatus> statuses = List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        when(applicationRepository.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(statuses, from, to)).thenReturn(List.of(application));
+
+        final List<Application> holidayReplacementApplications = sut.getApplicationsWhereHolidayReplacementShouldBeNotified(from, to, statuses);
+        assertThat(holidayReplacementApplications).hasSize(1).contains(application);
+    }
 }

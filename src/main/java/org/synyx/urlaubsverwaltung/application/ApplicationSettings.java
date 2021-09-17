@@ -35,9 +35,19 @@ public class ApplicationSettings {
     private boolean remindForUpcomingApplications = false;
 
     /**
-     * Specifies when a reminder for upcoming application should be send
+     * Specifies when a reminder for upcoming application should be sent
      */
     private Integer daysBeforeRemindForUpcomingApplications = 3;
+
+    /**
+     * Activates a notification after {daysBeforeRemindForUpcomingHolidayReplacement} days for upcoming holiday replacement
+     */
+    private boolean remindForUpcomingHolidayReplacement = false;
+
+    /**
+     * Specifies when a reminder for upcoming holiday replacement should be sent
+     */
+    private Integer daysBeforeRemindForUpcomingHolidayReplacement = 3;
 
     public Integer getMaximumMonthsToApplyForLeaveInAdvance() {
         return maximumMonthsToApplyForLeaveInAdvance;
@@ -85,5 +95,21 @@ public class ApplicationSettings {
 
     public void setDaysBeforeRemindForUpcomingApplications(Integer daysBeforeRemindForUpcomingApplications) {
         this.daysBeforeRemindForUpcomingApplications = daysBeforeRemindForUpcomingApplications;
+    }
+
+    public boolean isRemindForUpcomingHolidayReplacement() {
+        return remindForUpcomingHolidayReplacement;
+    }
+
+    public void setRemindForUpcomingHolidayReplacement(boolean remindForHolidayReplacementApplications) {
+        this.remindForUpcomingHolidayReplacement = remindForHolidayReplacementApplications;
+    }
+
+    public Integer getDaysBeforeRemindForUpcomingHolidayReplacement() {
+        return daysBeforeRemindForUpcomingHolidayReplacement;
+    }
+
+    public void setDaysBeforeRemindForUpcomingHolidayReplacement(Integer daysBeforeRemindForUpcomingHolidayReplacement) {
+        this.daysBeforeRemindForUpcomingHolidayReplacement = daysBeforeRemindForUpcomingHolidayReplacement;
     }
 }

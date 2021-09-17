@@ -1,0 +1,40 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="upcoming-holiday-replacement-reminder">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <not>
+        <columnExists tableName="settings" columnName="remind_for_upcoming_holiday_replacement"/>
+        <columnExists tableName="settings" columnName="days_before_remind_for_upcoming_holiday_replacement"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="settings">
+      <column name="remind_for_upcoming_holiday_replacement" type="BIT(1)" defaultValue="false">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+    <addColumn tableName="settings">
+      <column name="days_before_remind_for_upcoming_holiday_replacement" type="INT(10)" defaultValue="3">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="schneider" id="add_upcoming_holiday_replacement_notification_send">
+    <preConditions>
+      <tableExists tableName="application"/>
+      <not>
+        <columnExists tableName="application" columnName="upcoming_holiday_replacement_notification_send"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="application">
+      <column name="upcoming_holiday_replacement_notification_send" type="date"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

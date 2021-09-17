@@ -160,6 +160,8 @@ public class Application {
     @Convert(converter = DurationConverter.class)
     private Duration hours;
 
+    private LocalDate upcomingHolidayReplacementNotificationSend;
+
     public Integer getId() {
         return id;
     }
@@ -330,6 +332,14 @@ public class Application {
 
     public void setHours(Duration hours) {
         this.hours = hours;
+    }
+
+    public LocalDate getUpcomingHolidayReplacementNotificationSend() {
+        return upcomingHolidayReplacementNotificationSend;
+    }
+
+    public void setUpcomingHolidayReplacementNotificationSend(LocalDate upcomingHolidayReplacementNotificationSend) {
+        this.upcomingHolidayReplacementNotificationSend = upcomingHolidayReplacementNotificationSend;
     }
 
     /**

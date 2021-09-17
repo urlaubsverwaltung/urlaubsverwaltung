@@ -590,6 +590,25 @@ class ApplicationMailService {
         }
     }
 
+    void sendRemindForUpcomingHolidayReplacement(List<Application> applications, Integer daysBeforeUpcomingHolidayReplacement){
+        for (Application application : applications) {
+            for (HolidayReplacementEntity holidayReplacement : application.getHolidayReplacements()) {
+
+                final Map<String, Object> model = new HashMap<>();
+                model.put(APPLICATION, application);
+                model.put("daysBeforeUpcomingHolidayReplacement", daysBeforeUpcomingHolidayReplacement);
+                model.put("replacementNote", holidayReplacement.getNote());
+
+                final Mail mailToUpcomingHolidayReplacement = Mail.builder()
+                    .withRecipient(holidayReplacement.getPerson())
+                    .withSubject("subject.application.remind.upcoming.holiday_replacement", application.getPerson().getNiceName())
+                    .withTemplate("remind_holiday_replacement_upcoming", model)
+                    .build();
+                mailService.send(mailToUpcomingHolidayReplacement);
+            }
+        }
+    }
+
     void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
         /*

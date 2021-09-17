@@ -78,6 +78,25 @@ class ApplicationReminderMailService {
         }
     }
 
+    void sendUpcomingHolidayReplacementReminderNotification() {
+
+        final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
+        if (applicationSettings.isRemindForUpcomingHolidayReplacement()) {
+            final LocalDate today = LocalDate.now(clock);
+            final LocalDate to = today.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
+            final List<ApplicationStatus> allowedStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
+            final List<Application> upcomingApplicationsForHolidayReplacement = applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(today, to, allowedStatuses);
+
+            applicationMailService.sendRemindForUpcomingHolidayReplacement(upcomingApplicationsForHolidayReplacement, applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
+            upcomingApplicationsForHolidayReplacement.forEach(this::markUpcomingHolidayReplacementReminderSent);
+        }
+    }
+
+    private void markUpcomingHolidayReplacementReminderSent(final Application application) {
+        application.setUpcomingHolidayReplacementNotificationSend(LocalDate.now(clock));
+        applicationService.save(application);
+    }
+
     private Predicate<Application> isLongWaitingApplications() {
         return application -> {
 

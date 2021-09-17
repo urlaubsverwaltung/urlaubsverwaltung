@@ -13,5 +13,7 @@ class ApplicationSettingsTest {
         assertThat(settings.getMaximumMonthsToApplyForLeaveInAdvance()).isEqualTo(12);
         assertThat(settings.isRemindForUpcomingApplications()).isFalse();
         assertThat(settings.getDaysBeforeRemindForUpcomingApplications()).isEqualTo(3);
+        assertThat(settings.isRemindForUpcomingHolidayReplacement()).isFalse();
+        assertThat(settings.getDaysBeforeRemindForUpcomingHolidayReplacement()).isEqualTo(3);
     }
 }
