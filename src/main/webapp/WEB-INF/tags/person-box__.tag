@@ -11,7 +11,7 @@
 
 <uv:box__ className="tw-items-center ${cssClass}">
     <jsp:attribute name="icon">
-        <uv:box-icon>
+        <div class="tw-inline-block tw-rounded-full tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-p-1">
             <img
                 src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
                 alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
@@ -20,7 +20,7 @@
                 height="60px"
                 onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
             />
-        </uv:box-icon>
+        </div>
     </jsp:attribute>
     <jsp:body>
         <div class="tw-text-lg tw-mb-1">

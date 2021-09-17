@@ -32,7 +32,7 @@
         </uv:section-heading>
 
         <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
-            <div>
+            <div class="tw-p-1">
                 <uv:avatar url="${person.gravatarURL}?d=mm&s=120" username="${person.niceName}" width="60px" height="60px" border="true" />
             </div>
             <div>
@@ -41,14 +41,12 @@
                         <c:out value="${person.niceName}"/>
                     </a>
                 </div>
-                <div>
-                    <a href="mailto:<c:out value='${person.email}'/>" class="tw-inline-block tw-text-sm print:no-link">
-                        <span class="tw-flex tw-items-center">
-                            <icon:mail className="tw-w-4 tw-h-4" />
-                            &nbsp;<c:out value="${person.email}"/>
-                        </span>
-                    </a>
-                </div>
+                <a href="mailto:<c:out value='${person.email}'/>" class="tw-text-sm print:no-link">
+                    <span class="tw-flex tw-items-center">
+                        <icon:mail className="tw-w-4 tw-h-4" />
+                        &nbsp;<c:out value="${person.email}"/>
+                    </span>
+                </a>
             </div>
         </div>
 
