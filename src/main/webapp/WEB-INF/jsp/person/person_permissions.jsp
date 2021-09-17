@@ -25,17 +25,40 @@
 <div class="content">
     <div class="container">
 
+        <uv:section-heading>
+            <h2>
+                <spring:message code="person.form.permissions.title" arguments="${person.niceName}"/>
+            </h2>
+        </uv:section-heading>
+
+        <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
+            <div>
+                <uv:avatar url="${person.gravatarURL}?d=mm&s=120" username="${person.niceName}" width="60px" height="60px" border="true" />
+            </div>
+            <div>
+                <div class="tw-mb-1">
+                    <a href="${URL_PREFIX}/person/${person.id}/overview" class="tw-text-lg print:no-link">
+                        <c:out value="${person.niceName}"/>
+                    </a>
+                </div>
+                <div>
+                    <a href="mailto:<c:out value='${person.email}'/>" class="tw-inline-block tw-text-sm print:no-link">
+                        <span class="tw-flex tw-items-center">
+                            <icon:mail className="tw-w-4 tw-h-4" />
+                            &nbsp;<c:out value="${person.email}"/>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/permissions" modelAttribute="person" class="form-horizontal">
-            <form:hidden path="id"/>
-            <form:hidden path="niceName"/>
+            <form:hidden path="id" />
+            <form:hidden path="niceName" />
+            <form:hidden path="gravatarURL" />
+            <form:hidden path="email" />
 
             <div class="form-section tw-mb-16">
-                <uv:section-heading>
-                    <h2>
-                        <spring:message code="person.form.permissions.title" arguments="${person.niceName}"/>
-                    </h2>
-                </uv:section-heading>
-
                 <div class="row">
                     <c:set var="permissionsError">
                         <form:errors path="permissions" />
@@ -66,11 +89,6 @@
 
                     <div class="col-md-8 col-md-pull-4">
                         <div class="form-group is-required">
-
-                            <label class="control-label col-md-3">
-                                <spring:message code="person.form.permissions.roles"/>:
-                            </label>
-
                             <div class="col-md-9">
 
                                 <div class="checkbox tw-pb-2 tw-mb-2">

@@ -13,6 +13,8 @@ final class PersonPermissionsMapper {
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
         personPermissionsDto.setId(person.getId());
         personPermissionsDto.setNiceName(person.getNiceName());
+        personPermissionsDto.setGravatarURL(person.getGravatarURL());
+        personPermissionsDto.setEmail(person.getEmail());
         personPermissionsDto.setPermissions(List.copyOf(person.getPermissions()));
         personPermissionsDto.setNotifications(List.copyOf(person.getNotifications()));
         return personPermissionsDto;

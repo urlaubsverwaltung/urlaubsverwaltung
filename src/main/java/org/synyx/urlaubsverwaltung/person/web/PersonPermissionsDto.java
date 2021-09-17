@@ -10,6 +10,8 @@ public class PersonPermissionsDto {
 
     private Integer id;
     private String niceName;
+    private String gravatarURL;
+    private String email;
 
     private List<Role> permissions;
     private List<MailNotification> notifications;
@@ -28,6 +30,24 @@ public class PersonPermissionsDto {
 
     public void setNiceName(String niceName) {
         this.niceName = niceName;
+    }
+
+    public String getGravatarURL() {
+        return gravatarURL;
+    }
+
+    public PersonPermissionsDto setGravatarURL(String gravatarURL) {
+        this.gravatarURL = gravatarURL;
+        return this;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public PersonPermissionsDto setEmail(String email) {
+        this.email = email;
+        return this;
     }
 
     public List<Role> getPermissions() {
