@@ -19,29 +19,15 @@ export default async function sendGetDaysRequestForTurnOfTheYear(
     return;
   }
 
-  let before;
-  let after;
-
-  if (getYear(startDate) < getYear(toDate)) {
-    before = startDate;
-    after = toDate;
-  } else {
-    before = toDate;
-    after = startDate;
-  }
-
-  // before - 31.12.
-  // 1.1.   - after
-
   const [workDaysBefore, workDaysAfter] = await Promise.all([
-    getWorkdaysForDateRange(urlPrefix, dayLength, personId, before, endOfYear(before)),
-    getWorkdaysForDateRange(urlPrefix, dayLength, personId, startOfYear(after), after),
+    getWorkdaysForDateRange(urlPrefix, dayLength, personId, startDate, endOfYear(startDate)),
+    getWorkdaysForDateRange(urlPrefix, dayLength, personId, startOfYear(toDate), toDate),
   ]);
 
   const daysBefore = formatNumber(workDaysBefore);
   const daysAfter = formatNumber(workDaysAfter);
 
-  element.innerHTML = `<br />(${daysBefore} in ${getYear(before)} und ${daysAfter} in ${getYear(after)})`;
+  element.innerHTML = `<br />(${daysBefore} in ${getYear(startDate)} und ${daysAfter} in ${getYear(toDate)})`;
 }
 
 async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate, toDate) {
