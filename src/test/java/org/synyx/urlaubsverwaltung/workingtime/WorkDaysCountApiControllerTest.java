@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Optional;
 
 import static java.time.Month.JANUARY;
@@ -179,9 +178,6 @@ class WorkDaysCountApiControllerTest {
 
     @Test
     void ensureBadRequestForInvalidLengthParameter() throws Exception {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
 
         perform(get("/api/persons/23/workdays")
             .param("from", "2016-01-01")

@@ -22,9 +22,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
@@ -73,7 +73,7 @@ public class WorkDaysCountApiController {
             LocalDate endDate,
         @Parameter(description = "Day Length")
         @RequestParam(value = "length", required = false)
-            String length) {
+            DayLength length) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
@@ -84,12 +84,7 @@ public class WorkDaysCountApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
         }
 
-        final DayLength howLong;
-        try {
-            howLong = hasText(length) ? DayLength.valueOf(length) : DayLength.FULL;
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
-        }
+        final DayLength howLong = requireNonNullElse(length, DayLength.FULL);
 
         final BigDecimal days;
         try {
