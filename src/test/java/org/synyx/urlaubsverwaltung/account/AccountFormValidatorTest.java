@@ -3,9 +3,6 @@ package org.synyx.urlaubsverwaltung.account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
@@ -14,7 +11,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.stream.Stream;
+import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -60,6 +57,15 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureAnnualVacationMustNotBeNegative() {
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(-1));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verify(errors).rejectValue("annualVacationDays", "error.entry.min", new Object[]{"0"}, "");
+    }
+
+    @Test
     void ensureAnnualVacationMustBeInteger() {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(10.1));
@@ -76,7 +82,7 @@ class AccountFormValidatorTest {
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
 
         sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(maxDays));
-        verify(errors).rejectValue("annualVacationDays", "error.entry.invalid");
+        verify(errors).rejectValue("annualVacationDays", "error.entry.max", new Object[]{"40"}, "");
     }
 
     @Test
@@ -97,13 +103,22 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureActualVacationMustNotBeNegative() {
+        final AccountForm form = new AccountForm(2013);
+        form.setActualVacationDays(BigDecimal.valueOf(-1));
+
+        sut.validateActualVacation(form, errors);
+        verify(errors).rejectValue("actualVacationDays", "error.entry.min", new Object[]{"0"}, "");
+    }
+
+    @Test
     void ensureActualVacationMustNotBeGreaterThanAnnualVacation() {
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("30"));
         form.setActualVacationDays(new BigDecimal("31"));
 
         sut.validateActualVacation(form, errors);
-        verify(errors).rejectValue("actualVacationDays", "error.entry.invalid");
+        verify(errors).rejectValue("actualVacationDays", "error.entry.max", new Object[]{"30"}, "");
     }
 
     @Test
@@ -157,9 +172,18 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureRemainingVacationDaysMustNotBeNegative() {
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDays(BigDecimal.valueOf(-1));
+
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        verify(errors).rejectValue("remainingVacationDays", "error.entry.min", new Object[]{"0"}, "");
+    }
+
+    @Test
     void ensureRemainingVacationDaysMustBeFullOrHalf() {
         final AccountForm form = new AccountForm(2013);
-        form.setRemainingVacationDays(new BigDecimal(10.3));
+        form.setRemainingVacationDays(new BigDecimal("10.3"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(11));
 
         sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
@@ -167,23 +191,52 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureRemainingVacationDaysMustNotBeGreaterThanGivenMax() {
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDays(new BigDecimal("41"));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal(10));
+
+        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        verify(errors).rejectValue("remainingVacationDays", "person.form.annualVacation.error.remainingVacationDays.tooBig", new Object[]{"40"}, "");
+    }
+
+    @Test
+    void ensureRemainingVacationDaysNotExpiringMustBeNegative() {
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDays(BigDecimal.valueOf(10));
+        form.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(-1));
+
+        sut.validateRemainingVacationDaysNotExpiring(form, errors);
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.min", new Object[]{"0"}, "");
+    }
+
+    @Test
+    void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDaysNotExpiring(null);
+
+        sut.validateRemainingVacationDaysNotExpiring(form, errors);
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
+    }
+
+    @Test
     void ensureRemainingVacationDaysNotExpiringMustBeFullOrHalf() {
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal(10));
-        form.setRemainingVacationDaysNotExpiring(new BigDecimal(10.3));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal("10.3"));
 
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        sut.validateRemainingVacationDaysNotExpiring(form, errors);
         verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.fullOrHalfNumber");
     }
 
     @Test
-    void ensureRemainingVacationDaysMustNotBeGreaterThanOneYear() {
+    void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
         final AccountForm form = new AccountForm(2013);
-        form.setRemainingVacationDays(new BigDecimal("367"));
-        form.setRemainingVacationDaysNotExpiring(new BigDecimal(10));
+        form.setRemainingVacationDays(new BigDecimal("5"));
+        form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
 
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
-        verify(errors).rejectValue("remainingVacationDays", "error.entry.invalid");
+        sut.validateRemainingVacationDaysNotExpiring(form, errors);
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "person.form.annualVacation.error.remainingVacationDaysNotExpiring.tooBig", new Object[]{"5"}, "");
     }
 
     @Test
@@ -217,25 +270,6 @@ class AccountFormValidatorTest {
     }
 
     @Test
-    void ensureRemainingVacationDaysNotExpiringMustNotBeNull() {
-        final AccountForm form = new AccountForm(2013);
-        form.setRemainingVacationDaysNotExpiring(null);
-
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
-        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
-    }
-
-    @Test
-    void ensureRemainingVacationDaysNotExpiringMustNotBeGreaterThanRemainingVacationDays() {
-        final AccountForm form = new AccountForm(2013);
-        form.setRemainingVacationDays(new BigDecimal("5"));
-        form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
-
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
-        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.invalid");
-    }
-
-    @Test
     void ensureHolidaysAccountValidFromMustNotBeNull() {
         final AccountForm form = new AccountForm(2013);
         form.setHolidaysAccountValidFrom(null);
@@ -253,23 +287,46 @@ class AccountFormValidatorTest {
         verify(errors).rejectValue("holidaysAccountValidTo", "error.entry.mandatory");
     }
 
-    private static Stream<Arguments> fromDateBeforeToDate() {
-        return Stream.of(
-            Arguments.of(2013, LocalDate.of(2013, 5, 1), LocalDate.of(2013, 1, 1)),
-            Arguments.of(2013, LocalDate.of(2013, 5, 1), LocalDate.of(2013, 5, 1)),
-            Arguments.of(2014, LocalDate.of(2013, 1, 1), LocalDate.of(2013, 5, 1))
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("fromDateBeforeToDate")
-    void ensureInvalidPeriod(int year, LocalDate validFrom, LocalDate validTo) {
-        final AccountForm form = new AccountForm(year);
-        form.setHolidaysAccountValidFrom(validFrom);
-        form.setHolidaysAccountValidTo(validTo);
+    @Test
+    void ensureInvalidPeriodForToDateAfterFromDate() {
+        final AccountForm form = new AccountForm(2021);
+        form.setHolidaysAccountValidFrom(LocalDate.of(2021, Month.MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2021, Month.JANUARY, 1));
 
         sut.validatePeriod(form, errors);
-        verify(errors).reject("error.entry.invalidPeriod");
+        verify(errors).rejectValue("holidaysAccountValidTo", "person.form.annualVacation.error.holidaysAccountValidTo.invalidRangeReversed");
+        verify(errors).rejectValue("holidaysAccountValidFrom", "person.form.annualVacation.error.holidaysAccountValidFrom.invalidRangeReversed");
+    }
+
+    @Test
+    void ensureInvalidPeriodForToDateEqualsFromDate() {
+        final AccountForm form = new AccountForm(2021);
+        form.setHolidaysAccountValidFrom(LocalDate.of(2021, Month.MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2021, Month.MARCH, 1));
+
+        sut.validatePeriod(form, errors);
+        verify(errors).rejectValue("holidaysAccountValidTo", "person.form.annualVacation.error.holidaysAccountValidTo.invalidRange");
+        verify(errors).rejectValue("holidaysAccountValidFrom", "person.form.annualVacation.error.holidaysAccountValidFrom.invalidRange");
+    }
+
+    @Test
+    void ensureInvalidPeriodForFromDateWrongYear() {
+        final AccountForm form = new AccountForm(2021);
+        form.setHolidaysAccountValidFrom(LocalDate.of(2022, Month.MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2021, Month.MARCH, 1));
+
+        sut.validatePeriod(form, errors);
+        verify(errors).rejectValue("holidaysAccountValidFrom", "person.form.annualVacation.error.holidaysAccountValidFrom.invalidYear", new Object[]{"2021"}, "");
+    }
+
+    @Test
+    void ensureInvalidPeriodForToDateWringYear() {
+        final AccountForm form = new AccountForm(2021);
+        form.setHolidaysAccountValidFrom(LocalDate.of(2021, Month.MARCH, 1));
+        form.setHolidaysAccountValidTo(LocalDate.of(2020, Month.MARCH, 1));
+
+        sut.validatePeriod(form, errors);
+        verify(errors).rejectValue("holidaysAccountValidTo", "person.form.annualVacation.error.holidaysAccountValidTo.invalidYear", new Object[]{"2021"}, "");
     }
 
     @Test

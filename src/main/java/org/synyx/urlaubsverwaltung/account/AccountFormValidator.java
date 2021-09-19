@@ -17,8 +17,6 @@ class AccountFormValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INTEGER_FIELD = "error.entry.integer";
-    private static final String ERROR_ENTRY = "error.entry.invalid";
-    private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_COMMENT_TO_LONG = "error.entry.commentTooLong";
     private static final String ERROR_FULL_OR_HALF_NUMBER = "error.entry.fullOrHalfNumber";
 
@@ -27,6 +25,8 @@ class AccountFormValidator implements Validator {
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS = "remainingVacationDays";
     private static final String ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING = "remainingVacationDaysNotExpiring";
     private static final String ATTRIBUTE_COMMENT = "comment";
+    private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_FROM = "holidaysAccountValidFrom";
+    private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_TO = "holidaysAccountValidTo";
 
     private final SettingsService settingsService;
 
@@ -50,6 +50,7 @@ class AccountFormValidator implements Validator {
         validateAnnualVacation(form, errors, maximumAnnualVacationDays);
         validateActualVacation(form, errors);
         validateRemainingVacationDays(form, errors, maximumAnnualVacationDays);
+        validateRemainingVacationDaysNotExpiring(form, errors);
         validateComment(form, errors);
     }
 
@@ -66,22 +67,41 @@ class AccountFormValidator implements Validator {
         final LocalDate holidaysAccountValidFrom = form.getHolidaysAccountValidFrom();
         final LocalDate holidaysAccountValidTo = form.getHolidaysAccountValidTo();
 
-        validateDateNotNull(holidaysAccountValidFrom, "holidaysAccountValidFrom", errors);
-        validateDateNotNull(holidaysAccountValidTo, "holidaysAccountValidTo", errors);
+        validateDateNotNull(holidaysAccountValidFrom, ATTR_HOLIDAYS_ACCOUNT_VALID_FROM, errors);
+        validateDateNotNull(holidaysAccountValidTo, ATTR_HOLIDAYS_ACCOUNT_VALID_TO, errors);
 
         if (holidaysAccountValidFrom != null && holidaysAccountValidTo != null) {
-            boolean periodIsNotWithinOneYear = holidaysAccountValidFrom.getYear() != form.getHolidaysAccountYear()
-                || holidaysAccountValidTo.getYear() != form.getHolidaysAccountYear();
-            boolean periodIsOnlyOneDay = holidaysAccountValidFrom.equals(holidaysAccountValidTo);
-            boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
+            final int year = form.getHolidaysAccountYear();
+            final int fromYear = holidaysAccountValidFrom.getYear();
+            final int toYear = holidaysAccountValidTo.getYear();
+            final boolean invalidYear = fromYear != year || toYear != year;
 
-            if (periodIsNotWithinOneYear || periodIsOnlyOneDay || beginOfPeriodIsAfterEndOfPeriod) {
-                errors.reject(ERROR_PERIOD);
+            if (invalidYear) {
+                if (fromYear != year) {
+                    reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_FROM, msg("holidaysAccountValidFrom.invalidYear"), String.valueOf(year));
+                }
+                if (toYear != year) {
+                    reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_TO, msg("holidaysAccountValidTo.invalidYear"), String.valueOf(year));
+                }
+                return;
+            }
+
+            boolean periodIsOnlyOneDay = holidaysAccountValidFrom.equals(holidaysAccountValidTo);
+            if (periodIsOnlyOneDay) {
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_FROM, msg("holidaysAccountValidFrom.invalidRange"));
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_TO, msg("holidaysAccountValidTo.invalidRange"));
+                return;
+            }
+
+            boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
+            if (beginOfPeriodIsAfterEndOfPeriod) {
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_FROM, msg("holidaysAccountValidFrom.invalidRangeReversed"));
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_TO, msg("holidaysAccountValidTo.invalidRangeReversed"));
             }
         }
     }
 
-    void validateAnnualVacation(AccountForm form, Errors errors, BigDecimal maxDays) {
+    void validateAnnualVacation(AccountForm form, Errors errors, BigDecimal maxAnnualVacation) {
 
         final BigDecimal annualVacationDays = form.getAnnualVacationDays();
         validateNumberNotNull(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
@@ -89,7 +109,13 @@ class AccountFormValidator implements Validator {
         if (annualVacationDays != null) {
 
             validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
-            validateNumberOfDays(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, maxDays, errors);
+
+            if (isNegative(annualVacationDays)) {
+                reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, "error.entry.min", "0");
+            }
+            else if (isGreater(annualVacationDays, maxAnnualVacation)) {
+                reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, "error.entry.max", asIntString(maxAnnualVacation));
+            }
         }
     }
 
@@ -103,26 +129,50 @@ class AccountFormValidator implements Validator {
             validateFullOrHalfDay(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
 
             final BigDecimal annualVacationDays = form.getAnnualVacationDays();
-            validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
+
+            if (isNegative(actualVacationDays)) {
+                reject(errors, ATTRIBUTE_ACTUAL_VACATION_DAYS, "error.entry.min", "0");
+            } else if (isGreater(actualVacationDays, annualVacationDays)) {
+                reject(errors, ATTRIBUTE_ACTUAL_VACATION_DAYS, "error.entry.max", asIntString(annualVacationDays));
+            }
         }
     }
 
     void validateRemainingVacationDays(AccountForm form, Errors errors, BigDecimal maxDays) {
 
         final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
-        final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
 
         validateNumberNotNull(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
-        validateNumberNotNull(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
 
         if (remainingVacationDays != null) {
-            // field entitlement's remaining vacation days
             validateFullOrHalfDay(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
-            validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
+            if (isNegative(remainingVacationDays)) {
+                reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS, "error.entry.min", "0");
+            } else if (isGreater(remainingVacationDays, maxDays)) {
+                reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS, msg("remainingVacationDays.tooBig"), asIntString(maxDays));
+            }
+        }
+    }
 
-            if (remainingVacationDaysNotExpiring != null) {
+    void validateRemainingVacationDaysNotExpiring(AccountForm form, Errors errors) {
+
+        final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
+        final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();
+
+        if (remainingVacationDays == null && remainingVacationDaysNotExpiring == null) {
+            reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, ERROR_MANDATORY_FIELD);
+        }
+
+        if (remainingVacationDays != null) {
+            if (remainingVacationDaysNotExpiring == null) {
+                reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, ERROR_MANDATORY_FIELD);
+            } else {
                 validateFullOrHalfDay(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
-                validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, remainingVacationDays, errors);
+                if (isNegative(remainingVacationDaysNotExpiring)) {
+                    reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, "error.entry.min", "0");
+                } else if (isGreater(remainingVacationDaysNotExpiring, remainingVacationDays)) {
+                    reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, msg("remainingVacationDaysNotExpiring.tooBig"), asIntString(remainingVacationDays));
+                }
             }
         }
     }
@@ -165,21 +215,32 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    private void validateNumberOfDays(BigDecimal days, String field, BigDecimal maximumDays, Errors errors) {
-
-        // is number of days < 0 ?
-        if (days.compareTo(BigDecimal.ZERO) < 0) {
-            errors.rejectValue(field, ERROR_ENTRY);
-        }
-
-        // is number of days unrealistic?
-        if (days.compareTo(maximumDays) > 0) {
-            errors.rejectValue(field, ERROR_ENTRY);
-        }
-    }
-
     private BigDecimal getMaximumAnnualVacationDays() {
         final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
         return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
+    }
+
+    private boolean isNegative(BigDecimal bigDecimal) {
+        return bigDecimal.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    private boolean isGreater(BigDecimal first, BigDecimal second) {
+        return first.compareTo(second) > 0;
+    }
+
+    private void reject(Errors errors, String field, String errorCode, Object... messageAttributes) {
+        if (messageAttributes.length == 0) {
+            errors.rejectValue(field, errorCode);
+        } else {
+            errors.rejectValue(field, errorCode, messageAttributes, "");
+        }
+    }
+
+    private static String asIntString(BigDecimal bigDecimal) {
+        return String.valueOf(bigDecimal.intValue());
+    }
+
+    private static String msg(String key) {
+        return "person.form.annualVacation.error." + key;
     }
 }
