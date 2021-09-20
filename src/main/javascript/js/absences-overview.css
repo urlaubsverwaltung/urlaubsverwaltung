@@ -33,7 +33,6 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-
 .vacationOverview-table th,
 .vacationOverview-table td {
   color: #444444 !important;
@@ -100,9 +99,11 @@ th.vacationOverview-cal-head.today::after {
 .cal-day,
 .vacationOverview-cal-head,
 .vacationOverview-legend-colorbox {
-  background: linear-gradient(90deg,
-  hsla(var(--bg-left-hue), var(--bg-left-saturation), var(--bg-left-lightness), var(--bg-left-opacity)) 50%,
-  hsla(var(--bg-right-hue), var(--bg-right-saturation), var(--bg-right-lightness), var(--bg-right-opacity)) 50%) !important;
+  background: linear-gradient(
+    90deg,
+    hsla(var(--bg-left-hue), var(--bg-left-saturation), var(--bg-left-lightness), var(--bg-left-opacity)) 50%,
+    hsla(var(--bg-right-hue), var(--bg-right-saturation), var(--bg-right-lightness), var(--bg-right-opacity)) 50%
+  ) !important;
 }
 
 @media print {

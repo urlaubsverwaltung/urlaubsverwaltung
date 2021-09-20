@@ -3,39 +3,21 @@
 import { isAfter, format, getYear } from "date-fns";
 import formatNumber from "./format-number";
 import sendGetDaysRequestForTurnOfTheYear from "./send-get-days-request-for-turn-of-the-year";
-import { getJSON } from "../js/fetch";
+import { getJSON } from "./fetch";
 
 export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, elementSelector) {
   const element = document.querySelector(elementSelector);
   element.innerHTML = "";
 
-  if (!startDate && !toDate) {
+  if ((!personId && !startDate && !toDate) || isAfter(startDate, toDate)) {
     return;
   }
 
-  if (isAfter(startDate, toDate)) {
-    return;
-  }
-
-  const startDateString = format(startDate, "yyyy-MM-dd");
-  const toDateString = format(toDate, "yyyy-MM-dd");
-  const url =
-    urlPrefix +
-    "/persons/" +
-    personId +
-    "/workdays?from=" +
-    startDateString +
-    "&to=" +
-    toDateString +
-    "&length=" +
-    dayLength;
-
-  const data = await getJSON(url);
-  const workDays = data.workDays;
+  const workDays = await getWorkdaysForDateRange(urlPrefix, dayLength, personId, startDate, toDate);
 
   let text;
 
-  if (Number.isNaN(workDays)) {
+  if (!workDays) {
     text = window.uv.i18n["application.applier.invalidPeriod"];
   } else if (workDays === "1.0") {
     text = formatNumber(workDays) + " " + window.uv.i18n["application.applier.day"];
@@ -60,4 +42,16 @@ export default async function sendGetDaysRequest(urlPrefix, startDate, toDate, d
       `${elementSelector} .days-turn-of-the-year`,
     );
   }
+}
+
+async function getWorkdaysForDateRange(urlPrefix, dayLength, personId, fromDate, toDate) {
+  const startDate = format(fromDate, "yyyy-MM-dd");
+  const endDate = format(toDate, "yyyy-MM-dd");
+  let url = urlPrefix + "/persons/" + personId + "/workdays?from=" + startDate + "&to=" + endDate;
+  if (dayLength) {
+    url = url + "&length=" + dayLength;
+  }
+
+  const json = await getJSON(url);
+  return json.workDays;
 }
