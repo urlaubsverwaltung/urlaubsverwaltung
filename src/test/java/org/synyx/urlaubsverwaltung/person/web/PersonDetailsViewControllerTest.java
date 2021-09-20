@@ -51,7 +51,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTE
 
 
 @ExtendWith(MockitoExtension.class)
-class PersonViewControllerTest {
+class PersonDetailsViewControllerTest {
 
     private static final int UNKNOWN_PERSON_ID = 365;
     private static final int PERSON_ID = 1;
@@ -61,7 +61,7 @@ class PersonViewControllerTest {
     private static final String DEPARTMENT_ATTRIBUTE = "department";
     private static Clock clock;
 
-    private PersonViewController sut;
+    private PersonDetailsViewController sut;
 
     @Mock
     private PersonService personService;
@@ -82,7 +82,7 @@ class PersonViewControllerTest {
     void setUp() {
 
         clock = Clock.systemUTC();
-        sut = new PersonViewController(personService, accountService, vacationDaysService, departmentService,
+        sut = new PersonDetailsViewController(personService, accountService, vacationDaysService, departmentService,
             workingTimeService, settingsService, clock);
 
         person = new Person();

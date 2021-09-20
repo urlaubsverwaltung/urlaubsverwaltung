@@ -14,13 +14,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,9 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @ExtendWith(MockitoExtension.class)
-class PersonManagementViewControllerTest {
+class PersonPermissionsViewControllerTest {
 
-    private PersonManagementViewController sut;
+    private PersonPermissionsViewController sut;
 
     private static final int PERSON_ID = 1;
     private static final int UNKNOWN_PERSON_ID = 675;
@@ -46,101 +46,118 @@ class PersonManagementViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
-    private PersonValidator validator;
+    private PersonPermissionsDtoValidator validator;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonManagementViewController(personService, departmentService, validator);
+        sut = new PersonPermissionsViewController(personService, departmentService, validator);
     }
 
     @Test
-    void editPersonFormUsesPersonsWithGivenId() throws Exception {
+    void showPersonPermissionsAndNotificationsFormUsesPersonsWithGivenId() throws Exception {
 
         final Person personWithGivenId = personWithId(PERSON_ID);
-
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithGivenId));
 
-        perform(get("/web/person/" + PERSON_ID + "/edit"))
-            .andExpect(model().attribute("person", personWithGivenId));
+        perform(get("/web/person/" + PERSON_ID + "/permissions"))
+            .andExpect(model().attribute("person", hasProperty("id", is(PERSON_ID))));
     }
 
     @Test
-    void editPersonFormForUnknownIdThrowsUnknownPersonException() {
-
+    void showPersonPermissionsAndNotificationsForUnknownIdThrowsUnknownPersonException() {
         assertThatThrownBy(() ->
-            perform(get("/web/person/" + UNKNOWN_PERSON_ID + "/edit"))
+            perform(get("/web/person/" + UNKNOWN_PERSON_ID + "/permissions"))
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
-    void editPersonFormAddsDepartmentsToModel() throws Exception {
+    void showPersonPermissionsAndNotificationsAddsDepartmentsToModel() throws Exception {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
 
-        List<Department> departments = Collections.singletonList(new Department());
-        List<Department> secondStageDepartments = Collections.singletonList(new Department());
+        final List<Department> departments = List.of(new Department());
+        final List<Department> secondStageDepartments = List.of(new Department());
 
         when(departmentService.getManagedDepartmentsOfDepartmentHead(any())).thenReturn(departments);
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(any())).thenReturn(secondStageDepartments);
 
-        perform(get("/web/person/" + PERSON_ID + "/edit"))
+        perform(get("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(model().attribute("departments", departments))
             .andExpect(model().attribute("secondStageDepartments", secondStageDepartments));
     }
 
     @Test
-    void editPersonFormUsesNewPersonUsesCorrectView() throws Exception {
+    void showPersonPermissionsAndNotificationsUsesNewPersonUsesCorrectView() throws Exception {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
-
-        perform(get("/web/person/" + PERSON_ID + "/edit")).andExpect(view().name("person/person_form"));
+        perform(get("/web/person/" + PERSON_ID + "/permissions"))
+            .andExpect(view().name("person/person_permissions"));
     }
 
     @Test
-    void editPersonForwardsToViewIfValidationFails() throws Exception {
+    void showPersonPermissionsAndNotificationsUsesRedirectFromEdit() throws Exception {
+        perform(get("/web/person/" + PERSON_ID + "/edit"))
+            .andExpect(view().name("redirect:/web/person/1/permissions"));
+    }
+
+    @Test
+    void editPersonPermissionsAndNotificationsCorrectly() throws Exception {
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@inter.net");
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/" + PERSON_ID + "/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "USER")
+            .param("permissions[1]", "OFFICE")
+        );
+
+        verify(personService).update(person);
+    }
+
+    @Test
+    void editPersonPermissionsAndNotificationsForwardsToViewIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {
-
-            Errors errors = invocation.getArgument(1);
-            errors.rejectValue("email", "invalid.email");
-
+            final Errors errors = invocation.getArgument(1);
+            errors.rejectValue("permissions", "person.form.permissions.error.inactive");
             return null;
         }).when(validator).validate(any(), any());
 
-        perform(post("/web/person/" + PERSON_ID + "/edit")).andExpect(view().name("person/person_form"));
+        perform(post("/web/person/" + PERSON_ID + "/permissions"))
+            .andExpect(view().name("person/person_permissions"));
     }
 
     @Test
-    void editPersonUpdatesPersonCorrectly() throws Exception {
+    void editPersonPermissionsAndNotificationsAddsFlashAttribute() throws Exception {
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
 
-        perform(post("/web/person/" + PERSON_ID + "/edit")
-            .param("username", "username")
-            .param("lastName", "Meier")
-            .param("firstName", "Nina")
-            .param("email", "nina@inter.net"));
-
-        Person personWithExpectedAttributes = new Person("username", "Meier", "Nina", "nina@inter.net");
-
-        verify(personService).update(refEq(personWithExpectedAttributes));
-    }
-
-    @Test
-    void editPersonAddsFlashAttribute() throws Exception {
-
-        perform(post("/web/person/" + PERSON_ID + "/edit"))
+        perform(post("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(flash().attribute("updateSuccess", true));
     }
 
     @Test
-    void editPersonRedirectsToUpdatedPerson() throws Exception {
+    void editPersonPermissionsAndNotificationsRedirectsToUpdatedPerson() throws Exception {
 
-        perform(post("/web/person/" + PERSON_ID + "/edit"))
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
+
+        perform(post("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/person/" + PERSON_ID));
     }
 
+    @Test
+    void editPersonPermissionsAndNotificationsThrowsUnknownPersonException() {
+
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+            perform(post("/web/person/" + PERSON_ID + "/permissions"))
+        ).hasCauseInstanceOf(UnknownPersonException.class);
+    }
+
     private static Person personWithId(int personId) {
-        Person person = new Person();
+        final Person person = new Person();
         person.setId(personId);
         return person;
     }

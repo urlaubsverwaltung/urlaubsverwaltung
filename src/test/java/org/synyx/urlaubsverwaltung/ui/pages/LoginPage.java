@@ -40,7 +40,7 @@ public class LoginPage implements Page {
     }
 
     private boolean webpageTitleIsShown(WebDriver driver) {
-        final String loginText = messageSource.getMessage("person.form.data.login", new Object[]{}, locale);
+        final String loginText = messageSource.getMessage("login.title", new Object[]{}, locale);
         return driver.getTitle().equals(loginText);
     }
 
