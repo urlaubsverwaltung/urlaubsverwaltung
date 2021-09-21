@@ -45,7 +45,14 @@
                     </h1>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
-                <div class="tw-flex tw-ml-24"><spring:message code="person.details.masterData.username"/>:<p class="tw-ml-1 tw-px-1 tw-py-0.5 tw-font-mono tw-bg-gray-100 tw-rounded">${person.username}</p></div>
+                <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">
+                    <dt class="tw-font-normal">
+                        <spring:message code="person.details.masterData.username"/>:
+                    </dt>
+                    <dd>
+                        ${person.username}
+                    </dd>
+                </dl>
             </div>
             <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">
                 <uv:section-heading>

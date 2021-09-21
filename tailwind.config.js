@@ -24,6 +24,9 @@ module.exports = {
       fontSize: {
         "10rem": "10rem",
       },
+      margin: {
+        25: "6.25rem",
+      },
     },
     screens: {
       // cannot use 'extend' as `xs` would override other screens
