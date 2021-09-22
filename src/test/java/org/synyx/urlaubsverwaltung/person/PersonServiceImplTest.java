@@ -184,6 +184,14 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureGetPersonByMailAddressDelegatesToRepository() {
+        final String mailAddress = "foo@bar.test";
+        sut.getPersonByMailAddress(mailAddress);
+
+        verify(personRepository).findByEmail(mailAddress);
+    }
+
+    @Test
     void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
         final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");

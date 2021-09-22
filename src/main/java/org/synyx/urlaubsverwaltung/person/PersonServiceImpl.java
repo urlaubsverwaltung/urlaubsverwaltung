@@ -122,6 +122,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public Optional<Person> getPersonByMailAddress(String mailAddress) {
+        return personRepository.findByEmail(mailAddress);
+    }
+
+    @Override
     public List<Person> getActivePersons() {
         return personRepository.findAll()
             .stream()

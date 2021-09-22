@@ -11,5 +11,7 @@ interface PersonRepository extends JpaRepository<Person, Integer> {
 
     Optional<Person> findByUsername(String username);
 
+    Optional<Person> findByEmail(String email);
+
     int countByPermissionsNotContaining(Role permission);
 }

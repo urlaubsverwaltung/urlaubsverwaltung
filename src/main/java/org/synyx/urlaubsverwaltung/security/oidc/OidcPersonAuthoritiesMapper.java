@@ -50,7 +50,11 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
         final String userUniqueID = oidcUserAuthority.getIdToken().getSubject();
 
-        final Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
+        Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
+        // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
+        if (optionalPerson.isEmpty() && mailAddress.isPresent()) {
+            optionalPerson = personService.getPersonByMailAddress(mailAddress.get());
+        }
 
         final Person person;
 
@@ -58,6 +62,10 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
             Person tmpPerson = optionalPerson.get();
 
+            // this overrides the exiting username with the user unique id of oidc provider
+            if (!userUniqueID.equals(tmpPerson.getUsername())) {
+                tmpPerson.setUsername(userUniqueID);
+            }
             firstName.ifPresent(tmpPerson::setFirstName);
             lastName.ifPresent(tmpPerson::setLastName);
             mailAddress.ifPresent(tmpPerson::setEmail);
