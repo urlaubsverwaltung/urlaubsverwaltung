@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
+import org.slf4j.Logger;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,8 +13,10 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.Collection;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -23,6 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
  */
 public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
+    private static final Logger LOG = getLogger(lookup().lookupClass());
     private final PersonService personService;
 
     public OidcPersonAuthoritiesMapper(PersonService personService) {
@@ -62,8 +66,9 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
             Person tmpPerson = optionalPerson.get();
 
-            // this overrides the exiting username with the user unique id of oidc provider
             if (!userUniqueID.equals(tmpPerson.getUsername())) {
+                LOG.info("No person with given userUniqueID was found. Falling back to matching mail address for " +
+                    "person lookup. Existing username '{}' is replaced with '{}'.", tmpPerson.getUsername(), userUniqueID);
                 tmpPerson.setUsername(userUniqueID);
             }
             firstName.ifPresent(tmpPerson::setFirstName);
