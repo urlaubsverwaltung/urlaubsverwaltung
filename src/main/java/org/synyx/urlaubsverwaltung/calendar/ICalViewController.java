@@ -57,20 +57,15 @@ public class ICalViewController {
 
     @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
-
-        final File iCal;
+    public void getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
+        setContentTypeAndHeaders(response);
         try {
-            iCal = departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret, locale);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(BAD_REQUEST, "Could not generate department calendar");
+            departmentCalendarService.getCalendarForDepartment(departmentId, personId, secret, locale, response.getOutputStream());
+        } catch (IOException e) {
+            throw new ResponseStatusException(BAD_REQUEST, "Could not generate department calendar", e);
         } catch (CalendarException e) {
             throw new ResponseStatusException(NO_CONTENT);
         }
-
-        setContentTypeAndHeaders(response);
-
-        return fileToString(iCal);
     }
 
     @GetMapping("/company/persons/{personId}/calendar")

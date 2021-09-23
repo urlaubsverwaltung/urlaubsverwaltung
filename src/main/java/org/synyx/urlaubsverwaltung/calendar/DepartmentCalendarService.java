@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
@@ -78,8 +80,8 @@ class DepartmentCalendarService {
         return departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
     }
 
-    File getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
 
+    File getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
         }
@@ -105,6 +107,35 @@ class DepartmentCalendarService {
         final List<Absence> absences = absenceService.getOpenAbsencesSince(department.getMembers(), sinceDate);
 
         return iCalService.getCalendar(title, absences);
+    }
+
+    void getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale, OutputStream outputStream) throws IOException {
+
+        if (StringUtils.isBlank(secret)) {
+            throw new IllegalArgumentException("secret must not be empty.");
+        }
+
+        final Person person = getPersonOrThrow(personId);
+        final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findBySecretAndPerson(secret, person);
+        if (maybeDepartmentCalendar.isEmpty()) {
+            throw new IllegalArgumentException("No calendar found for secret=" + secret);
+        }
+
+        final Department department = getDepartmentOrThrow(departmentId);
+        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.get();
+        if (!departmentCalendar.getDepartmentId().equals(departmentId)) {
+            throw new IllegalArgumentException(String.format("Secret=%s does not match the given departmentId=%s", secret, departmentId));
+        }
+
+        final String title = messageSource.getMessage("calendar.department.title", List.of(department.getName()).toArray(), locale);
+
+        final LocalDate chosenCalendarPeriodSinceDate = LocalDate.now(clock).minus(departmentCalendar.getCalendarPeriod());
+        final LocalDate departmentExistsSinceDate = department.getCreatedAt();
+        final LocalDate sinceDate = departmentExistsSinceDate.isAfter(chosenCalendarPeriodSinceDate) ? departmentExistsSinceDate : chosenCalendarPeriodSinceDate;
+
+        final List<Absence> absences = absenceService.getOpenAbsencesSince(department.getMembers(), sinceDate);
+
+        iCalService.getCalendar(title, absences, outputStream);
     }
 
     @Transactional

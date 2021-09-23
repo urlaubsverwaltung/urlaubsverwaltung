@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
@@ -54,6 +55,12 @@ public class ICalService {
     @Autowired
     ICalService(CalendarProperties calendarProperties) {
         this.calendarProperties = calendarProperties;
+    }
+
+    public void getCalendar(String title, List<Absence> absences, OutputStream outputStream) throws IOException {
+        final Calendar calendar = generateCalendar(title, absences);
+        final CalendarOutputter calendarOutputter = new CalendarOutputter();
+        calendarOutputter.output(calendar, outputStream);
     }
 
     public File getCalendar(String title, List<Absence> absences) {
