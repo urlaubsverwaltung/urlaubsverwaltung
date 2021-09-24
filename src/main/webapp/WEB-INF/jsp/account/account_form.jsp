@@ -65,7 +65,7 @@
                 <spring:hasBindErrors name="account">
                     <div class="row tw-mb-8">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger tw-text-red-800">
+                            <div class="alert alert-danger tw-text-red-800 tw-text-sm">
                                 <spring:message code="error.info.message"/>
                             </div>
                         </div>
