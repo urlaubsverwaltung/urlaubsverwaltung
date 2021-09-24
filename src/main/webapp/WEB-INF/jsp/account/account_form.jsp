@@ -66,7 +66,7 @@
                     <div class="row tw-mb-8">
                         <div class="col-xs-12">
                             <div class="alert alert-danger tw-text-red-800">
-                                <form:errors />
+                                <spring:message code="error.info.message"/>
                             </div>
                         </div>
                     </div>
