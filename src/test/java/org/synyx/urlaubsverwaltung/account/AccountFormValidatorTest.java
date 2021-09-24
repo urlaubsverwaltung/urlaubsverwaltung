@@ -114,7 +114,7 @@ class AccountFormValidatorTest {
         form.setActualVacationDays(BigDecimal.valueOf(10.1));
 
         sut.validateActualVacation(form, errors);
-        verify(errors).rejectValue("actualVacationDays", "error.entry.fullOrHalfHour");
+        verify(errors).rejectValue("actualVacationDays", "error.entry.fullOrHalfNumber");
     }
 
     @Test
@@ -163,7 +163,7 @@ class AccountFormValidatorTest {
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(11));
 
         sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
-        verify(errors).rejectValue("remainingVacationDays", "error.entry.fullOrHalfHour");
+        verify(errors).rejectValue("remainingVacationDays", "error.entry.fullOrHalfNumber");
     }
 
     @Test
@@ -173,7 +173,7 @@ class AccountFormValidatorTest {
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(10.3));
 
         sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
-        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.fullOrHalfHour");
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.fullOrHalfNumber");
     }
 
     @Test

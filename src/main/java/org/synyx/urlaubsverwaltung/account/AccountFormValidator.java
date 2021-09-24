@@ -20,7 +20,7 @@ class AccountFormValidator implements Validator {
     private static final String ERROR_ENTRY = "error.entry.invalid";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_COMMENT_TO_LONG = "error.entry.commentTooLong";
-    private static final String ERROR_FULL_OR_HALF_AN_HOUR_FIELD = "error.entry.fullOrHalfHour";
+    private static final String ERROR_FULL_OR_HALF_NUMBER = "error.entry.fullOrHalfNumber";
 
     private static final String ATTRIBUTE_ANNUAL_VACATION_DAYS = "annualVacationDays";
     private static final String ATTRIBUTE_ACTUAL_VACATION_DAYS = "actualVacationDays";
@@ -100,7 +100,7 @@ class AccountFormValidator implements Validator {
 
         if (actualVacationDays != null) {
 
-            validateFullOrHalfAnHour(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
+            validateFullOrHalfDay(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, errors);
 
             final BigDecimal annualVacationDays = form.getAnnualVacationDays();
             validateNumberOfDays(actualVacationDays, ATTRIBUTE_ACTUAL_VACATION_DAYS, annualVacationDays, errors);
@@ -117,23 +117,23 @@ class AccountFormValidator implements Validator {
 
         if (remainingVacationDays != null) {
             // field entitlement's remaining vacation days
-            validateFullOrHalfAnHour(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
+            validateFullOrHalfDay(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
             validateNumberOfDays(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, maxDays, errors);
 
             if (remainingVacationDaysNotExpiring != null) {
-                validateFullOrHalfAnHour(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
+                validateFullOrHalfDay(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, errors);
                 validateNumberOfDays(remainingVacationDaysNotExpiring, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, remainingVacationDays, errors);
             }
         }
     }
 
-    private void validateFullOrHalfAnHour(BigDecimal days, String field, Errors errors) {
+    private void validateFullOrHalfDay(BigDecimal days, String field, Errors errors) {
 
         final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
         final boolean isFullOrHalfAnHour = decimal.equals("0") || decimal.startsWith("0.0") || decimal.startsWith("0.5");
 
         if (!isFullOrHalfAnHour && errors.getFieldErrors(field).isEmpty()) {
-            errors.rejectValue(field, ERROR_FULL_OR_HALF_AN_HOUR_FIELD);
+            errors.rejectValue(field, ERROR_FULL_OR_HALF_NUMBER);
         }
     }
 
