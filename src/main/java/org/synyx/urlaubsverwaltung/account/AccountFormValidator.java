@@ -113,8 +113,7 @@ class AccountFormValidator implements Validator {
 
             if (isNegative(annualVacationDays)) {
                 reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, ERROR_ENTRY_MIN, "0");
-            }
-            else if (isGreater(annualVacationDays, maxAnnualVacationDays)) {
+            } else if (isGreater(annualVacationDays, maxAnnualVacationDays)) {
                 reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, "error.entry.max", asIntString(maxAnnualVacationDays));
             }
         }
