@@ -27,7 +27,7 @@ class AccountFormValidator implements Validator {
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_FROM = "holidaysAccountValidFrom";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_TO = "holidaysAccountValidTo";
-    public static final String ERROR_ENTRY_MIN = "error.entry.min";
+    private static final String ERROR_ENTRY_MIN = "error.entry.min";
 
     private final SettingsService settingsService;
 
