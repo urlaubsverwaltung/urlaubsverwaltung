@@ -220,6 +220,16 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureRemainingVacationDaysNotExpiringMustNotBeNullEvenIfVacationDaysAreNotNull() {
+        final AccountForm form = new AccountForm(2013);
+        form.setRemainingVacationDays(BigDecimal.valueOf(10));
+        form.setRemainingVacationDaysNotExpiring(null);
+
+        sut.validateRemainingVacationDaysNotExpiring(form, errors);
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "error.entry.mandatory");
+    }
+
+    @Test
     void ensureRemainingVacationDaysNotExpiringMustBeFullOrHalf() {
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(new BigDecimal(10));
@@ -343,6 +353,15 @@ class AccountFormValidatorTest {
     void ensureCommentHasNoValidationError() {
         final AccountForm form = new AccountForm(2017);
         form.setComment("blabla");
+
+        sut.validateComment(form, errors);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureCommentWithNullHasNoValidationError() {
+        final AccountForm form = new AccountForm(2017);
+        form.setComment(null);
 
         sut.validateComment(form, errors);
         verifyNoInteractions(errors);
