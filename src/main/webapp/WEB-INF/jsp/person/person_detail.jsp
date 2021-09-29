@@ -12,7 +12,7 @@
 
 <head>
     <title>
-        <spring:message code="person.details.header.title" arguments="${person.niceName}"/>
+        <spring:message code="person.account.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
 </head>
@@ -27,12 +27,12 @@
         <div class="feedback">
             <c:if test="${createSuccess}">
                 <div class="alert alert-success">
-                    <spring:message code="person.details.action.create.success"/>
+                    <spring:message code="person.account.action.create.success"/>
                 </div>
             </c:if>
             <c:if test="${updateSuccess}">
                 <div class="alert alert-success">
-                    <spring:message code="person.details.action.update.success"/>
+                    <spring:message code="person.account.action.update.success"/>
                 </div>
             </c:if>
         </div>
@@ -41,13 +41,13 @@
             <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
                     <h1>
-                        <spring:message code="person.details.masterData.title"/>
+                        <spring:message code="person.account.masterData.title"/>
                     </h1>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
                 <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">
                     <dt class="tw-font-normal">
-                        <spring:message code="person.details.masterData.username"/>:
+                        <spring:message code="person.account.masterData.username"/>:
                     </dt>
                     <dd>
                         ${person.username}
@@ -65,7 +65,7 @@
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
-                            <spring:message code="person.details.permissions.title"/>
+                            <spring:message code="person.account.permissions.title"/>
                         </h2>
                     </jsp:body>
                 </uv:section-heading>
@@ -92,7 +92,7 @@
             <div class="md:tw-col-start-1 md:tw-row-start-2">
                 <uv:section-heading>
                     <h2>
-                        <spring:message code="person.details.departments.title"/>
+                        <spring:message code="person.account.departments.title"/>
                     </h2>
                 </uv:section-heading>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
@@ -104,7 +104,7 @@
                     <jsp:body>
                         <c:choose>
                             <c:when test="${empty departments}">
-                                <spring:message code="person.details.departments.none"/>
+                                <spring:message code="person.account.departments.none"/>
                             </c:when>
                             <c:otherwise>
                                 <ul class="tw-space-y-0.5 tw-text-sm">
@@ -127,13 +127,13 @@
 
                                         <c:choose>
                                             <c:when test="${departmentHeadOfDepartments.contains( department ) && secondStageAuthorityOfDepartments.contains( department )}">
-                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.departmentHeadAndSecondStageAuthority"/></li>
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.account.departments.departmentHeadAndSecondStageAuthority"/></li>
                                             </c:when>
                                             <c:when test="${departmentHeadOfDepartments.contains( department )}">
-                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.departmentHead"/></li>
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.account.departments.departmentHead"/></li>
                                             </c:when>
                                             <c:when test="${secondStageAuthorityOfDepartments.contains( department )}">
-                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.details.departments.secondStageAuthority"/></li>
+                                                <li><c:out escapeXml="false" value="${departmentLink}"/> <spring:message code="person.account.departments.secondStageAuthority"/></li>
                                             </c:when>
                                             <c:otherwise>
                                                 <li><c:out escapeXml="false" value="${departmentLink}"/></li>
@@ -157,7 +157,7 @@
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
-                            <spring:message code="person.details.annualVacation.title"/>
+                            <spring:message code="person.account.annualVacation.title"/>
                         </h2>
                         <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/person/${person.id}?year="/>
                     </jsp:body>
@@ -175,7 +175,7 @@
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
-                            <spring:message code="person.details.workingTime.title"/>
+                            <spring:message code="person.account.workingTime.title"/>
                         </h2>
                     </jsp:body>
                 </uv:section-heading>
@@ -190,12 +190,12 @@
                         <c:choose>
                             <c:when test="${workingTime != null}">
                                 <p class="tw-mb-2">
-                                    <spring:message code="person.details.workingTime.validity"/>
+                                    <spring:message code="person.account.workingTime.validity"/>
                                     <span class="is-inline-block"><uv:date date="${workingTime.validFrom}"/></span>:
                                 </p>
                                 <table class="tw-flex">
                                     <caption class="tw-sr-only">
-                                        <spring:message code="person.details.workingTime.title"/>
+                                        <spring:message code="person.account.workingTime.title"/>
                                     </caption>
                                     <thead class="tw-order-last">
                                         <tr>
@@ -285,7 +285,7 @@
                                 </table>
                             </c:when>
                             <c:otherwise>
-                                <spring:message code='person.details.workingTime.none'/>
+                                <spring:message code='person.account.workingTime.none'/>
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -303,7 +303,7 @@
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
-                            <spring:message code="person.details.federalState.title"/>
+                            <spring:message code="person.account.federalState.title"/>
                         </h2>
                     </jsp:body>
                 </uv:section-heading>
@@ -316,7 +316,7 @@
                     <jsp:body>
                         <p>
                             <span class="tw-block tw-mb-1 tw-text-sm">
-                                <spring:message code="person.details.workingTime.federalState"/>
+                                <spring:message code="person.account.workingTime.federalState"/>
                             </span>
                             <span class="tw-text-base tw-font-medium">
                                 <spring:message code="federalState.${federalState}"/>

@@ -267,6 +267,18 @@
                                     </a>
                                 </li>
                                 <li role="none" class="tw-mb-1">
+                                    <a href="${URL_PREFIX}/person/${userId}"
+                                        role="menuitem"
+                                        class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600">
+                                        <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                            <icon:user-circle className="tw-h-6 tw-w-6" />
+                                        </span>
+                                        <span class="tw-ml-4 tw-text-base">
+                                            <spring:message code="nav.account.title" />
+                                        </span>
+                                    </a>
+                                </li>
+                                <li role="none" class="tw-mb-1">
                                     <form:form action="/logout" method="POST" cssClass="tw-ml-auto tw-w-full">
                                         <button
                                             role="menuitem"
