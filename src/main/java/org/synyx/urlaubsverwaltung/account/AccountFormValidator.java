@@ -85,14 +85,12 @@ class AccountFormValidator implements Validator {
                 if (toYear != year) {
                     reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_TO, msg("holidaysAccountValidTo.invalidYear"), String.valueOf(year));
                 }
-                return;
             }
 
             boolean periodIsOnlyOneDay = holidaysAccountValidFrom.equals(holidaysAccountValidTo);
             if (periodIsOnlyOneDay) {
                 reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_FROM, msg("holidaysAccountValidFrom.invalidRange"));
                 reject(errors, ATTR_HOLIDAYS_ACCOUNT_VALID_TO, msg("holidaysAccountValidTo.invalidRange"));
-                return;
             }
 
             boolean beginOfPeriodIsAfterEndOfPeriod = holidaysAccountValidFrom.isAfter(holidaysAccountValidTo);
