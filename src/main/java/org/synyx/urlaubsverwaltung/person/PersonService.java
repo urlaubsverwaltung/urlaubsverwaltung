@@ -79,6 +79,13 @@ public interface PersonService {
     Optional<Person> getPersonByUsername(String username);
 
     /**
+     * finds a {@link Person} in the database by mail address.
+     * @param mailAddress of the person
+     * @return optional {@link Person} for the given mail address
+     */
+    Optional<Person> getPersonByMailAddress(String mailAddress);
+
+    /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
      *
      * @param role {@link Role}

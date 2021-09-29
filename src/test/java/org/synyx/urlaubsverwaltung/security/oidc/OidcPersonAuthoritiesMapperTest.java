@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.DisabledException;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -61,6 +63,32 @@ class OidcPersonAuthoritiesMapperTest {
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test
+    void mapAuthoritiesFromIdTokenBySyncAndEmailFallback() {
+        final String uniqueID = "uniqueID";
+        final String givenName = "test";
+        final String familyName = "me";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(uniqueID, givenName, familyName, email);
+
+        final Person personForLogin = new Person();
+        personForLogin.setUsername("idOfOtherIdentityProvider");
+        personForLogin.setPermissions(List.of(USER));
+        final Optional<Person> person = Optional.of(personForLogin);
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.getPersonByMailAddress(email)).thenReturn(person);
+
+        when(personService.save(personForLogin)).thenReturn(personForLogin);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+
+        final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personService).save(personArgumentCaptor.capture());
+        assertThat(personArgumentCaptor.getValue().getUsername()).isEqualTo(uniqueID);
     }
 
     @Test
