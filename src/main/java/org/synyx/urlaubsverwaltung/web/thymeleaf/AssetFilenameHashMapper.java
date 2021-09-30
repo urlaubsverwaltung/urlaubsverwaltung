@@ -3,13 +3,11 @@ package org.synyx.urlaubsverwaltung.web.thymeleaf;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-@Component
 public class AssetFilenameHashMapper {
 
     private static final String ASSETS_MANIFEST_FILE = "WEB-INF/assets-manifest.json";
