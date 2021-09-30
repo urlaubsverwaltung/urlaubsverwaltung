@@ -179,7 +179,7 @@
                 >
                   <a
                     class="action-link tw-text-gray-900 tw-text-opacity-50"
-                    href="${URL_PREFIX}/application/${application.id}/edit"
+                    th:href="@{/web/application/{applicationId}/edit (applicationId=${userRequestForLeave.id})}"
                     th:if="${userRequestForLeave.editAllowed}"
                   >
                     <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
@@ -187,7 +187,7 @@
                   </a>
                   <a
                     class="action-link tw-text-gray-900 tw-text-opacity-50"
-                    href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true"
+                    th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='allow', shortcut=true)}"
                     th:if="${userRequestForLeave.approveAllowed}"
                   >
                     <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
@@ -195,7 +195,7 @@
                   </a>
                   <a
                     class="action-link tw-text-gray-900 tw-text-opacity-50"
-                    href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true"
+                    th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', shortcut=true)}"
                     th:if="${userRequestForLeave.rejectAllowed}"
                   >
                     <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
