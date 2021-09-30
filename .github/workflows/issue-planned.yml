@@ -13,7 +13,7 @@ jobs:
         with:
           github-token: ${{github.token}}
           script: |
-            github.issues.addLabels({
+            github.rest.issues.addLabels({
               ...context.repo,
               issue_number: context.issue.number,
               labels: ['status: planned']
@@ -24,7 +24,7 @@ jobs:
         with:
           github-token: ${{github.token}}
           script: |
-            github.issues.removeLabel({
+            github.rest.issues.removeLabel({
               ...context.repo,
               issue_number: context.issue.number,
               name: 'status: new'
