@@ -99,7 +99,7 @@
       >
         <h2 class="tw-sr-only" th:text="#{applications.myself.waiting}"></h2>
         <p th:if="${#lists.isEmpty(userApplications)}" th:text="#{applications.none}"></p>
-        <div class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
+        <div th:if="${not #lists.isEmpty(userApplications)}" class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
           <div
             class="
               tw-sticky tw-py-2 tw-w-full
