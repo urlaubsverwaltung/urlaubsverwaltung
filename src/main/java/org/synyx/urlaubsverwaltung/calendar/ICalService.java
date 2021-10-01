@@ -56,12 +56,6 @@ public class ICalService {
         this.calendarProperties = calendarProperties;
     }
 
-    public File getCalendarAsFile(String title, List<Absence> absences) {
-        final File file = generateCalenderFile(title);
-        final Calendar calendar = getCalendar(title, absences);
-        return writeCalenderIntoFile(calendar, file);
-    }
-
     public File getSingleAppointmentAsFile(Absence absence, ICalType method) {
         final File file = generateCalenderFile("appointment");
         final Calendar calendar = getSingleAppointment(absence, method);

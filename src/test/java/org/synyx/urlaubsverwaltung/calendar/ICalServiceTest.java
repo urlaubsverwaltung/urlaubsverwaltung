@@ -43,28 +43,6 @@ class ICalServiceTest {
     }
 
     @Test
-    void getCalendarAsFileForPersonForOneFullDay() {
-
-        final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
-
-        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(fullDayAbsence));
-
-        assertThat(fileToString(calendar))
-            .contains("VERSION:2.0")
-            .contains("CALSCALE:GREGORIAN")
-            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:P1D")
-
-            .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190326")
-
-            .contains("ORGANIZER:mailto:no-reply@example.org");
-    }
-
-    @Test
     void getCalendarForPersonForOneFullDay() {
 
         final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
@@ -82,28 +60,6 @@ class ICalServiceTest {
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
             .contains("DTSTART;VALUE=DATE:20190326")
-
-            .contains("ORGANIZER:mailto:no-reply@example.org");
-    }
-
-    @Test
-    void getCalendarAsFileForPersonForHalfDayMorning() {
-
-        final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
-
-        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(morningAbsence));
-
-        assertThat(fileToString(calendar))
-            .contains("VERSION:2.0")
-            .contains("CALSCALE:GREGORIAN")
-            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:P1D")
-
-            .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190426T080000Z")
-            .contains("DTEND:20190426T120000Z")
 
             .contains("ORGANIZER:mailto:no-reply@example.org");
     }
@@ -131,29 +87,6 @@ class ICalServiceTest {
     }
 
     @Test
-    void getCalendarAsFileForPersonForMultipleFullDays() {
-
-        final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
-
-        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(manyFullDayAbsence));
-
-        assertThat(fileToString(calendar))
-            .contains("VERSION:2.0")
-            .contains("CALSCALE:GREGORIAN")
-            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:P1D")
-
-            .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190326")
-            .contains("DTEND;VALUE=DATE:20190402")
-
-            .contains("ORGANIZER:mailto:no-reply@example.org");
-    }
-
-    @Test
     void getCalendarForPersonForMultipleFullDays() {
 
         final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
@@ -172,28 +105,6 @@ class ICalServiceTest {
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
             .contains("DTSTART;VALUE=DATE:20190326")
             .contains("DTEND;VALUE=DATE:20190402")
-
-            .contains("ORGANIZER:mailto:no-reply@example.org");
-    }
-
-
-    @Test
-    void getCalendarAsFileForPersonForHalfDayNoon() {
-
-        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
-
-        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(fileToString(calendar))
-            .contains("VERSION:2.0")
-            .contains("CALSCALE:GREGORIAN")
-            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:P1D")
-
-            .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
 
             .contains("ORGANIZER:mailto:no-reply@example.org");
     }
@@ -217,32 +128,6 @@ class ICalServiceTest {
             .contains("DTEND:20190526T160000Z")
 
             .contains("ORGANIZER:mailto:no-reply@example.org");
-    }
-
-    @Test
-    void getCalendarAsFilePublishEvent() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
-
-        final CalendarProperties calendarProperties = new CalendarProperties();
-        calendarProperties.setOrganizer("no-reply@example.org");
-        final ICalService sut = new ICalService(calendarProperties);
-        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(fileToString(calendar))
-            .contains("VERSION:2.0")
-            .contains("CALSCALE:GREGORIAN")
-            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
-            .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:P1D")
-
-            .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
-            .contains("SUMMARY:Marlene Muster abwesend")
-            .contains("DTSTART:20190526T120000Z")
-            .contains("DTEND:20190526T160000Z")
-            .contains("ORGANIZER:mailto:no-reply@example.org")
-            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
     }
 
     @Test
