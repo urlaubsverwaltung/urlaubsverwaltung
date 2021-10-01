@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import net.fortuna.ical4j.model.Calendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,6 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -115,12 +115,11 @@ class DepartmentCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
-        when(iCalService.getCalendarAsFile("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
+        final Calendar iCal = new Calendar();
+        when(iCalService.getCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        final Calendar calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test

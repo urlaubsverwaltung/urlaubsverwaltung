@@ -1,6 +1,12 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.XProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,15 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
+import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,7 +46,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForPerson() throws Exception {
 
-        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn(generateFile("iCal string"));
+        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn(generateCalendar("iCal string"));
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN)
@@ -83,7 +82,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartment() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(generateFile("calendar department"));
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(generateCalendar("calendar department"));
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -120,7 +119,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForAll() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn(generateFile("calendar all"));
+        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn(generateCalendar("calendar all"));
 
         perform(get("/web/company/persons/2/calendar")
             .locale(GERMAN)
@@ -157,13 +156,16 @@ class ICalViewControllerTest {
         return standaloneSetup(sut).build().perform(builder);
     }
 
-    private File generateFile(String... content) throws IOException {
-        final Path file = Paths.get("calendar.ics");
-        Files.write(file, asList(content.clone()), UTF_8);
+    private Calendar generateCalendar(String content) {
 
-        final File iCal = file.toFile();
-        iCal.deleteOnExit();
+        final Calendar calendar = new Calendar();
+        calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
+        calendar.getProperties().add(VERSION_2_0);
+        calendar.getProperties().add(new XProperty("X-WR-CALNAME", content));
+        final VEvent event = new VEvent(new Date(0L), "");
+        event.getProperties().add(new Uid("uid"));
+        calendar.getComponents().add(event);
 
-        return iCal;
+        return calendar;
     }
 }
