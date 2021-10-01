@@ -79,7 +79,7 @@ class CompanyCalendarService {
         final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getCalendarPeriod());
         final List<Absence> absences = absenceService.getOpenAbsencesSince(sinceDate);
 
-        return iCalService.getCalendar(title, absences);
+        return iCalService.getCalendarAsFile(title, absences);
     }
 
     @Transactional

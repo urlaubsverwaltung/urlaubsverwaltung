@@ -117,7 +117,7 @@ class DepartmentCalendarServiceTest {
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
         final File iCal = new File("calendar.ics");
         iCal.deleteOnExit();
-        when(iCalService.getCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
+        when(iCalService.getCalendarAsFile("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
 
         final File calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
         assertThat(calendar).hasName("calendar.ics");
