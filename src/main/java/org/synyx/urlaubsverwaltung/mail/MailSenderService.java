@@ -1,7 +1,9 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import net.fortuna.ical4j.data.CalendarOutputter;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,9 +63,9 @@ class MailSenderService {
      * @param recipients      mail addresses where the mail should be sent to
      * @param subject         mail subject
      * @param text            mail body
-     * @param mailAttachments List of attachments to add to the mail
+     * @param mailCalendarAttachments List of attachments to add to the mail
      */
-    void sendEmail(String from, List<String> recipients, String subject, String text, List<MailAttachment> mailAttachments) {
+    void sendEmail(String from, List<String> recipients, String subject, String text, List<MailCalendarAttachment> mailCalendarAttachments) {
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
@@ -71,8 +75,16 @@ class MailSenderService {
             helper.setSubject(subject);
             helper.setText(text);
 
-            for (MailAttachment mailAttachment : mailAttachments) {
-                helper.addAttachment(mailAttachment.getName(), mailAttachment.getFile());
+            for (MailCalendarAttachment mailCalendarAttachment : mailCalendarAttachments) {
+
+                try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                    new CalendarOutputter().output(mailCalendarAttachment.getCalendar(), outputStream);
+                    final ByteArrayResource byteArrayResource = new ByteArrayResource(outputStream.toByteArray());
+                    helper.addAttachment(mailCalendarAttachment.getName(), byteArrayResource);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         } catch (MessagingException e) {
             LOG.error("Sending email to {} failed", recipients, e);

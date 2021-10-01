@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import net.fortuna.ical4j.model.Calendar;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +22,11 @@ public class Mail {
     private final String subjectMessageKey;
     private final Object[] subjectMessageArguments;
 
-    private final List<MailAttachment> mailAttachments;
+    private final List<MailCalendarAttachment> mailCalendarAttachments;
 
     Mail(List<Person> mailAddressRecipients, MailNotification mailNotificationRecipients, boolean sendToTechnicalMail,
          String templateName, Map<String, Object> templateModel, String subjectMessageKey,
-         Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
+         Object[] subjectMessageArguments, List<MailCalendarAttachment> mailCalendarAttachments) {
         this.mailAddressRecipients = mailAddressRecipients;
         this.mailNotificationRecipients = mailNotificationRecipients;
         this.sendToTechnicalMail = sendToTechnicalMail;
@@ -34,7 +34,7 @@ public class Mail {
         this.templateModel = templateModel;
         this.subjectMessageKey = subjectMessageKey;
         this.subjectMessageArguments = subjectMessageArguments;
-        this.mailAttachments = mailAttachments;
+        this.mailCalendarAttachments = mailCalendarAttachments;
     }
 
     public Optional<List<Person>> getMailAddressRecipients() {
@@ -65,8 +65,8 @@ public class Mail {
         return subjectMessageArguments;
     }
 
-    public Optional<List<MailAttachment>> getMailAttachments() {
-        return Optional.ofNullable(mailAttachments);
+    public Optional<List<MailCalendarAttachment>> getMailAttachments() {
+        return Optional.ofNullable(mailCalendarAttachments);
     }
 
     public static Mail.Builder builder() {
@@ -88,7 +88,7 @@ public class Mail {
         private String subjectMessageKey;
         private Object[] subjectMessageArguments;
 
-        private List<MailAttachment> mailAttachments;
+        private List<MailCalendarAttachment> mailCalendarAttachments;
 
         public Mail.Builder withTechnicalRecipient(boolean sendToTechnicalMail) {
             this.sendToTechnicalMail = sendToTechnicalMail;
@@ -126,19 +126,19 @@ public class Mail {
             return this;
         }
 
-        public Mail.Builder withAttachment(String name, File file) {
-            if (mailAttachments == null) {
-                mailAttachments = new ArrayList<>();
+        public Mail.Builder withCalendarAttachment(String name, Calendar calendar) {
+            if (mailCalendarAttachments == null) {
+                mailCalendarAttachments = new ArrayList<>();
             }
 
-            this.mailAttachments.add(new MailAttachment(name, file));
+            this.mailCalendarAttachments.add(new MailCalendarAttachment(name, calendar));
             return this;
         }
 
         public Mail build() {
             return new Mail(mailAddressRecipients, mailNotificationRecipients, sendToTechnicalMail,
                 templateName, templateModel, subjectMessageKey, subjectMessageArguments,
-                mailAttachments);
+                mailCalendarAttachments);
         }
     }
 }

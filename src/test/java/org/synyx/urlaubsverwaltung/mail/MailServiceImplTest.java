@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import net.fortuna.ical4j.model.Calendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +13,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,20 +141,19 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final Calendar iCal = new Calendar();
 
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
-            .withAttachment("fileName", iCal)
+            .withCalendarAttachment("fileName", iCal)
             .build();
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailCalendarAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailCalendarAttachment("fileName", iCal)));
     }
 
     @Test
@@ -172,20 +171,19 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final Calendar iCal = new Calendar();
 
         final Mail mail = Mail.builder()
             .withRecipient(persons)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
-            .withAttachment("fileName", iCal)
+            .withCalendarAttachment("fileName", iCal)
             .build();
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailCalendarAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailCalendarAttachment("fileName", iCal)));
     }
 
     @Test

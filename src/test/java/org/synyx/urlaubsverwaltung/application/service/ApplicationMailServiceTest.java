@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.service;
 
 
+import net.fortuna.ical4j.model.Calendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +25,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -77,8 +77,8 @@ class ApplicationMailServiceTest {
         settings.setApplicationSettings(new ApplicationSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final File file = new File("");
-        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
+        final Calendar calendar = new Calendar();
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(calendar);
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -112,7 +112,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("allowed_user");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
-        assertThat(mails.get(0).getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getCalendar()).isEqualTo(calendar);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.office");
@@ -350,8 +350,8 @@ class ApplicationMailServiceTest {
         model.put("holidayReplacementNote", "awesome replacement note");
         model.put("dayLength", "FULL");
 
-        final File file = new File("");
-        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
+        final Calendar calendar = new Calendar();
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(calendar);
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
@@ -362,7 +362,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.allow");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_allow");
         assertThat(mail.getTemplateModel()).isEqualTo(model);
-        assertThat(mail.getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mail.getMailAttachments().get().get(0).getCalendar()).isEqualTo(calendar);
         assertThat(mail.getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
@@ -449,8 +449,8 @@ class ApplicationMailServiceTest {
         settings.setTimeSettings(new TimeSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final File file = new File("");
-        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
+        final Calendar calendar= new Calendar();
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(calendar);
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -484,7 +484,7 @@ class ApplicationMailServiceTest {
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.holidayReplacement.cancellation");
         assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_cancellation");
         assertThat(mail.getTemplateModel()).isEqualTo(model);
-        assertThat(mail.getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mail.getMailAttachments().get().get(0).getCalendar()).isEqualTo(calendar);
         assertThat(mail.getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
@@ -575,8 +575,8 @@ class ApplicationMailServiceTest {
         settings.setTimeSettings(new TimeSettings());
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final File file = new File("");
-        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
+        final Calendar calendar = new Calendar();
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(calendar);
 
         final Person person = new Person();
         final Person office = new Person();
@@ -608,13 +608,13 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("cancelled_by_office");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
-        assertThat(mails.get(0).getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getCalendar()).isEqualTo(calendar);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person, office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("cancelled_by_office_management");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
-        assertThat(mails.get(1).getMailAttachments().get().get(0).getFile()).isEqualTo(file);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getCalendar()).isEqualTo(calendar);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
