@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import net.fortuna.ical4j.model.Calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -10,7 +11,6 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
@@ -61,7 +61,7 @@ class PersonCalendarService {
         return personCalendarRepository.findByPerson(person);
     }
 
-    File getCalendarForPerson(Integer personId, String secret, Locale locale) {
+    Calendar getCalendarForPerson(Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -83,7 +83,7 @@ class PersonCalendarService {
         final LocalDate sinceDate = LocalDate.now(clock).minus(personCalendar.getCalendarPeriod());
         final List<Absence> absences = absenceService.getOpenAbsencesSince(List.of(person), sinceDate);
 
-        return iCalService.getCalendarAsFile(title, absences);
+        return iCalService.getCalendar(title, absences);
     }
 
     @Transactional

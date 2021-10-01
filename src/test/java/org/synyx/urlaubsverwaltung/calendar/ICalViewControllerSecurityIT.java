@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.property.XProperty;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,14 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Arrays.asList;
 import static java.util.Locale.GERMAN;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -42,7 +36,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getPersonCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn(generateCalendar("calendar"));
 
         perform(get("/web/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());
@@ -52,7 +46,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getDepartmentCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(generateCalendar("calendar"));
 
         perform(get("/web/departments/1/persons/2/calendar").param("secret", secret))
             .andExpect(status().isOk());
@@ -62,20 +56,18 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getCompanyCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn(generateCalendar("calendar"));
 
         perform(get("/web/company/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());
     }
 
-    private File generateFile(String... content) throws IOException {
-        final Path file = Paths.get("calendar.ics");
-        Files.write(file, asList(content.clone()), UTF_8);
+    private Calendar generateCalendar(String content) {
 
-        final File iCal = file.toFile();
-        iCal.deleteOnExit();
+        final Calendar calendar = new Calendar();
+        calendar.getProperties().add(new XProperty("X-WR-CALNAME", content));
 
-        return iCal;
+        return calendar;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

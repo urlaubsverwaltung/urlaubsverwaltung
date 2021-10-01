@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import net.fortuna.ical4j.model.Calendar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +16,6 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -77,10 +77,10 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        when(iCalService.getCalendarAsFile("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn(new File("calendar.ics"));
+        Calendar iCal = new Calendar();
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        assertThat(sut.getCalendarForPerson(1, "secret", GERMAN)).isEqualTo(iCal);
     }
 
     @Test
@@ -99,12 +99,10 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(morningAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
-        when(iCalService.getCalendarAsFile("Abwesenheitskalender von Marlene Muster", morningAbsences)).thenReturn(iCal);
+        final Calendar iCal = new Calendar();
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", morningAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        assertThat(sut.getCalendarForPerson(1, "secret", GERMAN)).isEqualTo(iCal);
     }
 
     @Test
@@ -123,10 +121,11 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(manyFullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        when(iCalService.getCalendarAsFile("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn(new File("calendar.ics"));
 
-        final File iCal = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(iCal).hasName("calendar.ics");
+        Calendar iCal = new Calendar();
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn(iCal);
+
+        assertThat(sut.getCalendarForPerson(1, "secret", GERMAN)).isEqualTo(iCal);
     }
 
     @Test
@@ -145,10 +144,10 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(noonAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        when(iCalService.getCalendarAsFile("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn(new File("calendar.ics"));
+        Calendar iCal = new Calendar();
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        assertThat(sut.getCalendarForPerson(1, "secret", GERMAN)).isEqualTo(iCal);
     }
 
     @Test
