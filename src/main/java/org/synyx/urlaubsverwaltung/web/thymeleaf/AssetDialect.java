@@ -9,7 +9,7 @@ class AssetDialect extends AbstractProcessorDialect {
 
     private final AssetFilenameHashMapper assetFilenameHashMapper;
 
-    public AssetDialect(AssetFilenameHashMapper assetFilenameHashMapper) {
+    AssetDialect(AssetFilenameHashMapper assetFilenameHashMapper) {
         super("Asset Dialect", "asset", 1000);
         this.assetFilenameHashMapper = assetFilenameHashMapper;
     }
