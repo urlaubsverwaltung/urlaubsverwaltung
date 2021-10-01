@@ -658,7 +658,7 @@ class ApplicationMailService {
     }
     private File generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType) {
         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
-        return iCalService.getSingleAppointment(absence, iCalType);
+        return iCalService.getSingleAppointmentAsFile(absence, iCalType);
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {

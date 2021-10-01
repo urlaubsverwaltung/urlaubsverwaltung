@@ -104,7 +104,7 @@ class DepartmentCalendarService {
 
         final List<Absence> absences = absenceService.getOpenAbsencesSince(department.getMembers(), sinceDate);
 
-        return iCalService.getCalendar(title, absences);
+        return iCalService.getCalendarAsFile(title, absences);
     }
 
     @Transactional

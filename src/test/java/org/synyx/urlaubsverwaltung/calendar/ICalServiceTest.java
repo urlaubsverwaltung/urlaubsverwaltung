@@ -44,7 +44,7 @@ class ICalServiceTest {
     void getCalendarForPersonAndNoAbsenceFound() {
         final List<Absence> absences = List.of();
 
-        assertThatThrownBy(() -> sut.getCalendar("Abwesenheitskalender", absences))
+        assertThatThrownBy(() -> sut.getCalendarAsFile("Abwesenheitskalender", absences))
             .isInstanceOf(CalendarException.class);
     }
 
@@ -53,7 +53,7 @@ class ICalServiceTest {
 
         final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
-        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
+        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(fullDayAbsence));
 
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
@@ -75,7 +75,7 @@ class ICalServiceTest {
 
         final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
-        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence));
+        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(morningAbsence));
 
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
@@ -97,7 +97,7 @@ class ICalServiceTest {
 
         final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
-        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
+        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
@@ -120,7 +120,7 @@ class ICalServiceTest {
 
         final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
-        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(noonAbsence));
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -145,7 +145,7 @@ class ICalServiceTest {
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
-        final File calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        final File calendar = sut.getCalendarAsFile("Abwesenheitskalender", List.of(noonAbsence));
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -172,7 +172,7 @@ class ICalServiceTest {
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
 
-        final File calendar = sut.getSingleAppointment(noonAbsence, CANCELLED);
+        final File calendar = sut.getSingleAppointmentAsFile(noonAbsence, CANCELLED);
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -200,7 +200,7 @@ class ICalServiceTest {
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
 
-        final File calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED);
+        final File calendar = sut.getSingleAppointmentAsFile(noonAbsence, PUBLISHED);
         assertThat(fileToString(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")

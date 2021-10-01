@@ -78,7 +78,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final File file = new File("");
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -351,7 +351,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "FULL");
 
         final File file = new File("");
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
@@ -450,7 +450,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final File file = new File("");
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -576,7 +576,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final File file = new File("");
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(file);
+        when(iCalService.getSingleAppointmentAsFile(any(), any())).thenReturn(file);
 
         final Person person = new Person();
         final Person office = new Person();

@@ -81,7 +81,7 @@ class CompanyCalendarServiceTest {
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
         final File iCal = new File("calendar.ics");
         iCal.deleteOnExit();
-        when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences)).thenReturn(iCal);
+        when(iCalService.getCalendarAsFile("Abwesenheitskalender der Firma", absences)).thenReturn(iCal);
 
         final File calendar = sut.getCalendarForAll(10, "secret", GERMAN);
         assertThat(calendar).hasName("calendar.ics");
