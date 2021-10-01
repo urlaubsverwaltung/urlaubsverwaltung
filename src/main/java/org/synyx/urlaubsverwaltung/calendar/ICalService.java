@@ -58,24 +58,24 @@ public class ICalService {
 
     public File getCalendarAsFile(String title, List<Absence> absences) {
         final File file = generateCalenderFile(title);
-        final Calendar calendar = generateCalendar(title, absences);
+        final Calendar calendar = getCalendar(title, absences);
         return writeCalenderIntoFile(calendar, file);
     }
 
     public File getSingleAppointmentAsFile(Absence absence, ICalType method) {
         final File file = generateCalenderFile("appointment");
-        final Calendar calendar = generateForSingleAppointment(absence, method);
+        final Calendar calendar = getSingleAppointment(absence, method);
         return writeCalenderIntoFile(calendar, file);
     }
 
-    private Calendar generateCalendar(String title, List<Absence> absences) {
+    public Calendar getCalendar(String title, List<Absence> absences) {
         final Calendar calendar = prepareCalendar(absences, PUBLISHED);
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", title));
         calendar.getProperties().add(new RefreshInterval(new ParameterList(), calendarProperties.getRefreshInterval()));
         return calendar;
     }
 
-    private Calendar generateForSingleAppointment(Absence absence, ICalType method) {
+    public Calendar getSingleAppointment(Absence absence, ICalType method) {
         return prepareCalendar(List.of(absence), method);
     }
 
