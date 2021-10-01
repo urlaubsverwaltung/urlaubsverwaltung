@@ -1,6 +1,10 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Date;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 
 import static java.util.Locale.GERMAN;
+import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -65,7 +70,12 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     private Calendar generateCalendar(String content) {
 
         final Calendar calendar = new Calendar();
+        calendar.getProperties().add(new ProdId("-//Urlaubsverwaltung//iCal4j 1.0//DE"));
+        calendar.getProperties().add(VERSION_2_0);
         calendar.getProperties().add(new XProperty("X-WR-CALNAME", content));
+        final VEvent event = new VEvent(new Date(0L), "");
+        event.getProperties().add(new Uid("uid"));
+        calendar.getComponents().add(event);
 
         return calendar;
     }
