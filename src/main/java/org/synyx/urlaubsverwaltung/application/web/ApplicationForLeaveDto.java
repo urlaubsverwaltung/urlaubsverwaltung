@@ -16,12 +16,13 @@ public class ApplicationForLeaveDto {
     private final boolean approveAllowed;
     private final boolean temporaryApproveAllowed;
     private final boolean rejectAllowed;
+    private final boolean cancellationRequested;
 
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
     private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, String duration,
                                    DayLength dayLength, String workDays, String durationOfAbsenceDescription,
                                    boolean statusWaiting, boolean editAllowed, boolean approveAllowed,
-                                   boolean temporaryApproveAllowed, boolean rejectAllowed) {
+                                   boolean temporaryApproveAllowed, boolean rejectAllowed, boolean cancellationRequested) {
         this.id = id;
         this.person = person;
         this.vacationType = vacationType;
@@ -34,6 +35,7 @@ public class ApplicationForLeaveDto {
         this.approveAllowed = approveAllowed;
         this.temporaryApproveAllowed = temporaryApproveAllowed;
         this.rejectAllowed = rejectAllowed;
+        this.cancellationRequested = cancellationRequested;
     }
 
     public int getId() {
@@ -84,6 +86,10 @@ public class ApplicationForLeaveDto {
         return rejectAllowed;
     }
 
+    public boolean isCancellationRequested() {
+        return cancellationRequested;
+    }
+
     static Builder builder() {
         return new Builder();
     }
@@ -101,6 +107,7 @@ public class ApplicationForLeaveDto {
         private boolean approveAllowed;
         private boolean temporaryApproveAllowed;
         private boolean rejectAllowed;
+        private boolean cancellationRequested;
 
         Builder id(int id) {
             this.id = id;
@@ -162,6 +169,11 @@ public class ApplicationForLeaveDto {
             return this;
         }
 
+        Builder cancellationRequested(boolean cancellationRequested) {
+            this.cancellationRequested = cancellationRequested;
+            return this;
+        }
+
         ApplicationForLeaveDto build() {
             return new ApplicationForLeaveDto(
                 id,
@@ -175,7 +187,8 @@ public class ApplicationForLeaveDto {
                 editAllowed,
                 approveAllowed,
                 temporaryApproveAllowed,
-                rejectAllowed
+                rejectAllowed,
+                cancellationRequested
             );
         }
     }

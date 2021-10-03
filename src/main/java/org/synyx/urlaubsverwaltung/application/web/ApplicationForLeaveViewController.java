@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -31,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -97,9 +99,11 @@ public class ApplicationForLeaveViewController {
         final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, locale);
         model.addAttribute("otherApplications", otherApplicationsDtos);
 
-        final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
-        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
-        model.addAttribute("applications_cancellation_request", cancellationDtoList);
+        if (signedInUser.hasRole(OFFICE)) {
+            final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
+            final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
+            model.addAttribute("applications_cancellation_request", cancellationDtoList);
+        }
 
         final LocalDate holidayReplacementForDate = LocalDate.now(clock);
         final List<ApplicationReplacementDto> replacements = getHolidayReplacements(signedInUser, holidayReplacementForDate, locale);
@@ -115,6 +119,7 @@ public class ApplicationForLeaveViewController {
     private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, MessageSource messageSource, Locale locale) {
         final Person person = application.getPerson();
         final boolean isWaiting = application.hasStatus(WAITING);
+        final boolean isCancellationRequested = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
         final boolean twoStageApproval = application.isTwoStageApproval();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
@@ -133,6 +138,7 @@ public class ApplicationForLeaveViewController {
             .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
             .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting)
             .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
+            .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();
     }
@@ -227,10 +233,11 @@ public class ApplicationForLeaveViewController {
         if (signedInUser.hasRole(OFFICE)) {
             cancellationRequests = applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED));
         } else {
-            cancellationRequests = applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), List.of(signedInUser));
+            cancellationRequests = emptyList();
         }
 
         return cancellationRequests.stream()
+            .filter(application -> !application.getPerson().equals(signedInUser))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
@@ -270,7 +277,10 @@ public class ApplicationForLeaveViewController {
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
-        return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(user)).stream()
+        final List<ApplicationStatus> states = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+
+        return applicationService.getForStatesAndPerson(states, List.of(user))
+            .stream()
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
