@@ -298,7 +298,7 @@
         th:replace="fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions}, ~{::other-applications-heading-below})"
       >
         <th:block th:ref="other-applications-heading-body">
-          <h2 th:text="#{applications.other.waiting}"></h2>
+          <h2 class="tw-text-xl tw-font-medium" th:text="#{applications.other.waiting}"></h2>
         </th:block>
       </div>
 
@@ -383,7 +383,7 @@
         th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions}, ~{::cancellation-requests-heading-below})"
       >
         <th:block th:ref="cancellation-requests-heading-body">
-          <h1 id="cancellation-requests" th:text="#{applications.cancellation_request}"></h1>
+          <h1 id="cancellation-requests" class="tw-text-xl tw-font-medium" th:text="#{applications.cancellation_request}"></h1>
         </th:block>
       </div>
 
