@@ -399,7 +399,7 @@
           <tbody>
             <tr
               th:each="cancellationRequest,loopStatus : ${applications_cancellation_request}"
-              th:onclick="|navigate('/web/application/${applicationId} (applicationId=${cancellationRequest.id})');|"
+              th:onclick="|navigate('/web/application/${cancellationRequest.id}');|"
               class="active"
             >
               <td class="print:tw-hidden is-centered">
@@ -414,9 +414,10 @@
               </td>
               <td class="halves">
                 <a
-                  class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
+                  class="tw-block tw-mb-1 tw-text-lg print:no-link"
+                  th:classappend="${cancellationRequest.vacationType.category}"
                   href="#"
-                  th:href="@{/web/application/{applicationId} (applicationId=cancellationRequest.id)}"
+                  th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id})}"
                   th:switch="${#strings.isEmpty(cancellationRequest.duration)}"
                 >
                   <th:block th:case="true">
