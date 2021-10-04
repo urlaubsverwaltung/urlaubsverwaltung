@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
-import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
@@ -14,16 +13,12 @@ import net.fortuna.ical4j.model.property.RefreshInterval;
 import net.fortuna.ical4j.model.property.Sequence;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
-import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
@@ -144,25 +139,5 @@ public class ICalService {
     private String generateUid(Absence absence) {
         final String data = absence.getStartDate() + "" + absence.getEndDate() + "" + absence.getPerson();
         return DigestUtils.md5Hex(data).toUpperCase();
-    }
-
-    private File generateCalenderFile(String title) {
-        final File file;
-        try {
-            file = File.createTempFile("calendar-", ".ics");
-        } catch (IOException e) {
-            throw new CalendarException("Could not generate temp file for " + title + " calendar", e);
-        }
-        return file;
-    }
-
-    private File writeCalenderIntoFile(Calendar calendar, File file) {
-        try (final FileWriter calendarFileWriter = new FileWriter(file)) {
-            final CalendarOutputter calendarOutputter = new CalendarOutputter();
-            calendarOutputter.output(calendar, calendarFileWriter);
-        } catch (ValidationException | IOException e) {
-            throw new CalendarException("iCal calendar could not be written to file", e);
-        }
-        return file;
     }
 }
