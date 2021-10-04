@@ -82,7 +82,7 @@ class MailSenderService {
                     final ByteArrayResource byteArrayResource = new ByteArrayResource(outputStream.toByteArray());
                     helper.addAttachment(mailCalendarAttachment.getName(), byteArrayResource);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error("Adding calendar attachment failed for email to {}", recipients, e);
                 }
 
             }
