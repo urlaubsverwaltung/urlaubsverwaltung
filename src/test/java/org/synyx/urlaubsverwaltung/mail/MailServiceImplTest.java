@@ -6,13 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,8 +141,7 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
 
         final Mail mail = Mail.builder()
             .withRecipient(persons)
@@ -172,8 +171,7 @@ class MailServiceImplTest {
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
 
         final Mail mail = Mail.builder()
             .withRecipient(persons)

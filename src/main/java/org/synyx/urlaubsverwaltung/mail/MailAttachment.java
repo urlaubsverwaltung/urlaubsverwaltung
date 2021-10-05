@@ -1,20 +1,21 @@
 package org.synyx.urlaubsverwaltung.mail;
 
-import java.io.File;
+import org.springframework.core.io.ByteArrayResource;
+
 import java.util.Objects;
 
 public final class MailAttachment {
 
     private final String name;
-    private final File file;
+    private final ByteArrayResource content;
 
-    MailAttachment(String name, File file) {
-        this.file = file;
+    MailAttachment(String name, ByteArrayResource content) {
+        this.content = content;
         this.name = name;
     }
 
-    public File getFile() {
-        return file;
+    public ByteArrayResource getContent() {
+        return content;
     }
 
     public String getName() {
@@ -30,11 +31,11 @@ public final class MailAttachment {
             return false;
         }
         MailAttachment that = (MailAttachment) o;
-        return Objects.equals(name, that.name) && Objects.equals(file, that.file);
+        return Objects.equals(name, that.name) && Objects.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, file);
+        return Objects.hash(name, content);
     }
 }

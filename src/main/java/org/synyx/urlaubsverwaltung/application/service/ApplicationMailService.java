@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
@@ -18,7 +19,6 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +66,7 @@ class ApplicationMailService {
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
-        final File calendarFile = generateCalendar(application, DEFAULT);
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -285,7 +285,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final File calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT);
+        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -312,7 +312,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final File calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -452,7 +452,7 @@ class ApplicationMailService {
      */
     void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
-        final File calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -653,10 +653,10 @@ class ApplicationMailService {
         return messageSource.getMessage(key, args, GERMAN);
     }
 
-    private File generateCalendar(Application application, AbsenceType absenceType) {
+    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType) {
         return generateCalendar(application, absenceType, PUBLISHED);
     }
-    private File generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType) {
+    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType) {
         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
         return iCalService.getSingleAppointment(absence, iCalType);
     }
