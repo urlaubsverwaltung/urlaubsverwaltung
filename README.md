@@ -90,7 +90,7 @@ Alle Informationen zum Betrieb mit unserem Docker Image sind im Ordner [.example
 
 ### Konfiguration
 
-Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application.properties).
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/synyx/urlaubsverwaltung/blob/main/src/main/resources/application.properties).
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
 Anwendung allerdings nicht aus. Spezifische Konfigurationen wie z.B. die [Datenbank Einstellungen](#datenbank-konfigurieren)
 und [Security Provider](#security-provider-konfigurieren) müssen in einer eigenen Konfigurationsdatei hinterlegt werden.
@@ -319,7 +319,7 @@ Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, m
 
 `uv.development.demodata.create`
 
-in den [application-demodata.properties](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application-demodata.properties)
+in den [application-demodata.properties](https://github.com/synyx/urlaubsverwaltung/blob/main/src/main/resources/application-demodata.properties)
 auf `false` gesetzt werden.
 
 
