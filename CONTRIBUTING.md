@@ -41,7 +41,7 @@ They can also be added after the original pull request but before a merge.
 * We use [EditorConfig](https://editorconfig.org/) project to apply code formatting conventions.
 * Add some Javadocs.
 * A few unit tests would help a lot as well -- someone has to do it.
-* If no-one else is using your branch, please rebase it against the current master (or
+* If no-one else is using your branch, please rebase it against the current main (or
   other target branch in the main project).
 * When writing a commit message please follow [these conventions](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html),
   if you are fixing an existing issue please add `Fixes gh-XXXX` at the end of the commit
