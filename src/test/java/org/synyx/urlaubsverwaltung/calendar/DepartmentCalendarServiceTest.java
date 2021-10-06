@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
@@ -17,7 +18,6 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -115,12 +115,11 @@ class DepartmentCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar");
         when(iCalService.getCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        final ByteArrayResource calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test

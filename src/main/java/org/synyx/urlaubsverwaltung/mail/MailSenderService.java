@@ -72,7 +72,7 @@ class MailSenderService {
             helper.setText(text);
 
             for (MailAttachment mailAttachment : mailAttachments) {
-                helper.addAttachment(mailAttachment.getName(), mailAttachment.getFile());
+                helper.addAttachment(mailAttachment.getName(), mailAttachment.getContent());
             }
         } catch (MessagingException e) {
             LOG.error("Sending email to {} failed", recipients, e);

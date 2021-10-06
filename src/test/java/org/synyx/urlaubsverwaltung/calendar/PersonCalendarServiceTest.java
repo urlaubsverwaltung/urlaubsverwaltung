@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
@@ -15,7 +16,6 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -77,10 +77,11 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(fullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn(new File("calendar.ics"));
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test
@@ -99,12 +100,11 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(morningAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", morningAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test
@@ -123,10 +123,11 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(manyFullDayAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn(new File("calendar.ics"));
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn(iCal);
 
-        final File iCal = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(iCal).hasName("calendar.ics");
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test
@@ -145,10 +146,11 @@ class PersonCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(eq(List.of(person)), any(LocalDate.class))).thenReturn(noonAbsences);
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn(new File("calendar.ics"));
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test

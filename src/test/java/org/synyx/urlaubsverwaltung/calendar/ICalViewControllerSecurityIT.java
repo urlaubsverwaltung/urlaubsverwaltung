@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -42,7 +43,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getPersonCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
 
         perform(get("/web/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());
@@ -52,7 +53,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getDepartmentCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
 
         perform(get("/web/departments/1/persons/2/calendar").param("secret", secret))
             .andExpect(status().isOk());
@@ -62,7 +63,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getCompanyCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn(generateFile("calendar"));
+        when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
 
         perform(get("/web/company/persons/1/calendar").param("secret", secret))
             .andExpect(status().isOk());

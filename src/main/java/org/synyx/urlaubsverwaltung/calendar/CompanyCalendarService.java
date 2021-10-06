@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -11,7 +12,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
@@ -61,7 +61,7 @@ class CompanyCalendarService {
         return companyCalendarRepository.findByPerson(person);
     }
 
-    File getCalendarForAll(Integer personId, String secret, Locale locale) {
+    ByteArrayResource getCalendarForAll(Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");

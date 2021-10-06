@@ -18,11 +18,11 @@ import net.fortuna.ical4j.validate.ValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 
-import java.io.File;
-import java.io.FileWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
@@ -56,16 +56,14 @@ public class ICalService {
         this.calendarProperties = calendarProperties;
     }
 
-    public File getCalendar(String title, List<Absence> absences) {
-        final File file = generateCalenderFile(title);
+    public ByteArrayResource getCalendar(String title, List<Absence> absences) {
         final Calendar calendar = generateCalendar(title, absences);
-        return writeCalenderIntoFile(calendar, file);
+        return writeCalenderIntoRessource(calendar);
     }
 
-    public File getSingleAppointment(Absence absence, ICalType method) {
-        final File file = generateCalenderFile("appointment");
+    public ByteArrayResource getSingleAppointment(Absence absence, ICalType method) {
         final Calendar calendar = generateForSingleAppointment(absence, method);
-        return writeCalenderIntoFile(calendar, file);
+        return writeCalenderIntoRessource(calendar);
     }
 
     private Calendar generateCalendar(String title, List<Absence> absences) {
@@ -158,23 +156,15 @@ public class ICalService {
         return DigestUtils.md5Hex(data).toUpperCase();
     }
 
-    private File generateCalenderFile(String title) {
-        final File file;
-        try {
-            file = File.createTempFile("calendar-", ".ics");
-        } catch (IOException e) {
-            throw new CalendarException("Could not generate temp file for " + title + " calendar", e);
-        }
-        return file;
-    }
-
-    private File writeCalenderIntoFile(Calendar calendar, File file) {
-        try (final FileWriter calendarFileWriter = new FileWriter(file)) {
+    private ByteArrayResource writeCalenderIntoRessource(Calendar calendar) {
+        final ByteArrayResource byteArrayResource;
+        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             final CalendarOutputter calendarOutputter = new CalendarOutputter();
-            calendarOutputter.output(calendar, calendarFileWriter);
+            calendarOutputter.output(calendar, byteArrayOutputStream);
+            byteArrayResource = new ByteArrayResource(byteArrayOutputStream.toByteArray());
         } catch (ValidationException | IOException e) {
-            throw new CalendarException("iCal calendar could not be written to file", e);
+            throw new CalendarException("iCal calendar could not be written to ByteArrayResource", e);
         }
-        return file;
+        return byteArrayResource;
     }
 }

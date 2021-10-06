@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -47,7 +48,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForPerson() throws Exception {
 
-        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn(generateFile("iCal string"));
+        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn(new ByteArrayResource("iCal string".getBytes()));
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN)
@@ -83,7 +84,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartment() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(generateFile("calendar department"));
+        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(new ByteArrayResource("calendar department".getBytes()));
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -116,11 +117,10 @@ class ICalViewControllerTest {
             .andExpect(status().isNoContent());
     }
 
-
     @Test
     void getCalendarForAll() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn(generateFile("calendar all"));
+        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn(new ByteArrayResource("calendar all".getBytes()));
 
         perform(get("/web/company/persons/2/calendar")
             .locale(GERMAN)

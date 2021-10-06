@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -126,12 +126,12 @@ public class Mail {
             return this;
         }
 
-        public Mail.Builder withAttachment(String name, File file) {
+        public Mail.Builder withAttachment(String name, ByteArrayResource attachment) {
             if (mailAttachments == null) {
                 mailAttachments = new ArrayList<>();
             }
 
-            this.mailAttachments.add(new MailAttachment(name, file));
+            this.mailAttachments.add(new MailAttachment(name, attachment));
             return this;
         }
 
