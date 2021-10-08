@@ -253,7 +253,6 @@ class SickNoteIT {
 
     private Person createPerson() {
         final Person person = new Person("pennyworth", "Pennyworth", "Alfred", "alfred.pennyworth@example.org");
-        person.setPassword("2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec");
         person.setPermissions(List.of(USER, OFFICE));
         final Person savedPerson = personService.save(person);
 
