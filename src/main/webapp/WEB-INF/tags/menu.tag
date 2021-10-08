@@ -335,18 +335,6 @@
                             </span>
                         </a>
                     </li>
-                    <sec:authorize access="hasAuthority('USER')">
-                    <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
-                            <span class="tw-flex tw-items-center">
-                                <icon:plus-circle className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
-                                <span class="tw-ml-5 lg:tw-ml-2">
-                                    <spring:message code="nav.apply.title"/>
-                                </span>
-                            </span>
-                        </a>
-                    </li>
-                    </sec:authorize>
                     <li class="tw-flex tw-items-center">
                         <a href="${URL_PREFIX}/application" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
