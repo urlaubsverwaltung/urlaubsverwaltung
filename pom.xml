@@ -18,7 +18,7 @@
   <properties>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
-    <java.version>15</java.version>
+    <java.version>17</java.version>
     <testcontainers.version>1.17.2</testcontainers.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
     <docker.name>synyx/urlaubsverwaltung</docker.name>
