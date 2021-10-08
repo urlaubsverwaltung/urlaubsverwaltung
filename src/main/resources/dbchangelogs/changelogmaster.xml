@@ -87,5 +87,5 @@
   <include file="dbchangelogs/changelog-4.21.0-add-overtime-reduction-without-application-active-flag.xml"/>
   <include file="dbchangelogs/changelog-4.21.0-add-setting-overtime-write-privileged-only.xml"/>
   <include file="dbchangelogs/changelog-4.24.0-add-upcoming-holiday-replacement-reminder.xml"/>
-  <include file="dbchangelogs/changelog-5.0.0-drop-person-password.xml"/>
+  <include file="dbchangelogs/changelog-5.0.0-M1-drop-person-password.xml"/>
 </databaseChangeLog>
