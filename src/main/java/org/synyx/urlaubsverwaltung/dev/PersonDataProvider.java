@@ -15,6 +15,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -87,7 +88,9 @@ class PersonDataProvider {
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
 
-        final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).stream().map(DayOfWeek::getValue).collect(toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY)
+            .map(DayOfWeek::getValue)
+            .collect(toList());
         workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
         final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
