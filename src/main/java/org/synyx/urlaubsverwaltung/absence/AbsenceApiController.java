@@ -254,13 +254,9 @@ public class AbsenceApiController {
     }
 
     private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
-        switch (absenceType) {
-            case VACATION:
-                return Optional.of(VACATION);
-            case SICK:
-                return Optional.of(SICK_NOTE);
-            default:
-                return Optional.empty();
-        }
+        return switch (absenceType) {
+            case VACATION -> Optional.of(VACATION);
+            case SICK -> Optional.of(SICK_NOTE);
+        };
     }
 }
