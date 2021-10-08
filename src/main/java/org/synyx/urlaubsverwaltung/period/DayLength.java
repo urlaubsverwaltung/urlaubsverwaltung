@@ -27,18 +27,13 @@ public enum DayLength {
      * @return the matching enum member which represents the rest of the day.
      */
     public DayLength getInverse() {
-        switch (this) {
-            case FULL:
-                return ZERO;
-            case MORNING:
-                return NOON;
-            case NOON:
-                return MORNING;
-            case ZERO:
-                return FULL;
-        }
+        return switch (this) {
+            case FULL -> ZERO;
+            case MORNING -> NOON;
+            case NOON -> MORNING;
+            case ZERO -> FULL;
+        };
 
-        return null;
     }
 
     public boolean isHalfDay() { return isHalfDay; }

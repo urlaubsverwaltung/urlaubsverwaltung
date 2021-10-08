@@ -172,21 +172,22 @@ public class ApplicationForLeaveFormValidator implements Validator {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                 }
-                return;
+                break;
             case MORNING:
                 if (applicationDayLength == NOON) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                 }
-                return;
+                break;
             case NOON:
                 if (applicationDayLength == MORNING) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                 }
-                return;
+                break;
+            // nothing to do here
             default:
-                // nothing to do here
+                break;
         }
     }
 
@@ -200,21 +201,22 @@ public class ApplicationForLeaveFormValidator implements Validator {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                 }
-                return;
+                break;
             case MORNING:
                 if (applicationDayLength == NOON) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                 }
-                return;
+                break;
             case NOON:
                 if (applicationDayLength == MORNING) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                 }
-                return;
+                break;
+            // nothing to do here
             default:
-                // nothing to do here
+                break;
         }
     }
 

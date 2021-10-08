@@ -37,26 +37,22 @@ public class Absence {
         final ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
 
         switch (period.getDayLength()) {
-            case FULL:
+            case FULL -> {
                 this.startDate = periodStartDate;
                 this.endDate = periodEndDate.plusDays(1);
                 this.isAllDay = true;
-                break;
-
-            case MORNING:
+            }
+            case MORNING -> {
                 this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getMorningStart());
                 this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getMorningEnd());
                 this.isAllDay = false;
-                break;
-
-            case NOON:
+            }
+            case NOON -> {
                 this.startDate = periodStartDate.plusHours(absenceTimeConfiguration.getNoonStart());
                 this.endDate = periodEndDate.plusHours(absenceTimeConfiguration.getNoonEnd());
                 this.isAllDay = false;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Invalid day length!");
+            }
+            default -> throw new IllegalArgumentException("Invalid day length!");
         }
     }
 

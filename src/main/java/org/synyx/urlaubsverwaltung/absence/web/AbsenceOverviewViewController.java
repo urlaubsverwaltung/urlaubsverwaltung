@@ -43,7 +43,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -188,7 +187,7 @@ public class AbsenceOverviewViewController {
                     .stream()
                     .flatMap(List::stream)
                     .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
-                    .collect(toUnmodifiableList());
+                    .toList();
 
                 final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(holidaysByDate.get(date))
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser, publicHoliday))
@@ -366,34 +365,21 @@ public class AbsenceOverviewViewController {
     }
 
     private String getMonthMessageCode(LocalDate localDate) {
-        switch (localDate.getMonthValue()) {
-            case 1:
-                return "month.january";
-            case 2:
-                return "month.february";
-            case 3:
-                return "month.march";
-            case 4:
-                return "month.april";
-            case 5:
-                return "month.may";
-            case 6:
-                return "month.june";
-            case 7:
-                return "month.july";
-            case 8:
-                return "month.august";
-            case 9:
-                return "month.september";
-            case 10:
-                return "month.october";
-            case 11:
-                return "month.november";
-            case 12:
-                return "month.december";
-            default:
-                throw new IllegalStateException("month value not in range of 1 to 12 cannot be mapped to a message key.");
-        }
+        return switch (localDate.getMonthValue()) {
+            case 1 -> "month.january";
+            case 2 -> "month.february";
+            case 3 -> "month.march";
+            case 4 -> "month.april";
+            case 5 -> "month.may";
+            case 6 -> "month.june";
+            case 7 -> "month.july";
+            case 8 -> "month.august";
+            case 9 -> "month.september";
+            case 10 -> "month.october";
+            case 11 -> "month.november";
+            case 12 -> "month.december";
+            default -> throw new IllegalStateException("month value not in range of 1 to 12 cannot be mapped to a message key.");
+        };
     }
 
     private LocalDate getStartDate(Integer year, String month) {

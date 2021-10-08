@@ -129,44 +129,27 @@ public class WorkingTime {
      * @return <code>false</code> when given day of week matches DayLength ZERO, <code>true</code> otherwise.
      */
     public boolean isWorkingDay(DayOfWeek dayOfWeek) {
-        switch (dayOfWeek) {
-            case MONDAY:
-                return this.monday != ZERO;
-            case TUESDAY:
-                return this.tuesday != ZERO;
-            case WEDNESDAY:
-                return this.wednesday != ZERO;
-            case THURSDAY:
-                return this.thursday != ZERO;
-            case FRIDAY:
-                return this.friday != ZERO;
-            case SATURDAY:
-                return this.saturday != ZERO;
-            case SUNDAY:
-                return this.sunday != ZERO;
-        }
-        return false;
+        return switch (dayOfWeek) {
+            case MONDAY -> this.monday != ZERO;
+            case TUESDAY -> this.tuesday != ZERO;
+            case WEDNESDAY -> this.wednesday != ZERO;
+            case THURSDAY -> this.thursday != ZERO;
+            case FRIDAY -> this.friday != ZERO;
+            case SATURDAY -> this.saturday != ZERO;
+            case SUNDAY -> this.sunday != ZERO;
+        };
     }
 
     public DayLength getDayLengthForWeekDay(DayOfWeek dayOfWeek) {
-        switch (dayOfWeek) {
-            case MONDAY:
-                return this.monday;
-            case TUESDAY:
-                return this.tuesday;
-            case WEDNESDAY:
-                return this.wednesday;
-            case THURSDAY:
-                return this.thursday;
-            case FRIDAY:
-                return this.friday;
-            case SATURDAY:
-                return this.saturday;
-            case SUNDAY:
-                return this.sunday;
-            default:
-                return null;
-        }
+        return switch (dayOfWeek) {
+            case MONDAY -> this.monday;
+            case TUESDAY -> this.tuesday;
+            case WEDNESDAY -> this.wednesday;
+            case THURSDAY -> this.thursday;
+            case FRIDAY -> this.friday;
+            case SATURDAY -> this.saturday;
+            case SUNDAY -> this.sunday;
+        };
     }
 
     public void setDayLengthForWeekDay(DayOfWeek dayOfWeek, DayLength dayLength) {
@@ -191,8 +174,6 @@ public class WorkingTime {
                 break;
             case SUNDAY:
                 this.sunday = dayLength;
-                break;
-            default:
                 break;
         }
     }

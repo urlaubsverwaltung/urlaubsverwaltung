@@ -20,12 +20,12 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
     @Query("SELECT SUM(overtime.duration) FROM Overtime overtime WHERE overtime.person = :person")
     Double calculateTotalHoursForPerson(@Param("person") Person person);
 
-    @Query(
-        "SELECT overtime FROM Overtime overtime WHERE overtime.person = :person "
-            + "AND ((overtime.startDate BETWEEN :start AND :end) "
-            + "OR (overtime.endDate BETWEEN :start AND :end) "
-            + "OR (overtime.startDate < :start and overtime.endDate > :end)) "
-            + "ORDER BY overtime.startDate desc"
-    )
+    @Query("""
+            SELECT overtime FROM Overtime overtime WHERE overtime.person = :person
+            AND ((overtime.startDate BETWEEN :start AND :end)
+            OR (overtime.endDate BETWEEN :start AND :end)
+            OR (overtime.startDate < :start and overtime.endDate > :end))
+            ORDER BY overtime.startDate desc
+            """)
     List<Overtime> findByPersonAndPeriod(@Param("person") Person person, @Param("start") LocalDate start, @Param("end") LocalDate end);
 }

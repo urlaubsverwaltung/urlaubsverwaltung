@@ -51,7 +51,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ### Voraussetzungen
 
-* [JDK 11](https://openjdk.java.net/install/)
+* [JDK 17](https://openjdk.java.net/install/)
 * [MariaDB Datenbank (v10.5)](https://mariadb.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
@@ -344,7 +344,7 @@ vom Typ "Question" erstellen.
 
 ### Voraussetzungen
 
-* [JDK 11](https://openjdk.java.net/install/)
+* [JDK 17](https://openjdk.java.net/install/)
 * [Docker 19.03.0+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
