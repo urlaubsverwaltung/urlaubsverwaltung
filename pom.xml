@@ -99,10 +99,6 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-registry-stackdriver</artifactId>
-    </dependency>
 
     <!-- DATABASE -->
     <dependency>
@@ -223,6 +219,11 @@
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
       <version>v3-rev20210804-1.32.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-jackson2</artifactId>
+      <version>1.40.1</version>
     </dependency>
 
     <!-- Security -->
