@@ -346,7 +346,7 @@ vom Typ "Question" erstellen.
 ### Voraussetzungen
 
 * [JDK 11](https://openjdk.java.net/install/)
-* [Docker 17.12.0+](https://docs.docker.com/get-docker/)
+* [Docker 19.03.0+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
 
