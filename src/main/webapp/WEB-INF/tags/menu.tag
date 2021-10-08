@@ -244,16 +244,6 @@
                             </a>
                         </li>
                         <li class="tw-flex tw-items-center">
-                            <a href="${URL_PREFIX}/application/new" id="application-new-link" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
-                                <span class="tw-flex tw-items-center">
-                                    <icon:plus-circle className="navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4" />
-                                    <span class="tw-ml-5 lg:tw-ml-2">
-                                        <spring:message code="nav.apply.title"/>
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/application" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
                                     <icon:calendar className="navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4" />
