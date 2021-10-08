@@ -136,18 +136,13 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     private AbsencePeriod.AbsenceStatus toAbsenceStatus(ApplicationStatus applicationStatus) {
-        switch (applicationStatus) {
-            case ALLOWED:
-                return AbsencePeriod.AbsenceStatus.ALLOWED;
-            case WAITING:
-                return AbsencePeriod.AbsenceStatus.WAITING;
-            case TEMPORARY_ALLOWED:
-                return AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED;
-            case ALLOWED_CANCELLATION_REQUESTED:
-                return AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
-            default:
-                throw new IllegalStateException("application status not expected here.");
-        }
+        return switch (applicationStatus) {
+            case ALLOWED -> AbsencePeriod.AbsenceStatus.ALLOWED;
+            case WAITING -> AbsencePeriod.AbsenceStatus.WAITING;
+            case TEMPORARY_ALLOWED -> AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED;
+            case ALLOWED_CANCELLATION_REQUESTED -> AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
+            default -> throw new IllegalStateException("application status not expected here.");
+        };
     }
 
     private List<AbsencePeriod.Record> days(Application application, DateRange askedDateRange, List<WorkingTime> workingTimeList,
