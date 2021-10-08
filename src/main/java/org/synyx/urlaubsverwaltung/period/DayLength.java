@@ -27,20 +27,12 @@ public enum DayLength {
      * @return the matching enum member which represents the rest of the day.
      */
     public DayLength getInverse() {
-        switch (this) {
-            case FULL:
-                return ZERO;
-            case MORNING:
-                return NOON;
-            case NOON:
-                return MORNING;
-            case ZERO:
-                return FULL;
-        }
-
-        // this is not relevant, because every case is defined in the switch case, this will be nicer to read and
-        // without this last return case in java 17
-        return ZERO;
+        return switch (this) {
+            case FULL -> ZERO;
+            case MORNING -> NOON;
+            case NOON -> MORNING;
+            case ZERO -> FULL;
+        };
     }
 
     public boolean isHalfDay() { return isHalfDay; }
