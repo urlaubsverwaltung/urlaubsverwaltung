@@ -52,12 +52,6 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <sec:authorize access="hasAuthority('OFFICE')">
-                <a href="${URL_PREFIX}/application/new" class="icon-link tw-px-1"
-                   data-title="<spring:message code="action.apply.vacation"/>">
-                    <icon:plus-circle className="tw-w-5 tw-h-5"/>
-                </a>
-                </sec:authorize>
                 <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1"
                    data-title="<spring:message code="action.applications.absences_overview"/>">
                     <icon:calendar className="tw-w-5 tw-h-5"/>
