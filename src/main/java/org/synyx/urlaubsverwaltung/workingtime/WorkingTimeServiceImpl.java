@@ -215,23 +215,15 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     private static DayLength dayLengthForDayOfWeek(WorkingTimeEntity workingTimeEntity, DayOfWeek dayOfWeek) {
-        switch (dayOfWeek) {
-            case MONDAY:
-                return workingTimeEntity.getMonday();
-            case TUESDAY:
-                return workingTimeEntity.getTuesday();
-            case WEDNESDAY:
-                return workingTimeEntity.getWednesday();
-            case THURSDAY:
-                return workingTimeEntity.getThursday();
-            case FRIDAY:
-                return workingTimeEntity.getFriday();
-            case SATURDAY:
-                return workingTimeEntity.getSaturday();
-            case SUNDAY:
-                return workingTimeEntity.getSunday();
-        }
-        return DayLength.ZERO;
+        return switch (dayOfWeek) {
+            case MONDAY -> workingTimeEntity.getMonday();
+            case TUESDAY -> workingTimeEntity.getTuesday();
+            case WEDNESDAY -> workingTimeEntity.getWednesday();
+            case THURSDAY -> workingTimeEntity.getThursday();
+            case FRIDAY -> workingTimeEntity.getFriday();
+            case SATURDAY -> workingTimeEntity.getSaturday();
+            case SUNDAY -> workingTimeEntity.getSunday();
+        };
     }
 
     private static class CachedSupplier<T> implements Supplier<T> {
