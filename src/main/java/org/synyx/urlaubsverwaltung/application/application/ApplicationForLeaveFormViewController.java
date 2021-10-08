@@ -56,7 +56,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
@@ -457,7 +456,7 @@ class ApplicationForLeaveFormViewController {
         return getAllSelectableReplacementPersons().stream()
             .filter(predicate)
             .map(ApplicationForLeaveFormViewController::toSelectableHolidayReplacementDto)
-            .collect(toUnmodifiableList());
+            .toList();
     }
 
     private static void addSelectableHolidayReplacementsToModel(Model model, List<SelectableHolidayReplacementDto> dtos) {

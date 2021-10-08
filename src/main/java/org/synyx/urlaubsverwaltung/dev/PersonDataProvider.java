@@ -95,7 +95,9 @@ class PersonDataProvider {
         final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY)
+            .map(DayOfWeek::getValue)
+            .collect(toList());
         workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
         accountInteractionService.updateOrCreateHolidaysAccount(
