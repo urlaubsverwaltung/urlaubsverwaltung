@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isChristmasEve;
@@ -63,7 +62,7 @@ public class PublicHolidaysService {
 
         return getHolidays(from, to, federalState).stream()
             .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
-            .collect(toUnmodifiableList());
+            .toList();
     }
 
     private DayLength getHolidayDayLength(WorkingTimeSettings workingTimeSettings, LocalDate date, FederalState federalState) {
