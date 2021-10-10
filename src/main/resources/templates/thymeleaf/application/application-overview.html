@@ -353,7 +353,7 @@
                 </a>
                 <div th:text="${otherRequestForLeave.durationOfAbsenceDescription}"></div>
               </td>
-              <td class="tw-px-2.5 sm:tw-px-2 tw-py-4 tw-hidden lg:tw-table-cell text-right print:tw-hidden">
+              <td class="tw-px-2.5 sm:tw-px-2 tw-py-4 text-right print:tw-hidden">
                 <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
                   <a
                     th:if="${otherRequestForLeave.editAllowed}"
@@ -361,8 +361,10 @@
                     href="#"
                     th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
                   >
-                    <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                    <th:block th:text="#{action.edit}" />
+                    <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')"></svg>
+                    <span class="tw-sr-only lg:tw-not-sr-only">
+                      <th:block th:text="#{action.edit}" />
+                    </span>
                   </a>
                   <a
                     th:if="${otherRequestForLeave.approveAllowed}"
@@ -370,8 +372,10 @@
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
                   >
-                    <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                    <th:block th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
+                    <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')"></svg>
+                    <span class="tw-sr-only lg:tw-not-sr-only">
+                      <th:block th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
+                    </span>
                   </a>
                   <a
                     th:if="${otherRequestForLeave.rejectAllowed}"
@@ -379,8 +383,10 @@
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
                   >
-                    <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                    <th:block th:text="#{action.reject}" />
+                    <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')"></svg>
+                    <span class="tw-sr-only lg:tw-not-sr-only">
+                      <th:block th:text="#{action.reject}" />
+                    </span>
                   </a>
                 </div>
               </td>
