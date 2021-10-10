@@ -448,23 +448,27 @@
                   </a>
                   <div th:text="${cancellationRequest.durationOfAbsenceDescription}"></div>
                 </td>
-                <td class="tw-hidden md:tw-table-cell text-right print:tw-hidden">
+                <td class="text-right print:tw-hidden">
                   <div sec:authorize="hasAuthority('OFFICE')" class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                     <a
                       class="action-link tw-text-gray-900 tw-text-opacity-50"
                       href="#"
                       th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', shortcut=true)}"
                     >
-                      <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4 tw-mr-1')" />
-                      <th:block th:text="#{action.delete}" />
+                      <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <span class="tw-sr-only lg:tw-not-sr-only">
+                        <th:block th:text="#{action.delete}" />
+                      </span>
                     </a>
                     <a
                       class="action-link tw-text-gray-900 tw-text-opacity-50"
                       href="#"
                       th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
                     >
-                      <svg th:replace="icon/ban::svg(className='tw-w-4 tw-h-4 tw-mr-1')" />
-                      <th:block th:text="#{action.cancellationRequest}" />
+                      <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <span class="tw-sr-only lg:tw-not-sr-only">
+                        <th:block th:text="#{action.cancellationRequest}" />
+                      </span>
                     </a>
                   </div>
                 </td>
