@@ -182,7 +182,7 @@
                         <hr />
                         <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
                             code="action.save"/></button>
-                        <button type="button" class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
+                        <button type="button" class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>
                             <spring:message code="action.cancel"/>
                         </button>
                     </div>

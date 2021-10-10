@@ -285,7 +285,7 @@
                         >
                             <spring:message code="action.save"/>
                         </button>
-                        <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
+                        <button class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" type="button" data-back-button>
                             <spring:message code="action.cancel"/>
                         </button>
                     </div>
