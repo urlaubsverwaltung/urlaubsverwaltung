@@ -353,7 +353,7 @@
                 </a>
                 <div th:text="${otherRequestForLeave.durationOfAbsenceDescription}"></div>
               </td>
-              <td class="tw-px-2.5 sm:tw-px-2 tw-py-4 text-right print:tw-hidden">
+              <td class="tw-px-2.5 sm:tw-px-2 tw-py-4 print:tw-hidden">
                 <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
                   <a
                     th:if="${otherRequestForLeave.editAllowed}"
@@ -448,7 +448,7 @@
                   </a>
                   <div th:text="${cancellationRequest.durationOfAbsenceDescription}"></div>
                 </td>
-                <td class="text-right print:tw-hidden">
+                <td class="print:tw-hidden">
                   <div sec:authorize="hasAuthority('OFFICE')" class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                     <a
                       class="action-link tw-text-gray-900 tw-text-opacity-50"
