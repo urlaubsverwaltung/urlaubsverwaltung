@@ -9,3 +9,41 @@
 .action-link:hover {
   @apply tw-text-opacity-100 !important;
 }
+
+[class*=button-link] {
+  display: flex;
+  align-items: center;
+  text-decoration: none !important; /* important to override bootstrap */
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-rounded;
+  @apply tw-font-medium;
+  @apply tw-border;
+  transition: 100ms all ease-in-out;
+}
+
+.button-link,
+.button-link:hover,
+.button-link:focus {
+  @apply tw-border-gray-200;
+  @apply tw-bg-gray-100;
+  @apply tw-text-gray-600;
+}
+
+.button-link:hover,
+.button-link:focus {
+  @apply tw-bg-gray-200;
+}
+
+.button-link-main,
+.button-link-main:hover,
+.button-link-main:focus {
+  @apply tw-border-blue-500;
+  @apply tw-bg-blue-500;
+  @apply tw-text-blue-50;
+}
+
+.button-link-main:hover,
+.button-link-main:focus {
+  @apply tw-bg-blue-600;
+}
