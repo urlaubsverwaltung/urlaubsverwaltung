@@ -211,9 +211,9 @@
                 <div class="row tw-mb-16">
                     <div class="col-xs-12">
                         <hr />
-                        <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
+                        <button class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
                             code="action.save"/></button>
-                        <button type="button" class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>
+                        <button type="button" class="button col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>
                             <spring:message code="action.cancel"/>
                         </button>
                     </div>

@@ -120,9 +120,9 @@ textarea.error {
 
 **************************************************************************/
 
-.form-section .btn:last-child {
-  margin-bottom: 21px;
-}
+/*.form-section .btn:last-child {*/
+/*  margin-bottom: 21px;*/
+/*}*/
 
 .form-section .help-block {
   margin-top: 0;

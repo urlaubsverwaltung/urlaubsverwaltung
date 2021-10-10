@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="form-group">
-                    <button class="btn btn-primary btn-block" type="submit">
+                    <button class="button-main tw-w-full" type="submit">
                         <span class="tw-flex tw-items-center tw-justify-center">
                             <icon:login className="tw-w-5 tw-h-5" />
                             &nbsp;<spring:message code="login.form.submit"/>

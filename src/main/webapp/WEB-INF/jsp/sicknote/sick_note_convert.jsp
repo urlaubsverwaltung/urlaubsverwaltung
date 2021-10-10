@@ -208,9 +208,9 @@
 
                     <hr/>
 
-                    <button class="btn btn-success col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
+                    <button class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
                         code="action.save"/></button>
-                    <a class="btn btn-default col-xs-12 col-sm-5 col-md-2 pull-right"
+                    <a class="button col-xs-12 col-sm-5 col-md-2 pull-right"
                        href="${URL_PREFIX}/sicknote/${sickNote.id}"><spring:message code="action.cancel"/></a>
 
 
