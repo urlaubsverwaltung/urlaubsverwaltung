@@ -29,3 +29,41 @@
     float: none;
   }
 }
+
+a[class*=button] {
+  display: flex;
+  align-items: center;
+  text-decoration: none !important; /* important to override bootstrap */
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-rounded;
+  @apply tw-font-medium;
+  @apply tw-border;
+  transition: 100ms all ease-in-out;
+}
+
+a.button,
+a.button:hover,
+a.button:focus {
+  @apply tw-border-gray-200;
+  @apply tw-bg-gray-100;
+  @apply tw-text-gray-600;
+}
+
+a.button:hover,
+a.button:focus {
+  @apply tw-bg-gray-200;
+}
+
+a.button-main,
+a.button-main:hover,
+a.button-main:focus {
+  @apply tw-border-blue-500;
+  @apply tw-bg-blue-500;
+  @apply tw-text-blue-50;
+}
+
+a.button-main:hover,
+a.button-main:focus {
+  @apply tw-bg-blue-600;
+}

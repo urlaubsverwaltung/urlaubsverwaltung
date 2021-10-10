@@ -182,7 +182,7 @@
                   "
                 >
                   <a
-                    class="button-link tw-flex-1 tw-justify-center"
+                    class="button tw-flex-1 tw-justify-center"
                     th:href="@{/web/application/{applicationId}/edit (applicationId=${userRequestForLeave.id})}"
                     th:if="${userRequestForLeave.editAllowed}"
                   >
@@ -192,7 +192,7 @@
                     </span>
                   </a>
                   <a
-                    class="button-link tw-flex-1 tw-justify-center"
+                    class="button tw-flex-1 tw-justify-center"
                     th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='allow', shortcut=true)}"
                     th:if="${userRequestForLeave.approveAllowed}"
                   >
@@ -202,7 +202,7 @@
                     </span>
                   </a>
                   <a
-                    class="button-link tw-flex-1 tw-justify-center"
+                    class="button tw-flex-1 tw-justify-center"
                     th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', shortcut=true)}"
                     th:if="${userRequestForLeave.rejectAllowed}"
                   >
@@ -357,7 +357,7 @@
                 <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
                   <a
                     th:if="${otherRequestForLeave.editAllowed}"
-                    class="button-link"
+                    class="button"
                     href="#"
                     th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
                   >
@@ -368,7 +368,7 @@
                   </a>
                   <a
                     th:if="${otherRequestForLeave.approveAllowed}"
-                    class="button-link"
+                    class="button"
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
                   >
@@ -379,7 +379,7 @@
                   </a>
                   <a
                     th:if="${otherRequestForLeave.rejectAllowed}"
-                    class="button-link"
+                    class="button"
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
                   >
