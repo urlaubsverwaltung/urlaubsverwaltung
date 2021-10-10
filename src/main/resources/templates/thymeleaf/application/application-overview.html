@@ -206,7 +206,7 @@
                     th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', shortcut=true)}"
                     th:if="${userRequestForLeave.rejectAllowed}"
                   >
-                    <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <svg th:replace="icon/thumb-down::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
                     <span class="sr-only xs:tw-not-sr-only">
                       <th:block th:text="#{action.reject}"></th:block>
                     </span>
@@ -383,7 +383,7 @@
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
                   >
-                    <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')"></svg>
+                    <svg th:replace="icon/thumb-down::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')"></svg>
                     <span class="tw-sr-only lg:tw-not-sr-only">
                       <th:block th:text="#{action.reject}" />
                     </span>
@@ -465,7 +465,7 @@
                       href="#"
                       th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
                     >
-                      <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <svg th:replace="icon/thumb-down::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
                       <span class="tw-sr-only lg:tw-not-sr-only">
                         <th:block th:text="#{action.cancellationRequest}" />
                       </span>
