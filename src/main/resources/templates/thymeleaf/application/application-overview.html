@@ -353,11 +353,11 @@
                 </a>
                 <div th:text="${otherRequestForLeave.durationOfAbsenceDescription}"></div>
               </td>
-              <td class="tw-px-2.5 sm:tw-px-4 tw-py-4 tw-hidden lg:tw-table-cell text-right print:tw-hidden">
-                <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+              <td class="tw-px-2.5 sm:tw-px-2 tw-py-4 tw-hidden lg:tw-table-cell text-right print:tw-hidden">
+                <div class="tw-flex tw-gap-2 tw-justify-end print:tw-hidden">
                   <a
                     th:if="${otherRequestForLeave.editAllowed}"
-                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    class="button-link"
                     href="#"
                     th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
                   >
@@ -366,7 +366,7 @@
                   </a>
                   <a
                     th:if="${otherRequestForLeave.approveAllowed}"
-                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    class="button-link"
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
                   >
@@ -375,7 +375,7 @@
                   </a>
                   <a
                     th:if="${otherRequestForLeave.rejectAllowed}"
-                    class="action-link tw-text-gray-900 tw-text-opacity-50"
+                    class="button-link"
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
                   >
