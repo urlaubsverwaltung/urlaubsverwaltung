@@ -50,7 +50,8 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
         AND x.status = 'ACTIVE'
         AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)
         """)
-    List<SickNote> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, LocalDate endOfSickPayDate);
+    List<SickNote> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, int daysBeforeEndOfSickPayNotification, LocalDate today);
+
 
     List<SickNote> findByStatusInAndEndDateGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, LocalDate since);
 

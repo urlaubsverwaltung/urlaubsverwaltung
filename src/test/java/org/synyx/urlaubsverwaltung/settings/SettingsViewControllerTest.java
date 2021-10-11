@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
@@ -80,7 +79,7 @@ class SettingsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version", specialLeaveService);
+        sut = new SettingsViewController(new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version", specialLeaveService);
     }
 
     @Test
@@ -114,7 +113,6 @@ class SettingsViewControllerTest {
             .andExpect(model().attribute("weekDays", DayOfWeek.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
-            .andExpect(model().attribute("defaultVacationDaysFromSettings", is(false)))
             .andExpect(model().attribute("defaultWorkingTimeFromSettings", is(false)))
             .andExpect(model().attribute("authorizedRedirectUrl",
                 sut.getAuthorizedRedirectUrl("http://localhost" + requestUrl, OATUH_REDIRECT_REL)));
