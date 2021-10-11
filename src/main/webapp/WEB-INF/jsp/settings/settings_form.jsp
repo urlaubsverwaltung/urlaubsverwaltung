@@ -515,7 +515,6 @@
 
                 <div class="tab-pane" id="publicHolidays">
 
-                    <c:if test="${defaultWorkingTimeFromSettings}">
                     <div class="form-section tw-mb-8">
                         <uv:section-heading>
                             <h2>
@@ -606,7 +605,6 @@
                             </div>
                         </div>
                     </div>
-                    </c:if>
 
                     <div class="form-section tw-mb-8">
                         <uv:section-heading>
