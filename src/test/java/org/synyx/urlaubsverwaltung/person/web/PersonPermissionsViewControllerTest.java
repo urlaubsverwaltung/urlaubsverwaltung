@@ -95,12 +95,6 @@ class PersonPermissionsViewControllerTest {
     }
 
     @Test
-    void showPersonPermissionsAndNotificationsUsesRedirectFromEdit() throws Exception {
-        perform(get("/web/person/" + PERSON_ID + "/edit"))
-            .andExpect(view().name("redirect:/web/person/1/permissions"));
-    }
-
-    @Test
     void editPersonPermissionsAndNotificationsCorrectly() throws Exception {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@inter.net");
