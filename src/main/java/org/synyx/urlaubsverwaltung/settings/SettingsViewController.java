@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
@@ -34,7 +33,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping("/web/settings")
 public class SettingsViewController {
 
-    private final WorkingTimeProperties workingTimeProperties;
     private final SettingsService settingsService;
     private final VacationTypeService vacationTypeService;
     private final List<CalendarProvider> calendarProviders;
@@ -43,10 +41,8 @@ public class SettingsViewController {
     private final String applicationVersion;
 
     @Autowired
-    public SettingsViewController(WorkingTimeProperties workingTimeProperties,
-                                  SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
+    public SettingsViewController(SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion) {
-        this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.calendarProviders = calendarProviders;
@@ -124,8 +120,6 @@ public class SettingsViewController {
     }
 
     private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
-        model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
-
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
