@@ -160,11 +160,9 @@
                 </div>
 
                 <div class="tab-pane" id="publicHolidays">
-                    <c:if test="${defaultWorkingTimeFromSettings}">
                     <div class="form-section tw-mb-8">
                         <jsp:include page="public-holidays/default-workingtime.jsp" />
                     </div>
-                    </c:if>
                     <div class="form-section tw-mb-8">
                         <jsp:include page="public-holidays/time.jsp" />
                     </div>

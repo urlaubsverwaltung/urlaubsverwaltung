@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
@@ -33,7 +32,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -79,7 +77,7 @@ class SettingsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version", specialLeaveService);
+        sut = new SettingsViewController(settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version", specialLeaveService);
     }
 
     @Test
@@ -113,7 +111,6 @@ class SettingsViewControllerTest {
             .andExpect(model().attribute("weekDays", DayOfWeek.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
-            .andExpect(model().attribute("defaultWorkingTimeFromSettings", is(false)))
             .andExpect(model().attribute("authorizedRedirectUrl",
                 sut.getAuthorizedRedirectUrl("http://localhost" + requestUrl, OATUH_REDIRECT_REL)));
     }

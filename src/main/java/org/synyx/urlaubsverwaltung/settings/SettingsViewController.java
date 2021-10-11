@@ -21,7 +21,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -40,7 +39,6 @@ import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper
 @RequestMapping("/web/settings")
 public class SettingsViewController {
 
-    private final WorkingTimeProperties workingTimeProperties;
     private final SettingsService settingsService;
     private final VacationTypeService vacationTypeService;
     private final List<CalendarProvider> calendarProviders;
@@ -50,10 +48,8 @@ public class SettingsViewController {
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
-    public SettingsViewController(WorkingTimeProperties workingTimeProperties,
-                                  SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
+    public SettingsViewController(SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion, SpecialLeaveSettingsService specialLeaveService) {
-        this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.calendarProviders = calendarProviders;
@@ -137,8 +133,6 @@ public class SettingsViewController {
     }
 
     private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
-        model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
-
         settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
         settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
 
