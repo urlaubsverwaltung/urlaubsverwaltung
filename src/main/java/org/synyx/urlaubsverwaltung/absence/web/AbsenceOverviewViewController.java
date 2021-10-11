@@ -170,7 +170,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
     }
 
     private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType> vacationTypes) {
-        final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).collect(toUnmodifiableList());
+        final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).collect(Collectors.toUnmodifiableList());
 
         List<VacationTypeColorDto> vacationTypeColorDtos;
 
