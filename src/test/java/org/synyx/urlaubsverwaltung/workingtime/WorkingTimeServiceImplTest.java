@@ -45,8 +45,6 @@ class WorkingTimeServiceImplTest {
     private WorkingTimeServiceImpl sut;
 
     @Mock
-    private WorkingTimeProperties workingTimeProperties;
-    @Mock
     private WorkingTimeRepository workingTimeRepository;
     @Mock
     private SettingsService settingsService;
@@ -55,37 +53,11 @@ class WorkingTimeServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeServiceImpl(workingTimeProperties, workingTimeRepository, settingsService, fixedClock);
-    }
-
-    @Test
-    void ensureDefaultWorkingTimeCreationFromProperties() {
-
-        when(workingTimeProperties.isDefaultWorkingDaysDeactivated()).thenReturn(false);
-        when(workingTimeProperties.getDefaultWorkingDays()).thenReturn(List.of(1, 2, 3, 4, 5));
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        sut.createDefaultWorkingTime(person);
-
-        final ArgumentCaptor<WorkingTimeEntity> argument = ArgumentCaptor.forClass(WorkingTimeEntity.class);
-        verify(workingTimeRepository).save(argument.capture());
-
-        final WorkingTimeEntity persistedWorkingTimeEntity = argument.getValue();
-        assertThat(persistedWorkingTimeEntity.getPerson()).isEqualTo(person);
-        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock).with(firstDayOfYear()));
-        assertThat(persistedWorkingTimeEntity.getMonday()).isEqualTo(FULL);
-        assertThat(persistedWorkingTimeEntity.getTuesday()).isEqualTo(FULL);
-        assertThat(persistedWorkingTimeEntity.getWednesday()).isEqualTo(FULL);
-        assertThat(persistedWorkingTimeEntity.getThursday()).isEqualTo(FULL);
-        assertThat(persistedWorkingTimeEntity.getFriday()).isEqualTo(FULL);
-        assertThat(persistedWorkingTimeEntity.getSaturday()).isEqualTo(ZERO);
-        assertThat(persistedWorkingTimeEntity.getSunday()).isEqualTo(ZERO);
+        sut = new WorkingTimeServiceImpl(workingTimeRepository, settingsService, fixedClock);
     }
 
     @Test
     void ensureDefaultWorkingTimeCreationFromGui() {
-
-        when(workingTimeProperties.isDefaultWorkingDaysDeactivated()).thenReturn(true);
 
         final Settings settings = new Settings();
         settings.getWorkingTimeSettings().setMonday(ZERO);
