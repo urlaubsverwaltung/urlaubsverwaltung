@@ -27,15 +27,13 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final WorkingTimeProperties workingTimeProperties;
     private final WorkingTimeRepository workingTimeRepository;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
-    public WorkingTimeServiceImpl(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository,
+    public WorkingTimeServiceImpl(WorkingTimeRepository workingTimeRepository,
                                   SettingsService settingsService, Clock clock) {
-        this.workingTimeProperties = workingTimeProperties;
         this.workingTimeRepository = workingTimeRepository;
         this.settingsService = settingsService;
         this.clock = clock;
@@ -107,14 +105,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public void createDefaultWorkingTime(Person person) {
-        final List<Integer> defaultWorkingDays;
-
-        if (workingTimeProperties.isDefaultWorkingDaysDeactivated()) {
-            defaultWorkingDays = settingsService.getSettings().getWorkingTimeSettings().getWorkingDays();
-        } else {
-            defaultWorkingDays = workingTimeProperties.getDefaultWorkingDays();
-        }
-
+        final List<Integer> defaultWorkingDays = settingsService.getSettings().getWorkingTimeSettings().getWorkingDays();
         final LocalDate today = LocalDate.now(clock);
         this.touch(defaultWorkingDays, today, person);
     }
