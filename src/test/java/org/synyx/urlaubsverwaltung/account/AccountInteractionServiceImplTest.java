@@ -47,12 +47,10 @@ class AccountInteractionServiceImplTest {
     private Clock clock;
     @Mock
     private SettingsService settingsService;
-    @Mock
-    private AccountProperties accountProperties;
 
     @BeforeEach
     void setup() {
-        sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, settingsService, clock);
+        sut = new AccountInteractionServiceImpl(accountService, vacationDaysService, settingsService, clock);
     }
 
     @Test
@@ -64,35 +62,6 @@ class AccountInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(accountProperties.getDefaultVacationDays()).thenReturn(24);
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        sut.createDefaultAccount(person);
-
-        final ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
-        verify(accountService).save(argument.capture());
-
-        final Account account = argument.getValue();
-        assertThat(account.getPerson()).isEqualTo(person);
-        assertThat(account.getValidFrom()).isEqualTo(LocalDate.now(clock));
-        assertThat(account.getValidTo()).isEqualTo(LocalDate.now(clock).with(lastDayOfYear()));
-        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(24));
-        assertThat(account.getComment()).isEmpty();
-        assertThat(account.getYear()).isEqualTo(LocalDate.now(clock).getYear());
-        assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
-        assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
-    }
-
-    @Test
-    void testDefaultAccountCreationUseSettingsInsteadOfProperties() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), ZoneId.of("UTC"));
-        doReturn(fixedClock.instant()).when(clock).instant();
-        doReturn(fixedClock.getZone()).when(clock).getZone();
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        when(accountProperties.getDefaultVacationDays()).thenReturn(-1);
         final Settings settings = new Settings();
         settings.getAccountSettings().setDefaultVacationDays(1);
         when(settingsService.getSettings()).thenReturn(settings);
