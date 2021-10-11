@@ -36,13 +36,6 @@ public class PersonPermissionsViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/person/{personId}/edit")
-    @Deprecated(forRemoval = true)
-    public String redirectFromEditToPermissions(@PathVariable("personId") Integer personId) {
-        return "redirect:/web/person/" + personId + "/permissions";
-    }
-
-    @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/permissions")
     public String showPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId, Model model) throws UnknownPersonException {
 
