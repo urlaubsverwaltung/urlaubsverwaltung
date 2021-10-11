@@ -53,12 +53,10 @@ class AccountInteractionServiceImplTest {
     private Clock clock;
     @Mock
     private SettingsService settingsService;
-    @Mock
-    private AccountProperties accountProperties;
 
     @BeforeEach
     void setup() {
-        sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, settingsService, clock);
+        sut = new AccountInteractionServiceImpl(accountService, vacationDaysService, settingsService, clock);
     }
 
     static Stream<Arguments> accountCreationDateAndDays() {
@@ -100,8 +98,9 @@ class AccountInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(accountProperties.getDefaultVacationDays()).thenReturn(annualVacationDays);
-        when(settingsService.getSettings()).thenReturn(new Settings());
+        final Settings settings = new Settings();
+        settings.getAccountSettings().setDefaultVacationDays(annualVacationDays);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         sut.createDefaultAccount(person);
 
@@ -116,39 +115,6 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
         assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(annualVacationDays));
         assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(actualVacationDays));
-        assertThat(account.getComment()).isEmpty();
-        assertThat(account.getYear()).isEqualTo(now.getYear());
-        assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
-        assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
-    }
-
-    @Test
-    void testDefaultAccountCreationUseSettingsInsteadOfProperties() {
-
-        final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), ZoneId.of("UTC"));
-        doReturn(fixedClock.instant()).when(clock).instant();
-        doReturn(fixedClock.getZone()).when(clock).getZone();
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        when(accountProperties.getDefaultVacationDays()).thenReturn(-1);
-        final Settings settings = new Settings();
-        settings.getAccountSettings().setDefaultVacationDays(30);
-        when(settingsService.getSettings()).thenReturn(settings);
-
-        sut.createDefaultAccount(person);
-
-        final ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
-        verify(accountService).save(argument.capture());
-
-        final LocalDate now = LocalDate.now(clock);
-
-        final Account account = argument.getValue();
-        assertThat(account.getPerson()).isEqualTo(person);
-        assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
-        assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
-        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
-        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(13));
         assertThat(account.getComment()).isEmpty();
         assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
