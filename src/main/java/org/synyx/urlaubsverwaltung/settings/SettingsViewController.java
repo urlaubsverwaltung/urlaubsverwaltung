@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
@@ -31,7 +30,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping("/web/settings")
 public class SettingsViewController {
 
-    private final WorkingTimeProperties workingTimeProperties;
     private final SettingsService settingsService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
@@ -39,10 +37,8 @@ public class SettingsViewController {
     private final String applicationVersion;
 
     @Autowired
-    public SettingsViewController(WorkingTimeProperties workingTimeProperties,
-                                  SettingsService settingsService, List<CalendarProvider> calendarProviders,
+    public SettingsViewController(SettingsService settingsService, List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion) {
-        this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
@@ -104,8 +100,6 @@ public class SettingsViewController {
     }
 
     private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
-        model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
-
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
