@@ -6,33 +6,14 @@ import org.springframework.validation.annotation.Validated;
 import org.synyx.urlaubsverwaltung.validation.CronExpression;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @Component
 @ConfigurationProperties("uv.account")
 @Validated
 public class AccountProperties {
 
-    @NotNull
-    @Min(-1)
-    @Max(366)
-    @Deprecated(since = "4.4.0", forRemoval = true)
-    private Integer defaultVacationDays = 20;
-
     @Valid
     private Update update = new Update();
-
-    @Deprecated(since = "4.4.0", forRemoval = true)
-    public Integer getDefaultVacationDays() {
-        return defaultVacationDays;
-    }
-
-    @Deprecated(since = "4.4.0", forRemoval = true)
-    public void setDefaultVacationDays(Integer defaultVacationDays) {
-        this.defaultVacationDays = defaultVacationDays;
-    }
 
     public Update getUpdate() {
         return update;
