@@ -137,7 +137,6 @@
                                 </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
-                                <c:if test="${defaultVacationDaysFromSettings}">
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
                                            for="accountSettings.defaultVacationDays">
@@ -153,7 +152,6 @@
                                         </uv:error-text>
                                     </div>
                                 </div>
-                                </c:if>
                                 <div class="form-group is-required">
                                     <label class="control-label col-md-4"
                                            for="accountSettings.maximumAnnualVacationDays">
