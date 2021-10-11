@@ -28,16 +28,14 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final AccountProperties accountProperties;
     private final AccountService accountService;
     private final VacationDaysService vacationDaysService;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
-    AccountInteractionServiceImpl(AccountProperties accountProperties, AccountService accountService,
-                                  VacationDaysService vacationDaysService, SettingsService settingsService, Clock clock) {
-        this.accountProperties = accountProperties;
+    AccountInteractionServiceImpl(AccountService accountService, VacationDaysService vacationDaysService,
+                                  SettingsService settingsService, Clock clock) {
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.settingsService = settingsService;
@@ -48,17 +46,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     public void createDefaultAccount(Person person) {
 
         final LocalDate today = LocalDate.now(clock);
-
-        final Integer propertiesDefaultVacationDays = accountProperties.getDefaultVacationDays();
-        final Integer settingsDefaultVacationDays = settingsService.getSettings().getAccountSettings().getDefaultVacationDays();
-
-        final Integer defaultVacationDays;
-        if (propertiesDefaultVacationDays == -1) {
-            defaultVacationDays = settingsDefaultVacationDays;
-        } else {
-            defaultVacationDays = propertiesDefaultVacationDays;
-        }
-
+        final Integer defaultVacationDays = settingsService.getSettings().getAccountSettings().getDefaultVacationDays();
         final BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today, defaultVacationDays);
         final BigDecimal noRemainingVacationDaysForLastYear = ZERO;
 
