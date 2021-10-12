@@ -11,7 +11,7 @@ import static org.synyx.urlaubsverwaltung.ui.PageConditions.elementHasAttributeW
 
 public class NavigationPage implements Page {
 
-    private static final By NEW_APPLICATION_SELECTOR = By.id("application-new-link");
+    private static final By HOME_LINK_SELECTOR = By.id("home-link");
     private static final By SICK_NOTES_SELECTOR = By.cssSelector("[data-test-id=navigation-sick-notes-link]");
     private static final By SETTINGS_SELECTOR = By.cssSelector("[data-test-id=navigation-settings-link]");
 
@@ -27,7 +27,7 @@ public class NavigationPage implements Page {
 
     @Override
     public boolean isVisible(WebDriver driver) {
-        return newApplicationLinkVisible(driver);
+        return homeLinkVisible(driver);
     }
 
     public void logout() {
@@ -42,9 +42,8 @@ public class NavigationPage implements Page {
         driver.findElement(SETTINGS_SELECTOR).click();
     }
 
-
-    private static boolean newApplicationLinkVisible(WebDriver driver) {
-        final WebElement element = driver.findElement(NEW_APPLICATION_SELECTOR);
+    private static boolean homeLinkVisible(WebDriver driver) {
+        final WebElement element = driver.findElement(HOME_LINK_SELECTOR);
         return element != null && element.isDisplayed();
     }
 
