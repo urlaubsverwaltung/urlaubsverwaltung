@@ -90,12 +90,12 @@
 <footer>
     <div class="col-xs-12">
         <div class="row">
-            <p class="tw-text-sm">
-                powered by <a href="https://synyx.de/">synyx</a> and <a href="https://focus-shift.de/">Focus Shift</a>
-            </p>
-            <p class="tw-text-xs">
-               v${version}
-            </p>
+            <span class="tw-text-sm">
+                <a href="https://urlaubsverwaltung.cloud/">urlaubsverwaltung.cloud</a> |
+            </span>
+            <span class="tw-text-xs">
+                v${version}
+            </span>
         </div>
     </div>
 </footer>

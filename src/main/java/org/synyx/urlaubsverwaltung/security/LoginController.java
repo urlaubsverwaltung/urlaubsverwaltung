@@ -15,15 +15,12 @@ public class LoginController {
 
     @Autowired
     public LoginController(@Value("${info.app.version}") String applicationVersion) {
-
         this.applicationVersion = applicationVersion;
     }
 
     @GetMapping("")
     public String login(Model model) {
-
         model.addAttribute("version", applicationVersion);
-
         return "login/login";
     }
 }
