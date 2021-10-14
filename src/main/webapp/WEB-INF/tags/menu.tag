@@ -221,7 +221,7 @@
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
-                        class="tw-inline-block"
+                        class="tw-no-underline tw-inline-flex tw-items-center tw-text-gray-800 hover:tw-text-black transition-colors"
                         id="avatar-link"
                         aria-expanded="false"
                         aria-haspopup="true"
@@ -235,10 +235,11 @@
                             height="24px"
                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                         />
+                        <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
                     </a>
                     <div
                         id="avatar-menu"
-                        class="nav-popup-menu tw-w-screen tw-absolute tw--right-2 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                        class="nav-popup-menu tw-w-screen tw-absolute tw-right-0 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
