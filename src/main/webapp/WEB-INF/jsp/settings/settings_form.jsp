@@ -1032,6 +1032,17 @@
     </div>
 </div>
 
+<footer>
+    <div class="tw-mb-4">
+        <span class="tw-text-sm">
+            <a href="https://urlaubsverwaltung.cloud/">urlaubsverwaltung.cloud</a> |
+        </span>
+        <span class="tw-text-xs">
+            v${version}
+        </span>
+    </div>
+</footer>
+
 </body>
 
 </html>

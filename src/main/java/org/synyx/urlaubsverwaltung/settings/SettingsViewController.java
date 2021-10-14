@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,17 +38,19 @@ public class SettingsViewController {
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
     private final Clock clock;
+    private final String applicationVersion;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, Clock clock) {
+                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
         this.clock = clock;
+        this.applicationVersion = applicationVersion;
     }
 
     @GetMapping
@@ -124,6 +127,7 @@ public class SettingsViewController {
         }
 
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
+        model.addAttribute("version", applicationVersion);
     }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {
