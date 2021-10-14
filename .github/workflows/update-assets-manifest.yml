@@ -34,8 +34,8 @@ jobs:
           npm run build
       - name: Assets-Manifest commit
         run: |
-          git config --local user.name "Tobias Schneider[bot]"
-          git config --local user.email schneider@synyx.de
+          git config --local user.name "Alfred Pennyworth[bot]"
+          git config --local user.email alfred.pennyworth@urlaubsverwaltung.cloud
           git diff --quiet --name-only src/main/webapp/WEB-INF/assets-manifest.json || (git add src/main/webapp/WEB-INF/assets-manifest.json; git commit -m  "[dependabot skip] Adapt assets-manifest")
       - name: Assets-Manifest push
         uses: ad-m/github-push-action@v0.6.0
