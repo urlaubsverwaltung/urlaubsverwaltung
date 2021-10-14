@@ -36,7 +36,7 @@
 .button:hover:not(:disabled),
 .button:active,
 .button:focus {
-  @apply tw-border-gray-300;
+  @apply tw-border-gray-200;
   @apply tw-bg-gray-50;
   @apply tw-text-gray-600;
 }
