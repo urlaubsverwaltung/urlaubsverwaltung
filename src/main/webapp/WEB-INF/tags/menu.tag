@@ -279,6 +279,7 @@
                                         <span class="tw-ml-4 tw-text-base">
                                             <spring:message code="nav.help.title" />
                                         </span>
+                                        <icon:external-link className="tw-ml-1.5 tw-h-4 tw-w-4" />
                                     </a>
                                 </li>
                                 <li role="none" class="tw-mb-1">
