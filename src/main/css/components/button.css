@@ -27,6 +27,12 @@
   white-space: nowrap;
 }
 
+[class*=button] [class*=not-sr-only] {
+  /* tailwind not-sr-only sets white-space to 'normal' */
+  /* buttons text should not be wrapped however */
+  white-space: nowrap !important;
+}
+
 [class*=button]:disabled {
   cursor: not-allowed;
   opacity: 0.65;
