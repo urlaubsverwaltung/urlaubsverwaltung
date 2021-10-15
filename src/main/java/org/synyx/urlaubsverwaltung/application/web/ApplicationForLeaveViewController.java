@@ -33,7 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -232,7 +231,7 @@ public class ApplicationForLeaveViewController {
         if (signedInUser.hasRole(OFFICE)) {
             cancellationRequests = applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED));
         } else {
-            cancellationRequests = emptyList();
+            cancellationRequests = List.of();
         }
 
         return cancellationRequests.stream()
