@@ -55,7 +55,7 @@
     </div>
 
     <div class="form-group is-sticky row">
-        <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
+        <button type="submit" class="button-danger col-xs-12 col-sm-5">
             <c:choose>
                 <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
                     <spring:message code='action.delete.request'/>
@@ -65,7 +65,7 @@
                 </c:otherwise>
             </c:choose>
         </button>
-        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
+        <button type="button" class="button col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
             <spring:message code="action.cancel"/>
         </button>
     </div>

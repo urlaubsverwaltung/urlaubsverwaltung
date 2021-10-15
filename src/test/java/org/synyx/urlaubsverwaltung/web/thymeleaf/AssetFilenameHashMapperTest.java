@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.jsp.tags;
+package org.synyx.urlaubsverwaltung.web.thymeleaf;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;

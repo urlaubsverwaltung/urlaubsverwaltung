@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.jsp.tags;
+package org.synyx.urlaubsverwaltung.web.thymeleaf;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,23 +8,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-class AssetFilenameHashMapper {
+import static java.lang.String.format;
+
+public class AssetFilenameHashMapper {
 
     private static final String ASSETS_MANIFEST_FILE = "WEB-INF/assets-manifest.json";
 
     private final ResourceLoader resourceLoader;
 
-    AssetFilenameHashMapper(ResourceLoader resourceLoader) {
+    public AssetFilenameHashMapper(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    String getHashedAssetFilename(String assetNameWithoutHash) {
+    public String getHashedAssetFilename(String assetNameWithoutHash) {
 
-        InputStream manifestFileStream = getManifestFile();
-        HashMap<String, String> assets = getAssets(manifestFileStream);
-
+        final HashMap<String, String> assets = getAssets(getManifestFile());
         if (!assets.containsKey(assetNameWithoutHash)) {
-            throw new IllegalStateException(String.format("could not resolve given asset name=%s", assetNameWithoutHash));
+            throw new IllegalStateException(format("could not resolve given asset name=%s", assetNameWithoutHash));
         }
 
         return assets.get(assetNameWithoutHash);
@@ -32,7 +32,7 @@ class AssetFilenameHashMapper {
 
     private HashMap<String, String> getAssets(InputStream manifest) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(manifest, new TypeReference<>() {
             });
@@ -45,7 +45,7 @@ class AssetFilenameHashMapper {
         try {
             return resourceLoader.getResource(ASSETS_MANIFEST_FILE).getInputStream();
         } catch (IOException e) {
-            throw new IllegalStateException(String.format("could not read %s", ASSETS_MANIFEST_FILE));
+            throw new IllegalStateException("could not read " + ASSETS_MANIFEST_FILE);
         }
     }
 }

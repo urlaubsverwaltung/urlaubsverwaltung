@@ -74,10 +74,10 @@
                                 <div class="modal-body">
                                     <spring:message code="action.sicknote.cancel.confirm"/>
                                 </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-danger is-sticky" type="submit"><spring:message
+                                <div class="modal-footer tw-flex tw-space-x-2 tw-justify-end">
+                                    <button class="button-danger" type="submit"><spring:message
                                         code="action.delete"/></button>
-                                    <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true">
+                                    <button class="button" data-dismiss="modal" aria-hidden="true">
                                         <spring:message code="action.cancel"/></button>
                                 </div>
                             </div>
@@ -268,14 +268,15 @@
                                            cssErrorClass="form-control error"
                                            onkeyup="count(this.value, 'text-comment');"
                                            onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
-                            <br/>
-                            <button class="btn btn-success col-xs-12 col-sm-5" type="submit">
-                                <spring:message code="action.save"/>
-                            </button>
-                            <button class="btn btn-default col-xs-12 col-sm-5 pull-right" type="button"
-                                    onclick="$('div#comment-form').hide();">
-                                <spring:message code="action.cancel"/>
-                            </button>
+                            <div class="tw-mt-2">
+                                <button class="button-main-green col-xs-12 col-sm-5" type="submit">
+                                    <spring:message code="action.save"/>
+                                </button>
+                                <button class="button col-xs-12 col-sm-5 pull-right" type="button"
+                                        onclick="$('div#comment-form').hide();">
+                                    <spring:message code="action.cancel"/>
+                                </button>
+                            </div>
                         </form:form>
                     </div>
 

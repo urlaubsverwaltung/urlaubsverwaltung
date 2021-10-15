@@ -154,11 +154,11 @@
                                                             <div class="modal-body">
                                                                 <spring:message code="action.department.delete.confirm" arguments="${department.name}"/>
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button class="btn btn-danger is-sticky" type="submit">
+                                                            <div class="modal-footer tw-flex tw-justify-end tw-space-x-2">
+                                                                <button class="button-danger" type="submit">
                                                                     <spring:message code="action.department.delete"/>
                                                                 </button>
-                                                                <button class="btn btn-default is-sticky" data-dismiss="modal" aria-hidden="true">
+                                                                <button class="button" data-dismiss="modal" aria-hidden="true">
                                                                     <spring:message code="action.cancel"/>
                                                                 </button>
                                                             </div>

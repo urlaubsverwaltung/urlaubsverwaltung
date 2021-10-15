@@ -4,28 +4,124 @@
 
 **************************************************************************/
 
-.btn {
-  margin-right: 6px;
-  margin-bottom: 6px;
-  border-radius: 0;
-}
-
-.btn-default {
-  background-color: #f8f8f8;
-}
-
-*[class*="col-"].btn.pull-right {
-  margin-right: 0;
-}
-
-*[class*="col-"].btn.pull-left {
-  margin-left: 0;
-}
-
 /* STYLING FOR SM SCREENS */
 @media (max-width: 991px) {
-  .btn.pull-right,
-  .btn.pull-left {
+  [class*=button].pull-right,
+  [class*=button].pull-left {
     float: none;
   }
+}
+
+[class*=button] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important; /* important to override bootstrap */
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-rounded;
+  @apply tw-font-medium;
+  @apply tw-border;
+  transition: 100ms all ease-in-out;
+  @apply tw-text-sm;
+  white-space: nowrap;
+}
+
+[class*=button] [class*=not-sr-only] {
+  /* tailwind not-sr-only sets white-space to 'normal' */
+  /* buttons text should not be wrapped however */
+  white-space: nowrap !important;
+}
+
+[class*=button]:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.button,
+.button:hover:not(:disabled),
+.button:active,
+.button:focus {
+  @apply tw-border-gray-200;
+  @apply tw-bg-gray-50;
+  @apply tw-text-gray-600;
+}
+
+.button:hover:not(:disabled),
+.button:active,
+.button:focus {
+  @apply tw-border-gray-300;
+  @apply tw-bg-gray-100;
+}
+
+.button-main,
+.button-main:hover:not(:disabled),
+.button-main:active,
+.button-main:focus {
+  @apply tw-border-sky-600;
+  @apply tw-bg-sky-600;
+  @apply tw-text-sky-50;
+}
+
+.button-main:hover:not(:disabled),
+.button-main:active,
+.button-main:focus {
+  @apply tw-border-sky-700;
+  @apply tw-bg-sky-700;
+}
+
+.button-main-green,
+.button-main-green:hover:not(:disabled),
+.button-main-green:active,
+.button-main-green:focus {
+  @apply tw-border-bootstrap-green-dark;
+  @apply tw-bg-bootstrap-green;
+  @apply tw-text-white;
+}
+
+.button-main-green:hover:not(:disabled),
+.button-main-green:active,
+.button-main-green:focus {
+  @apply tw-bg-bootstrap-green-dark;
+}
+
+.button-danger,
+.button-danger:hover:not(:disabled),
+.button-danger:active,
+.button-danger:focus {
+  @apply tw-border-red-600;
+  @apply tw-bg-red-500;
+  @apply tw-text-white;
+}
+
+.button-danger:hover:not(:disabled),
+.button-danger:active,
+.button-danger:focus {
+  @apply tw-border-red-700;
+  @apply tw-bg-red-600;
+}
+
+.button-info,
+.button-info:hover:not(:disabled),
+.button-info:active,
+.button-info:focus {
+  @apply tw-border-cyan-600;
+  @apply tw-bg-cyan-500;
+  @apply tw-text-cyan-50;
+}
+
+.button-info:hover:not(:disabled),
+.button-info:active,
+.button-info:focus {
+  @apply tw-border-cyan-700;
+  @apply tw-bg-cyan-600;
+}
+
+[class*=button-as-addon] {
+  @apply tw-py-0;
+}
+
+.button-as-addon--right {
+  @apply tw-rounded-l-none;
+  @apply tw-border-l-0;
 }

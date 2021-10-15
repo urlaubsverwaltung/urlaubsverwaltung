@@ -158,9 +158,9 @@
             <c:choose>
                 <c:when test="${not empty application.holidayReplacements}">
                     <ul class="tw-list-none tw-m-0 tw-p-0" data-test-id="holiday-replacement-list">
-                        <c:forEach items="${application.holidayReplacements}" var="replacement">
+                        <c:forEach items="${application.holidayReplacements}" var="replacementInfo">
                         <li>
-                            <c:out value="${replacement.person.niceName}"/>
+                            <c:out value="${replacementInfo.person.niceName}"/>
                         </li>
                         </c:forEach>
                     </ul>

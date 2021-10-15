@@ -1002,7 +1002,7 @@
                                             <p class="text-danger col-md-5 col-md-push-4"><spring:message
                                                 code="settings.calendar.google.action.authenticate.description"/></p>
                                             <button id="googleOAuthButton" value="oauth" name="googleOAuthButton"
-                                                    type="submit" class="btn btn-primary col-md-3 col-md-push-4">
+                                                    type="submit" class="button-main col-md-3 col-md-push-4">
                                                 <spring:message code='settings.calendar.google.action.authenticate'/>
                                             </button>
                                         </c:when>
@@ -1022,7 +1022,7 @@
                 <div class="row tw-mb-16">
                     <div class="col-xs-12">
                         <p class="help-block tw-text-sm"><spring:message code="settings.action.update.description"/></p>
-                        <button type="submit" class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2" data-test-id="settings-save-button">
+                        <button type="submit" class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2" data-test-id="settings-save-button">
                             <spring:message code='action.save'/>
                         </button>
                     </div>

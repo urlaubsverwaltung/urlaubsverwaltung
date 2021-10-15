@@ -24,10 +24,10 @@
     </div>
 
     <div class="form-group is-sticky row">
-        <button type="submit" class="btn btn-info col-xs-12 col-sm-5">
+        <button type="submit" class="button-info col-xs-12 col-sm-5">
             <spring:message code='action.refer'/>
         </button>
-        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#refer').hide();">
+        <button type="button" class="button col-xs-12 col-sm-5 pull-right" onclick="$('#refer').hide();">
             <spring:message code="action.cancel"/>
         </button>
     </div>

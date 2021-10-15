@@ -275,17 +275,17 @@
             </div>
 
             <div class="form-section">
-                <div class="row">
+                <div class="row tw-mb-16">
                     <div class="col-xs-12">
                         <hr/>
                         <button
-                            class="btn btn-success col-xs-12 col-sm-5 col-md-2"
+                            class="button-main-green col-xs-12 col-sm-5 col-md-2"
                             type="submit"
                             data-test-id="sicknote-submit-button"
                         >
                             <spring:message code="action.save"/>
                         </button>
-                        <button class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right" type="button">
+                        <button class="button col-xs-12 col-sm-5 col-md-2 pull-right" type="button" data-back-button>
                             <spring:message code="action.cancel"/>
                         </button>
                     </div>

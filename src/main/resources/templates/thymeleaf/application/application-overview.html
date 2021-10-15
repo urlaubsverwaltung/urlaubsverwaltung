@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="_layout::head(~{::title}, ~{::scripts})">
+    <title th:text="#{calendar.share.header.title}"></title>
+    <th:block th:fragment="scripts">
+      <script defer asset:src="app_list.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+      <h1 class="tw-sr-only" th:text="#{applications.title}"></h1>
+
+      <div
+        class="feedback"
+        th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess)}"
+      >
+        <div class="alert alert-success">
+          <th:block th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></th:block>
+          <th:block th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></th:block>
+          <th:block th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></th:block>
+        </div>
+      </div>
+
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions}, ~{::user-applications-heading-below})"
+      >
+        <th:block th:ref="user-applications-heading-actions">
+          <a
+            href="#"
+            th:href="@{/web/application/new}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.apply.vacation}"
+            sec:authorize="hasAuthority('OFFICE')"
+          >
+            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+          </a>
+          <a
+            href="#"
+            th:href="@{/web/absences}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.applications.absences_overview}"
+          >
+            <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
+          </a>
+          <a
+            href="#"
+            th:href="@{/web/application/statistics}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.applications.statistics}"
+            sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')"
+          >
+            <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')"></svg>
+          </a>
+          <a href="#" th:replace="fragments/print::button"></a>
+        </th:block>
+        <th:block th:ref="user-applications-heading-body">
+          <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0" is="uv-nav-tabs">
+            <li
+              class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
+              th:classappend="${activeContent == 'application' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
+              data-content="#user-applications-block"
+              th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
+            >
+              <a
+                href="#user-applications-block"
+                th:href="@{/web/application}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost"
+                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
+                th:text="#{applications.myself.waiting}"
+              >
+              </a>
+            </li>
+            <li
+              class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
+              th:classappend="${activeContent == 'replacement' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
+              data-content="#user-replacements-block"
+              th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
+            >
+              <a
+                href="#user-replacements-block"
+                th:href="@{/web/application/replacement}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost tw-gap-2"
+                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
+              >
+                <th:block th:text="#{applications.holiday_replacement}" />
+                <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw-transform tw--translate-y-0.5">
+                  <th:block th:text="${#lists.size(applications_holiday_replacements)}" />
+                </span>
+              </a>
+            </li>
+          </ul>
+        </th:block>
+      </div>
+
+      <div
+        id="user-applications-block"
+        class="tw-mb-10"
+        th:hidden="${activeContent != 'application'}"
+      >
+        <h2 class="tw-sr-only" th:text="#{applications.myself.waiting}"></h2>
+        <p th:if="${#lists.isEmpty(userApplications)}" th:text="#{applications.none}"></p>
+        <div th:if="${not #lists.isEmpty(userApplications)}" class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
+          <div
+            class="
+              tw-sticky tw-py-2 tw-w-full
+              md:tw-w-1/4
+              lg:tw-p-2
+              tw-bg-gradient-to-b tw-from-white tw-via-white
+            "
+            style="top: 3.25rem"
+          >
+            <div class="tw-flex tw-space-x-5 lg:tw-space-x-6">
+              <img
+                th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+                alt=""
+              />
+              <span class="tw-flex-1 tw-flex tw-flex-wrap md:tw-flex-col">
+                <span class="tw-text-lg tw-break-words tw-w-full">
+                  <th:block th:text="${signedInUser.niceName}"></th:block>&nbsp;
+                </span>
+                <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.applied}"></span>
+              </span>
+            </div>
+          </div>
+          <ul
+            class="
+              tw-w-full tw-list-none tw-m-0 tw-p-0 tw-pl-20
+              md:tw-pl-0 md:tw-flex-1
+              tw-space-y-10
+              lg:tw-space-y-2
+              md:tw-mt-2
+              lg:tw-mt-0
+              md:tw-transform md:tw-translate-y-0.5
+              tw-text-sm
+            "
+          >
+              <li
+                class="
+                  tw-mt-2 xs:tw-mt-0
+                  md:tw-space-x-0
+                  lg:tw-p-2
+                  md:tw-block
+                  lg:tw-flex lg:tw-items-end
+                  lg:hover:tw-bg-gray-50
+                "
+                th:each="userRequestForLeave,loopStatus: ${userApplications}"
+              >
+                <a
+                  href="#"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id})}"
+                  class="tw-block tw-flex-1 tw-no-underline print:no-link"
+                  th:classappend="${userRequestForLeave.cancellationRequested ? 'tw-text-black-almost' : ''}"
+                >
+                  <span
+                    class="hover:tw-underline tw-mb-1 tw-text-lg"
+                    th:classappend="${userRequestForLeave.vacationType.category}"
+                  >
+                    <th:block th:if="${userRequestForLeave.cancellationRequested}">
+                      <th:block th:text="#{applications.cancellationRequestPrefix}" />
+                    </th:block>
+                    <th:block th:if="${#strings.isEmpty(userRequestForLeave.duration)}">
+                      <th:block th:text="${userRequestForLeave.workDays}" />
+                      <th:block th:text="#{duration.days}" />
+                    </th:block>
+                    <th:block th:if="${not #strings.isEmpty(userRequestForLeave.duration)}">
+                      <th:block th:text="${userRequestForLeave.duration}" />
+                    </th:block>
+                    <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
+                  </span>
+                  <span
+                    class="tw-block tw-text-black-almost"
+                    th:text="${userRequestForLeave.durationOfAbsenceDescription}"
+                  ></span>
+                </a>
+                <div
+                  class="
+                    tw-mt-2
+                    lg:tw-mt-0
+                    tw-flex tw-flex-wrap tw-gap-2
+                    lg:tw-justify-end
+                    print:tw-hidden
+                  "
+                >
+                  <a
+                    class="button tw-flex-1 tw-justify-center"
+                    th:href="@{/web/application/{applicationId}/edit (applicationId=${userRequestForLeave.id})}"
+                    th:if="${userRequestForLeave.editAllowed}"
+                  >
+                    <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <span class="sr-only xs:tw-not-sr-only">
+                      <th:block th:text="#{action.edit}"></th:block>
+                    </span>
+                  </a>
+                  <a
+                    class="button tw-flex-1 tw-justify-center"
+                    th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='allow', shortcut=true)}"
+                    th:if="${userRequestForLeave.approveAllowed}"
+                  >
+                    <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <span class="sr-only xs:tw-not-sr-only">
+                      <th:block th:text="${userRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
+                    </span>
+                  </a>
+                  <a
+                    class="button tw-flex-1 tw-justify-center"
+                    th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', shortcut=true)}"
+                    th:if="${userRequestForLeave.rejectAllowed}"
+                  >
+                    <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <span class="sr-only xs:tw-not-sr-only">
+                      <th:block th:text="#{action.reject}"></th:block>
+                    </span>
+                  </a>
+                </div>
+              </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        id="user-replacements-block"
+        class="tw-mb-10"
+        th:hidden="${activeContent != 'replacement'}"
+      >
+        <h2 class="tw-sr-only" th:text="#{applications.holiday_replacement}"></h2>
+        <p
+          th:if="${#lists.isEmpty(applications_holiday_replacements)}"
+          th:text="#{applications.holiday_replacement.none}"
+        ></p>
+        <div th:if="${!#lists.isEmpty(applications_holiday_replacements)}" class="tw-flex tw-items-start tw-flex-col md:tw-flex-row md:tw-space-x-12">
+          <div
+            class="
+              tw-sticky tw-py-2 tw-w-full
+              md:tw-w-auto
+              lg:tw-w-1/4
+              tw-bg-gradient-to-b tw-from-white tw-via-white
+              tw-z-10
+            "
+            style="top: 3.25rem"
+          >
+            <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
+              <img
+                th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+                alt=""
+              />
+              <span class="tw-flex tw-flex-wrap md:tw-flex-col">
+                <span class="tw-text-lg">
+                  <th:block th:text="${signedInUser.niceName}"></th:block>&nbsp;
+                </span>
+                <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.represents}"></span>
+              </span>
+            </div>
+          </div>
+          <ul
+            class="
+              tw-flex-1 tw-list-none tw-m-0 tw-p-0 tw-mt-4
+              md:tw-pl-0
+              tw-space-y-6
+              lg:tw-gap-2
+              md:tw-mt-2
+              md:tw-transform md:tw-translate-y-0.5
+            "
+          >
+            <li
+              class="tw-flex tw-flex-col tw-gap-4 xs:tw-pl-20 md:tw-pl-0"
+              th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}"
+            >
+              <div class="tw-flex tw-flex-row-reverse tw-gap-4">
+                <div class="tw-self-center print:tw-hidden">
+                  <img
+                    th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=mm&s=104'},username=${replacementInfo.person.name},width='52px',height='52px')"
+                    alt=""
+                  />
+                </div>
+                <div class="tw-flex-1">
+                  <div>
+                    <span class="tw-text-lg" th:text="${replacementInfo.person.name}"></span>
+                  </div>
+                  <div class="tw-text-sm">
+                    <th:block th:if="${replacementInfo.pending}" th:text="#{applications.holiday_replacement.pending}"></th:block>
+                    <span th:text="${replacementInfo.durationOfAbsenceDescription}" class="tw-font-bold"></span>
+                    <span class="tw-whitespace-nowrap">
+                      (<th:block th:switch="${#strings.isEmpty(replacementInfo.duration)}">
+                        <th:block th:case="true">
+                          <th:block th:text="${replacementInfo.workDays}" />
+                          <th:block th:text="#{duration.days}" />
+                        </th:block>
+                        <th:block th:case="false">
+                          <th:block th:text="${replacementInfo.duration}" />
+                        </th:block>
+                      </th:block>)
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                th:if="${!#strings.isEmpty(replacementInfo.note)}"
+                class="text-bubble text-bubble--triangle-top-right tw-self-end lg:text-bubble--triangle-top-left tw-mr-7 lg:tw-ml-7 sm:tw-max-w-md"
+              >
+                <p class="tw-italic tw-text-sm tw-m-0" th:text="${replacementInfo.note}"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions}, ~{::other-applications-heading-below})"
+      >
+        <th:block th:ref="other-applications-heading-body">
+          <h2 class="tw-text-xl tw-font-medium" th:text="#{applications.other.waiting}"></h2>
+        </th:block>
+      </div>
+
+      <div class="tw-mb-10">
+        <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
+        <ul
+          th:if="${not #lists.isEmpty(otherApplications)}"
+          class="
+            tw-w-full tw-list-none tw-m-0 tw-p-0
+            tw-text-sm
+            tw-space-y-10 lg:tw-space-y-4
+          "
+        >
+          <li
+            th:each="otherRequestForLeave,loopStatus : ${otherApplications}"
+            class="
+              tw-relative
+              md:tw-flex md:tw-items-top lg:tw-items-center
+              md:tw-space-x-12
+              lg:tw-p-2
+              lg:hover:tw-bg-gray-50
+            "
+          >
+            <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
+              <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=mm&s=104'},username=${otherRequestForLeave.person.name},width='52px',height='52px')"
+                  alt=""
+                />
+              </span>
+              <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
+                <th:block th:text="${otherRequestForLeave.person.name}"></th:block>&nbsp;
+                <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
+              </span>
+            </div>
+            <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
+              <div class="tw-flex-1 lg:tw-px-1">
+                <a
+                  href="#"
+                  th:href="@{/web/application/{applicationId}(applicationId=${otherRequestForLeave.id})}"
+                  class="tw-block tw-flex-1 tw-no-underline print:no-link"
+                >
+                  <span
+                    class="hover:tw-underline tw-mb-1 tw-text-lg"
+                    th:classappend="${otherRequestForLeave.vacationType.category}"
+                    th:switch="${#strings.isEmpty(otherRequestForLeave.duration)}"
+                  >
+                    <th:block th:case="true">
+                      <th:block th:text="${otherRequestForLeave.workDays}" />
+                      <th:block th:text="#{duration.days}" />
+                    </th:block>
+                    <th:block th:case="false">
+                      <th:block th:text="${otherRequestForLeave.duration}" />
+                    </th:block>
+                    <th:block th:text="#{${otherRequestForLeave.vacationType.messageKey}}" />
+                  </span>
+                  <span
+                    class="tw-block tw-text-black-almost"
+                    th:text="${otherRequestForLeave.durationOfAbsenceDescription}"
+                  ></span>
+                </a>
+              </div>
+              <div class="print:tw-hidden">
+                <div class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
+                  <a
+                    th:if="${otherRequestForLeave.editAllowed}"
+                    class="button tw-flex-1"
+                    href="#"
+                    th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
+                  >
+                    <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                    <span class="tw-sr-only xs:tw-not-sr-only">
+                      <th:block th:text="#{action.edit}" />
+                    </span>
+                  </a>
+                  <a
+                    th:if="${otherRequestForLeave.approveAllowed}"
+                    class="button tw-flex-1"
+                    href="#"
+                    th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
+                  >
+                    <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                    <span class="tw-sr-only xs:tw-not-sr-only">
+                      <th:block th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}" />
+                    </span>
+                  </a>
+                  <a
+                    th:if="${otherRequestForLeave.rejectAllowed}"
+                    class="button tw-flex-1"
+                    href="#"
+                    th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
+                  >
+                    <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                    <span class="tw-sr-only xs:tw-not-sr-only">
+                      <th:block th:text="#{action.reject}" />
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <th:block th:if="${applications_cancellation_request != null}">
+        <div
+          th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions}, ~{::cancellation-requests-heading-below})"
+        >
+          <th:block th:ref="cancellation-requests-heading-body">
+            <h2 id="cancellation-requests" class="tw-text-xl tw-font-medium" th:text="#{applications.cancellation_request}"></h2>
+          </th:block>
+        </div>
+
+        <div class="tw-mb-10">
+          <p th:if="${#lists.isEmpty(applications_cancellation_request)}" th:text="#{applications.cancellation_request.none}"></p>
+          <ul
+            th:if="${not #lists.isEmpty(applications_cancellation_request)}"
+            class="
+              tw-w-full tw-list-none tw-m-0 tw-p-0
+              tw-text-sm
+              tw-space-y-10 lg:tw-space-y-4
+            "
+          >
+            <li
+              th:each="cancellationRequest,loopStatus : ${applications_cancellation_request}"
+              class="
+                tw-relative
+                md:tw-flex md:tw-items-top lg:tw-items-center
+                md:tw-space-x-12
+                lg:tw-p-2
+                lg:hover:tw-bg-gray-50
+              "
+            >
+              <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
+                <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static">
+                  <img
+                    th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=mm&s=104'},username=${cancellationRequest.person.name},width='52px',height='52px')"
+                    alt=""
+                  />
+                </span>
+                <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
+                  <th:block th:text="${cancellationRequest.person.name}"></th:block>&nbsp;
+                  <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
+                </span>
+              </div>
+              <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
+                <div class="tw-flex-1 lg:tw-px-1">
+                  <a
+                    href="#"
+                    th:href="@{/web/application/{applicationId}(applicationId=${cancellationRequest.id})}"
+                    class="tw-block tw-flex-1 tw-no-underline print:no-link"
+                  >
+                    <span
+                      class="hover:tw-underline tw-mb-1 tw-text-lg"
+                      th:classappend="${cancellationRequest.vacationType.category}"
+                      th:switch="${#strings.isEmpty(cancellationRequest.duration)}"
+                    >
+                      <th:block th:text="#{applications.cancellationRequestPrefix}" />
+                      <th:block th:case="true">
+                        <th:block th:text="${cancellationRequest.workDays}" />
+                        <th:block th:text="#{duration.days}" />
+                      </th:block>
+                      <th:block th:case="false">
+                        <th:block th:text="${cancellationRequest.duration}" />
+                      </th:block>
+                      <th:block th:text="#{${cancellationRequest.vacationType.messageKey}}" />
+                    </span>
+                    <span
+                      class="tw-block tw-text-black-almost"
+                      th:text="${cancellationRequest.durationOfAbsenceDescription}"
+                    ></span>
+                  </a>
+                </div>
+                <div class="print:tw-hidden">
+                  <div sec:authorize="hasAuthority('OFFICE')" class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
+                    <a
+                      class="button tw-flex-1"
+                      href="#"
+                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', shortcut=true)}"
+                    >
+                      <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <span class="tw-sr-only xs:tw-not-sr-only">
+                        <th:block th:text="#{action.delete}" />
+                      </span>
+                    </a>
+                    <a
+                      class="button tw-flex-1"
+                      href="#"
+                      th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
+                    >
+                      <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <span class="tw-sr-only xs:tw-not-sr-only">
+                        <th:block th:text="#{action.cancellationRequest}" />
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </th:block>
+
+    </main>
+  </body>
+</html>

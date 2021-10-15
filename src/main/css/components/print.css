@@ -5,8 +5,7 @@
 **************************************************************************/
 
 @media print {
-  .btn,
-  .btn-group,
+  .button,
   .navbar,
   #datepicker,
   tr.inactive,

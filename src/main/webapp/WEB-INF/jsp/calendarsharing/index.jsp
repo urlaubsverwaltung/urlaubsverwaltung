@@ -83,7 +83,7 @@
                                     </div>
                                 </c:forEach>
                             </div>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="button-main">
                                 <spring:message code="calendar.share.me.form.submit.text"/>
                             </button>
                         </div>
@@ -108,11 +108,11 @@
                             <p class="tw-mb-8 tw-text-base">
                                 <spring:message code="calendar.share.me.reset.paragraph"/>
                             </p>
-                            <div class="tw-flex tw-flex-col sm:tw-flex-row">
-                                <button type="submit" class="btn btn-default tw-mb-4 sm:tw-mb-0">
+                            <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
+                                <button type="submit" class="button tw-mb-4 sm:tw-mb-0">
                                     <spring:message code="calendar.share.me.reset.form.submit.text"/>
                                 </button>
-                                <button type="submit" name="unlink" class="btn btn-default sm:tw-mb-0">
+                                <button type="submit" name="unlink" class="button sm:tw-mb-0">
                                     <spring:message code="calendar.share.me.unlink.form.submit.text"/>
                                 </button>
                             </div>
@@ -180,7 +180,7 @@
                                                 </div>
                                             </c:forEach>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="submit" class="button-main">
                                             <spring:message code="calendar.share.department.form.submit.text" arguments="${departmentCal.departmentName}" />
                                         </button>
                                     </div>
@@ -209,11 +209,11 @@
                                         <p class="tw-mb-8 tw-text-base">
                                             <spring:message code="calendar.share.department.reset.paragraph"/>
                                         </p>
-                                        <div class="tw-flex tw-flex-col sm:tw-flex-row">
-                                            <button type="submit" class="btn btn-default tw-mb-4 sm:tw-mb-0">
+                                        <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
+                                            <button type="submit" class="button tw-mb-4 sm:tw-mb-0">
                                                 <spring:message code="calendar.share.department.reset.form.submit.text"/>
                                             </button>
-                                            <button type="submit" name="unlink" class="btn btn-default sm:tw-mb-0">
+                                            <button type="submit" name="unlink" class="button sm:tw-mb-0">
                                                 <spring:message code="calendar.share.department.unlink.form.submit.text"/>
                                             </button>
                                         </div>
@@ -250,12 +250,12 @@
                             </p>
                             <c:choose>
                             <c:when test="${companyCalendarAccessible.accessible}">
-                                <button type="submit" class="btn btn-default">
+                                <button type="submit" class="button">
                                     <spring:message code="calendar.share.company.accessible.disable.button.text"/>
                                 </button>
                             </c:when>
                             <c:otherwise>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="button-main">
                                     <spring:message code="calendar.share.company.accessible.enable.button.text"/>
                                 </button>
                             </c:otherwise>
@@ -297,7 +297,7 @@
                                             </div>
                                         </c:forEach>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="button-main">
                                         <spring:message code="calendar.share.company.form.submit.text"/>
                                     </button>
                                 </div>
@@ -322,11 +322,11 @@
                                     <p class="tw-mb-8 tw-text-base">
                                         <spring:message code="calendar.share.company.reset.paragraph"/>
                                     </p>
-                                    <div class="tw-flex tw-flex-col sm:tw-flex-row">
-                                        <button type="submit" class="btn btn-default tw-mb-4 sm:tw-mb-0">
+                                    <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
+                                        <button type="submit" class="button tw-mb-4 sm:tw-mb-0">
                                             <spring:message code="calendar.share.company.reset.form.submit.text"/>
                                         </button>
-                                        <button type="submit" name="unlink" class="btn btn-default sm:tw-mb-0">
+                                        <button type="submit" name="unlink" class="button sm:tw-mb-0">
                                             <spring:message code="calendar.share.company.unlink.form.submit.text"/>
                                         </button>
                                     </div>

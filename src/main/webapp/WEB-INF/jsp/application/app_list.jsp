@@ -114,8 +114,8 @@
                                 <tr class="active" onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <uv:avatar
-                                            url="${application.person.gravatarURL}?d=mm&s=40"
-                                            username="${application.person.niceName}"
+                                            url="${application.person.avatarUrl}?d=mm&s=40"
+                                            username="${application.person.name}"
                                             width="40px"
                                             height="40px"
                                             border="true"
@@ -123,7 +123,7 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.person.niceName}"/>
+                                            <c:out value="${application.person.name}"/>
                                         </span>
                                         <span>
                                             <spring:message code="application.applier.applied"/>
@@ -133,84 +133,36 @@
                                         <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
                                            href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
-                                                <c:when test="${application.hours != null}">
-                                                    <uv:duration duration="${application.hours}"/>
+                                                <c:when test="${not empty application.duration}">
+                                                    <c:out value="${application.duration}" />
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <uv:number number="${application.workDays}"/>
+                                                    <c:out value="${application.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:otherwise>
                                             </c:choose>
                                         </a>
                                         <div>
-                                            <c:choose>
-                                                <c:when test="${application.startDate == application.endDate}">
-                                                    <c:set var="APPLICATION_DATE">
-                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
-                                                    </c:set>
-                                                    <c:choose>
-                                                        <c:when
-                                                            test="${application.startTime != null && application.endTime != null}">
-                                                            <c:set var="APPLICATION_START_TIME">
-                                                                <uv:time dateTime="${application.startDateWithTime}"/>
-                                                            </c:set>
-                                                            <c:set var="APPLICATION_END_TIME">
-                                                                <uv:time dateTime="${application.endDateWithTime}"/>
-                                                            </c:set>
-                                                            <c:set var="APPLICATION_TIME">
-                                                                <spring:message code="absence.period.time"
-                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                                                                argumentSeparator=";"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
-                                                                            argumentSeparator=";"/>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="APPLICATION_DAY_LENGTH">
-                                                                <spring:message code="${application.dayLength}"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}"
-                                                                            argumentSeparator=";"/>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="APPLICATION_START_DATE">
-                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
-                                                    </c:set>
-                                                    <c:set var="APPLICATION_END_DATE">
-                                                        <spring:message code="${application.weekDayOfEndDate}.short"/>,
-                                                        <uv:date date="${application.endDate}"/>
-                                                    </c:set>
-                                                    <spring:message code="absence.period.multipleDays"
-                                                                    arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
-                                                                    argumentSeparator=";"/>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:out value="${application.durationOfAbsenceDescription}" />
                                         </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                            <c:if test="${application.person.id == signedInUser.id && application.status == 'WAITING'}">
+                                            <c:if test="${application.editAllowed}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}/edit">
                                                     <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <spring:message code='action.edit'/>
                                                 </a>
                                             </c:if>
-                                            <c:if
-                                                test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <c:if test="${application.approveAllowed}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
                                                     <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <c:choose>
-                                                        <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                                                        <c:when test="${application.temporaryApproveAllowed}">
                                                             <spring:message code='action.temporary_allow'/>
                                                         </c:when>
                                                         <c:otherwise>
@@ -219,8 +171,7 @@
                                                     </c:choose>
                                                 </a>
                                             </c:if>
-                                            <c:if
-                                                test="${CAN_ALLOW && (application.person.id != signedInUser.id || IS_BOSS)}">
+                                            <c:if test="${application.rejectAllowed}">
                                                 <a class="action-link tw-text-gray-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
                                                     <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
@@ -260,8 +211,8 @@
                                     onclick="navigate('${URL_PREFIX}/application/${application.id}');">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
+                                            src="<c:out value='${application.person.avatarUrl}?d=mm&s=40'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.name}"/>"
                                             class="gravatar tw-rounded-full"
                                             width="40px"
                                             height="40px"
@@ -270,7 +221,7 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.person.niceName}"/>
+                                            <c:out value="${application.person.name}"/>
                                         </span>
                                         <span>
                                             <spring:message code="application.applier.applied"/>
@@ -280,72 +231,19 @@
                                         <a class="tw-block tw-mb-1 tw-text-lg print:no-link ${application.vacationType.category}"
                                            href="${URL_PREFIX}/application/${application.id}">
                                             <c:choose>
-                                                <c:when test="${application.hours != null}">
-                                                    <uv:duration duration="${application.hours}"/>
+                                                <c:when test="${not empty application.duration}">
+                                                    <c:out value="${application.duration}" />
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <uv:number number="${application.workDays}"/>
+                                                    <c:out value="${application.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                     <spring:message code="${application.vacationType.messageKey}"/>
                                                 </c:otherwise>
                                             </c:choose>
                                         </a>
                                         <div>
-                                            <c:choose>
-                                                <c:when test="${application.startDate == application.endDate}">
-                                                    <c:set var="APPLICATION_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
-                                                    </c:set>
-                                                    <c:choose>
-                                                        <c:when
-                                                            test="${application.startTime != null && application.endTime != null}">
-                                                            <c:set var="APPLICATION_START_TIME">
-                                                                <uv:time
-                                                                    dateTime="${application.startDateWithTime}"/>
-                                                            </c:set>
-                                                            <c:set var="APPLICATION_END_TIME">
-                                                                <uv:time
-                                                                    dateTime="${application.endDateWithTime}"/>
-                                                            </c:set>
-                                                            <c:set var="APPLICATION_TIME">
-                                                                <spring:message code="absence.period.time"
-                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                                                                argumentSeparator=";"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
-                                                                            argumentSeparator=";"/>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="APPLICATION_DAY_LENGTH">
-                                                                <spring:message
-                                                                    code="${application.dayLength}"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}"
-                                                                            argumentSeparator=";"/>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="APPLICATION_START_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
-                                                    </c:set>
-                                                    <c:set var="APPLICATION_END_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfEndDate}.short"/>,
-                                                        <uv:date date="${application.endDate}"/>
-                                                    </c:set>
-                                                    <spring:message code="absence.period.multipleDays"
-                                                                    arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
-                                                                    argumentSeparator=";"/>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:out value="${application.durationOfAbsenceDescription}" />
                                         </div>
                                     </td>
                                     <td class="hidden-xs hidden-sm text-right print:tw-hidden">
@@ -390,12 +288,12 @@
                     <c:otherwise>
                         <table class="list-table list-table-bt-0 tw-text-sm">
                             <tbody>
-                            <c:forEach items="${applications_holiday_replacements}" var="application" varStatus="loopStatus">
+                            <c:forEach items="${applications_holiday_replacements}" var="replacementInfo" varStatus="loopStatus">
                                 <tr class="active">
                                     <td class="print:tw-hidden is-centered">
                                         <img
-                                            src="<c:out value='${application.personGravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.personName}"/>"
+                                            src="<c:out value='${replacementInfo.person.avatarUrl}?d=mm&s=40'/>"
+                                            alt="<spring:message code="gravatar.alt" arguments="${replacementInfo.person.name}"/>"
                                             class="gravatar tw-rounded-full"
                                             width="40px"
                                             height="40px"
@@ -404,9 +302,9 @@
                                     </td>
                                     <td class="hidden-xs print:tw-table-cell">
                                         <span class="tw-block tw-text-lg tw-mb-1">
-                                            <c:out value="${application.personName}"/>
+                                            <c:out value="${replacementInfo.person.name}"/>
                                         </span>
-                                        <c:if test="${application.pending}">
+                                        <c:if test="${replacementInfo.pending}">
                                             <div>
                                                 <spring:message code="applications.holiday_replacement.pending"/>
                                             </div>
@@ -415,73 +313,21 @@
                                     <td class="halves">
                                         <span class="tw-block tw-mb-1 tw-text-lg">
                                             <c:choose>
-                                                <c:when test="${application.hours != null}">
-                                                    <uv:duration duration="${application.hours}"/>
+                                                <c:when test="${replacementInfo.duration != null}">
+                                                    <c:out value="${replacementInfo.duration}" />
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <uv:number number="${application.workDays}"/>
+                                                    <c:out value="${replacementInfo.workDays}" />
                                                     <spring:message code="duration.days"/>
                                                 </c:otherwise>
                                             </c:choose>
                                         </span>
                                         <div>
-                                            <c:choose>
-                                                <c:when test="${application.startDate == application.endDate}">
-                                                    <c:set var="APPLICATION_DATE">
-                                                        <spring:message code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
-                                                    </c:set>
-                                                    <c:choose>
-                                                        <c:when
-                                                            test="${application.startTime != null && application.endTime != null}">
-                                                            <c:set var="APPLICATION_START_TIME">
-                                                                <uv:time
-                                                                    dateTime="${application.startDateWithTime}"/>
-                                                            </c:set>
-                                                            <c:set var="APPLICATION_END_TIME">
-                                                                <uv:time
-                                                                    dateTime="${application.endDateWithTime}"/>
-                                                            </c:set>
-                                                            <c:set var="APPLICATION_TIME">
-                                                                <spring:message code="absence.period.time"
-                                                                                arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                                                                argumentSeparator=";"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_TIME}"
-                                                                            argumentSeparator=";"/>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <c:set var="APPLICATION_DAY_LENGTH">
-                                                                <spring:message
-                                                                    code="${application.dayLength}"/>
-                                                            </c:set>
-                                                            <spring:message code="absence.period.singleDay"
-                                                                            arguments="${APPLICATION_DATE};${APPLICATION_DAY_LENGTH}"
-                                                                            argumentSeparator=";"/>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="APPLICATION_START_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfStartDate}.short"/>,
-                                                        <uv:date date="${application.startDate}"/>
-                                                    </c:set>
-                                                    <c:set var="APPLICATION_END_DATE">
-                                                        <spring:message
-                                                            code="${application.weekDayOfEndDate}.short"/>,
-                                                        <uv:date date="${application.endDate}"/>
-                                                    </c:set>
-                                                    <spring:message code="absence.period.multipleDays"
-                                                                    arguments="${APPLICATION_START_DATE};${APPLICATION_END_DATE}"
-                                                                    argumentSeparator=";"/>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:out value="${replacementInfo.durationOfAbsenceDescription}" />
                                         </div>
                                     </td>
                                     <td class="tw-break-words tw-max-w-xs">
-                                        <c:out value="${application.note}"/>
+                                        <c:out value="${replacementInfo.note}"/>
                                     </td>
                                 </tr>
                             </c:forEach>

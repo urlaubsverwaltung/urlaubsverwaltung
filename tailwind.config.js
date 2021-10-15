@@ -1,9 +1,15 @@
 const defaultConfig = require("tailwindcss/defaultConfig.js");
+const colors = require("tailwindcss/colors");
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   purge: {
-    content: ["./src/main/webapp/**/*.jsp", "./src/main/webapp/**/*.tag", "./src/main/javascript/**/*.js"],
+    content: [
+      "./src/main/webapp/**/*.jsp",
+      "./src/main/webapp/**/*.tag",
+      "./src/main/javascript/**/*.js",
+      "./src/main/resources/templates/**/*.html",
+    ],
   },
   // use a prefix to not conflict with bootstrap
   prefix: "tw-",
@@ -26,6 +32,13 @@ module.exports = {
       },
       margin: {
         25: "6.25rem",
+      },
+      colors: {
+        "black-almost": "#444444",
+        "bootstrap-green": "#5cb85c",
+        "bootstrap-green-dark": "#449d44",
+        cyan: { ...colors.cyan },
+        sky: { ...colors.sky },
       },
     },
     screens: {

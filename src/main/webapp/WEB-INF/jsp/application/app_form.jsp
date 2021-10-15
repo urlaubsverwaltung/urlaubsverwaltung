@@ -381,7 +381,7 @@
                                                 </uv:select>
                                                 <button
                                                     type="submit"
-                                                    class="btn btn-default tw-border-l-0 tw-rounded-r tw-m-0 tw-px-4 tw-font-medium"
+                                                    class="button button-as-addon--right"
                                                     name="add-holiday-replacement"
                                                     formmethod="post"
                                                     formaction="${ADD_REPLACEMENT_ACTION}"
@@ -530,16 +530,16 @@
                         </div>
                     </div>
 
-                    <div class="form-section">
+                    <div class="form-section tw-mb-12">
                         <div class="row">
                             <div class="col-xs-12">
                                 <hr/>
                                 <button id="apply-application" type="submit"
-                                        class="btn btn-success pull-left col-xs-12 col-sm-5 col-md-2">
+                                        class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2">
                                     <spring:message code="action.apply.vacation"/>
                                 </button>
                                 <button type="button"
-                                        class="btn btn-default back col-xs-12 col-sm-5 col-md-2 pull-right">
+                                        class="button col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>
                                     <spring:message code="action.cancel"/>
                                 </button>
                             </div>
