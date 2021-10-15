@@ -238,7 +238,7 @@ public class ApplicationForLeaveViewController {
         }
 
         return cancellationRequests.stream()
-            .filter(application -> !application.getPerson().equals(signedInUser))
+            .filter(withoutApplicationsOf(signedInUser))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
@@ -249,7 +249,7 @@ public class ApplicationForLeaveViewController {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
             return getApplicationsForLeaveForBossOrOffice().stream()
-                .filter(applicationForLeave -> !applicationForLeave.getPerson().equals(signedInUser))
+                .filter(withoutApplicationsOf(signedInUser))
                 .collect(toList());
         }
 
@@ -306,8 +306,8 @@ public class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private Predicate<Application> withoutApplicationsOf(Person head) {
-        return application -> !application.getPerson().equals(head);
+    private Predicate<Application> withoutApplicationsOf(Person person) {
+        return application -> !application.getPerson().equals(person);
     }
 
     private Predicate<Application> withoutSecondStageAuthorityApplications() {
