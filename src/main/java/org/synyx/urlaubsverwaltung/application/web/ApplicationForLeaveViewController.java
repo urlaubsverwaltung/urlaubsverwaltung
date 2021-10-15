@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -180,7 +181,7 @@ public class ApplicationForLeaveViewController {
         return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey());
     }
 
-    private static String toDurationString(java.time.Duration javaTimeDuration, MessageSource messageSource, Locale locale) {
+    private static String toDurationString(Duration javaTimeDuration, MessageSource messageSource, Locale locale) {
         if (javaTimeDuration == null) {
             return "";
         }
