@@ -156,7 +156,7 @@
                     th:classappend="${userRequestForLeave.vacationType.category}"
                   >
                     <th:block th:if="${userRequestForLeave.cancellationRequested}">
-                      <th:block th:text="#{applications.cancellationRequestPrefix}" />&nbsp;
+                      <th:block th:text="#{applications.cancellationRequestPrefix}" />
                     </th:block>
                     <th:block th:if="${#strings.isEmpty(userRequestForLeave.duration)}">
                       <th:block th:text="${userRequestForLeave.workDays}" />
@@ -466,7 +466,7 @@
                       th:classappend="${cancellationRequest.vacationType.category}"
                       th:switch="${#strings.isEmpty(cancellationRequest.duration)}"
                     >
-                      <th:block th:text="#{applications.cancellationRequestPrefix}" />&nbsp;
+                      <th:block th:text="#{applications.cancellationRequestPrefix}" />
                       <th:block th:case="true">
                         <th:block th:text="${cancellationRequest.workDays}" />
                         <th:block th:text="#{duration.days}" />
