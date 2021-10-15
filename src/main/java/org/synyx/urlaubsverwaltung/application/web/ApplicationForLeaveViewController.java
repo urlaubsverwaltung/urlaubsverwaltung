@@ -101,7 +101,7 @@ public class ApplicationForLeaveViewController {
         model.addAttribute("otherApplications", otherApplicationsDtos);
 
         if (signedInUser.hasRole(OFFICE)) {
-            final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests();
+            final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser);
             final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
             model.addAttribute("applications_cancellation_request", cancellationDtoList);
         }
@@ -226,9 +226,7 @@ public class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests() {
-
-        final Person signedInUser = personService.getSignedInUser();
+    private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests(Person signedInUser) {
 
         List<Application> cancellationRequests;
         if (signedInUser.hasRole(OFFICE)) {
@@ -280,8 +278,7 @@ public class ApplicationForLeaveViewController {
     private List<ApplicationForLeave> getApplicationsForLeaveForUser(Person user) {
         final List<ApplicationStatus> states = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
-        return applicationService.getForStatesAndPerson(states, List.of(user))
-            .stream()
+        return applicationService.getForStatesAndPerson(states, List.of(user)).stream()
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
             .collect(toList());
