@@ -5,7 +5,7 @@ public class ApplicationPersonDto {
     private final String name;
     private final String avatarUrl;
 
-    public ApplicationPersonDto(String name, String avatarUrl) {
+    ApplicationPersonDto(String name, String avatarUrl) {
         this.name = name;
         this.avatarUrl = avatarUrl;
     }

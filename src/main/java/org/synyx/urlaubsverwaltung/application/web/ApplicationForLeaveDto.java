@@ -197,7 +197,7 @@ public class ApplicationForLeaveDto {
         private final String category;
         private final String messageKey;
 
-        public VacationType(String category, String messageKey) {
+        VacationType(String category, String messageKey) {
             this.category = category;
             this.messageKey = messageKey;
         }
