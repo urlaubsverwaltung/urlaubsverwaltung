@@ -22,11 +22,13 @@ public class MenuDataProvider implements HandlerInterceptor {
 
     private final PersonService personService;
     private final SettingsService settingsService;
+    private final MenuProperties menuProperties;
 
     @Autowired
-    public MenuDataProvider(PersonService personService, SettingsService settingsService) {
+    public MenuDataProvider(PersonService personService, SettingsService settingsService, MenuProperties menuProperties) {
         this.personService = personService;
         this.settingsService = settingsService;
+        this.menuProperties = menuProperties;
     }
 
     @Override
@@ -42,6 +44,7 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("userLastName", user.getLastName());
             modelAndView.addObject("userId", user.getId());
             modelAndView.addObject("menuGravatarUrl", gravatarUrl);
+            modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
         }
