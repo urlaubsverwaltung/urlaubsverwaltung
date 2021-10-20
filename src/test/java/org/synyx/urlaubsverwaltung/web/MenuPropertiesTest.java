@@ -26,13 +26,13 @@ class MenuPropertiesTest {
     @Test
     void helpUrlDefault() {
         final MenuProperties menuProperties = new MenuProperties();
-        assertThat(menuProperties.getHelp().getUrl()).isEqualTo("https://urlaubsverwaltung.cloud/wissensbasis");
+        assertThat(menuProperties.getHelp().getUrl()).isEqualTo("https://urlaubsverwaltung.cloud/hilfe/?source=open-source#dokumentation");
     }
 
     @Test
     void helpUrlIsGiven() {
         final MenuProperties menuProperties = new MenuProperties();
-        menuProperties.getHelp().setUrl("https://urlaubsverwaltung.cloud/support/#wissensbasis");
+        menuProperties.getHelp().setUrl("https://urlaubsverwaltung.cloud/hilfe/?source=open-source#dokumentation");
         final Set<ConstraintViolation<MenuProperties>> violations = validator.validate(menuProperties);
 
         assertThat(violations.size()).isZero();
