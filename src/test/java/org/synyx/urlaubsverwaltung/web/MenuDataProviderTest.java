@@ -39,7 +39,7 @@ class MenuDataProviderTest {
 
     @BeforeEach
     void setUp() {
-        sut = new MenuDataProvider(personService, settingsService);
+        sut = new MenuDataProvider(personService, settingsService, new MenuProperties());
     }
 
     @Test

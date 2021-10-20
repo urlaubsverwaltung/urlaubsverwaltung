@@ -221,7 +221,7 @@
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
-                        class="tw-inline-block"
+                        class="tw-no-underline tw-inline-flex tw-items-center tw-text-gray-800 hover:tw-text-black transition-colors"
                         id="avatar-link"
                         aria-expanded="false"
                         aria-haspopup="true"
@@ -235,10 +235,11 @@
                             height="24px"
                             onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                         />
+                        <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
                     </a>
                     <div
                         id="avatar-menu"
-                        class="nav-popup-menu tw-w-screen tw-absolute tw--right-2 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                        class="nav-popup-menu tw-w-screen tw-absolute tw-right-0 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
@@ -264,6 +265,23 @@
                                                 <span>${userLastName}</span>
                                             </span>
                                         </span>
+                                    </a>
+                                </li>
+                                <li role="none" class="tw-mb-1">
+                                    <a
+                                        href="${menuHelpUrl}"
+                                        role="menuitem"
+                                        class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                        <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                            <icon:question-mark-circle className="tw-h-6 tw-w-6" />
+                                        </span>
+                                        <span class="tw-ml-4 tw-text-base">
+                                            <spring:message code="nav.help.title" />
+                                        </span>
+                                        <icon:external-link className="tw-ml-1.5 tw-h-4 tw-w-4" />
                                     </a>
                                 </li>
                                 <li role="none" class="tw-mb-1">

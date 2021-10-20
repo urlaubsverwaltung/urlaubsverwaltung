@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,15 +23,17 @@ public class MenuDataProvider implements HandlerInterceptor {
 
     private final PersonService personService;
     private final SettingsService settingsService;
+    private final MenuProperties menuProperties;
 
     @Autowired
-    public MenuDataProvider(PersonService personService, SettingsService settingsService) {
+    public MenuDataProvider(PersonService personService, SettingsService settingsService, MenuProperties menuProperties) {
         this.personService = personService;
         this.settingsService = settingsService;
+        this.menuProperties = menuProperties;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
 
         if (modelAndView != null && menuIsShown(modelAndView)) {
 
@@ -42,6 +45,7 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("userLastName", user.getLastName());
             modelAndView.addObject("userId", user.getId());
             modelAndView.addObject("menuGravatarUrl", gravatarUrl);
+            modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
         }
