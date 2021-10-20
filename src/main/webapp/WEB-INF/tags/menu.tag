@@ -272,6 +272,8 @@
                                         href="${menuHelpUrl}"
                                         role="menuitem"
                                         class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
+                                        target="_blank"
+                                        rel="noopener"
                                     >
                                         <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                             <icon:question-mark-circle className="tw-h-6 tw-w-6" />
