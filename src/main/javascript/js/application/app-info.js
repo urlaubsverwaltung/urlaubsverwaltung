@@ -1,7 +1,6 @@
-import $ from "jquery";
 import sendGetDaysRequestForTurnOfTheYear from "../send-get-days-request-for-turn-of-the-year";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
   const dayLength = window.uv.dayLength;
   const personId = window.uv.personId;
 

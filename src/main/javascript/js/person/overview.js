@@ -4,7 +4,7 @@ import { getYear, setYear, startOfYear, subMonths, addMonths } from "date-fns";
 import getUrlParameter from "../get-url-parameter";
 import "../../components/calendar";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
   const personId = window.uv.personId;
   const webPrefix = window.uv.webPrefix;
   const apiPrefix = window.uv.apiPrefix;

@@ -1,7 +1,6 @@
-import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
-$(document).ready(async function () {
+document.addEventListener("DOMContentLoaded", async () => {
   const urlPrefix = window.uv.apiPrefix;
   const personId = window.uv.personId;
 

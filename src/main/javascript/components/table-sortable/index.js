@@ -1,7 +1,7 @@
 import $ from "jquery";
 import "tablesorter";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
   $.tablesorter.addParser({
     id: "germanDate",
     is: function () {

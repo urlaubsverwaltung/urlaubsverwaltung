@@ -6,7 +6,7 @@ import "../../components/timepicker";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
-$(document).ready(async function () {
+document.addEventListener("DOMContentLoaded", async () => {
   const { apiPrefix: urlPrefix, personId } = window.uv;
   let fromDateElement;
   let toDateElement;

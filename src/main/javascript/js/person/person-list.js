@@ -2,7 +2,7 @@ import $ from "jquery";
 import List from "list.js";
 import "tablesorter";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
   $("table.sortable").tablesorter({
     sortList: [[1, 0]],
     headers: {

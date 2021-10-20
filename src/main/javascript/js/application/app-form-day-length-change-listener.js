@@ -1,9 +1,8 @@
-import $ from "jquery";
 import { parseISO } from "date-fns";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
   // re-calculate vacation days when changing the day length
 
   const urlPrefix = window.uv.apiPrefix;

@@ -1,7 +1,7 @@
 import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
-$(document).ready(async function () {
+document.addEventListener("DOMContentLoaded", async () => {
   const person = window.uv.params.person;
   if (person) {
     const employeeElement = document.querySelector("#employee");

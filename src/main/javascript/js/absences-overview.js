@@ -2,7 +2,7 @@ import $ from "jquery";
 import "tablesorter";
 import "./absences-overview.css";
 
-$(function () {
+document.addEventListener("DOMContentLoaded", () => {
   $("table.sortable").tablesorter({
     sortList: [[1, 0]],
     headers: {

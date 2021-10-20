@@ -2,7 +2,7 @@ import $ from "jquery";
 import "tablesorter";
 import "../components/popover";
 
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", () => {
   $("table.sortable").tablesorter({
     sortList: [[0, 0]],
   });

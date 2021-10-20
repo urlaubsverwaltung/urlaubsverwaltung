@@ -37,7 +37,7 @@ function paramize(p) {
   return result.replace(/[&?]$/, "");
 }
 
-$(function () {
+document.addEventListener("DOMContentLoaded", () => {
   const $datepicker = $("#datepicker");
 
   const numberOfMonths = 10;
