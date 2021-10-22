@@ -25,7 +25,7 @@ Dann steige über unsere [Landingpage] direkt in das [Demo-System](https://urlau
 
 ## FAQ
 
-Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).  
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [Hilfe](https://urlaubsverwaltung.cloud/hilfe/).  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
 vom Typ "Question" erstellen.
 
