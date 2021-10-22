@@ -124,7 +124,7 @@
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
-            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-space-x-2" role="menubar">
+            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-center tw-space-x-2" role="menubar">
                 <c:choose>
                     <c:when test="${navigationRequestPopupEnabled}">
                         <div class="tw-relative">
