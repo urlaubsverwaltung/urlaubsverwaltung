@@ -103,7 +103,6 @@ Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung
 
 ```properties
 # account
-uv.account.default-vacation-days=20 # deprecated - kann über 'Einstellungen' gesetzt werden wenn auf '-1' gesetzt
 uv.account.update.cron=0 0 5 1 1 *
 
 # application
@@ -169,15 +168,6 @@ uv.template-engine.jsp.use-precompiled=false
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
-
-# workingtime - deprecated - kann über 'Einstellungen' gesetzt werden 
-# wenn auf uv.workingtime.default-working-days[0]=-1 gesetzt
-# (monday till friday)
-uv.workingtime.default-working-days[0]=1
-uv.workingtime.default-working-days[1]=2
-uv.workingtime.default-working-days[2]=3
-uv.workingtime.default-working-days[3]=4
-uv.workingtime.default-working-days[4]=5
 ```
 
 
