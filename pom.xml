@@ -26,6 +26,9 @@
     <java.version>17</java.version>
     <testcontainers.version>1.16.0</testcontainers.version>
     <selenium.version>3.141.59</selenium.version>
+    <docker-publish-registry>registry.example.com</docker-publish-registry>
+    <docker-publish-registry-username>username</docker-publish-registry-username>
+    <docker-publish-registry-password>password</docker-publish-registry-password>
   </properties>
 
   <scm>
@@ -376,6 +379,18 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <image>
+            <name>synyx/${project.artifactId}:${project.version}</name>
+          </image>
+          <docker>
+            <publishRegistry>
+              <username>${docker-publish-registry-username}</username>
+              <password>${docker-publish-registry-password}</password>
+              <url>${docker-publish-registry}</url>
+            </publishRegistry>
+          </docker>
+        </configuration>
       </plugin>
 
       <!-- Frontend assets -->
@@ -453,30 +468,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-
-      <!-- Docker -->
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.37.0</version>
-        <configuration>
-          <images>
-            <image>
-              <name>synyx/urlaubsverwaltung</name>
-              <build>
-                <dockerFileDir>${project.basedir}</dockerFileDir>
-                <assembly>
-                  <descriptorRef>artifact</descriptorRef>
-                </assembly>
-                <tags>
-                  <tag>${project.version}</tag>
-                  <tag>latest</tag>
-                </tags>
-              </build>
-            </image>
-          </images>
-        </configuration>
       </plugin>
 
       <!-- Editorconfig -->
