@@ -139,6 +139,7 @@
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.button.text" />
                                 </span>
+                                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
                             </button>
                             <div
                                 id="add-something-new-menu"
@@ -221,7 +222,7 @@
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
-                        class="tw-no-underline tw-inline-flex tw-items-center tw-text-gray-800 hover:tw-text-black tw-transition-colors"
+                        class="tw-no-underline tw-text-gray-800 hover:tw-text-black tw-transition-colors"
                         id="avatar-link"
                         aria-expanded="false"
                         aria-haspopup="true"
