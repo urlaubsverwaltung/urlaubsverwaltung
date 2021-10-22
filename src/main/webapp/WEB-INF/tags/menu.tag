@@ -124,7 +124,7 @@
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
         <div class="tw-flex tw-w-full tw-bg-gray-100">
-            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-space-x-2" role="menubar">
+            <div class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-center tw-space-x-2" role="menubar">
                 <c:choose>
                     <c:when test="${navigationRequestPopupEnabled}">
                         <div class="tw-relative">
@@ -139,10 +139,11 @@
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.button.text" />
                                 </span>
+                                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
                             </button>
                             <div
                                 id="add-something-new-menu"
-                                class="nav-popup-menu tw-w-screen tw-absolute tw-right-0 tw-top-full tw-mt-1 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                                class="nav-popup-menu tw-w-screen tw-absolute tw-right-2 tw-top-full tw-mt-1 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                                 aria-hidden="true"
                                 data-test-id="add-something-new-popupmenu"
                             >
@@ -221,7 +222,7 @@
                 <div class="tw-relative">
                     <a
                         href="#avatar-menu"
-                        class="tw-no-underline tw-inline-flex tw-items-center tw-text-gray-800 hover:tw-text-black transition-colors"
+                        class="tw-no-underline tw-text-gray-800 hover:tw-text-black tw-transition-colors"
                         id="avatar-link"
                         aria-expanded="false"
                         aria-haspopup="true"
@@ -239,7 +240,7 @@
                     </a>
                     <div
                         id="avatar-menu"
-                        class="nav-popup-menu tw-w-screen tw-absolute tw-right-0 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                        class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
                         aria-hidden="true"
                         data-test-id="avatar-popupmenu"
                     >
