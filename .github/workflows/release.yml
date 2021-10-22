@@ -48,6 +48,7 @@ jobs:
           files: |
             ./target/urlaubsverwaltung-*.war
             ./target/urlaubsverwaltung-*.jar
+          prerelease: true
       - name: Publish docker image to Docker Hub
         run: >
           ./mvnw $MAVEN_CLI_OPTS
