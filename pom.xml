@@ -335,8 +335,6 @@
             </goals>
             <configuration>
               <mergeFragment>true</mergeFragment>
-              <sourceVersion>${java.version}</sourceVersion>
-              <targetVersion>${java.version}</targetVersion>
             </configuration>
           </execution>
         </executions>
