@@ -162,6 +162,8 @@ public class Application {
 
     private LocalDate upcomingHolidayReplacementNotificationSend;
 
+    private LocalDate upcomingApplicationsReminderSend;
+
     public Integer getId() {
         return id;
     }
@@ -340,6 +342,14 @@ public class Application {
 
     public void setUpcomingHolidayReplacementNotificationSend(LocalDate upcomingHolidayReplacementNotificationSend) {
         this.upcomingHolidayReplacementNotificationSend = upcomingHolidayReplacementNotificationSend;
+    }
+
+    public LocalDate getUpcomingApplicationsReminderSend() {
+        return upcomingApplicationsReminderSend;
+    }
+
+    public void setUpcomingApplicationsReminderSend(LocalDate upcomingApplicationsReminderSend) {
+        this.upcomingApplicationsReminderSend = upcomingApplicationsReminderSend;
     }
 
     /**

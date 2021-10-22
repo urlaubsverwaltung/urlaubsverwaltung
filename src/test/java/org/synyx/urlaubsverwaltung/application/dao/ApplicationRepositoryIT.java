@@ -445,7 +445,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     }
 
     @Test
-    void findByStatusInAndStartDate() {
+    void findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull() {
 
         final Person person = new Person("sam", "smith", "sam", "smith@example.org");
         final Person savedPerson = personService.save(person);
@@ -480,11 +480,19 @@ class ApplicationRepositoryIT extends TestContainersBase {
         tomorrowWaitingDateApplication.setStatus(WAITING);
         sut.save(tomorrowWaitingDateApplication);
 
-        final LocalDate requestedStartDate = LocalDate.of(2020, 5, 5);
+        // day after tomorrow
+        final LocalDate dayAfterTomorrowAllowedDates = LocalDate.of(2020, 5, 6);
+
+        final Application dayAfterTomorrowDateApplication = createApplication(savedPerson, getVacationType(HOLIDAY), dayAfterTomorrowAllowedDates, dayAfterTomorrowAllowedDates, FULL);
+        dayAfterTomorrowDateApplication.setStatus(ALLOWED);
+        sut.save(dayAfterTomorrowDateApplication);
+
+        final LocalDate requestedStartDateFrom = LocalDate.of(2020, 5, 4);
+        final LocalDate requestedStartDateTo = LocalDate.of(2020, 5, 5);
         final List<ApplicationStatus> requestStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
-        final List<Application> applications = sut.findByStatusInAndStartDate(requestStatuses, requestedStartDate);
+        final List<Application> applications = sut.findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(requestStatuses, requestedStartDateFrom, requestedStartDateTo);
         assertThat(applications)
-            .containsOnly(tomorrowDateApplication, tomorrowCancellationRequestDateApplication, tomorrowTemporaryAllowedDateApplication);
+            .containsOnly(todayApplication, tomorrowDateApplication, tomorrowCancellationRequestDateApplication, tomorrowTemporaryAllowedDateApplication);
     }
 
     @Test
