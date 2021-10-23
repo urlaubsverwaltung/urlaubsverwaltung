@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -33,7 +34,7 @@ public class SettingsValidator implements Validator {
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
+    public void validate(Object o, @NonNull Errors errors) {
 
         Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
 

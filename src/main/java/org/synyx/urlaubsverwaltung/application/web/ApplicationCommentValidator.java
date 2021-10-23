@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.web;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -20,14 +21,14 @@ public class ApplicationCommentValidator implements Validator {
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
 
         return ApplicationCommentForm.class.equals(clazz);
     }
 
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
 
         ApplicationCommentForm comment = (ApplicationCommentForm) target;
 

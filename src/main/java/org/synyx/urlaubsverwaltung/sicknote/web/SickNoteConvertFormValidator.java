@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -17,12 +18,12 @@ public class SickNoteConvertFormValidator implements Validator {
     private static final int MAX_CHARS = 200;
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return SickNoteConvertForm.class.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
 
         final SickNoteConvertForm convertForm = (SickNoteConvertForm) target;
         final String reason = convertForm.getReason();
