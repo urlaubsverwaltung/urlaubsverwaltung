@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -36,12 +37,12 @@ public class DepartmentViewValidator implements Validator {
     private static final String ERROR_SECOND_STAGE_AUTHORITY_NO_ACCESS = "department.members.error.secondStageHasNoAccess";
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return DepartmentForm.class.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
         final DepartmentForm departmentForm = (DepartmentForm) target;
 
         validateName(errors, departmentForm.getName());
