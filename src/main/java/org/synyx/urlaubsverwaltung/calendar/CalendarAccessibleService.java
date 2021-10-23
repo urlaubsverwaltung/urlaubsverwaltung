@@ -46,11 +46,10 @@ class CalendarAccessibleService {
         final List<CompanyCalendarAccessible> companyCalendarAccessibleList = companyCalendarAccessibleRepository.findAll();
         if (companyCalendarAccessibleList.isEmpty()) {
             companyCalendarAccessible = new CompanyCalendarAccessible();
-            companyCalendarAccessible.setAccessible(isCompanyCalendarAccessible);
         } else {
             companyCalendarAccessible = companyCalendarAccessibleList.get(0);
-            companyCalendarAccessible.setAccessible(isCompanyCalendarAccessible);
         }
+        companyCalendarAccessible.setAccessible(isCompanyCalendarAccessible);
 
         companyCalendarAccessibleRepository.save(companyCalendarAccessible);
     }
