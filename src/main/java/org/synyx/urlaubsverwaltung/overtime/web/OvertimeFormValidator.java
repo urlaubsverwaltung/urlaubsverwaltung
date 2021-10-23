@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -46,12 +47,12 @@ public class OvertimeFormValidator implements Validator {
     }
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return OvertimeForm.class.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
 
         final OvertimeForm overtimeForm = (OvertimeForm) target;
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
