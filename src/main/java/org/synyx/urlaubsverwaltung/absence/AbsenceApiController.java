@@ -257,7 +257,6 @@ public class AbsenceApiController {
         return switch (absenceType) {
             case VACATION -> Optional.of(VACATION);
             case SICK -> Optional.of(SICK_NOTE);
-            default -> Optional.empty();
         };
     }
 }
