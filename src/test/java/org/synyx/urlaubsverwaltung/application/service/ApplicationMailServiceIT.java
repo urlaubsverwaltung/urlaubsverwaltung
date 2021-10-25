@@ -1626,7 +1626,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Urlaubsantrag von Max Muster wurde erfolgreich editiert");
+        assertThat(msg.getSubject()).contains("Urlaubsantrag von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
