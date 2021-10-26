@@ -58,6 +58,6 @@ class PersonMailServiceIT extends TestContainersBase {
         assertThat(text).contains("Es wurde ein neuer Benutzer angelegt.");
         assertThat(text).contains("Lieschen Müller");
         assertThat(text).contains("Du kannst unter folgender URL die Einstellungen des Benutzer einsehen und anpassen:");
-        assertThat(text).contains("https://localhost:8080/web/person/1");
+        assertThat(text).contains("/web/person/1");
     }
 }
