@@ -667,7 +667,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller wurde angepasst");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -1632,7 +1632,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Max Muster");
-        assertThat(content).contains("der Urlaubsantrag von Max Muster wurde angepasst.");
+        assertThat(content).contains("der Urlaubsantrag von Max Muster wurde bearbeitet.");
         assertThat(content).contains("/web/application/1234");
     }
 
