@@ -55,6 +55,7 @@ class PersonServiceImplTest {
     private ApplicationEventPublisher applicationEventPublisher;
 
     private final ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor = ArgumentCaptor.forClass(PersonDisabledEvent.class);
+    private final ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonCreatedEvent.class);
 
     @BeforeEach
     void setUp() {
@@ -110,6 +111,23 @@ class PersonServiceImplTest {
 
         final Person savedPerson = sut.create(person);
         assertThat(savedPerson).isEqualTo(person);
+    }
+
+    @Test
+    void ensureNotificationIsSendForCreatedPerson() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+        when(personRepository.save(person)).thenReturn(person);
+
+        final Person createdPerson = sut.create(person);
+
+        verify(applicationEventPublisher).publishEvent(personCreatedEventArgumentCaptor.capture());
+
+        final PersonCreatedEvent personCreatedEvent = personCreatedEventArgumentCaptor.getValue();
+        assertThat(personCreatedEvent.getSource()).isEqualTo(sut);
+        assertThat(personCreatedEvent.getPersonId()).isEqualTo(createdPerson.getId());
+        assertThat(personCreatedEvent.getPersonNiceName()).isEqualTo(createdPerson.getNiceName());
     }
 
     @Test

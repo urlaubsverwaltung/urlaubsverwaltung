@@ -64,6 +64,8 @@ class PersonServiceImpl implements PersonService {
         accountInteractionService.createDefaultAccount(person);
         workingTimeWriteService.createDefaultWorkingTime(person);
 
+        applicationEventPublisher.publishEvent(new PersonCreatedEvent(this, person.getId(), person.getNiceName()));
+
         return createdPerson;
     }
 
