@@ -9,7 +9,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @Service
 class PersonMailService {
@@ -29,7 +29,7 @@ class PersonMailService {
         model.put("personNiceName", event.getPersonNiceName());
 
         final Mail toOffice = Mail.builder()
-            .withRecipient(OVERTIME_NOTIFICATION_OFFICE)
+            .withRecipient(NOTIFICATION_OFFICE)
             .withSubject("subject.person.created")
             .withTemplate("person_created_office", model)
             .build();

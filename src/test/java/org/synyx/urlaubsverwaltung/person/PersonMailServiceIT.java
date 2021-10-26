@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
@@ -32,14 +32,14 @@ class PersonMailServiceIT extends TestContainersBase {
     private PersonService personService;
 
     @Test
-    void ensureOfficeWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
+    void ensureOfficeWithNotificationsGetMailNewPersonIsCreated() throws MessagingException, IOException {
 
         final Person createdPerson = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         createdPerson.setId(1);
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
+        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.save(office);
 
         sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName()));
