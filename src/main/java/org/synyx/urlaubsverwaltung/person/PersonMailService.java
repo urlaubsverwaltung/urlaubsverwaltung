@@ -22,7 +22,7 @@ class PersonMailService {
 
     @Async
     @EventListener
-    void sendPersonCreationNotification(PersonCreatedEvent event) {
+    public void sendPersonCreationNotification(PersonCreatedEvent event) {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("personId", event.getPersonId());
