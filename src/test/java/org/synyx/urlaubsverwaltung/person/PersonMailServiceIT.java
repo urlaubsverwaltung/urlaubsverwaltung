@@ -49,7 +49,7 @@ class PersonMailServiceIT extends TestContainersBase {
 
         // check attributes
         final Message msg = greenMail.getReceivedMessagesForDomain(office.getEmail())[0];
-        assertThat(msg.getSubject()).contains("Neuer Benutzer für Urlaubsverwaltung erstellt");
+        assertThat(msg.getSubject()).contains("Ein neuer Benutzer für wurde angelegt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
