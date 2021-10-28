@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 public class DayAbsenceDto {
 
     public enum Type {
-
         VACATION,
         SICK_NOTE
     }

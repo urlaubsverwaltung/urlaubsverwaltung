@@ -35,7 +35,6 @@ public final class DateRange implements Iterable<LocalDate> {
 
     private static final class DateRangeIterator implements Iterator<LocalDate> {
 
-
         private LocalDate cursor;
         private final LocalDate endDate;
 
@@ -57,9 +56,7 @@ public final class DateRange implements Iterable<LocalDate> {
             }
 
             final LocalDate current = cursor;
-
             cursor = cursor.plusDays(1);
-
             return current;
         }
     }

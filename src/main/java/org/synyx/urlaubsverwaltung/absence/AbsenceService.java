@@ -1,11 +1,9 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
-
 
 public interface AbsenceService {
 
