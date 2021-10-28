@@ -31,7 +31,6 @@ import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.T
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 
-
 @Service
 public class AbsenceServiceImpl implements AbsenceService {
 
