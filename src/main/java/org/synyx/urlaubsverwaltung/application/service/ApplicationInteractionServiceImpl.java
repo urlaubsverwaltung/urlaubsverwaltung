@@ -131,10 +131,12 @@ public class ApplicationInteractionServiceImpl implements ApplicationInteraction
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
-        final Optional<String> eventId = calendarSyncService.addAbsence(new Absence(savedApplication.getPerson(),
-            savedApplication.getPeriod(), new AbsenceTimeConfiguration(timeSettings)));
-        eventId.ifPresent(s -> absenceMappingService.create(savedApplication.getId(), VACATION, s));
-
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
+            final Absence absence = new Absence(savedApplication.getPerson(), savedApplication.getPeriod(), absenceTimeConfiguration);
+            calendarSyncService.addAbsence(absence)
+                .ifPresent(eventId -> absenceMappingService.create(savedApplication.getId(), VACATION, eventId));
+        }
         return savedApplication;
     }
 

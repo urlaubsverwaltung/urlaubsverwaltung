@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.service.folder.CalendarFolder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
-import microsoft.exchange.webservices.data.core.service.item.Item;
 import microsoft.exchange.webservices.data.property.complex.Attendee;
 import microsoft.exchange.webservices.data.property.complex.AttendeeCollection;
 import microsoft.exchange.webservices.data.property.complex.FolderId;
@@ -28,10 +27,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion.Exchange2010_SP2;
 import static microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName.Calendar;
-import static microsoft.exchange.webservices.data.core.enumeration.service.MessageDisposition.SaveOnly;
-import static microsoft.exchange.webservices.data.core.enumeration.service.SendInvitationsMode.SendToNone;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +48,12 @@ class ExchangeCalendarProviderTest {
     private ExchangeService exchangeService;
     @Mock
     private ExchangeFactory exchangeFactory;
+
+    @Test
+    void isRealProviderConfigured() {
+        final ExchangeCalendarProvider sut = new ExchangeCalendarProvider(calendarMailService);
+        assertThat(sut.isRealProviderConfigured()).isTrue();
+    }
 
     @Test
     void checkCalendarSyncSettingsNoExceptionForEmptyEmail() {

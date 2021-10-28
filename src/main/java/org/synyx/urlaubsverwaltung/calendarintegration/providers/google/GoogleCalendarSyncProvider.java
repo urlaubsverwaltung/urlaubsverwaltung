@@ -58,47 +58,12 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     @Autowired
     public GoogleCalendarSyncProvider(CalendarMailService calendarMailService, SettingsService settingsService) {
         this.calendarMailService = calendarMailService;
-
         this.settingsService = settingsService;
     }
 
-    /**
-     * Build and return an authorized google calendar client.
-     *
-     * @return an authorized calendar client service
-     */
-    private com.google.api.services.calendar.Calendar getOrCreateGoogleCalendarClient() {
-
-        String refreshToken =
-            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
-
-        if (googleCalendarClient != null &&
-            refreshToken != null &&
-            refreshTokenHashCode == refreshToken.hashCode()) {
-            LOG.debug("use cached googleCalendarClient");
-            return googleCalendarClient;
-        }
-        try {
-            LOG.info("create new googleCalendarClient");
-
-            if (refreshToken != null) {
-                refreshTokenHashCode = refreshToken.hashCode();
-            }
-
-            NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            TokenResponse tokenResponse = new TokenResponse();
-            tokenResponse.setRefreshToken(refreshToken);
-
-            Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
-
-            return new com.google.api.services.calendar.Calendar.Builder(
-                httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
-
-        } catch (GeneralSecurityException | IOException e) {
-            LOG.error("Something went wrong!", e);
-        }
-
-        return null;
+    @Override
+    public boolean isRealProviderConfigured() {
+        return true;
     }
 
     @Override
@@ -198,6 +163,46 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
                 LOG.warn("Could not connect to calendar with calendar id '{}'", calendarId, e);
             }
         }
+    }
+
+
+    /**
+     * Build and return an authorized google calendar client.
+     *
+     * @return an authorized calendar client service
+     */
+    private com.google.api.services.calendar.Calendar getOrCreateGoogleCalendarClient() {
+
+        String refreshToken =
+            settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings().getRefreshToken();
+
+        if (googleCalendarClient != null &&
+            refreshToken != null &&
+            refreshTokenHashCode == refreshToken.hashCode()) {
+            LOG.debug("use cached googleCalendarClient");
+            return googleCalendarClient;
+        }
+        try {
+            LOG.info("create new googleCalendarClient");
+
+            if (refreshToken != null) {
+                refreshTokenHashCode = refreshToken.hashCode();
+            }
+
+            NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            TokenResponse tokenResponse = new TokenResponse();
+            tokenResponse.setRefreshToken(refreshToken);
+
+            Credential credential = createCredentialWithRefreshToken(httpTransport, JSON_FACTORY, tokenResponse);
+
+            return new com.google.api.services.calendar.Calendar.Builder(
+                httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+
+        } catch (GeneralSecurityException | IOException e) {
+            LOG.error("Something went wrong!", e);
+        }
+
+        return null;
     }
 
     private Credential createCredentialWithRefreshToken(

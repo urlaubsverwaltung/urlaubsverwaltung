@@ -108,16 +108,18 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         applicationInteractionService.createFromConvertedSickNote(application, converter);
         LOG.info("Converted sick note to vacation: {}", sickNote);
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
-        if (absenceMapping.isPresent()) {
-            final String eventId = absenceMapping.get().getEventId();
-            final TimeSettings timeSettings = getTimeSettings();
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
+            if (absenceMapping.isPresent()) {
+                final String eventId = absenceMapping.get().getEventId();
+                final TimeSettings timeSettings = getTimeSettings();
 
-            calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                new AbsenceTimeConfiguration(timeSettings)), eventId);
+                calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
+                    new AbsenceTimeConfiguration(timeSettings)), eventId);
 
-            absenceMappingService.delete(absenceMapping.get());
-            absenceMappingService.create(application.getId(), VACATION, eventId);
+                absenceMappingService.delete(absenceMapping.get());
+                absenceMappingService.create(application.getId(), VACATION, eventId);
+            }
         }
 
         return sickNote;
@@ -143,21 +145,24 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private void updateAbsence(SickNote sickNote) {
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
-        if (absenceMapping.isPresent()) {
-            final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
-            calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
-                timeConfiguration), absenceMapping.get().getEventId());
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
+            if (absenceMapping.isPresent()) {
+                final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
+                calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
+                    timeConfiguration), absenceMapping.get().getEventId());
+            }
         }
     }
 
     private void updateCalendar(SickNote sickNote) {
 
-        final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
-        final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), timeConfiguration);
-
-        final Optional<String> maybeEventId = calendarSyncService.addAbsence(absence);
-        maybeEventId.ifPresent(eventId -> absenceMappingService.create(sickNote.getId(), SICKNOTE, eventId));
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
+            final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), timeConfiguration);
+            calendarSyncService.addAbsence(absence)
+                .ifPresent(eventId -> absenceMappingService.create(sickNote.getId(), SICKNOTE, eventId));
+        }
     }
 
     private TimeSettings getTimeSettings() {

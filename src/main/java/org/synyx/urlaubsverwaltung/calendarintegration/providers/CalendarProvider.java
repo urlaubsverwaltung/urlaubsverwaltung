@@ -13,6 +13,13 @@ import java.util.Optional;
 public interface CalendarProvider {
 
     /**
+     * Returns `true` or `false` if a real calendar provider is
+     *
+     * @return true if a real provider is configured
+     */
+    boolean isRealProviderConfigured();
+
+    /**
      * Add a person's absence to calendar.
      *
      * @param absence          represents the absence of a person
