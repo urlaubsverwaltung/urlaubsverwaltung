@@ -12,6 +12,7 @@ import static javax.persistence.EnumType.STRING;
 /**
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
  */
+@Deprecated(since = "4.26.0", forRemoval = true)
 @Entity
 public class AbsenceMapping {
 

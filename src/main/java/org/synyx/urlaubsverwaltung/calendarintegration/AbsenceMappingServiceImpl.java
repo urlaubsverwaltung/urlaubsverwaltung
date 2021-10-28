@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Deprecated(since = "4.26.0", forRemoval = true)
 @Service
 public class AbsenceMappingServiceImpl implements AbsenceMappingService {
 

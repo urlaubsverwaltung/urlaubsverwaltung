@@ -5,6 +5,7 @@ import java.util.Optional;
 /**
  * Service provides access to {@link AbsenceMapping}.
  */
+@Deprecated(since = "4.26.0", forRemoval = true)
 public interface AbsenceMappingService {
 
     /**
