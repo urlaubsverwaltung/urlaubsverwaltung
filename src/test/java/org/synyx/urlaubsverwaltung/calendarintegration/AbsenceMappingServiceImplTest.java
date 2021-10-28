@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,8 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.SICKNOTE;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
+import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
+import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceMappingServiceImplTest {
