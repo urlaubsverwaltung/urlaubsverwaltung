@@ -69,6 +69,11 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     }
 
     @Override
+    public boolean isRealProviderConfigured() {
+        return true;
+    }
+
+    @Override
     public Optional<String> add(Absence absence, CalendarSettings calendarSettings) {
 
         final ExchangeCalendarSettings exchangeCalendarSettings = calendarSettings.getExchangeCalendarSettings();

@@ -64,6 +64,8 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureCreatedSickNoteIsPersisted() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -82,6 +84,8 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureCreatedSickNoteHasComment() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -98,6 +102,8 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureCreatingSickNoteAddsEventToCalendar() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -113,6 +119,9 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureUpdatedSickNoteIsPersisted() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
+
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -132,6 +141,9 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureUpdatedSickHasComment() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
+
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -149,6 +161,9 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureUpdatingSickNoteUpdatesCalendarEvent() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
+
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, AbsenceMappingType.VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -199,6 +214,9 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureConvertedSickNoteIsPersisted() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
+
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -229,6 +247,9 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
+
         final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
         when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
