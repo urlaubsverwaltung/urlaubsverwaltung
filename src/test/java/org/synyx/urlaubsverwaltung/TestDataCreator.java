@@ -1,12 +1,12 @@
 package org.synyx.urlaubsverwaltung;
 
-import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
 import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;

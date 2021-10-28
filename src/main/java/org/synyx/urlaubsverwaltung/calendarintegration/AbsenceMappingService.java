@@ -1,7 +1,6 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import java.util.Optional;
-
 
 /**
  * Service provides access to {@link AbsenceMapping}.

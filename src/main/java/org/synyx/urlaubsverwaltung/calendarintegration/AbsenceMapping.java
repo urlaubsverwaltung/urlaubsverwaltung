@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence;
+package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
-
 
 /**
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
@@ -71,7 +70,6 @@ public class AbsenceMapping {
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
-
 
     @Override
     public boolean equals(Object o) {
