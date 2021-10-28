@@ -104,15 +104,20 @@ class ApplicationReminderMailServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final VacationType vacationType = createVacationType(HOLIDAY);
-        final LocalDate tomorrow = LocalDate.now(clock).plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+        final LocalDate now = LocalDate.now(clock);
+        final LocalDate to = now.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
 
         final Application tomorrowApplication = createApplication(person, vacationType);
-        tomorrowApplication.setApplicationDate(tomorrow);
+        tomorrowApplication.setApplicationDate(to);
 
-        when(applicationService.getApplicationsWithStartDateAndState(tomorrow, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
+        when(applicationService.getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(now, to, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
 
         sut.sendUpcomingApplicationsReminderNotification();
         verify(applicationMailService).sendRemindForUpcomingApplicationsReminderNotification(List.of(tomorrowApplication), applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+
+        final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
+        verify(applicationService).save(applicationArgumentCaptor.capture());
+        assertThat(applicationArgumentCaptor.getAllValues().get(0).getUpcomingApplicationsReminderSend()).isEqualTo(now);
     }
 
     @Test

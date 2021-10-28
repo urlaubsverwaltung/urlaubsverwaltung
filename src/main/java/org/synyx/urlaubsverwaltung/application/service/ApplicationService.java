@@ -56,13 +56,14 @@ public interface ApplicationService {
                                                                ApplicationStatus status);
 
     /**
-     * Gets all {@link Application}s that have the given start date and the given state.
+     * Gets all {@link Application}s where the applicant for an upcoming application should be notified
      *
-     * @param startDate {@link LocalDate}
-     * @param statuses  {@link ApplicationStatus}
-     * @return all {@link Application}s with the given states and startDate
+     * @param from defines the start as {@link LocalDate} of a period that should be considered
+     * @param to defines the end as {@link LocalDate} of a period that should be considered
+     * @param statuses  {@link ApplicationStatus} that should be filtered for
+     * @return all {@link Application}s where the given params match and
      */
-    List<Application> getApplicationsWithStartDateAndState(LocalDate startDate, List<ApplicationStatus> statuses);
+    List<Application> getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(LocalDate from, LocalDate to, List<ApplicationStatus> statuses);
 
     /**
      * Gets all {@link Application}s where the holiday replacement should be notified.

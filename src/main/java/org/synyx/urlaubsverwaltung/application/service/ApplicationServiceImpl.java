@@ -53,8 +53,8 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsWithStartDateAndState(LocalDate startDate, List<ApplicationStatus> statuses) {
-        return applicationRepository.findByStatusInAndStartDate(statuses, startDate);
+    public List<Application> getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(LocalDate from, LocalDate to, List<ApplicationStatus> statuses) {
+        return applicationRepository.findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull(statuses, from, to);
     }
 
     @Override

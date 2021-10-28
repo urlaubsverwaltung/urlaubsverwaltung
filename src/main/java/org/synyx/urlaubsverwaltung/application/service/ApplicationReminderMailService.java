@@ -70,12 +70,19 @@ class ApplicationReminderMailService {
 
         final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
         if (applicationSettings.isRemindForUpcomingApplications()) {
-            final LocalDate dateForUpcomingApplications = LocalDate.now(clock).plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+            final LocalDate today = LocalDate.now(clock);
+            final LocalDate to = today.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
             final List<ApplicationStatus> allowedStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
-            final List<Application> upcomingApplications = applicationService.getApplicationsWithStartDateAndState(dateForUpcomingApplications, allowedStatuses);
+            final List<Application> upcomingApplications = applicationService.getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(today, to, allowedStatuses);
 
             applicationMailService.sendRemindForUpcomingApplicationsReminderNotification(upcomingApplications, applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+            upcomingApplications.forEach(this::markUpcomingApplicationsReminderSent);
         }
+    }
+
+    private void markUpcomingApplicationsReminderSent(final Application application) {
+        application.setUpcomingApplicationsReminderSend(LocalDate.now(clock));
+        applicationService.save(application);
     }
 
     void sendUpcomingHolidayReplacementReminderNotification() {
