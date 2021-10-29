@@ -9,6 +9,24 @@ import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OV
 class VacationTypeTest {
 
     @Test
+    void ensureVacationTypeIsActive() {
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setActive(true);
+
+        assertThat(vacationType.isActive()).isTrue();
+    }
+
+    @Test
+    void ensureVacationTypeIsInactive() {
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setActive(false);
+
+        assertThat(vacationType.isActive()).isFalse();
+    }
+
+    @Test
     void ensureReturnsTrueIfVacationTypeIsOfGivenCategory() {
 
         final VacationType vacationType = new VacationType();
@@ -32,9 +50,10 @@ class VacationTypeTest {
         vacationType.setCategory(HOLIDAY);
         vacationType.setMessageKey("messageKey");
         vacationType.setId(10);
+        vacationType.setActive(true);
 
         final String vacationTypeToString = vacationType.toString();
-        assertThat(vacationTypeToString).isEqualTo("VacationType{category=HOLIDAY, messageKey='messageKey'}");
+        assertThat(vacationTypeToString).isEqualTo("VacationType{id=10, active=true, category=HOLIDAY, messageKey='messageKey'}");
     }
 
     @Test

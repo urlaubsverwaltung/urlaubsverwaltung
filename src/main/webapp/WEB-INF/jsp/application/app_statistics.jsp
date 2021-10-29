@@ -145,7 +145,6 @@
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                                         <spring:message code="applications.statistics.total"/>:
                                         <c:forEach items="${vacationTypes}" var="type">
-                                            <%-- TODO maybe show each type for every user if one has a vacation --%>
                                             <c:if test="${statistic.hasVacationType(type)}">
                                                 <br/>
                                                 <small>

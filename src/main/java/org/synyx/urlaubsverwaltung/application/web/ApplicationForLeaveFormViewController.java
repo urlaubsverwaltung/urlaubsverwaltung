@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.dao.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.service.EditApplicationForLeaveNotAllowedException;
@@ -58,6 +57,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.application.web.ApplicationMapper.merge;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -406,9 +406,8 @@ public class ApplicationForLeaveFormViewController {
 
         List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         if (!overtimeActive) {
-            activeVacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
+            activeVacationTypes = vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
         }
-        // TODO vacationTypes ->  activeVacationTypes in jsp
         model.addAttribute("vacationTypes", activeVacationTypes);
 
         appendDepartmentsToReplacements(appForm);

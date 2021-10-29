@@ -160,9 +160,9 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, vacationType=VacationType{" +
-            "category=null, messageKey='null'}, dayLength=ZERO, hours=0, minutes=0, holidayReplacements=[" +
-            "HolidayReplacementDto{, person=Person{id='null'}, note='null', departments='null'}], address='Address', " +
-            "teamInformed=true}");
+            "id=null, active=false, category=null, messageKey='null'}, dayLength=ZERO, hours=0, minutes=0, " +
+            "holidayReplacements=[HolidayReplacementDto{, person=Person{id='null'}, note='null', departments='null'}], " +
+            "address='Address', teamInformed=true}");
     }
 
     private ApplicationForLeaveForm formWithOvertime(BigDecimal hours, Integer minutes) {

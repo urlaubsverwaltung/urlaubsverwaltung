@@ -175,16 +175,16 @@
                                     </label>
                                     <div class="col-md-9">
                                         <uv:select id="vacationType" testId="vacation-type-select" name="vacationType"
-                                                   onchange="vacationTypeChanged(this.value);">
+                                                   onchange="vacationTypeChanged(this.selectedOptions[0].dataset.vacationtypeCategory);">
                                             <c:forEach items="${vacationTypes}" var="vacationType">
                                                 <c:choose>
                                                     <c:when test="${vacationType == application.vacationType}">
-                                                        <option value="${vacationType.id}" selected="selected">
+                                                        <option value="${vacationType.id}" data-vacationtype-category="${vacationType.category}" selected="selected">
                                                             <spring:message code="${vacationType.messageKey}"/>
                                                         </option>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <option value="${vacationType.id}">
+                                                        <option value="${vacationType.id}" data-vacationtype-category="${vacationType.category}">
                                                             <spring:message code="${vacationType.messageKey}"/>
                                                         </option>
                                                     </c:otherwise>
