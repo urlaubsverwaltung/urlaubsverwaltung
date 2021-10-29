@@ -342,7 +342,7 @@ class SickNoteViewControllerTest {
     void ensureGetConvertSickNoteToVacationAddModel() throws Exception {
 
         when(sickNoteServiceMock.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(vacationTypeServiceMock.getVacationTypes()).thenReturn(Collections.emptyList());
+        when(vacationTypeServiceMock.getAllVacationTypes()).thenReturn(Collections.emptyList());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))

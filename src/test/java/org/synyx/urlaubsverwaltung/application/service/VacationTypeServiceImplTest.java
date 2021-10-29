@@ -40,4 +40,6 @@ class VacationTypeServiceImplTest {
 
         assertThat(noOvertimeType).hasSize(2).containsExactly(holiday, specialLeave);
     }
+
+    // TODO tests
 }

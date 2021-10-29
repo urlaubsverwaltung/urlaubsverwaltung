@@ -102,7 +102,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
         final List<VacationType> vacationType = Collections.singletonList(new VacationType());
-        when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("from", "01.01.2019")

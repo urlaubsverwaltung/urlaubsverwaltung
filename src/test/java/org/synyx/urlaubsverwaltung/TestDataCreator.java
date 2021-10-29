@@ -34,6 +34,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 
@@ -75,9 +76,9 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
+        final VacationType vacationType = createVacationType(HOLIDAY, "application.data.vacationType.holiday");
 
-        Application application = new Application();
+        final Application application = new Application();
         application.setPerson(person);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
@@ -201,7 +202,7 @@ public final class TestDataCreator {
 
         VacationType vacationType1 = new VacationType();
         vacationType1.setId(1000);
-        vacationType1.setCategory(VacationCategory.HOLIDAY);
+        vacationType1.setCategory(HOLIDAY);
         vacationType1.setMessageKey("application.data.vacationType.holiday");
         vacationTypes.add(vacationType1);
 

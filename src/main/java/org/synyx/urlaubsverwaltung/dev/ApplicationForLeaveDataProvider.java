@@ -92,7 +92,7 @@ class ApplicationForLeaveDataProvider {
     private VacationType getVacationType(VacationCategory vacationCategory) {
 
         VacationType vacationType = null;
-        final List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
         for (VacationType savedVacationType : vacationTypes) {
             if (savedVacationType.isOfCategory(vacationCategory)) {
                 vacationType = savedVacationType;

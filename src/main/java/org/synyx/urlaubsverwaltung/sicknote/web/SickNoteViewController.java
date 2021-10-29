@@ -214,7 +214,7 @@ public class SickNoteViewController {
 
         model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
-        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
+        model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
         return "sicknote/sick_note_convert";
     }
@@ -232,7 +232,7 @@ public class SickNoteViewController {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
-            model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
+            model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
             return "sicknote/sick_note_convert";
         }

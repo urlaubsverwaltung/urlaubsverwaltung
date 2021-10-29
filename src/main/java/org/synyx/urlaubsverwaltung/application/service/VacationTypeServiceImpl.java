@@ -21,14 +21,19 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     @Override
-    public List<VacationType> getVacationTypes() {
+    public List<VacationType> getAllVacationTypes() {
         return vacationTypeRepository.findAll();
+    }
+
+    @Override
+    public List<VacationType> getActiveVacationTypes() {
+        return vacationTypeRepository.findByActiveIsTrue();
     }
 
     @Override
     public List<VacationType> getVacationTypesFilteredBy(VacationCategory vacationCategory) {
 
-        return getVacationTypes().stream()
+        return getAllVacationTypes().stream()
             .filter(vt -> vt.getCategory() != vacationCategory)
             .collect(toList());
     }

@@ -5,7 +5,6 @@ import org.synyx.urlaubsverwaltung.application.domain.VacationType;
 
 import java.util.List;
 
-
 public interface VacationTypeService {
 
     /**
@@ -13,7 +12,14 @@ public interface VacationTypeService {
      *
      * @return list of all created vacation types
      */
-    List<VacationType> getVacationTypes();
+    List<VacationType> getAllVacationTypes();
+
+    /**
+     * Returns all active vacation type
+     *
+     * @return list of all active vacation types
+     */
+    List<VacationType> getActiveVacationTypes();
 
     /**
      * Returns the vacation types filter by the given vacationCategory parameter

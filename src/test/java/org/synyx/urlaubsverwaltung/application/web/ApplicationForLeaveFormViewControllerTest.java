@@ -119,7 +119,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(true);
@@ -733,7 +733,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
 
         final Integer applicationId = 1;
         final Application application = new Application();
@@ -768,7 +768,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
 
         final Integer applicationId = 1;
         final Application application = new Application();
@@ -803,7 +803,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getVacationTypes()).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
 
         final Integer applicationId = 1;
         final Application application = new Application();

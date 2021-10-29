@@ -14,12 +14,10 @@ public enum VacationCategory {
     private final String messageKey;
 
     VacationCategory(String messageKey) {
-
         this.messageKey = messageKey;
     }
 
     public String getMessageKey() {
-
         return messageKey;
     }
 }
