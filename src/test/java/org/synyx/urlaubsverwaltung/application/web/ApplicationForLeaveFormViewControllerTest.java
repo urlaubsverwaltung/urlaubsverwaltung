@@ -119,7 +119,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(singletonList(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(true);
@@ -148,7 +148,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(singletonList(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
@@ -177,7 +177,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getVacationTypesFilteredBy(OVERTIME)).thenReturn(singletonList(vacationType));
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(singletonList(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
@@ -732,9 +732,6 @@ class ApplicationForLeaveFormViewControllerTest {
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
-
         final Integer applicationId = 1;
         final Application application = new Application();
         application.setId(applicationId);
@@ -767,9 +764,6 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setApplicationSettings(appSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
-
         final Integer applicationId = 1;
         final Application application = new Application();
         application.setId(applicationId);
@@ -801,9 +795,6 @@ class ApplicationForLeaveFormViewControllerTest {
         appSettings.setAllowHalfDays(false);
         settings.setApplicationSettings(appSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(singletonList(vacationType));
 
         final Integer applicationId = 1;
         final Application application = new Application();

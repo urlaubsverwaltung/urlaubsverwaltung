@@ -31,10 +31,9 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     @Override
-    public List<VacationType> getVacationTypesFilteredBy(VacationCategory vacationCategory) {
-
-        return getAllVacationTypes().stream()
-            .filter(vt -> vt.getCategory() != vacationCategory)
+    public List<VacationType> getActiveVacationTypesWithoutCategory(VacationCategory vacationCategory) {
+        return getActiveVacationTypes().stream()
+            .filter(vacationType -> vacationType.getCategory() != vacationCategory)
             .collect(toList());
     }
 }

@@ -14,7 +14,7 @@ describe("vacationTypeChanged", function () {
       overtimeElement.setAttribute("id", "overtime");
       document.body.append(overtimeElement);
 
-      vacationTypeChanged("2000");
+      vacationTypeChanged("SPECIALLEAVE");
 
       expect(overtimeElement.classList.contains("hidden")).toBeTruthy();
     });
@@ -25,14 +25,14 @@ describe("vacationTypeChanged", function () {
       specialLeaveElement.classList.add("hidden");
       document.body.append(specialLeaveElement);
 
-      vacationTypeChanged("2000");
+      vacationTypeChanged("SPECIALLEAVE");
 
       expect(specialLeaveElement.classList.contains("hidden")).toBeFalsy();
     });
 
     it("does not throw when no element exists", function () {
       expect(() => {
-        vacationTypeChanged("2000");
+        vacationTypeChanged("SPECIALLEAVE");
       }).not.toThrow();
     });
   });
@@ -44,7 +44,7 @@ describe("vacationTypeChanged", function () {
       overtimeElement.classList.add("hidden");
       document.body.append(overtimeElement);
 
-      vacationTypeChanged("4000");
+      vacationTypeChanged("OVERTIME");
 
       expect(overtimeElement.classList.contains("hidden")).toBeFalsy();
     });
@@ -54,14 +54,14 @@ describe("vacationTypeChanged", function () {
       specialLeaveElement.setAttribute("id", "special-leave");
       document.body.append(specialLeaveElement);
 
-      vacationTypeChanged("4000");
+      vacationTypeChanged("OVERTIME");
 
       expect(specialLeaveElement.classList.contains("hidden")).toBeTruthy();
     });
 
     it("does not throw when no element exists", function () {
       expect(() => {
-        vacationTypeChanged("4000");
+        vacationTypeChanged("OVERTIME");
       }).not.toThrow();
     });
   });

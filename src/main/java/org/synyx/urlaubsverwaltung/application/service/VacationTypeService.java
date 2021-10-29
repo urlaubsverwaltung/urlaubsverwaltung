@@ -27,5 +27,5 @@ public interface VacationTypeService {
      * @param vacationCategory to filter out
      * @return a filtered list of @{VacationCategory}
      */
-    List<VacationType> getVacationTypesFilteredBy(VacationCategory vacationCategory);
+    List<VacationType> getActiveVacationTypesWithoutCategory(VacationCategory vacationCategory);
 }

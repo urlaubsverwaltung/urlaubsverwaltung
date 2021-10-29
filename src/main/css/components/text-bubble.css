@@ -3,7 +3,7 @@
   align-items: center;
   position: relative;
   padding: 1rem 1.5rem;
-  border: 2px solid theme('colors.blue.100');
+  border: 2px solid theme("colors.blue.100");
   border-radius: 1rem;
 }
 
@@ -12,7 +12,7 @@
 }
 
 .text-bubble--triangle-top-right:before {
-  content: ' ';
+  content: " ";
   position: absolute;
   width: 0;
   height: 0;
@@ -21,11 +21,11 @@
   top: -12px;
   bottom: auto;
   border: 6px solid;
-  border-color: transparent theme('colors.blue.100') theme('colors.blue.100') transparent;
+  border-color: transparent theme("colors.blue.100") theme("colors.blue.100") transparent;
 }
 
 .text-bubble--triangle-top-right:after {
-  content: ' ';
+  content: " ";
   position: absolute;
   width: 0;
   height: 0;
