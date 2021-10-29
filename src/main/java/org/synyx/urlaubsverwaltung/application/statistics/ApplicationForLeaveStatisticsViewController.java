@@ -28,10 +28,8 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
  * Controller to generate applications for leave statistics.
  */
 @Controller
-@RequestMapping(ApplicationForLeaveStatisticsViewController.STATISTICS_REL)
+@RequestMapping("/web/application/statistics")
 public class ApplicationForLeaveStatisticsViewController {
-
-    static final String STATISTICS_REL = "/web/application/statistics";
 
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
@@ -62,7 +60,7 @@ public class ApplicationForLeaveStatisticsViewController {
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());
 
-        return "redirect:" + STATISTICS_REL + "?from=" + startDateIsoString + "&to=" + endDateIsoString;
+        return "redirect:/web/application/statistics?from=" + startDateIsoString + "&to=" + endDateIsoString;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -84,11 +82,8 @@ public class ApplicationForLeaveStatisticsViewController {
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
-
-        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-        model.addAttribute("statistics", statistics);
-
-        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
+        model.addAttribute("statistics", applicationForLeaveStatisticsService.getStatistics(period));
+        model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
         return "application/app_statistics";
     }
@@ -111,13 +106,12 @@ public class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
-        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-
         final String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
+        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
         try (CSVWriter csvWriter = new CSVWriter(response.getWriter())) {
             applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
         }
@@ -128,10 +122,8 @@ public class ApplicationForLeaveStatisticsViewController {
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {
-
         final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
         final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(null);
-
         return new FilterPeriod(startDate, endDate);
     }
 }

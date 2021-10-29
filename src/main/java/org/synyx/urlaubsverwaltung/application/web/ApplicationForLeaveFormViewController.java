@@ -404,11 +404,12 @@ public class ApplicationForLeaveFormViewController {
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
 
-        List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         if (!overtimeActive) {
-            vacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
+            activeVacationTypes = vacationTypeService.getVacationTypesFilteredBy(VacationCategory.OVERTIME);
         }
-        model.addAttribute("vacationTypes", vacationTypes);
+        // TODO vacationTypes ->  activeVacationTypes in jsp
+        model.addAttribute("vacationTypes", activeVacationTypes);
 
         appendDepartmentsToReplacements(appForm);
         model.addAttribute("application", appForm);

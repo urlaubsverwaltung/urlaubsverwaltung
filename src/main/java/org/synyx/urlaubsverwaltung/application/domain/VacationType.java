@@ -2,12 +2,10 @@ package org.synyx.urlaubsverwaltung.application.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
-
 
 /**
  * Describes a type of vacation.
@@ -18,13 +16,22 @@ import static javax.persistence.EnumType.STRING;
 public class VacationType {
 
     @Id
-    @GeneratedValue
     private Integer id;
+
+    private boolean active;
 
     @Enumerated(STRING)
     private VacationCategory category;
 
     private String messageKey;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean enabled) {
+        this.active = enabled;
+    }
 
     public Integer getId() {
         return id;
@@ -57,7 +64,9 @@ public class VacationType {
     @Override
     public String toString() {
         return "VacationType{" +
-            "category=" + category +
+            "id=" + id +
+            ", active=" + active +
+            ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
             '}';
     }
