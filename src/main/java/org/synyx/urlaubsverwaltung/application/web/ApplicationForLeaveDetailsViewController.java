@@ -116,7 +116,6 @@ public class ApplicationForLeaveDetailsViewController {
         return "application/app_detail";
     }
 
-
     /*
      * Allow a not yet allowed application for leave (Privileged user only!).
      */
@@ -168,7 +167,6 @@ public class ApplicationForLeaveDetailsViewController {
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
-
     /*
      * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
      * to decide about this application (an email is sent).
@@ -199,7 +197,6 @@ public class ApplicationForLeaveDetailsViewController {
         throw new AccessDeniedException(format("User '%s' has not the correct permissions to refer application for " +
             "leave to user '%s'", sender.getId(), referUsername));
     }
-
 
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/reject")

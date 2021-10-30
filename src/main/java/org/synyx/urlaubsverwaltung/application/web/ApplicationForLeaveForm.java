@@ -15,7 +15,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
 
-
 /**
  * View class representing an application for leave.
  */

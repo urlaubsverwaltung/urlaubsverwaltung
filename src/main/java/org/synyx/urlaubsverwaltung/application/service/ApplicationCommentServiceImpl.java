@@ -13,7 +13,6 @@ import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Implementation of interface {@link ApplicationCommentService}.
  */

@@ -48,7 +48,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
-
 @Service
 @Transactional
 public class ApplicationInteractionServiceImpl implements ApplicationInteractionService {

@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * This service provides access to the {@link Application} entities. Except for saving, the access is read-only.
  * Business interactions are found in
@@ -41,8 +40,7 @@ public interface ApplicationService {
      * @param person    {@link Person}
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate,
-                                                                Person person);
+    List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
@@ -52,15 +50,14 @@ public interface ApplicationService {
      * @param status    {@link ApplicationStatus}
      * @return all {@link Application}s with the given state and vacation time between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate,
-                                                               ApplicationStatus status);
+    List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
     /**
      * Gets all {@link Application}s where the applicant for an upcoming application should be notified
      *
-     * @param from defines the start as {@link LocalDate} of a period that should be considered
-     * @param to defines the end as {@link LocalDate} of a period that should be considered
-     * @param statuses  {@link ApplicationStatus} that should be filtered for
+     * @param from     defines the start as {@link LocalDate} of a period that should be considered
+     * @param to       defines the end as {@link LocalDate} of a period that should be considered
+     * @param statuses {@link ApplicationStatus} that should be filtered for
      * @return all {@link Application}s where the given params match and
      */
     List<Application> getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(LocalDate from, LocalDate to, List<ApplicationStatus> statuses);
@@ -68,9 +65,9 @@ public interface ApplicationService {
     /**
      * Gets all {@link Application}s where the holiday replacement should be notified.
      *
-     * @param from defines the start as {@link LocalDate} of a period that should be considered
-     * @param to defines the end as {@link LocalDate} of a period that should be considered
-     * @param statuses  {@link ApplicationStatus} that should be filtered for
+     * @param from     defines the start as {@link LocalDate} of a period that should be considered
+     * @param to       defines the end as {@link LocalDate} of a period that should be considered
+     * @param statuses {@link ApplicationStatus} that should be filtered for
      * @return all {@link Application}s where the given params match and
      */
     List<Application> getApplicationsWhereHolidayReplacementShouldBeNotified(LocalDate from, LocalDate to, List<ApplicationStatus> statuses);
@@ -86,8 +83,7 @@ public interface ApplicationService {
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y and
      * with a certain state
      */
-    List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate,
-                                                                        Person person, ApplicationStatus status);
+    List<Application> getApplicationsForACertainPeriodAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
 
     /**
      * Get all {@link Application} with specific states
@@ -121,9 +117,9 @@ public interface ApplicationService {
      * Get all {@link Application}s with specific states and persons for the given date range
      *
      * @param statuses {@link ApplicationStatus} to filter
-     * @param persons {@link Person}s to consider
-     * @param start start date (inclusive)
-     * @param end end date (inclusive)
+     * @param persons  {@link Person}s to consider
+     * @param start    start date (inclusive)
+     * @param end      end date (inclusive)
      * @return list of all matching {@link Application}s
      */
     List<Application> getForStatesAndPerson(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);

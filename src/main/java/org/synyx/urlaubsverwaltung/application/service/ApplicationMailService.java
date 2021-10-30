@@ -481,7 +481,6 @@ class ApplicationMailService {
         mailService.send(mailToRelevantPersons);
     }
 
-
     /**
      * Sends an email to the bosses notifying
      * that there is a new application for leave
@@ -511,7 +510,6 @@ class ApplicationMailService {
 
         mailService.send(mailToAllowAndRemind);
     }
-
 
     /**
      * Sends an email to the applicant and to the second stage authorities that the application for leave has been

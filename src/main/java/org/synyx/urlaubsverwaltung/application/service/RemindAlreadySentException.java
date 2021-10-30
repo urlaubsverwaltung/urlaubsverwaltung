@@ -7,7 +7,6 @@ package org.synyx.urlaubsverwaltung.application.service;
 public class RemindAlreadySentException extends Exception {
 
     RemindAlreadySentException(String message) {
-
         super(message);
     }
 }
