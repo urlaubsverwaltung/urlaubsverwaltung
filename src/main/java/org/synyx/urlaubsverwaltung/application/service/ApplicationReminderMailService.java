@@ -41,7 +41,7 @@ class ApplicationReminderMailService {
 
     void sendWaitingApplicationsReminderNotification() {
 
-        boolean isRemindForWaitingApplicationsActive =
+        final boolean isRemindForWaitingApplicationsActive =
             settingsService.getSettings().getApplicationSettings().isRemindForWaitingApplications();
 
         if (isRemindForWaitingApplicationsActive) {
@@ -107,14 +107,13 @@ class ApplicationReminderMailService {
     private Predicate<Application> isLongWaitingApplications() {
         return application -> {
 
-            LocalDate remindDate = application.getRemindDate();
+            final LocalDate remindDate = application.getRemindDate();
             if (remindDate == null) {
                 Integer daysBeforeRemindForWaitingApplications =
                     settingsService.getSettings().getApplicationSettings().getDaysBeforeRemindForWaitingApplications();
 
                 // never reminded before
-                LocalDate minDateForNotification = application.getApplicationDate()
-                    .plusDays(daysBeforeRemindForWaitingApplications);
+                final LocalDate minDateForNotification = application.getApplicationDate().plusDays(daysBeforeRemindForWaitingApplications);
 
                 // true -> remind!
                 // false -> to early for notification

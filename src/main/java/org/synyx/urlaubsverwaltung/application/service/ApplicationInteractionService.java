@@ -22,7 +22,6 @@ public interface ApplicationInteractionService {
      */
     Application apply(Application application, Person applier, Optional<String> comment);
 
-
     /**
      * Sets the application's state to allowed or to preliminary allowed (in case of two step approval) and informs the
      * person of the application for leave that his vacation has been allowed.
@@ -34,7 +33,6 @@ public interface ApplicationInteractionService {
      */
     Application allow(Application application, Person privilegedUser, Optional<String> comment);
 
-
     /**
      * Sets the application's state to rejected (only by privileged user) and informs the person of the application for
      * leave and all privileged persons that his vacation has been rejected.
@@ -45,7 +43,6 @@ public interface ApplicationInteractionService {
      * @return the rejected application for leave
      */
     Application reject(Application application, Person privilegedUser, Optional<String> comment);
-
 
     /**
      * Sets the application's state to cancelled.

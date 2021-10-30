@@ -7,7 +7,6 @@ package org.synyx.urlaubsverwaltung.application.service;
 public class ImpatientAboutApplicationForLeaveProcessException extends Exception {
 
     ImpatientAboutApplicationForLeaveProcessException(String message) {
-
         super(message);
     }
 }

@@ -42,7 +42,6 @@ class ApplicationRecipientService {
         return getResponsibleSecondStageAuthorities(application.getPerson());
     }
 
-
     /**
      * Depending on application issuer role the recipients for allowed/remind/rejected/revoked/cancelled mail are
      * generated.

@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * This service provides access to the {@link ApplicationComment} entities.
  */
@@ -25,7 +24,6 @@ public interface ApplicationCommentService {
      * @return the created comment
      */
     ApplicationComment create(Application application, ApplicationCommentAction action, Optional<String> text, Person author);
-
 
     /**
      * Gets all {@link ApplicationComment}s for the given {@link Application}.
