@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -48,7 +49,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
@@ -106,7 +106,7 @@ class VacationDaysServiceTest {
         a1.setEndDate(LocalDate.of(2012, JANUARY, 3));
         a1.setDayLength(FULL);
         a1.setStatus(ALLOWED);
-        a1.setVacationType(createVacationType(HOLIDAY));
+        a1.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         a1.setPerson(person);
 
         // 5 days
@@ -115,7 +115,7 @@ class VacationDaysServiceTest {
         a2.setEndDate(LocalDate.of(2012, MARCH, 16));
         a2.setDayLength(FULL);
         a2.setStatus(ALLOWED);
-        a2.setVacationType(createVacationType(HOLIDAY));
+        a2.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         a2.setPerson(person);
 
         // 4 days
@@ -124,7 +124,7 @@ class VacationDaysServiceTest {
         a3.setEndDate(LocalDate.of(2012, FEBRUARY, 9));
         a3.setDayLength(FULL);
         a3.setStatus(WAITING);
-        a3.setVacationType(createVacationType(HOLIDAY));
+        a3.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         a3.setPerson(person);
 
         // 1 day
@@ -133,7 +133,7 @@ class VacationDaysServiceTest {
         a4.setEndDate(LocalDate.of(2012, FEBRUARY, 10));
         a4.setDayLength(FULL);
         a4.setStatus(ALLOWED_CANCELLATION_REQUESTED);
-        a4.setVacationType(createVacationType(HOLIDAY));
+        a4.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         a4.setPerson(person);
 
         // 6 days at all: 2 before April + 4 after April
@@ -142,7 +142,7 @@ class VacationDaysServiceTest {
         a5.setEndDate(LocalDate.of(2012, APRIL, 5));
         a5.setDayLength(FULL);
         a5.setStatus(WAITING);
-        a5.setVacationType(createVacationType(HOLIDAY));
+        a5.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         a5.setPerson(person);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
@@ -177,7 +177,7 @@ class VacationDaysServiceTest {
         a1.setDayLength(FULL);
         a1.setPerson(person);
         a1.setStatus(ALLOWED);
-        a1.setVacationType(createVacationType(HOLIDAY));
+        a1.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         // 5 days
         final Application a2 = new Application();
@@ -186,7 +186,7 @@ class VacationDaysServiceTest {
         a2.setDayLength(FULL);
         a2.setPerson(person);
         a2.setStatus(ALLOWED);
-        a2.setVacationType(createVacationType(HOLIDAY));
+        a2.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         // 6 days at all: 2 before April + 4 after April
         final Application a4 = new Application();
@@ -195,7 +195,7 @@ class VacationDaysServiceTest {
         a4.setDayLength(FULL);
         a4.setPerson(person);
         a4.setStatus(WAITING);
-        a4.setVacationType(createVacationType(HOLIDAY));
+        a4.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(List.of(a1, a2, a4));
@@ -214,35 +214,35 @@ class VacationDaysServiceTest {
         final LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
 
         final Application cancelledHoliday = new Application();
-        cancelledHoliday.setVacationType(createVacationType(HOLIDAY));
+        cancelledHoliday.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         cancelledHoliday.setStatus(CANCELLED);
 
         final Application rejectedHoliday = new Application();
-        rejectedHoliday.setVacationType(createVacationType(HOLIDAY));
+        rejectedHoliday.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         rejectedHoliday.setStatus(REJECTED);
 
         final Application waitingSpecialLeave = new Application();
-        waitingSpecialLeave.setVacationType(createVacationType(SPECIALLEAVE));
+        waitingSpecialLeave.setVacationType(TestDataCreator.createVacationTypeEntity(SPECIALLEAVE));
         waitingSpecialLeave.setStatus(WAITING);
 
         final Application allowedSpecialLeave = new Application();
-        allowedSpecialLeave.setVacationType(createVacationType(SPECIALLEAVE));
+        allowedSpecialLeave.setVacationType(TestDataCreator.createVacationTypeEntity(SPECIALLEAVE));
         allowedSpecialLeave.setStatus(ALLOWED);
 
         final Application waitingUnpaidLeave = new Application();
-        waitingUnpaidLeave.setVacationType(createVacationType(UNPAIDLEAVE));
+        waitingUnpaidLeave.setVacationType(TestDataCreator.createVacationTypeEntity(UNPAIDLEAVE));
         waitingUnpaidLeave.setStatus(WAITING);
 
         final Application allowedUnpaidLeave = new Application();
-        allowedUnpaidLeave.setVacationType(createVacationType(UNPAIDLEAVE));
+        allowedUnpaidLeave.setVacationType(TestDataCreator.createVacationTypeEntity(UNPAIDLEAVE));
         allowedUnpaidLeave.setStatus(ALLOWED);
 
         final Application waitingOvertime = new Application();
-        waitingOvertime.setVacationType(createVacationType(OVERTIME));
+        waitingOvertime.setVacationType(TestDataCreator.createVacationTypeEntity(OVERTIME));
         waitingOvertime.setStatus(WAITING);
 
         final Application allowedOvertime = new Application();
-        allowedOvertime.setVacationType(createVacationType(OVERTIME));
+        allowedOvertime.setVacationType(TestDataCreator.createVacationTypeEntity(OVERTIME));
         allowedOvertime.setStatus(ALLOWED);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
@@ -446,7 +446,7 @@ class VacationDaysServiceTest {
         application.setEndDate(LocalDate.of(2015, JANUARY, 3));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
-        application.setVacationType(createVacationType(HOLIDAY));
+        application.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         application.setPerson(person);
         return application;
     }

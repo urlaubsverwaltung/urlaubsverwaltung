@@ -14,7 +14,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 
 @SpringBootTest
 @Transactional
-class VacationTypeRepositoryIT extends TestContainersBase {
+class VacationTypeEntityRepositoryIT extends TestContainersBase {
 
     @Autowired
     private VacationTypeRepository sut;
@@ -24,21 +24,21 @@ class VacationTypeRepositoryIT extends TestContainersBase {
 
         sut.deleteAll();
 
-        final VacationType active = new VacationType();
+        final VacationTypeEntity active = new VacationTypeEntity();
         active.setId(1);
         active.setActive(true);
         active.setCategory(HOLIDAY);
         active.setMessageKey("message.key.active");
         sut.save(active);
 
-        final VacationType inactive = new VacationType();
+        final VacationTypeEntity inactive = new VacationTypeEntity();
         inactive.setId(2);
         inactive.setActive(false);
         inactive.setCategory(OVERTIME);
         inactive.setMessageKey("message.key.inactive");
         sut.save(inactive);
 
-        final List<VacationType> activeVacationTypes = sut.findByActiveIsTrue();
+        final List<VacationTypeEntity> activeVacationTypes = sut.findByActiveIsTrue();
         assertThat(activeVacationTypes)
             .hasSize(1)
             .contains(active);

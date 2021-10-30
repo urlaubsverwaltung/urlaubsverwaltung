@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.DurationConverter;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -98,7 +98,7 @@ public class Application {
      * Type of vacation, e.g. holiday, special leave etc.
      */
     @ManyToOne
-    private VacationType vacationType;
+    private VacationTypeEntity vacationType;
 
     /**
      * Day length of the vacation period, e.g. full day, morning, noon.
@@ -300,11 +300,11 @@ public class Application {
         this.status = status;
     }
 
-    public VacationType getVacationType() {
+    public VacationTypeEntity getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationType vacationType) {
+    public void setVacationType(VacationTypeEntity vacationType) {
         this.vacationType = vacationType;
     }
 

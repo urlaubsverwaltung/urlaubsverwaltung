@@ -5,22 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionServiceImpl;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationMailService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.application.DeclineCancellationRequestedApplicationForLeaveNotAllowedException;
-import org.synyx.urlaubsverwaltung.application.application.EditApplicationForLeaveNotAllowedException;
-import org.synyx.urlaubsverwaltung.application.application.ImpatientAboutApplicationForLeaveProcessException;
-import org.synyx.urlaubsverwaltung.application.application.RemindAlreadySentException;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
-import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
@@ -57,16 +48,15 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyAbsenceMapping;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CONVERTED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REFERRED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -998,7 +988,7 @@ class ApplicationInteractionServiceImplTest {
         ImpatientAboutApplicationForLeaveProcessException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application applicationForLeave = createApplication(person, createVacationType(HOLIDAY));
+        final Application applicationForLeave = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         applicationForLeave.setApplicationDate(LocalDate.now(UTC).minusDays(3));
         applicationForLeave.setRemindDate(LocalDate.now(UTC).minusDays(1));
 
@@ -1043,7 +1033,7 @@ class ApplicationInteractionServiceImplTest {
         final Integer applicationId = 1;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         application.setId(applicationId);
 
         when(applicationService.getApplicationById(applicationId)).thenReturn(Optional.of(application));
@@ -1059,7 +1049,7 @@ class ApplicationInteractionServiceImplTest {
         final Integer applicationId = 1;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         application.setStatus(WAITING);
         application.setId(applicationId);
         when(applicationService.save(application)).thenReturn(application);
@@ -1087,13 +1077,13 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
         newReplacementEntity.setPerson(newHolidayReplacement);
 
-        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application newApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setHolidayReplacements(List.of(newReplacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
-        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application oldApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final Optional<String> comment = of("Comment");
 
@@ -1113,7 +1103,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application newApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         when(applicationService.save(newApplication)).thenReturn(newApplication);
@@ -1124,7 +1114,7 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(oldHolidayReplacement);
 
-        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application oldApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
 
         final Optional<String> comment = of("Comment");
@@ -1151,7 +1141,7 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacementPerson);
 
-        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application newApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setStartDate(LocalDate.of(2020, 10, 3));
@@ -1159,7 +1149,7 @@ class ApplicationInteractionServiceImplTest {
         newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
-        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application oldApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
         oldApplication.setStartDate(LocalDate.of(2020, 10, 4));
         oldApplication.setEndDate(LocalDate.of(2020, 10, 4));
@@ -1188,14 +1178,14 @@ class ApplicationInteractionServiceImplTest {
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacementPerson);
 
-        final Application newApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application newApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         newApplication.setStatus(WAITING);
         newApplication.setId(applicationId);
         newApplication.setDayLength(DayLength.FULL);
         newApplication.setHolidayReplacements(List.of(replacementEntity));
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
-        final Application oldApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application oldApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         oldApplication.setHolidayReplacements(List.of(replacementEntity));
         oldApplication.setDayLength(DayLength.NOON);
 
@@ -1214,7 +1204,7 @@ class ApplicationInteractionServiceImplTest {
     void editApplicationForLeaveHasWrongStatus() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         application.setStatus(ALLOWED);
 
         final Optional<String> comment = of("Comment");
@@ -1230,10 +1220,10 @@ class ApplicationInteractionServiceImplTest {
     void editApplicationWithDifferentPerson() {
 
         final Person oldPerson = new Person();
-        final Application oldApplication = createApplication(oldPerson, createVacationType(HOLIDAY));
+        final Application oldApplication = createApplication(oldPerson, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         oldApplication.setStatus(WAITING);
         final Person newPerson = new Person();
-        final Application newApplication = createApplication(newPerson, createVacationType(HOLIDAY));
+        final Application newApplication = createApplication(newPerson, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         newApplication.setStatus(WAITING);
 
         final Optional<String> comment = of("Comment");

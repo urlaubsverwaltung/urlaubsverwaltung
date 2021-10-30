@@ -1,8 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VacationTypeService {
+
+    Optional<VacationType> getById(Integer id);
 
     /**
      * Returns all created vacation types

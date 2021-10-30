@@ -11,12 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationMailService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationRecipientService;
-import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -44,7 +39,11 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.*;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -1777,14 +1776,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-            "in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-            "Alfred Pennyworth" + EMAIL_LINE_BREAK +
+                "Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-            "Da du vom 16.04.2021 bis zum 16.04.2021 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-            "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                "Da du vom 16.04.2021 bis zum 16.04.2021 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-            "Link zum Antrag: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
+                "Link zum Antrag: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
         );
     }
 
@@ -2100,7 +2099,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);
-        application.setVacationType(TestDataCreator.createVacationType(HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);

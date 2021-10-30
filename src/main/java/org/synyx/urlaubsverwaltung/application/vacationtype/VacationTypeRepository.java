@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-interface VacationTypeRepository extends JpaRepository<VacationType, Integer> {
+interface VacationTypeRepository extends JpaRepository<VacationTypeEntity, Integer> {
 
-    List<VacationType> findByActiveIsTrue();
+    List<VacationTypeEntity> findByActiveIsTrue();
 }

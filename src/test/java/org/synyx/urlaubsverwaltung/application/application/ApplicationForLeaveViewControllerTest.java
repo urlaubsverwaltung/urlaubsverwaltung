@@ -11,14 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeaveDto;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeaveViewController;
-import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -687,8 +681,8 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
 
-    private static VacationType anyVacationType() {
-        final VacationType vacationType = new VacationType();
+    private static VacationTypeEntity anyVacationType() {
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(VacationCategory.HOLIDAY);
         vacationType.setMessageKey("vacationTypeMessageKey");
         return vacationType;

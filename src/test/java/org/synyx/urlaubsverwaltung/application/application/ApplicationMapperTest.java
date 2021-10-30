@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -16,14 +17,13 @@ class ApplicationMapperTest {
     @Test
     void ensureOvertimeReductionForEditingVacationOvertime() {
 
-        final VacationType oldVacationType = new VacationType();
+        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
         oldVacationType.setCategory(OVERTIME);
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final VacationType newVacationType = new VacationType();
-        newVacationType.setCategory(OVERTIME);
+        final VacationType newVacationType = new VacationType(1, true, OVERTIME, "message_key");
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setHours(BigDecimal.ONE);
@@ -36,14 +36,13 @@ class ApplicationMapperTest {
     @Test
     void ensureReasonForEditingVacationSpecialLeave() {
 
-        final VacationType oldVacationType = new VacationType();
+        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
         oldVacationType.setCategory(SPECIALLEAVE);
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final VacationType newVacationType = new VacationType();
-        newVacationType.setCategory(SPECIALLEAVE);
+        final VacationType newVacationType = new VacationType(1, true, SPECIALLEAVE, "message_key");
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setReason("Birth of a child");
@@ -56,14 +55,13 @@ class ApplicationMapperTest {
     @Test
     void ensureNoOvertimeReductionForConvertingVacationOvertimeToHoliday() {
 
-        final VacationType oldVacationType = new VacationType();
+        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
         oldVacationType.setCategory(OVERTIME);
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final VacationType newVacationType = new VacationType();
-        newVacationType.setCategory(HOLIDAY);
+        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key");
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 
@@ -75,14 +73,13 @@ class ApplicationMapperTest {
     @Test
     void ensureNoReasonForConvertingVacationSpecialLeaveToHoliday() {
 
-        final VacationType oldVacationType = new VacationType();
+        final VacationTypeEntity oldVacationType = new VacationTypeEntity();
         oldVacationType.setCategory(SPECIALLEAVE);
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final VacationType newVacationType = new VacationType();
-        newVacationType.setCategory(HOLIDAY);
+        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key");
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 

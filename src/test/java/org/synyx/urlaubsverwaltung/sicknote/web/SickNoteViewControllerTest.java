@@ -50,6 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -342,7 +343,7 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType());
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key"));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -357,7 +358,7 @@ class SickNoteViewControllerTest {
         overtimeActive(true);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType());
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key"));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -391,7 +392,7 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType());
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key"));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {
@@ -414,7 +415,7 @@ class SickNoteViewControllerTest {
         overtimeActive(true);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType());
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key"));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {

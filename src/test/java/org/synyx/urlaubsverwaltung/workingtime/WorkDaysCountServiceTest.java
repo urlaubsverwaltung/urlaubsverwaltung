@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
@@ -29,7 +30,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -68,7 +68,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -96,7 +96,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -124,7 +124,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person();
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -146,7 +146,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -168,7 +168,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person();
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -190,7 +190,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -212,7 +212,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -235,7 +235,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
@@ -258,7 +258,7 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Application application = createApplication(person, createVacationType(HOLIDAY));
+        final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
