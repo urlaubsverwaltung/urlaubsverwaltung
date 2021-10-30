@@ -6,8 +6,8 @@ import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -22,6 +22,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 
 /**
  * Builds a {@link ApplicationForLeaveStatistics} for the given
@@ -38,8 +39,8 @@ class ApplicationForLeaveStatisticsBuilder {
 
     @Autowired
     ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-                                                WorkDaysCountService workDaysCountService, VacationDaysService vacationDaysService,
-                                                OvertimeService overtimeService) {
+                                         WorkDaysCountService workDaysCountService, VacationDaysService vacationDaysService,
+                                         OvertimeService overtimeService) {
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
@@ -62,9 +63,9 @@ class ApplicationForLeaveStatisticsBuilder {
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person);
         for (Application application : applications) {
             if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
-                statistics.addWaitingVacationDays(application.getVacationType(), getVacationDaysFor(application, from, to));
+                statistics.addWaitingVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to));
             } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
-                statistics.addAllowedVacationDays(application.getVacationType(), getVacationDaysFor(application, from, to));
+                statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to));
             }
         }
 

@@ -1,27 +1,29 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.util.Objects;
+
+import static javax.persistence.EnumType.STRING;
 
 /**
  * Describes a type of vacation.
+ *
+ * @since 2.15.0
  */
-public class VacationType {
+@Entity(name = "vacation_type")
+public class VacationTypeEntity {
 
+    @Id
     private Integer id;
+
     private boolean active;
+
+    @Enumerated(STRING)
     private VacationCategory category;
+
     private String messageKey;
-
-    public VacationType() {
-        // ok
-    }
-
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey) {
-        this.id = id;
-        this.active = active;
-        this.category = category;
-        this.messageKey = messageKey;
-    }
 
     public boolean isActive() {
         return active;
@@ -71,14 +73,18 @@ public class VacationType {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        VacationType that = (VacationType) o;
-        return active == that.active && category == that.category && Objects.equals(messageKey, that.messageKey);
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final VacationTypeEntity that = (VacationTypeEntity) o;
+        return null != this.getId() && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(active, category, messageKey);
+        return Objects.hash(id);
     }
 }

@@ -5,8 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
@@ -18,7 +19,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -45,7 +45,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreatesACommentAndPersistsIt() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationType vacationType = createVacationType(HOLIDAY);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
         when(commentRepository.save(any())).then(returnsFirstArg());
@@ -70,7 +70,7 @@ class ApplicationCommentServiceImplTest {
     void ensureCreationOfCommentWithTextWorks() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationType vacationType = createVacationType(HOLIDAY);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(HOLIDAY);
         final Application application = createApplication(person, vacationType);
 
         when(commentRepository.save(any())).then(returnsFirstArg());

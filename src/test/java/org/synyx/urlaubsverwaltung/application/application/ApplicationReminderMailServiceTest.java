@@ -7,12 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationMailService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationReminderMailService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -29,7 +26,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -61,7 +57,7 @@ class ApplicationReminderMailServiceTest {
         boolean isActive = true;
         prepareSettingsWithRemindForWaitingApplications(isActive);
 
-        final VacationType vacationType = createVacationType(HOLIDAY);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(HOLIDAY);
 
         final Application shortWaitingApplication = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"), vacationType);
         shortWaitingApplication.setApplicationDate(LocalDate.now(clock));
@@ -106,7 +102,7 @@ class ApplicationReminderMailServiceTest {
         final ApplicationSettings applicationSettings = prepareSettingsWithRemindForUpcomingApplications(true);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final VacationType vacationType = createVacationType(HOLIDAY);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(HOLIDAY);
         final LocalDate now = LocalDate.now(clock);
         final LocalDate to = now.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingApplications());
 
@@ -141,7 +137,7 @@ class ApplicationReminderMailServiceTest {
         final LocalDate now = LocalDate.now(clock);
         final LocalDate to = now.plusDays(applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
 
-        final Application tomorrowApplication = createApplication(person, createVacationType(HOLIDAY));
+        final Application tomorrowApplication = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
         tomorrowApplication.setApplicationDate(to);
 
         when(applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(now, to, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));

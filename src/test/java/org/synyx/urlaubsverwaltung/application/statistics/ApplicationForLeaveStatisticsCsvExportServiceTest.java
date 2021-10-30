@@ -26,7 +26,6 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +54,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
-        final VacationType vacationType = createVacationType(HOLIDAY);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
         applicationForLeaveStatistics.addWaitingVacationDays(vacationType, ONE);
@@ -97,7 +96,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwo.setFirstName("personTwoFirstName");
         personTwo.setLastName("personTwoLastName");
 
-        final VacationType vacationType = createVacationType(HOLIDAY);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
 
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);

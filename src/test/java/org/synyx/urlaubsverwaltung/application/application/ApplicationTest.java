@@ -1,11 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -177,7 +174,7 @@ class ApplicationTest {
         replacementEntity.setPerson(person);
         replacementEntity.setNote("hello myself");
 
-        final VacationType vacationType = new VacationType();
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(VacationCategory.HOLIDAY);
 
         final Application application = new Application();

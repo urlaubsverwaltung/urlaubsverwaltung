@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.vacations;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.api.PersonDto;
 import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 
@@ -30,7 +30,7 @@ class VacationDto {
         this.person = PersonMapper.mapToDto(application.getPerson());
         this.status = application.getStatus().name();
 
-        VacationType vacationType = application.getVacationType();
+        VacationTypeEntity vacationType = application.getVacationType();
         this.type = vacationType.getCategory().toString();
     }
 

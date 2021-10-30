@@ -16,13 +16,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeaveFormValidator;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeaveFormViewController;
-import org.synyx.urlaubsverwaltung.application.application.UnknownApplicationForLeaveException;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.application.application.EditApplicationForLeaveNotAllowedException;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
@@ -47,7 +41,6 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.SEPTEMBER;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -72,8 +65,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -121,8 +116,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(singletonList(vacationType));
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(true);
@@ -150,8 +145,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(singletonList(vacationType));
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
@@ -179,8 +174,8 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType();
-        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(singletonList(vacationType));
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
         overtimeSettings.setOvertimeActive(false);
@@ -459,16 +454,14 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
 
-        assertThatThrownBy(() -> {
-            perform(post("/web/application/new/replacements")
-                .header("X-Requested-With", "ajax")
-                .param("holidayReplacementToAdd", "1")
-                .param("person", "1337")
-                .param("vacationType.category", "HOLIDAY")
-                .param("holidayReplacements[0].person.id", "42")
-                .param("holidayReplacements[1].person.id", "1337")
-                .param("add-holiday-replacement", ""));
-        }).hasCauseInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> perform(post("/web/application/new/replacements")
+            .header("X-Requested-With", "ajax")
+            .param("holidayReplacementToAdd", "1")
+            .param("person", "1337")
+            .param("vacationType.category", "HOLIDAY")
+            .param("holidayReplacements[0].person.id", "42")
+            .param("holidayReplacements[1].person.id", "1337")
+            .param("add-holiday-replacement", ""))).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -739,6 +732,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(WAITING);
+        application.setVacationType(createVacationTypeEntity(HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         perform(get("/web/application/1/edit"))
@@ -771,6 +765,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(WAITING);
+        application.setVacationType(createVacationTypeEntity(HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         perform(get("/web/application/1/edit"))
@@ -804,6 +799,7 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setId(applicationId);
         application.setStatus(WAITING);
         application.setDayLength(DayLength.MORNING);
+        application.setVacationType(createVacationTypeEntity(HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         perform(get("/web/application/1/edit"))
@@ -851,6 +847,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(WAITING);
+        application.setVacationType(createVacationTypeEntity(HOLIDAY));
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
 
         perform(get("/web/application/1/edit"))

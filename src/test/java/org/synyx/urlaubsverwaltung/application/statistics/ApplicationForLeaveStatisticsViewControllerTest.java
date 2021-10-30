@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -33,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsViewControllerTest {
@@ -101,7 +101,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
-        final List<VacationType> vacationType = Collections.singletonList(new VacationType());
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key"));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

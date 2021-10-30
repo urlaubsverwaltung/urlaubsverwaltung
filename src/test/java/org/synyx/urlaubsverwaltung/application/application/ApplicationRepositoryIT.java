@@ -6,8 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -54,7 +56,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         final Person max = personService.save(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
         final Person marlene = personService.save(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
-        final VacationType vacationType = getVacationType(HOLIDAY);
+        final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
         final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
@@ -565,9 +567,12 @@ class ApplicationRepositoryIT extends TestContainersBase {
             .containsOnly(tomorrowDateApplication, tomorrowCancellationRequestDateApplication, tomorrowTemporaryAllowedDateApplication);
     }
 
-    private VacationType getVacationType(VacationCategory category) {
+    private VacationTypeEntity getVacationType(VacationCategory category) {
+        final List<VacationTypeEntity> vacationTypeEntities = vacationTypeService.getAllVacationTypes().stream()
+            .map(VacationTypeServiceImpl::convert)
+            .collect(toList());
 
-        for (VacationType vacationType : vacationTypeService.getAllVacationTypes()) {
+        for (VacationTypeEntity vacationType : vacationTypeEntities) {
             if (vacationType.isOfCategory(category)) {
                 return vacationType;
             }
