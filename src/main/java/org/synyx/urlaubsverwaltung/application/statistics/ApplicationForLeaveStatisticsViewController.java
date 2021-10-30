@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
@@ -29,7 +29,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
  */
 @Controller
 @RequestMapping("/web/application/statistics")
-public class ApplicationForLeaveStatisticsViewController {
+class ApplicationForLeaveStatisticsViewController {
 
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
@@ -37,7 +37,7 @@ public class ApplicationForLeaveStatisticsViewController {
     private final DateFormatAware dateFormatAware;
 
     @Autowired
-    public ApplicationForLeaveStatisticsViewController(
+    ApplicationForLeaveStatisticsViewController(
         ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {

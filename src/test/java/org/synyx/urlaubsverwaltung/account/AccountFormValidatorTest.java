@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;

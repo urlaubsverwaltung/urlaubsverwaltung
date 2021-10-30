@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 
 
 /**

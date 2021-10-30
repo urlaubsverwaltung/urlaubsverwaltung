@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung;
 
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -34,7 +34,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 

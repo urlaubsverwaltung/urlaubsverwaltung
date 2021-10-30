@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -19,10 +19,10 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfMonth;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfMonth;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;

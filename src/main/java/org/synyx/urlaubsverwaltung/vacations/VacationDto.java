@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.vacations;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.api.PersonDto;
 import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 

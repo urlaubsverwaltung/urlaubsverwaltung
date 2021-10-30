@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ public class ApplicationForLeaveStatistics {
     private BigDecimal leftVacationDays = ZERO;
     private Duration leftOvertime = Duration.ZERO;
 
-    public ApplicationForLeaveStatistics(Person person) {
+    ApplicationForLeaveStatistics(Person person) {
         this.person = person;
     }
 

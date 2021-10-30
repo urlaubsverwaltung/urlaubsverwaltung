@@ -4,8 +4,8 @@ import liquibase.util.csv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 

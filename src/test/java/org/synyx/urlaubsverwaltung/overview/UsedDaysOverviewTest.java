@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.UNPAIDLEAVE;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
 
 
 @ExtendWith(MockitoExtension.class)

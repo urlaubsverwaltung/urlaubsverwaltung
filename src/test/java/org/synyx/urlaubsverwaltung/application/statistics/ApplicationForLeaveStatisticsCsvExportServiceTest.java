@@ -7,8 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsCsvExportServiceTest {

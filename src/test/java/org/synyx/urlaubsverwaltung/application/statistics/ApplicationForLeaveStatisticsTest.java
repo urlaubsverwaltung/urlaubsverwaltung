@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;

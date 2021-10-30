@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -27,8 +27,8 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker

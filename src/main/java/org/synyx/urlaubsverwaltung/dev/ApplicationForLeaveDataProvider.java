@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 /**
