@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
