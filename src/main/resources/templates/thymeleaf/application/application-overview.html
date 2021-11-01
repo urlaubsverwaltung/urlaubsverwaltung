@@ -124,6 +124,7 @@
           </div>
           <ul
             class="
+              lg:list--hover
               tw-w-full tw-list-none tw-m-0 tw-p-0 tw-pl-20
               md:tw-pl-0 md:tw-flex-1
               tw-space-y-10
@@ -141,7 +142,7 @@
                   lg:tw-p-2
                   md:tw-block
                   lg:tw-flex lg:tw-items-end
-                  lg:hover:tw-bg-zinc-50
+                  dark:tw-rounded
                 "
                 th:each="userRequestForLeave,loopStatus: ${userApplications}"
               >
@@ -317,6 +318,7 @@
         <ul
           th:if="${not #lists.isEmpty(otherApplications)}"
           class="
+            lg:list--hover
             tw-w-full tw-list-none tw-m-0 tw-p-0
             tw-text-sm
             tw-space-y-10 lg:tw-space-y-4
@@ -329,7 +331,7 @@
               md:tw-flex md:tw-items-top lg:tw-items-center
               md:tw-space-x-12
               lg:tw-p-2
-              lg:hover:tw-bg-zinc-50
+              dark:tw-rounded
             "
           >
             <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
@@ -427,6 +429,7 @@
           <ul
             th:if="${not #lists.isEmpty(applications_cancellation_request)}"
             class="
+              lg:list--hover
               tw-w-full tw-list-none tw-m-0 tw-p-0
               tw-text-sm
               tw-space-y-10 lg:tw-space-y-4
@@ -439,7 +442,7 @@
                 md:tw-flex md:tw-items-top lg:tw-items-center
                 md:tw-space-x-12
                 lg:tw-p-2
-                lg:hover:tw-bg-zinc-50
+                dark:tw-rounded
               "
             >
               <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
