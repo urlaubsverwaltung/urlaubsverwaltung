@@ -16,3 +16,13 @@ a:hover .dropdown-caret,
 a:focus .dropdown-caret {
   border-top-color: black;
 }
+
+@media (prefers-color-scheme: dark) {
+  .dropdown-caret {
+    border-top-color: theme("colors.neutral.100");
+  }
+
+  a:is(:hover, :focus) .dropdown-caret {
+    border-top-color: theme("colors.neutral.400");
+  }
+}

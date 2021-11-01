@@ -4,28 +4,36 @@
   @apply tw-w-full;
   @apply tw-z-50;
   @apply tw-bg-zinc-100;
+  @apply dark:tw-bg-neutral-800;
   @apply tw-h-12;
   @apply lg:tw-h-auto;
 }
 
 .navigation-inner {
   @apply tw-bg-zinc-100;
+  @apply dark:tw-bg-neutral-800;
 }
 
 .navigation-link {
   @apply tw-text-zinc-900;
   @apply hover:tw-text-blue-400;
   @apply tw-transition-colors;
+  @apply dark:tw-text-neutral-100;
+  @apply dark:hover:tw-text-neutral-400;
+  text-decoration: none !important;
 }
 
 .navigation-link-icon {
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-50;
   @apply tw-transition-colors;
+  @apply dark:tw-text-neutral-100;
+  @apply dark:tw-text-opacity-100;
 }
 
 .navigation-link:is(:hover, :focus) .navigation-link-icon {
   @apply tw-text-blue-400;
+  @apply dark:tw-text-neutral-400;
 }
 
 .navigation-content-spacer--left,
@@ -45,11 +53,13 @@
 .navigation-content-spacer--left::before,
 .navigation-content-spacer--right::before {
   @apply tw-bg-zinc-100;
+  @apply dark:tw-bg-neutral-800;
 }
 
 .navigation-content-spacer--left::after,
 .navigation-content-spacer--right::after {
   @apply tw-bg-white;
+  @apply dark:tw-bg-neutral-900;
 }
 
 .navigation-content-spacer--left::after {
@@ -148,8 +158,41 @@
   content: "";
 }
 
+@media (prefers-color-scheme: dark) {
+  .nav-popup-menu::before {
+    border-bottom-color: theme("colors.neutral.600");
+  }
+}
+
 .nav-popup-menu-inner {
   background-color: rgba(31, 41, 55, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  .nav-popup-menu-inner {
+    @apply tw-border;
+    @apply tw-border-neutral-600;
+    @apply tw-bg-neutral-900;
+  }
+}
+
+@supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
+  .nav-popup-menu-inner {
+    --uv-backdrop-blur: 12px;
+    --uv-backdrop-saturate: 180%;
+    -webkit-backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
+    backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
+    background-color: rgba(31, 41, 55, 0.85);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .nav-popup-menu-inner {
+      @apply tw-backdrop-filter;
+      @apply tw-backdrop-blur-xl;
+      @apply tw-bg-neutral-900;
+      @apply tw-bg-opacity-70;
+    }
+  }
 }
 
 .nav-popup-menu-button {
@@ -163,8 +206,13 @@
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-75;
   @apply tw-transition-colors;
-  @apply hover:tw-text-opacity-100;
-  @apply focus:tw-text-opacity-100;
+  @apply dark:tw-text-neutral-100;
+  @apply dark:hover:tw-text-opacity-100;
+}
+
+.nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
+  @apply tw-text-opacity-100;
+  @apply dark:tw-text-neutral-100;
 }
 
 .nav-popup-menu_link,
@@ -179,20 +227,13 @@
 .nav-popup-menu_link {
   @apply hover:tw-bg-zinc-600;
   @apply focus:tw-bg-zinc-600;
+  @apply dark:hover:tw-bg-neutral-600;
+  @apply dark:focus:tw-bg-neutral-600;
 }
 
 .nav-popup-menu_link-icon {
   @apply tw-border;
   @apply tw-border-zinc-50;
   @apply tw-border-opacity-25;
-}
-
-@supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
-  .nav-popup-menu-inner {
-    --uv-backdrop-blur: 12px;
-    --uv-backdrop-saturate: 180%;
-    -webkit-backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
-    backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
-    background-color: rgba(31, 41, 55, 0.85);
-  }
+  @apply dark:tw-border-neutral-500;
 }
