@@ -43,7 +43,7 @@
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />"/>
 </head>
 
-<body class="md:tw-bg-zinc-100">
+<body>
 
 <nav role="navigation">
     <h1 class="tw-text-3xl tw-my-8 tw-text-center">

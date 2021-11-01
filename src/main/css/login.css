@@ -20,4 +20,11 @@
     background-color: #fff;
     border: 1px solid #e5e5e5;
   }
+
+  @media (prefers-color-scheme: dark) {
+    .login--form {
+      background-color: theme("colors.neutral.800");
+      border-color: theme("colors.neutral.800");
+    }
+  }
 }
