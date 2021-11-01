@@ -8,6 +8,38 @@
   @apply lg:tw-h-auto;
 }
 
+.navigation-content-spacer--left,
+.navigation-content-spacer--right {
+  position: relative;
+}
+
+.navigation-content-spacer--left::before,
+.navigation-content-spacer--right::before,
+.navigation-content-spacer--left::after,
+.navigation-content-spacer--right::after {
+  content: "";
+  position: absolute;
+  @apply tw-inset-0;
+}
+
+.navigation-content-spacer--left::before,
+.navigation-content-spacer--right::before {
+  @apply tw-bg-zinc-100;
+}
+
+.navigation-content-spacer--left::after,
+.navigation-content-spacer--right::after {
+  @apply tw-bg-white;
+}
+
+.navigation-content-spacer--left::after {
+  @apply tw-rounded-tl-full;
+}
+
+.navigation-content-spacer--right::after {
+  @apply tw-rounded-tr-full;
+}
+
 #menu-toggle-checkbox ~ label ~ nav .navigation-items {
   overflow: hidden;
   transition: max-height 400ms ease-in;
