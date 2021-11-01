@@ -127,222 +127,220 @@
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
       <div class="tw-flex tw-w-full tw-bg-gray-100">
-        <div
-          class="tw-p-3 tw-order-last lg:tw-p-2 tw-flex tw-items-start lg:tw-items-center tw-space-x-2"
-          role="menubar"
-        >
-          <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
-            <button
-              id="add-something-new"
-              class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
-              aria-expanded="false"
-              aria-haspopup="true"
-              data-test-id="add-something-new"
+        <div class="tw-order-last" role="menubar">
+          <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
+            <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
+              <button
+                id="add-something-new"
+                class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
+                aria-expanded="false"
+                aria-haspopup="true"
+                data-test-id="add-something-new"
+              >
+                <svg
+                  th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
+                ></svg>
+                <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
+                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+              </button>
+              <div
+                id="add-something-new-menu"
+                class="
+                  nav-popup-menu
+                  tw-w-screen
+                  tw-absolute
+                  tw-right-2
+                  tw-top-full
+                  tw-mt-1
+                  tw-flex
+                  tw-justify-end
+                  tw-transform
+                  tw-origin-top-right
+                  tw-transition-transform
+                  tw-scale-x-0
+                  tw-scale-y-0
+                  tw-scale-x-1
+                  tw-scale-y-1
+                "
+                  aria-hidden="true"
+                  data-test-id="add-something-new-popupmenu"
+                >
+                  <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner">
+                    <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
+                      <li role="none">
+                        <a
+                          href="#"
+                          th:href="@{/web/application/new}"
+                          role="menuitem"
+                          class="
+                            tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
+                            hover:tw-bg-gray-600
+                          "
+                          data-test-id="quick-add-new-application"
+                        >
+                          <span
+                            class="
+                              tw-border
+                              tw-border-gray-50
+                              tw-border-opacity-25
+                              tw-px-2
+                              tw-py-1
+                              tw-rounded
+                              tw-flex
+                              tw-items-center
+                            "
+                          >
+                            <svg th:replace="icon/document-text::svg(className='tw-h-5 tw-w-5')"></svg>
+                          </span>
+                          <span class="tw-ml-3" th:text="#{nav.add.vacation}"></span>
+                        </a>
+                      </li>
+                      <li role="none" sec:authorize="hasAuthority('OFFICE')">
+                        <a
+                          href="#"
+                          th:href="@{/web/sicknote/new}"
+                          role="menuitem"
+                          class="
+                            tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
+                            hover:tw-bg-gray-600
+                          "
+                          data-test-id="quick-add-new-sicknote"
+                        >
+                        <span
+                          class="
+                            tw-border
+                            tw-border-gray-50
+                            tw-border-opacity-25
+                            tw-px-2
+                            tw-py-1
+                            tw-rounded
+                            tw-flex
+                            tw-items-center
+                          "
+                        >
+                          <svg th:replace="icon/medkit::svg(className='tw-h-5 tw-w-5')"></svg>
+                        </span>
+                        <span class="tw-ml-3" th:text="#{nav.add.sicknote}"></span>
+                      </a>
+                    </li>
+                    <li role="none" th:if="${navigationOvertimeItemEnabled}">
+                      <a
+                        href="#"
+                        th:href="@{/web/overtime/new}"
+                        role="menuitem"
+                        class="
+                          tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
+                          hover:tw-bg-gray-600
+                        "
+                        data-test-id="quick-add-new-overtime"
+                      >
+                        <span
+                          class="
+                            tw-border
+                            tw-border-gray-50
+                            tw-border-opacity-25
+                            tw-px-2
+                            tw-py-1
+                            tw-rounded
+                            tw-flex
+                            tw-items-center
+                          "
+                        >
+                          <svg th:replace="icon/clock::svg(className='tw-h-5 tw-w-5')"></svg>
+                        </span>
+                        <span class="tw-ml-3" th:text="#{nav.add.overtime}"></span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <a
+              href="#"
+              th:href="@{/web/application/new}"
+              class="tw-flex tw-items-center"
+              data-test-id="new-application"
+              th:if="${not navigationRequestPopupEnabled}"
             >
               <svg
                 th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
               ></svg>
-              <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
-              <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
-            </button>
-            <div
-              id="add-something-new-menu"
-              class="
-                nav-popup-menu
-                tw-w-screen
-                tw-absolute
-                tw-right-2
-                tw-top-full
-                tw-mt-1
-                tw-flex
-                tw-justify-end
-                tw-transform
-                tw-origin-top-right
-                tw-transition-transform
-                tw-scale-x-0
-                tw-scale-y-0
-                tw-scale-x-1
-                tw-scale-y-1
-              "
-              aria-hidden="true"
-              data-test-id="add-something-new-popupmenu"
-            >
-              <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner">
-                <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
-                  <li role="none">
-                    <a
-                      href="#"
-                      th:href="@{/web/application/new}"
-                      role="menuitem"
-                      class="
-                        tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                        hover:tw-bg-gray-600
-                      "
-                      data-test-id="quick-add-new-application"
-                    >
-                      <span
-                        class="
-                          tw-border
-                          tw-border-gray-50
-                          tw-border-opacity-25
-                          tw-px-2
-                          tw-py-1
-                          tw-rounded
-                          tw-flex
-                          tw-items-center
-                        "
-                      >
-                        <svg th:replace="icon/document-text::svg(className='tw-h-5 tw-w-5')"></svg>
-                      </span>
-                      <span class="tw-ml-3" th:text="#{nav.add.vacation}"></span>
-                    </a>
-                  </li>
-                  <li role="none" sec:authorize="hasAuthority('OFFICE')">
-                    <a
-                      href="#"
-                      th:href="@{/web/sicknote/new}"
-                      role="menuitem"
-                      class="
-                        tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                        hover:tw-bg-gray-600
-                      "
-                      data-test-id="quick-add-new-sicknote"
-                    >
-                      <span
-                        class="
-                          tw-border
-                          tw-border-gray-50
-                          tw-border-opacity-25
-                          tw-px-2
-                          tw-py-1
-                          tw-rounded
-                          tw-flex
-                          tw-items-center
-                        "
-                      >
-                        <svg th:replace="icon/medkit::svg(className='tw-h-5 tw-w-5')"></svg>
-                      </span>
-                      <span class="tw-ml-3" th:text="#{nav.add.sicknote}"></span>
-                    </a>
-                  </li>
-                  <li role="none" th:if="${navigationOvertimeItemEnabled}">
-                    <a
-                      href="#"
-                      th:href="@{/web/overtime/new}"
-                      role="menuitem"
-                      class="
-                        tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                        hover:tw-bg-gray-600
-                      "
-                      data-test-id="quick-add-new-overtime"
-                    >
-                      <span
-                        class="
-                          tw-border
-                          tw-border-gray-50
-                          tw-border-opacity-25
-                          tw-px-2
-                          tw-py-1
-                          tw-rounded
-                          tw-flex
-                          tw-items-center
-                        "
-                      >
-                        <svg th:replace="icon/clock::svg(className='tw-h-5 tw-w-5')"></svg>
-                      </span>
-                      <span class="tw-ml-3" th:text="#{nav.add.overtime}"></span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <a
-            href="#"
-            th:href="@{/web/application/new}"
-            class="tw-flex tw-items-center"
-            data-test-id="new-application"
-            th:if="${not navigationRequestPopupEnabled}"
-          >
-            <svg
-              th:replace="icon/plus::svg(className='tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
-            ></svg>
-            <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
-          </a>
-          <div class="tw-relative">
-            <a
-              href="#avatar-menu"
-              class="tw-no-underline tw-text-gray-800 hover:tw-text-black tw-transition-colors"
-              id="avatar-link"
-              aria-expanded="false"
-              aria-haspopup="true"
-              data-test-id="avatar"
-            >
-              <img
-                src="#"
-                th:src="${menuGravatarUrl + '?d=mm'}"
-                alt=""
-                class="gravatar tw-rounded-full"
-                width="24px"
-                height="24px"
-                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-              />
-              <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+              <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
             </a>
-            <div
-              id="avatar-menu"
-              class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
-              aria-hidden="true"
-              data-test-id="avatar-popupmenu"
-            >
-              <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner" style="max-width: 78%">
-                <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
-                  <li role="none" class="tw-mb-4">
-                    <a
-                      href="#"
-                      th:href="@{/web/person/{userId}/overview(userId=${userId})}"
-                      role="menuitem"
-                      class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2"
-                    >
-                      <span class="tw-flex tw-items-center">
-                        <img
-                          src="#"
-                          th:src="${menuGravatarUrl + '?d=mm&s=128'}"
-                          alt=""
-                          class="gravatar tw-rounded-full"
-                          width="64px"
-                          height="64px"
-                          onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                        />
-                        <span class="tw-ml-6 tw-flex-1 tw-flex tw-flex-col tw-font-bold">
-                          <span class="tw-sr-only" th:text="#{nav.user.title}"></span>
-                          <span th:text="${userFirstName}"></span>
-                          <span th:text="${userLastName}"></span>
+            <div class="tw-relative">
+              <a
+                href="#avatar-menu"
+                class="tw-no-underline tw-text-gray-800 hover:tw-text-black tw-transition-colors"
+                id="avatar-link"
+                aria-expanded="false"
+                aria-haspopup="true"
+                data-test-id="avatar"
+              >
+                <img
+                  src="#"
+                  th:src="${menuGravatarUrl + '?d=mm'}"
+                  alt=""
+                  class="gravatar tw-rounded-full"
+                  width="24px"
+                  height="24px"
+                  onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                />
+                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+              </a>
+              <div
+                id="avatar-menu"
+                class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-transform tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                aria-hidden="true"
+                data-test-id="avatar-popupmenu"
+              >
+                <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner" style="max-width: 78%">
+                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
+                    <li role="none" class="tw-mb-4">
+                      <a
+                        href="#"
+                        th:href="@{/web/person/{userId}/overview(userId=${userId})}"
+                        role="menuitem"
+                        class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2"
+                      >
+                        <span class="tw-flex tw-items-center">
+                          <img
+                            src="#"
+                            th:src="${menuGravatarUrl + '?d=mm&s=128'}"
+                            alt=""
+                            class="gravatar tw-rounded-full"
+                            width="64px"
+                            height="64px"
+                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                          />
+                          <span class="tw-ml-6 tw-flex-1 tw-flex tw-flex-col tw-font-bold">
+                            <span class="tw-sr-only" th:text="#{nav.user.title}"></span>
+                            <span th:text="${userFirstName}"></span>
+                            <span th:text="${userLastName}"></span>
+                          </span>
                         </span>
-                      </span>
-                    </a>
-                  </li>
-                  <li role="none" class="tw-mb-1">
-                    <a
-                      th:href="${menuHelpUrl}"
-                      role="menuitem"
-                      class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
-                        <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
-                      </span>
-                      <span class="tw-ml-4 tw-text-base" th:text="#{nav.help.title}"></span>
-                      <svg th:replace="icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')"></svg>
-                    </a>
-                  </li>
-                  <li role="none" class="tw-mb-1">
-                    <a
-                      href="#"
-                      th:href="@{/web/person/{userId}(userId=${userId})}"
-                      role="menuitem"
-                      class="
+                      </a>
+                    </li>
+                    <li role="none" class="tw-mb-1">
+                      <a
+                        th:href="${menuHelpUrl}"
+                        role="menuitem"
+                        class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                          <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                        </span>
+                        <span class="tw-ml-4 tw-text-base" th:text="#{nav.help.title}"></span>
+                        <svg th:replace="icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')"></svg>
+                      </a>
+                    </li>
+                    <li role="none" class="tw-mb-1">
+                      <a
+                        href="#"
+                        th:href="@{/web/person/{userId}(userId=${userId})}"
+                        role="menuitem"
+                        class="
                           tw-w-full
                           tw-block
                           tw-py-2
@@ -355,47 +353,6 @@
                           tw-bg-transparent
                           tw-text-white
                           hover:tw-bg-gray-600"
-                    >
-                      <span class="tw-flex tw-items-center">
-                        <span
-                          class="
-                            tw-border
-                            tw-border-gray-50
-                            tw-border-opacity-25
-                            tw-px-2
-                            tw-py-1
-                            tw-rounded
-                            tw-flex
-                            tw-items-center
-                            tw-ml-2.5
-                          "
-                        >
-                          <svg th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"></svg>
-                        </span>
-                        <span class="tw-ml-4 tw-text-base" th:text="#{nav.account.title}"></span>
-                      </span>
-                    </a>
-                  </li>
-                  <li role="none" class="tw-mb-1">
-                    <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
-                      <button
-                        role="menuitem"
-                        type="submit"
-                        class="
-                          tw-w-full
-                          tw-block
-                          tw-py-2
-                          tw-pl-5
-                          tw-pr-16
-                          tw-text-sm
-                          tw-no-underline
-                          tw-flex
-                          tw-items-center
-                          tw-bg-transparent
-                          tw-text-white
-                          hover:tw-bg-gray-600
-                        "
-                        data-test-id="logout"
                       >
                         <span class="tw-flex tw-items-center">
                           <span
@@ -411,14 +368,56 @@
                               tw-ml-2.5
                             "
                           >
-                            <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
+                            <svg th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                           </span>
-                          <span class="tw-ml-4 tw-text-base" th:text="#{nav.signout.title}"></span>
+                          <span class="tw-ml-4 tw-text-base" th:text="#{nav.account.title}"></span>
                         </span>
-                      </button>
-                    </form>
-                  </li>
-                </ul>
+                      </a>
+                    </li>
+                    <li role="none" class="tw-mb-1">
+                      <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
+                        <button
+                          role="menuitem"
+                          type="submit"
+                          class="
+                            tw-w-full
+                            tw-block
+                            tw-py-2
+                            tw-pl-5
+                            tw-pr-16
+                            tw-text-sm
+                            tw-no-underline
+                            tw-flex
+                            tw-items-center
+                            tw-bg-transparent
+                            tw-text-white
+                            hover:tw-bg-gray-600
+                          "
+                          data-test-id="logout"
+                        >
+                          <span class="tw-flex tw-items-center">
+                            <span
+                              class="
+                                tw-border
+                                tw-border-gray-50
+                                tw-border-opacity-25
+                                tw-px-2
+                                tw-py-1
+                                tw-rounded
+                                tw-flex
+                                tw-items-center
+                                tw-ml-2.5
+                              "
+                            >
+                              <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
+                            </span>
+                            <span class="tw-ml-4 tw-text-base" th:text="#{nav.signout.title}"></span>
+                          </span>
+                        </button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
