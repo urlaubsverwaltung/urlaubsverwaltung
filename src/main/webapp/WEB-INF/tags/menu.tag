@@ -19,7 +19,7 @@
         </span>
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
-        <div class="tw-flex tw-w-full tw-bg-zinc-100">
+        <div class="navigation-inner tw-flex tw-w-full">
             <div class="tw-order-last" role="menubar">
                 <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
                     <c:choose>

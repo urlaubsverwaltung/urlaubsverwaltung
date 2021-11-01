@@ -8,6 +8,10 @@
   @apply lg:tw-h-auto;
 }
 
+.navigation-inner {
+  @apply tw-bg-zinc-100;
+}
+
 .navigation-link {
   @apply tw-text-zinc-900;
   @apply hover:tw-text-blue-400;
