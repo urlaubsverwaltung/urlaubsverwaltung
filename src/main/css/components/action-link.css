@@ -6,6 +6,10 @@
   @apply tw-duration-100 !important;
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-50;
+  @apply dark:tw-text-neutral-50;
+  @apply dark:hover:tw-text-neutral-50;
+  @apply dark:focus:tw-text-neutral-50;
+  @apply dark:tw-text-opacity-75;
 }
 
 .action-link:hover {
