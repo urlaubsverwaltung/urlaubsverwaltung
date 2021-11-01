@@ -2,6 +2,30 @@ duet-date-picker {
   --duet-color-button: #eee;
 }
 
+@media (prefers-color-scheme: dark) {
+  duet-date-picker {
+    --duet-color-primary: #005fcc;
+    --duet-color-text: theme("colors.neutral.50");
+    --duet-color-text-active: theme("colors.neutral.50");
+    --duet-color-placeholder: theme("colors.neutral.50");
+    --duet-color-button: theme("colors.neutral.800");
+    --duet-color-surface: theme("colors.neutral.800");
+    --duet-color-overlay: rgba(0, 0, 0, 0.8);
+    --duet-color-border: #fff;
+
+    --duet-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --duet-font-normal: 400;
+    --duet-font-bold: 600;
+
+    --duet-radius: 4px;
+    --duet-z-index: 600;
+  }
+
+  .duet-date__dialog-content {
+    @apply tw-border-neutral-600;
+  }
+}
+
 duet-date-picker.form-control {
   padding: 0;
 }

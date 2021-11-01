@@ -5,7 +5,7 @@
 <%@attribute name="icon" fragment="true" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
-<div class="box tw-bg-white tw-flex tw-items-start ${className}">
+<div class="box tw-flex tw-items-start ${className}">
     <div class="tw-mr-6 tw-p-1">
         <jsp:invoke fragment="icon" />
     </div>

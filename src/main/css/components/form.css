@@ -7,6 +7,12 @@
   @apply tw-rounded-md;
 }
 
+@media (prefers-color-scheme: dark) {
+  .form-control {
+    border-color: theme("colors.neutral.600") !important;
+  }
+}
+
 .form-control:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
@@ -188,4 +194,20 @@ textarea.error {
 
 .search-field {
   margin-bottom: 21px;
+}
+
+.select-caret {
+  @apply tw-text-zinc-700;
+}
+
+@media (prefers-color-scheme: dark) {
+  input, select, textarea {
+    @apply tw-border-neutral-600 !important;
+    @apply tw-bg-neutral-700 !important;
+    @apply tw-text-neutral-50 !important;
+  }
+
+  .select-caret {
+    @apply tw-text-neutral-50;
+  }
 }
