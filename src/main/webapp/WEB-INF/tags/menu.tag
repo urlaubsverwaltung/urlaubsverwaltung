@@ -213,7 +213,7 @@
                                 class="tw-flex tw-items-center"
                                 data-test-id="new-application"
                             >
-                                <icon:plus className="tw-w-6 tw-h-6 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" strokeWidth="3" />
+                                <icon:plus className="tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.vacation" />
                                 </span>
