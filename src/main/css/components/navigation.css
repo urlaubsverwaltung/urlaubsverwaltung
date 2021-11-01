@@ -136,6 +136,7 @@
   @apply tw-transition-colors;
   @apply tw-text-zinc-800;
   @apply hover:tw-text-black;
+  @apply focus:tw-text-black;
 }
 
 .nav-popup-menu-button_icon {
@@ -143,6 +144,7 @@
   @apply tw-text-opacity-75;
   @apply tw-transition-colors;
   @apply hover:tw-text-opacity-100;
+  @apply focus:tw-text-opacity-100;
 }
 
 .nav-popup-menu_link,
@@ -151,10 +153,12 @@
   @apply tw-text-white;
   /* override default anchor hover color to keep color for '--no-hover' */
   @apply hover:tw-text-white;
+  @apply focus:tw-text-white;
 }
 
 .nav-popup-menu_link {
   @apply hover:tw-bg-zinc-600;
+  @apply focus:tw-bg-zinc-600;
 }
 
 .nav-popup-menu_link-icon {
