@@ -45,6 +45,9 @@
   @apply tw-border-zinc-200;
   @apply tw-bg-zinc-50;
   @apply tw-text-zinc-600;
+  @apply dark:tw-border-neutral-600;
+  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-text-neutral-100;
 }
 
 .button:hover:not(:disabled),
@@ -52,6 +55,8 @@
 .button:focus {
   @apply tw-border-zinc-300;
   @apply tw-bg-zinc-100;
+  @apply dark:tw-border-neutral-500;
+  @apply dark:tw-bg-neutral-700;
 }
 
 .button-main,
