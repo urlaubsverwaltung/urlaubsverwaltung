@@ -4,6 +4,8 @@
   @apply tw-items-center !important;
   @apply tw-transition-opacity !important;
   @apply tw-duration-100 !important;
+  @apply tw-text-zinc-900;
+  @apply tw-text-opacity-50;
 }
 
 .action-link:hover {
