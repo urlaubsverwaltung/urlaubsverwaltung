@@ -20,7 +20,7 @@
   @apply tw-transition-colors;
 }
 
-.navigation-link:hover .navigation-link-icon {
+.navigation-link:is(:hover, :focus) .navigation-link-icon {
   @apply tw-text-blue-400;
 }
 
