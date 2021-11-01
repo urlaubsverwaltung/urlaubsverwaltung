@@ -24,15 +24,15 @@
                 <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
                     <c:choose>
                         <c:when test="${navigationRequestPopupEnabled}">
-                            <div class="tw-relative">
+                            <divbutton class="tw-relative">
                                 <button
                                     id="add-something-new"
-                                    class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
+                                    class="nav-popup-menu-button tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
                                     aria-expanded="false"
                                     aria-haspopup="true"
                                     data-test-id="add-something-new"
                                 >
-                                    <icon:plus className="tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
+                                    <icon:plus className="nav-popup-menu-button_icon tw-w-7 tw-h-7" />
                                     <span class="tw-sr-only">
                                         <spring:message code="nav.add.button.text" />
                                     </span>
@@ -53,15 +53,15 @@
                                                 <a
                                                     href="${URL_PREFIX}/application/new"
                                                     role="menuitem"
-                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-zinc-600"
+                                                    class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                                                     data-test-id="quick-add-new-application"
                                                 >
-                                                <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
-                                                    <icon:calendar className="tw-h-5 tw-w-5" />
-                                                </span>
+                                                    <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <icon:calendar className="tw-h-5 tw-w-5" />
+                                                    </span>
                                                     <span class="tw-ml-3">
-                                                    <spring:message code="nav.add.vacation" />
-                                                </span>
+                                                        <spring:message code="nav.add.vacation" />
+                                                    </span>
                                                 </a>
                                             </li>
                                             <sec:authorize access="hasAuthority('OFFICE')">
@@ -69,10 +69,10 @@
                                                     <a
                                                         href="${URL_PREFIX}/sicknote/new"
                                                         role="menuitem"
-                                                        class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-zinc-600"
+                                                        class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                                                         data-test-id="quick-add-new-sicknote"
                                                     >
-                                                        <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                                                             <icon:medkit className="tw-h-5 tw-w-5" />
                                                         </span>
                                                         <span class="tw-ml-3">
@@ -86,10 +86,10 @@
                                                     <a
                                                         href="${URL_PREFIX}/overtime/new"
                                                         role="menuitem"
-                                                        class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-zinc-600"
+                                                        class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                                                         data-test-id="quick-add-new-overtime"
                                                     >
-                                                        <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                                                             <icon:briefcase className="tw-h-5 tw-w-5" />
                                                         </span>
                                                         <span class="tw-ml-3">
@@ -101,7 +101,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </divbutton>
                         </c:when>
                         <c:otherwise>
                             <a
@@ -109,7 +109,7 @@
                                 class="tw-flex tw-items-center"
                                 data-test-id="new-application"
                             >
-                                <icon:plus className="tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
+                                <icon:plus className="nav-popup-menu-button_icon tw-w-7 tw-h-7" />
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.vacation" />
                                 </span>
@@ -119,7 +119,7 @@
                     <div class="tw-relative">
                         <a
                             href="#avatar-menu"
-                            class="tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
+                            class="nav-popup-menu-button tw-no-underline"
                             id="avatar-link"
                             aria-expanded="false"
                             aria-haspopup="true"
@@ -147,7 +147,7 @@
                             >
                                 <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
                                     <li role="none" class="tw-mb-4">
-                                        <a href="${URL_PREFIX}/person/${userId}/overview" role="menuitem" class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2">
+                                        <a href="${URL_PREFIX}/person/${userId}/overview" role="menuitem" class="nav-popup-menu_link--no-hover tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-px-2">
                                             <span class="tw-flex tw-items-center">
                                                 <img
                                                     src="<c:out value='${menuGravatarUrl}?d=mm&s=128'/>"
@@ -169,11 +169,11 @@
                                         <a
                                             href="${menuHelpUrl}"
                                             role="menuitem"
-                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600"
+                                            class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
                                             target="_blank"
                                             rel="noopener"
                                         >
-                                            <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                            <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                 <icon:question-mark-circle className="tw-h-6 tw-w-6" />
                                             </span>
                                             <span class="tw-ml-4 tw-text-base">
@@ -185,8 +185,8 @@
                                     <li role="none" class="tw-mb-1">
                                         <a href="${URL_PREFIX}/person/${userId}"
                                            role="menuitem"
-                                           class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600">
-                                            <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                           class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center">
+                                            <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                 <icon:user-circle className="tw-h-6 tw-w-6" />
                                             </span>
                                             <span class="tw-ml-4 tw-text-base">
@@ -199,11 +199,11 @@
                                             <button
                                                 role="menuitem"
                                                 type="submit"
-                                                class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600"
+                                                class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
                                                 data-test-id="logout"
                                             >
                                                 <span class="tw-flex tw-items-center">
-                                                    <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                                    <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                         <icon:logout className="tw-w-6 tw-h-6" />
                                                     </span>
                                                     <span class="tw-ml-4 tw-text-base">

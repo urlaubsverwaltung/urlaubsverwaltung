@@ -132,6 +132,37 @@
   background-color: rgba(31, 41, 55, 0.95);
 }
 
+.nav-popup-menu-button {
+  @apply tw-transition-colors;
+  @apply tw-text-zinc-800;
+  @apply hover:tw-text-black;
+}
+
+.nav-popup-menu-button_icon {
+  @apply tw-text-zinc-900;
+  @apply tw-text-opacity-75;
+  @apply tw-transition-colors;
+  @apply hover:tw-text-opacity-100;
+}
+
+.nav-popup-menu_link,
+.nav-popup-menu_link--no-hover {
+  @apply tw-bg-transparent;
+  @apply tw-text-white;
+  /* override default anchor hover color to keep color for '--no-hover' */
+  @apply hover:tw-text-white;
+}
+
+.nav-popup-menu_link {
+  @apply hover:tw-bg-zinc-600;
+}
+
+.nav-popup-menu_link-icon {
+  @apply tw-border;
+  @apply tw-border-zinc-50;
+  @apply tw-border-opacity-25;
+}
+
 @supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
   .nav-popup-menu-inner {
     --uv-backdrop-blur: 12px;

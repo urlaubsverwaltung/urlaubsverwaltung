@@ -28,14 +28,12 @@
             <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
               <button
                 id="add-something-new"
-                class="tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
+                class="nav-popup-menu-button tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
                 aria-expanded="false"
                 aria-haspopup="true"
                 data-test-id="add-something-new"
               >
-                <svg
-                  th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
-                ></svg>
+                <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
                 <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
                 <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
               </button>
@@ -67,24 +65,10 @@
                           href="#"
                           th:href="@{/web/application/new}"
                           role="menuitem"
-                          class="
-                            tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                            hover:tw-bg-zinc-600
-                          "
+                          class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                           data-test-id="quick-add-new-application"
                         >
-                          <span
-                            class="
-                              tw-border
-                              tw-border-zinc-50
-                              tw-border-opacity-25
-                              tw-px-2
-                              tw-py-1
-                              tw-rounded
-                              tw-flex
-                              tw-items-center
-                            "
-                          >
+                          <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                             <svg th:replace="icon/document-text::svg(className='tw-h-5 tw-w-5')"></svg>
                           </span>
                           <span class="tw-ml-3" th:text="#{nav.add.vacation}"></span>
@@ -95,24 +79,10 @@
                           href="#"
                           th:href="@{/web/sicknote/new}"
                           role="menuitem"
-                          class="
-                            tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                            hover:tw-bg-zinc-600
-                          "
+                          class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                           data-test-id="quick-add-new-sicknote"
                         >
-                        <span
-                          class="
-                            tw-border
-                            tw-border-zinc-50
-                            tw-border-opacity-25
-                            tw-px-2
-                            tw-py-1
-                            tw-rounded
-                            tw-flex
-                            tw-items-center
-                          "
-                        >
+                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                           <svg th:replace="icon/medkit::svg(className='tw-h-5 tw-w-5')"></svg>
                         </span>
                         <span class="tw-ml-3" th:text="#{nav.add.sicknote}"></span>
@@ -123,24 +93,10 @@
                         href="#"
                         th:href="@{/web/overtime/new}"
                         role="menuitem"
-                        class="
-                          tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                          hover:tw-bg-zinc-600
-                        "
+                        class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                         data-test-id="quick-add-new-overtime"
                       >
-                        <span
-                          class="
-                            tw-border
-                            tw-border-zinc-50
-                            tw-border-opacity-25
-                            tw-px-2
-                            tw-py-1
-                            tw-rounded
-                            tw-flex
-                            tw-items-center
-                          "
-                        >
+                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                           <svg th:replace="icon/clock::svg(className='tw-h-5 tw-w-5')"></svg>
                         </span>
                         <span class="tw-ml-3" th:text="#{nav.add.overtime}"></span>
@@ -157,15 +113,13 @@
               data-test-id="new-application"
               th:if="${not navigationRequestPopupEnabled}"
             >
-              <svg
-                th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
-              ></svg>
+              <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
               <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
             </a>
             <div class="tw-relative">
               <a
                 href="#avatar-menu"
-                class="tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
+                class="nav-popup-menu_link--no-hover tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
                 id="avatar-link"
                 aria-expanded="false"
                 aria-haspopup="true"
@@ -195,7 +149,7 @@
                         href="#"
                         th:href="@{/web/person/{userId}/overview(userId=${userId})}"
                         role="menuitem"
-                        class="tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-text-white tw-px-2"
+                        class="nav-popup-menu_link--no-hover tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-px-2"
                       >
                         <span class="tw-flex tw-items-center">
                           <img
@@ -219,11 +173,11 @@
                       <a
                         th:href="${menuHelpUrl}"
                         role="menuitem"
-                        class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600"
+                        class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
                         target="_blank"
                         rel="noopener"
                       >
-                        <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                           <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                         </span>
                         <span class="tw-ml-4 tw-text-base" th:text="#{nav.help.title}"></span>
@@ -236,6 +190,7 @@
                         th:href="@{/web/person/{userId}(userId=${userId})}"
                         role="menuitem"
                         class="
+                          nav-popup-menu_link
                           tw-w-full
                           tw-block
                           tw-py-2
@@ -245,24 +200,10 @@
                           tw-no-underline
                           tw-flex
                           tw-items-center
-                          tw-bg-transparent
-                          tw-text-white
-                          hover:tw-bg-zinc-600"
+                        "
                       >
                         <span class="tw-flex tw-items-center">
-                          <span
-                            class="
-                              tw-border
-                              tw-border-zinc-50
-                              tw-border-opacity-25
-                              tw-px-2
-                              tw-py-1
-                              tw-rounded
-                              tw-flex
-                              tw-items-center
-                              tw-ml-2.5
-                            "
-                          >
+                          <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                             <svg th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                           </span>
                           <span class="tw-ml-4 tw-text-base" th:text="#{nav.account.title}"></span>
@@ -275,6 +216,7 @@
                           role="menuitem"
                           type="submit"
                           class="
+                            nav-popup-menu_link
                             tw-w-full
                             tw-block
                             tw-py-2
@@ -284,26 +226,11 @@
                             tw-no-underline
                             tw-flex
                             tw-items-center
-                            tw-bg-transparent
-                            tw-text-white
-                            hover:tw-bg-zinc-600
                           "
                           data-test-id="logout"
                         >
                           <span class="tw-flex tw-items-center">
-                            <span
-                              class="
-                                tw-border
-                                tw-border-zinc-50
-                                tw-border-opacity-25
-                                tw-px-2
-                                tw-py-1
-                                tw-rounded
-                                tw-flex
-                                tw-items-center
-                                tw-ml-2.5
-                              "
-                            >
+                            <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                               <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
                             </span>
                             <span class="tw-ml-4 tw-text-base" th:text="#{nav.signout.title}"></span>

@@ -12,7 +12,7 @@
   }
 }
 
-[class*="button"] {
+.button, .button-main, .button-main-green, .button-danger, .button-info {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -27,13 +27,13 @@
   white-space: nowrap;
 }
 
-[class*="button"] [class*="not-sr-only"] {
+:is(.button, .button-main, .button-main-green, .button-danger, .button-info) [class*="not-sr-only"] {
   /* tailwind not-sr-only sets white-space to 'normal' */
   /* buttons text should not be wrapped however */
   white-space: nowrap !important;
 }
 
-[class*="button"]:disabled {
+:is(.button, .button-main, .button-main-green, .button-danger, .button-info):disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
