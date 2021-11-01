@@ -80,12 +80,18 @@
         <c:set var="heading">
             <spring:message code="application.data.title"/>
         </c:set>
+        <c:set var="BUTTON_SUBMIT_TITLE">
+            <spring:message code="action.apply.vacation"/>
+        </c:set>
     </c:when>
     <c:otherwise>
         <c:set var="ACTION" value="${URL_PREFIX}/application/${application.id}"/>
         <c:set var="ADD_REPLACEMENT_ACTION" value="${URL_PREFIX}/application/${application.id}"/>
         <c:set var="heading">
             <spring:message code="application.data.title.edit"/>
+        </c:set>
+        <c:set var="BUTTON_SUBMIT_TITLE">
+            <spring:message code="action.apply.vacation.edit"/>
         </c:set>
     </c:otherwise>
 </c:choose>
@@ -534,12 +540,10 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <hr/>
-                                <button id="apply-application" type="submit"
-                                        class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2">
-                                    <spring:message code="action.apply.vacation"/>
+                                <button id="apply-application" type="submit" class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2">
+                                    ${BUTTON_SUBMIT_TITLE}
                                 </button>
-                                <button type="button"
-                                        class="button col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>
+                                <button type="button" class="button col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>
                                     <spring:message code="action.cancel"/>
                                 </button>
                             </div>
