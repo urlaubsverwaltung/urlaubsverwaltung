@@ -257,17 +257,10 @@
                 href="#"
                 th:href="@{/web/overview}"
                 id="home-link"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/home::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/home::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span
                     class="tw-ml-5 lg:tw-ml-2 lg:tw-sr-only xl:tw-not-sr-only xl:tw-ml-2"
                     th:text="#{nav.home.title}"
@@ -280,17 +273,10 @@
                 href="#"
                 th:href="@{/web/application/new}"
                 id="application-new-link"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/plus-circle::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/plus-circle::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.apply.title}"></span>
                 </span>
               </a>
@@ -299,17 +285,10 @@
               <a
                 href="#"
                 th:href="@{/web/application}"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/calendar::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/calendar::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.vacation.title}"></span>
                 </span>
               </a>
@@ -318,18 +297,11 @@
               <a
                 href="#"
                 th:href="@{/web/sicknote}"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
                 data-test-id="navigation-sick-notes-link"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/medkit::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.sicknote.title}"></span>
                 </span>
               </a>
@@ -341,17 +313,10 @@
               <a
                 href="#"
                 th:href="@{/web/person(active=true)}"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/user::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/user::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.person.title}"></span>
                 </span>
               </a>
@@ -360,17 +325,10 @@
               <a
                 href="#"
                 th:href="@{/web/department}"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/user-group::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/user-group::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.department.title}"></span>
                 </span>
               </a>
@@ -379,18 +337,11 @@
               <a
                 href="#"
                 th:href="@{/web/settings}"
-                class="
-                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
-                  lg:tw-text-base
-                  hover:tw-text-blue-400
-                  tw-transition-colors
-                "
+                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
                 data-test-id="navigation-settings-link"
               >
                 <span class="tw-flex tw-items-center">
-                  <svg
-                    th:replace="icon/cog::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
-                  ></svg>
+                  <svg th:replace="icon/cog::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.settings.title}"></span>
                 </span>
               </a>

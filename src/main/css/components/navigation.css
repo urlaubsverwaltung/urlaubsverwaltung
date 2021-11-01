@@ -8,6 +8,22 @@
   @apply lg:tw-h-auto;
 }
 
+.navigation-link {
+  @apply tw-text-zinc-900;
+  @apply hover:tw-text-blue-400;
+  @apply tw-transition-colors;
+}
+
+.navigation-link-icon {
+  @apply tw-text-zinc-900;
+  @apply tw-text-opacity-50;
+  @apply tw-transition-colors;
+}
+
+.navigation-link:hover .navigation-link-icon {
+  @apply tw-text-blue-400;
+}
+
 .navigation-content-spacer--left,
 .navigation-content-spacer--right {
   position: relative;
