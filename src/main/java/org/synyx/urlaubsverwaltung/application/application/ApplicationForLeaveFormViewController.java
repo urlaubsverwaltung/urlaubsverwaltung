@@ -286,11 +286,14 @@ class ApplicationForLeaveFormViewController {
                     .and(not(isEqual(person)))
             );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
+
             prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
+
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
-            LOG.info("new application ({}) has errors: {}", appForm, errors);
+
+            LOG.debug("new application ({}) has errors: {}", appForm, errors);
             return APP_FORM;
         }
 
@@ -298,7 +301,7 @@ class ApplicationForLeaveFormViewController {
         final Person applier = personService.getSignedInUser();
         final Application savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
 
-        LOG.info("new application with success applied {}", savedApplicationForLeave);
+        LOG.debug("new application with success applied {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 
@@ -367,7 +370,7 @@ class ApplicationForLeaveFormViewController {
                     .and(not(isEqual(signedInUser))))
             );
 
-            LOG.info("edit application ({}) has errors: {}", appForm, errors);
+            LOG.debug("edit application ({}) has errors: {}", appForm, errors);
             return APP_FORM;
         }
 
@@ -379,7 +382,7 @@ class ApplicationForLeaveFormViewController {
             return "application/app_notwaiting";
         }
 
-        LOG.info("Edited application with success applied {}", savedApplicationForLeave);
+        LOG.debug("Edited application with success applied {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("editSuccess", true);
 
