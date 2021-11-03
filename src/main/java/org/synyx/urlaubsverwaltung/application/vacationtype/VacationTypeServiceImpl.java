@@ -48,7 +48,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     private Function<VacationTypeEntity, VacationType> convertToVacationType() {
-        return vacationTypeEntity -> new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey());
+        return vacationTypeEntity -> new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval());
     }
 
     public static VacationTypeEntity convert(VacationType vacationType) {
@@ -57,10 +57,11 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         vacationTypeEntity.setActive(vacationType.isActive());
         vacationTypeEntity.setCategory(vacationType.getCategory());
         vacationTypeEntity.setMessageKey(vacationType.getMessageKey());
+        vacationTypeEntity.setRequiresApproval(vacationType.isRequiresApproval());
         return vacationTypeEntity;
     }
 
     public static VacationType convert(VacationTypeEntity vacationTypeEntity) {
-        return new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey());
+        return new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval());
     }
 }

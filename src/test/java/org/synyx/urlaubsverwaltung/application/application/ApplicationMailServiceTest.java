@@ -527,6 +527,181 @@ class ApplicationMailServiceTest {
         assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
+    @Test
+    void sendConfirmationAllowedDirectly() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setRequiresApproval(false);
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(WAITING);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendConfirmationAllowedDirectly(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.user");
+        assertThat(mail.getTemplateName()).isEqualTo("confirm_allowed_directly");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
+    void sendConfirmationAllowedDirectlyByOffice() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setRequiresApproval(false);
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(WAITING);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendConfirmationAllowedDirectlyByOffice(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.office");
+        assertThat(mail.getTemplateName()).isEqualTo("new_directly_allowed_applications_by_office");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
+    void sendNewDirectlyAllowedApplicationNotification() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationCategory vacationCategory = HOLIDAY;
+        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+        person.setFirstName("Lord");
+        person.setLastName("Helmchen");
+
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setRequiresApproval(false);
+        vacationType.setCategory(vacationCategory);
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.MIN);
+        application.setEndDate(LocalDate.MAX);
+        application.setStatus(WAITING);
+
+        final List<Person> recipients = singletonList(person);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(recipients);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendNewDirectlyAllowedApplicationNotification(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(recipients);
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.boss");
+        assertThat(mail.getSubjectMessageArguments()[0]).isEqualTo("Lord Helmchen");
+        assertThat(mail.getTemplateName()).isEqualTo("new_directly_allowed_applications");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
+    void notifyHolidayReplacementAboutDirectlyAllowedApplication() {
+
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final Person holidayReplacement = new Person();
+
+        final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
+        replacementEntity.setPerson(holidayReplacement);
+        replacementEntity.setNote("awesome note");
+
+        final Person applicant = new Person();
+        applicant.setFirstName("Theo");
+        applicant.setLastName("Fritz");
+
+        final Application application = new Application();
+        application.setPerson(applicant);
+        application.setHolidayReplacements(List.of(replacementEntity));
+        application.setDayLength(dayLength);
+        application.setStartDate(LocalDate.of(2020, 10, 2));
+        application.setEndDate(LocalDate.of(2020, 10, 3));
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("holidayReplacement", holidayReplacement);
+        model.put("holidayReplacementNote", "awesome note");
+        model.put("dayLength", "FULL");
+
+        sut.notifyHolidayReplacementAboutDirectlyAllowedApplication(replacementEntity, application);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(holidayReplacement));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.allowedDirectly.holidayReplacement");
+        assertThat(mail.getTemplateName()).isEqualTo("notify_holiday_replacement_directly_allow");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
 
     @Test
     void sendAppliedForLeaveByOfficeNotification() {

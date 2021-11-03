@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
@@ -58,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REFERRED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -203,6 +205,94 @@ class ApplicationInteractionServiceImplTest {
         sut.apply(applicationForLeave, applier, comment);
 
         verify(accountInteractionService).updateRemainingVacationDays(2013, person);
+    }
+
+    // Direct ALLOW APPLICATION FOR LEAVE -------------------------------------------------------------------------------------
+    @Test
+    void ensureApplicationForLeaveCanBeAllowedDirectly() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Optional<String> comment = of("Foo");
+
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false);
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setVacationType(convert(holidayType));
+        applicationForLeave.setStatus(ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person)).thenReturn(new ApplicationComment(person, clock));
+
+        sut.directAllow(applicationForLeave, person, comment);
+
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
+
+        verify(calendarSyncService, never()).addAbsence(any(Absence.class));
+        verifyNoInteractions(absenceMappingService);
+
+        verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
+    }
+
+    @Test
+    void ensureApplicationForLeaveCanBeAllowedDirectlyWithCalendarSync() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Optional<String> comment = of("Foo");
+
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false);
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setVacationType(convert(holidayType));
+        applicationForLeave.setStatus(ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person)).thenReturn(new ApplicationComment(person, clock));
+
+        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
+        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("eventId"));
+
+        sut.directAllow(applicationForLeave, person, comment);
+
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
+
+        verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
+    }
+
+
+    @Test
+    void ensureApplicationForLeaveCanBeAllowedDirectlyByOffice() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person office = new Person("office", "Muster", "Marlene", "muster@example.org");
+        office.setPermissions(List.of(OFFICE));
+        final Optional<String> comment = of("Foo");
+
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false);
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setVacationType(convert(holidayType));
+        applicationForLeave.setStatus(ALLOWED);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, office)).thenReturn(new ApplicationComment(person, clock));
+
+        sut.directAllow(applicationForLeave, office, comment);
+
+        assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, office);
+
+        verify(calendarSyncService, never()).addAbsence(any(Absence.class));
+        verifyNoInteractions(absenceMappingService);
+
+        verify(applicationMailService, never()).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
 
     // ALLOW APPLICATION FOR LEAVE -------------------------------------------------------------------------------------

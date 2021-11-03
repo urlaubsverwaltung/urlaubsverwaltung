@@ -127,7 +127,14 @@
                                 <spring:message code="application.progress.TEMPORARY_ALLOWED"/> <uv:date date="${app.editedDate}"/>
                             </c:when>
                             <c:when test="${app.status == 'ALLOWED'}">
-                                <spring:message code="application.progress.ALLOWED"/> <uv:date date="${app.editedDate}"/>
+                                <c:choose>
+                                    <c:when test="${app.editedDate != null}">
+                                        <spring:message code="application.progress.ALLOWED"/> <uv:date date="${app.editedDate}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="application.progress.ALLOWED_DIRECTLY"/> <uv:date date="${app.applicationDate}"/>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:when>
                             <c:when test="${app.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
                                 <spring:message code="application.progress.ALLOWED_CANCELLATION_REQUESTED"/> <uv:date date="${app.cancelDate}"/>

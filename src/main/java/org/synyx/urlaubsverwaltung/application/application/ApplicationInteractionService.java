@@ -33,6 +33,17 @@ public interface ApplicationInteractionService {
     Application allow(Application application, Person privilegedUser, Optional<String> comment);
 
     /**
+     * Sets the application's state to allowed  and informs the
+     * person of the application for leave that his vacation has been directly allowed.
+     *
+     * @param application for leave
+     * @param applier     that allowed the application for leave
+     * @param comment     giving further information to allowing of application for leave (is optional)
+     * @return the allowed application for leave
+     */
+    Application directAllow(Application application, Person applier, Optional<String> comment);
+
+    /**
      * Sets the application's state to rejected (only by privileged user) and informs the person of the application for
      * leave and all privileged persons that his vacation has been rejected.
      *

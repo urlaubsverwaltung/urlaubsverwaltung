@@ -23,7 +23,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final VacationType newVacationType = new VacationType(1, true, OVERTIME, "message_key");
+        final VacationType newVacationType = new VacationType(1, true, OVERTIME, "message_key", true);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setHours(BigDecimal.ONE);
@@ -42,7 +42,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final VacationType newVacationType = new VacationType(1, true, SPECIALLEAVE, "message_key");
+        final VacationType newVacationType = new VacationType(1, true, SPECIALLEAVE, "message_key", true);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setReason("Birth of a child");
@@ -61,7 +61,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 
@@ -79,7 +79,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 

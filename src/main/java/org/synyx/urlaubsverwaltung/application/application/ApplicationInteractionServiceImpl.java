@@ -29,6 +29,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED_DIRECTLY;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.APPLIED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED;
@@ -171,6 +172,52 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         throw new IllegalStateException("Applications for leave can be allowed only by a privileged user!");
+    }
+
+    @Override
+    public Application directAllow(Application application, Person applier, Optional<String> comment) {
+
+        application.setStatus(ALLOWED);
+        application.setApplier(applier);
+        application.setApplicationDate(LocalDate.now(clock));
+
+        final Application savedApplication = applicationService.save(application);
+        LOG.info("Created application for leave and allow directly via not required approval: {}", savedApplication);
+
+        // COMMENT
+        final ApplicationComment createdComment = commentService.create(savedApplication, ALLOWED_DIRECTLY, comment, applier);
+
+        // EMAILS
+        final Person person = application.getPerson();
+        if (person.equals(applier)) {
+            // person himself applies for leave
+            // person gets a confirmation email with the data of the application for leave
+            applicationMailService.sendConfirmationAllowedDirectly(savedApplication, createdComment);
+        } else if (applier.hasRole(OFFICE)) {
+            // if a person with the office role applies for leave on behalf of the person
+            // person gets an email that someone else has applied for leave on behalf
+            applicationMailService.sendConfirmationAllowedDirectlyByOffice(savedApplication, createdComment);
+        }
+
+        // relevant management person gets email that a new directly allowed application for leave has been created
+        applicationMailService.sendNewDirectlyAllowedApplicationNotification(savedApplication, createdComment);
+
+        // send email to holiday replacement to inform beforehand the confirmation
+        for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+            applicationMailService.notifyHolidayReplacementAboutDirectlyAllowedApplication(holidayReplacement, savedApplication);
+        }
+
+        // update remaining vacation days (if there is already a holidays account for next year
+        // TODO - wann brachen wir das? Nur wenn die category HOLIDAY ist?
+        accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
+
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
+            final Absence absence = new Absence(savedApplication.getPerson(), savedApplication.getPeriod(), absenceTimeConfiguration);
+            calendarSyncService.addAbsence(absence)
+                .ifPresent(eventId -> absenceMappingService.create(savedApplication.getId(), VACATION, eventId));
+        }
+        return savedApplication;
     }
 
 

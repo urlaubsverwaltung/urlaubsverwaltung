@@ -101,7 +101,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key"));
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

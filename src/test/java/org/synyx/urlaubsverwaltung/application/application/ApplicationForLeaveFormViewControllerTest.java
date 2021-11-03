@@ -70,6 +70,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -116,7 +117,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -145,7 +146,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -174,7 +175,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -395,9 +396,24 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
 
         perform(post("/web/application")
-            .param("vacationType.category", "HOLIDAY"));
+            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.requiresApproval", "true"));
 
         verify(applicationInteractionService).apply(any(), eq(person), any());
+    }
+
+    @Test
+    void postNewApplicationFormCallsServiceToDirectAllowApplication() throws Exception {
+
+        final Person person = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(applicationInteractionService.directAllow(any(), any(), any())).thenReturn(someApplication());
+
+        perform(post("/web/application")
+            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.requiresApproval", "false"));
+
+        verify(applicationInteractionService).directAllow(any(), eq(person), any());
     }
 
     @Test
@@ -410,7 +426,8 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(applicationWithId(applicationId));
 
         perform(post("/web/application")
-            .param("vacationType.category", "HOLIDAY"))
+            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.requiresApproval", "true"))
             .andExpect(flash().attribute("applySuccess", true))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + applicationId));
@@ -1134,21 +1151,25 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     private Person personWithRole(Role role) {
-        Person person = new Person();
+        final Person person = new Person();
         person.setPermissions(List.of(role));
 
         return person;
     }
 
     private Person personWithId(int id) {
-        Person person = new Person();
+        final Person person = new Person();
         person.setId(id);
 
         return person;
     }
 
     private Application someApplication() {
-        Application application = new Application();
+
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true);
+
+        final Application application = new Application();
+        application.setVacationType(convert(holidayType));
         application.setStartDate(LocalDate.now().plusDays(10));
         application.setEndDate(LocalDate.now().plusDays(20));
 
@@ -1156,7 +1177,7 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     private Application applicationWithId(int id) {
-        Application application = someApplication();
+        final Application application = someApplication();
         application.setId(id);
 
         return application;

@@ -18,6 +18,7 @@ public enum ApplicationCommentAction {
     CONVERTED,
     TEMPORARY_ALLOWED,
     ALLOWED,
+    ALLOWED_DIRECTLY,
     REJECTED,
     CANCELLED,
     CANCEL_REQUESTED,

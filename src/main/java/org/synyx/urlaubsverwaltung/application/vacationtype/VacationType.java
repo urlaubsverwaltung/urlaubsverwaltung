@@ -11,16 +11,18 @@ public class VacationType {
     private boolean active;
     private VacationCategory category;
     private String messageKey;
+    private boolean requiresApproval;
 
     public VacationType() {
         // ok
     }
 
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey) {
+    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval) {
         this.id = id;
         this.active = active;
         this.category = category;
         this.messageKey = messageKey;
+        this.requiresApproval = requiresApproval;
     }
 
     public boolean isActive() {
@@ -59,6 +61,14 @@ public class VacationType {
         this.messageKey = messageKey;
     }
 
+    public boolean isRequiresApproval() {
+        return requiresApproval;
+    }
+
+    public void setRequiresApproval(boolean requiresApproval) {
+        this.requiresApproval = requiresApproval;
+    }
+
     @Override
     public String toString() {
         return "VacationType{" +
@@ -66,6 +76,7 @@ public class VacationType {
             ", active=" + active +
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
+            ", requiresApproval='" + requiresApproval + '\'' +
             '}';
     }
 
@@ -74,11 +85,11 @@ public class VacationType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VacationType that = (VacationType) o;
-        return active == that.active && category == that.category && Objects.equals(messageKey, that.messageKey);
+        return active == that.active && requiresApproval == that.requiresApproval && category == that.category && Objects.equals(messageKey, that.messageKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(active, category, messageKey);
+        return Objects.hash(active, category, messageKey, requiresApproval);
     }
 }
