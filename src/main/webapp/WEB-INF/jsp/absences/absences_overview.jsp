@@ -52,17 +52,14 @@
                         <div class="col-md-4">
                             <uv:select id="yearSelect" name="year">
                                 <c:forEach var="i" begin="1" end="9">
-                                    <option
-                                        value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}>
+                                    <option value="${currentYear - 10 + i}" ${(currentYear - 10 + i) == selectedYear ? 'selected="selected"' : ''}>
                                         <c:out value="${currentYear - 10 + i}"/>
                                     </option>
                                 </c:forEach>
-                                <option
-                                    value="${currentYear}" ${currentYear == selectedYear ? 'selected="selected"' : ''}>
+                                <option value="${currentYear}" ${currentYear == selectedYear ? 'selected="selected"' : ''}>
                                     <c:out value="${currentYear}"/>
                                 </option>
-                                <option
-                                    value="${currentYear + 1}" ${(currentYear + 1) == selectedYear ? 'selected="selected"' : ''}>
+                                <option value="${currentYear + 1}" ${(currentYear + 1) == selectedYear ? 'selected="selected"' : ''}>
                                     <c:out value="${currentYear + 1}"/>
                                 </option>
                             </uv:select>
@@ -385,7 +382,5 @@
             </table>
         </div>
     </div>
-
 </div>
-
 </body>

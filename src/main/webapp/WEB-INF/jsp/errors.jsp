@@ -48,7 +48,5 @@
         <a href="${URL_PREFIX}/overview"><spring:message code="errorPage.back"/></a>
     </p>
 </div>
-
 </body>
-
 </html>
