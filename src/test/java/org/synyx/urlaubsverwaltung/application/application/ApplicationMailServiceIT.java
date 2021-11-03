@@ -729,7 +729,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Lieschen Müller hat dich bei einer Abwesenheit als Vertretung vorgesehen.");
         assertThat(content).contains("Es handelt sich um den Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig.");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
         assertThat(content).contains("Eine Nachricht an die Vertretung");
     }
 
@@ -764,7 +764,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("die Abwesenheit von Lieschen Müller wurde genehmigt.");
         assertThat(content).contains("Du wurdest damit für den Zeitraum vom 29.05.2020 bis 29.05.2020, ganztägig als Vertretung eingetragen.");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
         assertThat(content).contains("Eine Nachricht an die Vertretung");
 
         final List<DataSource> attachments = getAttachments(msg);
@@ -802,7 +802,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("im Zeitraum von 18.12.2020 bis 18.12.2020, ganztägig,");
         assertThat(content).contains("nicht mehr als Vertretung vorgesehen.");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
 
         final List<DataSource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
@@ -839,7 +839,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("der Zeitraum für die Abwesenheit von Lieschen Müller bei dem du als Vertretung vorgesehen bist, hat sich geändert.");
         assertThat(content).contains("Der neue Zeitraum ist von 18.12.2020 bis 18.12.2020, ganztägig.");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
         assertThat(content).contains("Eine Nachricht an die Vertretung");
     }
 
@@ -2146,7 +2146,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Notiz:");
         assertThat(content).contains("Some notes");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
     }
 
     @Test
@@ -2181,7 +2181,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Notiz:");
         assertThat(content).contains("Some notes");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
     }
 
     @Test
@@ -2214,7 +2214,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("deine Urlaubsvertretung für Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 beginnt morgen.");
         assertThat(content).doesNotContain("Notiz:");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
-        assertThat(content).contains("/web/application#holiday-replacement");
+        assertThat(content).contains("/web/application/replacement");
     }
 
     private void verifyInbox(Person inboxOwner, List<Application> applications) throws MessagingException, IOException {

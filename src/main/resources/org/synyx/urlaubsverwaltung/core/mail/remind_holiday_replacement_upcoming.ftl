@@ -7,4 +7,4 @@ Notiz:
 ${replacementNote}${'\n'}
 </#if>
 
-Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter ${baseLinkURL}web/application#holiday-replacement
+Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter ${baseLinkURL}web/application/replacement
