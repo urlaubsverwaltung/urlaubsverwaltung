@@ -8,4 +8,4 @@ Notiz von ${application.person.niceName} an dich:
 ${holidayReplacementNote}
 </#if>
 
-Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter ${baseLinkURL}web/application#holiday-replacement
+Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter ${baseLinkURL}web/application/replacement
