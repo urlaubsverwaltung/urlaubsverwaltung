@@ -51,9 +51,10 @@ class VacationTypeEntityTest {
         vacationType.setMessageKey("messageKey");
         vacationType.setId(10);
         vacationType.setActive(true);
+        vacationType.setRequiresApproval(false);
 
         final String vacationTypeToString = vacationType.toString();
-        assertThat(vacationTypeToString).isEqualTo("VacationType{id=10, active=true, category=HOLIDAY, messageKey='messageKey'}");
+        assertThat(vacationTypeToString).isEqualTo("VacationType{id=10, active=true, category=HOLIDAY, messageKey='messageKey', requiresApproval='false'}");
     }
 
     @Test

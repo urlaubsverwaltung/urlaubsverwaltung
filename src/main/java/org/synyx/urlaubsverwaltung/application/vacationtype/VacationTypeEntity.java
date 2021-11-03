@@ -25,6 +25,8 @@ public class VacationTypeEntity {
 
     private String messageKey;
 
+    private boolean requiresApproval;
+
     public boolean isActive() {
         return active;
     }
@@ -61,6 +63,14 @@ public class VacationTypeEntity {
         this.messageKey = messageKey;
     }
 
+    public boolean isRequiresApproval() {
+        return requiresApproval;
+    }
+
+    public void setRequiresApproval(boolean requiresApproval) {
+        this.requiresApproval = requiresApproval;
+    }
+
     @Override
     public String toString() {
         return "VacationType{" +
@@ -68,6 +78,7 @@ public class VacationTypeEntity {
             ", active=" + active +
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
+            ", requiresApproval='" + requiresApproval + '\'' +
             '}';
     }
 

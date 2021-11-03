@@ -130,7 +130,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         while (hasNextAccount) {
             final int nextYear = startYear + 1;
-            Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(nextYear, person);
+            final Optional<Account> nextYearsHolidaysAccountOptional = accountService.getHolidaysAccount(nextYear, person);
 
             if (nextYearsHolidaysAccountOptional.isPresent()) {
                 final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(startYear, person);

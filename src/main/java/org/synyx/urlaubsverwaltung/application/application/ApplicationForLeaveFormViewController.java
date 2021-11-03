@@ -299,9 +299,14 @@ class ApplicationForLeaveFormViewController {
 
         final Application app = mapToApplication(appForm);
         final Person applier = personService.getSignedInUser();
-        final Application savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
 
-        LOG.debug("new application with success applied {}", savedApplicationForLeave);
+        final Application savedApplicationForLeave;
+        if (app.getVacationType().isRequiresApproval()) {
+            savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
+        } else {
+            savedApplicationForLeave = applicationInteractionService.directAllow(app, applier, ofNullable(appForm.getComment()));
+        }
+        LOG.debug("new application has been saved {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 

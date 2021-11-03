@@ -18,6 +18,8 @@ public enum ApplicationCommentAction {
     CONVERTED,
     TEMPORARY_ALLOWED,
     ALLOWED,
+    // TODO add translations etc
+    ALLOWED_DIRECTLY,
     REJECTED,
     CANCELLED,
     CANCEL_REQUESTED,

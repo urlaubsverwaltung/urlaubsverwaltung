@@ -54,7 +54,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
         applicationForLeaveStatistics.addWaitingVacationDays(vacationType, ONE);
@@ -96,7 +96,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwo.setFirstName("personTwoFirstName");
         personTwo.setLastName("personTwoLastName");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
 
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);

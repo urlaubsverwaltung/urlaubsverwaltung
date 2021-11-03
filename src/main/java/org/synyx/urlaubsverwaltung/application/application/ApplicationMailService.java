@@ -376,6 +376,112 @@ class ApplicationMailService {
     }
 
     /**
+     * Sends an email to the applicant that the application
+     * has been created successfully.
+     *
+     * @param application confirmed application
+     * @param comment     additional comment for the confirming application
+     */
+    void sendConfirmationAllowedDirectly(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
+
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.allowedDirectly.user")
+            .withTemplate("confirm_allowed_directly", model)
+            .build();
+
+        mailService.send(mailToApplicant);
+    }
+
+    /**
+     * Sends an email to the person of the given application
+     * that the office has entered a application directly on behalf of himself.
+     *
+     * @param application confirmed application on behalf
+     * @param comment     additional comment for the application
+     */
+    void sendConfirmationAllowedDirectlyByOffice(Application application, ApplicationComment comment) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
+
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.allowedDirectly.office")
+            .withTemplate("new_directly_allowed_applications_by_office", model)
+            .build();
+
+        mailService.send(mailToApplicant);
+    }
+
+    /**
+     * Sends an email to the bosses notifying
+     * that there is a new directly allowed application for leave
+     * which has to be allowed or rejected by a boss.
+     *
+     * @param application to allow or reject
+     * @param comment     additional comment for the application
+     */
+    void sendNewDirectlyAllowedApplicationNotification(Application application, ApplicationComment comment) {
+
+        final List<Application> applicationsForLeave =
+            departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
+        model.put("departmentVacations", applicationsForLeave);
+
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
+        final Mail mailToAllowAndRemind = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.application.allowedDirectly.boss", application.getPerson().getNiceName())
+            .withTemplate("new_directly_allowed_applications", model)
+            .build();
+
+        mailService.send(mailToAllowAndRemind);
+    }
+
+    /**
+     * Sends mail to person to inform that he/she
+     * has been selected as holiday replacement
+     * for an directly allowed application
+     * that stands in while someone is on holiday.
+     *
+     * @param application to inform the holiday replacement
+     */
+    void notifyHolidayReplacementAboutDirectlyAllowedApplication(HolidayReplacementEntity holidayReplacement, Application application) {
+
+        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
+        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+
+        final Mail mailToReplacement = Mail.builder()
+            .withRecipient(holidayReplacement.getPerson())
+            .withSubject("subject.application.allowedDirectly.holidayReplacement", application.getPerson().getNiceName())
+            .withTemplate("notify_holiday_replacement_directly_allow", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
+            .build();
+
+        mailService.send(mailToReplacement);
+    }
+
+    /**
      * Sends an email to the person of the given application
      * that the office has applied for leave on behalf of himself.
      *
