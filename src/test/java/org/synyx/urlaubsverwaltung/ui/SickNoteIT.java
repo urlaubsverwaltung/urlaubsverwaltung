@@ -28,6 +28,7 @@ import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -44,7 +45,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
-import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -64,7 +65,7 @@ class SickNoteIT {
     @Container
     private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
         .withRecordingMode(RECORD_FAILING, new File("target"))
-        .withCapabilities(new ChromeOptions());
+        .withCapabilities(chromeOptions());
 
     static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
 
@@ -90,7 +91,7 @@ class SickNoteIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
@@ -117,7 +118,7 @@ class SickNoteIT {
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
@@ -145,7 +146,7 @@ class SickNoteIT {
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
@@ -178,7 +179,7 @@ class SickNoteIT {
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
@@ -208,7 +209,7 @@ class SickNoteIT {
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, ENGLISH);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
@@ -241,7 +242,7 @@ class SickNoteIT {
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver, messageSource, ENGLISH);
+        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver, messageSource, GERMAN);
 
         navigationPage.clickSickNotes();
         wait.until(pageIsVisible(sickNoteOverviewPage));
@@ -268,5 +269,11 @@ class SickNoteIT {
 
 
         return savedPerson;
+    }
+
+    private ChromeOptions chromeOptions() {
+        final ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("prefs", Map.of("intl.accept_languages", "de-DE"));
+        return options;
     }
 }

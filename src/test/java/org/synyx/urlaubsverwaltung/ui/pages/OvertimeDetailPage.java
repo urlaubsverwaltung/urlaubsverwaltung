@@ -42,6 +42,6 @@ public class OvertimeDetailPage implements Page {
         final String durationText = driver.findElement(DURATION_SELECTOR).getText().strip();
         // check if the second digit chunk matches the expected minutes
         // this test fails when the overtime entry contains minutes only, of course. improve it when you need it.
-        return durationText.matches(String.format("^\\d+ \\w+ %d \\w+", minutes));
+        return durationText.matches(String.format("^\\d+ \\w+\\. %d \\w+\\.", minutes));
     }
 }

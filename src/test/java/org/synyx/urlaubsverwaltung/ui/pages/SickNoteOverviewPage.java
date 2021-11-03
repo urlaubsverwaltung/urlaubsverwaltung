@@ -27,7 +27,8 @@ public class SickNoteOverviewPage implements Page {
 
     @Override
     public boolean isVisible(WebDriver driver) {
-        return driver.getTitle().equals("Sick notes");
+        final String sickNoteHeaderTitle = messageSource.getMessage("sicknotes.header.title", new Object[]{}, locale);
+        return driver.getTitle().equals(sickNoteHeaderTitle);
     }
 
     public boolean showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
