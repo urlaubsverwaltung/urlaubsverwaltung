@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.ui;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ class ApplicationForLeaveCreateIT {
     @Container
     private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
         .withRecordingMode(RECORD_FAILING, new File("target"))
-        .withCapabilities(new FirefoxOptions());
+        .withCapabilities(new ChromeOptions());
 
     static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
 
