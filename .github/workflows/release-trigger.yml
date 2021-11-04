@@ -19,6 +19,8 @@ on:
 jobs:
   trigger-release:
     runs-on: ubuntu-20.04
+    env:
+      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -45,7 +47,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build
-        run: ./mvnw --batch-mode clean verify
+        run: >
+          ./mvnw $MAVEN_CLI_OPTS
+          -Pcoverage
+          clean verify
       - name: Create Release Notes
         uses: docker://decathlon/release-notes-generator-action:3.1.5
         env:
@@ -64,7 +69,7 @@ jobs:
           github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
       - name: Set release version
-        run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
+        run: ./mvnw $MAVEN_CLI_OPTS versions:set -DnewVersion=${{ github.event.inputs.releaseVersion }}
       - name: Commit release version
         run: git add pom.xml && git commit -m "New Release Version urlaubsverwaltung-${{ github.event.inputs.releaseVersion }}"
       - name: Add release tag
@@ -75,7 +80,7 @@ jobs:
           github_token: ${{ secrets.AM_PAT }}
           branch: ${{ github.ref }}
       - name: Set new snapshot version
-        run: ./mvnw --batch-mode versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
+        run: ./mvnw $MAVEN_CLI_OPTS versions:set -DnewVersion=${{ github.event.inputs.nextVersion }}
       - name: Commit new snapshot version
         run: git add pom.xml && git commit -m "Prepare Next Snapshot Version urlaubsverwaltung-${{ github.event.inputs.nextVersion }}"
       - name: Push snapshot commit

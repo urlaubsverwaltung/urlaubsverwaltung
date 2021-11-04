@@ -14,6 +14,8 @@ jobs:
   build:
     name: build and analyse
     runs-on: ubuntu-20.04
+    env:
+      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -41,11 +43,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build
-        run: ./mvnw --batch-mode -Pcoverage clean verify
+        run: >
+          ./mvnw $MAVEN_CLI_OPTS
+          -Pcoverage
+          clean verify
       - name: Analyse with SonarCloud
         if: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
         run: >
-          ./mvnw --batch-mode
+          ./mvnw $MAVEN_CLI_OPTS
           -Pcoverage
           sonar:sonar
           -Dsonar.host.url=https://sonarcloud.io
