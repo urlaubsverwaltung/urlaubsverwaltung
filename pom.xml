@@ -25,7 +25,6 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>11</java.version>
     <testcontainers.version>1.16.2</testcontainers.version>
-    <selenium.version>3.141.59</selenium.version>
   </properties>
 
   <scm>
@@ -292,29 +291,14 @@
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-remote-driver</artifactId>
-      <version>${selenium.version}</version>
+      <artifactId>selenium-chrome-driver</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-firefox-driver</artifactId>
-      <version>${selenium.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>guava</artifactId>
-          <groupId>com.google.guava</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-support</artifactId>
-      <version>${selenium.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
