@@ -60,7 +60,7 @@
     "css-loader": "5.2.7",
     "cssnano": "5.0.8",
     "date-fns": "2.25.0",
-    "eslint": "6.8.0",
+    "eslint": "8.1.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-prettier": "3.4.1",
     "eslint-plugin-unicorn": "19.0.1",
