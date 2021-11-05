@@ -12,7 +12,6 @@ public interface SettingsService {
      */
     void save(Settings settings);
 
-
     /**
      * @return settings for the application
      */
