@@ -5,6 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -108,7 +109,11 @@ class AccountFormValidator implements Validator {
 
         if (annualVacationDays != null) {
 
-            validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+            if (isAllowHalfDaysActive()) {
+                validateFullOrHalfDay(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+            } else {
+                validateIsInteger(annualVacationDays, ATTRIBUTE_ANNUAL_VACATION_DAYS, errors);
+            }
 
             if (isNegative(annualVacationDays)) {
                 reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, ERROR_ENTRY_MIN, "0");
@@ -214,11 +219,6 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    private BigDecimal getMaximumAnnualVacationDays() {
-        final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
-        return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
-    }
-
     private boolean isNegative(BigDecimal bigDecimal) {
         return bigDecimal.compareTo(BigDecimal.ZERO) < 0;
     }
@@ -241,5 +241,15 @@ class AccountFormValidator implements Validator {
 
     private static String msg(String key) {
         return "person.form.annualVacation.error." + key;
+    }
+
+    private BigDecimal getMaximumAnnualVacationDays() {
+        final AccountSettings accountSettings = settingsService.getSettings().getAccountSettings();
+        return BigDecimal.valueOf(accountSettings.getMaximumAnnualVacationDays());
+    }
+
+    private boolean isAllowHalfDaysActive() {
+        final ApplicationSettings applicationSettings = settingsService.getSettings().getApplicationSettings();
+        return applicationSettings.isAllowHalfDays();
     }
 }
