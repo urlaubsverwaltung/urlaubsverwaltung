@@ -22,9 +22,7 @@
 </head>
 
 <body>
-
 <uv:menu/>
-
 <div class="content">
     <div class="container">
 
@@ -53,20 +51,17 @@
                     <c:choose>
                         <c:when test="${not empty createdDepartment}">
                             <div class="alert alert-success">
-                                <spring:message code="department.action.create.success"
-                                                arguments="${createdDepartment.name}"/>
+                                <spring:message code="department.action.create.success" arguments="${createdDepartment.name}"/>
                             </div>
                         </c:when>
                         <c:when test="${not empty updatedDepartment}">
                             <div class="alert alert-success">
-                                <spring:message code="department.action.edit.success"
-                                                arguments="${updatedDepartment.name}"/>
+                                <spring:message code="department.action.edit.success" arguments="${updatedDepartment.name}"/>
                             </div>
                         </c:when>
                         <c:when test="${not empty deletedDepartment}">
                             <div class="alert alert-success">
-                                <spring:message code="department.action.delete.success"
-                                                arguments="${deletedDepartment.name}"/>
+                                <spring:message code="department.action.delete.success" arguments="${deletedDepartment.name}"/>
                             </div>
                         </c:when>
                     </c:choose>
@@ -126,7 +121,6 @@
                                                 <spring:message code="department.members.inactive"/>
                                             </a>
                                         </c:if>
-
                                     </td>
                                     <td class="is-centered hidden-xs">
                                         <c:if test="${department.twoStageApproval}">
@@ -137,7 +131,7 @@
                                         <uv:date date="${department.lastModification}"/>
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">
-                                        <td>
+                                    <td>
                                             <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
                                                 <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"
                                                      role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -184,15 +178,11 @@
                             </c:forEach>
                             </tbody>
                         </table>
-
                     </c:otherwise>
                 </c:choose>
-
             </div>
         </div>
     </div>
 </div>
-
 </body>
-
 </html>

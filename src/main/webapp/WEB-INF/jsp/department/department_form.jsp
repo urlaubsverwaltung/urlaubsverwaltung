@@ -25,12 +25,10 @@
     <script defer src="<asset:url value='department_form.js' />"></script>
 </head>
 
-<body>
-
-<uv:menu/>
-
 <spring:url var="URL_PREFIX" value="/web"/>
 
+<body>
+<uv:menu/>
 <div class="content">
     <div class="container">
 
@@ -226,10 +224,12 @@
                 <div class="row tw-mb-16">
                     <div class="col-xs-12">
                         <hr />
-                        <button class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"><spring:message
-                            code="action.save"/></button>
-                        <a class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-                           href="${URL_PREFIX}/department"><spring:message code="action.cancel"/></a>
+                        <button class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit">
+                            <spring:message code="action.save"/>
+                        </button>
+                        <a class="button col-xs-12 col-sm-5 col-md-2 pull-right" href="${URL_PREFIX}/department">
+                            <spring:message code="action.cancel"/>
+                        </a>
                     </div>
                 </div>
             </div>
