@@ -204,18 +204,18 @@
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-amber-300 tw-text-white">
+                            <uv:box-icon className="tw-bg-amber-300 tw-text-white dark:tw-bg-yellow-400 dark:tw-text-neutral-900">
                                 <icon:sun className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
                         <jsp:body>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                 <spring:message code="overview.vacations.holidayLeave.1" />
                             </span>
                             <span class="tw-my-1 tw-text-lg tw-font-medium">
                                 <spring:message code="overview.vacations.holidayLeave.2" arguments="${holidayLeave}"/>
                             </span>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                 <span class="tw-flex tw-items-center">
                                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-5 tw-h-5" solid="true" />
@@ -229,18 +229,18 @@
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-amber-300 tw-text-white">
+                            <uv:box-icon className="tw-bg-amber-300 tw-text-white dark:tw-bg-yellow-400 dark:tw-text-neutral-900">
                                 <icon:flag className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
                         <jsp:body>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                 <spring:message code="overview.vacations.otherLeave.1" />
                             </span>
                             <span class="tw-my-1 tw-text-lg tw-font-medium">
                                 <spring:message code="overview.vacations.otherLeave.2" arguments="${otherLeave}"/>
                             </span>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                 <span class="tw-flex tw-items-center">
                                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-5 tw-h-5" solid="true" />
@@ -285,18 +285,18 @@
                     <div class="tw-w-full sm:tw-w-1/2">
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
-                                <uv:box-icon className="tw-bg-red-500 tw-text-white">
+                                <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-700 dark:tw-text-neutral-900">
                                     <icon:medkit className="tw-w-8 tw-h-8" />
                                 </uv:box-icon>
                             </jsp:attribute>
                             <jsp:body>
-                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                     <spring:message code="overview.sicknotes.sickdays.1" />
                                 </span>
                                 <span class="tw-my-1 tw-text-lg tw-font-medium">
                                     <spring:message code="overview.sicknotes.sickdays.2" arguments="${sickDaysOverview.sickDays.days['TOTAL']}" />
                                 </span>
-                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                     <span class="tw-flex tw-items-center">
                                         <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                             <icon:check className="tw-w-5 tw-h-5" solid="true" />
@@ -310,18 +310,18 @@
                     <div class="tw-w-full sm:tw-w-1/2">
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
-                                <uv:box-icon className="tw-bg-red-500 tw-text-white">
+                                <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-700 dark:tw-text-neutral-900">
                                     <icon:child className="tw-w-8 tw-h-8" />
                                 </uv:box-icon>
                             </jsp:attribute>
                             <jsp:body>
-                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                     <spring:message code="overview.sicknotes.sickdays.child.1" />
                                 </span>
                                 <span class="tw-my-1 tw-text-lg tw-font-medium">
                                     <spring:message code="overview.sicknotes.sickdays.child.2" arguments="${sickDaysOverview.childSickDays.days['TOTAL']} "/>
                                 </span>
-                                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                     <span class="tw-flex tw-items-center">
                                         <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                             <icon:check className="tw-w-5 tw-h-5" solid="true" />
