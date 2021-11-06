@@ -39,7 +39,7 @@ describe("calendar", () => {
 
   it("renders", async () => {
     // 01.12.2017
-    mockDate(1512130448379);
+    mockDate(1_512_130_448_379);
     await calendarTestSetup();
 
     renderCalendar(createHolidayService());
@@ -51,7 +51,7 @@ describe("calendar", () => {
     (givenStatus) => {
       test("in the past", async () => {
         // today is 2017-12-01
-        mockDate(1512130448379);
+        mockDate(1_512_130_448_379);
 
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
@@ -87,7 +87,7 @@ describe("calendar", () => {
 
       test("in the future", async () => {
         // today is 2017-12-01
-        mockDate(1512130448379);
+        mockDate(1_512_130_448_379);
 
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
@@ -123,7 +123,7 @@ describe("calendar", () => {
 
       test("today", async () => {
         // today is 2017-12-01
-        mockDate(1512130448379);
+        mockDate(1_512_130_448_379);
 
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)

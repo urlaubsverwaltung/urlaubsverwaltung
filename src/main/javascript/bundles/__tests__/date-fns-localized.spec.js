@@ -26,7 +26,7 @@ describe("date-fns-localized", () => {
     async (givenLanguage) => {
       navigatorLanguage = givenLanguage;
 
-      require("../date-fns-localized");
+      await import("../date-fns-localized");
 
       // wait for resolved promise in implementation
       // which then calls `setLocale`
@@ -46,7 +46,7 @@ describe("date-fns-localized", () => {
     async (givenLanguage) => {
       navigatorLanguage = givenLanguage;
 
-      require("../date-fns-localized");
+      await import("../date-fns-localized");
 
       // wait for resolved promise in implementation
       // which then calls `setLocale`
