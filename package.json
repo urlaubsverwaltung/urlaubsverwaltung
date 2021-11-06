@@ -61,7 +61,7 @@
     "cssnano": "5.0.8",
     "date-fns": "2.25.0",
     "eslint": "8.1.0",
-    "eslint-config-prettier": "6.15.0",
+    "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-unicorn": "38.0.0",
     "fetch-mock": "9.11.0",
