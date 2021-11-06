@@ -10,7 +10,7 @@
 
 <uv:box__ className="${className}">
     <jsp:attribute name="icon">
-        <uv:box-icon className="tw-bg-emerald-500 tw-text-white">
+        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-600 dark:tw-text-neutral-900">
             <icon:presentation-chart-bar className="tw-w-8 tw-h-8" />
         </uv:box-icon>
     </jsp:attribute>

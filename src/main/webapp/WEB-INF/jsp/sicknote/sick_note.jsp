@@ -87,7 +87,7 @@
 
                 <uv:box className="tw-mb-6">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-red-500 tw-text-white">
+                        <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-700 dark:tw-text-neutral-900">
                             <c:choose>
                                 <c:when test="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
                                     <icon:child className="tw-w-8 tw-h-8" />
@@ -99,7 +99,7 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <span class="tw-text-sm tw-text-black tw-text-opacity-75" data-test-id="sicknote-person">
+                        <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100" data-test-id="sicknote-person">
                             <spring:message
                                 code="sicknotes.details.box.person.has"
                                 arguments="${sickNote.person.niceName}"
@@ -108,7 +108,7 @@
                         <span class="tw-my-1 tw-text-lg tw-font-medium" data-test-id="sicknote-type">
                             <c:out value="${SICK_NOTE_MESSAGEKEY}" />
                         </span>
-                        <span class="tw-text-sm tw-text-black tw-text-opacity-75" data-test-id="sicknote-date">
+                        <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100" data-test-id="sicknote-date">
                             <c:choose>
                                 <c:when test="${sickNote.startDate == sickNote.endDate}">
                                     <c:set var="SICK_NOTE_DATE">
