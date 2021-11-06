@@ -47,7 +47,7 @@ body {
   *,
   ::before,
   ::after {
-    border-color: theme("colors.neutral.50");
+    border-color: theme("colors.neutral.600");
   }
 }
 
