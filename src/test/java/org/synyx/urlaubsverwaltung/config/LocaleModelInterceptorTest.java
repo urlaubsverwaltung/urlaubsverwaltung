@@ -19,7 +19,7 @@ class LocaleModelInterceptorTest {
         final ModelAndView modelAndView = new ModelAndView();
 
         localeModelInterceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
-        assertThat(modelAndView.getModelMap().getAttribute(localeModelInterceptor.getParamName())).isEqualTo("de");
+        assertThat(modelAndView.getModelMap().getAttribute("locale")).isEqualTo("de");
     }
 
     @Test
