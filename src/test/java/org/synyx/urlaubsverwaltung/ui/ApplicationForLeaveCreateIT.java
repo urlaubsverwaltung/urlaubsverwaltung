@@ -35,6 +35,7 @@ import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.math.BigDecimal.TEN;
@@ -49,7 +50,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
-import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.support.ui.ExpectedConditions.not;
@@ -71,7 +72,7 @@ class ApplicationForLeaveCreateIT {
     @Container
     private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
         .withRecordingMode(RECORD_FAILING, new File("target"))
-        .withCapabilities(new ChromeOptions());
+        .withCapabilities(chromeOptions());
 
     static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
 
@@ -103,9 +104,9 @@ class ApplicationForLeaveCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
         final ApplicationPage applicationPage = new ApplicationPage(webDriver);
 
@@ -151,9 +152,9 @@ class ApplicationForLeaveCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
         final SettingsPage settingsPage = new SettingsPage(webDriver);
         final ApplicationPage applicationPage = new ApplicationPage(webDriver);
 
@@ -200,11 +201,11 @@ class ApplicationForLeaveCreateIT {
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
         final WebDriverWait wait = new WebDriverWait(webDriver, 20);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, ENGLISH);
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, ENGLISH);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
         final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, ENGLISH);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, GERMAN);
 
         webDriver.get("http://host.testcontainers.internal:" + port);
 
@@ -285,5 +286,11 @@ class ApplicationForLeaveCreateIT {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
+    }
+
+    private ChromeOptions chromeOptions() {
+        final ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("prefs", Map.of("intl.accept_languages", "de-DE"));
+        return options;
     }
 }
