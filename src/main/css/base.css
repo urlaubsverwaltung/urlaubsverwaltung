@@ -5,7 +5,7 @@ body {
   margin: 0;
   color: #444444;
   @apply dark:tw-bg-neutral-900;
-  @apply dark:tw-text-neutral-100;
+  @apply dark:tw-text-neutral-200;
 }
 
 /**
