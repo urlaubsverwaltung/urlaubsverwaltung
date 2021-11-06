@@ -46,115 +46,118 @@ describe("calendar", () => {
     expect(document.body).toMatchSnapshot();
   });
 
-  describe.each([["ALLOWED"], ["WAITING"]])("ensure vacation of status=%s is clickable", (givenStatus) => {
-    test("in the past", async () => {
-      // today is 2017-12-01
-      mockDate(1512130448379);
+  describe.each([["ALLOWED"], ["WAITING"], ["TEMPORARY_ALLOWED"]])(
+    "ensure vacation of status=%s is clickable",
+    (givenStatus) => {
+      test("in the past", async () => {
+        // today is 2017-12-01
+        mockDate(1512130448379);
 
-      // personId -> createHolidayService (param)
-      // year -> holidayService.fetchPersonal (param)
-      // type -> holidayService.fetchPersonal (implementation detail)
-      fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
-        absences: [
-          {
-            date: "2017-11-01",
-            dayLength: 1,
-            absencePeriodName: "FULL",
-            type: "VACATION",
-            status: givenStatus,
-          },
-        ],
+        // personId -> createHolidayService (param)
+        // year -> holidayService.fetchPersonal (param)
+        // type -> holidayService.fetchPersonal (implementation detail)
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
+          absences: [
+            {
+              date: "2017-11-01",
+              dayLength: 1,
+              absencePeriodName: "FULL",
+              type: "VACATION",
+              status: givenStatus,
+            },
+          ],
+        });
+
+        await calendarTestSetup();
+
+        const holidayService = createHolidayService({ personId: 42 });
+        // fetch personal holiday data and cache the (mocked) response
+        // the response is used when the calendar renders
+        await holidayService.fetchPersonal(2017);
+
+        renderCalendar(holidayService);
+
+        const $ = document.querySelector.bind(document);
+        expect(
+          $(
+            '[data-datepicker-date="2017-11-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
+          ),
+        ).toBeTruthy();
       });
 
-      await calendarTestSetup();
+      test("in the future", async () => {
+        // today is 2017-12-01
+        mockDate(1512130448379);
 
-      const holidayService = createHolidayService({ personId: 42 });
-      // fetch personal holiday data and cache the (mocked) response
-      // the response is used when the calendar renders
-      await holidayService.fetchPersonal(2017);
+        // personId -> createHolidayService (param)
+        // year -> holidayService.fetchPersonal (param)
+        // type -> holidayService.fetchPersonal (implementation detail)
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
+          absences: [
+            {
+              date: "2017-12-05",
+              dayLength: 1,
+              absencePeriodName: "FULL",
+              type: "VACATION",
+              status: givenStatus,
+            },
+          ],
+        });
 
-      renderCalendar(holidayService);
+        await calendarTestSetup();
 
-      const $ = document.querySelector.bind(document);
-      expect(
-        $(
-          '[data-datepicker-date="2017-11-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
-        ),
-      ).toBeTruthy();
-    });
+        const holidayService = createHolidayService({ personId: 42 });
+        // fetch personal holiday data and cache the (mocked) response
+        // the response is used when the calendar renders
+        await holidayService.fetchPersonal(2017);
 
-    test("in the future", async () => {
-      // today is 2017-12-01
-      mockDate(1512130448379);
+        renderCalendar(holidayService);
 
-      // personId -> createHolidayService (param)
-      // year -> holidayService.fetchPersonal (param)
-      // type -> holidayService.fetchPersonal (implementation detail)
-      fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
-        absences: [
-          {
-            date: "2017-12-05",
-            dayLength: 1,
-            absencePeriodName: "FULL",
-            type: "VACATION",
-            status: givenStatus,
-          },
-        ],
+        const $ = document.querySelector.bind(document);
+        expect(
+          $(
+            '[data-datepicker-date="2017-12-05"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
+          ),
+        ).toBeTruthy();
       });
 
-      await calendarTestSetup();
+      test("today", async () => {
+        // today is 2017-12-01
+        mockDate(1512130448379);
 
-      const holidayService = createHolidayService({ personId: 42 });
-      // fetch personal holiday data and cache the (mocked) response
-      // the response is used when the calendar renders
-      await holidayService.fetchPersonal(2017);
+        // personId -> createHolidayService (param)
+        // year -> holidayService.fetchPersonal (param)
+        // type -> holidayService.fetchPersonal (implementation detail)
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
+          absences: [
+            {
+              date: "2017-12-01",
+              dayLength: 1,
+              absencePeriodName: "FULL",
+              type: "VACATION",
+              status: givenStatus,
+            },
+          ],
+        });
 
-      renderCalendar(holidayService);
+        await calendarTestSetup();
 
-      const $ = document.querySelector.bind(document);
-      expect(
-        $(
-          '[data-datepicker-date="2017-12-05"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
-        ),
-      ).toBeTruthy();
-    });
+        const holidayService = createHolidayService({ personId: 42 });
+        // fetch personal holiday data and cache the (mocked) response
+        // the response is used when the calendar renders
+        await holidayService.fetchPersonal(2017);
 
-    test("today", async () => {
-      // today is 2017-12-01
-      mockDate(1512130448379);
+        renderCalendar(holidayService);
 
-      // personId -> createHolidayService (param)
-      // year -> holidayService.fetchPersonal (param)
-      // type -> holidayService.fetchPersonal (implementation detail)
-      fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
-        absences: [
-          {
-            date: "2017-12-01",
-            dayLength: 1,
-            absencePeriodName: "FULL",
-            type: "VACATION",
-            status: givenStatus,
-          },
-        ],
+        const $ = document.querySelector.bind(document);
+        expect(
+          $(
+            '[data-datepicker-date="2017-12-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
+          ),
+        ).toBeTruthy();
       });
-
-      await calendarTestSetup();
-
-      const holidayService = createHolidayService({ personId: 42 });
-      // fetch personal holiday data and cache the (mocked) response
-      // the response is used when the calendar renders
-      await holidayService.fetchPersonal(2017);
-
-      renderCalendar(holidayService);
-
-      const $ = document.querySelector.bind(document);
-      expect(
-        $(
-          '[data-datepicker-date="2017-12-01"][data-datepicker-absence-type="VACATION"][data-datepicker-selectable="true"]',
-        ),
-      ).toBeTruthy();
-    });
-  });
+    },
+  );
 
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
     return window.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
