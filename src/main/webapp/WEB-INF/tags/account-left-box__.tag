@@ -25,13 +25,13 @@
                         <c:set var="remainingVacationDays" value="${vacationDaysLeft.remainingVacationDaysNotExpiring}" />
                     </c:otherwise>
                 </c:choose>
-                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                     <spring:message code="person.account.vacation.left.1" />
                 </span>
                 <span class="tw-my-1 tw-text-lg tw-font-medium">
                     <spring:message code="person.account.vacation.left.2" arguments="${vacationDaysLeft.vacationDays + remainingVacationDays}" />
                 </span>
-                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                     <spring:message code="person.account.vacation.left.remaining" arguments="${remainingVacationDays}"
                     />
                 </span>

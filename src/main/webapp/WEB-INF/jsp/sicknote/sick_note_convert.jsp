@@ -126,13 +126,13 @@
                             </uv:box-icon>
                         </jsp:attribute>
                         <jsp:body>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                 <spring:message code="sicknotes.details.box.person.has" arguments="${sickNote.person.niceName}" />
                             </span>
                             <span class="tw-my-1 tw-text-lg tw-font-medium">
                                 <spring:message code="${sickNote.sickNoteType.messageKey}" />
                             </span>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                                 <c:choose>
                                     <c:when test="${sickNote.startDate == sickNote.endDate}">
                                         <c:set var="SICK_NOTE_DATE">

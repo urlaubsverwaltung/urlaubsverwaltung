@@ -15,13 +15,13 @@
     <jsp:body>
         <c:choose>
             <c:when test="${account != null}">
-                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                     <spring:message code="person.account.vacation.entitlement.1" />
                 </span>
                 <span class="tw-my-1 tw-text-lg tw-font-medium">
                     <spring:message code="person.account.vacation.entitlement.2" arguments="${account.vacationDays + account.remainingVacationDays}" />
                 </span>
-                <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
                     <spring:message code="person.account.vacation.entitlement.remaining" arguments="${account.remainingVacationDays}"/>
                 </span>
             </c:when>
