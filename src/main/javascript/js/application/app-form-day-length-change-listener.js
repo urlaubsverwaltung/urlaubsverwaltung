@@ -9,7 +9,7 @@ $(document).ready(function () {
   const urlPrefix = window.uv.apiPrefix;
   const personId = window.uv.personId;
 
-  [...document.querySelectorAll("input[name='dayLength']")].forEach((element) =>
+  for (const element of document.querySelectorAll("input[name='dayLength']"))
     element.addEventListener("change", (event) => {
       const dayLength = event.target.value;
 
@@ -28,6 +28,5 @@ $(document).ready(function () {
 
       sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
       sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
-    }),
-  );
+    });
 });

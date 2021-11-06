@@ -46,9 +46,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
 
   const showAbsences = () => {
     // clear all days
-    [...duetDateElement.querySelectorAll(".duet-date__day")].forEach((element) => {
+    for (const element of duetDateElement.querySelectorAll(".duet-date__day")) {
       element.classList.remove(...Object.values(datepickerClassnames));
-    });
+    }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
     const lastDayOfMonth = formatISO(endOfMonth(parseISO(firstDayOfMonth)), { representation: "date" });
@@ -68,7 +68,7 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
     ]).then(([publicHolidays, absences]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
-      for (let dayElement of [...duetDateElement.querySelectorAll(".duet-date__day")]) {
+      for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
         const dayAndMonthString = dayElement.querySelector(".duet-date__vhidden").textContent;
         const date = parse(dayAndMonthString, dateFormatShort, new Date());
         // dayAndMonthString is a hard coded duet-date-picker screen-reader-only value which does not contain the year.

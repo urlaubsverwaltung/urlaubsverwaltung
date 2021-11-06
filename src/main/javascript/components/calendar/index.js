@@ -219,7 +219,7 @@ $(function () {
         const absences = data.absences;
 
         if (absences.length > 0) {
-          $.each(absences, function (idx, absence) {
+          $.each(absences, function (index, absence) {
             c[year] = c[year] || [];
             c[year].push(absence);
           });
@@ -236,7 +236,7 @@ $(function () {
         const publicHolidays = data.publicHolidays;
 
         if (publicHolidays.length > 0) {
-          $.each(publicHolidays, function (idx, publicHoliday) {
+          $.each(publicHolidays, function (index, publicHoliday) {
             c[year] = c[year] || [];
             c[year].push(publicHoliday);
           });
@@ -373,8 +373,6 @@ $(function () {
             return holiday.status;
           }
         }
-
-        return undefined;
       },
 
       getAbsenceId: function (date) {
@@ -623,8 +621,8 @@ $(function () {
       let d = date;
       const m = getMonth(d);
 
-      return render(TMPL.week, function (_, dayIdx) {
-        let dayIndexToRender = Number(dayIdx) + window.uv.weekStartsOn;
+      return render(TMPL.week, function (_, dayIndex) {
+        let dayIndexToRender = Number(dayIndex) + window.uv.weekStartsOn;
         if (dayIndexToRender === 7) {
           dayIndexToRender = 0;
         }

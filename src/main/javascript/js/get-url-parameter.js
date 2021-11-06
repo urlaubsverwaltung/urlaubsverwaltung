@@ -7,9 +7,5 @@ export default function getUrlParameter(name) {
   const regex = new RegExp(regexS);
   const results = regex.exec(window.location.href);
 
-  if (results) {
-    return results[1];
-  } else {
-    return "";
-  }
+  return results ? results[1] : "";
 }

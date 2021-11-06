@@ -82,6 +82,7 @@ $(document).ready(async function () {
 });
 
 function compose(...functions) {
+  // eslint-disable-next-line unicorn/no-array-reduce
   return functions.reduce(
     (a, b) =>
       (...arguments_) =>
