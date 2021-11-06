@@ -177,6 +177,12 @@ function getCssClassesForDate(date, publicHolidays, absences) {
         absencePeriodName: "FULL",
         status: "WAITING",
       });
+    const isPersonalHolidayFullTemporaryApproved = () =>
+      fitsCriteria(absences, {
+        type: "VACATION",
+        absencePeriodName: "FULL",
+        status: "TEMPORARY_ALLOWED",
+      });
     const isPersonalHolidayFullApproved = () =>
       fitsCriteria(absences, {
         type: "VACATION",
@@ -189,6 +195,12 @@ function getCssClassesForDate(date, publicHolidays, absences) {
         absencePeriodName: "MORNING",
         status: "WAITING",
       });
+    const isPersonalHolidayMorningTemporaryApproved = () =>
+      fitsCriteria(absences, {
+        type: "VACATION",
+        absencePeriodName: "MORNING",
+        status: "TEMPORARY_ALLOWED",
+      });
     const isPersonalHolidayMorningApproved = () =>
       fitsCriteria(absences, {
         type: "VACATION",
@@ -200,6 +212,12 @@ function getCssClassesForDate(date, publicHolidays, absences) {
         type: "VACATION",
         absencePeriodName: "NOON",
         status: "WAITING",
+      });
+    const isPersonalHolidayNoonTemporaryApproved = () =>
+      fitsCriteria(absences, {
+        type: "VACATION",
+        absencePeriodName: "NOON",
+        status: "TEMPORARY_ALLOWED",
       });
     const isPersonalHolidayNoonApproved = () =>
       fitsCriteria(absences, {
@@ -223,10 +241,13 @@ function getCssClassesForDate(date, publicHolidays, absences) {
       isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
       isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
       isPersonalHolidayFull() && datepickerClassnames.personalHolidayFull,
+      isPersonalHolidayFullTemporaryApproved() && datepickerClassnames.personalHolidayFull,
       isPersonalHolidayFullApproved() && datepickerClassnames.personalHolidayFullApproved,
       isPersonalHolidayMorning() && datepickerClassnames.personalHolidayMorning,
+      isPersonalHolidayMorningTemporaryApproved() && datepickerClassnames.personalHolidayMorning,
       isPersonalHolidayMorningApproved() && datepickerClassnames.personalHolidayMorningApproved,
       isPersonalHolidayNoon() && datepickerClassnames.personalHolidayNoon,
+      isPersonalHolidayNoonTemporaryApproved() && datepickerClassnames.personalHolidayNoon,
       isPersonalHolidayNoonApproved() && datepickerClassnames.personalHolidayNoonApproved,
       isSickDayFull() && datepickerClassnames.sickNoteFull,
       isSickDayMorning() && datepickerClassnames.sickNoteMorning,

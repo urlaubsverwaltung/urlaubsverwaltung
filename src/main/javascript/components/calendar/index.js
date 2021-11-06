@@ -130,6 +130,9 @@ $(function () {
       isPersonalHolidayFull: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayFull(date);
       },
+      isPersonalHolidayFullTemporaryApproved: function (date) {
+        return !isWeekend(date) && holidayService.isPersonalHolidayFullTemporaryApproved(date);
+      },
       isPersonalHolidayFullApproved: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayFullApproved(date);
       },
@@ -139,6 +142,9 @@ $(function () {
       isPersonalHolidayMorning: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayMorning(date);
       },
+      isPersonalHolidayMorningTemporaryApproved: function (date) {
+        return !isWeekend(date) && holidayService.isPersonalHolidayMorningTemporaryApproved(date);
+      },
       isPersonalHolidayMorningApproved: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayMorningApproved(date);
       },
@@ -147,6 +153,9 @@ $(function () {
       },
       isPersonalHolidayNoon: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayNoon(date);
+      },
+      isPersonalHolidayNoonTemporaryApproved: function (date) {
+        return !isWeekend(date) && holidayService.isPersonalHolidayNoonTemporaryApproved(date);
       },
       isPersonalHolidayNoonApproved: function (date) {
         return !isWeekend(date) && holidayService.isPersonalHolidayNoonApproved(date);
@@ -279,6 +288,10 @@ $(function () {
         absencePeriodName: absencePeriod.FULL,
         status: "WAITING",
       }),
+      isPersonalHolidayFullTemporaryApproved: isOfType("holiday", {
+        absencePeriodName: absencePeriod.FULL,
+        status: "TEMPORARY_ALLOWED",
+      }),
       isPersonalHolidayFullApproved: isOfType("holiday", {
         absencePeriodName: absencePeriod.FULL,
         status: "ALLOWED",
@@ -292,6 +305,10 @@ $(function () {
         absencePeriodName: absencePeriod.MORNING,
         status: "WAITING",
       }),
+      isPersonalHolidayMorningTemporaryApproved: isOfType("holiday", {
+        absencePeriodName: absencePeriod.MORNING,
+        status: "TEMPORARY_ALLOWED",
+      }),
       isPersonalHolidayMorningApproved: isOfType("holiday", {
         absencePeriodName: absencePeriod.MORNING,
         status: "ALLOWED",
@@ -304,6 +321,10 @@ $(function () {
       isPersonalHolidayNoon: isOfType("holiday", {
         absencePeriodName: absencePeriod.NOON,
         status: "WAITING",
+      }),
+      isPersonalHolidayNoonTemporaryApproved: isOfType("holiday", {
+        absencePeriodName: absencePeriod.NOON,
+        status: "TEMPORARY_ALLOWED",
       }),
       isPersonalHolidayNoonApproved: isOfType("holiday", {
         absencePeriodName: absencePeriod.NOON,
@@ -629,12 +650,15 @@ $(function () {
           assert.isPublicHolidayMorning(date) ? CSS.dayPublicHolidayMorning : "",
           assert.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
           assert.isPersonalHolidayFull(date) ? CSS.dayPersonalHolidayFull : "",
+          assert.isPersonalHolidayFullTemporaryApproved(date) ? CSS.dayPersonalHolidayFull : "",
           assert.isPersonalHolidayFullApproved(date) ? CSS.dayPersonalHolidayFullApproved : "",
           assert.isPersonalHolidayFullCancellationRequest(date) ? CSS.dayPersonalHolidayFullApproved : "",
           assert.isPersonalHolidayMorning(date) ? CSS.dayPersonalHolidayMorning : "",
+          assert.isPersonalHolidayMorningTemporaryApproved(date) ? CSS.dayPersonalHolidayMorning : "",
           assert.isPersonalHolidayMorningApproved(date) ? CSS.dayPersonalHolidayMorningApproved : "",
           assert.isPersonalHolidayMorningCancellationRequest(date) ? CSS.dayPersonalHolidayMorningApproved : "",
           assert.isPersonalHolidayNoon(date) ? CSS.dayPersonalHolidayNoon : "",
+          assert.isPersonalHolidayNoonTemporaryApproved(date) ? CSS.dayPersonalHolidayNoon : "",
           assert.isPersonalHolidayNoonApproved(date) ? CSS.dayPersonalHolidayNoonApproved : "",
           assert.isPersonalHolidayNoonCancellationRequest(date) ? CSS.dayPersonalHolidayNoonApproved : "",
           assert.isSickDayFull(date) ? CSS.daySickDayFull : "",
@@ -651,9 +675,16 @@ $(function () {
         const isPersonalHoliday = assert.isPersonalHolidayFull(date);
         const isPersonalHolidayApproved = assert.isPersonalHolidayFullApproved(date);
         const isPersonalHolidayCancellationRequest = assert.isPersonalHolidayFullCancellationRequest(date);
+        const isPersonalHolidayTemporaryApproved = assert.isPersonalHolidayFullTemporaryApproved(date);
         const isSickDay = assert.isSickDayFull(date);
 
-        if (isPersonalHoliday || isPersonalHolidayApproved || isPersonalHolidayCancellationRequest || isSickDay) {
+        if (
+          isPersonalHoliday ||
+          isPersonalHolidayApproved ||
+          isPersonalHolidayTemporaryApproved ||
+          isPersonalHolidayCancellationRequest ||
+          isSickDay
+        ) {
           return true;
         }
 
