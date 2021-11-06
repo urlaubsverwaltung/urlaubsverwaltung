@@ -21,7 +21,7 @@
 
 <c:choose>
     <c:when test="${border == true}">
-        <span class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1 tw-inline-block">
+        <span class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-neutral-800 tw-rounded-full tw-p-1 tw-inline-block">
             ${avatar}
         </span>
     </c:when>
