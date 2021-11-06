@@ -1,0 +1,24 @@
+.modal-content {
+  @apply dark:tw-bg-neutral-800;
+}
+
+.modal-dialog button.close {
+  @apply dark:tw-text-neutral-200;
+  @apply dark:hover:tw-text-neutral-100;
+}
+
+
+@media (prefers-color-scheme: dark) {
+
+  .modal-content {
+    box-shadow: none;
+  }
+
+  .modal-header {
+    border-bottom-color: theme("colors.neutral.900");
+  }
+
+  .modal-footer {
+    border-top-color: theme("colors.neutral.900");
+  }
+}
