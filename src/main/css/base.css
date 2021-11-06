@@ -72,6 +72,7 @@ html {
 
 hr {
   border-color: #d5d5d5;
+  @apply dark:tw-border-neutral-600;
 }
 
 footer {
