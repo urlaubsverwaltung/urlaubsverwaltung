@@ -2,21 +2,11 @@ th.vacationOverview-cal-head.today {
   --vacation-overview-rows: 0;
   position: relative;
 }
-th.vacationOverview-cal-head.today::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  bottom: -1px;
-  left: -1px;
-  right: -1px;
-  @apply tw-border;
-  @apply tw-border-white;
-}
 th.vacationOverview-cal-head.today::after {
   content: "";
-  border-width: 3px;
-  @apply tw-border-zinc-500;
-  @apply tw-border-opacity-40;
+  @apply tw-border-3;
+  @apply tw-border-calendar-today;
+  @apply tw-border-opacity-80;
   position: absolute;
   top: 0;
   left: 0;
@@ -35,9 +25,12 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table th,
 .vacationOverview-table td {
-  color: #444444 !important;
-  border: 1px solid #ffffff;
+  border: 1px solid theme("borderColor.calendar.DEFAULT");
   font-weight: normal;
+}
+
+.vacationOverview-table thead th {
+  @apply dark:tw-font-medium;
 }
 
 .vacationOverview-table td {
@@ -49,7 +42,7 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .vacationOverview-legend-colorbox {
-  border: 3px solid #ffffff;
+  border: 3pt solid theme("borderColor.calendar.DEFAULT");
   width: 1.5rem;
 }
 
@@ -65,13 +58,14 @@ th.vacationOverview-cal-head.today::after {
   --absence-bar-color-morning: transparent;
   --absence-bar-color-noon: transparent;
   --absence-bar-color: transparent;
-  --background-color-left: #e5e5e5;
-  --background-color-right: #e5e5e5;
+  --background-left: theme("backgroundColor.calendar.DEFAULT");
+  --background-right: theme("backgroundColor.calendar.DEFAULT");
+  --font-color: theme("textColor.calendar.DEFAULT");
   /* h-full only works when parent td has an explicit height */
   height: 100%;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
+  background: linear-gradient(90deg, var(--background-left) 50%, var(--background-right) 50%);
 }
 
 .vacationOverview-table td,
@@ -131,66 +125,65 @@ th.vacationOverview-cal-head.today::after {
 }
 
 @media print {
-  .cal-day {
-    --bg-left-lightness: 100%;
-    --bg-right-lightness: 100%;
+  .cal-day,
+  .vacationOverview-legend-colorbox {
   }
 }
 
-.absence-full {
-  --absence-bar-color: #facc15;
-}
 .absence-morning {
-  --absence-bar-color-morning: #facc15;
+  --absence-bar-color-morning: theme("backgroundColor.personal-holiday-approved");
 }
 .absence-noon {
-  --absence-bar-color-noon: #facc15;
+  --absence-bar-color-noon: theme("backgroundColor.personal-holiday-approved");
+}
+.absence-full {
+  --absence-bar-color: theme("backgroundColor.personal-holiday-approved");
 }
 
-.vacation-full-waiting {
-  --absence-bar-color: #eab308;
-}
 .vacation-morning-waiting {
-  --absence-bar-color-morning: #eab308;
+  --absence-bar-color-morning: theme("backgroundColor.personal-holiday");
 }
 .vacation-noon-waiting {
-  --absence-bar-color-noon: #eab308;
+  --absence-bar-color-noon: theme("backgroundColor.personal-holiday");
+}
+.vacation-full-waiting {
+  --absence-bar-color: theme("backgroundColor.personal-holiday");
 }
 
-.vacation-full-approved {
-  --absence-bar-color: #facc15;
-}
 .vacation-morning-approved {
-  --absence-bar-color-morning: #facc15;
+  --absence-bar-color-morning: theme("backgroundColor.personal-holiday-approved");
 }
 .vacation-noon-approved {
-  --absence-bar-color-noon: #facc15;
+  --absence-bar-color-noon: theme("backgroundColor.personal-holiday-approved");
+}
+.vacation-full-approved {
+  --absence-bar-color: theme("backgroundColor.personal-holiday-approved");
 }
 
-.sick-note-full {
-  --absence-bar-color: #ef4444;
-}
 .sick-note-morning {
-  --absence-bar-color-morning: #ef4444;
+  --absence-bar-color-morning: theme("backgroundColor.sick-note");
 }
 .sick-note-noon {
-  --absence-bar-color-noon: #ef4444;
+  --absence-bar-color-noon: theme("backgroundColor.sick-note");
+}
+.sick-note-full {
+  --absence-bar-color: theme("backgroundColor.sick-note");
 }
 
 .public-holiday-morning {
-  --background-color-left: #b5d0df;
+  --absence-bar-color-morning: theme("backgroundColor.public-holiday");
 }
 .public-holiday-noon {
-  --background-color-right: #b5d0df;
+  --absence-bar-color-noon: theme("backgroundColor.public-holiday");
 }
 .public-holiday-full {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
+  --absence-bar-color: theme("backgroundColor.public-holiday");
 }
 
 .weekend {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
+  --background-left: theme("backgroundColor.calendar.weekend");
+  --background-right: theme("backgroundColor.calendar.weekend");
+  --font-color: theme("textColor.calendar.weekend");
 }
 
 @media print {

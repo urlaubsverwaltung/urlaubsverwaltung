@@ -34,6 +34,7 @@
 @layer base {
   :root {
     --uv-cal-border-color: 255, 255, 255;
+    --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
     --uv-cal-default-bg: 229, 229, 229;
     --uv-cal-default-color: 111, 111, 111;
     --uv-cal-default-color-hover: 111, 111, 111;
@@ -61,7 +62,8 @@
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --uv-cal-border-color: 64, 64, 64; /* neutral.700 */
+      --uv-cal-border-color: 23, 23, 23; /* neutral.900 */
+      --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
       --uv-cal-default-bg: 38, 38, 38; /* neutral.800 */
       --uv-cal-default-color: 212, 212, 212; /* neutral.300 */
       --uv-cal-default-color-hover: 212, 212, 212; /* neutral.300 */

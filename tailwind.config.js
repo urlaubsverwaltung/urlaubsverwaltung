@@ -21,6 +21,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      borderWidth: {
+        3: "3px",
+      },
       lineHeight: {
         normal: "normal",
       },
@@ -38,6 +41,7 @@ module.exports = {
       borderColor: {
         calendar: {
           DEFAULT: withOpacity("--uv-cal-border-color"),
+          today: withOpacity("--uv-cal-today-border-color"),
         },
       },
       textColor: {
