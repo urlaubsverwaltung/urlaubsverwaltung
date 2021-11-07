@@ -2,6 +2,7 @@
 @import "./base.css";
 
 @import "tailwindcss/components";
+@import "./components/alert.css";
 @import "./components/action-link.css";
 @import "./components/button.css";
 @import "./components/box.css";
