@@ -269,7 +269,7 @@
                                            onkeyup="count(this.value, 'text-comment');"
                                            onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
                             <div class="tw-mt-2">
-                                <button class="button-main-green col-xs-12 col-sm-5" type="submit">
+                                <button class="button-main-green dark:button-main col-xs-12 col-sm-5" type="submit">
                                     <spring:message code="action.save"/>
                                 </button>
                                 <button class="button col-xs-12 col-sm-5 pull-right" type="button"

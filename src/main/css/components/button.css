@@ -59,6 +59,25 @@
   @apply dark:tw-bg-neutral-700;
 }
 
+.button-main-green,
+.button-main-green:hover:not(:disabled),
+.button-main-green:active,
+.button-main-green:focus {
+  @apply tw-border-bootstrap-green-dark;
+  @apply tw-bg-bootstrap-green;
+  @apply tw-text-white;
+  @apply dark:tw-bg-bootstrap-green-dark;
+  @apply dark:tw-border-bootstrap-green;
+  @apply tw-transition-colors;
+}
+
+.button-main-green:hover:not(:disabled),
+.button-main-green:active,
+.button-main-green:focus {
+  @apply tw-bg-bootstrap-green-dark;
+  @apply dark:tw-bg-bootstrap-green;
+}
+
 .button-main,
 .button-main:hover:not(:disabled),
 .button-main:active,
@@ -79,23 +98,26 @@
   @apply dark:tw-border-sky-600;
 }
 
-.button-main-green,
-.button-main-green:hover:not(:disabled),
-.button-main-green:active,
-.button-main-green:focus {
-  @apply tw-border-bootstrap-green-dark;
-  @apply tw-bg-bootstrap-green;
-  @apply tw-text-white;
-  @apply dark:tw-bg-bootstrap-green-dark;
-  @apply dark:tw-border-bootstrap-green;
-  @apply tw-transition-colors;
-}
+@media (prefers-color-scheme: dark) {
+  .dark\:button-main,
+  .dark\:button-main:hover:not(:disabled),
+  .dark\:button-main:active,
+  .dark\:button-main:focus {
+    @apply tw-border-sky-600;
+    @apply tw-bg-sky-600;
+    @apply tw-text-sky-50;
+    @apply dark:tw-bg-sky-700;
+    @apply dark:tw-border-sky-700;
+  }
 
-.button-main-green:hover:not(:disabled),
-.button-main-green:active,
-.button-main-green:focus {
-  @apply tw-bg-bootstrap-green-dark;
-  @apply dark:tw-bg-bootstrap-green;
+  .dark\:button-main:hover:not(:disabled),
+  .dark\:button-main:active,
+  .dark\:button-main:focus {
+    @apply tw-border-sky-700;
+    @apply tw-bg-sky-700;
+    @apply dark:tw-bg-sky-600;
+    @apply dark:tw-border-sky-600;
+  }
 }
 
 .button-danger,
