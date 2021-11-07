@@ -66,6 +66,8 @@
   @apply tw-border-sky-600;
   @apply tw-bg-sky-600;
   @apply tw-text-sky-50;
+  @apply dark:tw-bg-sky-700;
+  @apply dark:tw-border-sky-700;
 }
 
 .button-main:hover:not(:disabled),
@@ -73,6 +75,8 @@
 .button-main:focus {
   @apply tw-border-sky-700;
   @apply tw-bg-sky-700;
+  @apply dark:tw-bg-sky-600;
+  @apply dark:tw-border-sky-600;
 }
 
 .button-main-green,
@@ -82,12 +86,16 @@
   @apply tw-border-bootstrap-green-dark;
   @apply tw-bg-bootstrap-green;
   @apply tw-text-white;
+  @apply dark:tw-bg-bootstrap-green-dark;
+  @apply dark:tw-border-bootstrap-green;
+  @apply tw-transition-colors;
 }
 
 .button-main-green:hover:not(:disabled),
 .button-main-green:active,
 .button-main-green:focus {
   @apply tw-bg-bootstrap-green-dark;
+  @apply dark:tw-bg-bootstrap-green;
 }
 
 .button-danger,
@@ -97,6 +105,8 @@
   @apply tw-border-red-600;
   @apply tw-bg-red-500;
   @apply tw-text-white;
+  @apply dark:tw-bg-red-600;
+  @apply dark:tw-border-red-700;
 }
 
 .button-danger:hover:not(:disabled),
@@ -104,6 +114,8 @@
 .button-danger:focus {
   @apply tw-border-red-700;
   @apply tw-bg-red-600;
+  @apply dark:tw-bg-red-500;
+  @apply dark:tw-border-red-600;
 }
 
 .button-info,
@@ -113,6 +125,7 @@
   @apply tw-border-cyan-600;
   @apply tw-bg-cyan-500;
   @apply tw-text-cyan-50;
+  @apply dark:tw-bg-cyan-600;
 }
 
 .button-info:hover:not(:disabled),
@@ -120,6 +133,7 @@
 .button-info:focus {
   @apply tw-border-cyan-700;
   @apply tw-bg-cyan-600;
+  @apply dark:tw-bg-cyan-500;
 }
 
 [class*="button-as-addon"] {
