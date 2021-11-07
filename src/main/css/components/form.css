@@ -31,6 +31,12 @@
   border-color: #ccc;
 }
 
+@media (prefers-color-scheme: dark) {
+  .input-group {
+    border-color: theme("colors.neutral.600");
+  }
+}
+
 .input-group.has-error {
   @apply tw-border-red-700;
 }
@@ -42,12 +48,23 @@
   @apply tw-rounded-r-none !important;
 }
 
+.input-group-addon {
+  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-text-neutral-200;
+}
+
 .input-group .input-group-addon {
   /* remove border of input-group-addon since the input-group defines it */
   @apply tw-border-0 !important;
   /* however, left border should still be visible */
   @apply tw-border-l-2 !important;
   border-color: #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-group .input-group-addon {
+    border-color: theme("colors.neutral.600");
+  }
 }
 
 .input-group:focus-within {
@@ -128,6 +145,8 @@ textarea.error {
 
 .form-section .help-block {
   margin-top: 0;
+  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-text-opacity-75;
 }
 
 /**************************************************************************
