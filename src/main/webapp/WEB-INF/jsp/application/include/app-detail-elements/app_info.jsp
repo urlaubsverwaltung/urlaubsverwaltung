@@ -34,7 +34,7 @@
         </uv:box-icon>
     </jsp:attribute>
     <jsp:body>
-        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+        <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
             <c:out value="${application.person.niceName}"/> ${APPLIER_APPLIED}
         </span>
         <span class="tw-my-1 tw-text-lg tw-font-medium">
@@ -67,7 +67,7 @@
                 </c:choose>
             </span>
         </span>
-        <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+        <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-neutral-300 dark:tw-text-opacity-100">
             <c:choose>
                 <c:when test="${application.startDate == application.endDate}">
                     <c:set var="APPLICATION_DATE">
