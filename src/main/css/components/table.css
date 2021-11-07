@@ -106,11 +106,13 @@ tr.inactive td > * {
 .tablesorter-header {
   color: #2a6496;
   font-weight: normal;
+  @apply dark:tw-text-sky-600;
 }
 
 .tablesorter-header:hover {
   cursor: pointer;
   color: #1896db;
+  @apply dark:tw-text-sky-500;
 }
 
 .tablesorter-header-inner {
@@ -124,15 +126,16 @@ th.sortable-field .tablesorter-header-inner:after {
   background-size: cover;
   width: 16px;
   height: 16px;
-  background-image: url("../icons/selector.svg");
+  mask: url("../icons/selector.svg") no-repeat 50% 50%;
+  @apply dark:tw-bg-neutral-200;
 }
 
 th.tablesorter-headerDesc .tablesorter-header-inner:after {
-  background-image: url("../icons/chevron-down.svg");
+  mask: url("../icons/chevron-down.svg") no-repeat 50% 50%;
 }
 
 th.tablesorter-headerAsc .tablesorter-header-inner:after {
-  background-image: url("../icons/chevron-up.svg");
+  mask: url("../icons/chevron-up.svg") no-repeat 50% 50%;
 }
 
 /**************************************************************************
