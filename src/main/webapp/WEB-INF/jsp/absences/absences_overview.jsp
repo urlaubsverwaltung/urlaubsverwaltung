@@ -171,7 +171,7 @@
                         <tr role="row">
                             <th
                                 scope="row"
-                                class="tw-p-0.5 print:tw-hidden tw-sticky tw-left-0 tw-bg-gradient-to-r tw-from-white tw-border-l-0 tw-z-10"
+                                class="tw-p-0.5 print:tw-hidden tw-sticky tw-left-0 tw-bg-gradient-to-r tw-from-white dark:tw-from-neutral-900 tw-border-l-0 tw-z-10"
                             >
                                 <uv:avatar
                                     url="${person.gravatarUrl}?d=mm&s=32"
