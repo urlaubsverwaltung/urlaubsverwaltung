@@ -1,0 +1,21 @@
+@media (prefers-color-scheme: dark) {
+  .popover {
+    box-shadow: none !important;
+    border-color: theme("colors.neutral.600") !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+  }
+
+  .popover-title {
+    background-color: theme("colors.neutral.800") !important;
+    color: theme("colors.neutral.200") !important;
+    border-bottom-color: theme("colors.neutral.900") !important;
+  }
+
+  .popover-content {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    background-color: theme("colors.neutral.900") !important;
+    color: theme("colors.neutral.200") !important;
+  }
+}

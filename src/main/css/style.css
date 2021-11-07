@@ -23,6 +23,7 @@
 @import "./components/tabs.css";
 @import "./components/separator.css";
 @import "./components/states.css";
+@import "./components/popover.css";
 @import "./components/print.css";
 @import "./components/section-heading.css";
 @import "./components/text-bubble.css";
