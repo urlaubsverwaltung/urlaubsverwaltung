@@ -135,12 +135,12 @@
                 <div class="row">
                     <c:if test="${not empty departmentHeadsError}">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger tw-text-red-800">${departmentHeadsError}</div>
+                            <div class="alert alert-danger">${departmentHeadsError}</div>
                         </div>
                     </c:if>
                     <c:if test="${not empty secondStageAuthoritiesError}">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger tw-text-red-800">${secondStageAuthoritiesError}</div>
+                            <div class="alert alert-danger">${secondStageAuthoritiesError}</div>
                         </div>
                     </c:if>
                 </div>

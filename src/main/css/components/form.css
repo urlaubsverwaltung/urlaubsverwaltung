@@ -161,16 +161,19 @@ textarea.error {
   overflow: auto;
   max-height: 400px;
   width: 100%;
+  @apply dark:tw-border-neutral-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
+  @apply dark:tw-border-neutral-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
+  @apply dark:tw-bg-neutral-800;
 }
 
 .department--member.is-inactive {
