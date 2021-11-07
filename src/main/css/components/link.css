@@ -4,7 +4,8 @@ a {
 }
 
 a:hover,
-a:focus {
+a:focus,
+a:active {
   color: #1896db;
   @apply dark:tw-text-sky-500;
 }
