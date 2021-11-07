@@ -285,7 +285,7 @@
                     <div class="tw-w-full sm:tw-w-1/2">
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
-                                <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-700 dark:tw-text-neutral-900">
+                                <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-neutral-900">
                                     <icon:medkit className="tw-w-8 tw-h-8" />
                                 </uv:box-icon>
                             </jsp:attribute>
@@ -310,7 +310,7 @@
                     <div class="tw-w-full sm:tw-w-1/2">
                         <uv:box-narrow className="tw-border-none">
                             <jsp:attribute name="icon">
-                                <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-700 dark:tw-text-neutral-900">
+                                <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-neutral-900">
                                     <icon:child className="tw-w-8 tw-h-8" />
                                 </uv:box-icon>
                             </jsp:attribute>
