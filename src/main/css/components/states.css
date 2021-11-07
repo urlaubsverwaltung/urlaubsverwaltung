@@ -32,7 +32,7 @@
 
 .state {
   color: #6f6f6f;
-  @apply dark:tw-text-neutral-500 !important;
+  @apply dark:tw-text-neutral-400 !important;
 }
 
 .state.pull-right {
@@ -41,7 +41,7 @@
 
 .state.WAITING {
   color: #6f6f6f !important;
-  @apply dark:tw-text-neutral-300 !important;
+  @apply dark:tw-text-neutral-400 !important;
 }
 
 .state.ALLOWED {
