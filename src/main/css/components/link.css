@@ -1,13 +1,13 @@
 a {
   color: #2a6496;
-  @apply dark:tw-text-sky-600;
+  @apply dark:tw-text-sky-500;
 }
 
 a:hover,
 a:focus,
 a:active {
   color: #1896db;
-  @apply dark:tw-text-sky-500;
+  @apply dark:tw-text-sky-400;
 }
 
 @media print {
