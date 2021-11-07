@@ -531,7 +531,7 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <hr/>
-                                <button id="apply-application" type="submit" class="button-main-green dark:button-main pull-left col-xs-12 col-sm-5 col-md-2">
+                                <button id="apply-application" type="submit" class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2">
                                     ${BUTTON_SUBMIT_TITLE}
                                 </button>
                                 <button type="button" class="button col-xs-12 col-sm-5 col-md-2 pull-right" data-back-button>

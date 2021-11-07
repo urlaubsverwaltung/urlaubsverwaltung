@@ -21,6 +21,7 @@
   @apply tw-py-2;
   @apply tw-rounded;
   @apply tw-font-medium;
+  @apply dark:tw-font-semibold;
   @apply tw-border;
   transition: 100ms all ease-in-out;
   @apply tw-text-sm;
@@ -69,6 +70,7 @@
   @apply dark:tw-bg-bootstrap-green-dark;
   @apply dark:tw-border-bootstrap-green;
   @apply tw-transition-colors;
+  @apply dark:tw-text-neutral-900;
 }
 
 .button-main-green:hover:not(:disabled),
@@ -76,6 +78,22 @@
 .button-main-green:focus {
   @apply tw-bg-bootstrap-green-dark;
   @apply dark:tw-bg-bootstrap-green;
+}
+
+.alert .button-main-green,
+.alert .button-main-green:hover:not(:disabled),
+.alert .button-main-green:active,
+.alert .button-main-green:focus {
+  @apply dark:tw-bg-green-600;
+  @apply dark:tw-border-green-700;
+  @apply dark:tw-text-neutral-800;
+}
+
+.alert .button-main-green:hover:not(:disabled),
+.alert .button-main-green:active,
+.alert .button-main-green:focus {
+  @apply dark:tw-bg-green-500;
+  @apply dark:tw-border-green-600;
 }
 
 .button-main,

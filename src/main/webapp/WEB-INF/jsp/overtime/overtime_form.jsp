@@ -194,7 +194,7 @@
                 <div class="form-section">
                     <div class="col-xs-12">
                         <hr/>
-                        <button class="button-main-green dark:button-main col-xs-12 col-sm-5 col-md-2" type="submit" data-test-id="overtime-submit-button">
+                        <button class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit" data-test-id="overtime-submit-button">
                             <spring:message code="action.save"/>
                         </button>
                         <button class="button col-xs-12 col-sm-5 col-md-2 pull-right" type="button" data-back-button>

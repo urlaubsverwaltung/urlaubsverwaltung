@@ -57,7 +57,7 @@
     </div>
 
     <div class="form-group is-sticky row">
-        <button type="submit" class="button-main-green dark:button-main col-xs-12 col-sm-5">
+        <button type="submit" class="button-main-green col-xs-12 col-sm-5">
             <c:choose>
                 <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
                     <spring:message code='action.temporary_allow'/>
