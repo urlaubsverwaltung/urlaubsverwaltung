@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.time.Month;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccountFormValidatorTest {
@@ -58,6 +60,11 @@ class AccountFormValidatorTest {
 
     @Test
     void ensureAnnualVacationMustNotBeNegative() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(-1));
 
@@ -66,7 +73,12 @@ class AccountFormValidatorTest {
     }
 
     @Test
-    void ensureAnnualVacationMustBeInteger() {
+    void ensureAnnualVacationMustBeIntegerIfHalfDayIsNotActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(10.1));
 
@@ -75,7 +87,67 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureAnnualVacationCanBeIntegerIfHalfDayIsNotActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureAnnualVacationMustBeFullOrHalfDaysIfHalfDayIsActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10.6));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verify(errors).rejectValue("annualVacationDays", "error.entry.fullOrHalfNumber");
+    }
+
+    @Test
+    void ensureAnnualVacationCanBeHalfDayIfHalfDayIsActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10.5));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureAnnualVacationCanBeFullDayIfHalfDayIsActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verifyNoInteractions(errors);
+    }
+
+    @Test
     void ensureAnnualVacationMustNotBeGreaterThanMaximumDaysConfiguredInSettings() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
 
         int maxDays = 40;
         final AccountForm form = new AccountForm(2013);
@@ -87,6 +159,11 @@ class AccountFormValidatorTest {
 
     @Test
     void ensureValidAnnualVacationHasNoValidationError() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(new BigDecimal("28"));
 
