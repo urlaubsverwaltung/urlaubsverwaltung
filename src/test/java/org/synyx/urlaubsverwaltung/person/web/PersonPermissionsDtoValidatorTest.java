@@ -107,23 +107,23 @@ class PersonPermissionsDtoValidatorTest {
     }
 
     @Test
-    void ensureDepartmentHeadRoleAndOfficeRoleCanNotBeSelectedBoth() {
+    void ensureDepartmentHeadRoleAndOfficeRoleCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
         personPermissionsDto.setPermissions(asList(USER, OFFICE, DEPARTMENT_HEAD));
 
         sut.validatePermissions(personPermissionsDto, errors);
-        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination.departmentHead");
+        verifyNoInteractions(errors);
     }
 
     @Test
-    void ensureSecondStageRoleAndOfficeRoleCanNotBeSelectedBoth() {
+    void ensureSecondStageRoleAndOfficeRoleCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
         personPermissionsDto.setPermissions(asList(USER, OFFICE, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
-        verify(errors).rejectValue("permissions", "person.form.permissions.error.combination.secondStage");
+        verifyNoInteractions(errors);
     }
 
     @Test
