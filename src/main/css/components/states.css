@@ -46,7 +46,7 @@
 
 .state.ALLOWED {
   color: #43c83c !important;
-  @apply dark:tw-text-green-600 !important;
+  @apply dark:tw-text-green-500 !important;
 }
 
 .state.TEMPORARY_ALLOWED {
