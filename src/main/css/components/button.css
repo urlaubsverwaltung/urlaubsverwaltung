@@ -67,32 +67,33 @@
   @apply tw-border-bootstrap-green-dark;
   @apply tw-bg-bootstrap-green;
   @apply tw-text-white;
-  @apply dark:tw-bg-bootstrap-green-dark;
-  @apply dark:tw-border-bootstrap-green;
   @apply tw-transition-colors;
-  @apply dark:tw-text-neutral-900;
+  @apply dark:tw-bg-green-700;
+  @apply dark:tw-border-green-600;
+  @apply dark:tw-text-green-50;
 }
 
 .button-main-green:hover:not(:disabled),
 .button-main-green:active,
 .button-main-green:focus {
   @apply tw-bg-bootstrap-green-dark;
-  @apply dark:tw-bg-bootstrap-green;
+  @apply dark:tw-bg-green-600;
+  @apply dark:tw-border-green-600;
 }
 
 .alert .button-main-green,
 .alert .button-main-green:hover:not(:disabled),
 .alert .button-main-green:active,
 .alert .button-main-green:focus {
-  @apply dark:tw-bg-green-600;
-  @apply dark:tw-border-green-700;
-  @apply dark:tw-text-neutral-800;
+  @apply dark:tw-bg-green-700;
+  @apply dark:tw-border-green-600;
+  @apply dark:tw-text-green-50;
 }
 
 .alert .button-main-green:hover:not(:disabled),
 .alert .button-main-green:active,
 .alert .button-main-green:focus {
-  @apply dark:tw-bg-green-500;
+  @apply dark:tw-bg-green-600;
   @apply dark:tw-border-green-600;
 }
 
@@ -165,7 +166,8 @@
   @apply tw-border-cyan-600;
   @apply tw-bg-cyan-500;
   @apply tw-text-cyan-50;
-  @apply dark:tw-bg-cyan-600;
+  @apply dark:tw-bg-sky-700;
+  @apply dark:tw-text-sky-100;
 }
 
 .button-info:hover:not(:disabled),
@@ -173,7 +175,8 @@
 .button-info:focus {
   @apply tw-border-cyan-700;
   @apply tw-bg-cyan-600;
-  @apply dark:tw-bg-cyan-500;
+  @apply dark:tw-bg-sky-600;
+  @apply dark:tw-border-sky-600;
 }
 
 [class*="button-as-addon"] {
