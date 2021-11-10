@@ -171,6 +171,20 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureAnnualVacationCannotBeALittleMoreWithALotsOfZerosThanHalfDayIfHalfDayIsActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(true);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10.500000000000001));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verify(errors).rejectValue("annualVacationDays", "error.entry.fullOrHalfNumber");
+    }
+
+    @Test
     void ensureAnnualVacationCanBeFullDayIfHalfDayIsActive() {
 
         final Settings settings = new Settings();
