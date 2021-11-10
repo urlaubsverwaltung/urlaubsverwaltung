@@ -188,7 +188,7 @@ public final class TestDataCreator {
     }
 
     public static VacationTypeEntity createVacationTypeEntity(VacationCategory category) {
-        return createVacationTypeEntity(category, category.getMessageKey());
+        return createVacationTypeEntity(category, "application.data.vacationType.holiday");
     }
 
     public static VacationTypeEntity createVacationTypeEntity(VacationCategory category, String messageKey) {

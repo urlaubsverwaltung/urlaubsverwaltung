@@ -12,7 +12,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -492,13 +491,13 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
-
         final Person person = new Person();
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -533,14 +532,14 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
-
         final Person person = new Person();
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setRequiresApproval(false);
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -575,14 +574,15 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Person person = new Person();
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setRequiresApproval(false);
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -617,16 +617,16 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
-
         final Person person = new Person();
         person.setFirstName("Lord");
         person.setLastName("Helmchen");
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setRequiresApproval(false);
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -709,13 +709,13 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
-
         final Person person = new Person();
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -798,15 +798,15 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
-
         final Person person = new Person();
         person.setFirstName("Lord");
         person.setLastName("Helmchen");
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -851,14 +851,14 @@ class ApplicationMailServiceTest {
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
 
-        final VacationCategory vacationCategory = HOLIDAY;
-        when(messageSource.getMessage(eq(vacationCategory.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
-
         final Person person = new Person();
         final List<Person> recipients = singletonList(person);
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setCategory(vacationCategory);
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
 
         final Application application = new Application();
         application.setVacationType(vacationType);

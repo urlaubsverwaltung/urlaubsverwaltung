@@ -68,7 +68,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, applicationComment);
 
@@ -100,7 +100,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
@@ -261,7 +261,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
@@ -285,7 +285,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
@@ -310,7 +310,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
@@ -464,7 +464,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
@@ -488,7 +488,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
 
@@ -596,7 +596,7 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
@@ -639,7 +639,7 @@ class ApplicationMailService {
 
         Map<String, Object> modelSecondStage = new HashMap<>();
         modelSecondStage.put(APPLICATION, application);
-        modelSecondStage.put(VACATION_TYPE, getTranslation(application.getVacationType().getCategory().getMessageKey()));
+        modelSecondStage.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
         modelSecondStage.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
