@@ -2,4 +2,5 @@
   @apply tw-pb-2;
   @apply tw-border-b-2;
   @apply dark:tw-border-b;
+  @apply dark:tw-border-neutral-600;
 }
