@@ -201,8 +201,7 @@ class AccountFormValidator implements Validator {
 
     private void validateIsInteger(BigDecimal days, String field, Errors errors) {
 
-        final String decimal = days.subtract(new BigDecimal(days.intValue())).toPlainString();
-        final boolean isValid = decimal.startsWith("0.0") || decimal.equals("0");
+        final boolean isValid = days.stripTrailingZeros().scale() <= 0;
 
         if (!isValid && errors.getFieldErrors(field).isEmpty()) {
             errors.rejectValue(field, ERROR_INTEGER_FIELD);

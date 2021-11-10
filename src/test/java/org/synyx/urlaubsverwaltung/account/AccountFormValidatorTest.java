@@ -87,6 +87,34 @@ class AccountFormValidatorTest {
     }
 
     @Test
+    void ensureAnnualVacationMustBeIntegerAndCanBeZero() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(0));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureAnnualVacationMustBeIntegerIfHalfDayIsNotActiveDeepAfterDot() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10.000000000000001));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verify(errors).rejectValue("annualVacationDays", "error.entry.integer");
+    }
+
+    @Test
     void ensureAnnualVacationCanBeIntegerIfHalfDayIsNotActive() {
 
         final Settings settings = new Settings();
@@ -95,6 +123,20 @@ class AccountFormValidatorTest {
 
         final AccountForm form = new AccountForm(2013);
         form.setAnnualVacationDays(BigDecimal.valueOf(10));
+
+        sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureAnnualVacationCanBeIntegerWithDotZeroIfHalfDayIsNotActive() {
+
+        final Settings settings = new Settings();
+        settings.getApplicationSettings().setAllowHalfDays(false);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final AccountForm form = new AccountForm(2013);
+        form.setAnnualVacationDays(BigDecimal.valueOf(10.0));
 
         sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(40));
         verifyNoInteractions(errors);
