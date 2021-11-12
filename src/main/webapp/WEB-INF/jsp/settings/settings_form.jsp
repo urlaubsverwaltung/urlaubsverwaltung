@@ -93,6 +93,16 @@
                         </li>
                         <li role="presentation">
                             <a
+                                href="#absenceTypes"
+                                aria-controls="absenceTypes"
+                                role="tab"
+                                data-toggle="tab"
+                            >
+                                <spring:message code="settings.tabs.absenceTypes"/>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a
                                 href="#publicHolidays"
                                 aria-controls="publicHolidays"
                                 role="tab"
@@ -423,6 +433,135 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="tab-pane" id="absenceTypes">
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code='settings.absenceTypes.title'/>
+                        </h2>
+                    </uv:section-heading>
+                    <div>
+                        <table id="absence-type-table" class="absence-type-settings-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <spring:message code='settings.absenceTypes.table.head.state' />
+                                    </th>
+                                    <th>
+                                        <spring:message code='settings.absenceTypes.table.head.type' />
+                                    </th>
+                                    <th>
+                                        <spring:message code='settings.absenceTypes.table.head.category' />
+                                    </th>
+                                    <th>
+                                        <spring:message code='settings.absenceTypes.table.head.approval' />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-enabled="false">
+                                    <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
+                                        <span class="checkbox-switch">
+                                            <input type="checkbox" id="absenceType-active-erholungsurlaub">
+                                            <label for="absenceType-active-erholungsurlaub" class="tw-sr-only">
+                                                Aktiviert / Deaktiviert
+                                            </label>
+                                        </span>
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
+                                        Erholungsurlaub
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
+                                        Urlaub
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />">
+                                        <input type="checkbox" class="absence-type-approval-checkbox" id="absenceType-twoStageApproval-erholungsurlaub">
+                                        <label for="absenceType-twoStageApproval-erholungsurlaub" class="tw-sr-only">
+                                            Genehmigungsprozess
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr data-enabled="false">
+                                    <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
+                                        <span class="checkbox-switch">
+                                            <input type="checkbox" id="absenceType-active-sonderurlaub">
+                                            <label for="absenceType-active-sonderurlaub" class="tw-sr-only">
+                                                Aktiviert / Deaktiviert
+                                            </label>
+                                        </span>
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
+                                        Sonderurlaub
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
+                                        unbezahlter Urlaub
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />">
+                                        <input type="checkbox" class="absence-type-approval-checkbox" id="absenceType-twoStageApproval-sonderurlaub">
+                                        <label for="absenceType-twoStageApproval-sonderurlaub" class="tw-sr-only">
+                                            Genehmigungsprozess
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr data-enabled="false">
+                                    <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
+                                        <span class="checkbox-switch">
+                                            <input type="checkbox" id="absenceType-active-unbezahlterUrlaub">
+                                            <label for="absenceType-active-unbezahlterUrlaub" class="tw-sr-only">
+                                                Aktiviert / Deaktiviert
+                                            </label>
+                                        </span>
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
+                                        Unbezahlter Urlaub
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
+                                        unbezahlter Urlaub
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />">
+                                        <input type="checkbox" class="absence-type-approval-checkbox" id="absenceType-twoStageApproval-unbezahlterUrlaub">
+                                        <label for="absenceType-twoStageApproval-unbezahlterUrlaub" class="tw-sr-only">
+                                            Genehmigungsprozess
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr data-enabled="false">
+                                    <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
+                                        <span class="checkbox-switch">
+                                            <input type="checkbox" id="absenceType-active-ueberstunden">
+                                            <label for="absenceType-active-ueberstunden" class="tw-sr-only">
+                                                Aktiviert / Deaktiviert
+                                            </label>
+                                        </span>
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
+                                        Überstundenabbau
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
+                                        Überstunden
+                                    </td>
+                                    <td data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />">
+                                        <input type="checkbox" class="absence-type-approval-checkbox" id="absenceType-twoStageApproval-ueberstunden">
+                                        <label for="absenceType-twoStageApproval-ueberstunden" class="tw-sr-only">
+                                            Genehmigungsprozess
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <script type="module">
+                        const table = document.querySelector("#absence-type-table");
+                        table.addEventListener("click", function(event) {
+                            if (event.target.closest("[data-col-status]")) {
+                                // enable/disable clicked
+                                const tr = event.target.closest("tr");
+                                const checkbox = tr.querySelector("input[type='checkbox']");
+                                tr.dataset.enabled = checkbox.checked;
+                            }
+                        });
+                    </script>
                 </div>
 
                 <div class="tab-pane" id="publicHolidays">
