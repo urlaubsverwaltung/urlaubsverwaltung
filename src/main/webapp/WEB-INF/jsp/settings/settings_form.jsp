@@ -464,6 +464,7 @@
                                     <tr data-enabled="${absenceType.active}">
                                         <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
                                             <span class="checkbox-switch">
+                                                <form:hidden path="absenceTypeSettings.items[${loop.index}].id" value="${absenceType.id}" />
                                                 <form:checkbox path="absenceTypeSettings.items[${loop.index}].active" id="absenceType-active-${loop.index}" />
                                                 <label for="absenceType-active-${loop.index}" class="tw-sr-only">
                                                     <spring:message code="settings.absenceTypes.action.state.label" />

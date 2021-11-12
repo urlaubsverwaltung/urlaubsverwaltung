@@ -28,4 +28,11 @@ public interface VacationTypeService {
      * @return a filtered list of @{VacationCategory}
      */
     List<VacationType> getActiveVacationTypesWithoutCategory(VacationCategory vacationCategory);
+
+    /**
+     * Updates the given vacation types
+     *
+     * @param vacationTypeUpdates the vacation types to update
+     */
+    void updateVacationTypes(List<VacationTypeUpdate> vacationTypeUpdates);
 }

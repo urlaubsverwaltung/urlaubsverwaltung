@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @Transactional
@@ -45,6 +47,26 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         return getActiveVacationTypes().stream()
             .filter(vacationType -> vacationType.getCategory() != vacationCategory)
             .collect(toList());
+    }
+
+    @Override
+    public void updateVacationTypes(List<VacationTypeUpdate> vacationTypeUpdates) {
+
+        final Map<Integer, VacationTypeUpdate> byId = vacationTypeUpdates.stream().collect(toMap(VacationTypeUpdate::getId, vacationTypeUpdate -> vacationTypeUpdate));
+
+        final List<VacationTypeEntity> updatedEntities = vacationTypeRepository.findAllById(byId.keySet())
+            .stream()
+            .map(VacationTypeServiceImpl::convert)
+            .map(vacationType -> {
+                final VacationTypeUpdate vacationTypeUpdate = byId.get(vacationType.getId());
+                vacationType.setActive(vacationTypeUpdate.isActive());
+                vacationType.setRequiresApproval(vacationTypeUpdate.isRequiresApproval());
+                return vacationType;
+            })
+            .map(VacationTypeServiceImpl::convert)
+            .collect(toList());
+
+        vacationTypeRepository.saveAll(updatedEntities);
     }
 
     private Function<VacationTypeEntity, VacationType> convertToVacationType() {

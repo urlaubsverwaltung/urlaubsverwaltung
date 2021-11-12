@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -99,7 +100,11 @@ public class SettingsViewController {
 
         settingsService.save(processGoogleRefreshToken(settings));
 
-        // TODO save absenceTypeSettings
+        final List<VacationTypeUpdate> vacationTypeUpdates = settingsDto.getAbsenceTypeSettings().getItems()
+            .stream()
+            .map(SettingsViewController::absenceTypeDtoToVacationTypeUpdate)
+            .collect(toList());
+        vacationTypeService.updateVacationTypes(vacationTypeUpdates);
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -192,6 +197,14 @@ public class SettingsViewController {
             .setActive(vacationType.isActive())
             .setRequiresApproval(vacationType.isRequiresApproval())
             .build();
+    }
+
+    private static VacationTypeUpdate absenceTypeDtoToVacationTypeUpdate(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
+        return new VacationTypeUpdate(
+            absenceTypeSettingsItemDto.getId(),
+            absenceTypeSettingsItemDto.isActive(),
+            absenceTypeSettingsItemDto.isRequiresApproval()
+        );
     }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {
