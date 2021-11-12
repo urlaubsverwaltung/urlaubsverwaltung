@@ -33,8 +33,8 @@ public class SwaggerConfig {
                     .contact(
                         new Contact()
                             .name("Urlaubsverwaltung")
-                            .url("https://github.com/synyx/urlaubsverwaltung")
-                            .email("urlaubsverwaltung@synyx.de")
+                            .url("https://urlaubsverwaltung.cloud")
+                            .email("info@urlaubsverwaltung.cloud")
                     )
                     .license(
                         new License()

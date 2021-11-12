@@ -31,8 +31,8 @@
 
         <p class="tw-mb-8">
             <spring:message code="calendar.share.info"/>
-            <a href="https://github.com/synyx/urlaubsverwaltung/wiki/Fragen-zur-iCal-Kalenderfreigabe">
-                <spring:message code="calendar.share.info.wiki"/>
+            <a href="https://urlaubsverwaltung.cloud/hilfe/kalender/">
+                <spring:message code="calendar.share.info.help"/>
             </a>
         </p>
 
