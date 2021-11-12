@@ -245,7 +245,7 @@ class ApplicationForLeaveCreateIT {
         assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
 
         // ensure given information has been persisted successfully
-        // (currently the detail page hides some information like comments for holiday replacements)
+        // (currently the detail page hides some information like comments for replacements)
         applicationDetailPage.selectEdit();
         wait.until(pageIsVisible(applicationPage));
 

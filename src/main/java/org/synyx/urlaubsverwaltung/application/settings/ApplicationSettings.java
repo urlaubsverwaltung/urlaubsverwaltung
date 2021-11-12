@@ -40,12 +40,12 @@ public class ApplicationSettings {
     private Integer daysBeforeRemindForUpcomingApplications = 3;
 
     /**
-     * Activates a notification after {daysBeforeRemindForUpcomingHolidayReplacement} days for upcoming holiday replacement
+     * Activates a notification after {daysBeforeRemindForUpcomingHolidayReplacement} days for upcoming replacement
      */
     private boolean remindForUpcomingHolidayReplacement = false;
 
     /**
-     * Specifies when a reminder for upcoming holiday replacement should be sent
+     * Specifies when a reminder for upcoming replacement should be sent
      */
     private Integer daysBeforeRemindForUpcomingHolidayReplacement = 3;
 

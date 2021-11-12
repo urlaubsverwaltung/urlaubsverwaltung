@@ -45,7 +45,7 @@ class ApplicationReminderMailConfigurationTest {
         cronTaskStartsSoon.getRunnable().run();
         verify(service).sendUpcomingApplicationsReminderNotification();
 
-        // Upcoming holiday replacement Reminder
+        // Upcoming replacement Reminder
         final CronTask cronTaskHolidayReplacementStartsSoon = cronTaskList.get(2);
         assertThat(cronTaskHolidayReplacementStartsSoon.getExpression()).isEqualTo("0 0 7 * * *");
 

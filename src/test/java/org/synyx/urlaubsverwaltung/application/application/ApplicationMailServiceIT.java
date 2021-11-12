@@ -686,7 +686,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         final MimeMessage msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Eine Urlaubsvertretung für Lieschen Müller wurde eingestellt");
+        assertThat(msg.getSubject()).contains("Eine Vertretung für Lieschen Müller wurde eingestellt");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -726,7 +726,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -761,7 +761,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         MimeMessage msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Deine Urlaubsvertretung für Lieschen Müller wurde eingeplant");
+        assertThat(msg.getSubject()).contains("Deine Vertretung für Lieschen Müller wurde eingeplant");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -798,7 +798,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         MimeMessage msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller wurde zurückgezogen");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde zurückgezogen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -836,7 +836,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Urlaubsvertretung für Lieschen Müller wurde bearbeitet");
+        assertThat(msg.getSubject()).contains("Deine vorläufig geplante Vertretung für Lieschen Müller wurde bearbeitet");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -2145,7 +2145,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Urlaubsvertretung für Lieschen Müller");
+        assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -2180,7 +2180,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Urlaubsvertretung für Lieschen Müller");
+        assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -2214,7 +2214,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Urlaubsvertretung für Lieschen Müller");
+        assertThat(msg.getSubject()).contains("Erinnerung an deine bevorstehende Vertretung für Lieschen Müller");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email

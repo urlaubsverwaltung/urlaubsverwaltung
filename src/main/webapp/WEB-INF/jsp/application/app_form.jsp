@@ -355,7 +355,7 @@
                                     </div>
                                 </div>
 
-                                <%-- holiday replacement--%>
+                                <%-- replacement--%>
                                 <c:if test="${not empty selectableHolidayReplacements}">
                                     <div class="form-group">
                                         <label class="control-label col-md-3">

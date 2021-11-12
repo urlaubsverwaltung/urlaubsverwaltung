@@ -429,7 +429,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         wrongDateApplication.setStatus(WAITING);
         sut.save(wrongDateApplication);
 
-        // other holiday replacement
+        // other replacement
         final Person otherHolidayReplacement = new Person("other", "other", "holiday", "other@example.org");
         final Person savedOtherHolidayReplacement = personService.save(otherHolidayReplacement);
         final HolidayReplacementEntity otherHolidayReplacementEntity = new HolidayReplacementEntity();

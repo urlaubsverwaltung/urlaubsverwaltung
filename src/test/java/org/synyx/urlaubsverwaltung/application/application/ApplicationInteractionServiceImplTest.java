@@ -647,7 +647,7 @@ class ApplicationInteractionServiceImplTest {
         assertThatIllegalStateException().isThrownBy(() -> sut.allow(applicationForLeave, departmentHead, comment));
     }
 
-    // ALLOWING - HOLIDAY REPLACEMENT NOTIFICATION
+    // ALLOWING - REPLACEMENT NOTIFICATION
     @Test
     void ensureAllowingApplicationForLeaveWithHolidayReplacementSendsNotificationToReplacement() {
 

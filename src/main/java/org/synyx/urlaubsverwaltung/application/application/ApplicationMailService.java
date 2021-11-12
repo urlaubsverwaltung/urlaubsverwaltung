@@ -326,11 +326,11 @@ class ApplicationMailService {
 
     /**
      * Sends mail to person to inform that he/she
-     * has been selected as holiday replacement
+     * has been selected as replacement
      * for an directly allowed application
      * that stands in while someone is on holiday.
      *
-     * @param application to inform the holiday replacement
+     * @param application to inform the replacement
      */
     void notifyHolidayReplacementAboutDirectlyAllowedApplication(HolidayReplacementEntity holidayReplacement, Application application) {
 
@@ -354,10 +354,10 @@ class ApplicationMailService {
 
     /**
      * Sends mail to person to inform that he/she
-     * has been selected as holiday replacement
+     * has been selected as replacement
      * but that this application status is WAITING
      *
-     * @param application to inform the holiday replacement beforehand
+     * @param application to inform the replacement beforehand
      */
     void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application) {
 
@@ -378,10 +378,10 @@ class ApplicationMailService {
 
     /**
      * Sends mail to person to inform that he/she
-     * has been selected as holiday replacement
+     * has been selected as replacement
      * that stands in while someone is on holiday.
      *
-     * @param application to inform the holiday replacement
+     * @param application to inform the replacement
      */
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
@@ -405,10 +405,10 @@ class ApplicationMailService {
 
     /**
      * Sends mail to person to inform that he/she
-     * has been selected as holiday replacement
+     * has been selected as replacement
      * but that the request was cancelled/rejected/revoked/...
      *
-     * @param application to inform the holiday replacement was cancelled
+     * @param application to inform the replacement was cancelled
      */
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
@@ -431,10 +431,10 @@ class ApplicationMailService {
 
     /**
      * Sends mail to person to inform that he/she
-     * has been selected as holiday replacement
+     * has been selected as replacement
      * but that the request was cancelled/rejected/revoked/...
      *
-     * @param application to inform the holiday replacement was cancelled
+     * @param application to inform the replacement was cancelled
      */
     void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application) {
 

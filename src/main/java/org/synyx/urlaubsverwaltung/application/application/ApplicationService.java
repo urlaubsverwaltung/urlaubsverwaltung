@@ -61,7 +61,7 @@ public interface ApplicationService {
     List<Application> getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(LocalDate from, LocalDate to, List<ApplicationStatus> statuses);
 
     /**
-     * Gets all {@link Application}s where the holiday replacement should be notified.
+     * Gets all {@link Application}s where the replacement should be notified.
      *
      * @param from     defines the start as {@link LocalDate} of a period that should be considered
      * @param to       defines the end as {@link LocalDate} of a period that should be considered
@@ -131,13 +131,13 @@ public interface ApplicationService {
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
     /**
-     * Get a list of all active holiday replacements of the given person and that are active at the given date
+     * Get a list of all active replacements of the given person and that are active at the given date
      * <p>
-     * A active holiday replacement is a replacement that will end after the given date
+     * A active replacement is a replacement that will end after the given date
      *
      * @param holidayReplacement of the application
-     * @param date               that will indicate when a holiday replacement is active or not
-     * @return List of applications where the given person is the active holiday replacement
+     * @param date               that will indicate when a replacement is active or not
+     * @return List of applications where the given person is the active replacement
      */
     List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date);
 }

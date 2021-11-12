@@ -121,7 +121,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         // relevant management person gets email that a new application for leave has been created
         applicationMailService.sendNewApplicationNotification(savedApplication, createdComment);
 
-        // send email to holiday replacement to inform beforehand the confirmation
+        // send email to replacement to inform beforehand the confirmation
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
             applicationMailService.notifyHolidayReplacementForApply(holidayReplacement, savedApplication);
         }
@@ -202,7 +202,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         // relevant management person gets email that a new directly allowed application for leave has been created
         applicationMailService.sendNewDirectlyAllowedApplicationNotification(savedApplication, createdComment);
 
-        // send email to holiday replacement to inform beforehand the confirmation
+        // send email to replacement to inform beforehand the confirmation
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
             applicationMailService.notifyHolidayReplacementAboutDirectlyAllowedApplication(holidayReplacement, savedApplication);
         }

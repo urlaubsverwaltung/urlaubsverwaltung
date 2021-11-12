@@ -16,11 +16,11 @@ class HolidayReplacementEntityTest {
 
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
         holidayReplacementDto.setPerson(holidayReplacement);
-        holidayReplacementDto.setNote("some note to the holiday replacement");
+        holidayReplacementDto.setNote("some note to the replacement");
 
         final HolidayReplacementEntity holidayReplacementEntity = from(holidayReplacementDto);
         assertThat(holidayReplacementEntity.getPerson()).isEqualTo(holidayReplacement);
-        assertThat(holidayReplacementEntity.getNote()).isEqualTo("some note to the holiday replacement");
+        assertThat(holidayReplacementEntity.getNote()).isEqualTo("some note to the replacement");
     }
 
     @Test
