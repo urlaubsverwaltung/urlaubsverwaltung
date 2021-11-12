@@ -1,9 +1,10 @@
 Hallo ${application.person.niceName},
 
-${application.canceller.niceName} hat einen deiner Urlaubsanträge storniert.
+${application.canceller.niceName} hat einen deine Abwesenheit storniert.
 
 <#if (comment.text)?has_content>
-Kommentar zur Stornierung von ${comment.person.niceName} zum Antrag: ${comment.text}
+Kommentar von ${comment.person.niceName}:
+${comment.text}
 
 </#if>
-Es handelt sich um folgenden Urlaubsantrag: ${baseLinkURL}web/application/${application.id?c}
+Es handelt sich um folgende Abwesenheit: ${baseLinkURL}web/application/${application.id?c}

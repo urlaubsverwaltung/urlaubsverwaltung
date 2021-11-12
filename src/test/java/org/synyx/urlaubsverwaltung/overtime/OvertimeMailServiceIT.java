@@ -19,10 +19,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -72,7 +70,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
         final String text = (String) msg.getContent();
         assertThat(text).contains("Hallo Marlene Muster");
         assertThat(text).contains("es wurden Überstunden erfasst: https://localhost:8080/web/overtime/1");
-        assertThat(text).contains("Datum: 16.04.2020 - 23.04.2020");
-        assertThat(text).contains("Dauer: 55 Std. 12 Min.");
+        assertThat(text).contains("Datum:       16.04.2020 - 23.04.2020");
+        assertThat(text).contains("Dauer:       55 Std. 12 Min.");
     }
 }

@@ -22,4 +22,4 @@ ${replacement.person.niceName}<#if replacement.note?has_content>, "${replacement
 Da du vom ${application.startDate.format("dd.MM.yyyy")} bis zum ${application.endDate.format("dd.MM.yyyy")} nicht anwesend bist, denke bitte an die Übergabe.
 Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
 
-Link zum Antrag: ${baseLinkURL}web/application/${application.id?c}
+Link zur Abwesenheit: ${baseLinkURL}web/application/${application.id?c}

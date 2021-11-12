@@ -2,22 +2,22 @@ Hallo ${application.person.niceName},
 
 dein Abwesenheitsantrag wurde erfolgreich eingestellt.
 
-Informationen zum Abwesenheitsantrag:
+    ${baseLinkURL}web/application/${application.id?c}
 
-    Antragsdatum: ${application.applicationDate.format("dd.MM.yyyy")}
-    Zeitraum der Abwesenheit: ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
+Informationen zum Abwesenheit:
+
+    Antragsdatum:        ${application.applicationDate.format("dd.MM.yyyy")}
+    Zeitraum:            ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
     Art der Abwesenheit: ${vacationType}
     <#if (application.reason)?has_content>
-    Grund: ${application.reason}
+    Grund:               <@compress single_line=true>${application.reason}</@compress>
     </#if>
     <#if application.holidayReplacements?has_content >
-    Vertretung: <#list application.holidayReplacements as replacement>${replacement.person.niceName}<#if !replacement?is_last>, </#if></#list>
+    Vertretung:          <#list application.holidayReplacements as replacement>${replacement.person.niceName}<#if !replacement?is_last>, </#if></#list>
     </#if>
     <#if (application.address)?has_content>
-    Anschrift/Telefon während der Abwesenheit: ${application.address}
+    Anschrift/Telefon:   <@compress single_line=true>${application.address}</@compress>
     </#if>
     <#if (comment.text)?has_content>
-    Kommentar: ${comment.text}
+    Kommentar:           <@compress single_line=true>${comment.text}</@compress>
     </#if>
-
-Link zur eingestellten Abwesenheit: ${baseLinkURL}web/application/${application.id?c}

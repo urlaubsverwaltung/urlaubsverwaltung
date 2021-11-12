@@ -1,24 +1,24 @@
 Hallo ${recipient.niceName},
 
-es wurde eine neue, nicht zu genehmigende, Abwesenheit eingestellt.
+es wurde eine neue Abwesenheit eingestellt (diese muss nicht genehmigt werden).
 
     ${baseLinkURL}web/application/${application.id?c}
 
-Informationen zum Urlaubsantrag:
+Informationen zur Abwesenheit:
 
-    Mitarbeiter: ${application.person.niceName}
+    Mitarbeiter:               ${application.person.niceName}
     Datum der Antragsstellung: ${application.applicationDate.format("dd.MM.yyyy")}
-    Zeitraum des beantragten Urlaubs: ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
-    Art des Urlaubs: ${vacationType}
+    Zeitraum:                  ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
+    Art der Abwesenheit:       ${vacationType}
     <#if (application.reason)?has_content>
-    Grund: ${application.reason}
+    Grund:                     <@compress single_line=true>${application.reason}</@compress>
     </#if>
     <#if application.holidayReplacements?has_content >
-    Vertretung: <#list application.holidayReplacements as replacement>${replacement.person.niceName}<#if !replacement?is_last>, </#if></#list>
+    Vertretung:                <#list application.holidayReplacements as replacement>${replacement.person.niceName}<#if !replacement?is_last>, </#if></#list>
     </#if>
     <#if (application.address)?has_content>
-    Anschrift/Telefon während des Urlaubs: ${application.address}
+    Anschrift/Telefon:         <@compress single_line=true>${application.address}</@compress>
     </#if>
     <#if (comment.text)?has_content>
-    Kommentar: ${comment.text}
+    Kommentar:                 <@compress single_line=true>${comment.text}</@compress>
     </#if>

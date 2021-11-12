@@ -3,7 +3,8 @@ Hallo ${application.person.niceName},
 dein am ${application.applicationDate.format("dd.MM.yyyy")} gestellter, nicht genehmigter Antrag wurde von ${comment.person.niceName} storniert.
 
 <#if (comment.text)?has_content>
-Begründung: ${comment.text}
+Begründung:
+${comment.text}
 
 </#if>
-Link zum Antrag: ${baseLinkURL}web/application/${application.id?c}
+Link zur Abwesenheit: ${baseLinkURL}web/application/${application.id?c}

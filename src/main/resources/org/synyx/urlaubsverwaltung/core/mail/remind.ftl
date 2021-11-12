@@ -1,5 +1,5 @@
 Hallo ${recipient.niceName},
 
-${application.person.niceName} bittet um die Bearbeitung des Urlaubsantrags vom ${application.applicationDate.format("dd.MM.yyyy")}.
+${application.person.niceName} bittet um die Bearbeitung der Abwesenheit vom ${application.applicationDate.format("dd.MM.yyyy")}.
 
-Link zum Antrag: ${baseLinkURL}web/application/${application.id?c}
+Link zur Abwesenheit: ${baseLinkURL}web/application/${application.id?c}

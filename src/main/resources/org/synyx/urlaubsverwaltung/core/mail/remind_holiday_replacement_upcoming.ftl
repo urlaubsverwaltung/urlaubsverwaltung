@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-deine Urlaubsvertretung für ${application.person.niceName} vom ${application.startDate.format("dd.MM.yyyy")} bis zum ${application.endDate.format("dd.MM.yyyy")} beginnt <#if daysBeforeUpcomingHolidayReplacement == 1>morgen<#else>in ${daysBeforeUpcomingHolidayReplacement} Tagen</#if>.
+deine Vertretung für ${application.person.niceName} vom ${application.startDate.format("dd.MM.yyyy")} bis zum ${application.endDate.format("dd.MM.yyyy")} beginnt <#if daysBeforeUpcomingHolidayReplacement == 1>morgen<#else>in ${daysBeforeUpcomingHolidayReplacement} Tagen</#if>.
 
 <#if replacementNote?has_content>
 Notiz:
