@@ -30,8 +30,6 @@ class PersonPermissionsDtoValidator implements Validator {
     private static final String ERROR_PERMISSIONS_MANDATORY = "person.form.permissions.error.mandatory";
     private static final String ERROR_PERMISSIONS_INACTIVE_ROLE = "person.form.permissions.error.inactive";
     private static final String ERROR_PERMISSIONS_USER_ROLE = "person.form.permissions.error.user";
-    private static final String ERROR_PERMISSIONS_COMBINATION_DEPARTMENT_HEAD_WITH_BOSS = "person.form.permissions.error.combination.departmentHead";
-    private static final String ERROR_PERMISSIONS_COMBINATION_SECOND_STAGE_WITH_BOSS = "person.form.permissions.error.combination.secondStage";
     private static final String ERROR_NOTIFICATIONS_COMBINATION = "person.form.notifications.error.combination";
 
     private static final String ATTRIBUTE_PERMISSIONS = "permissions";
@@ -67,20 +65,6 @@ class PersonPermissionsDtoValidator implements Validator {
         // user role must always be selected for active user
         if (!roles.contains(INACTIVE) && !roles.contains(USER)) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, ERROR_PERMISSIONS_USER_ROLE);
-            return;
-        }
-
-        validateCombinationOfRoles(roles, errors);
-    }
-
-    private void validateCombinationOfRoles(Collection<Role> roles, Errors errors) {
-
-        if (roles.contains(DEPARTMENT_HEAD) && roles.contains(BOSS)) {
-            errors.rejectValue(ATTRIBUTE_PERMISSIONS, ERROR_PERMISSIONS_COMBINATION_DEPARTMENT_HEAD_WITH_BOSS);
-        }
-
-        if (roles.contains(SECOND_STAGE_AUTHORITY) && roles.contains(BOSS)) {
-            errors.rejectValue(ATTRIBUTE_PERMISSIONS, ERROR_PERMISSIONS_COMBINATION_SECOND_STAGE_WITH_BOSS);
         }
     }
 
