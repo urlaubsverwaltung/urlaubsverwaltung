@@ -9,12 +9,21 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
+import org.synyx.urlaubsverwaltung.account.AccountSettings;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.sicknote.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
 import java.util.List;
@@ -57,13 +66,18 @@ class SettingsViewControllerTest {
 
     @Mock
     private SettingsService settingsService;
+
+    @Mock
+    private VacationTypeService vacationTypeService;
+
     @Mock
     private SettingsValidator settingsValidator;
+
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version");
+        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version");
     }
 
     @Test
@@ -77,13 +91,22 @@ class SettingsViewControllerTest {
     @Test
     void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1);
+        vacationType.setActive(true);
+        vacationType.setRequiresApproval(true);
+        vacationType.setCategory(VacationCategory.HOLIDAY);
+        vacationType.setMessageKey("vacationType.messageKey");
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
         final Settings settings = someSettings();
         when(settingsService.getSettings()).thenReturn(settings);
 
         final String requestUrl = "/web/settings";
 
+        // TODO test explicit settings attributes
         perform(get(requestUrl))
-            .andExpect(model().attribute("settings", settings))
+            .andExpect(model().attributeExists("settings"))
             .andExpect(model().attribute("federalStateTypes", FederalState.values()))
             .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
@@ -181,7 +204,19 @@ class SettingsViewControllerTest {
             return null;
         }).when(settingsValidator).validate(any(), any());
 
-        perform(post("/web/settings"))
+        perform(
+            post("/web/settings")
+                .param("calendarSettings.provider", "NoopCalendarSyncProvider")
+                .param("calendarSettings.exchangeCalendarSettings.email", "")
+                .param("calendarSettings.exchangeCalendarSettings.password", "")
+                .param("calendarSettings.exchangeCalendarSettings.ewsUrl", "")
+                .param("calendarSettings.exchangeCalendarSettings.calendar", "")
+                .param("calendarSettings.exchangeCalendarSettings.timeZoneId", "Z")
+                .param("calendarSettings.googleCalendarSettings.clientId", "")
+                .param("calendarSettings.googleCalendarSettings.clientSecret", "")
+                .param("calendarSettings.googleCalendarSettings.calendarId", "")
+                .param("calendarSettings.googleCalendarSettings.authorizedRedirectUrl", "http://localhost:8080/web/google-api-handshake")
+        )
             .andExpect(view().name("settings/settings_form"));
     }
 
@@ -190,7 +225,11 @@ class SettingsViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
-        perform(post("/web/settings"));
+        perform(
+            post("/web/settings")
+                .param("absenceTypeSettings.items[0].id", "10")
+        );
+
         verify(settingsService).save(any(Settings.class));
     }
 
@@ -199,16 +238,34 @@ class SettingsViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(someSettings());
 
-        perform(post("/web/settings")).andExpect(flash().attribute("success", true));
+        perform(
+            post("/web/settings")
+                .param("absenceTypeSettings.items[0].id", "10")
+        )
+            .andExpect(flash().attribute("success", true));
 
-        perform(post("/web/settings"))
+        perform(
+            post("/web/settings")
+                .param("absenceTypeSettings.items[0].id", "10")
+        )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/settings"));
     }
 
     private static Settings someSettings() {
 
-        return new Settings();
+        final Settings settings = new Settings();
+
+        settings.setId(1);
+        settings.setApplicationSettings(new ApplicationSettings());
+        settings.setAccountSettings(new AccountSettings());
+        settings.setWorkingTimeSettings(new WorkingTimeSettings());
+        settings.setOvertimeSettings(new OvertimeSettings());
+        settings.setTimeSettings(new TimeSettings());
+        settings.setSickNoteSettings(new SickNoteSettings());
+        settings.setCalendarSettings(new CalendarSettings());
+
+        return settings;
     }
 
     private static Settings someSettingsWithNoExchangeTimezone() {
