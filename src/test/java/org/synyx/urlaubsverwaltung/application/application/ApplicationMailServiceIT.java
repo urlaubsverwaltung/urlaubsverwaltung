@@ -101,7 +101,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email user attributes
         MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde genehmigt");
+        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -117,7 +117,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neuer genehmigter Antrag");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -173,7 +173,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email user attributes
         MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde genehmigt");
+        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -189,7 +189,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neuer genehmigter Antrag");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -250,7 +250,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email user attributes
         MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde genehmigt");
+        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -266,7 +266,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         Message msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neuer genehmigter Antrag");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -310,7 +310,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde abgelehnt");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde abgelehnt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -326,7 +326,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxBoss.length).isOne();
 
         Message msgBoss = inboxBoss[0];
-        assertThat(msgBoss.getSubject()).isEqualTo("Ein Urlaubsantrag wurde abgelehnt");
+        assertThat(msgBoss.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
 
         String contentBoss = (String) msgBoss.getContent();
         assertThat(contentBoss).contains("Hallo Hugo Boss");
@@ -340,7 +340,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxDepartmentHead.length).isOne();
 
         Message msgDepartmentHead = inboxDepartmentHead[0];
-        assertThat(msgDepartmentHead.getSubject()).isEqualTo("Ein Urlaubsantrag wurde abgelehnt");
+        assertThat(msgDepartmentHead.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
 
         String contentDepartmentHead = (String) msgDepartmentHead.getContent();
         assertThat(contentDepartmentHead).contains("Hallo Department Head");
@@ -366,7 +366,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Hilfe bei der Entscheidung über einen Urlaubsantrag");
+        assertThat(msg.getSubject()).isEqualTo("Hilfe bei der Entscheidung über eine zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -492,7 +492,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Ein Benutzer beantragt die Stornierung eines genehmigten Antrags");
+        assertThat(msg.getSubject()).isEqualTo("Ein Benutzer beantragt die Stornierung einer genehmigten Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String contentOffice = (String) msg.getContent();
@@ -557,7 +557,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         final Message contentUser = inboxUser[0];
-        assertThat(contentUser.getSubject()).isEqualTo("Dein Abwesenheitsantrag wurde eingestellt");
+        assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde eingestellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
         assertThat(contentUser.getContent()).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -600,7 +600,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         final Message contentUser = inboxUser[0];
-        assertThat(contentUser.getSubject()).isEqualTo("Ein Abwesenheitsantrag wurde für dich eingestellt");
+        assertThat(contentUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich eingestellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
         assertThat(contentUser.getContent()).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1006,7 +1006,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Für dich wurde ein Urlaubsantrag eingereicht");
+        assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -1048,7 +1048,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Für dich wurde ein Urlaubsantrag eingereicht");
+        assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
@@ -1101,7 +1101,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Für dich wurde ein Urlaubsantrag eingereicht");
+        assertThat(msg.getSubject()).isEqualTo("Für dich wurde eine zu genehmigende Abwesenheit eingereicht");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
@@ -1143,7 +1143,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxApplicant.length).isOne();
 
         Message msg = inboxApplicant[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde erfolgreich storniert");
+        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String content = (String) msg.getContent();
@@ -1158,7 +1158,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxRelevantPerson.length).isOne();
 
         Message msgRelevantPerson = inboxRelevantPerson[0];
-        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein nicht genehmigter Urlaubsantrag wurde erfolgreich storniert");
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine nicht genehmigte Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
         String contentRelevantPerson = (String) msgRelevantPerson.getContent();
@@ -1192,7 +1192,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxApplicant.length).isOne();
 
         Message msg = inboxApplicant[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde storniert");
+        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String content = (String) msg.getContent();
@@ -1207,7 +1207,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxRelevantPerson.length).isOne();
 
         Message msgRelevantPerson = inboxRelevantPerson[0];
-        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein nicht genehmigter Urlaubsantrag wurde erfolgreich storniert");
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine nicht genehmigte Abwesenheit wurde erfolgreich storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
         String contentRelevantPerson = (String) msgRelevantPerson.getContent();
@@ -1247,7 +1247,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxApplicant.length).isOne();
 
         MimeMessage msg = inboxApplicant[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Antrag wurde storniert");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         String content = readPlainContent(msg);
@@ -1265,7 +1265,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxRelevantPerson.length).isOne();
 
         MimeMessage msgRelevantPerson = inboxRelevantPerson[0];
-        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Ein Antrag wurde vom Office storniert");
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vom Office storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
         String contentRelevantPerson = readPlainContent(msgRelevantPerson);
@@ -1523,7 +1523,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email user
         Message msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig genehmigt");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
@@ -1537,7 +1537,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email office
         Message msgSecondStage = inboxSecondStage[0];
-        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig genehmigt");
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
@@ -1600,12 +1600,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email user
         Message msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig genehmigt");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // get email office
         final Message msgSecondStage = inboxSecondStage[0];
-        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig genehmigt");
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
@@ -1673,12 +1673,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email user
         Message msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Dein Urlaubsantrag wurde vorläufig genehmigt");
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // get email office
         final Message msgSecondStage = inboxSecondStage[0];
-        assertThat(msgSecondStage.getSubject()).isEqualTo("Ein Urlaubsantrag wurde vorläufig genehmigt");
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
         assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
 
         // check content of office email
@@ -1733,7 +1733,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // has mail correct attributes?
         Message msg = inboxOfBoss[0];
-        assertThat(msg.getSubject()).contains("Erinnerung wartender Urlaubsantrag");
+        assertThat(msg.getSubject()).isEqualTo("Erinnerung auf wartende zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -1789,7 +1789,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Urlaubsantrag von Max Muster wurde erfolgreich bearbeitet");
+        assertThat(msg.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
@@ -2223,7 +2223,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         Message msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Erinnerung für wartende Urlaubsanträge");
+        assertThat(msg.getSubject()).isEqualTo("Erinnerung für wartende zu genehmigende Abwesenheiten");
 
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo " + inboxOwner.getNiceName());
@@ -2238,7 +2238,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                                                        ApplicationComment comment) throws MessagingException, IOException {
 
         // check subject
-        assertThat(msg.getSubject()).isEqualTo("Neuer Urlaubsantrag für " + niceName);
+        assertThat(msg.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für " + niceName + " eingereicht");
 
         // check from and recipient
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);

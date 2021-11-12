@@ -78,7 +78,7 @@
         <c:set var="ACTION" value="${URL_PREFIX}/application"/>
         <c:set var="ADD_REPLACEMENT_ACTION" value="${URL_PREFIX}/application/new"/>
         <c:set var="heading">
-            <spring:message code="application.data.title"/>
+            <spring:message code="application.data.title.new"/>
         </c:set>
         <c:set var="BUTTON_SUBMIT_TITLE">
             <spring:message code="action.apply.vacation"/>

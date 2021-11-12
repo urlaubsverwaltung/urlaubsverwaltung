@@ -736,7 +736,7 @@ class ApplicationMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.appliedByOffice");
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.applied.office");
         assertThat(mail.getTemplateName()).isEqualTo("new_application_by_office");
         assertThat(mail.getTemplateModel()).isEqualTo(model);
     }

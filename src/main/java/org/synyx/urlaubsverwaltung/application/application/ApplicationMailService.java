@@ -494,7 +494,7 @@ class ApplicationMailService {
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
-            .withSubject("subject.application.appliedByOffice")
+            .withSubject("subject.application.applied.office")
             .withTemplate("new_application_by_office", model)
             .build();
 
