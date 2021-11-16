@@ -58,7 +58,7 @@
     "babel-loader": "8.2.3",
     "concurrently": "6.3.0",
     "css-loader": "5.2.7",
-    "cssnano": "5.0.8",
+    "cssnano": "5.0.10",
     "date-fns": "2.25.0",
     "eslint": "8.1.0",
     "eslint-config-prettier": "8.3.0",
