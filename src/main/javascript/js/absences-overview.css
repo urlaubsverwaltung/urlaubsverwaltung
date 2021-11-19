@@ -75,35 +75,60 @@ th.vacationOverview-cal-head.today::after {
 
 .cal-day,
 .vacationOverview-legend-colorbox {
-  --bg-left-hue: 0;
-  --bg-left-saturation: 0%;
-  --bg-left-lightness: 90%;
-  --bg-left-opacity: 1;
-  --bg-right-hue: 0;
-  --bg-right-saturation: 0%;
-  --bg-right-lightness: 90%;
-  --bg-right-opacity: 1;
+  overflow: hidden;
+  position: relative;
+  --absence-bar-color-morning: transparent;
+  --absence-bar-color-noon: transparent;
+  --absence-bar-color: transparent;
 }
 
 .vacationOverview-cal-head {
-  --bg-left-hue: 0;
-  --bg-left-saturation: 0%;
-  --bg-left-lightness: 100%;
-  --bg-left-opacity: 1;
-  --bg-right-hue: 0;
-  --bg-right-saturation: 0%;
-  --bg-right-lightness: 100%;
-  --bg-right-opacity: 1;
+  --absence-bar-color-morning: transparent;
+  --absence-bar-color-noon: transparent;
+  --absence-bar-color: transparent;
 }
 
 .cal-day,
 .vacationOverview-cal-head,
 .vacationOverview-legend-colorbox {
-  background: linear-gradient(
-    90deg,
-    hsla(var(--bg-left-hue), var(--bg-left-saturation), var(--bg-left-lightness), var(--bg-left-opacity)) 50%,
-    hsla(var(--bg-right-hue), var(--bg-right-saturation), var(--bg-right-lightness), var(--bg-right-opacity)) 50%
-  ) !important;
+  --background-color: #e5e5e5;
+  background-color: var(--background-color);
+}
+
+.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after,
+.vacationOverview-legend-colorbox:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  height: 4px;
+  border-radius: 99999px;
+  background-color: var(--absence-bar-color);
+}
+
+.cal-day:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before,
+.vacationOverview-legend-colorbox:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 50%;
+  height: 4px;
+  border-radius: 99999px;
+  background-color: var(--absence-bar-color-morning);
+}
+
+.cal-day:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after,
+.vacationOverview-legend-colorbox:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  right: 4px;
+  height: 4px;
+  border-radius: 99999px;
+  background-color: var(--absence-bar-color-noon);
 }
 
 @media print {
@@ -114,78 +139,58 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-.absence-full,
+.absence-full {
+  --absence-bar-color: #FACC15;
+}
 .absence-morning {
-  --bg-left-hue: 49;
-  --bg-left-saturation: 100%;
-  --bg-left-lightness: 81%;
+  --absence-bar-color-morning: #FACC15;
 }
-.absence-full,
 .absence-noon {
-  --bg-right-hue: 49;
-  --bg-right-saturation: 100%;
-  --bg-right-lightness: 81%;
+  --absence-bar-color-noon: #FACC15;
 }
 
-.vacation-full-waiting,
+.vacation-full-waiting {
+  --absence-bar-color: #EAB308;
+}
 .vacation-morning-waiting {
-  --bg-left-hue: 48;
-  --bg-left-saturation: 100%;
-  --bg-left-lightness: 70%;
+  --absence-bar-color-morning: #EAB308;
 }
-.vacation-full-waiting,
 .vacation-noon-waiting {
-  --bg-right-hue: 48;
-  --bg-right-saturation: 100%;
-  --bg-right-lightness: 70%;
+  --absence-bar-color-noon: #EAB308;
 }
 
-.vacation-full-approved,
+.vacation-full-approved {
+  --absence-bar-color: #FACC15;
+}
 .vacation-morning-approved {
-  --bg-left-hue: 49;
-  --bg-left-saturation: 100%;
-  --bg-left-lightness: 81%;
+  --absence-bar-color-morning: #FACC15;
 }
-.vacation-full-approved,
 .vacation-noon-approved {
-  --bg-right-hue: 49;
-  --bg-right-saturation: 100%;
-  --bg-right-lightness: 81%;
+  --absence-bar-color-noon: #FACC15;
 }
 
-.sick-note-full,
+.sick-note-full {
+  --absence-bar-color: #EF4444;
+}
 .sick-note-morning {
-  --bg-left-hue: 6;
-  --bg-left-saturation: 100%;
-  --bg-left-lightness: 87%;
+  --absence-bar-color-morning: #EF4444;
 }
-.sick-note-full,
 .sick-note-noon {
-  --bg-right-hue: 6;
-  --bg-right-saturation: 100%;
-  --bg-right-lightness: 87%;
+  --absence-bar-color-noon: #EF4444;
 }
 
-.public-holiday-full,
-.public-holiday-morning {
-  --bg-left-hue: 201;
-  --bg-left-saturation: 40%;
-  --bg-left-lightness: 79%;
-}
-.public-holiday-full,
-.public-holiday-noon {
-  --bg-right-hue: 201;
-  --bg-right-saturation: 40%;
-  --bg-right-lightness: 79%;
+.datepicker-public-holiday-marker {
+  position: absolute;
+  transform: rotate(45deg);
+  background-color: #71717A;
+  width: 1rem;
+  height: 1rem;
+  top: -0.625rem;
+  right: -0.625rem;
 }
 
 .weekend {
-  --bg-left-hue: 201;
-  --bg-left-saturation: 40%;
-  --bg-left-lightness: 79%;
-  --bg-right-hue: 201;
-  --bg-right-saturation: 40%;
-  --bg-right-lightness: 79%;
+  --background-color: #b5d0df;
 }
 
 @media print {
@@ -210,17 +215,7 @@ th.vacationOverview-cal-head.today::after {
     font-weight: 300 !important;
   }
 
-  .public-holiday-full,
-  .public-holiday-morning {
-    --bg-left-lightness: 100%;
-  }
-  .public-holiday-full,
-  .public-holiday-noon {
-    --bg-right-lightness: 100%;
-  }
-
   .weekend {
-    --bg-left-lightness: 100%;
-    --bg-right-lightness: 100%;
+    --background-color: #ffffff;
   }
 }

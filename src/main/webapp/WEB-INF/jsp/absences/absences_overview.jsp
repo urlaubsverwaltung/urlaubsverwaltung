@@ -150,11 +150,13 @@
                                     class="non-sortable text-zinc-700 vacationOverview-cal-head
                                             ${day.weekend ? 'weekend' : ''}
                                             ${day.today ? ' today' : ''}
-                                            ${(day.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                             ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                             ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
+                                    <c:if test="${day.type.publicHolidayFull}">
+                                        <span class="datepicker-public-holiday-marker"></span>
+                                    </c:if>
                                     <c:out value="${day.dayOfMonth}"/>
                                 </th>
                             </c:forEach>
@@ -192,11 +194,13 @@
                                         ${(absence.type.sickNoteFull) ? ' sick-note-full' : ''}
                                         ${(absence.type.sickNoteMorning) ? ' sick-note-morning' : ''}
                                         ${(absence.type.sickNoteNoon) ? ' sick-note-noon' : ''}
-                                        ${(absence.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                         ${(absence.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                         ${(absence.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}
                                         ${(absence.weekend) ? ' weekend' : ''}"
                                 >
+                                    <c:if test="${absence.type.publicHolidayFull}">
+                                        <span class="datepicker-public-holiday-marker"></span>
+                                    </c:if>
                                     <span class="tw-hidden print:tw-inline print:tw-font-mono">
                                         <c:if test="${absence.type.waitingVacationMorning}">
                                             <spring:message code="absences.overview.vacation.morning.abbr"/>
