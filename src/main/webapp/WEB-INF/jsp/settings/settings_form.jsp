@@ -441,6 +441,11 @@
                             <spring:message code='settings.absenceTypes.title'/>
                         </h2>
                     </uv:section-heading>
+                    <div class="tw-flex tw-flex-row-reverse" >
+                        <a title="<spring:message code="settings.absenceTypes.help"/>" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
+                            <icon:question-mark-circle className="tw-w-6 tw-h-6" />
+                        </a>
+                    </div>
                     <div>
                         <table id="absence-type-table" class="absence-type-settings-table">
                             <thead>
