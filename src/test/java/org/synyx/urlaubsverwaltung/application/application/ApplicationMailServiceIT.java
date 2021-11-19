@@ -530,7 +530,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msg = inbox[0];
 
         // check subject
-        assertThat(msg.getSubject()).contains("Deine Krankmeldung wurde zu Urlaub umgewandelt");
+        assertThat(msg.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
 
         // check from and recipient
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
