@@ -20,6 +20,7 @@
       INSERT INTO vacation_type (id, category, message_key) VALUES (5005, 'OTHER', 'application.data.vacationType.education');
       INSERT INTO vacation_type (id, category, message_key) VALUES (5006, 'OTHER', 'application.data.vacationType.homeOffice');
       INSERT INTO vacation_type (id, category, message_key) VALUES (5007, 'OTHER', 'application.data.vacationType.outOfOffice');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5008, 'OTHER', 'application.data.vacationType.training');
     </sql>
 
   </changeSet>
