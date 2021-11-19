@@ -1,9 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -13,8 +14,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
@@ -50,7 +50,7 @@ class SickNoteConvertFormTest {
         final LocalDate startDate = LocalDate.of(2014, 1, 1);
         final LocalDate endDate = LocalDate.of(2014, 1, 10);
         final SickNote sickNote = createSickNote(person, startDate, endDate, FULL);
-        final VacationType vacationType = createVacationType(VacationCategory.UNPAIDLEAVE);
+        final VacationTypeEntity vacationType = TestDataCreator.createVacationTypeEntity(VacationCategory.UNPAIDLEAVE);
 
         final SickNoteConvertForm sut = new SickNoteConvertForm(sickNote);
         sut.setReason("Some Reason");

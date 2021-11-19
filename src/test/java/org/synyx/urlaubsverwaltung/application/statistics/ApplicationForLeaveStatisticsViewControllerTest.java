@@ -8,15 +8,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -33,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsViewControllerTest {
@@ -101,8 +101,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
-        final List<VacationType> vacationType = Collections.singletonList(new VacationType());
-        when(vacationTypeService.getVacationTypes()).thenReturn(vacationType);
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("from", "01.01.2019")

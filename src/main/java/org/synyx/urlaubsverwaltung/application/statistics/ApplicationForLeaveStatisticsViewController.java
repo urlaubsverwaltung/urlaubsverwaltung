@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
@@ -28,10 +28,8 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
  * Controller to generate applications for leave statistics.
  */
 @Controller
-@RequestMapping(ApplicationForLeaveStatisticsViewController.STATISTICS_REL)
-public class ApplicationForLeaveStatisticsViewController {
-
-    static final String STATISTICS_REL = "/web/application/statistics";
+@RequestMapping("/web/application/statistics")
+class ApplicationForLeaveStatisticsViewController {
 
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
@@ -39,7 +37,7 @@ public class ApplicationForLeaveStatisticsViewController {
     private final DateFormatAware dateFormatAware;
 
     @Autowired
-    public ApplicationForLeaveStatisticsViewController(
+    ApplicationForLeaveStatisticsViewController(
         ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
@@ -62,7 +60,7 @@ public class ApplicationForLeaveStatisticsViewController {
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());
 
-        return "redirect:" + STATISTICS_REL + "?from=" + startDateIsoString + "&to=" + endDateIsoString;
+        return "redirect:/web/application/statistics?from=" + startDateIsoString + "&to=" + endDateIsoString;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -84,11 +82,8 @@ public class ApplicationForLeaveStatisticsViewController {
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
-
-        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-        model.addAttribute("statistics", statistics);
-
-        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
+        model.addAttribute("statistics", applicationForLeaveStatisticsService.getStatistics(period));
+        model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
         return "application/app_statistics";
     }
@@ -111,13 +106,12 @@ public class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
-        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-
         final String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
+        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
         try (CSVWriter csvWriter = new CSVWriter(response.getWriter())) {
             applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
         }
@@ -128,10 +122,8 @@ public class ApplicationForLeaveStatisticsViewController {
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {
-
         final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
         final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(null);
-
         return new FilterPeriod(startDate, endDate);
     }
 }

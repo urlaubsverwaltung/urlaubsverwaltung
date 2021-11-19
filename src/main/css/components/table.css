@@ -142,3 +142,210 @@ th.tablesorter-headerAsc .tablesorter-header-inner:after {
 td.halves h4 {
   margin-top: 5px;
 }
+
+/**************************************************************************
+  Absence Type Settings Table
+**************************************************************************/
+
+.absence-type-approval-checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  appearance: none;
+  @apply tw-border;
+  @apply tw-border-gray-400;
+  @apply tw-rounded;
+  @apply tw-transition-colors;
+}
+
+.absence-type-approval-checkbox:checked {
+  @apply tw-bg-blue-500;
+  @apply tw-border-blue-500;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e")
+}
+
+table.absence-type-settings-table thead {
+  position: sticky;
+  top: 3.25rem; /* header height */
+  background-color: #ffffff;
+}
+
+@screen sm {
+  table.absence-type-settings-table thead {
+    top: 3rem; /* header height */
+  }
+}
+
+/* kudos https://css-tricks.com/responsive-data-tables/ */
+@media only screen and (max-width: 639px) {
+  table.absence-type-settings-table {
+    display: block;
+
+    /* Force table to not be like tables anymore */
+    thead, tbody, th, td, tr {
+      display: block;
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    tbody {
+      tr {
+        @apply tw-rounded;
+        @apply tw-border;
+        @apply tw-p-2;
+        @apply tw-transition-colors;
+        @apply tw-bg-white;
+      }
+
+      tr:not(:last-child) {
+        @apply tw-mb-4;
+      }
+
+      tr[data-enabled="true"] {
+        @apply tw-border-blue-100;
+        @apply tw-bg-blue-50;
+        @apply tw-bg-opacity-20;
+      }
+
+      td {
+        /* Behave  like a "row" */
+        @apply tw-px-2;
+        @apply tw-py-1;
+        display: flex;
+        align-items: center;
+        @apply tw-text-base;
+        @apply tw-text-black-almost;
+      }
+
+      tr[data-enabled="false"] td {
+        @apply tw-text-opacity-75;
+      }
+
+      tr[data-enabled="false"] .absence-type-approval-checkbox {
+        @apply tw-border-gray-300;
+      }
+
+      tr[data-enabled="false"] .absence-type-approval-checkbox:checked {
+        @apply tw-bg-blue-300;
+        @apply tw-border-blue-300;
+      }
+
+      td::before {
+        /* Now like a table header */
+        width: 40%;
+        white-space: nowrap;
+        @apply tw-pr-4;
+        @apply tw-font-medium;
+        @apply tw-text-gray-800;
+        @apply tw-text-sm;
+        @apply tw-truncate;
+      }
+
+      /*
+      Label the data
+      */
+      td::before { content: attr(data-th-text); }
+
+      td:nth-of-type(4) {
+        text-align: left;
+      }
+    }
+  }
+}
+
+@screen sm {
+  table.absence-type-settings-table tr {
+    @apply tw-transition-colors;
+  }
+
+  table.absence-type-settings-table tr[data-enabled="false"] {
+    @apply tw-text-gray-500;
+  }
+
+  table.absence-type-settings-table tr[data-enabled="false"]:hover {
+    @apply tw-bg-gray-100;
+  }
+
+  table.absence-type-settings-table tr[data-enabled="true"] {
+    @apply tw-text-blue-900;
+    @apply tw-bg-blue-50;
+    @apply tw-bg-opacity-75;
+  }
+
+  table.absence-type-settings-table tr[data-enabled="true"]:hover {
+    @apply tw-bg-blue-100;
+    @apply tw-bg-opacity-70;
+  }
+
+  table.absence-type-settings-table tr[data-enabled="false"] .absence-type-approval-checkbox {
+    @apply tw-border-gray-300;
+  }
+  table.absence-type-settings-table tr[data-enabled="false"] .absence-type-approval-checkbox:checked {
+    @apply tw-bg-blue-300;
+    @apply tw-border-blue-300;
+  }
+
+  table.absence-type-settings-table {
+    border-collapse: separate;
+    border-spacing: 0 0.25rem;
+
+    thead {
+      th {
+        @apply tw-text-sm;
+        @apply tw-px-4;
+        @apply tw-py-1;
+      }
+
+      th:nth-of-type(1) {
+        @apply tw-pr-4;
+      }
+      th:nth-of-type(4) {
+        @apply tw-text-right;
+      }
+    }
+
+    tbody {
+      td {
+        @apply tw-mb-2;
+        @apply tw-py-1;
+      }
+
+      td:nth-of-type(1) {
+        @apply tw-rounded-l;
+        @apply tw-pl-4;
+        @apply tw-pr-4;
+      }
+      td:nth-of-type(2) {
+        @apply tw-pl-4;
+        @apply tw-pr-8;
+      }
+      td:nth-of-type(3) {
+        @apply tw-pl-4;
+        @apply tw-pr-8;
+      }
+      td:nth-of-type(4) {
+        text-align: right;
+        @apply tw-rounded-r;
+        @apply tw-pl-4;
+        @apply tw-pr-4;
+      }
+    }
+  }
+}
+
+@screen md {
+  table.absence-type-settings-table {
+    tbody {
+      td:nth-of-type(2) {
+        @apply tw-pr-16;
+      }
+      td:nth-of-type(3) {
+        @apply tw-pr-16;
+      }
+    }
+  }
+}

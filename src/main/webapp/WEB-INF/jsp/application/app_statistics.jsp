@@ -145,36 +145,40 @@
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                                         <spring:message code="applications.statistics.total"/>:
                                         <c:forEach items="${vacationTypes}" var="type">
-                                            <br/>
-                                            <small>
-                                                <spring:message code="${type.messageKey}"/>:
-                                            </small>
+                                            <c:if test="${statistic.hasVacationType(type)}">
+                                                <br/>
+                                                <small>
+                                                    <spring:message code="${type.messageKey}"/>:
+                                                </small>
+                                            </c:if>
                                         </c:forEach>
                                     </td>
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell number">
                                         <strong class="sortable">
-                                            <uv:number
-                                                number="${statistic.totalAllowedVacationDays}"/>
+                                            <uv:number number="${statistic.totalAllowedVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
-                                            <br/>
-                                            <small>
-                                                <uv:number number="${statistic.allowedVacationDays[type]}"/>
-                                            </small>
+                                            <c:if test="${statistic.hasVacationType(type)}">
+                                                <br/>
+                                                <small>
+                                                    <uv:number number="${statistic.getAllowedVacationDays(type)}"/>
+                                                </small>
+                                            </c:if>
                                         </c:forEach>
                                     </td>
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell number">
                                         <strong class="sortable">
-                                            <uv:number
-                                                number="${statistic.totalWaitingVacationDays}"/>
+                                            <uv:number number="${statistic.totalWaitingVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.days"/>
                                         <c:forEach items="${vacationTypes}" var="type">
-                                            <br/>
-                                            <small>
-                                                <uv:number number="${statistic.waitingVacationDays[type]}"/>
-                                            </small>
+                                            <c:if test="${statistic.hasVacationType(type)}">
+                                                <br/>
+                                                <small>
+                                                    <uv:number number="${statistic.getWaitingVacationDays(type)}"/>
+                                                </small>
+                                            </c:if>
                                         </c:forEach>
                                     </td>
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell">

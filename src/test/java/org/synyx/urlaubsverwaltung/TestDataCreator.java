@@ -1,12 +1,13 @@
 package org.synyx.urlaubsverwaltung;
 
-import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.account.Account;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -34,6 +35,10 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
 
@@ -67,7 +72,7 @@ public final class TestDataCreator {
     }
 
     // Application for leave -------------------------------------------------------------------------------------------
-    public static Application createApplication(Person person, VacationType vacationType) {
+    public static Application createApplication(Person person, VacationTypeEntity vacationType) {
 
         LocalDate now = LocalDate.now(UTC);
         return createApplication(person, vacationType, now, now.plusDays(3), FULL);
@@ -75,9 +80,9 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        VacationType vacationType = TestDataCreator.createVacationType(VacationCategory.HOLIDAY, "application.data.vacationType.holiday");
+        final VacationTypeEntity vacationType = createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday");
 
-        Application application = new Application();
+        final Application application = new Application();
         application.setPerson(person);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
@@ -88,7 +93,7 @@ public final class TestDataCreator {
         return application;
     }
 
-    public static Application createApplication(Person person, VacationType vacationType, LocalDate startDate,
+    public static Application createApplication(Person person, VacationTypeEntity vacationType, LocalDate startDate,
                                                 LocalDate endDate, DayLength dayLength) {
 
         Application application = new Application();
@@ -182,13 +187,13 @@ public final class TestDataCreator {
         return workingTime;
     }
 
-    public static VacationType createVacationType(VacationCategory category) {
-        return createVacationType(category, category.getMessageKey());
+    public static VacationTypeEntity createVacationTypeEntity(VacationCategory category) {
+        return createVacationTypeEntity(category, "application.data.vacationType.holiday");
     }
 
-    public static VacationType createVacationType(VacationCategory category, String messageKey) {
+    public static VacationTypeEntity createVacationTypeEntity(VacationCategory category, String messageKey) {
 
-        VacationType vacationType = new VacationType();
+        VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(category);
         vacationType.setMessageKey(messageKey);
 
@@ -197,27 +202,46 @@ public final class TestDataCreator {
 
     public static List<VacationType> createVacationTypes() {
 
-        ArrayList<VacationType> vacationTypes = new ArrayList<>();
+        final List<VacationType> vacationTypes = new ArrayList<>();
 
-        VacationType vacationType1 = new VacationType();
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true);
+        vacationTypes.add(holidayType);
+
+        final VacationType specialLeaveType = new VacationType(2000, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true);
+        vacationTypes.add(specialLeaveType);
+
+        final VacationType vacationType3 = new VacationType(3000, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true);
+        vacationTypes.add(vacationType3);
+
+        final VacationType vacationType4 = new VacationType(4000, true, OVERTIME, "application.data.vacationType.overtime", true);
+        vacationTypes.add(vacationType4);
+
+        return vacationTypes;
+    }
+
+    public static List<VacationTypeEntity> createVacationTypesEntities() {
+
+        ArrayList<VacationTypeEntity> vacationTypes = new ArrayList<>();
+
+        VacationTypeEntity vacationType1 = new VacationTypeEntity();
         vacationType1.setId(1000);
-        vacationType1.setCategory(VacationCategory.HOLIDAY);
+        vacationType1.setCategory(HOLIDAY);
         vacationType1.setMessageKey("application.data.vacationType.holiday");
         vacationTypes.add(vacationType1);
 
-        VacationType vacationType2 = new VacationType();
+        VacationTypeEntity vacationType2 = new VacationTypeEntity();
         vacationType2.setCategory(VacationCategory.SPECIALLEAVE);
         vacationType2.setMessageKey("application.data.vacationType.specialleave");
         vacationType2.setId(2000);
         vacationTypes.add(vacationType2);
 
-        VacationType vacationType3 = new VacationType();
+        VacationTypeEntity vacationType3 = new VacationTypeEntity();
         vacationType3.setCategory(VacationCategory.UNPAIDLEAVE);
         vacationType3.setMessageKey("application.data.vacationType.unpaidleave");
         vacationType3.setId(3000);
         vacationTypes.add(vacationType3);
 
-        VacationType vacationType4 = new VacationType();
+        VacationTypeEntity vacationType4 = new VacationTypeEntity();
         vacationType4.setCategory(VacationCategory.OVERTIME);
         vacationType4.setMessageKey("application.data.vacationType.overtime");
         vacationType4.setId(4000);

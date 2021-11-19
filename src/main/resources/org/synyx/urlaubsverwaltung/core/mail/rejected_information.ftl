@@ -6,4 +6,4 @@ der von ${application.person.niceName} am ${application.applicationDate.format("
 Begründung: ${comment.text}
 
 </#if>
-Link zum Antrag: ${baseLinkURL}web/application/${application.id?c}
+Link zur Abwesenheit: ${baseLinkURL}web/application/${application.id?c}

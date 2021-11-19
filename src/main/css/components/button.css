@@ -6,13 +6,13 @@
 
 /* STYLING FOR SM SCREENS */
 @media (max-width: 991px) {
-  [class*=button].pull-right,
-  [class*=button].pull-left {
+  [class*="button"].pull-right,
+  [class*="button"].pull-left {
     float: none;
   }
 }
 
-[class*=button] {
+[class*="button"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -27,13 +27,13 @@
   white-space: nowrap;
 }
 
-[class*=button] [class*=not-sr-only] {
+[class*="button"] [class*="not-sr-only"] {
   /* tailwind not-sr-only sets white-space to 'normal' */
   /* buttons text should not be wrapped however */
   white-space: nowrap !important;
 }
 
-[class*=button]:disabled {
+[class*="button"]:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
@@ -117,7 +117,7 @@
   @apply tw-bg-cyan-600;
 }
 
-[class*=button-as-addon] {
+[class*="button-as-addon"] {
   @apply tw-py-0;
 }
 

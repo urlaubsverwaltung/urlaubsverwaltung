@@ -5,7 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.synyx.urlaubsverwaltung.application.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;

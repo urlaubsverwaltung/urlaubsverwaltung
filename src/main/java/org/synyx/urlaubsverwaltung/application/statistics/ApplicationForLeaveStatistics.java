@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -25,17 +24,36 @@ public class ApplicationForLeaveStatistics {
     private BigDecimal leftVacationDays = ZERO;
     private Duration leftOvertime = Duration.ZERO;
 
-    public ApplicationForLeaveStatistics(Person person, VacationTypeService vacationTypeService) {
+    ApplicationForLeaveStatistics(Person person) {
         this.person = person;
-
-        for (VacationType vacationType : vacationTypeService.getVacationTypes()) {
-            waitingVacationDays.put(vacationType, ZERO);
-            allowedVacationDays.put(vacationType, ZERO);
-        }
     }
 
     public Person getPerson() {
         return person;
+    }
+
+    public Map<VacationType, BigDecimal> getWaitingVacationDays() {
+        return waitingVacationDays;
+    }
+
+    public Map<VacationType, BigDecimal> getAllowedVacationDays() {
+        return allowedVacationDays;
+    }
+
+    public BigDecimal getLeftVacationDays() {
+        return leftVacationDays;
+    }
+
+    public void setLeftVacationDays(BigDecimal leftVacationDays) {
+        this.leftVacationDays = leftVacationDays;
+    }
+
+    public Duration getLeftOvertime() {
+        return leftOvertime;
+    }
+
+    public void setLeftOvertime(Duration leftOvertime) {
+        this.leftOvertime = leftOvertime;
     }
 
     public BigDecimal getTotalWaitingVacationDays() {
@@ -58,37 +76,23 @@ public class ApplicationForLeaveStatistics {
         return total;
     }
 
-    public BigDecimal getLeftVacationDays() {
-        return leftVacationDays;
-    }
-
-    public Map<VacationType, BigDecimal> getWaitingVacationDays() {
-        return waitingVacationDays;
-    }
-
-    public Map<VacationType, BigDecimal> getAllowedVacationDays() {
-        return allowedVacationDays;
-    }
-
-    public void setLeftVacationDays(BigDecimal leftVacationDays) {
-        this.leftVacationDays = leftVacationDays;
-    }
-
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
-        final BigDecimal currentWaitingVacationDays = getWaitingVacationDays().get(vacationType);
+        final BigDecimal currentWaitingVacationDays = getWaitingVacationDays().getOrDefault(vacationType, ZERO);
         getWaitingVacationDays().put(vacationType, currentWaitingVacationDays.add(waitingVacationDays));
     }
 
     public void addAllowedVacationDays(VacationType vacationType, BigDecimal allowedVacationDays) {
-        final BigDecimal currentAllowedVacationDays = getAllowedVacationDays().get(vacationType);
+        final BigDecimal currentAllowedVacationDays = getAllowedVacationDays().getOrDefault(vacationType, ZERO);
         getAllowedVacationDays().put(vacationType, currentAllowedVacationDays.add(allowedVacationDays));
     }
 
-    public void setLeftOvertime(Duration leftOvertime) {
-        this.leftOvertime = leftOvertime;
+    public boolean hasVacationType(VacationType type) {
+        return waitingVacationDays.containsKey(type) || allowedVacationDays.containsKey(type);
     }
 
-    public Duration getLeftOvertime() {
-        return leftOvertime;
+    public BigDecimal getWaitingVacationDays(VacationType type) {
+        return waitingVacationDays.getOrDefault(type, ZERO);
     }
+
+    public BigDecimal getAllowedVacationDays(VacationType type) {return allowedVacationDays.getOrDefault(type, ZERO);}
 }

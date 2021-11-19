@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -18,18 +20,21 @@ class ApplicationForLeaveStatisticsService {
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
+    private final VacationTypeService vacationTypeService;
 
     @Autowired
     ApplicationForLeaveStatisticsService(PersonService personService, DepartmentService departmentService,
-                                         ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder) {
+                                         ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder, VacationTypeService vacationTypeService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.applicationForLeaveStatisticsBuilder = applicationForLeaveStatisticsBuilder;
+        this.vacationTypeService = vacationTypeService;
     }
 
     List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
+        final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         return getRelevantPersons().stream()
-            .map(person -> applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate()))
+            .map(person -> applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate(), activeVacationTypes))
             .collect(toList());
     }
 

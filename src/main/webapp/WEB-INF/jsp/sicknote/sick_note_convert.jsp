@@ -59,7 +59,7 @@
                         <div class="col-md-7">
                             <uv:select id="vacationType" name="vacationType">
                                 <c:forEach items="${vacationTypes}" var="vacationType">
-                                    <option value="${vacationType.id}" ${sickNoteConvertForm.vacationType == vacationType ? 'selected="selected"' : ''}>
+                                    <option value="${vacationType.id}" ${sickNoteConvertForm.vacationType.id == vacationType.id ? 'selected="selected"' : ''}>
                                         <spring:message code="${vacationType.messageKey}"/>
                                     </option>
                                 </c:forEach>

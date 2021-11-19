@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -35,6 +38,7 @@ public class SettingsViewController {
     private final AccountProperties accountProperties;
     private final WorkingTimeProperties workingTimeProperties;
     private final SettingsService settingsService;
+    private final VacationTypeService vacationTypeService;
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
     private final Clock clock;
@@ -42,11 +46,12 @@ public class SettingsViewController {
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
-                                  SettingsService settingsService, List<CalendarProvider> calendarProviders,
+                                  SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
+        this.vacationTypeService = vacationTypeService;
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
         this.clock = clock;
@@ -74,17 +79,19 @@ public class SettingsViewController {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@ModelAttribute("settings") Settings settings,
+    public String settingsSaved(@ModelAttribute("settings") SettingsDto settingsDto,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
+        final Settings settings = settingsDtoToSettings(settingsDto);
         settingsValidator.validate(settings, errors);
+
         if (errors.hasErrors()) {
 
             final StringBuffer requestURL = request.getRequestURL();
             final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
 
-            fillModel(model, settings, authorizedRedirectUrl);
+            fillModel(model, settingsDto, authorizedRedirectUrl);
 
             model.addAttribute("errors", errors);
 
@@ -92,6 +99,12 @@ public class SettingsViewController {
         }
 
         settingsService.save(processGoogleRefreshToken(settings));
+
+        final List<VacationTypeUpdate> vacationTypeUpdates = settingsDto.getAbsenceTypeSettings().getItems()
+            .stream()
+            .map(SettingsViewController::absenceTypeDtoToVacationTypeUpdate)
+            .collect(toList());
+        vacationTypeService.updateVacationTypes(vacationTypeUpdates);
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -107,10 +120,17 @@ public class SettingsViewController {
     }
 
     private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
+        final SettingsDto settingsDto = settingsToDto(settings);
+        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+
+        fillModel(model, settingsDto, authorizedRedirectUrl);
+    }
+
+    private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
         model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
         model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
 
-        model.addAttribute("settings", settings);
+        model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
 
@@ -122,12 +142,69 @@ public class SettingsViewController {
 
         model.addAttribute("availableTimezones", List.of(TimeZone.getAvailableIDs()));
 
-        if (settings.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
-            settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(clock.getZone().getId());
+        if (settingsDto.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
+            settingsDto.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(clock.getZone().getId());
         }
 
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
         model.addAttribute("version", applicationVersion);
+    }
+
+    private SettingsDto settingsToDto(Settings settings) {
+        // TODO use DTOs for settings
+        final SettingsDto settingsDto = new SettingsDto();
+        settingsDto.setId(settings.getId());
+        settingsDto.setApplicationSettings(settings.getApplicationSettings());
+        settingsDto.setAccountSettings(settings.getAccountSettings());
+        settingsDto.setWorkingTimeSettings(settings.getWorkingTimeSettings());
+        settingsDto.setOvertimeSettings(settings.getOvertimeSettings());
+        settingsDto.setTimeSettings(settings.getTimeSettings());
+        settingsDto.setSickNoteSettings(settings.getSickNoteSettings());
+        settingsDto.setCalendarSettings(settings.getCalendarSettings());
+        return settingsDto;
+    }
+
+    private Settings settingsDtoToSettings(SettingsDto settingsDto) {
+        final Settings settings = new Settings();
+        settings.setId(settingsDto.getId());
+        settings.setApplicationSettings(settingsDto.getApplicationSettings());
+        settings.setAccountSettings(settingsDto.getAccountSettings());
+        settings.setWorkingTimeSettings(settingsDto.getWorkingTimeSettings());
+        settings.setOvertimeSettings(settingsDto.getOvertimeSettings());
+        settings.setTimeSettings(settingsDto.getTimeSettings());
+        settings.setSickNoteSettings(settingsDto.getSickNoteSettings());
+        settings.setCalendarSettings(settingsDto.getCalendarSettings());
+        return settings;
+    }
+
+    private AbsenceTypeSettingsDto absenceTypeItemSettingDto() {
+        final List<AbsenceTypeSettingsItemDto> absenceTypeDtos = vacationTypeService.getAllVacationTypes()
+            .stream()
+            .map(this::vacationTypeToDto)
+            .collect(toList());
+
+        final AbsenceTypeSettingsDto absenceTypeSettingsDto = new AbsenceTypeSettingsDto();
+        absenceTypeSettingsDto.setItems(absenceTypeDtos);
+
+        return absenceTypeSettingsDto;
+    }
+
+    private AbsenceTypeSettingsItemDto vacationTypeToDto(VacationType vacationType) {
+        return AbsenceTypeSettingsItemDto.builder()
+            .setId(vacationType.getId())
+            .setMessageKey(vacationType.getMessageKey())
+            .setCategory(vacationType.getCategory())
+            .setActive(vacationType.isActive())
+            .setRequiresApproval(vacationType.isRequiresApproval())
+            .build();
+    }
+
+    private static VacationTypeUpdate absenceTypeDtoToVacationTypeUpdate(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
+        return new VacationTypeUpdate(
+            absenceTypeSettingsItemDto.getId(),
+            absenceTypeSettingsItemDto.isActive(),
+            absenceTypeSettingsItemDto.isRequiresApproval()
+        );
     }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {

@@ -28,8 +28,12 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     public CalendarSyncServiceImpl(SettingsService settingsService, CalendarService calendarService) {
         this.settingsService = settingsService;
         this.calendarService = calendarService;
+        LOG.debug("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
+    }
 
-        LOG.info("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
+    @Override
+    public boolean isRealProviderConfigured() {
+        return calendarService.getCalendarProvider().isRealProviderConfigured();
     }
 
     @Override

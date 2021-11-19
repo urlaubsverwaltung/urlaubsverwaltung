@@ -88,4 +88,8 @@
   <include file="dbchangelogs/changelog-4.21.0-add-setting-overtime-write-privileged-only.xml"/>
   <include file="dbchangelogs/changelog-4.24.0-add-upcoming-holiday-replacement-reminder.xml"/>
   <include file="dbchangelogs/changelog-4.26.0-add-upcoming-application-reminder.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-index-for-absence-mapping-id-and-type.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-activation-of-vacationtypes.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-requires-approval-of-vacationtypes.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-new-vacation-types.xml"/>
 </databaseChangeLog>

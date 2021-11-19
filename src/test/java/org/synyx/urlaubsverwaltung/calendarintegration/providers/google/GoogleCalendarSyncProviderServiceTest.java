@@ -111,6 +111,12 @@ class GoogleCalendarSyncProviderServiceTest {
     }
 
     @Test
+    void isRealProviderConfigured() {
+        final GoogleCalendarSyncProvider sut = new GoogleCalendarSyncProvider(calendarMailService, settingsService);
+        assertThat(sut.isRealProviderConfigured()).isTrue();
+    }
+
+    @Test
     void testCalendarEventCount() throws GeneralSecurityException, IOException {
         Integer eventCount = getCalendarEventCount();
         assertThat(eventCount >= 0).isTrue();

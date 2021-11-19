@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationCategory;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -13,7 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 /**
@@ -45,7 +46,7 @@ class ApplicationForLeaveDataProvider {
             application.setApplicationDate(startDate.minusDays(5L));
             application.setStartDate(startDate);
             application.setEndDate(endDate);
-            application.setVacationType(getVacationType(vacationCategory));
+            application.setVacationType(convert(getVacationType(vacationCategory)));
             application.setDayLength(dayLength);
             application.setReason("Lorem ipsum dolor sit amet, consetetur sadipscing elitr");
 
@@ -92,7 +93,7 @@ class ApplicationForLeaveDataProvider {
     private VacationType getVacationType(VacationCategory vacationCategory) {
 
         VacationType vacationType = null;
-        final List<VacationType> vacationTypes = vacationTypeService.getVacationTypes();
+        final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
         for (VacationType savedVacationType : vacationTypes) {
             if (savedVacationType.isOfCategory(vacationCategory)) {
                 vacationType = savedVacationType;

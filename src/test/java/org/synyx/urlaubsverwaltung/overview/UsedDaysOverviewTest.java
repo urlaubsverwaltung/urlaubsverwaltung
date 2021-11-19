@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.TestDataCreator;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -23,15 +24,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationType;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.domain.VacationCategory.UNPAIDLEAVE;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +44,7 @@ class UsedDaysOverviewTest {
     void ensureThrowsIfOneOfTheGivenApplicationsDoesNotMatchTheGivenYear() {
 
         final Application application = new Application();
-        application.setVacationType(createVacationType(HOLIDAY));
+        application.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         application.setStartDate(LocalDate.of(2014, 10, 13));
         application.setEndDate(LocalDate.of(2014, 10, 13));
         application.setStatus(WAITING);
@@ -57,61 +57,61 @@ class UsedDaysOverviewTest {
     void ensureGeneratesCorrectUsedDaysOverview() {
 
         final Application holiday = anyApplication();
-        holiday.setVacationType(createVacationType(HOLIDAY));
+        holiday.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         holiday.setStartDate(LocalDate.of(2014, 10, 13));
         holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(WAITING);
 
         final Application holidayAllowed = anyApplication();
-        holidayAllowed.setVacationType(createVacationType(HOLIDAY));
+        holidayAllowed.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ALLOWED);
 
         final Application holidayAllowedRequestCancellation = anyApplication();
-        holidayAllowedRequestCancellation.setVacationType(createVacationType(HOLIDAY));
+        holidayAllowedRequestCancellation.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         holidayAllowedRequestCancellation.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowedRequestCancellation.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowedRequestCancellation.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         final Application specialLeave = anyApplication();
-        specialLeave.setVacationType(createVacationType(SPECIALLEAVE));
+        specialLeave.setVacationType(TestDataCreator.createVacationTypeEntity(SPECIALLEAVE));
         specialLeave.setStartDate(LocalDate.of(2014, 10, 15));
         specialLeave.setEndDate(LocalDate.of(2014, 10, 15));
         specialLeave.setStatus(WAITING);
 
         final Application specialLeaveAllowed = anyApplication();
-        specialLeaveAllowed.setVacationType(createVacationType(SPECIALLEAVE));
+        specialLeaveAllowed.setVacationType(TestDataCreator.createVacationTypeEntity(SPECIALLEAVE));
         specialLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 16));
         specialLeaveAllowed.setStatus(ALLOWED);
 
         final Application unpaidLeave = anyApplication();
-        unpaidLeave.setVacationType(createVacationType(UNPAIDLEAVE));
+        unpaidLeave.setVacationType(TestDataCreator.createVacationTypeEntity(UNPAIDLEAVE));
         unpaidLeave.setStartDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setEndDate(LocalDate.of(2014, 10, 17));
         unpaidLeave.setStatus(WAITING);
 
         final Application unpaidLeaveAllowed = anyApplication();
-        unpaidLeaveAllowed.setVacationType(createVacationType(UNPAIDLEAVE));
+        unpaidLeaveAllowed.setVacationType(TestDataCreator.createVacationTypeEntity(UNPAIDLEAVE));
         unpaidLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 20));
         unpaidLeaveAllowed.setStatus(ALLOWED);
 
         final Application overtimeLeave = anyApplication();
-        overtimeLeave.setVacationType(createVacationType(OVERTIME));
+        overtimeLeave.setVacationType(TestDataCreator.createVacationTypeEntity(OVERTIME));
         overtimeLeave.setStartDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setEndDate(LocalDate.of(2014, 10, 21));
         overtimeLeave.setStatus(WAITING);
 
         final Application overtimeLeaveAllowed = anyApplication();
-        overtimeLeaveAllowed.setVacationType(createVacationType(OVERTIME));
+        overtimeLeaveAllowed.setVacationType(TestDataCreator.createVacationTypeEntity(OVERTIME));
         overtimeLeaveAllowed.setStartDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveAllowed.setEndDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveAllowed.setStatus(ALLOWED);
 
         final Application overtimeLeaveRequestCancellation = anyApplication();
-        overtimeLeaveRequestCancellation.setVacationType(createVacationType(OVERTIME));
+        overtimeLeaveRequestCancellation.setVacationType(TestDataCreator.createVacationTypeEntity(OVERTIME));
         overtimeLeaveRequestCancellation.setStartDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveRequestCancellation.setEndDate(LocalDate.of(2014, 10, 22));
         overtimeLeaveRequestCancellation.setStatus(ALLOWED_CANCELLATION_REQUESTED);
@@ -148,7 +148,7 @@ class UsedDaysOverviewTest {
         LocalDate endDate = LocalDate.of(2014, 1, 6);
 
         // 3 days in 2013, 2 days in 2014
-        Application holiday = createApplication(person, createVacationType(HOLIDAY), startDate, endDate, DayLength.FULL);
+        Application holiday = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY), startDate, endDate, DayLength.FULL);
 
         when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(2014, 1, 1), endDate, person))
             .thenReturn(BigDecimal.valueOf(2));
@@ -170,19 +170,19 @@ class UsedDaysOverviewTest {
     void ensureGeneratesCorrectUsedDaysOverviewConsideringTemporaryAllowedApplicationsForLeave() {
 
         final Application holiday = anyApplication();
-        holiday.setVacationType(createVacationType(HOLIDAY));
+        holiday.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         holiday.setStartDate(LocalDate.of(2014, 10, 13));
         holiday.setEndDate(LocalDate.of(2014, 10, 13));
         holiday.setStatus(WAITING);
 
         final Application holidayAllowed = anyApplication();
-        holidayAllowed.setVacationType(createVacationType(HOLIDAY));
+        holidayAllowed.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         holidayAllowed.setStartDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setEndDate(LocalDate.of(2014, 10, 14));
         holidayAllowed.setStatus(ALLOWED);
 
         final Application holidayTemporaryAllowed = anyApplication();
-        holidayTemporaryAllowed.setVacationType(createVacationType(HOLIDAY));
+        holidayTemporaryAllowed.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         holidayTemporaryAllowed.setStartDate(LocalDate.of(2014, 10, 15));
         holidayTemporaryAllowed.setEndDate(LocalDate.of(2014, 10, 15));
         holidayTemporaryAllowed.setStatus(TEMPORARY_ALLOWED);

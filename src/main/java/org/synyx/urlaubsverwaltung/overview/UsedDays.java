@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

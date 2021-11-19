@@ -93,6 +93,16 @@
                         </li>
                         <li role="presentation">
                             <a
+                                href="#absenceTypes"
+                                aria-controls="absenceTypes"
+                                role="tab"
+                                data-toggle="tab"
+                            >
+                                <spring:message code="settings.tabs.absenceTypes"/>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a
                                 href="#publicHolidays"
                                 aria-controls="publicHolidays"
                                 role="tab"
@@ -221,7 +231,7 @@
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
-                                    <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.descripton"/>
+                                    <spring:message code="settings.vacation.daysBeforeRemindForWaitingApplications.description"/>
                                 </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
@@ -422,6 +432,65 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="absenceTypes">
+                    <uv:section-heading>
+                        <h2>
+                            <spring:message code='settings.absenceTypes.title'/>
+                        </h2>
+                    </uv:section-heading>
+                    <div>
+                        <table id="absence-type-table" class="absence-type-settings-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        <spring:message code='settings.absenceTypes.table.head.state' />
+                                    </th>
+                                    <th scope="col">
+                                        <spring:message code='settings.absenceTypes.table.head.type' />
+                                    </th>
+                                    <th scope="col">
+                                        <spring:message code='settings.absenceTypes.table.head.category' />
+                                    </th>
+                                    <th scope="col">
+                                        <spring:message code='settings.absenceTypes.table.head.approval' />
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${settings.absenceTypeSettings.items}" var="absenceType" varStatus="loop">
+                                    <tr data-enabled="${absenceType.active}">
+                                        <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
+                                            <span class="checkbox-switch">
+                                                <form:hidden path="absenceTypeSettings.items[${loop.index}].id" value="${absenceType.id}" />
+                                                <form:checkbox path="absenceTypeSettings.items[${loop.index}].active" id="absenceType-active-${loop.index}" />
+                                                <label for="absenceType-active-${loop.index}" class="tw-sr-only">
+                                                    <spring:message code="settings.absenceTypes.action.state.label" />
+                                                </label>
+                                            </span>
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
+                                            <spring:message code="${absenceType.messageKey}" />
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
+                                            <spring:message code="${absenceType.category}" />
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />">
+                                            <form:checkbox
+                                                path="absenceTypeSettings.items[${loop.index}].requiresApproval"
+                                                id="absenceType-approval-${loop.index}"
+                                                cssClass="absence-type-approval-checkbox"
+                                            />
+                                            <label for="absenceType-approval-${loop.index}" class="tw-sr-only">
+                                                <spring:message code="settings.absenceTypes.action.approve.label" />
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

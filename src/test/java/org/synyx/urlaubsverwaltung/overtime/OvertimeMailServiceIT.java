@@ -19,10 +19,8 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createOvertimeRecord;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -30,6 +28,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
 class OvertimeMailServiceIT extends TestContainersBase {
+
+    private static final String EMAIL_LINE_BREAK = "\r\n";
 
     @RegisterExtension
     public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
@@ -69,10 +69,17 @@ class OvertimeMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        final String text = (String) msg.getContent();
-        assertThat(text).contains("Hallo Marlene Muster");
-        assertThat(text).contains("es wurden Überstunden erfasst: https://localhost:8080/web/overtime/1");
-        assertThat(text).contains("Datum: 16.04.2020 - 23.04.2020");
-        assertThat(text).contains("Dauer: 55 Std. 12 Min.");
+        assertThat(msg.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "es wurden Überstunden erfasst." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
+            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK);
     }
 }

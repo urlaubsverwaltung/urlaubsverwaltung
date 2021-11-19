@@ -12,6 +12,14 @@ import java.util.Optional;
 public interface CalendarSyncService {
 
     /**
+     * Returns true if a real provider is configured.
+     * Can be used as guard to reduce intensive creation of e.g. {@link Absence}
+     *
+     * @return returns true if a real provider is configured
+     */
+    boolean isRealProviderConfigured();
+
+    /**
      * Add a person's absence to calendar.
      *
      * @param absence represents the absence of a person

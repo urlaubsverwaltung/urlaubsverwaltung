@@ -8,10 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -33,12 +33,13 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypes;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.REJECTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypesEntities;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,25 +57,23 @@ class ApplicationForLeaveStatisticsBuilderTest {
     private VacationDaysService vacationDaysService;
     @Mock
     private OvertimeService overtimeService;
-    @Mock
-    private VacationTypeService vacationTypeService;
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workDaysCountService,
-            vacationDaysService, overtimeService, vacationTypeService);
+            vacationDaysService, overtimeService);
     }
 
     @Test
     void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(new Person(), of(2014, 1, 1), of(2015, 1, 1)));
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(new Person(), of(2014, 1, 1), of(2015, 1, 1), List.of(type)));
     }
 
     @Test
     void ensureUsesWaitingAndAllowedVacationOfAllHolidayTypesToBuildStatistics() {
 
-        final List<VacationType> vacationTypes = createVacationTypes();
-        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
         final Person person = new Person();
 
@@ -160,7 +159,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(ONE);
 
-        final ApplicationForLeaveStatistics statistics = sut.build(person, from, to);
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
+
+        final ApplicationForLeaveStatistics statistics = sut.build(person, from, to, List.of(type));
         assertThat(statistics.getPerson()).isEqualTo(person);
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(new BigDecimal("4"));
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(new BigDecimal("3"));
@@ -170,8 +171,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Test
     void ensureCallsCalendarServiceToCalculatePartialVacationDaysOfVacationsSpanningOverTheGivenPeriod() {
 
-        final List<VacationType> vacationTypes = createVacationTypes();
-        when(vacationTypeService.getVacationTypes()).thenReturn(vacationTypes);
+        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
         final Person person = new Person();
         final LocalDate validFrom = of(2021, 1, 1);
@@ -216,7 +216,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate periodTo = of(2021, 5, 28);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(periodFrom, periodTo, person)).thenReturn(List.of(applicationSpanningIntoPeriod, applicationInPeriod, applicationSpanningOutOfPeriod));
 
-        final ApplicationForLeaveStatistics statistics = sut.build(person, periodFrom, periodTo);
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
+
+        final ApplicationForLeaveStatistics statistics = sut.build(person, periodFrom, periodTo, List.of(type));
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(16));
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
         assertThat(statistics.getLeftVacationDays()).isEqualTo(TEN);
@@ -237,7 +239,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(390));
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(new BigDecimal("8.5"));
 
-        final ApplicationForLeaveStatistics statistics = sut.build(person, periodFrom, periodTo);
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
+
+        final ApplicationForLeaveStatistics statistics = sut.build(person, periodFrom, periodTo, List.of(type));
         assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofMinutes(390));
         assertThat(statistics.getLeftVacationDays()).isEqualTo(new BigDecimal("8.5"));
     }

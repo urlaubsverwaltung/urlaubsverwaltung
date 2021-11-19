@@ -36,7 +36,7 @@ public class ApplicationPage implements Page {
     }
 
     /**
-     * selected the given person in the  holiday replacement select box.
+     * selected the given person in the  replacement select box.
      * Note that this does not submit the form! Maybe there is JavaScript loaded which does it, though.
      *
      * @param person person that should be selected
@@ -51,7 +51,7 @@ public class ApplicationPage implements Page {
         final HolidayReplacementRowElement holidayReplacementRow = getHolidayReplacementRow(person);
 
         if (holidayReplacementRow == null) {
-            throw new IllegalStateException("could not find holiday replacement row for the given person.");
+            throw new IllegalStateException("could not find replacement row for the given person.");
         }
 
         final WebElement textarea = holidayReplacementRow.rowElement.findElement(By.tagName("textarea"));
@@ -65,7 +65,7 @@ public class ApplicationPage implements Page {
     }
 
     /**
-     * Checks if the given person is visible at the given position of added holiday replacements.
+     * Checks if the given person is visible at the given position of added replacements.
      *
      * @param person person that should be visible
      * @param position the position to check against. starts with 1.
@@ -76,11 +76,11 @@ public class ApplicationPage implements Page {
     }
 
     /**
-     * Checks if the given person is visible at the given position of added holiday replacements and if it has the given comment.
+     * Checks if the given person is visible at the given position of added replacements and if it has the given comment.
      *
      * @param person person that should be visible
      * @param position the position to check against. starts with 1.
-     * @param comment the comment for the holiday replacement
+     * @param comment the comment for the replacement
      * @return <code>true</code> if the person is visible at the given position, <code>false</code> otherwise.
      */
     public boolean showsAddedReplacementAtPosition(Person person, int position, String comment) {

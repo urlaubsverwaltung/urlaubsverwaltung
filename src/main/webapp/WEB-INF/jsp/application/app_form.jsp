@@ -78,7 +78,7 @@
         <c:set var="ACTION" value="${URL_PREFIX}/application"/>
         <c:set var="ADD_REPLACEMENT_ACTION" value="${URL_PREFIX}/application/new"/>
         <c:set var="heading">
-            <spring:message code="application.data.title"/>
+            <spring:message code="application.data.title.new"/>
         </c:set>
         <c:set var="BUTTON_SUBMIT_TITLE">
             <spring:message code="action.apply.vacation"/>
@@ -175,20 +175,11 @@
                                     </label>
                                     <div class="col-md-9">
                                         <uv:select id="vacationType" testId="vacation-type-select" name="vacationType"
-                                                   onchange="vacationTypeChanged(this.value);">
+                                                   onchange="vacationTypeChanged(this.selectedOptions[0].dataset.vacationtypeCategory);">
                                             <c:forEach items="${vacationTypes}" var="vacationType">
-                                                <c:choose>
-                                                    <c:when test="${vacationType == application.vacationType}">
-                                                        <option value="${vacationType.id}" selected="selected">
-                                                            <spring:message code="${vacationType.messageKey}"/>
-                                                        </option>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <option value="${vacationType.id}">
-                                                            <spring:message code="${vacationType.messageKey}"/>
-                                                        </option>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <option value="${vacationType.id}" data-vacationtype-category="${vacationType.category}" ${application.vacationType.id == vacationType.id ? 'selected="selected"' : ''}>
+                                                    <spring:message code="${vacationType.messageKey}"/>
+                                                </option>
                                             </c:forEach>
                                         </uv:select>
                                     </div>
@@ -364,7 +355,7 @@
                                     </div>
                                 </div>
 
-                                <%-- holiday replacement--%>
+                                <%-- replacement--%>
                                 <c:if test="${not empty selectableHolidayReplacements}">
                                     <div class="form-group">
                                         <label class="control-label col-md-3">

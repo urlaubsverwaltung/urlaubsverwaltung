@@ -13,7 +13,7 @@ import javax.validation.Valid;
 public class ApplicationProperties {
 
     /*
-     * Checks every day at 07:00 am if remind mails for upcoming holiday replacement applications can be sent
+     * Checks every day at 07:00 am if remind mails for upcoming replacement applications can be sent
      */
     @Valid
     private ReminderNotification upcomingHolidayReplacementNotification = new ReminderNotification();

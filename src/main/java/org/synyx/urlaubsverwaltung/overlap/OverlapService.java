@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.overlap;
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.application.dao.ApplicationRepository;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -20,10 +20,10 @@ import java.util.function.Predicate;
 
 import static java.time.Instant.ofEpochMilli;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
@@ -37,13 +37,13 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 @Service
 public class OverlapService {
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final Clock clock;
 
     @Autowired
-    public OverlapService(ApplicationRepository applicationRepository, SickNoteService sickNoteService, Clock clock) {
-        this.applicationRepository = applicationRepository;
+    public OverlapService(ApplicationService applicationService, SickNoteService sickNoteService, Clock clock) {
+        this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.clock = clock;
     }
@@ -200,7 +200,7 @@ public class OverlapService {
     private List<Application> getRelevantApplicationsForLeave(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
         // get all applications for leave
-        final List<Application> applicationsForLeave = applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+        final List<Application> applicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, person);
 
         // remove the non-relevant ones
         return applicationsForLeave.stream()

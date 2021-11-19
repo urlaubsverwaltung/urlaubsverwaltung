@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.absence.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
+import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -21,8 +21,8 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.SICKNOTE;
-import static org.synyx.urlaubsverwaltung.absence.AbsenceMappingType.VACATION;
+import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
+import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.CANCELLED;
@@ -108,16 +108,18 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         applicationInteractionService.createFromConvertedSickNote(application, converter);
         LOG.info("Converted sick note to vacation: {}", sickNote);
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
-        if (absenceMapping.isPresent()) {
-            final String eventId = absenceMapping.get().getEventId();
-            final TimeSettings timeSettings = getTimeSettings();
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
+            if (absenceMapping.isPresent()) {
+                final String eventId = absenceMapping.get().getEventId();
+                final TimeSettings timeSettings = getTimeSettings();
 
-            calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
-                new AbsenceTimeConfiguration(timeSettings)), eventId);
+                calendarSyncService.update(new Absence(application.getPerson(), application.getPeriod(),
+                    new AbsenceTimeConfiguration(timeSettings)), eventId);
 
-            absenceMappingService.delete(absenceMapping.get());
-            absenceMappingService.create(application.getId(), VACATION, eventId);
+                absenceMappingService.delete(absenceMapping.get());
+                absenceMappingService.create(application.getId(), VACATION, eventId);
+            }
         }
 
         return sickNote;
@@ -143,21 +145,24 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     private void updateAbsence(SickNote sickNote) {
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
-        if (absenceMapping.isPresent()) {
-            final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
-            calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
-                timeConfiguration), absenceMapping.get().getEventId());
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
+            if (absenceMapping.isPresent()) {
+                final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
+                calendarSyncService.update(new Absence(sickNote.getPerson(), sickNote.getPeriod(),
+                    timeConfiguration), absenceMapping.get().getEventId());
+            }
         }
     }
 
     private void updateCalendar(SickNote sickNote) {
 
-        final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
-        final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), timeConfiguration);
-
-        final Optional<String> maybeEventId = calendarSyncService.addAbsence(absence);
-        maybeEventId.ifPresent(eventId -> absenceMappingService.create(sickNote.getId(), SICKNOTE, eventId));
+        if (calendarSyncService.isRealProviderConfigured()) {
+            final AbsenceTimeConfiguration timeConfiguration = new AbsenceTimeConfiguration(getTimeSettings());
+            final Absence absence = new Absence(sickNote.getPerson(), sickNote.getPeriod(), timeConfiguration);
+            calendarSyncService.addAbsence(absence)
+                .ifPresent(eventId -> absenceMappingService.create(sickNote.getId(), SICKNOTE, eventId));
+        }
     }
 
     private TimeSettings getTimeSettings() {

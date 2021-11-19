@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.application.service.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
@@ -35,6 +37,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -89,6 +92,7 @@ public class SickNoteViewController {
         binder.registerCustomEditor(Instant.class, new InstantPropertyEditor(clock, settingsService));
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
+        binder.registerCustomEditor(VacationType.class, new VacationTypePropertyEditor(vacationTypeService));
     }
 
     @GetMapping("/sicknote/{id}")
@@ -214,7 +218,7 @@ public class SickNoteViewController {
 
         model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
-        model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
+        model.addAttribute("vacationTypes", getActiveVacationTypes());
 
         return "sicknote/sick_note_convert";
     }
@@ -232,7 +236,7 @@ public class SickNoteViewController {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
-            model.addAttribute("vacationTypes", vacationTypeService.getVacationTypes());
+            model.addAttribute("vacationTypes", getActiveVacationTypes());
 
             return "sicknote/sick_note_convert";
         }
@@ -250,5 +254,17 @@ public class SickNoteViewController {
         sickNoteInteractionService.cancel(sickNote, personService.getSignedInUser());
 
         return REDIRECT_WEB_SICKNOTE + id;
+    }
+
+    private List<VacationType> getActiveVacationTypes() {
+        final List<VacationType> vacationTypes;
+
+        final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
+        if (overtimeActive) {
+            vacationTypes = vacationTypeService.getActiveVacationTypes();
+        } else {
+            vacationTypes = vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
+        }
+        return vacationTypes;
     }
 }

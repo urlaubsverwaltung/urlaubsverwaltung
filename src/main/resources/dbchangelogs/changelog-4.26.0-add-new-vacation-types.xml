@@ -1,0 +1,27 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-new-vacation-types">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+      <columnExists tableName="vacation_type" columnName="id"/>
+      <columnExists tableName="vacation_type" columnName="category"/>
+      <columnExists tableName="vacation_type" columnName="message_key"/>
+    </preConditions>
+
+    <sql>
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5000, 'OTHER', 'application.data.vacationType.parentalLeave');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5001, 'OTHER', 'application.data.vacationType.maternityProtection');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5002, 'OTHER', 'application.data.vacationType.sabbatical');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5003, 'OTHER', 'application.data.vacationType.paidLeave');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5004, 'OTHER', 'application.data.vacationType.cure');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5005, 'OTHER', 'application.data.vacationType.education');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5006, 'OTHER', 'application.data.vacationType.homeOffice');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5007, 'OTHER', 'application.data.vacationType.outOfOffice');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5008, 'OTHER', 'application.data.vacationType.training');
+    </sql>
+
+  </changeSet>
+</databaseChangeLog>

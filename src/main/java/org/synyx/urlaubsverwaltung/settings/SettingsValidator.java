@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validateTimeSettings;
 import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.validateAccountSettings;
-import static org.synyx.urlaubsverwaltung.application.ApplicationSettingsValidator.validateApplicationSettings;
+import static org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsValidator.validateApplicationSettings;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
 import static org.synyx.urlaubsverwaltung.sicknote.SickNoteSettingsValidator.validateSickNoteSettings;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;

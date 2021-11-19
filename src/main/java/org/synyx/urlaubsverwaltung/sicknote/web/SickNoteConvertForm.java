@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.web;
 
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.domain.VacationType;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
@@ -9,7 +9,7 @@ import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import static org.synyx.urlaubsverwaltung.application.domain.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 
 /**
  * Represents a form to convert a sick note to vacation.
@@ -20,7 +20,7 @@ public class SickNoteConvertForm {
     private DayLength dayLength;
     private LocalDate startDate;
     private LocalDate endDate;
-    private VacationType vacationType;
+    private VacationTypeEntity vacationType;
     private String reason;
 
     public SickNoteConvertForm() {
@@ -66,11 +66,11 @@ public class SickNoteConvertForm {
         this.endDate = endDate;
     }
 
-    public VacationType getVacationType() {
+    public VacationTypeEntity getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationType vacationType) {
+    public void setVacationType(VacationTypeEntity vacationType) {
         this.vacationType = vacationType;
     }
 
