@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-es wurde eine neue Abwesenheit eingestellt (diese muss nicht genehmigt werden).
+es wurde eine neue Abwesenheit erstellt (diese muss nicht genehmigt werden).
 
     ${baseLinkURL}web/application/${application.id?c}
 

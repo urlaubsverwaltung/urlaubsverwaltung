@@ -1,6 +1,6 @@
 Hallo ${holidayReplacement.niceName},
 
-eine Abwesenheit von ${application.person.niceName} wurde eingestellt und
+eine Abwesenheit von ${application.person.niceName} wurde erstellt und
 du wurdest für den Zeitraum vom ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength} als Vertretung eingetragen.
 
 <#if holidayReplacementNote?has_content>

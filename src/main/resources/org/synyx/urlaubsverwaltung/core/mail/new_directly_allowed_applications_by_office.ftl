@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-${application.applier.niceName} hat eine Abwesenheit für dich eingestellt.
+${application.applier.niceName} hat eine Abwesenheit für dich erstellt.
 
     ${baseLinkURL}web/application/${application.id?c}
 

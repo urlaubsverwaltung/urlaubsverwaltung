@@ -563,11 +563,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         final Message contentUser = inboxUser[0];
-        assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde eingestellt");
+        assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
         assertThat(contentUser.getContent()).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "dein Abwesenheitsantrag wurde erfolgreich eingestellt." + EMAIL_LINE_BREAK +
+            "dein Abwesenheitsantrag wurde erfolgreich erstellt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -606,11 +606,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         final Message contentUser = inboxUser[0];
-        assertThat(contentUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich eingestellt");
+        assertThat(contentUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
         assertThat(contentUser.getContent()).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Marlene Muster hat eine Abwesenheit für dich eingestellt." + EMAIL_LINE_BREAK +
+            "Marlene Muster hat eine Abwesenheit für dich erstellt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -647,11 +647,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of relevant person email
         final Message contentRelevantPerson = inboxUser[0];
-        assertThat(contentRelevantPerson.getSubject()).isEqualTo("Neue Abwesenheit wurde von Lieschen Mueller eingestellt");
+        assertThat(contentRelevantPerson.getSubject()).isEqualTo("Neue Abwesenheit wurde von Lieschen Mueller erstellt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(contentRelevantPerson.getAllRecipients()[0]);
         assertThat(contentRelevantPerson.getContent()).isEqualTo("Hallo Relevant Person," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es wurde eine neue Abwesenheit eingestellt (diese muss nicht genehmigt werden)." + EMAIL_LINE_BREAK +
+            "es wurde eine neue Abwesenheit erstellt (diese muss nicht genehmigt werden)." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -686,13 +686,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inbox.length).isOne();
 
         final MimeMessage msg = inbox[0];
-        assertThat(msg.getSubject()).contains("Eine Vertretung für Lieschen Müller wurde eingestellt");
+        assertThat(msg.getSubject()).contains("Eine Vertretung für Lieschen Müller wurde eingetragen");
         assertThat(new InternetAddress(holidayReplacement.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
         assertThat(readPlainContent(msg)).isEqualTo("Hallo Mar Teria," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde eingestellt und" + EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde erstellt und" + EMAIL_LINE_BREAK +
             "du wurdest für den Zeitraum vom 18.12.2020 bis 18.12.2020, ganztägig als Vertretung eingetragen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Notiz von Lieschen Müller an dich:" + EMAIL_LINE_BREAK +

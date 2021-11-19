@@ -1,6 +1,6 @@
 Hallo ${application.person.niceName},
 
-dein Abwesenheitsantrag wurde erfolgreich eingestellt.
+dein Abwesenheitsantrag wurde erfolgreich erstellt.
 
     ${baseLinkURL}web/application/${application.id?c}
 

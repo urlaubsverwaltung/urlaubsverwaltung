@@ -6,6 +6,20 @@
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
+<c:choose>
+    <c:when test="${application.status == 'ALLOWED' && application.editedDate == null}">
+        <c:set var="APPLIER_APPLIED">
+            <spring:message code="application.applier.appliedDirectly"/>
+        </c:set>
+    </c:when>
+    <c:otherwise>
+        <c:set var="APPLIER_APPLIED">
+            <spring:message code="application.applier.applied"/>
+        </c:set>
+    </c:otherwise>
+</c:choose>
+
 <uv:box className="tw-h-32 tw-mb-4">
     <jsp:attribute name="icon">
         <uv:box-icon className="tw-bg-yellow-300 tw-text-white">
@@ -21,7 +35,7 @@
     </jsp:attribute>
     <jsp:body>
         <span class="tw-text-sm tw-text-black tw-text-opacity-75">
-            <c:out value="${application.person.niceName}"/> <spring:message code="application.applier.applied"/>
+            <c:out value="${application.person.niceName}"/> ${APPLIER_APPLIED}
         </span>
         <span class="tw-my-1 tw-text-lg tw-font-medium">
             <spring:message code="${application.vacationType.messageKey}"/>
