@@ -17,7 +17,7 @@
       INSERT INTO vacation_type (id, category, message_key) VALUES (5002, 'OTHER', 'application.data.vacationType.sabbatical');
       INSERT INTO vacation_type (id, category, message_key) VALUES (5003, 'OTHER', 'application.data.vacationType.paidLeave');
       INSERT INTO vacation_type (id, category, message_key) VALUES (5004, 'OTHER', 'application.data.vacationType.cure');
-      INSERT INTO vacation_type (id, category, message_key) VALUES (5005, 'OTHER', 'application.data.vacationType.vocationalSchool');
+      INSERT INTO vacation_type (id, category, message_key) VALUES (5005, 'OTHER', 'application.data.vacationType.education');
       INSERT INTO vacation_type (id, category, message_key) VALUES (5006, 'OTHER', 'application.data.vacationType.homeOffice');
       INSERT INTO vacation_type (id, category, message_key) VALUES (5007, 'OTHER', 'application.data.vacationType.outOfOffice');
     </sql>
