@@ -423,7 +423,6 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
-        ;
 
         appForm.setVacationType(vacationType);
         appForm.setReason("");
