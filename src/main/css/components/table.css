@@ -258,8 +258,6 @@ table.absence-type-settings-table thead {
 }
 
 @screen sm {
-  table.absence-type-settings-table {}
-
   table.absence-type-settings-table tr {
     @apply tw-transition-colors;
   }
@@ -305,10 +303,6 @@ table.absence-type-settings-table thead {
       th:nth-of-type(1) {
         @apply tw-pr-4;
       }
-      th:nth-of-type(2) {
-      }
-      th:nth-of-type(3) {
-      }
       th:nth-of-type(4) {
         @apply tw-text-right;
       }
@@ -346,15 +340,11 @@ table.absence-type-settings-table thead {
 @screen md {
   table.absence-type-settings-table {
     tbody {
-      td:nth-of-type(1) {
-      }
       td:nth-of-type(2) {
         @apply tw-pr-16;
       }
       td:nth-of-type(3) {
         @apply tw-pr-16;
-      }
-      td:nth-of-type(4) {
       }
     }
   }
