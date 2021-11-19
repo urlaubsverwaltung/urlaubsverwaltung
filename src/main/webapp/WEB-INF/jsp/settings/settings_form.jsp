@@ -445,16 +445,16 @@
                         <table id="absence-type-table" class="absence-type-settings-table">
                             <thead>
                                 <tr>
-                                    <th>
+                                    <th scope="col">
                                         <spring:message code='settings.absenceTypes.table.head.state' />
                                     </th>
-                                    <th>
+                                    <th scope="col">
                                         <spring:message code='settings.absenceTypes.table.head.type' />
                                     </th>
-                                    <th>
+                                    <th scope="col">
                                         <spring:message code='settings.absenceTypes.table.head.category' />
                                     </th>
-                                    <th>
+                                    <th scope="col">
                                         <spring:message code='settings.absenceTypes.table.head.approval' />
                                     </th>
                                 </tr>
