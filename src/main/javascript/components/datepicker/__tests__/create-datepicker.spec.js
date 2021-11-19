@@ -4,6 +4,7 @@ import DatepickerDE from "../locale/de";
 import fetchMock from "fetch-mock";
 import de from "date-fns/locale/de";
 import { setLocale } from "../../../lib/date-fns/locale-resolver";
+import { parsers as htmlParsers } from "prettier/parser-html";
 
 describe("create-datepicker", () => {
   beforeEach(() => {
@@ -290,6 +291,113 @@ describe("create-datepicker", () => {
       });
     });
 
+    describe("clears public holiday markers", function () {
+      beforeEach(async () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          publicHolidays: [
+            {
+              date: "2020-12-25",
+              absencePeriodName: "FULL",
+            },
+            {
+              date: "2020-12-26",
+              absencePeriodName: "FULL",
+            },
+          ],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          absences: [],
+        });
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        const urlPrefix = "my-url-prefix";
+        const getPersonId = () => 42;
+
+        await createDatepicker("input", { urlPrefix, getPersonId });
+
+        // duet datepicker must to be opened to update month and year select-box values
+        document.querySelector("button.duet-date__toggle").click();
+        await new Promise((resolve) => setTimeout(resolve, 2));
+        fetchMock.resetHistory();
+      });
+
+      test("after month has been changed", () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-01-01&to=2020-01-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31`, {
+          absences: [],
+        });
+
+        const monthElement = document.querySelector(".duet-date__select--month");
+
+        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+
+        monthElement.value = "0";
+        fireEvent.change(monthElement);
+
+        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+      });
+
+      test("after year has been changed", () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2019-12-01&to=2019-12-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31`, {
+          absences: [],
+        });
+
+        const yearElement = document.querySelector(".duet-date__select--year");
+
+        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+
+        yearElement.value = "2019";
+        fireEvent.change(yearElement);
+
+        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+      });
+
+      test("after next button has been clicked", () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-11-01&to=2020-11-30`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30`, {
+          absences: [],
+        });
+
+        const previousMonthButton = document.querySelector(".duet-date__prev");
+
+        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+
+        previousMonthButton.click();
+        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+      });
+
+      test("after prev button has been clicked", () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2021-01-01&to=2021-01-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31`, {
+          absences: [],
+        });
+
+        const nextMonthButton = document.querySelector(".duet-date__next");
+
+        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+
+        nextMonthButton.click();
+        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+      });
+    });
+
     describe("highlights days", () => {
       test("weekend", async () => {
         fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
@@ -340,6 +448,33 @@ describe("create-datepicker", () => {
         assertWeekend("27. Dezember");
       });
 
+      test("no public holidays", async () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          absences: [],
+        });
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        const urlPrefix = "my-url-prefix";
+        const getPersonId = () => 42;
+
+        await createDatepicker("input", { urlPrefix, getPersonId });
+
+        // fetch public holidays and update view
+        document.querySelector("button.duet-date__toggle").click();
+
+        // wait for response and css class calculation
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        expect([...document.querySelectorAll("span.datepicker-public-holiday-marker")]).toHaveLength(0);
+      });
+
       describe("public holiday", () => {
         function mockPublicHolidays(publicHolidays) {
           fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
@@ -373,10 +508,7 @@ describe("create-datepicker", () => {
           await renderCurrentDatepickerMonth();
 
           const element = getDatepickerDayElement("24. Dezember");
-          expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).toContain("datepicker-day-public-holiday-full");
-          expect(element.classList).not.toContain("datepicker-day-public-holiday-morning");
-          expect(element.classList).not.toContain("datepicker-day-public-holiday-noon");
+          expect(element.querySelector("span.datepicker-public-holiday-marker")).toBeDefined();
         });
 
         test("morning", async () => {
@@ -390,10 +522,7 @@ describe("create-datepicker", () => {
           await renderCurrentDatepickerMonth();
 
           const element = getDatepickerDayElement("24. Dezember");
-          expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).not.toContain("datepicker-day-public-holiday-full");
-          expect(element.classList).toContain("datepicker-day-public-holiday-morning");
-          expect(element.classList).not.toContain("datepicker-day-public-holiday-noon");
+          expect(element.querySelector("span.datepicker-public-holiday-marker")).toBeDefined();
         });
 
         test("noon", async () => {
@@ -407,10 +536,7 @@ describe("create-datepicker", () => {
           await renderCurrentDatepickerMonth();
 
           const element = getDatepickerDayElement("24. Dezember");
-          expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).not.toContain("datepicker-day-public-holiday-full");
-          expect(element.classList).not.toContain("datepicker-day-public-holiday-morning");
-          expect(element.classList).toContain("datepicker-day-public-holiday-noon");
+          expect(element.querySelector("span.datepicker-public-holiday-marker")).toBeDefined();
         });
       });
 

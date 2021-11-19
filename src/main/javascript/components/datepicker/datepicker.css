@@ -31,8 +31,25 @@ duet-date-picker.error {
   padding: 0;
   /* override duet stuff */
   opacity: 1;
-  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
-  color: var(--font-color);
+  --background-color: #e5e5e5;
+  background: var(--background-color);
+  color: #0A0A0A;
+}
+
+.duet-date__day.datepicker-day {
+  /* to position the `.datepicker-public-holiday-marker` */
+  position: relative;
+}
+
+.duet-date__day.datepicker-day-weekend,
+.duet-date__day.datepicker-day-weekend:not(.is-month) {
+  --background-color: #b5d0df;
+}
+
+.duet-date__day.datepicker-day:hover::before {
+  /* override duet stuff */
+  top: auto;
+  opacity: 1;
 }
 
 .duet-date__day.datepicker-day-today {
