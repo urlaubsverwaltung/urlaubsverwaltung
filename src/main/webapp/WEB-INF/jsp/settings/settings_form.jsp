@@ -497,6 +497,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="tw-pt-4 tw-text-sm">
+                        <icon:information-circle className="tw-w-4 tw-h-4" solid="false" />
+                        <a href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart"><spring:message code="settings.absenceTypes.description"/></a>
+                    </div>
                 </div>
 
                 <div class="tab-pane" id="publicHolidays">
