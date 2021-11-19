@@ -7,7 +7,7 @@ const icons = {
 class CopyToClipboardInputElement extends HTMLDivElement {
   connectedCallback() {
     const button = document.createElement("button");
-    button.classList.add("button", "tw-m-0", "tw-border-0", "tw-outline-none");
+    button.classList.add("button", "tw-m-0", "tw-border-0", "tw-outline-none", "button--no-hover");
     button.dataset.title = this.dataset.messageButtonTitle;
     button.dataset.placement = "bottom";
     button.innerHTML = icons.clipboardCopy;

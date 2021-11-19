@@ -106,7 +106,7 @@
                             </p>
                             <div
                                 is="uv-copy-to-clipboard-input"
-                                class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 focus-within:tw-ring"
+                                class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 dark:tw-border-neutral-600 focus-within:tw-ring"
                                 data-message-button-title="<spring:message code="calendar.share.me.button.clipboard.tooltip" />"
                             >
                                 <input type="text" value="${privateCalendarShare.calendarUrl}"
@@ -204,7 +204,7 @@
                                         </p>
                                         <div
                                             is="uv-copy-to-clipboard-input"
-                                            class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 focus-within:tw-ring"
+                                            class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 dark:tw-border-neutral-600 focus-within:tw-ring"
                                             data-message-button-title="<spring:message code="calendar.share.department.button.clipboard.tooltip" />"
                                         >
                                             <input type="text" value="${departmentCal.calendarUrl}"
@@ -321,7 +321,7 @@
                                     </p>
                                     <div
                                         is="uv-copy-to-clipboard-input"
-                                        class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 focus-within:tw-ring"
+                                        class="tw-flex tw-flex-row tw-mb-8 tw-border tw-border-zinc-200 dark:tw-border-neutral-600 focus-within:tw-ring"
                                         data-message-button-title="<spring:message code="calendar.share.company.button.clipboard.tooltip" />"
                                     >
                                         <input type="text" value="${companyCalendarShare.calendarUrl}"

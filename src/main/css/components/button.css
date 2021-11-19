@@ -40,7 +40,7 @@
 }
 
 .button,
-.button:hover:not(:disabled),
+.button:hover:not(:is(:disabled, .button--no-hover)),
 .button:active,
 .button:focus {
   @apply tw-border-zinc-200;
@@ -51,7 +51,7 @@
   @apply dark:tw-text-neutral-100;
 }
 
-.button:hover:not(:disabled),
+.button:hover:not(:is(:disabled, .button--no-hover)),
 .button:active,
 .button:focus {
   @apply tw-border-zinc-300;
