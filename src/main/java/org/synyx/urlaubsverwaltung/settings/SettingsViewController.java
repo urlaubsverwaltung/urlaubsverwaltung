@@ -180,7 +180,7 @@ public class SettingsViewController {
     private AbsenceTypeSettingsDto absenceTypeItemSettingDto() {
         final List<AbsenceTypeSettingsItemDto> absenceTypeDtos = vacationTypeService.getAllVacationTypes()
             .stream()
-            .map(vacationType -> vacationTypeToDto(vacationType))
+            .map(this::vacationTypeToDto)
             .collect(toList());
 
         final AbsenceTypeSettingsDto absenceTypeSettingsDto = new AbsenceTypeSettingsDto();
