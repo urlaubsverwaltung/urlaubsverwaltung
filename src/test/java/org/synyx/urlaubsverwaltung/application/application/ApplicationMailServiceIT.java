@@ -131,9 +131,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK);
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -204,10 +204,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK);
+            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -282,10 +282,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK);
+            "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -573,10 +573,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK);
+            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -617,10 +617,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "    Datum:               12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK);
+            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -658,10 +658,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:               Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "    Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Kommentar:                 OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK);
+            "    Kommentar:                 OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -933,11 +933,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
-            "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK);
+            "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -980,11 +980,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
-            "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK);
+            "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -1061,11 +1061,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
-            "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK);
+            "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -1112,11 +1112,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Antragsdatum:        12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
-            "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK);
+            "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -1429,10 +1429,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:               Lieschen M¨¨üller" + EMAIL_LINE_BREAK +
-            "    Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:                Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1482,10 +1482,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:               Lieschen M¨¨üller" + EMAIL_LINE_BREAK +
-            "    Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:                Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1555,9 +1555,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:               Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1626,10 +1626,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:               Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:                Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1702,10 +1702,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:               Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Datum der Antragsstellung: 12.04.2021" + EMAIL_LINE_BREAK +
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:                Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +

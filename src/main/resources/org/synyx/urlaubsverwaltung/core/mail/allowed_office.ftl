@@ -12,7 +12,6 @@ ${comment.text}
 Informationen zur Abwesenheit:
 
     Mitarbeiter:         ${application.person.niceName}
-    Antragsdatum:        ${application.applicationDate.format("dd.MM.yyyy")}
     Zeitraum:            ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
     Art der Abwesenheit: ${vacationType}
     <#if (application.reason)?has_content>
@@ -24,3 +23,4 @@ Informationen zur Abwesenheit:
     <#if (application.address)?has_content>
     Anschrift/Telefon:   <@compress single_line=true>${application.address?trim}</@compress>
     </#if>
+    Erstellungsdatum:    ${application.applicationDate.format("dd.MM.yyyy")}

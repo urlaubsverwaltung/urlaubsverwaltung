@@ -7,7 +7,6 @@ es liegt ein neuer zu genehmigender Antrag vor.
 Informationen zur Abwesenheit:
 
     Mitarbeiter:               ${application.person.niceName}
-    Datum der Antragsstellung: ${application.applicationDate.format("dd.MM.yyyy")}
     Zeitraum:                  ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
     Art der Abwesenheit:       ${vacationType}
     <#if (application.reason)?has_content>
@@ -22,6 +21,7 @@ Informationen zur Abwesenheit:
     <#if (comment.text)?has_content>
     Kommentar:                 <@compress single_line=true>${comment.text}</@compress>
     </#if>
+    Erstellungsdatum:          ${application.applicationDate.format("dd.MM.yyyy")}
 
 Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
 

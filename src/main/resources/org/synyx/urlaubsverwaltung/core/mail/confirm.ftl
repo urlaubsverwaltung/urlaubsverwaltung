@@ -6,7 +6,6 @@ deine Abwesenheit wurde erfolgreich eingereicht.
 
 Informationen zum Abwesenheit:
 
-    Antragsdatum:        ${application.applicationDate.format("dd.MM.yyyy")}
     Zeitraum:            ${application.startDate.format("dd.MM.yyyy")} bis ${application.endDate.format("dd.MM.yyyy")}, ${dayLength}
     Art der Abwesenheit: ${vacationType}
     <#if (application.reason)?has_content>
@@ -21,3 +20,4 @@ Informationen zum Abwesenheit:
     <#if (comment.text)?has_content>
     Kommentar:           <@compress single_line=true>${comment.text}</@compress>
     </#if>
+    Erstellungsdatum:    ${application.applicationDate.format("dd.MM.yyyy")}
