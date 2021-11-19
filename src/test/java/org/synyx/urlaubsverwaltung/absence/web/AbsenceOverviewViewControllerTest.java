@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
@@ -78,6 +79,8 @@ class AbsenceOverviewViewControllerTest {
     private SettingsService settingsService;
     @Mock
     private AbsenceService absenceService;
+    @Mock
+    private WorkingTimeService workingTimeService;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -92,7 +95,7 @@ class AbsenceOverviewViewControllerTest {
         when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, clock,
-            publicHolidaysService, settingsService, absenceService);
+            publicHolidaysService, settingsService, absenceService, workingTimeService);
     }
 
     @Test
@@ -402,7 +405,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
-            publicHolidaysService, settingsService, absenceService);
+            publicHolidaysService, settingsService, absenceService, workingTimeService);
 
         final var person = new Person();
         person.setFirstName("boss");
@@ -494,7 +497,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, clock,
-            publicHolidaysService, settingsService, absenceService);
+            publicHolidaysService, settingsService, absenceService, workingTimeService);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -594,7 +597,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
-            publicHolidaysService, settingsService, absenceService);
+            publicHolidaysService, settingsService, absenceService, workingTimeService);
 
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
@@ -1839,7 +1842,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
-            publicHolidaysService, settingsService, absenceService);
+            publicHolidaysService, settingsService, absenceService, workingTimeService);
 
         final var person = new Person();
         person.setId(1);
@@ -1896,7 +1899,7 @@ class AbsenceOverviewViewControllerTest {
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
-            publicHolidaysService, settingsService, absenceService);
+            publicHolidaysService, settingsService, absenceService, workingTimeService);
 
         final var person = new Person();
         person.setFirstName("boss");

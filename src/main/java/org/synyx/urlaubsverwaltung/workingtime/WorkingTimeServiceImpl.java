@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -11,7 +12,9 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -75,6 +78,27 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     @Override
     public List<WorkingTime> getByPerson(Person person) {
         return toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
+    }
+
+    @Override
+    public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
+
+        final List<WorkingTime> workingTimeList = getByPerson(person).stream()
+            .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
+            .collect(toList());
+
+        final HashMap<DateRange, FederalState> dateRangeFederalStateHashMap = new HashMap<>();
+        LocalDate nextEnd = dateRange.getEndDate();
+
+        for (WorkingTime workingTime : workingTimeList) {
+
+            final DateRange range = new DateRange(workingTime.getValidFrom(), nextEnd);
+            dateRangeFederalStateHashMap.put(range, workingTime.getFederalState());
+
+            nextEnd = workingTime.getValidFrom().minusDays(1);
+        }
+
+        return dateRangeFederalStateHashMap;
     }
 
     @Override
