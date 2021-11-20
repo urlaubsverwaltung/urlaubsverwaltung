@@ -136,10 +136,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final Person departmentMember = new Person();
         departmentMember.setId(1);
         departmentMember.setPermissions(List.of(USER));
-        final Person inactiveDepartmentMember = new Person();
-        inactiveDepartmentMember.setId(1);
-        inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
-        when(departmentService.getManagedMembersOfDepartmentHead(departmentHead)).thenReturn(List.of(departmentMember, inactiveDepartmentMember));
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHead)).thenReturn(List.of(departmentMember));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         final List<VacationType> vacationTypes = List.of(vacationType);
@@ -150,6 +147,33 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
         assertThat(statistics.get(0).getPerson()).isEqualTo(departmentMember);
+    }
+
+    @Test
+    void getStatisticsForDepartmentHeadIgnoresInactivePersons() {
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person inactiveDepartmentMember = new Person();
+        inactiveDepartmentMember.setId(1);
+        inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
+
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHead)).thenReturn(List.of(inactiveDepartmentMember));
+
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final List<VacationType> vacationTypes = List.of(vacationType);
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+        final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
+        assertThat(statistics).isEmpty();
+
+        verifyNoInteractions(applicationForLeaveStatisticsBuilder);
     }
 
     @Test
@@ -167,10 +191,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         departmentMember.setId(1);
         departmentMember.setPermissions(List.of(USER));
 
-        final Person inactiveDepartmentMember = new Person();
-        inactiveDepartmentMember.setId(1);
-        inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
-        when(departmentService.getManagedMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(departmentMember, inactiveDepartmentMember));
+        when(departmentService.getManagedMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(departmentMember));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         final List<VacationType> vacationTypes = List.of(vacationType);
@@ -181,6 +202,32 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
         assertThat(statistics.get(0).getPerson()).isEqualTo(departmentMember);
+    }
+
+    @Test
+    void getStatisticsForSecondStageAuthorityIgnoresInactivePersons() {
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final Person inactiveDepartmentMember = new Person();
+        inactiveDepartmentMember.setId(1);
+        inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
+        when(departmentService.getManagedMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(inactiveDepartmentMember));
+
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final List<VacationType> vacationTypes = List.of(vacationType);
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+        final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
+        assertThat(statistics).isEmpty();
+
+        verifyNoInteractions(applicationForLeaveStatisticsBuilder);
     }
 
     @Test
@@ -206,12 +253,8 @@ class ApplicationForLeaveStatisticsServiceTest {
         departmentMemberThree.setId(3);
         departmentMemberThree.setPermissions(List.of(USER));
 
-        final Person inactiveDepartmentMember = new Person();
-        inactiveDepartmentMember.setId(4);
-        inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
-
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMember, departmentMemberThree));
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMember, departmentMemberTwo, inactiveDepartmentMember));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMember, departmentMemberTwo));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
         final List<VacationType> vacationTypes = List.of(vacationType);
@@ -226,5 +269,39 @@ class ApplicationForLeaveStatisticsServiceTest {
         assertThat(statistics.get(0).getPerson()).isEqualTo(departmentMember);
         assertThat(statistics.get(1).getPerson()).isEqualTo(departmentMemberThree);
         assertThat(statistics.get(2).getPerson()).isEqualTo(departmentMemberTwo);
+    }
+
+    @Test
+    void getStatisticsForDepartmentHeadAndSecondStageAuthorityIgnoresInactivePersons() {
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final Person departmentHeadAndSecondStageAuthority = new Person();
+        departmentHeadAndSecondStageAuthority.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuthority);
+
+        final Person inactiveDepartmentMember = new Person();
+        inactiveDepartmentMember.setId(1);
+        inactiveDepartmentMember.setPermissions(List.of(USER));
+        inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
+
+        final Person inactiveDepartmentMemberTwo = new Person();
+        inactiveDepartmentMemberTwo.setId(2);
+        inactiveDepartmentMemberTwo.setPermissions(List.of(USER));
+        inactiveDepartmentMemberTwo.setPermissions(List.of(USER, INACTIVE));
+
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(inactiveDepartmentMember));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(inactiveDepartmentMemberTwo));
+
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final List<VacationType> vacationTypes = List.of(vacationType);
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+
+        final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
+        assertThat(statistics).isEmpty();
+
+        verifyNoInteractions(applicationForLeaveStatisticsBuilder);
     }
 }
