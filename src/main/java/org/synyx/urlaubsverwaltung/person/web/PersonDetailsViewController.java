@@ -27,14 +27,18 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -152,23 +156,26 @@ public class PersonDetailsViewController {
             return personService.getActivePersons();
         }
 
+        final List<Person> relevantPersons = new ArrayList<>();
         // NOTE: If the logged-in user is only department head, he wants to see only the persons of his departments
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // NOTE: Only persons without inactive role are relevant
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+            departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
         // NOTE: If the logged-in user is second stage authority, he wants to see only the persons of his departments
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // NOTE: Only persons without inactive role are relevant
-            return departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+            departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
-        return Collections.emptyList();
+        return relevantPersons.stream()
+            .filter(distinctByKey(Person::getId))
+            .collect(toList());
     }
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
@@ -177,23 +184,31 @@ public class PersonDetailsViewController {
             return personService.getInactivePersons();
         }
 
+        final List<Person> relevantPersons = new ArrayList<>();
         // NOTE: If the logged-in user is only department head, he wants to see only the persons of his departments
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // NOTE: Only persons with inactive role are relevant
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+            departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
                 .filter(person -> person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
         // NOTE: If the logged-in user is second stage authority, he wants to see only the persons of his departments
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // NOTE: Only persons with inactive role are relevant
-            return departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+            departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
                 .filter(person -> person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
-        return Collections.emptyList();
+        return relevantPersons.stream()
+            .filter(distinctByKey(Person::getId))
+            .collect(toList());
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
