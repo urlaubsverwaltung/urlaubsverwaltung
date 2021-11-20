@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
@@ -174,7 +171,7 @@ public class PersonDetailsViewController {
         }
 
         return relevantPersons.stream()
-            .filter(distinctByKey(Person::getId))
+            .distinct()
             .collect(toList());
     }
 
@@ -202,13 +199,8 @@ public class PersonDetailsViewController {
         }
 
         return relevantPersons.stream()
-            .filter(distinctByKey(Person::getId))
+            .distinct()
             .collect(toList());
-    }
-
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {

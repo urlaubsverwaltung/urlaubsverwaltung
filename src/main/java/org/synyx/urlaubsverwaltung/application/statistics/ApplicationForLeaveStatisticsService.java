@@ -11,10 +11,6 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -70,12 +66,7 @@ class ApplicationForLeaveStatisticsService {
         }
 
        return relevantPersons.stream()
-            .filter(distinctByKey(Person::getId))
+            .distinct()
             .collect(toList());
-    }
-
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        final Map<Object, Boolean> seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }
