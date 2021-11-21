@@ -202,6 +202,15 @@
                                         <span class="datepicker-public-holiday-marker"></span>
                                     </c:if>
                                     <span class="tw-hidden print:tw-inline print:tw-font-mono">
+                                        <c:if test="${absence.type.absenceMorning}">
+                                            <spring:message code="absences.overview.absence.morning.abbr"/>
+                                        </c:if>
+                                        <c:if test="${absence.type.absenceNoon}">
+                                            <spring:message code="absences.overview.absence.noon.abbr"/>
+                                        </c:if>
+                                        <c:if test="${absence.type.absenceFull}">
+                                            <spring:message code="absences.overview.absence.abbr"/>
+                                        </c:if>
                                         <c:if test="${absence.type.waitingVacationMorning}">
                                             <spring:message code="absences.overview.vacation.morning.abbr"/>
                                         </c:if>
