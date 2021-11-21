@@ -245,8 +245,9 @@ public class AbsenceOverviewViewController {
         for (AbsencePeriod.Record absenceRecord : absenceRecords) {
             if (absenceRecord.isHalfDayAbsence()) {
                 builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, isPrivileged);
+            } else {
+                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, isPrivileged);
             }
-            builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, isPrivileged);
         }
 
         return builder;
