@@ -318,7 +318,8 @@ public class AbsenceOverviewViewController {
             }
             return morningWaiting ? builder.waitingVacationMorning() : builder.allowedVacationMorning();
         }
-        if (isPrivileged) {
+
+        if (!isPrivileged) {
             return builder.absenceNoon();
         }
         return noonWaiting ? builder.waitingVacationNoon() : builder.allowedVacationNoon();

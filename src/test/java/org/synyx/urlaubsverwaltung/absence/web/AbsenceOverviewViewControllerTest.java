@@ -709,7 +709,7 @@ class AbsenceOverviewViewControllerTest {
             ));
     }
 
-    private static Stream<Arguments> dayLengthVacationTypeData() {
+    private static Stream<Arguments> dayLengthVacationTypeDataForPrivilegedPerson() {
         return Stream.of(
             Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationFull"),
             Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "allowedVacationMorning"),
@@ -717,18 +717,18 @@ class AbsenceOverviewViewControllerTest {
             Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationFull"),
             Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "waitingVacationMorning"),
             Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationNoon"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceFull"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "absenceMorning"),
-            Arguments.of(USER, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceNoon"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceFull"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "absenceMorning"),
-            Arguments.of(USER, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceNoon")
+            Arguments.of(OFFICE, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationFull"),
+            Arguments.of(OFFICE, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "allowedVacationMorning"),
+            Arguments.of(OFFICE, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationNoon"),
+            Arguments.of(OFFICE, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationFull"),
+            Arguments.of(OFFICE, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "waitingVacationMorning"),
+            Arguments.of(OFFICE, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationNoon")
         );
     }
 
     @ParameterizedTest
-    @MethodSource("dayLengthVacationTypeData")
-    void ensureVacationOneDay(Role role, AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String typeProperty) throws Exception {
+    @MethodSource("dayLengthVacationTypeDataForPrivilegedPerson")
+    void ensureVacationOneDayForPrivilegedPerson(Role role, AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String typeProperty) throws Exception {
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -755,7 +755,71 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("persons", hasItem(
                         hasProperty("days", hasItems(
                             hasProperty("type",
-                                hasProperty(typeProperty, is(true))
+                                allOf(
+                                    hasProperty(typeProperty, is(true)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("absenceFull", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    private static Stream<Arguments> dayLengthVacationTypeDataForNotPrivilegedPerson() {
+        return Stream.of(
+            Arguments.of(new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceFull"),
+            Arguments.of(new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "absenceMorning"),
+            Arguments.of(null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceNoon"),
+            Arguments.of(new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceFull"),
+            Arguments.of(new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "absenceMorning"),
+            Arguments.of(null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceNoon")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("dayLengthVacationTypeDataForNotPrivilegedPerson")
+    void ensureVacationOneDayForNotPrivilegedPerson(AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String typeProperty) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty(typeProperty, is(true)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
                             )
                         ))
                     ))
