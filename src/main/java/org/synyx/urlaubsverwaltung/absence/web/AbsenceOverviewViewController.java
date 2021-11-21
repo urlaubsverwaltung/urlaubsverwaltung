@@ -304,7 +304,7 @@ public class AbsenceOverviewViewController {
         final boolean vacationNoon = noonType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
         final boolean vacationFull = vacationMorning && vacationNoon;
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
-        final boolean noonWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
+        final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
 
         if (vacationFull) {
             if (!isPrivileged) {
