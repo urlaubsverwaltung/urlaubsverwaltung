@@ -294,36 +294,18 @@ public class AbsenceOverviewViewController {
         if (sickFull) {
             return isPrivileged ? builder.sickNoteFull() : builder.absenceFull();
         }
-        if (sickMorning) {
-            return isPrivileged ? builder.sickNoteMorning() : builder.absenceMorning();
-        }
-        if (sickNoon) {
-            return isPrivileged ? builder.sickNoteNoon() : builder.absenceNoon();
-        }
 
-        final boolean vacationMorning = morningType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
-        final boolean vacationNoon = noonType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
-        final boolean vacationFull = vacationMorning && vacationNoon;
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
 
-        if (vacationFull) {
-            if (!isPrivileged) {
-                return builder.absenceFull();
-            }
-            return morningWaiting ? builder.waitingVacationFull() : builder.allowedVacationFull();
+        if (morningWaiting && noonWaiting) {
+            return isPrivileged ? builder.waitingVacationFull() : builder.absenceFull();
         }
-        if (vacationMorning) {
-            if (!isPrivileged) {
-                return builder.absenceMorning();
-            }
-            return morningWaiting ? builder.waitingVacationMorning() : builder.allowedVacationMorning();
+        else if (!morningWaiting && !noonWaiting) {
+            return isPrivileged ? builder.allowedVacationFull() : builder.absenceFull();
         }
 
-        if (!isPrivileged) {
-            return builder.absenceNoon();
-        }
-        return noonWaiting ? builder.waitingVacationNoon() : builder.allowedVacationNoon();
+        return builder;
     }
 
     private AbsenceOverviewDayType.Builder getPublicHolidayType(DayLength dayLength) {
