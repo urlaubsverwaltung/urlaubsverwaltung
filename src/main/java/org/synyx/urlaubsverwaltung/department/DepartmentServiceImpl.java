@@ -182,7 +182,6 @@ class DepartmentServiceImpl implements DepartmentService {
         return new ArrayList<>(relevantPersons);
     }
 
-
     @Override
     public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
 
