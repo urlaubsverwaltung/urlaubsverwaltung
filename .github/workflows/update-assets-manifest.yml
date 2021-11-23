@@ -30,8 +30,7 @@ jobs:
         run: ./mvnw --batch-mode frontend:install-node-and-npm
       - name: Install npm dependencies and build
         run: |
-          npm ci
-          npm run build
+          ./mvnw --batch-mode frontend:npm@install-npm-dependencies frontend:npm@npm-build
       - name: Assets-Manifest commit
         run: |
           git config --local user.name "Alfred Pennyworth[bot]"
