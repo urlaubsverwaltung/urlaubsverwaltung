@@ -206,7 +206,7 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "true"));
 
-        verify(departmentService).getManagedMembersOfDepartmentHead(signedInUser);
+        verify(departmentService).getMembersForDepartmentHead(signedInUser);
     }
 
     @Test
@@ -217,7 +217,7 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "true"));
 
-        verify(departmentService).getManagedMembersForSecondStageAuthority(signedInUser);
+        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
     }
 
     @Test
@@ -228,8 +228,8 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "true"));
 
-        verify(departmentService).getManagedMembersOfDepartmentHead(signedInUser);
-        verify(departmentService).getManagedMembersForSecondStageAuthority(signedInUser);
+        verify(departmentService).getMembersForDepartmentHead(signedInUser);
+        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
     }
 
     @Test
@@ -260,7 +260,7 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "false"));
 
-        verify(departmentService).getManagedMembersOfDepartmentHead(signedInUser);
+        verify(departmentService).getMembersForDepartmentHead(signedInUser);
     }
 
     @Test
@@ -271,7 +271,7 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "false"));
 
-        verify(departmentService).getManagedMembersForSecondStageAuthority(signedInUser);
+        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
     }
 
     @Test
@@ -282,8 +282,8 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "false"));
 
-        verify(departmentService).getManagedMembersOfDepartmentHead(signedInUser);
-        verify(departmentService).getManagedMembersForSecondStageAuthority(signedInUser);
+        verify(departmentService).getMembersForDepartmentHead(signedInUser);
+        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
     }
 
     @Test

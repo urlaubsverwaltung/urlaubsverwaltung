@@ -357,6 +357,96 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void getMembersForDepartmentHead() {
+
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
+        final DepartmentMemberEmbeddable marleneMember = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+        final DepartmentMemberEmbeddable maxMember = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+
+        final DepartmentEntity departmentOne = new DepartmentEntity();
+        departmentOne.setName("departmentOne");
+        departmentOne.setMembers(List.of(marleneMember, maxMember, departmentHeadMember));
+
+        final DepartmentMemberEmbeddable tomMember = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+        final DepartmentEntity departmentTwo = new DepartmentEntity();
+        departmentTwo.setName("departmentTwo");
+        departmentTwo.setMembers(List.of(tomMember));
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(departmentOne, departmentTwo));
+
+        final List<Person> members = sut.getMembersForDepartmentHead(departmentHead);
+        assertThat(members).containsOnly(marleneMember.getPerson(), tomMember.getPerson(), departmentHeadMember.getPerson(), maxMember.getPerson());
+    }
+
+    @Test
+    void getMembersForDepartmentHeadDistinct() {
+
+        final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+
+        final DepartmentEntity departmentOne = new DepartmentEntity();
+        departmentOne.setName("departmentOne");
+        departmentOne.setMembers(List.of(member));
+
+        final DepartmentEntity departmentTwo = new DepartmentEntity();
+        departmentTwo.setName("departmentTwo");
+        departmentTwo.setMembers(List.of(member));
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(departmentOne, departmentTwo));
+
+        final List<Person> members = sut.getMembersForDepartmentHead(departmentHead);
+        assertThat(members).containsOnly(member.getPerson());
+    }
+
+    @Test
+    void getMembersForSecondStageAuthority() {
+
+        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
+        final DepartmentMemberEmbeddable marleneMember = departmentMemberEmbeddable("muster", "Muster", "Marlene", "marlene.muster@example.org");
+        final DepartmentMemberEmbeddable maxMember = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+
+        final DepartmentEntity departmentOne = new DepartmentEntity();
+        departmentOne.setName("departmentOne");
+        departmentOne.setMembers(List.of(marleneMember, maxMember, departmentHeadMember));
+
+        final DepartmentMemberEmbeddable tomMember = departmentMemberEmbeddable("tom", "Tom", "Baer", "tom.baer@example.org");
+        final DepartmentEntity departmentTwo = new DepartmentEntity();
+        departmentTwo.setName("departmentTwo");
+        departmentTwo.setMembers(List.of(tomMember));
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(departmentOne, departmentTwo));
+
+        final List<Person> members = sut.getMembersForSecondStageAuthority(secondStageAuthority);
+        assertThat(members).containsOnly(marleneMember.getPerson(), tomMember.getPerson(), departmentHeadMember.getPerson(), maxMember.getPerson());
+    }
+
+    @Test
+    void getMembersForSecondStageAuthorityDistinct() {
+
+        final DepartmentMemberEmbeddable member = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
+
+        final DepartmentEntity departmentOne = new DepartmentEntity();
+        departmentOne.setName("departmentOne");
+        departmentOne.setMembers(List.of(member));
+
+        final DepartmentEntity departmentTwo = new DepartmentEntity();
+        departmentTwo.setName("departmentTwo");
+        departmentTwo.setMembers(List.of(member));
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(departmentOne, departmentTwo));
+
+        final List<Person> members = sut.getMembersForSecondStageAuthority(secondStageAuthority);
+        assertThat(members).containsOnly(member.getPerson());
+    }
+
+    @Test
     void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
 
         final Person departmentHead = new Person();

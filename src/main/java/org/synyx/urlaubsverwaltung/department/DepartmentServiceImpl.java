@@ -186,26 +186,38 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
 
         final Set<Person> relevantPersons = new HashSet<>();
-        final List<Department> departments = getManagedDepartmentsOfDepartmentHead(departmentHead);
-
-        departments.forEach(department ->
+        getManagedDepartmentsOfDepartmentHead(departmentHead).forEach(department ->
             relevantPersons.addAll(department.getMembers().stream().filter(isNotSecondStageIn(department)).collect(toSet()))
         );
-
         return new ArrayList<>(relevantPersons);
+    }
+
+    @Override
+    public List<Person> getMembersForDepartmentHead(Person departmentHead) {
+        return getManagedDepartmentsOfDepartmentHead(departmentHead).stream()
+            .map(Department::getMembers)
+            .flatMap(List::stream)
+            .distinct()
+            .collect(toList());
     }
 
     @Override
     public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
 
         final Set<Person> relevantPersons = new HashSet<>();
-        final List<Department> departments = getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority);
-
-        departments.forEach(department ->
+        getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority).forEach(department ->
             relevantPersons.addAll(department.getMembers().stream().filter(isNotSecondStageIn(department)).collect(toSet()))
         );
-
         return new ArrayList<>(relevantPersons);
+    }
+
+    @Override
+    public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
+        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority).stream()
+            .map(Department::getMembers)
+            .flatMap(List::stream)
+            .distinct()
+            .collect(toList());
     }
 
     @Override

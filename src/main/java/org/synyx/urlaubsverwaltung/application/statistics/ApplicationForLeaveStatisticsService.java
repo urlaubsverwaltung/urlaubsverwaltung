@@ -54,18 +54,18 @@ class ApplicationForLeaveStatisticsService {
 
         final List<Person> relevantPersons = new ArrayList<>();
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+            departmentService.getMembersForDepartmentHead(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
                 .collect(toCollection(() -> relevantPersons));
         }
 
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
                 .collect(toCollection(() -> relevantPersons));
         }
 
-       return relevantPersons.stream()
+        return relevantPersons.stream()
             .distinct()
             .collect(toList());
     }
