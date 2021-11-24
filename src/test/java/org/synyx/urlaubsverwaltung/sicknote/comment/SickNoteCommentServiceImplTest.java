@@ -27,17 +27,17 @@ class SickNoteCommentServiceImplTest {
     private SickNoteCommentServiceImpl sut;
 
     @Mock
-    private SickNoteCommentRepository sickNoteCommentRepository;
+    private SickNoteCommentEntityRepository sickNoteCommentEntityRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteCommentServiceImpl(sickNoteCommentRepository, Clock.systemUTC());
+        sut = new SickNoteCommentServiceImpl(sickNoteCommentEntityRepository, Clock.systemUTC());
     }
 
     @Test
     void ensureCreatesACommentAndPersistsIt() {
 
-        when(sickNoteCommentRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(sickNoteCommentEntityRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(author);
@@ -53,13 +53,13 @@ class SickNoteCommentServiceImplTest {
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getText()).isEmpty();
 
-        verify(sickNoteCommentRepository).save(comment);
+        verify(sickNoteCommentEntityRepository).save(comment);
     }
 
     @Test
     void ensureCreationOfCommentWithTextWorks() {
 
-        when(sickNoteCommentRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(sickNoteCommentEntityRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final String givenComment = "Foo";
         final Person givenAuthor = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -73,6 +73,6 @@ class SickNoteCommentServiceImplTest {
         assertThat(sickNoteCommentEntity.getPerson()).isEqualTo(givenAuthor);
         assertThat(sickNoteCommentEntity.getText()).isEqualTo(givenComment);
 
-        verify(sickNoteCommentRepository).save(sickNoteCommentEntity);
+        verify(sickNoteCommentEntityRepository).save(sickNoteCommentEntity);
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Repository for {@link SickNoteCommentEntity} entities.
  */
-interface SickNoteCommentRepository extends CrudRepository<SickNoteCommentEntity, Integer> {
+interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteCommentEntity, Integer> {
 
     List<SickNoteCommentEntity> findBySickNote(SickNote sickNote);
 }

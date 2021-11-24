@@ -16,12 +16,12 @@ import static java.util.Objects.requireNonNullElse;
 @Service
 class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
-    private final SickNoteCommentRepository sickNoteCommentRepository;
+    private final SickNoteCommentEntityRepository sickNoteCommentEntityRepository;
     private final Clock clock;
 
     @Autowired
-    public SickNoteCommentServiceImpl(SickNoteCommentRepository sickNoteCommentRepository, Clock clock) {
-        this.sickNoteCommentRepository = sickNoteCommentRepository;
+    public SickNoteCommentServiceImpl(SickNoteCommentEntityRepository sickNoteCommentEntityRepository, Clock clock) {
+        this.sickNoteCommentEntityRepository = sickNoteCommentEntityRepository;
         this.clock = clock;
     }
 
@@ -39,11 +39,11 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
         comment.setPerson(author);
         comment.setText(requireNonNullElse(text, ""));
 
-        return sickNoteCommentRepository.save(comment);
+        return sickNoteCommentEntityRepository.save(comment);
     }
 
     @Override
     public List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote) {
-        return sickNoteCommentRepository.findBySickNote(sickNote);
+        return sickNoteCommentEntityRepository.findBySickNote(sickNote);
     }
 }
