@@ -13,8 +13,8 @@ import static javax.persistence.EnumType.STRING;
 /**
  * Comment to a sick note containing detailed information like date of comment or commenting person.
  */
-@Entity
-public class SickNoteComment extends AbstractComment {
+@Entity(name = "sick_note_comment")
+public class SickNoteCommentEntity extends AbstractComment {
 
     @ManyToOne
     private SickNote sickNote;
@@ -22,11 +22,11 @@ public class SickNoteComment extends AbstractComment {
     @Enumerated(STRING)
     private SickNoteCommentAction action;
 
-    protected SickNoteComment() {
+    protected SickNoteCommentEntity() {
         super();
     }
 
-    public SickNoteComment(Clock clock) {
+    public SickNoteCommentEntity(Clock clock) {
         super(clock);
     }
 

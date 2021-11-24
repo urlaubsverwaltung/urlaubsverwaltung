@@ -9,7 +9,7 @@ import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -171,7 +171,7 @@ public class SickNoteValidator implements Validator {
         }
     }
 
-    public void validateComment(SickNoteComment comment, Errors errors) {
+    public void validateComment(SickNoteCommentEntity comment, Errors errors) {
 
         final String text = comment.getText();
 

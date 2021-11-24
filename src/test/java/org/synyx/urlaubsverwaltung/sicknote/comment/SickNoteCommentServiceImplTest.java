@@ -42,7 +42,7 @@ class SickNoteCommentServiceImplTest {
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(author);
 
-        final SickNoteComment comment = sut.create(sickNote, EDITED, author);
+        final SickNoteCommentEntity comment = sut.create(sickNote, EDITED, author);
         assertThat(comment).isNotNull();
         assertThat(comment.getSickNote()).isNotNull();
         assertThat(comment.getDate()).isNotNull();
@@ -65,14 +65,14 @@ class SickNoteCommentServiceImplTest {
         final Person givenAuthor = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote givenSickNote = createSickNote(givenAuthor);
 
-        final SickNoteComment sickNoteComment = sut.create(givenSickNote, CONVERTED_TO_VACATION, givenAuthor, givenComment);
-        assertThat(sickNoteComment).isNotNull();
-        assertThat(sickNoteComment.getDate()).isNotNull();
-        assertThat(sickNoteComment.getSickNote()).isEqualTo(givenSickNote);
-        assertThat(sickNoteComment.getAction()).isEqualTo(CONVERTED_TO_VACATION);
-        assertThat(sickNoteComment.getPerson()).isEqualTo(givenAuthor);
-        assertThat(sickNoteComment.getText()).isEqualTo(givenComment);
+        final SickNoteCommentEntity sickNoteCommentEntity = sut.create(givenSickNote, CONVERTED_TO_VACATION, givenAuthor, givenComment);
+        assertThat(sickNoteCommentEntity).isNotNull();
+        assertThat(sickNoteCommentEntity.getDate()).isNotNull();
+        assertThat(sickNoteCommentEntity.getSickNote()).isEqualTo(givenSickNote);
+        assertThat(sickNoteCommentEntity.getAction()).isEqualTo(CONVERTED_TO_VACATION);
+        assertThat(sickNoteCommentEntity.getPerson()).isEqualTo(givenAuthor);
+        assertThat(sickNoteCommentEntity.getText()).isEqualTo(givenComment);
 
-        verify(sickNoteCommentRepository).save(sickNoteComment);
+        verify(sickNoteCommentRepository).save(sickNoteCommentEntity);
     }
 }

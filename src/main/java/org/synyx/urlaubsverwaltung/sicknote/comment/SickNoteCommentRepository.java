@@ -6,9 +6,9 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import java.util.List;
 
 /**
- * Repository for {@link SickNoteComment} entities.
+ * Repository for {@link SickNoteCommentEntity} entities.
  */
-interface SickNoteCommentRepository extends CrudRepository<SickNoteComment, Integer> {
+interface SickNoteCommentRepository extends CrudRepository<SickNoteCommentEntity, Integer> {
 
-    List<SickNoteComment> findBySickNote(SickNote sickNote);
+    List<SickNoteCommentEntity> findBySickNote(SickNote sickNote);
 }

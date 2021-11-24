@@ -26,14 +26,14 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteCommentAction action, Person author) {
+    public SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author) {
         return this.create(sickNote, action, author, null);
     }
 
     @Override
-    public SickNoteComment create(SickNote sickNote, SickNoteCommentAction action, Person author, String text) {
+    public SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author, String text) {
 
-        final SickNoteComment comment = new SickNoteComment(clock);
+        final SickNoteCommentEntity comment = new SickNoteCommentEntity(clock);
         comment.setSickNote(sickNote);
         comment.setAction(action);
         comment.setPerson(author);
@@ -43,7 +43,7 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public List<SickNoteComment> getCommentsBySickNote(SickNote sickNote) {
+    public List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote) {
         return sickNoteCommentRepository.findBySickNote(sickNote);
     }
 }

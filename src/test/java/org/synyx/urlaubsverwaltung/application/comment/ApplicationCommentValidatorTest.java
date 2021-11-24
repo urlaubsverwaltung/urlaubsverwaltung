@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.comment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -38,7 +38,7 @@ class ApplicationCommentValidatorTest {
 
     @Test
     void ensureDoesNotSupportOtherClass() {
-        assertThat(validator.supports(SickNoteComment.class)).isFalse();
+        assertThat(validator.supports(SickNoteCommentEntity.class)).isFalse();
     }
 
     @Test

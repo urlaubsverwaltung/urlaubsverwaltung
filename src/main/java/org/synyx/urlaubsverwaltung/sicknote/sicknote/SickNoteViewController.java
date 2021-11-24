@@ -21,7 +21,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
@@ -101,9 +101,9 @@ class SickNoteViewController {
 
         if (signedInUser.hasRole(OFFICE) || sickNote.getPerson().equals(signedInUser)) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
-            model.addAttribute("comment", new SickNoteComment(clock));
+            model.addAttribute("comment", new SickNoteCommentEntity(clock));
 
-            List<SickNoteComment> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
+            List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
             return "sicknote/sick_note";
@@ -188,7 +188,7 @@ class SickNoteViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Integer id,
-                             @ModelAttribute("comment") SickNoteComment comment, RedirectAttributes redirectAttributes, Errors errors)
+                             @ModelAttribute("comment") SickNoteCommentEntity comment, RedirectAttributes redirectAttributes, Errors errors)
         throws UnknownSickNoteException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
