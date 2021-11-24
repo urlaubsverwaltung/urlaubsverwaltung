@@ -58,7 +58,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -661,20 +660,21 @@ class AbsenceOverviewViewControllerTest {
                 )))));
     }
 
-    private static Stream<Arguments> dayLengthSickNoteTypeData() {
+    // ---
+    // WAITING / TEMPORARY_ALLOWED vacation, privileged user
+
+    private static Stream<Arguments> privilegedRoleAndAbsenceStatusWaitingArguments() {
         return Stream.of(
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "sickNoteFull"),
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningSick(1), null, "sickNoteMorning"),
-            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonSick(1), "sickNoteNoon"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningSick(1), new AbsencePeriod.RecordNoonSick(1), "absenceFull"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningSick(1), null, "absenceMorning"),
-            Arguments.of(USER, null, new AbsencePeriod.RecordNoonSick(1), "absenceNoon")
+            Arguments.of(Role.BOSS, AbsencePeriod.AbsenceStatus.WAITING),
+            Arguments.of(Role.OFFICE, AbsencePeriod.AbsenceStatus.WAITING),
+            Arguments.of(Role.BOSS, AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED),
+            Arguments.of(Role.OFFICE, AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("dayLengthSickNoteTypeData")
-    void ensureSickNoteOneDay(Role role, AbsencePeriod.RecordMorning morning, AbsencePeriod.RecordNoon noon, String typeProperty) throws Exception {
+    @MethodSource("privilegedRoleAndAbsenceStatusWaitingArguments")
+    void ensureVacationMorningWaitingForPrivilegedPerson(Role role, AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -687,12 +687,13 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
-        final AbsencePeriod absencePeriodSick = new AbsencePeriod(List.of(record));
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, absenceStatus);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
-        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodSick));
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -701,7 +702,20 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("persons", hasItem(
                         hasProperty("days", hasItems(
                             hasProperty("type",
-                                hasProperty(typeProperty, is(true))
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(true)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
                             )
                         ))
                     ))
@@ -709,26 +723,9 @@ class AbsenceOverviewViewControllerTest {
             ));
     }
 
-    private static Stream<Arguments> dayLengthVacationTypeData() {
-        return Stream.of(
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationFull"),
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "allowedVacationMorning"),
-            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "allowedVacationNoon"),
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationFull"),
-            Arguments.of(BOSS, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "waitingVacationMorning"),
-            Arguments.of(BOSS, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "waitingVacationNoon"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceFull"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), null, "absenceMorning"),
-            Arguments.of(USER, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED), "absenceNoon"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceFull"),
-            Arguments.of(USER, new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING), null, "absenceMorning"),
-            Arguments.of(USER, null, new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING), "absenceNoon")
-        );
-    }
-
     @ParameterizedTest
-    @MethodSource("dayLengthVacationTypeData")
-    void ensureVacationOneDay(Role role, AbsencePeriod.RecordMorningVacation morning, AbsencePeriod.RecordNoonVacation noon, String typeProperty) throws Exception {
+    @MethodSource("privilegedRoleAndAbsenceStatusWaitingArguments")
+    void ensureVacationNoonWaitingForPrivilegedPerson(Role role, AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -741,6 +738,59 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, absenceStatus);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(true)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @MethodSource("privilegedRoleAndAbsenceStatusWaitingArguments")
+    void ensureVacationFullWaitingForPrivilegedPerson(Role role, AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, absenceStatus);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, absenceStatus);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -755,13 +805,1034 @@ class AbsenceOverviewViewControllerTest {
                     hasProperty("persons", hasItem(
                         hasProperty("days", hasItems(
                             hasProperty("type",
-                                hasProperty(typeProperty, is(true))
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(true)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
                             )
                         ))
                     ))
                 ))
             ));
     }
+
+    // waiting / temporary allowed vacation, not privileged user
+
+    @ParameterizedTest
+    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = { "WAITING", "TEMPORARY_ALLOWED" })
+    void ensureVacationMorningWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, absenceStatus);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = { "WAITING", "TEMPORARY_ALLOWED" })
+    void ensureVacationNoonWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, absenceStatus);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(true)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = { "WAITING", "TEMPORARY_ALLOWED" })
+    void ensureVacationFullWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, absenceStatus);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, absenceStatus);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(true)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // ---
+    // ALLOWED vacation, privileged user
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureVacationMorningAllowedForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(true)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureVacationNoonAllowedForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(true)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureVacationFullAllowedForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(true)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // allowed vacation, not privileged user
+
+    @Test
+    void ensureVacationMorningAllowedForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureVacationNoonAllowedForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(true)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureVacationFullAllowedForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(true)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // ---
+    // sick note, privileged user
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureSickNoteMorningForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(true)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureSickNoteNoonForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(true))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureSickNoteFullForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(true)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // sick note, not privileged user
+
+    @Test
+    void ensureSickNoteMorningForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureSickNoteNoonForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(true)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureSickNoteFullForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(true)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // ---
+    // half VACATION, half SICK
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureVacationMorningAndSickNoteNoonForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
+
+        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, sickNoteNoon);
+
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(true)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(true))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    void ensureVacationNoonAndSickNoteMorningForPrivilegedPerson(Role role) throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
+
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, sickNoteMorning, null);
+
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(true)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(true)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // half vacation, sick note, not privileged user
+
+    @Test
+    void ensureVacationMorningAndSickNoteNoonForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
+
+        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(1);
+        final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, sickNoteNoon);
+
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("absenceNoon", is(true)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureVacationNoonAndSickNoteMorningForNotPrivilegedPerson() throws Exception {
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
+
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(1);
+        final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, sickNoteMorning, null);
+
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
+
+        perform
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("absenceNoon", is(true)),
+                                    hasProperty("waitingVacationFull", is(false)),
+                                    hasProperty("waitingVacationMorning", is(false)),
+                                    hasProperty("waitingVacationNoon", is(false)),
+                                    hasProperty("allowedVacationFull", is(false)),
+                                    hasProperty("allowedVacationMorning", is(false)),
+                                    hasProperty("allowedVacationNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
 
     @Test
     void ensureWeekendsAndHolidays() throws Exception {
