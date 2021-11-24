@@ -16,8 +16,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 /**
  * Handles exceptions and redirects to error page.
  */
-@ControllerAdvice(basePackages = {"org.synyx.urlaubsverwaltung.sicknote.web"}, annotations = Controller.class)
-public class SicknoteExceptionHandlerControllerAdvice {
+@ControllerAdvice(basePackages = {"org.synyx.urlaubsverwaltung.sicknote.sicknote"}, annotations = Controller.class)
+public class SickNoteExceptionHandlerControllerAdvice {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -31,7 +31,7 @@ public class SicknoteExceptionHandlerControllerAdvice {
      */
     private static ModelAndView getErrorPage(Exception exception, HttpStatus httpStatus) {
 
-        ModelAndView modelAndView = new ModelAndView(ERROR_PAGE_NAME);
+        final ModelAndView modelAndView = new ModelAndView(ERROR_PAGE_NAME);
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("statusCode", httpStatus.value());
 

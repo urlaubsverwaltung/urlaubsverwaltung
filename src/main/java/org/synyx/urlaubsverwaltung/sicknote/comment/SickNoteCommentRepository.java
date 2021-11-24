@@ -5,7 +5,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.util.List;
 
-
 /**
  * Repository for {@link SickNoteComment} entities.
  */

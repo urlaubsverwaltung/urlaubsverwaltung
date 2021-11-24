@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknotetype;
 
 import java.util.List;
 
-
 public interface SickNoteTypeService {
 
     /**

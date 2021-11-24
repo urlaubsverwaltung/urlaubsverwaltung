@@ -43,7 +43,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  */
 @Controller
 @RequestMapping("/web")
-public class SickNoteViewController {
+class SickNoteViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String SICKNOTE_SICK_NOTE_FORM = "sicknote/sick_note_form";
@@ -65,7 +65,7 @@ public class SickNoteViewController {
     private final Clock clock;
 
     @Autowired
-    public SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
+    SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                                   SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                                   VacationTypeService vacationTypeService, PersonService personService,
                                   WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,

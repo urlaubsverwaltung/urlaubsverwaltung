@@ -19,7 +19,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  */
 @Controller
 @RequestMapping("/web")
-public class SickNoteStatisticsViewController {
+class SickNoteStatisticsViewController {
 
     private final SickNoteStatisticsService statisticsService;
     private final Clock clock;

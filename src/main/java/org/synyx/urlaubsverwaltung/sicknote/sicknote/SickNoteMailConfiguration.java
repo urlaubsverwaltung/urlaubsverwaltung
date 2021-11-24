@@ -6,13 +6,13 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 @Configuration
-public class SickNoteMailConfiguration implements SchedulingConfigurer {
+class SickNoteMailConfiguration implements SchedulingConfigurer {
 
     private final SickNoteProperties sickNoteProperties;
     private final SickNoteMailService sickNoteMailService;
 
     @Autowired
-    public SickNoteMailConfiguration(SickNoteProperties sickNoteProperties, SickNoteMailService sickNoteMailService) {
+    SickNoteMailConfiguration(SickNoteProperties sickNoteProperties, SickNoteMailService sickNoteMailService) {
         this.sickNoteProperties = sickNoteProperties;
         this.sickNoteMailService = sickNoteMailService;
     }

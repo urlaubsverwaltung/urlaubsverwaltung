@@ -24,7 +24,7 @@ class SickNoteServiceImpl implements SickNoteService {
     private final Clock clock;
 
     @Autowired
-    public SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService, Clock clock) {
+    SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService, Clock clock) {
         this.sickNoteRepository = sickNoteRepository;
         this.settingsService = settingsService;
         this.clock = clock;

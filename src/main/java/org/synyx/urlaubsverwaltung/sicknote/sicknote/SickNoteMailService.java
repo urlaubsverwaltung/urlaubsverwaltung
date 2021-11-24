@@ -16,7 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @Service
-public class SickNoteMailService {
+class SickNoteMailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -25,7 +25,7 @@ public class SickNoteMailService {
     private final MailService mailService;
 
     @Autowired
-    public SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
+    SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService) {
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;

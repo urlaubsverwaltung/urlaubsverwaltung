@@ -22,7 +22,6 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
-
 /**
  * Class for validating {@link SickNote} object.
  */

@@ -48,7 +48,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final Clock clock;
 
     @Autowired
-    public SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
+    SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
                                           ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
                                           AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
 

@@ -11,7 +11,7 @@ class SickNoteTypeServiceImpl implements SickNoteTypeService {
     private final SickNoteTypeRepository sickNoteTypeRepository;
 
     @Autowired
-    public SickNoteTypeServiceImpl(SickNoteTypeRepository sickNoteTypeRepository) {
+    SickNoteTypeServiceImpl(SickNoteTypeRepository sickNoteTypeRepository) {
         this.sickNoteTypeRepository = sickNoteTypeRepository;
     }
 
