@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.sicknote.api.SickNoteApiController;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController;
 import org.synyx.urlaubsverwaltung.vacations.VacationApiController;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController;
 
@@ -28,7 +28,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
 import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
-import static org.synyx.urlaubsverwaltung.sicknote.api.SickNoteApiController.SICKNOTES;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController.SICKNOTES;
 import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATIONS;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 

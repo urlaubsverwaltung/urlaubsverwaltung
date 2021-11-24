@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.application.comment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteComment;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteComment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

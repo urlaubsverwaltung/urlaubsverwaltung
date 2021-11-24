@@ -14,7 +14,6 @@ import java.time.ZonedDateTime;
 
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
-
 /**
  * Controller for statistics of sick notes resp. sick days.
  */
@@ -26,15 +25,14 @@ public class SickNoteStatisticsViewController {
     private final Clock clock;
 
     @Autowired
-    public SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService, Clock clock) {
+    SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService, Clock clock) {
         this.statisticsService = statisticsService;
         this.clock = clock;
     }
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote/statistics")
-    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear,
-                                      Model model) {
+    public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
 
         final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
         final SickNoteStatistics statistics = statisticsService.createStatistics(clockOfRequestedYear);
