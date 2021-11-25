@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -24,7 +23,6 @@ public class SettingsDto {
     private OvertimeSettings overtimeSettings;
     private TimeSettings timeSettings;
     private SickNoteSettings sickNoteSettings;
-    private CalendarSettings calendarSettings;
 
     public Integer getId() {
         return id;
@@ -98,14 +96,6 @@ public class SettingsDto {
         this.sickNoteSettings = sickNoteSettings;
     }
 
-    public CalendarSettings getCalendarSettings() {
-        return calendarSettings;
-    }
-
-    public void setCalendarSettings(CalendarSettings calendarSettings) {
-        this.calendarSettings = calendarSettings;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,13 +109,12 @@ public class SettingsDto {
             && Objects.equals(overtimeSettings, that.overtimeSettings)
             && Objects.equals(timeSettings, that.timeSettings)
             && Objects.equals(sickNoteSettings, that.sickNoteSettings)
-            && Objects.equals(calendarSettings, that.calendarSettings)
             && Objects.equals(specialLeaveSettings, that.specialLeaveSettings);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, absenceTypeSettings, applicationSettings, accountSettings, workingTimeSettings,
-            overtimeSettings, timeSettings, sickNoteSettings, calendarSettings, specialLeaveSettings);
+            overtimeSettings, timeSettings, sickNoteSettings, specialLeaveSettings);
     }
 }

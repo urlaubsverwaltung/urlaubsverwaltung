@@ -6,22 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -38,16 +31,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.anyAbsenceMapping;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -63,7 +53,6 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
-import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -83,33 +72,19 @@ class ApplicationInteractionServiceImplTest {
     @Mock
     private ApplicationMailService applicationMailService;
     @Mock
-    private CalendarSyncService calendarSyncService;
-    @Mock
-    private AbsenceMappingService absenceMappingService;
-    @Mock
-    private SettingsService settingsService;
-    @Mock
     private DepartmentService departmentService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-
-        final Settings settings = new Settings();
-        settings.setTimeSettings(new TimeSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
-
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, clock);
+            applicationMailService, departmentService, clock);
     }
 
     // APPLY FOR LEAVE -------------------------------------------------------------------------------------------------
     @Test
     void ensureApplyForLeaveChangesStateAndOtherAttributesAndSavesTheApplicationForLeave() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -130,29 +105,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureApplyingForLeaveAddsCalendarEvent() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
-
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Optional<String> comment = of("Foo");
-
-        Application applicationForLeave = getDummyApplication(person);
-        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
-
-        sut.apply(applicationForLeave, applier, comment);
-
-        verify(calendarSyncService).addAbsence(any(Absence.class));
-        verify(absenceMappingService).create(isNull(), eq(VACATION), anyString());
-    }
-
-    @Test
     void ensureSendsConfirmationEmailToPersonAndNotificationEmailToBossesWhenApplyingForOneself() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -171,9 +124,6 @@ class ApplicationInteractionServiceImplTest {
 
     @Test
     void ensureSendsNotificationToPersonIfApplicationForLeaveNotAppliedByOneself() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -194,9 +144,6 @@ class ApplicationInteractionServiceImplTest {
 
     @Test
     void ensureApplyingForLeaveUpdatesTheRemainingVacationDays() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(of("42"));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person applier = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -230,9 +177,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
 
-        verify(calendarSyncService, never()).addAbsence(any(Absence.class));
-        verifyNoInteractions(absenceMappingService);
-
         verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
@@ -253,9 +197,6 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
         when(commentService.create(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person)).thenReturn(new ApplicationComment(person, clock));
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("eventId"));
 
         sut.directAllow(applicationForLeave, person, comment);
 
@@ -289,9 +230,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, office);
 
-        verify(calendarSyncService, never()).addAbsence(any(Absence.class));
-        verifyNoInteractions(absenceMappingService);
-
         verify(applicationMailService, never()).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
@@ -317,7 +255,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -340,7 +277,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -362,7 +298,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, boss);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -383,8 +318,6 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(applicationService);
         verifyNoInteractions(commentService);
         verifyNoInteractions(applicationMailService);
-        verifyNoInteractions(calendarSyncService);
-        verifyNoInteractions(absenceMappingService);
     }
 
     // ALLOWING - DEPARTMENT HEAD
@@ -422,7 +355,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -446,7 +378,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, TEMPORARY_ALLOWED, person, departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead);
-        assertNoCalendarSyncOccurs();
         assertTemporaryAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -470,8 +401,6 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(applicationService);
         verifyNoInteractions(commentService);
         verifyNoInteractions(applicationMailService);
-        verifyNoInteractions(calendarSyncService);
-        verifyNoInteractions(absenceMappingService);
     }
 
     @Test
@@ -494,7 +423,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, departmentHead);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -518,7 +446,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -542,7 +469,6 @@ class ApplicationInteractionServiceImplTest {
 
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
-        assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
     }
 
@@ -568,7 +494,6 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, person, secondStage);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
         assertAllowedNotificationIsSent(applicationForLeave);
-        verifyNoInteractions(calendarSyncService);
     }
 
     @Test
@@ -594,7 +519,6 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveHasChangedStatus(applicationForLeave, ALLOWED, departmentHead, secondStageAuthority);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStageAuthority);
         assertAllowedNotificationIsSent(applicationForLeave);
-        verifyNoInteractions(calendarSyncService);
     }
 
     @Test
@@ -759,28 +683,6 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureRejectingApplicationForLeaveDeletesCalendarEvent() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final Optional<String> comment = of("Foo");
-
-        final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(WAITING);
-        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
-
-        final AbsenceMapping absenceMapping = anyAbsenceMapping();
-        final Optional<AbsenceMapping> absenceByIdAndType = absenceMappingService.getAbsenceByIdAndType(isNull(), eq(VACATION));
-        when(absenceByIdAndType).thenReturn(of(absenceMapping));
-
-        sut.reject(applicationForLeave, boss, comment);
-
-        verify(calendarSyncService).deleteAbsence(absenceMapping.getEventId());
-        verify(absenceMappingService).delete(absenceMapping);
-    }
-
-    @Test
     void ensureRejectingApplicationForLeaveSendsEmailToPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -821,27 +723,6 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
-    }
-
-    @Test
-    void ensureCancellingApplicationForLeaveDeletesCalendarEvent() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person canceller = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final Optional<String> comment = of("Foo");
-
-        final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(WAITING);
-        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
-
-        final AbsenceMapping absenceMapping = anyAbsenceMapping();
-        when(absenceMappingService.getAbsenceByIdAndType(null, VACATION)).thenReturn(of(absenceMapping));
-
-        sut.cancel(applicationForLeave, canceller, comment);
-
-        verify(calendarSyncService).deleteAbsence(anyString());
-        verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
 
     @Test
@@ -1371,19 +1252,9 @@ class ApplicationInteractionServiceImplTest {
         verify(commentService).create(applicationForLeave, action, optionalComment, privilegedUser);
     }
 
-    private void assertNoCalendarSyncIsExecuted() {
-        verifyNoInteractions(calendarSyncService);
-        verifyNoInteractions(absenceMappingService);
-    }
-
     private void assertAllowedNotificationIsSent(Application applicationForLeave) {
         verify(applicationMailService).sendAllowedNotification(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService, never()).sendTemporaryAllowedNotification(any(Application.class), any(ApplicationComment.class));
-    }
-
-    private void assertNoCalendarSyncOccurs() {
-        verifyNoInteractions(calendarSyncService);
-        verifyNoInteractions(absenceMappingService);
     }
 
     private void assertTemporaryAllowedNotificationIsSent(Application applicationForLeave) {

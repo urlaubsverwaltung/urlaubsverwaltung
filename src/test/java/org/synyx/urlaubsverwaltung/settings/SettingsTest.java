@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.person.Person;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +17,6 @@ class SettingsTest {
 
         assertThat(settings.getApplicationSettings()).isNotNull();
         assertThat(settings.getWorkingTimeSettings()).isNotNull();
-        assertThat(settings.getCalendarSettings()).isNotNull();
     }
 
     @Test

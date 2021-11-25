@@ -68,13 +68,8 @@
                 <form:errors path="overtimeSettings.*"/>
             </c:set>
 
-            <c:set var="calendarError">
-                <form:errors path="calendarSettings.*"/>
-            </c:set>
-
             <c:set var="hasAbsenceError" value="${not empty applicationError || not empty sickNoteError || not empty accountError}" />
             <c:set var="hasPublicHolidayError" value="${not empty workingTimeError || not empty timeError || not empty overtimeError}" />
-            <c:set var="hasCalendarError" value="${not empty calendarError}" />
 
             <div class="row">
                 <div class="col-xs-12">
@@ -112,18 +107,6 @@
                             >
                                 <spring:message code="settings.tabs.workingTime"/>
                                 <c:if test="${hasPublicHolidayError}">*</c:if>
-                            </a>
-                        </li>
-                        <li role="presentation">
-                            <a
-                                href="#calendar"
-                                aria-controls="calendar"
-                                role="tab"
-                                data-toggle="tab"
-                                class="${hasCalendarError ? 'tw-text-red-800' : ''}"
-                            >
-                                <spring:message code="settings.tabs.calendar"/>
-                                <c:if test="${hasCalendarError}">*</c:if>
                             </a>
                         </li>
                     </ul>
@@ -171,22 +154,6 @@
                     </div>
                     <div class="form-section tw-mb-8">
                         <jsp:include page="public-holidays/overtime.jsp" />
-                    </div>
-                </div>
-
-                <div class="tab-pane" id="calendar">
-                    <div class="alert alert-danger tw-flex tw-items-center" role="alert">
-                        <icon:speakerphone className="tw-w-4 tw-h-4" solid="true" />
-                        &nbsp;<spring:message code="settings.calendar.deprecated"/>
-                    </div>
-                    <div class="form-section">
-                        <jsp:include page="calendar/integration.jsp" />
-                    </div>
-                    <div class="form-section" id="exchange-calendar">
-                        <jsp:include page="calendar/exchange.jsp" />
-                    </div>
-                    <div class="form-section" id="google-calendar">
-                        <jsp:include page="calendar/google.jsp" />
                     </div>
                 </div>
             </div>

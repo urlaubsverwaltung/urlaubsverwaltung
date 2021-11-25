@@ -10,26 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.TimeZone;
 
-import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
@@ -41,42 +34,29 @@ public class SettingsViewController {
 
     private final SettingsService settingsService;
     private final VacationTypeService vacationTypeService;
-    private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
-    private final Clock clock;
     private final String applicationVersion;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
-    public SettingsViewController(SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion, SpecialLeaveSettingsService specialLeaveService) {
+    public SettingsViewController(SettingsService settingsService, VacationTypeService vacationTypeService,
+                                  SettingsValidator settingsValidator, @Value("${info.app.version}") String applicationVersion, SpecialLeaveSettingsService specialLeaveService) {
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
-        this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
-        this.clock = clock;
         this.applicationVersion = applicationVersion;
         this.specialLeaveSettingsService = specialLeaveService;
     }
 
     @GetMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsDetails(@RequestParam(value = "oautherrors", required = false) String googleOAuthError,
-                                  HttpServletRequest request, Model model) {
-
-        final String requestURL = request.getRequestURL().toString();
-        final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
+    public String settingsDetails(Model model) {
 
         final Settings settings = settingsService.getSettings();
         final SettingsDto settingsDto = settingsToDto(settings);
         settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
         settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
-        fillModel(model, settingsDto, authorizedRedirectUrl);
-
-        if (shouldShowOAuthError(googleOAuthError, settings)) {
-            model.addAttribute("errors", googleOAuthError);
-            model.addAttribute("oautherrors", googleOAuthError);
-        }
+        fillModel(model, settings);
 
         return "settings/settings_form";
     }
@@ -84,25 +64,18 @@ public class SettingsViewController {
     @PostMapping
     @PreAuthorize(IS_OFFICE)
     public String settingsSaved(@Valid @ModelAttribute("settings") SettingsDto settingsDto, Errors errors,
-                                @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
-                                Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+                                Model model, RedirectAttributes redirectAttributes) {
 
         final Settings settings = settingsDtoToSettings(settingsDto);
         settingsValidator.validate(settings, errors);
 
         if (errors.hasErrors()) {
-
-            final StringBuffer requestURL = request.getRequestURL();
-            final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
-
-            fillModel(model, settingsDto, authorizedRedirectUrl);
-
+            fillModel(model, settingsDto);
             model.addAttribute("errors", errors);
-
             return "settings/settings_form";
         }
 
-        settingsService.save(processGoogleRefreshToken(settings));
+        settingsService.save(settings);
 
         final List<VacationTypeUpdate> vacationTypeUpdates = settingsDto.getAbsenceTypeSettings().getItems()
             .stream()
@@ -114,17 +87,17 @@ public class SettingsViewController {
         final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = mapToSpecialLeaveSettingsItems(specialLeaveSettingsDto.getSpecialLeaveSettingsItems());
         specialLeaveSettingsService.saveAll(specialLeaveSettingsItems);
 
-        if (googleOAuthButton != null) {
-            return "redirect:/web/google-api-handshake";
-        }
-
         redirectAttributes.addFlashAttribute("success", true);
 
         return "redirect:/web/settings";
     }
 
-    String getAuthorizedRedirectUrl(String requestURL, String redirectPath) {
-        return requestURL.replace("/settings", redirectPath);
+    private void fillModel(Model model, Settings settings) {
+        final SettingsDto settingsDto = settingsToDto(settings);
+        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
+
+        fillModel(model, settingsDto);
     }
 
     private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
@@ -132,28 +105,11 @@ public class SettingsViewController {
         return SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsDto(specialLeaveSettingsItems);
     }
 
-    private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
-        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
-        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
-
+    private void fillModel(Model model, SettingsDto settingsDto) {
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("dayLengthTypes", DayLength.values());
         model.addAttribute("weekDays", DayOfWeek.values());
-
-        final List<String> providers = calendarProviders.stream()
-            .map(provider -> provider.getClass().getSimpleName())
-            .sorted(reverseOrder())
-            .collect(toList());
-        model.addAttribute("providers", providers);
-
-        model.addAttribute("availableTimezones", List.of(TimeZone.getAvailableIDs()));
-
-        if (settingsDto.getCalendarSettings().getExchangeCalendarSettings().getTimeZoneId() == null) {
-            settingsDto.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(clock.getZone().getId());
-        }
-
-        model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
         model.addAttribute("version", applicationVersion);
     }
 
@@ -167,8 +123,6 @@ public class SettingsViewController {
         settingsDto.setOvertimeSettings(settings.getOvertimeSettings());
         settingsDto.setTimeSettings(settings.getTimeSettings());
         settingsDto.setSickNoteSettings(settings.getSickNoteSettings());
-        settingsDto.setCalendarSettings(settings.getCalendarSettings());
-
         return settingsDto;
     }
 
@@ -181,7 +135,6 @@ public class SettingsViewController {
         settings.setOvertimeSettings(settingsDto.getOvertimeSettings());
         settings.setTimeSettings(settingsDto.getTimeSettings());
         settings.setSickNoteSettings(settingsDto.getSickNoteSettings());
-        settings.setCalendarSettings(settingsDto.getCalendarSettings());
         return settings;
     }
 
@@ -197,37 +150,5 @@ public class SettingsViewController {
             absenceTypeSettingsItemDto.isRequiresApproval(),
             absenceTypeSettingsItemDto.getColor(),
             absenceTypeSettingsItemDto.isVisibleToEveryone());
-    }
-
-    private Settings processGoogleRefreshToken(Settings settingsUpdate) {
-        final Settings storedSettings = settingsService.getSettings();
-
-        final GoogleCalendarSettings storedGoogleSettings = storedSettings.getCalendarSettings().getGoogleCalendarSettings();
-        final GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getCalendarSettings().getGoogleCalendarSettings();
-
-        updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
-
-        if (refreshTokenGotInvalid(storedGoogleSettings, updateGoogleSettings)) {
-            // refresh token is invalid if settings changed
-            updateGoogleSettings.setRefreshToken(null);
-        }
-
-        return settingsUpdate;
-    }
-
-    private boolean refreshTokenGotInvalid(GoogleCalendarSettings oldSettings, GoogleCalendarSettings newSettings) {
-        if (oldSettings.getClientSecret() == null
-            || oldSettings.getClientId() == null
-            || oldSettings.getCalendarId() == null) {
-            return true;
-        }
-
-        return !oldSettings.equals(newSettings);
-    }
-
-    private boolean shouldShowOAuthError(String googleOAuthError, Settings settings) {
-        return googleOAuthError != null
-            && !googleOAuthError.isEmpty()
-            && settings.getCalendarSettings().getGoogleCalendarSettings().getRefreshToken() == null;
     }
 }
