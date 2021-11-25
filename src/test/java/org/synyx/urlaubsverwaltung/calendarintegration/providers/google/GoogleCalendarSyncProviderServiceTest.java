@@ -9,7 +9,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import org.junit.Assume;
 import org.junit.jupiter.api.BeforeAll;
@@ -96,7 +96,7 @@ class GoogleCalendarSyncProviderServiceTest {
 
     private Integer getCalendarEventCount() throws GeneralSecurityException, IOException {
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setRefreshToken(REFRESH_TOKEN);
