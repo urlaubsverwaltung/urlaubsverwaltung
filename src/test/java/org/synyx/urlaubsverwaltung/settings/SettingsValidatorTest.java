@@ -10,10 +10,6 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
-import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -393,87 +389,5 @@ class SettingsValidatorTest {
         settingsValidator.validate(settings, mockError);
 
         verifyNoInteractions(mockError);
-    }
-
-    // Exchange calendar settings --------------------------------------------------------------------------------------
-    @Test
-    void ensureExchangeCalendarSettingsAreNotMandatoryIfDeactivated() {
-
-        Settings settings = new Settings();
-        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
-            .getExchangeCalendarSettings();
-
-        exchangeCalendarSettings.setEmail(null);
-        exchangeCalendarSettings.setPassword(null);
-        exchangeCalendarSettings.setCalendar(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        verifyNoInteractions(mockError);
-    }
-
-    @Test
-    void ensureExchangeCalendarSettingsAreMandatory() {
-
-        Settings settings = new Settings();
-        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
-            .getExchangeCalendarSettings();
-
-        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getSimpleName());
-        exchangeCalendarSettings.setEmail(null);
-        exchangeCalendarSettings.setPassword(null);
-        exchangeCalendarSettings.setCalendar(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.password", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("calendarSettings.exchangeCalendarSettings.calendar", "error.entry.mandatory");
-    }
-
-    @Test
-    void ensureExchangeCalendarEmailMustHaveValidFormat() {
-
-        Settings settings = new Settings();
-        ExchangeCalendarSettings exchangeCalendarSettings = settings.getCalendarSettings()
-            .getExchangeCalendarSettings();
-
-        settings.getCalendarSettings().setProvider(ExchangeCalendarProvider.class.getSimpleName());
-        exchangeCalendarSettings.setEmail("synyx");
-        exchangeCalendarSettings.setPassword("top-secret");
-        exchangeCalendarSettings.setCalendar("Urlaub");
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        verify(mockError).rejectValue("calendarSettings.exchangeCalendarSettings.email", "error.entry.mail");
-    }
-
-    @Test
-    void ensureGoogleCalendarSettingsAreMandatory() {
-
-        Settings settings = new Settings();
-        GoogleCalendarSettings googleCalendarSettings = settings.getCalendarSettings()
-            .getGoogleCalendarSettings();
-
-        settings.getCalendarSettings().setProvider(GoogleCalendarSyncProvider.class.getSimpleName());
-        googleCalendarSettings.setCalendarId(null);
-        googleCalendarSettings.setClientId(null);
-        googleCalendarSettings.setClientSecret(null);
-
-        Errors mockError = mock(Errors.class);
-        settingsValidator.validate(settings, mockError);
-
-        verify(mockError)
-            .rejectValue("calendarSettings.googleCalendarSettings.calendarId", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("calendarSettings.googleCalendarSettings.clientId", "error.entry.mandatory");
-        verify(mockError)
-            .rejectValue("calendarSettings.googleCalendarSettings.clientSecret", "error.entry.mandatory");
     }
 }

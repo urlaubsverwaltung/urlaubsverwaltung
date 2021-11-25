@@ -4,20 +4,13 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -29,6 +22,11 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED_DIRECTLY;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.APPLIED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED;
@@ -36,12 +34,6 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REVOKED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -59,9 +51,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     private final AccountInteractionService accountInteractionService;
     private final ApplicationCommentService commentService;
     private final ApplicationMailService applicationMailService;
-    private final CalendarSyncService calendarSyncService;
-    private final AbsenceMappingService absenceMappingService;
-    private final TimeSettings timeSettings;
     private final DepartmentService departmentService;
     private final Clock clock;
 
@@ -70,18 +59,12 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
                                              ApplicationCommentService commentService,
                                              AccountInteractionService accountInteractionService,
                                              ApplicationMailService applicationMailService,
-                                             CalendarSyncService calendarSyncService,
-                                             AbsenceMappingService absenceMappingService,
-                                             SettingsService settingsService,
                                              DepartmentService departmentService, Clock clock) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
         this.accountInteractionService = accountInteractionService;
         this.applicationMailService = applicationMailService;
-        this.calendarSyncService = calendarSyncService;
-        this.absenceMappingService = absenceMappingService;
-        this.timeSettings = settingsService.getSettings().getTimeSettings();
         this.departmentService = departmentService;
         this.clock = clock;
     }
@@ -129,12 +112,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         // update remaining vacation days (if there is already a holidays account for next year)
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
-        if (calendarSyncService.isRealProviderConfigured()) {
-            final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
-            final Absence absence = new Absence(savedApplication.getPerson(), savedApplication.getPeriod(), absenceTimeConfiguration);
-            calendarSyncService.addAbsence(absence)
-                .ifPresent(eventId -> absenceMappingService.create(savedApplication.getId(), VACATION, eventId));
-        }
         return savedApplication;
     }
 
@@ -211,12 +188,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         // TODO - wann brachen wir das? Nur wenn die category HOLIDAY ist?
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
-        if (calendarSyncService.isRealProviderConfigured()) {
-            final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
-            final Absence absence = new Absence(savedApplication.getPerson(), savedApplication.getPeriod(), absenceTimeConfiguration);
-            calendarSyncService.addAbsence(absence)
-                .ifPresent(eventId -> absenceMappingService.create(savedApplication.getId(), VACATION, eventId));
-        }
         return savedApplication;
     }
 
@@ -294,12 +265,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
         }
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedApplication.getId(), VACATION);
-        if (absenceMapping.isPresent()) {
-            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
-            absenceMappingService.delete(absenceMapping.get());
-        }
-
         return application;
     }
 
@@ -319,12 +284,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         accountInteractionService.updateRemainingVacationDays(application.getStartDate().getYear(), person);
-
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(application.getId(), VACATION);
-        if (absenceMapping.isPresent()) {
-            calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
-            absenceMappingService.delete(absenceMapping.get());
-        }
 
         return application;
     }

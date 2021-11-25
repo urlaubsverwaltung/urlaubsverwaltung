@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -12,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Objects;
-
 
 /**
  * Represents the settings / business rules for the application.
@@ -30,9 +28,6 @@ public class Settings {
     private OvertimeSettings overtimeSettings;
     private TimeSettings timeSettings;
     private SickNoteSettings sickNoteSettings;
-
-    @Deprecated(since = "4.0.0", forRemoval = true)
-    private CalendarSettings calendarSettings;
 
     public Integer getId() {
         return id;
@@ -88,21 +83,6 @@ public class Settings {
 
     public void setOvertimeSettings(OvertimeSettings overtimeSettings) {
         this.overtimeSettings = overtimeSettings;
-    }
-
-    public CalendarSettings getCalendarSettings() {
-
-        if (calendarSettings == null) {
-            calendarSettings = new CalendarSettings();
-        }
-
-        return calendarSettings;
-    }
-
-    @Deprecated(since = "4.0.0", forRemoval = true)
-    public void setCalendarSettings(CalendarSettings calendarSettings) {
-
-        this.calendarSettings = calendarSettings;
     }
 
     public TimeSettings getTimeSettings() {
