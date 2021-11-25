@@ -10,7 +10,7 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -45,7 +45,7 @@ public class GoogleCalendarSyncProvider implements CalendarProvider {
     /**
      * Global instance of the JSON factory.
      */
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
