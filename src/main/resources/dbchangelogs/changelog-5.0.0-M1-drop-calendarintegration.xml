@@ -1,0 +1,44 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="drop_absence_mapping">
+    <preConditions>
+      <tableExists tableName="absence_mapping"/>
+    </preConditions>
+
+    <dropTable tableName="absence_mapping"/>
+
+  </changeSet>
+
+  <changeSet author="schneider" id="drop_settings_calendar">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="calendar_ews_email"/>
+      <columnExists tableName="settings" columnName="calendar_ews_password"/>
+      <columnExists tableName="settings" columnName="calendar_ews_calendar"/>
+      <columnExists tableName="settings" columnName="calendar_ews_send_invitation_active"/>
+      <columnExists tableName="settings" columnName="calendar_google_client_id"/>
+      <columnExists tableName="settings" columnName="calendar_google_client_secret"/>
+      <columnExists tableName="settings" columnName="calendar_google_calendar_id"/>
+      <columnExists tableName="settings" columnName="calendar_google_refresh_token"/>
+      <columnExists tableName="settings" columnName="calendar_provider"/>
+      <columnExists tableName="settings" columnName="calendar_ews_url"/>
+      <columnExists tableName="settings" columnName="calendar_ews_timezoneid"/>
+    </preConditions>
+
+    <dropColumn tableName="settings" columnName="calendar_ews_email"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_password"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_calendar"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_send_invitation_active"/>
+    <dropColumn tableName="settings" columnName="calendar_google_client_id"/>
+    <dropColumn tableName="settings" columnName="calendar_google_client_secret"/>
+    <dropColumn tableName="settings" columnName="calendar_google_calendar_id"/>
+    <dropColumn tableName="settings" columnName="calendar_google_refresh_token"/>
+    <dropColumn tableName="settings" columnName="calendar_provider"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_url"/>
+    <dropColumn tableName="settings" columnName="calendar_ews_timezoneid"/>
+
+  </changeSet>
+</databaseChangeLog>
