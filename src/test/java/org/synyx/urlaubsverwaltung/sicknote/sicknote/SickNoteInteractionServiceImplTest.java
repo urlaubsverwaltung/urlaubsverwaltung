@@ -5,36 +5,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
-import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
-import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 
 /**
  * Unit test for {@link SickNoteInteractionServiceImpl}.
@@ -50,25 +34,14 @@ class SickNoteInteractionServiceImplTest {
     private SickNoteCommentService commentService;
     @Mock
     private ApplicationInteractionService applicationInteractionService;
-    @Mock
-    private CalendarSyncService calendarSyncService;
-    @Mock
-    private AbsenceMappingService absenceMappingService;
-    @Mock
-    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteInteractionServiceImpl(sickNoteService, commentService, applicationInteractionService, calendarSyncService,
-            absenceMappingService, settingsService, Clock.systemUTC());
+        sut = new SickNoteInteractionServiceImpl(sickNoteService, commentService, applicationInteractionService, Clock.systemUTC());
     }
 
     @Test
     void ensureCreatedSickNoteIsPersisted() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -86,10 +59,6 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureCreatedSickNoteHasComment() {
 
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final String comment = "test comment";
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -102,30 +71,7 @@ class SickNoteInteractionServiceImplTest {
     }
 
     @Test
-    void ensureCreatingSickNoteAddsEventToCalendar() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-        when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("42"));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
-
-        final SickNote sickNote = getSickNote();
-
-        sut.create(sickNote, creator);
-
-        verify(calendarSyncService).addAbsence(any(Absence.class));
-        verify(absenceMappingService).create(eq(sickNote.getId()), eq(SICKNOTE), anyString());
-    }
-
-    @Test
     void ensureUpdatedSickNoteIsPersisted() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -143,12 +89,6 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureUpdatedSickHasComment() {
 
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final String comment = "test comment";
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -161,29 +101,7 @@ class SickNoteInteractionServiceImplTest {
     }
 
     @Test
-    void ensureUpdatingSickNoteUpdatesCalendarEvent() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, AbsenceMappingType.VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
-
-        final SickNote sickNote = getSickNote();
-
-        sut.update(sickNote, creator);
-
-        verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
-    }
-
-    @Test
     void ensureCancelledSickNoteIsPersisted() {
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = getSickNote();
@@ -198,29 +116,7 @@ class SickNoteInteractionServiceImplTest {
     }
 
     @Test
-    void ensureCancellingSickNoteDeletesCalendarEvent() {
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
-
-        final SickNote sickNote = getSickNote();
-
-        sut.cancel(sickNote, creator);
-
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
-        verify(calendarSyncService).deleteAbsence(anyString());
-        verify(absenceMappingService).delete(any(AbsenceMapping.class));
-    }
-
-    @Test
     void ensureConvertedSickNoteIsPersisted() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
@@ -244,34 +140,6 @@ class SickNoteInteractionServiceImplTest {
 
         // assert application for leave correctly created
         verify(applicationInteractionService).createFromConvertedSickNote(applicationForLeave, creator);
-    }
-
-    @Test
-    void ensureConvertingSickNoteToVacationUpdatesCalendarEvent() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
-
-        final Application applicationForLeave = new Application();
-        applicationForLeave.setStartDate(LocalDate.now(UTC));
-        applicationForLeave.setEndDate(LocalDate.now(UTC));
-        applicationForLeave.setStatus(ApplicationStatus.ALLOWED);
-        applicationForLeave.setDayLength(DayLength.FULL);
-        applicationForLeave.setPerson(creator);
-
-        final SickNote sickNote = getSickNote();
-
-        sut.convert(sickNote, applicationForLeave, creator);
-
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
-        verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).delete(absenceMapping);
-        verify(absenceMappingService).create(isNull(), eq(VACATION), anyString());
     }
 
     private SickNote getSickNote() {

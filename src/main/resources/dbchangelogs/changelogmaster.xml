@@ -93,4 +93,5 @@
   <include file="dbchangelogs/changelog-4.26.0-add-requires-approval-of-vacationtypes.xml"/>
   <include file="dbchangelogs/changelog-4.26.0-add-new-vacation-types.xml"/>
   <include file="dbchangelogs/changelog-5.0.0-M1-drop-person-password.xml"/>
+  <include file="dbchangelogs/changelog-5.0.0-M1-drop-calendarintegration.xml"/>
 </databaseChangeLog>
