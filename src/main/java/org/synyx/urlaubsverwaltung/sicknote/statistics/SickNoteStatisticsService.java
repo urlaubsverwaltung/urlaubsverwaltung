@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -19,12 +19,12 @@ public class SickNoteStatisticsService {
     private final WorkDaysCountService workDaysCountService;
 
     @Autowired
-    public SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService) {
+    SickNoteStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService) {
         this.sickNoteService = sickNoteService;
         this.workDaysCountService = workDaysCountService;
     }
 
-    public SickNoteStatistics createStatistics(Clock clock) {
+    SickNoteStatistics createStatistics(Clock clock) {
         return new SickNoteStatistics(clock, sickNoteService, workDaysCountService);
     }
 }

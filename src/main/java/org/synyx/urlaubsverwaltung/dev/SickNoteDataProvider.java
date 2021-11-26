@@ -2,16 +2,16 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteCategory;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteInteractionService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteType;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteTypeService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.synyx.urlaubsverwaltung.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 /**
  * Provides sick note demo data.

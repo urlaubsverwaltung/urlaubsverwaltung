@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -26,7 +26,6 @@ import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
-
 
 /**
  * Unit test for {@link SickNoteStatistics}.
@@ -115,9 +114,8 @@ class SickNoteStatisticsTest {
 
         when(sickNoteDAO.getAllActiveByYear(2015)).thenReturn(sickNotes);
 
-        Clock fixedClock = Clock.fixed(ZonedDateTime.now(this.clock).withYear(2015).toInstant(), this.clock.getZone());
-
-        assertThatIllegalArgumentException().isThrownBy(
-            () -> new SickNoteStatistics(fixedClock, sickNoteDAO, workDaysCountService));
+        final Clock fixedClock = Clock.fixed(ZonedDateTime.now(this.clock).withYear(2015).toInstant(), this.clock.getZone());
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new SickNoteStatistics(fixedClock, sickNoteDAO, workDaysCountService));
     }
 }

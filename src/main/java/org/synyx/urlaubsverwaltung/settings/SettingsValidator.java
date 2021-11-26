@@ -16,7 +16,7 @@ import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validate
 import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.validateAccountSettings;
 import static org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsValidator.validateApplicationSettings;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
-import static org.synyx.urlaubsverwaltung.sicknote.SickNoteSettingsValidator.validateSickNoteSettings;
+import static org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsValidator.validateSickNoteSettings;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;
 
 @Component

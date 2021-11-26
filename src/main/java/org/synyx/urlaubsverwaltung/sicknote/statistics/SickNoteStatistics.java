@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ public class SickNoteStatistics {
     private final BigDecimal totalNumberOfSickDays;
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
-    public SickNoteStatistics(Clock clock, SickNoteService sickNoteService, WorkDaysCountService calendarService) {
+    SickNoteStatistics(Clock clock, SickNoteService sickNoteService, WorkDaysCountService calendarService) {
 
         this.year = Year.now(clock).getValue();
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteService.getNumberOfPersonsWithMinimumOneSickNote(year);
