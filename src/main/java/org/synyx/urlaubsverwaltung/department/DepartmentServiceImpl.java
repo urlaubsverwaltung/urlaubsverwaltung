@@ -12,15 +12,12 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -171,25 +168,21 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     private List<Person> getMembersOfAssignedDepartments(Person member) {
-
-        final Set<Person> relevantPersons = new HashSet<>();
-        final List<Department> departments = getAssignedDepartmentsOfMember(member);
-
-        for (Department department : departments) {
-            relevantPersons.addAll(department.getMembers());
-        }
-
-        return new ArrayList<>(relevantPersons);
+        return getAssignedDepartmentsOfMember(member)
+            .stream()
+            .map(Department::getMembers)
+            .flatMap(List::stream)
+            .distinct()
+            .collect(toList());
     }
 
     @Override
     public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
-
-        final Set<Person> relevantPersons = new HashSet<>();
-        getManagedDepartmentsOfDepartmentHead(departmentHead).forEach(department ->
-            relevantPersons.addAll(department.getMembers().stream().filter(isNotSecondStageIn(department)).collect(toSet()))
-        );
-        return new ArrayList<>(relevantPersons);
+        return getManagedDepartmentsOfDepartmentHead(departmentHead)
+            .stream()
+            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .distinct()
+            .collect(toList());
     }
 
     @Override
@@ -203,12 +196,11 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
-
-        final Set<Person> relevantPersons = new HashSet<>();
-        getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority).forEach(department ->
-            relevantPersons.addAll(department.getMembers().stream().filter(isNotSecondStageIn(department)).collect(toSet()))
-        );
-        return new ArrayList<>(relevantPersons);
+        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
+            .stream()
+            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .distinct()
+            .collect(toList());
     }
 
     @Override
