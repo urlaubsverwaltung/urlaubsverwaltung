@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
+import com.sun.xml.bind.v2.TODO;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 class SpecialLeaveSettingsEntity {
 
     @Id
+    // TODO
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
