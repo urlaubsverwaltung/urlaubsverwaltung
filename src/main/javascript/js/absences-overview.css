@@ -46,7 +46,6 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table thead th {
   padding: 8px;
-  cursor: default !important; /* override $.tablesorter */
 }
 
 .vacationOverview-table tbody th {

@@ -143,11 +143,11 @@
                        aria-describedby="absence-table-${month.nameOfMonth}">
                     <thead>
                         <tr>
-                            <th scope="col" class="print:tw-hidden">&nbsp;</th>
-                            <th scope="col" class="sortable-field">&nbsp;</th>
+                            <th scope="col" class="print:tw-hidden tw-cursor-default">&nbsp;</th>
+                            <th scope="col" class="sortable-field tw-cursor-pointer">&nbsp;</th>
                             <c:forEach items="${month.days}" var="day">
                                 <th scope="col"
-                                    class="non-sortable text-zinc-700 vacationOverview-cal-head
+                                    class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head
                                             ${day.weekend ? 'weekend' : ''}
                                             ${day.today ? ' today' : ''}
                                             ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
