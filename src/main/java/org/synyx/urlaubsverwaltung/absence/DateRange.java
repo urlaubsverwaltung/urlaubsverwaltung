@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.absence;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -59,5 +60,18 @@ public final class DateRange implements Iterable<LocalDate> {
             cursor = cursor.plusDays(1);
             return current;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DateRange that = (DateRange) o;
+        return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startDate, endDate);
     }
 }

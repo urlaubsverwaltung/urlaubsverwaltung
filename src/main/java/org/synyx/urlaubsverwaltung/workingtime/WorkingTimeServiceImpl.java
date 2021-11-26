@@ -83,7 +83,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     @Override
     public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
 
-        final List<WorkingTime> workingTimeList = getByPerson(person).stream()
+        final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
+        final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
             .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
             .collect(toList());
 
@@ -92,8 +93,19 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
         for (WorkingTime workingTime : workingTimeList) {
 
-            final DateRange range = new DateRange(workingTime.getValidFrom(), nextEnd);
+            final DateRange range;
+
+            if(workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                range = new DateRange(dateRange.getStartDate(), nextEnd);
+            } else {
+                range = new DateRange(workingTime.getValidFrom(), nextEnd);
+            }
+
             dateRangeFederalStateHashMap.put(range, workingTime.getFederalState());
+
+            if(workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                return dateRangeFederalStateHashMap;
+            }
 
             nextEnd = workingTime.getValidFrom().minusDays(1);
         }
