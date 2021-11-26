@@ -9,10 +9,16 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Service
 class ApplicationForLeaveStatisticsService {
@@ -41,10 +47,26 @@ class ApplicationForLeaveStatisticsService {
     private List<Person> getRelevantPersons() {
 
         final Person signedInUser = personService.getSignedInUser();
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser);
+
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+            return personService.getActivePersons();
         }
 
-        return personService.getActivePersons();
+        final List<Person> relevantPersons = new ArrayList<>();
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
+            departmentService.getMembersForDepartmentHead(signedInUser).stream()
+                .filter(person -> !person.hasRole(INACTIVE))
+                .collect(toCollection(() -> relevantPersons));
+        }
+
+        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
+                .filter(person -> !person.hasRole(INACTIVE))
+                .collect(toCollection(() -> relevantPersons));
+        }
+
+        return relevantPersons.stream()
+            .distinct()
+            .collect(toList());
     }
 }

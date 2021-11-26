@@ -27,7 +27,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toCollection;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -152,23 +152,20 @@ public class PersonDetailsViewController {
             return personService.getActivePersons();
         }
 
-        // NOTE: If the logged-in user is only department head, he wants to see only the persons of his departments
+        final List<Person> relevantPersons = new ArrayList<>();
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            // NOTE: Only persons without inactive role are relevant
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+            departmentService.getMembersForDepartmentHead(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
-        // NOTE: If the logged-in user is second stage authority, he wants to see only the persons of his departments
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            // NOTE: Only persons without inactive role are relevant
-            return departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
-        return Collections.emptyList();
+        return relevantPersons;
     }
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
@@ -177,23 +174,20 @@ public class PersonDetailsViewController {
             return personService.getInactivePersons();
         }
 
-        // NOTE: If the logged-in user is only department head, he wants to see only the persons of his departments
+        final List<Person> relevantPersons = new ArrayList<>();
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            // NOTE: Only persons with inactive role are relevant
-            return departmentService.getManagedMembersOfDepartmentHead(signedInUser).stream()
+            departmentService.getMembersForDepartmentHead(signedInUser).stream()
                 .filter(person -> person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
-        // NOTE: If the logged-in user is second stage authority, he wants to see only the persons of his departments
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            // NOTE: Only persons with inactive role are relevant
-            return departmentService.getManagedMembersForSecondStageAuthority(signedInUser).stream()
+            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
                 .filter(person -> person.hasRole(INACTIVE))
-                .collect(toList());
+                .collect(toCollection(() -> relevantPersons));
         }
 
-        return Collections.emptyList();
+        return relevantPersons;
     }
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {

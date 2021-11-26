@@ -91,20 +91,45 @@ public interface DepartmentService {
     List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate);
 
     /**
-     * Get all members (including the given person) of the departments where the given person is the department head.
+     * Get all managed members of the departments where the given person is a department head.
+     * (including the given person)
      *
-     * @param departmentHead manages the members to be fetched
+     * @param departmentHead responsible for absences of the members
      * @return all unique members of the departments where the given person is the department head
+     * without other second stage authority in the same departments.
      */
     List<Person> getManagedMembersOfDepartmentHead(Person departmentHead);
 
     /**
-     * Get all members of the departments where the given person is the secondStageAuthority.
+     * Get all distinct members of the departments where the given person is department head.
+     * (including the given person)
      *
-     * @param secondStageAuthority responsible for releases of the members to be fetched
-     * @return all unique members of the departments where the given person is the secondStageAuthority
+     * @param departmentHead to know all the members of the department
+     * @return all unique members of the departments where the given person is department head.
+     */
+    List<Person> getMembersForDepartmentHead(Person departmentHead);
+
+    /**
+     * Get all managed members of the departments where the given person is a second stage authority.
+     * (excluding the given person)
+     * <p>
+     * Managed means every member that is only a member or a department head.
+     * Second stage authority does not manage another second stage authority in the same department.
+     *
+     * @param secondStageAuthority responsible for absences in the two-stage approval process of the members
+     * @return all unique members of the departments where the given person is the second stage authority
+     * without other second stage authority in the same departments.
      */
     List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority);
+
+    /**
+     * Get all distinct members of the departments where the given person is second stage authority.
+     * (including the given person)
+     *
+     * @param secondStageAuthority to know all the members of the department
+     * @return all unique members of the departments where the given person is second stage authority.
+     */
+    List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority);
 
     /**
      * Check if the given department head manages a department that the given person is assigned to.
