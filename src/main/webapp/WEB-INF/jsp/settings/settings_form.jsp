@@ -441,12 +441,28 @@
                             <spring:message code='settings.absenceTypes.title'/>
                         </h2>
                     </uv:section-heading>
-                    <div class="tw-flex tw-flex-row-reverse" >
-                        <a title="<spring:message code="settings.absenceTypes.help"/>" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
-                            <icon:question-mark-circle className="tw-w-6 tw-h-6" />
-                        </a>
-                    </div>
-                    <div>
+                    <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
+                        <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-ml-8 tw-pt-2 tw-text-sm">
+                            <div class="tw-flex">
+                                <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                <div class="tw-flex tw-flex-col">
+                                    <p>
+                                        <spring:message code="settings.absenceTypes.help.1"/>
+                                        <a class="tw-flex tw-items-center" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
+                                            <icon:external-link className="tw-mr-1 tw-h-4 tw-w-4" />
+                                            <spring:message code="settings.absenceTypes.help.2"/>
+                                        </a>
+                                    </p>
+                                    <p>
+                                        <spring:message code="settings.absenceTypes.description.1"/>
+                                        <a class="tw-flex tw-items-center" href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart">
+                                            <icon:mail className="tw-mr-1 tw-h-4 tw-w-4" />
+                                            <spring:message code="settings.absenceTypes.description.2"/>
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <table id="absence-type-table" class="absence-type-settings-table">
                             <thead>
                                 <tr>
@@ -496,10 +512,6 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="tw-pt-4 tw-text-sm">
-                        <icon:information-circle className="tw-w-4 tw-h-4" solid="false" />
-                        <a href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart"><spring:message code="settings.absenceTypes.description"/></a>
                     </div>
                 </div>
 
