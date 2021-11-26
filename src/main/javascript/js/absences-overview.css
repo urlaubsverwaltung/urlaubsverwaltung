@@ -49,8 +49,8 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .vacationOverview-legend-colorbox {
-  border: 3pt solid #fff;
-  width: 23px;
+  border: 3px solid #ffffff;
+  width: 1.5rem;
 }
 
 .vacationOverview-legend-text {
@@ -61,30 +61,42 @@ th.vacationOverview-cal-head.today::after {
   box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.5);
 }
 
-.cal-day,
-.vacationOverview-legend-colorbox {
+.cal-day {
+  --absence-bar-color-morning: transparent;
+  --absence-bar-color-noon: transparent;
+  --absence-bar-color: transparent;
+  --background-color: #e5e5e5;
+  /* h-full only works when parent td has an explicit height */
+  height: 100%;
   overflow: hidden;
   position: relative;
-  --absence-bar-color-morning: transparent;
-  --absence-bar-color-noon: transparent;
-  --absence-bar-color: transparent;
-}
-
-.vacationOverview-cal-head {
-  --absence-bar-color-morning: transparent;
-  --absence-bar-color-noon: transparent;
-  --absence-bar-color: transparent;
-}
-
-.cal-day,
-.vacationOverview-cal-head,
-.vacationOverview-legend-colorbox {
-  --background-color: #e5e5e5;
   background-color: var(--background-color);
 }
 
-.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after,
-.vacationOverview-legend-colorbox:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
+.vacationOverview-table td,
+.vacationOverview-legend-table td {
+  /* explicit height to enable `td div` height 100% */
+  /* height: 0 only works in chrome & friends. firefox needs a real height value; see below. */
+  height: 0;
+}
+
+@-moz-document url-prefix() {
+  /* firefox only */
+  .vacationOverview-table td {
+    /* when changing this value you have to adjust the currentDay highlighting box, too */
+    height: 2.81rem;
+  }
+  .vacationOverview-legend-table td {
+    height: 1.5rem;
+  }
+}
+
+.vacationOverview-table th.tablesorter-header > div.tablesorter-header-inner {
+  /* h-full only works when parent td has an explicit height */
+  height: 100%;
+}
+
+.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -95,8 +107,7 @@ th.vacationOverview-cal-head.today::after {
   background-color: var(--absence-bar-color);
 }
 
-.cal-day:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before,
-.vacationOverview-legend-colorbox:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before {
+.cal-day:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -107,8 +118,7 @@ th.vacationOverview-cal-head.today::after {
   background-color: var(--absence-bar-color-morning);
 }
 
-.cal-day:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after,
-.vacationOverview-legend-colorbox:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after {
+.cal-day:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -120,8 +130,7 @@ th.vacationOverview-cal-head.today::after {
 }
 
 @media print {
-  .cal-day,
-  .vacationOverview-legend-colorbox {
+  .cal-day {
     --bg-left-lightness: 100%;
     --bg-right-lightness: 100%;
   }
