@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,6 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
-
 
 /**
  * Unit test for {@link CalculationService}.
@@ -86,9 +84,8 @@ class CalculationServiceTest {
             .thenReturn(Optional.of(workingTime));
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,
-            new OverlapService(null, null, Clock.systemUTC()), applicationService);
+            new OverlapService(null, null), applicationService);
     }
-
 
     @Test
     void testCheckApplicationSameYearAndEnoughDaysLeftAreNegativeEditing() {

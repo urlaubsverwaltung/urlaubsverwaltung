@@ -1,10 +1,9 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.account.AccountService;
@@ -139,7 +138,7 @@ class CalculationService {
     }
 
     private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
-        final List<Interval> beforeApril = overlapService.getListOfOverlaps(
+        final List<DateRange> beforeApril = overlapService.getListOfOverlaps(
             getFirstDayOfYear(year),
             getLastDayOfMonth(year, MARCH.getValue()),
             List.of(application),
@@ -149,13 +148,13 @@ class CalculationService {
         return beforeApril.isEmpty() ? ZERO : calculateWorkDaysBeforeApril(application, beforeApril);
     }
 
-    private BigDecimal calculateWorkDaysBeforeApril(Application application, List<Interval> beforeApril) {
-        final DateTime start = beforeApril.get(0).getStart();
-        final DateTime end = beforeApril.get(0).getEnd();
+    private BigDecimal calculateWorkDaysBeforeApril(Application application, List<DateRange> beforeApril) {
+        final LocalDate start = beforeApril.get(0).getStartDate();
+        final LocalDate end = beforeApril.get(0).getEndDate();
         return workDaysCountService.getWorkDaysCount(
             application.getDayLength(),
-            LocalDate.of(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth()),
-            LocalDate.of(end.getYear(), end.getMonthOfYear(), end.getDayOfMonth()),
+            LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth()),
+            LocalDate.of(end.getYear(), end.getMonth(), end.getDayOfMonth()),
             application.getPerson());
     }
 
