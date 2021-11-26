@@ -9,7 +9,7 @@ gibt es auch ein Container Image für Docker.
 
 ## docker-compose
 
-### Mit MariaDB
+### Mit PostgreSQL
 
 Dieses Beispiel sollte nur zum Testen im lokalen Netzwerk verwendet werden, da eine unverschlüsselte HTTP-Verbindung
 zur Urlaubsverwaltung verwendet wird.
@@ -17,7 +17,7 @@ zur Urlaubsverwaltung verwendet wird.
 Um dieses Beispiel zu verwenden sind folgende Schritte notwendig:
 
 * Über `docker-compose pull` wird das neuste Containerimage der Urlaubsverwaltung heruntergeladen
-* Der Start der Urlaubsverwaltung inkl. MariaDB erfolgt durch `docker-compose up -d`
+* Der Start der Urlaubsverwaltung inkl. PostgreSQL erfolgt durch `docker-compose up -d`
 
 Falls die Urlaubsverwaltung auf eine neue Version aktualisiert werden sollte,
 müssen diese zwei Schritte wiederholt werden.
@@ -27,21 +27,21 @@ müssen diese zwei Schritte wiederholt werden.
 Die kubernetes Deployments verwenden den helm Chart [urlaubsverwaltung](kubernetes/chart/urlaubsverwaltung). Die
 nachfolgenden Beispiele verwenden `helm template`, um nicht extra einen tiller im k8s Cluster installiert haben zu müssen.
 
-### Mit existierender MariaDB
+### Mit existierender PostgreSQL
 
-In der Datei [values-existing-mariadb.yaml](kubernetes/chart/urlaubsverwaltung/values-existing-mariadb.yaml)
-sind die Verbindungsdaten zu der existierenden MariaDB zu konfigurieren. Danach kann via helm das Deployment
+In der Datei [values-existing-postgresql.yaml](kubernetes/chart/urlaubsverwaltung/values-existing-postgresql.yaml)
+sind die Verbindungsdaten zu der existierenden PostgreSQL zu konfigurieren. Danach kann via helm das Deployment
 durchgeführt werden:
 
 ```bash
 cd kubernetes/chart/urlaubsverwaltung
-helm template -f values-existing-mariadb.yaml --name uv . | kubectl apply -n urlaubsverwaltung -f -
+helm template -f values-existing-postgresql.yaml --name uv . | kubectl apply -n urlaubsverwaltung -f -
 ```
 
-### Mit MariaDB Deployment
+### Mit PostgreSQL Deployment
 
 ```bash
 cd kubernetes/chart/urlaubsverwaltung
 helm dependency update
-helm template -f values-mariadb.yaml --name uv . | kubectl apply -n urlaubsverwaltung -f -
+helm template -f values-postgresql.yaml --name uv . | kubectl apply -n urlaubsverwaltung -f -
 ```

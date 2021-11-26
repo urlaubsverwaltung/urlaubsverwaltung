@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.comment;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
@@ -22,7 +24,17 @@ import static java.util.Optional.ofNullable;
 public abstract class AbstractComment {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GenericGenerator(
+        name = "comment_id_seq",
+        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+        parameters = {
+            @Parameter(name = "sequence_name", value = "comment_id_seq"),
+            @Parameter(name = "initial_value", value = "1"),
+            @Parameter(name = "increment_size", value = "1")
+        }
+    )
+    @GeneratedValue(generator = "comment_id_seq")
     private Integer id;
 
     // Who has written the comment?

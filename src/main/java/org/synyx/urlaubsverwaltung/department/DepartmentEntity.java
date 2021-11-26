@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.Parameter;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.CollectionTable;
@@ -25,7 +27,17 @@ import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 class DepartmentEntity {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GenericGenerator(
+        name = "department_id_seq",
+        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+        parameters = {
+            @Parameter(name = "sequence_name", value = "department_id_seq"),
+            @Parameter(name = "initial_value", value = "1"),
+            @Parameter(name = "increment_size", value = "1")
+        }
+    )
+    @GeneratedValue(generator = "department_id_seq")
     private Integer id;
 
     @Column(nullable = false)

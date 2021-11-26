@@ -27,7 +27,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,12 +66,12 @@ class OvertimeCreateIT {
         .withRecordingMode(RECORD_FAILING, new File("target"))
         .withCapabilities(chromeOptions());
 
-    static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
+    static final TestPostgreContainer postgre = new TestPostgreContainer();
 
     @DynamicPropertySource
-    static void mariaDBProperties(DynamicPropertyRegistry registry) {
-        mariaDB.start();
-        mariaDB.configureSpringDataSource(registry);
+    static void postgreDBProperties(DynamicPropertyRegistry registry) {
+        postgre.start();
+        postgre.configureSpringDataSource(registry);
     }
 
     @Autowired

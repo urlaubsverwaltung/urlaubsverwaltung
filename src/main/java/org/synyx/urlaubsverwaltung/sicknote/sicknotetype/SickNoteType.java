@@ -4,7 +4,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Objects;
 
@@ -14,7 +13,6 @@ import static javax.persistence.EnumType.STRING;
 public class SickNoteType {
 
     @Id
-    @GeneratedValue
     private Integer id;
 
     @Enumerated(STRING)

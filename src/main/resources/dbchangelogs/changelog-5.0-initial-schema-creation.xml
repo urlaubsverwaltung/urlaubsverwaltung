@@ -1,0 +1,796 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+
+  <changeSet author="Tobias Schneider" id="1638014064459-1">
+    <createTable tableName="absence_mapping">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="absence_id" type="integer"/>
+      <column name="absence_mapping_type" type="VARCHAR(255)"/>
+      <column name="event_id" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-2">
+
+    <createTable tableName="account">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="annual_vacation_days" type="DECIMAL(19, 2)"/>
+      <column defaultValueComputed="NULL" name="remaining_vacation_days" type="DECIMAL(19, 2)"/>
+      <column defaultValueComputed="NULL" name="vacation_days" type="DECIMAL(19, 2)"/>
+      <column defaultValueComputed="NULL" name="valid_from" type="date"/>
+      <column defaultValueComputed="NULL" name="valid_to" type="date"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="remaining_vacation_days_not_expiring" type="DECIMAL(19, 2)"/>
+      <column name="comment" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-3">
+
+    <createTable tableName="application">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="address" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="application_date" type="date"/>
+      <column defaultValueComputed="NULL" name="end_date" type="date"/>
+      <column name="day_length" type="VARCHAR(20)"/>
+      <column name="reason" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="start_date" type="date"/>
+      <column name="status" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="boss_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="office_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="cancel_date" type="date"/>
+      <column defaultValueComputed="NULL" name="edited_date" type="date"/>
+      <column defaultValueComputed="NULL" name="remind_date" type="date"/>
+      <column defaultValueComputed="NULL" name="applier_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="canceller_id" type="integer"/>
+      <column defaultValueBoolean="false" name="team_informed" type="boolean"/>
+      <column defaultValueComputed="NULL" name="hours" type="DECIMAL(19, 2)"/>
+      <column defaultValueBoolean="false" name="two_stage_approval" type="boolean"/>
+      <column defaultValueComputed="NULL" name="vacation_type_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="start_time" type="time"/>
+      <column defaultValueComputed="NULL" name="end_time" type="time"/>
+      <column defaultValueComputed="NULL" name="upcoming_holiday_replacement_notification_send" type="date"/>
+      <column defaultValueComputed="NULL" name="upcoming_applications_reminder_send" type="date"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-4">
+
+    <createTable tableName="application_comment">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="application_id" type="integer"/>
+      <column name="action" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-5">
+
+    <createTable tableName="calendar_accessible">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="dtype" type="VARCHAR(31)"/>
+      <column defaultValueBoolean="false" name="is_accessible" type="boolean"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-6">
+
+    <createTable tableName="company_calendar">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="secret" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValue="P100Y" name="calendar_period" type="VARCHAR(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="NULL" name="person_id" type="integer">
+        <constraints unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-7">
+
+    <createTable tableName="department">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="last_modification" type="date"/>
+      <column defaultValueBoolean="false" name="two_stage_approval" type="boolean"/>
+      <column defaultValueComputed="NULL" name="created_at" type="date"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-8">
+
+    <createTable tableName="department_calendar">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="secret" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValue="P100Y" name="calendar_period" type="VARCHAR(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="NULL" name="department_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-9">
+    <createTable tableName="department_department_head">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="department_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="department_heads_id" type="integer"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-10">
+    <createTable tableName="department_member">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="department_id" type="integer"/>
+      <column name="members_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueDate="1970-01-01" name="accession_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-11">
+    <createTable tableName="department_second_stage_authority">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="department_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="second_stage_authorities_id" type="integer"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-12">
+    <createTable tableName="holiday_replacements">
+      <column name="application_id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="person_id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="note" type="BLOB"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-13">
+
+    <createTable tableName="overtime">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="person_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="NULL" name="start_date" type="date"/>
+      <column defaultValueComputed="NULL" name="end_date" type="date"/>
+      <column defaultValueComputed="NULL" name="duration" type="DECIMAL(19, 2)"/>
+      <column defaultValueComputed="NULL" name="last_modification_date" type="date"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-14">
+    <createTable tableName="overtime_comment">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="overtime_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="action" type="VARCHAR(30)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-15">
+
+    <createTable tableName="person">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="email" type="VARCHAR(255)"/>
+      <column name="first_name" type="VARCHAR(255)"/>
+      <column name="last_name" type="VARCHAR(255)"/>
+      <column name="username" type="VARCHAR(255)">
+        <constraints unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-16">
+
+    <createTable tableName="person_calendar">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="secret" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValue="P100Y" name="calendar_period" type="VARCHAR(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="NULL" name="person_id" type="integer">
+        <constraints unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-17">
+    <createTable tableName="person_notifications">
+      <column name="person_id" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="notifications" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-18">
+    <createTable tableName="person_permissions">
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+      <column name="permissions" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-19">
+
+    <createTable tableName="settings">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="maximum_annual_vacation_days" type="integer"/>
+      <column defaultValueComputed="NULL" name="maximum_months_to_apply_for_leave_in_advance" type="integer"/>
+      <column defaultValueComputed="NULL" name="maximum_sick_pay_days" type="integer"/>
+      <column defaultValueComputed="NULL" name="days_before_end_of_sick_pay_notification" type="integer"/>
+      <column name="working_duration_for_new_years_eve" type="VARCHAR(255)"/>
+      <column name="working_duration_for_christmas_eve" type="VARCHAR(255)"/>
+      <column name="federal_state" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="work_day_begin_hour" type="integer"/>
+      <column defaultValueComputed="NULL" name="work_day_end_hour" type="integer"/>
+      <column name="calendar_ews_email" type="VARCHAR(255)"/>
+      <column name="calendar_ews_password" type="VARCHAR(255)"/>
+      <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
+      <column defaultValueBoolean="false" name="calendar_ews_send_invitation_active" type="boolean"/>
+      <column defaultValueComputed="NULL" name="overtime_maximum" type="integer"/>
+      <column defaultValueBoolean="false" name="overtime_active" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueComputed="NULL" name="overtime_minimum" type="integer"/>
+      <column defaultValueBoolean="false" name="remind_for_waiting_applications" type="boolean"/>
+      <column defaultValueComputed="NULL" name="days_before_remind_for_waiting_applications" type="integer"/>
+      <column name="calendar_google_client_id" type="VARCHAR(255)"/>
+      <column name="calendar_google_client_secret" type="VARCHAR(255)"/>
+      <column name="calendar_google_calendar_id" type="VARCHAR(255)"/>
+      <column name="calendar_google_refresh_token" type="VARCHAR(255)"/>
+      <column name="calendar_provider" type="VARCHAR(255)"/>
+      <column name="calendar_ews_url" type="VARCHAR(255)"/>
+      <column name="calendar_ews_timezoneid" type="VARCHAR(255)"/>
+      <column defaultValue="Europe/Berlin" name="timezoneid" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="default_vacation_days" type="integer"/>
+      <column defaultValue="FULL" name="monday" type="VARCHAR(255)"/>
+      <column defaultValue="FULL" name="tuesday" type="VARCHAR(255)"/>
+      <column defaultValue="FULL" name="wednesday" type="VARCHAR(255)"/>
+      <column defaultValue="FULL" name="thursday" type="VARCHAR(255)"/>
+      <column defaultValue="FULL" name="friday" type="VARCHAR(255)"/>
+      <column defaultValue="ZERO" name="saturday" type="VARCHAR(255)"/>
+      <column defaultValue="ZERO" name="sunday" type="VARCHAR(255)"/>
+      <column defaultValueBoolean="false" name="remind_for_upcoming_applications" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueNumeric="3" name="days_before_remind_for_upcoming_applications" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueBoolean="true" name="allow_half_days" type="boolean"/>
+      <column defaultValueNumeric="0" name="overtime_minimum_reduction" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueBoolean="true" name="overtime_reduction_without_application_active" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueBoolean="false" name="overtime_write_privileged_only" type="boolean"/>
+      <column defaultValueBoolean="false" name="remind_for_upcoming_holiday_replacement" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueNumeric="3" name="days_before_remind_for_upcoming_holiday_replacement" type="integer">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <!-- TODO -->
+    <insert tableName="settings">
+      <column name="id" valueNumeric="1"/>
+      <column name="federal_state" value="BADEN_WUERTTEMBERG"/>
+      <column name="working_duration_for_new_years_eve" value="FULL"/>
+      <column name="working_duration_for_christmas_eve" value="FULL"/>
+      <column name="work_day_begin_hour" value="8"/>
+      <column name="work_day_end_hour" value="16"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-20">
+
+    <createTable tableName="sick_note">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column defaultValueComputed="NULL" name="aub_end_date" type="date"/>
+      <column defaultValueComputed="NULL" name="aub_start_date" type="date"/>
+      <column defaultValueComputed="NULL" name="end_date" type="date"/>
+      <column defaultValueComputed="NULL" name="last_edited" type="date"/>
+      <column defaultValueComputed="NULL" name="start_date" type="date"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+      <column name="day_length" type="VARCHAR(20)"/>
+      <column name="status" type="VARCHAR(30)"/>
+      <column defaultValueComputed="NULL" name="sick_note_type_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="end_of_sick_pay_notification_send" type="date"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-21">
+    <createTable tableName="sick_note_comment">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="action" type="VARCHAR(255)"/>
+      <column name="text" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+      <column defaultValueComputed="NULL" name="sick_note_id" type="integer"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-22">
+    <createTable tableName="sick_note_type">
+      <column name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="category" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message_key" type="VARCHAR(255)"/>
+    </createTable>
+
+    <!-- TODO -->
+    <insert tableName="sick_note_type">
+      <column name="id" valueNumeric="1000"/>
+      <column name="category" value="SICK_NOTE"/>
+      <column name="message_key" value="application.data.vacationType.holiday"/>
+    </insert>
+    <insert tableName="sick_note_type">
+      <column name="id" valueNumeric="2000"/>
+      <column name="category" value="SICK_NOTE_CHILD"/>
+      <column name="message_key" value="application.data.vacationType.holiday"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-23">
+    <createTable tableName="vacation_type">
+      <column name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="category" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message_key" type="VARCHAR(255)"/>
+      <column defaultValueBoolean="false" name="active" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column defaultValueBoolean="false" name="requires_approval" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <!-- TODO -->
+    <insert tableName="vacation_type">
+      <column name="id" valueNumeric="1000"/>
+      <column name="category" value="HOLIDAY"/>
+      <column name="message_key" value="application.data.vacationType.holiday"/>
+      <column name="active" value="true"/>
+      <column name="requires_approval" value="true"/>
+    </insert>
+    <insert tableName="vacation_type">
+      <column name="id" valueNumeric="2000"/>
+      <column name="category" value="SPECIALLEAVE"/>
+      <column name="message_key" value="application.data.vacationType.specialleave"/>
+      <column name="active" value="true"/>
+      <column name="requires_approval" value="true"/>
+    </insert>
+    <insert tableName="vacation_type">
+      <column name="id" valueNumeric="3000"/>
+      <column name="category" value="UNPAIDLEAVE"/>
+      <column name="message_key" value="application.data.vacationType.unpaidleave"/>
+      <column name="active" value="true"/>
+      <column name="requires_approval" value="true"/>
+    </insert>
+    <insert tableName="vacation_type">
+      <column name="id" valueNumeric="4000"/>
+      <column name="category" value="OVERTIME"/>
+      <column name="message_key" value="application.data.vacationType.overtime"/>
+      <column name="active" value="true"/>
+      <column name="requires_approval" value="true"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-24">
+
+    <createTable tableName="working_time">
+      <column autoIncrement="true" name="id" type="integer">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="friday" type="VARCHAR(255)"/>
+      <column name="monday" type="VARCHAR(255)"/>
+      <column name="saturday" type="VARCHAR(255)"/>
+      <column name="sunday" type="VARCHAR(255)"/>
+      <column name="thursday" type="VARCHAR(255)"/>
+      <column name="tuesday" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="valid_from" type="date"/>
+      <column name="wednesday" type="VARCHAR(255)"/>
+      <column defaultValueComputed="NULL" name="person_id" type="integer"/>
+      <column name="federal_state_override" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-25">
+    <addUniqueConstraint columnNames="valid_from, person_id" constraintName="unique_account_by_valid-from_and_person"
+                         tableName="account"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-26">
+    <addUniqueConstraint columnNames="department_id, person_id" constraintName="unique_department_calendar_per_person"
+                         tableName="department_calendar"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-27">
+    <createIndex indexName="FK1D0C220DC1CA25B2" tableName="account">
+      <column defaultValueComputed="NULL" name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-28">
+    <createIndex indexName="FK4A44D1CF323A0A01" tableName="sick_note_comment">
+      <column defaultValueComputed="NULL" name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-29">
+    <createIndex indexName="FK9B1752BAC1CA25B2" tableName="person_permissions">
+      <column defaultValueComputed="NULL" name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-30">
+    <createIndex indexName="FK9BDE863F88CA0EA2" tableName="application_comment">
+      <column defaultValueComputed="NULL" name="application_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-31">
+    <createIndex indexName="FKC00DAD304C576368" tableName="application">
+      <column defaultValueComputed="NULL" name="canceller_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-32">
+    <createIndex indexName="FKC00DAD307949FCBC" tableName="application">
+      <column defaultValueComputed="NULL" name="applier_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-33">
+    <createIndex indexName="FKC00DAD308DE74EB" tableName="application">
+      <column defaultValueComputed="NULL" name="office_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-34">
+    <createIndex indexName="FKC00DAD3093066E9A" tableName="application">
+      <column defaultValueComputed="NULL" name="boss_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-35">
+    <createIndex indexName="FK_OvertimeComment_Overtime" tableName="overtime_comment">
+      <column name="overtime_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-36">
+    <createIndex indexName="FK_OvertimeComment_Person" tableName="overtime_comment">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-37">
+    <createIndex indexName="FK_Person_notifications" tableName="person_notifications">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-38">
+    <createIndex indexName="Index_Account_person_validFrom" tableName="account">
+      <column defaultValueComputed="NULL" name="person_id"/>
+      <column defaultValueComputed="NULL" name="valid_from"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-39">
+    <createIndex indexName="Index_Application_person_hours" tableName="application">
+      <column defaultValueComputed="NULL" name="person_id"/>
+      <column defaultValueComputed="NULL" name="hours"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-40">
+    <createIndex indexName="Index_Application_person_startDate_endDate" tableName="application">
+      <column defaultValueComputed="NULL" name="person_id"/>
+      <column defaultValueComputed="NULL" name="start_date"/>
+      <column defaultValueComputed="NULL" name="end_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-41">
+    <createIndex indexName="Index_Application_person_status_startDate_endDate" tableName="application">
+      <column defaultValueComputed="NULL" name="person_id"/>
+      <column name="status"/>
+      <column defaultValueComputed="NULL" name="start_date"/>
+      <column defaultValueComputed="NULL" name="end_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-42">
+    <createIndex indexName="Index_Application_status_startDate_endDate" tableName="application">
+      <column name="status"/>
+      <column defaultValueComputed="NULL" name="start_date"/>
+      <column defaultValueComputed="NULL" name="end_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-43">
+    <createIndex indexName="Index_Overtime_person_hours" tableName="overtime">
+      <column name="person_id"/>
+      <column defaultValueComputed="NULL" name="duration"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-44">
+    <createIndex indexName="Index_Overtime_person_startDate_endDate" tableName="overtime">
+      <column name="person_id"/>
+      <column defaultValueComputed="NULL" name="start_date"/>
+      <column defaultValueComputed="NULL" name="end_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-45">
+    <createIndex indexName="Index_SickNote_person_startDate_endDate" tableName="sick_note">
+      <column defaultValueComputed="NULL" name="person_id"/>
+      <column defaultValueComputed="NULL" name="start_date"/>
+      <column defaultValueComputed="NULL" name="end_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-46">
+    <createIndex indexName="Index_SickNote_startDate_endDate" tableName="sick_note">
+      <column defaultValueComputed="NULL" name="start_date"/>
+      <column defaultValueComputed="NULL" name="end_date"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-47">
+    <createIndex indexName="Index_WorkingTime_person" tableName="working_time">
+      <column defaultValueComputed="NULL" name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-48">
+    <createIndex indexName="Index_WorkingTime_person_validFrom" tableName="working_time">
+      <column defaultValueComputed="NULL" name="person_id"/>
+      <column defaultValueComputed="NULL" name="valid_from"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-49">
+    <createIndex indexName="fk_department_calendar_person" tableName="department_calendar">
+      <column defaultValueComputed="NULL" name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-50">
+    <createIndex indexName="fk_holiday_replacements_person" tableName="holiday_replacements">
+      <column name="person_id"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-51">
+    <createIndex indexName="unique_absence_id_and_absence_mapping_type" tableName="absence_mapping">
+      <column defaultValueComputed="NULL" name="absence_id"/>
+      <column name="absence_mapping_type"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-52">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="account" constraintName="FK1D0C220DC1CA25B2"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-53">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="sick_note_comment"
+                             constraintName="FK4A44D1CF323A0A01" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-54">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="working_time"
+                             constraintName="FK6B1E997E323A0A01" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-55">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_permissions"
+                             constraintName="FK9B1752BAC1CA25B2" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-56">
+    <addForeignKeyConstraint baseColumnNames="application_id" baseTableName="application_comment"
+                             constraintName="FK9BDE863F88CA0EA2" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="application" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-57">
+    <addForeignKeyConstraint baseColumnNames="canceller_id" baseTableName="application"
+                             constraintName="FKC00DAD304C576368" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-58">
+    <addForeignKeyConstraint baseColumnNames="applier_id" baseTableName="application"
+                             constraintName="FKC00DAD307949FCBC" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-59">
+    <addForeignKeyConstraint baseColumnNames="office_id" baseTableName="application" constraintName="FKC00DAD308DE74EB"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-60">
+    <addForeignKeyConstraint baseColumnNames="boss_id" baseTableName="application" constraintName="FKC00DAD3093066E9A"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-61">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="application" constraintName="FKC00DAD30C1CA25B2"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-62">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="sick_note" constraintName="FKF689670323A0A01"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-63">
+    <addForeignKeyConstraint baseColumnNames="overtime_id" baseTableName="overtime_comment"
+                             constraintName="FK_OvertimeComment_Overtime" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="overtime" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-64">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="overtime_comment"
+                             constraintName="FK_OvertimeComment_Person" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-65">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="overtime" constraintName="FK_Overtime_Person"
+                             deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-66">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_notifications"
+                             constraintName="FK_Person_notifications" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-67">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="company_calendar"
+                             constraintName="fk_company_calendar_person" deferrable="false" initiallyDeferred="false"
+                             onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-68">
+    <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="department_calendar"
+                             constraintName="fk_department_calendar_department" deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="id"
+                             referencedTableName="department" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-69">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="department_calendar"
+                             constraintName="fk_department_calendar_person" deferrable="false" initiallyDeferred="false"
+                             onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-70">
+    <addForeignKeyConstraint baseColumnNames="application_id" baseTableName="holiday_replacements"
+                             constraintName="fk_holiday_replacements_application" deferrable="false"
+                             initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                             referencedColumnNames="id" referencedTableName="application" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-71">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="holiday_replacements"
+                             constraintName="fk_holiday_replacements_person" deferrable="false"
+                             initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                             referencedColumnNames="id" referencedTableName="person" validate="true"/>
+  </changeSet>
+
+  <changeSet author="Tobias Schneider" id="1638014064459-72">
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_calendar"
+                             constraintName="fk_person_calendar_person" deferrable="false" initiallyDeferred="false"
+                             onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+
+</databaseChangeLog>

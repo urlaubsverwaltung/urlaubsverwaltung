@@ -1,14 +1,13 @@
 version: '3.8'
 services:
-  mariadb:
-    image: mariadb:10.5
-    ports:
-      - '3308:3306'
+  postgres:
+    image: postgres:14.1-alpine
     environment:
-      - MYSQL_DATABASE=urlaubsverwaltung
-      - MYSQL_USER=urlaubsverwaltung
-      - MYSQL_PASSWORD=urlaubsverwaltung
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      POSTGRES_DB: ${POSTGRES_DB:-urlaubsverwaltung}
+      POSTGRES_USER: ${POSTGRES_USER:-urlaubsverwaltung}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-urlaubsverwaltung}
+    ports:
+      - "5434:5432"
   mailhog:
     image: mailhog/mailhog:v1.0.0
     ports:

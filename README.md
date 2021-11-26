@@ -205,12 +205,12 @@ Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der ei
 
 #### Datenbank konfigurieren
 
-Die Anwendung verwendet zur Speicherung der Daten ein MariaDB-Datenbankmanagementsystem. 
-Erstelle in deinem MariaDB-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`
+Die Anwendung verwendet zur Speicherung der Daten ein PostgreSQL-Datenbankmanagementsystem. 
+Erstelle in deinem PostgreSQL-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`
 sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
 
 ```properties
-spring.datasource.url=jdbc:mariadb://$HOST:$PORT/$NAME_DER_DATENBANK
+spring.datasource.url=jdbc:postgresql://$HOST:$PORT/$NAME_DER_DATENBANK
 spring.datasource.username=$BENUTZER
 spring.datasource.password=$PASSWORT
 ```
@@ -291,7 +291,7 @@ und die Anwendung mit dem Profil `demodata` zu starten:
 java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.war
 ```
 
-Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
+Auf diese Weise wird die Anwendung mit einer PostgreSQL-Datenbankmanagementsystem gestartet und Demodaten generiert.
 
 Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
@@ -361,7 +361,7 @@ Folgende git hooks werden installiert:
 
 ### Anwendung starten
 
-Da die Urlaubsverwaltung abhängig von einer MariaDB-Datenbank ist, kann diese über
+Da die Urlaubsverwaltung abhängig von einer PostgreSQL-Datenbank ist, kann diese über
 
 ```bash
 docker-compose up
@@ -386,7 +386,7 @@ bzw. für Windows Benutzer über:
 
 Im Browser lässt sich die Anwendung dann über [http://localhost:8080/](http://localhost:8080/) ansteuern.
 
-Mit dem `demodata` Profil wird eine MariaDB-Datenbank verwendet und es werden Demodaten angelegt,
+Mit dem `demodata` Profil wird eine PostgreSQL-Datenbank verwendet und es werden Demodaten angelegt,
 d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der Weboberfläche nun mit verschiedenen
 [Demodaten-Benutzer](#demodaten-benutzer) anmelden.
 

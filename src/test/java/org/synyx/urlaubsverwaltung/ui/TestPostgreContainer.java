@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.ui;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
-import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
-class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
+class TestPostgreContainer extends PostgreSQLContainer<TestPostgreContainer> {
 
-    private static final String VERSION = "10.5";
+    private static final String VERSION = "14.1";
 
-    TestMariaDBContainer() {
-        super(MariaDBContainer.NAME + ":" + VERSION);
+    TestPostgreContainer() {
+        super(IMAGE + ":" + VERSION);
     }
 
     /**
@@ -16,13 +16,14 @@ class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
      *
      * <p>Usage:</p>
      * <pre><code>
-     * static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
+     * static final TestPostgreContainer postgre = new TestPostgreContainer();
      * &#64;DynamicPropertySource
      * static void setupDataSource(DynamicPropertySource registry) {
-     *     mariaDB.start();
-     *     mariaDB.configureSpringDataSource(registry);
+     *     postgre.start();
+     *     postgre.configureSpringDataSource(registry);
      * }
-     * </code></pre>
+     * </code>
+     * </pre>
      *
      * @param registry
      */

@@ -1,7 +1,10 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.Parameter;
 
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -24,7 +27,17 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 public class Person {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GenericGenerator(
+        name = "person_id_seq",
+        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+        parameters = {
+            @Parameter(name = "sequence_name", value = "person_id_seq"),
+            @Parameter(name = "initial_value", value = "1"),
+            @Parameter(name = "increment_size", value = "1")
+        }
+    )
+    @GeneratedValue(generator = "person_id_seq")
     private Integer id;
 
     private String username;
