@@ -143,11 +143,11 @@
                        aria-describedby="absence-table-${month.nameOfMonth}">
                     <thead>
                         <tr>
-                            <th scope="col" class="print:tw-hidden tw-cursor-default">&nbsp;</th>
-                            <th scope="col" class="sortable-field tw-cursor-pointer">&nbsp;</th>
+                            <th scope="col" class="print:tw-hidden tw-cursor-default tw-p-2">&nbsp;</th>
+                            <th scope="col" class="sortable-field tw-cursor-pointer tw-p-2">&nbsp;</th>
                             <c:forEach items="${month.days}" var="day">
                                 <th scope="col"
-                                    class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head
+                                    class="non-sortable tw-cursor-default tw-p-2 text-zinc-700 vacationOverview-cal-head
                                             ${day.weekend ? 'weekend' : ''}
                                             ${day.today ? ' today' : ''}
                                             ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
@@ -165,7 +165,10 @@
                     <tbody class="vacationOverview-tbody">
                     <c:forEach var="person" items="${month.persons}">
                         <tr role="row">
-                            <th scope="row" class="tw-p-0.5 print:tw-hidden tw-sticky tw-left-0 tw-bg-gradient-to-r tw-from-white tw-border-l-0 tw-z-10">
+                            <th
+                                scope="row"
+                                class="tw-p-0.5 print:tw-hidden tw-sticky tw-left-0 tw-bg-gradient-to-r tw-from-white tw-border-l-0 tw-z-10"
+                            >
                                 <uv:avatar
                                     url="${person.gravatarUrl}?d=mm&s=32"
                                     username="${person.firstName} ${person.lastName}"
@@ -174,7 +177,10 @@
                                     border="true"
                                 />
                             </th>
-                            <th scope="row" class="tw-py-0.5 tw-pl-2 print:tw-py-1.5">
+                            <th
+                                scope="row"
+                                class="tw-py-0.5 tw-pl-2 tw-pr-4 print:tw-py-1.5"
+                            >
                                 <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
                                     <c:out value="${person.firstName}"/>&nbsp;
                                     <span><c:out value="${person.lastName}"/></span>
