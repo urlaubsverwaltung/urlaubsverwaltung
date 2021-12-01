@@ -441,7 +441,28 @@
                             <spring:message code='settings.absenceTypes.title'/>
                         </h2>
                     </uv:section-heading>
-                    <div>
+                    <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
+                        <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-ml-8 tw-pt-2 tw-text-sm">
+                            <div class="tw-flex">
+                                <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                <div class="tw-flex tw-flex-col">
+                                    <p>
+                                        <spring:message code="settings.absenceTypes.help.1"/>
+                                        <a class="tw-inline-flex tw-items-center" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
+                                            <spring:message code="settings.absenceTypes.help.2"/>
+                                            <icon:external-link className="tw-ml-1 tw-h-4 tw-w-4" />
+                                        </a>
+                                    </p>
+                                    <p>
+                                        <spring:message code="settings.absenceTypes.description.1"/>
+                                        <a class="tw-flex tw-items-center" href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart">
+                                            <icon:mail className="tw-mr-1 tw-h-4 tw-w-4" />
+                                            <spring:message code="settings.absenceTypes.description.2"/>
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <table id="absence-type-table" class="absence-type-settings-table">
                             <thead>
                                 <tr>
