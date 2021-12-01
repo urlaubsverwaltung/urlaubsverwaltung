@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
-      <version>1.5.12</version>
+      <version>1.5.13</version>
     </dependency>
 
     <!-- WEB -->
