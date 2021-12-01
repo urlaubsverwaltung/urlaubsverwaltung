@@ -448,9 +448,9 @@
                                 <div class="tw-flex tw-flex-col">
                                     <p>
                                         <spring:message code="settings.absenceTypes.help.1"/>
-                                        <a class="tw-flex tw-items-center" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
-                                            <icon:external-link className="tw-mr-1 tw-h-4 tw-w-4" />
+                                        <a class="tw-inline-flex tw-items-center" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
                                             <spring:message code="settings.absenceTypes.help.2"/>
+                                            <icon:external-link className="tw-ml-1 tw-h-4 tw-w-4" />
                                         </a>
                                     </p>
                                     <p>
