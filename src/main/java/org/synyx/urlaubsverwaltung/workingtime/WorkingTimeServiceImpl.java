@@ -95,7 +95,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
             final DateRange range;
 
-            if(workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
                 range = new DateRange(dateRange.getStartDate(), nextEnd);
             } else {
                 range = new DateRange(workingTime.getValidFrom(), nextEnd);
@@ -103,7 +103,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
             federalStatesOfPersonByDateRage.put(range, workingTime.getFederalState());
 
-            if(workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
                 return federalStatesOfPersonByDateRage;
             }
 

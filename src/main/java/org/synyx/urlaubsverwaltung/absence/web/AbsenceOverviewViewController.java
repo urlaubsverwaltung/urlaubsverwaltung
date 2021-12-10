@@ -153,7 +153,6 @@ public class AbsenceOverviewViewController {
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 
-
         final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
             publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(dateRange, person));

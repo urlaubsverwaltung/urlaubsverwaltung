@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
@@ -380,5 +381,19 @@ class WorkingTimeServiceImplTest {
                 entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), RHEINLAND_PFALZ),
                 entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), BADEN_WUERTTEMBERG)
             );
+    }
+
+    @Test
+    void getFederalStatesByPersonAndDateRangeWithoutWorkingTimes() {
+
+        final Person batman = new Person();
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(batman)).thenReturn(emptyList());
+
+        assertThat(sut.getFederalStatesByPersonAndDateRange(batman,
+            new DateRange(
+                LocalDate.of(2021, 11, 1),
+                LocalDate.of(2021, 11, 30)))).isEmpty();
+
     }
 }
