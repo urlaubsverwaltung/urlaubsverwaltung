@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -18,18 +19,19 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BREMEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.*;
 
 @ExtendWith(MockitoExtension.class)
 class WorkingTimeServiceImplTest {
@@ -338,5 +340,60 @@ class WorkingTimeServiceImplTest {
         final FederalState defaultFederalState = sut.getSystemDefaultFederalState();
 
         assertThat(defaultFederalState).isEqualTo(BREMEN);
+    }
+
+    @Test
+    void getFederalStatesByPersonAndDateRange() {
+
+        final Person batman = new Person();
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(batman);
+        workingTimeEntity.setValidFrom(LocalDate.of(2020, 9, 1));
+        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
+        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setPerson(batman);
+        workingTimeEntityChanged.setValidFrom(LocalDate.of(2021, 11, 15));
+        workingTimeEntityChanged.setFederalStateOverride(RHEINLAND_PFALZ);
+
+        final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
+        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setPerson(batman);
+        workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
+        workingTimeEntityFuture.setFederalStateOverride(BERLIN);
+
+        final List<WorkingTimeEntity> timeEntities = List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity );
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(batman)).thenReturn(timeEntities);
+
+        final Map<DateRange, FederalState> federalStatesByPersonAndDateRange = sut.getFederalStatesByPersonAndDateRange(batman,
+            new DateRange(
+                LocalDate.of(2021, 11, 1),
+                LocalDate.of(2021, 11, 30)));
+
+        assertThat(federalStatesByPersonAndDateRange)
+            .isNotEmpty()
+            .hasSize(2)
+            .containsExactly(
+                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), RHEINLAND_PFALZ),
+                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), BADEN_WUERTTEMBERG)
+            );
+    }
+
+    @Test
+    void getFederalStatesByPersonAndDateRangeWithoutWorkingTimes() {
+
+        final Person batman = new Person();
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(batman)).thenReturn(emptyList());
+
+        assertThat(sut.getFederalStatesByPersonAndDateRange(batman,
+            new DateRange(
+                LocalDate.of(2021, 11, 1),
+                LocalDate.of(2021, 11, 30)))).isEmpty();
+
     }
 }

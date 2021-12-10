@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
@@ -59,12 +60,13 @@ public class AbsenceOverviewViewController {
     private final PublicHolidaysService publicHolidaysService;
     private final SettingsService settingsService;
     private final AbsenceService absenceService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
     public AbsenceOverviewViewController(PersonService personService, DepartmentService departmentService,
                                          MessageSource messageSource, Clock clock,
                                          PublicHolidaysService publicHolidaysService, SettingsService settingsService,
-                                         AbsenceService absenceService) {
+                                         AbsenceService absenceService, WorkingTimeService workingTimeService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.messageSource = messageSource;
@@ -72,6 +74,7 @@ public class AbsenceOverviewViewController {
         this.publicHolidaysService = publicHolidaysService;
         this.settingsService = settingsService;
         this.absenceService = absenceService;
+        this.workingTimeService = workingTimeService;
     }
 
     @GetMapping
@@ -150,15 +153,10 @@ public class AbsenceOverviewViewController {
             .flatMap(List::stream)
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 
-        final Map<LocalDate, PublicHoliday> holidaysByDate =
-            publicHolidaysService.getPublicHolidays(dateRange.getStartDate(), dateRange.getEndDate(), defaultFederalState)
-                .stream()
-                .collect(
-                    toMap(
-                        PublicHoliday::getDate,
-                        Function.identity()
-                    )
-                );
+        final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
+        for (Person person : personList) {
+            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(dateRange, person));
+        }
 
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
@@ -175,7 +173,7 @@ public class AbsenceOverviewViewController {
                             view.getLastName().equals(person.getLastName())
                         )
                         .findFirst()
-                        .orElse(null),Function.identity()
+                        .orElse(null), Function.identity()
                     )
                 );
 
@@ -190,7 +188,7 @@ public class AbsenceOverviewViewController {
                     .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
                     .collect(toUnmodifiableList());
 
-                final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(holidaysByDate.get(date))
+                final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser, publicHoliday))
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser))
                     .build();
@@ -200,6 +198,19 @@ public class AbsenceOverviewViewController {
         }
 
         return new ArrayList<>(monthsByNr.values());
+    }
+
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
+        return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+            .entrySet().stream()
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .flatMap(List::stream)
+            .collect(
+                toMap(
+                    PublicHoliday::getDate,
+                    Function.identity()
+                )
+            );
     }
 
     private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {
@@ -300,8 +311,7 @@ public class AbsenceOverviewViewController {
 
         if (morningWaiting && noonWaiting) {
             return isPrivileged ? builder.waitingVacationFull() : builder.absenceFull();
-        }
-        else if (!morningWaiting && !noonWaiting) {
+        } else if (!morningWaiting && !noonWaiting) {
             return isPrivileged ? builder.allowedVacationFull() : builder.absenceFull();
         }
 
