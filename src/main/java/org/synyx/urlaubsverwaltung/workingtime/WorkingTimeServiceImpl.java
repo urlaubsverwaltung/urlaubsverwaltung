@@ -88,7 +88,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
             .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
             .collect(toList());
 
-        final HashMap<DateRange, FederalState> dateRangeFederalStateHashMap = new HashMap<>();
+        final HashMap<DateRange, FederalState> federalStatesOfPersonByDateRage = new HashMap<>();
         LocalDate nextEnd = dateRange.getEndDate();
 
         for (WorkingTime workingTime : workingTimeList) {
@@ -101,16 +101,16 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
                 range = new DateRange(workingTime.getValidFrom(), nextEnd);
             }
 
-            dateRangeFederalStateHashMap.put(range, workingTime.getFederalState());
+            federalStatesOfPersonByDateRage.put(range, workingTime.getFederalState());
 
             if(workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
-                return dateRangeFederalStateHashMap;
+                return federalStatesOfPersonByDateRage;
             }
 
             nextEnd = workingTime.getValidFrom().minusDays(1);
         }
 
-        return dateRangeFederalStateHashMap;
+        return federalStatesOfPersonByDateRage;
     }
 
     @Override

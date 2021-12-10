@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
@@ -155,25 +154,9 @@ public class AbsenceOverviewViewController {
             .collect(groupingBy(AbsencePeriod.Record::getPerson));
 
 
-        final HashMap<Person, Map<LocalDate, PublicHoliday>> personHolidays = new HashMap<>();
-
+        final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
         for (Person person : personList) {
-
-            // hole alle Holidays pro person
-            Map<LocalDate, PublicHoliday> holidayMap =
-                workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
-
-                    .entrySet().stream()
-                    .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
-                    .flatMap(List::stream)
-                    .collect(
-                        toMap(
-                            PublicHoliday::getDate,
-                            Function.identity()
-                        )
-                    );
-
-            personHolidays.put(person, holidayMap);
+            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(dateRange, person));
         }
 
         for (LocalDate date : dateRange) {
@@ -206,7 +189,7 @@ public class AbsenceOverviewViewController {
                     .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
                     .collect(toUnmodifiableList());
 
-                final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(personHolidays.get(person).get(date))
+                final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
                     .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser, publicHoliday))
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser))
                     .build();
@@ -216,6 +199,19 @@ public class AbsenceOverviewViewController {
         }
 
         return new ArrayList<>(monthsByNr.values());
+    }
+
+    private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
+        return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+            .entrySet().stream()
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .flatMap(List::stream)
+            .collect(
+                toMap(
+                    PublicHoliday::getDate,
+                    Function.identity()
+                )
+            );
     }
 
     private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {
@@ -316,8 +312,7 @@ public class AbsenceOverviewViewController {
 
         if (morningWaiting && noonWaiting) {
             return isPrivileged ? builder.waitingVacationFull() : builder.absenceFull();
-        }
-        else if (!morningWaiting && !noonWaiting) {
+        } else if (!morningWaiting && !noonWaiting) {
             return isPrivileged ? builder.allowedVacationFull() : builder.absenceFull();
         }
 
