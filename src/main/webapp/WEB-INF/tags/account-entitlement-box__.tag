@@ -8,7 +8,7 @@
 
 <uv:box__ className="${className}">
     <jsp:attribute name="icon">
-        <uv:box-icon className="tw-bg-green-500 tw-text-white">
+        <uv:box-icon className="tw-bg-emerald-500 tw-text-white">
             <icon:calendar className="tw-w-8 tw-h-8" />
         </uv:box-icon>
     </jsp:attribute>

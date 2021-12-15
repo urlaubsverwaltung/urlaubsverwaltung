@@ -79,7 +79,7 @@ describe("send-get-department-vacations-request", () => {
     expect(dateFormatSpy).toHaveBeenCalledWith(new Date(2020, 7, 19), "dd.MM.yyyy");
     expect(dateFormatSpy).toHaveBeenCalledWith(new Date(2020, 7, 21), "dd.MM.yyyy");
     expect(div.innerHTML).toBe(
-      '1 i18n:application.applier.applicationsOfColleagues<ul class="tw-m-0 tw-p-0"><li class="tw-flex tw-items-center tw-pt-2">Bruce Wayne:</li><li class="tw-flex tw-items-center tw-pl-5"><span class="tw-text-green-500 tw-absolute tw--ml-5" title="undefined"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="tw-w-4 tw-h-4 tw-stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg></span>19.08.2020 - 21.08.2020</li></ul>',
+      '1 i18n:application.applier.applicationsOfColleagues<ul class="tw-m-0 tw-p-0"><li class="tw-flex tw-items-center tw-pt-2">Bruce Wayne:</li><li class="tw-flex tw-items-center tw-pl-5"><span class="tw-text-emerald-500 tw-absolute tw--ml-5" title="undefined"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16px" height="16px" class="tw-w-4 tw-h-4 tw-stroke-2" role="img" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg></span>19.08.2020 - 21.08.2020</li></ul>',
     );
   });
 

@@ -181,7 +181,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-green-500 tw-text-white">
+                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white">
                             <icon:clock className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
@@ -309,7 +309,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-8 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-green-500 tw-text-white">
+                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white">
                             <icon:map className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>

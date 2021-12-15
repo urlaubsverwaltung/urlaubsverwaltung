@@ -204,7 +204,7 @@
                                             </c:otherwise>
                                         </c:choose>
                                         <c:if test="${application.status == 'ALLOWED'}">
-                                            <span class="tw-text-green-500">
+                                            <span class="tw-text-emerald-500">
                                                 <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                             </span>
                                         </c:if>

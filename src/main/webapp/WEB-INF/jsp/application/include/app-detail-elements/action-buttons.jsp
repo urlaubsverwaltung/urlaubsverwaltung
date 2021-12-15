@@ -57,7 +57,7 @@
             </c:otherwise>
         </c:choose>
 
-        <a href="#" class="icon-link tw-px-1 hover:tw-text-green-500" data-title="${ALLOW_DATA_TITLE}"
+        <a href="#" class="icon-link tw-px-1 hover:tw-text-emerald-500" data-title="${ALLOW_DATA_TITLE}"
            onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
             <icon:check className="tw-w-5 tw-h-5" solid="true" />
         </a>
