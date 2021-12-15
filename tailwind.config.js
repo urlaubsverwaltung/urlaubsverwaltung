@@ -1,5 +1,4 @@
 const defaultConfig = require("tailwindcss/defaultConfig.js");
-const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   content: [
@@ -43,20 +42,5 @@ module.exports = {
       ...defaultConfig.theme.screens,
     },
   },
-  plugins: [
-    plugin(function ({ addUtilities }) {
-      const printStyles = {
-        ".no-break-inside": {
-          "break-inside": "avoid",
-        },
-        ".no-page-break-inside": {
-          "break-inside": "avoid-page",
-        },
-        ".no-col-break-inside": {
-          "break-inside": "avoid-column",
-        },
-      };
-      addUtilities(printStyles, ["responsive"]);
-    }),
-  ],
+  plugins: [],
 };

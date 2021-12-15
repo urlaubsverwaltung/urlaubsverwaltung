@@ -131,7 +131,7 @@
     <div class="tw-mx-auto tw-px-4 tw-min-w-max xl:tw-max-w-max">
         <hr class="print:tw-hidden"/>
         <c:forEach items="${absenceOverview.months}" var="month">
-            <div class="tw-mb-10 print:tw-no-break-inside">
+            <div class="tw-mb-10 print:tw-break-inside-avoid">
                 <h2
                     id="absence-table-${month.nameOfMonth}"
                     class="tw-text-2xl tw-m-0 tw-mb-5 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
@@ -234,7 +234,7 @@
                 </table>
             </div>
         </c:forEach>
-        <div id="vacationOverviewLegend" class="tw-mb-8 print:tw-no-break-inside">
+        <div id="vacationOverviewLegend" class="tw-mb-8 print:tw-break-inside-avoid">
             <table aria-hidden="true" class="tw-sticky tw-left-4 tw-text-sm print:tw-font-mono">
                 <caption>
                     <spring:message code="absences.overview.legendTitle"/>
