@@ -13,7 +13,7 @@
   }
 }
 
-@screen print {
+@layer print {
   .navigation {
     @apply tw-hidden;
   }
