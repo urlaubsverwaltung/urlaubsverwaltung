@@ -42,16 +42,16 @@
 .button:hover:not(:disabled),
 .button:active,
 .button:focus {
-  @apply tw-border-gray-200;
-  @apply tw-bg-gray-50;
-  @apply tw-text-gray-600;
+  @apply tw-border-zinc-200;
+  @apply tw-bg-zinc-50;
+  @apply tw-text-zinc-600;
 }
 
 .button:hover:not(:disabled),
 .button:active,
 .button:focus {
-  @apply tw-border-gray-300;
-  @apply tw-bg-gray-100;
+  @apply tw-border-zinc-300;
+  @apply tw-bg-zinc-100;
 }
 
 .button-main,

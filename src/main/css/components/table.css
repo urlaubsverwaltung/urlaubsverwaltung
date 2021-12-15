@@ -152,7 +152,7 @@ td.halves h4 {
   height: 1.125rem;
   appearance: none;
   @apply tw-border;
-  @apply tw-border-gray-400;
+  @apply tw-border-zinc-400;
   @apply tw-rounded;
   @apply tw-transition-colors;
 }
@@ -226,7 +226,7 @@ table.absence-type-settings-table thead {
       }
 
       tr[data-enabled="false"] .absence-type-approval-checkbox {
-        @apply tw-border-gray-300;
+        @apply tw-border-zinc-300;
       }
 
       tr[data-enabled="false"] .absence-type-approval-checkbox:checked {
@@ -240,7 +240,7 @@ table.absence-type-settings-table thead {
         white-space: nowrap;
         @apply tw-pr-4;
         @apply tw-font-medium;
-        @apply tw-text-gray-800;
+        @apply tw-text-zinc-800;
         @apply tw-text-sm;
         @apply tw-truncate;
       }
@@ -263,11 +263,11 @@ table.absence-type-settings-table thead {
   }
 
   table.absence-type-settings-table tr[data-enabled="false"] {
-    @apply tw-text-gray-500;
+    @apply tw-text-zinc-500;
   }
 
   table.absence-type-settings-table tr[data-enabled="false"]:hover {
-    @apply tw-bg-gray-100;
+    @apply tw-bg-zinc-100;
   }
 
   table.absence-type-settings-table tr[data-enabled="true"] {
@@ -282,7 +282,7 @@ table.absence-type-settings-table thead {
   }
 
   table.absence-type-settings-table tr[data-enabled="false"] .absence-type-approval-checkbox {
-    @apply tw-border-gray-300;
+    @apply tw-border-zinc-300;
   }
   table.absence-type-settings-table tr[data-enabled="false"] .absence-type-approval-checkbox:checked {
     @apply tw-bg-blue-300;

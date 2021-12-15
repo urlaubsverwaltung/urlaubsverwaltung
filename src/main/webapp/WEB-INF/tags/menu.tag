@@ -123,7 +123,7 @@
         </span>
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
-        <div class="tw-flex tw-w-full tw-bg-gray-100">
+        <div class="tw-flex tw-w-full tw-bg-zinc-100">
             <div class="tw-order-last" role="menubar">
                 <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
                     <c:choose>
@@ -136,7 +136,7 @@
                                     aria-haspopup="true"
                                     data-test-id="add-something-new"
                                 >
-                                    <icon:plus className="tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
+                                    <icon:plus className="tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
                                     <span class="tw-sr-only">
                                         <spring:message code="nav.add.button.text" />
                                     </span>
@@ -157,10 +157,10 @@
                                                 <a
                                                     href="${URL_PREFIX}/application/new"
                                                     role="menuitem"
-                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
+                                                    class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-zinc-600"
                                                     data-test-id="quick-add-new-application"
                                                 >
-                                                <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                                                     <icon:calendar className="tw-h-5 tw-w-5" />
                                                 </span>
                                                     <span class="tw-ml-3">
@@ -173,10 +173,10 @@
                                                     <a
                                                         href="${URL_PREFIX}/sicknote/new"
                                                         role="menuitem"
-                                                        class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
+                                                        class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-zinc-600"
                                                         data-test-id="quick-add-new-sicknote"
                                                     >
-                                                        <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                                                             <icon:medkit className="tw-h-5 tw-w-5" />
                                                         </span>
                                                         <span class="tw-ml-3">
@@ -190,10 +190,10 @@
                                                     <a
                                                         href="${URL_PREFIX}/overtime/new"
                                                         role="menuitem"
-                                                        class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-gray-600"
+                                                        class="tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white hover:tw-bg-zinc-600"
                                                         data-test-id="quick-add-new-overtime"
                                                     >
-                                                        <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                                                        <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
                                                             <icon:briefcase className="tw-h-5 tw-w-5" />
                                                         </span>
                                                         <span class="tw-ml-3">
@@ -213,7 +213,7 @@
                                 class="tw-flex tw-items-center"
                                 data-test-id="new-application"
                             >
-                                <icon:plus className="tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
+                                <icon:plus className="tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors" />
                                 <span class="tw-sr-only">
                                     <spring:message code="nav.add.vacation" />
                                 </span>
@@ -223,7 +223,7 @@
                     <div class="tw-relative">
                         <a
                             href="#avatar-menu"
-                            class="tw-no-underline tw-text-gray-800 hover:tw-text-black tw-transition-colors"
+                            class="tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
                             id="avatar-link"
                             aria-expanded="false"
                             aria-haspopup="true"
@@ -273,11 +273,11 @@
                                         <a
                                             href="${menuHelpUrl}"
                                             role="menuitem"
-                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
+                                            class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600"
                                             target="_blank"
                                             rel="noopener"
                                         >
-                                            <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                            <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                 <icon:question-mark-circle className="tw-h-6 tw-w-6" />
                                             </span>
                                             <span class="tw-ml-4 tw-text-base">
@@ -289,8 +289,8 @@
                                     <li role="none" class="tw-mb-1">
                                         <a href="${URL_PREFIX}/person/${userId}"
                                            role="menuitem"
-                                           class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600">
-                                            <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                           class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600">
+                                            <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                 <icon:user-circle className="tw-h-6 tw-w-6" />
                                             </span>
                                             <span class="tw-ml-4 tw-text-base">
@@ -303,11 +303,11 @@
                                             <button
                                                 role="menuitem"
                                                 type="submit"
-                                                class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
+                                                class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600"
                                                 data-test-id="logout"
                                             >
                                                 <span class="tw-flex tw-items-center">
-                                                    <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                                    <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                         <icon:logout className="tw-w-6 tw-h-6" />
                                                     </span>
                                                     <span class="tw-ml-4 tw-text-base">
@@ -326,9 +326,9 @@
             <div class="tw-flex-1 navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                 <ul class="tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4 lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2 xl:tw-px-0">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/overview" id="home-link" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a href="${URL_PREFIX}/overview" id="home-link" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:home className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:home className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2 lg:tw-sr-only xl:tw-not-sr-only xl:tw-ml-2">
                                     <spring:message code="nav.home.title"/>
                                 </span>
@@ -337,9 +337,9 @@
                     </li>
                     <sec:authorize access="hasAuthority('USER')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a href="${URL_PREFIX}/application/new" id="application-new-link" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:plus-circle className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:plus-circle className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.apply.title"/>
                                 </span>
@@ -348,9 +348,9 @@
                     </li>
                     </sec:authorize>
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/application" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a href="${URL_PREFIX}/application" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:calendar className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:calendar className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.vacation.title"/>
                                 </span>
@@ -359,9 +359,9 @@
                     </li>
                     <sec:authorize access="hasAuthority('OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/sicknote" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors" data-test-id="navigation-sick-notes-link">
+                        <a href="${URL_PREFIX}/sicknote" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors" data-test-id="navigation-sick-notes-link">
                             <span class="tw-flex tw-items-center">
-                                <icon:medkit className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:medkit className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.sicknote.title"/>
                                 </span>
@@ -371,9 +371,9 @@
                     </sec:authorize>
                     <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/person?active=true" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a href="${URL_PREFIX}/person?active=true" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:user className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:user className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.person.title"/>
                                 </span>
@@ -383,9 +383,9 @@
                     </sec:authorize>
                     <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
                     <li class="tw-flex tw-items-center">
-                        <a href="${URL_PREFIX}/department" class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
+                        <a href="${URL_PREFIX}/department" class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors">
                             <span class="tw-flex tw-items-center">
-                                <icon:user-group className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:user-group className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.department.title"/>
                                 </span>
@@ -397,11 +397,11 @@
                     <li class="tw-flex tw-items-center">
                         <a
                             href="${URL_PREFIX}/settings"
-                            class="tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors"
+                            class="tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg lg:tw-text-base hover:tw-text-blue-400 tw-transition-colors"
                             data-test-id="navigation-settings-link"
                         >
                             <span class="tw-flex tw-items-center">
-                                <icon:cog className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
+                                <icon:cog className="tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors" />
                                 <span class="tw-ml-5 lg:tw-ml-2">
                                     <spring:message code="nav.settings.title"/>
                                 </span>
@@ -413,11 +413,11 @@
             </div>
         </div>
         <div class="tw-flex tw-w-full lg:tw-hidden">
-            <div class="tw-w-4 tw-bg-gray-100">
+            <div class="tw-w-4 tw-bg-zinc-100">
                 <div class="tw-h-4 tw-rounded-tl-full tw-bg-white"></div>
             </div>
             <div class="tw-flex-1"></div>
-            <div class="tw-w-4 tw-bg-gray-100">
+            <div class="tw-w-4 tw-bg-zinc-100">
                 <div class="tw-h-4 tw-rounded-tr-full tw-bg-white"></div>
             </div>
         </div>

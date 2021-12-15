@@ -14,16 +14,16 @@ class NavTabs extends HTMLUListElement {
           const previousLink = this[activeSymbol].querySelector("a");
           delete this[activeSymbol].dataset.active;
           this[activeSymbol].classList.add("tw-border-transparent");
-          this[activeSymbol].classList.remove("tw-border-gray-200");
+          this[activeSymbol].classList.remove("tw-border-zinc-200");
           previousLink.classList.remove("tw-text-black-almost");
-          previousLink.classList.add("tw-text-gray-400");
+          previousLink.classList.add("tw-text-zinc-400");
           document.querySelector(this[activeSymbol].dataset.content).setAttribute("hidden", "");
 
           clickedItem.dataset.active = "true";
           clickedItem.classList.remove("tw-border-transparent");
-          clickedItem.classList.add("tw-border-gray-200");
+          clickedItem.classList.add("tw-border-zinc-200");
           event.target.classList.add("tw-text-black-almost");
-          event.target.classList.remove("tw-text-gray-400");
+          event.target.classList.remove("tw-text-zinc-400");
           document.querySelector(clickedItem.dataset.content).removeAttribute("hidden");
 
           this[activeSymbol] = clickedItem;

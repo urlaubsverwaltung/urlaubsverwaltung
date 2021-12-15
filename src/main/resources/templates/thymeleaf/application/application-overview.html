@@ -57,7 +57,7 @@
           <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0" is="uv-nav-tabs">
             <li
               class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
-              th:classappend="${activeContent == 'application' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
+              th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-applications-block"
               th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
             >
@@ -65,14 +65,14 @@
                 href="#user-applications-block"
                 th:href="@{/web/application}"
                 class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost"
-                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
+                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost' : 'tw-text-zinc-400'}"
                 th:text="#{applications.myself.waiting}"
               >
               </a>
             </li>
             <li
               class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
-              th:classappend="${activeContent == 'replacement' ? 'tw-border-gray-200' : 'tw-border-transparent'}"
+              th:classappend="${activeContent == 'replacement' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-replacements-block"
               th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
             >
@@ -80,7 +80,7 @@
                 href="#user-replacements-block"
                 th:href="@{/web/application/replacement}"
                 class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost tw-gap-2"
-                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-gray-400'}"
+                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-zinc-400'}"
               >
                 <th:block th:text="#{applications.holiday_replacement}" />
                 <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5">
@@ -141,7 +141,7 @@
                   lg:tw-p-2
                   md:tw-block
                   lg:tw-flex lg:tw-items-end
-                  lg:hover:tw-bg-gray-50
+                  lg:hover:tw-bg-zinc-50
                 "
                 th:each="userRequestForLeave,loopStatus: ${userApplications}"
               >
@@ -329,7 +329,7 @@
               md:tw-flex md:tw-items-top lg:tw-items-center
               md:tw-space-x-12
               lg:tw-p-2
-              lg:hover:tw-bg-gray-50
+              lg:hover:tw-bg-zinc-50
             "
           >
             <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
@@ -439,7 +439,7 @@
                 md:tw-flex md:tw-items-top lg:tw-items-center
                 md:tw-space-x-12
                 lg:tw-p-2
-                lg:hover:tw-bg-gray-50
+                lg:hover:tw-bg-zinc-50
               "
             >
               <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">

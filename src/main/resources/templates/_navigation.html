@@ -126,7 +126,7 @@
       </span>
     </label>
     <nav class="tw-max-w-6xl tw-mx-auto">
-      <div class="tw-flex tw-w-full tw-bg-gray-100">
+      <div class="tw-flex tw-w-full tw-bg-zinc-100">
         <div class="tw-order-last" role="menubar">
           <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
             <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
@@ -138,7 +138,7 @@
                 data-test-id="add-something-new"
               >
                 <svg
-                  th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
+                  th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
                 ></svg>
                 <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
                 <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
@@ -173,14 +173,14 @@
                           role="menuitem"
                           class="
                             tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                            hover:tw-bg-gray-600
+                            hover:tw-bg-zinc-600
                           "
                           data-test-id="quick-add-new-application"
                         >
                           <span
                             class="
                               tw-border
-                              tw-border-gray-50
+                              tw-border-zinc-50
                               tw-border-opacity-25
                               tw-px-2
                               tw-py-1
@@ -201,14 +201,14 @@
                           role="menuitem"
                           class="
                             tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                            hover:tw-bg-gray-600
+                            hover:tw-bg-zinc-600
                           "
                           data-test-id="quick-add-new-sicknote"
                         >
                         <span
                           class="
                             tw-border
-                            tw-border-gray-50
+                            tw-border-zinc-50
                             tw-border-opacity-25
                             tw-px-2
                             tw-py-1
@@ -229,14 +229,14 @@
                         role="menuitem"
                         class="
                           tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center tw-text-white
-                          hover:tw-bg-gray-600
+                          hover:tw-bg-zinc-600
                         "
                         data-test-id="quick-add-new-overtime"
                       >
                         <span
                           class="
                             tw-border
-                            tw-border-gray-50
+                            tw-border-zinc-50
                             tw-border-opacity-25
                             tw-px-2
                             tw-py-1
@@ -262,14 +262,14 @@
               th:if="${not navigationRequestPopupEnabled}"
             >
               <svg
-                th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-gray-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
+                th:replace="icon/plus::svg(className='tw-w-7 tw-h-7 tw-text-zinc-900 tw-text-opacity-75 hover:tw-text-opacity-100 tw-transition-colors')"
               ></svg>
               <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
             </a>
             <div class="tw-relative">
               <a
                 href="#avatar-menu"
-                class="tw-no-underline tw-text-gray-800 hover:tw-text-black tw-transition-colors"
+                class="tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
                 id="avatar-link"
                 aria-expanded="false"
                 aria-haspopup="true"
@@ -323,11 +323,11 @@
                       <a
                         th:href="${menuHelpUrl}"
                         role="menuitem"
-                        class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-gray-600"
+                        class="tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center tw-bg-transparent tw-text-white hover:tw-bg-zinc-600"
                         target="_blank"
                         rel="noopener"
                       >
-                        <span class="tw-border tw-border-gray-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                        <span class="tw-border tw-border-zinc-50 tw-border-opacity-25 tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                           <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                         </span>
                         <span class="tw-ml-4 tw-text-base" th:text="#{nav.help.title}"></span>
@@ -351,13 +351,13 @@
                           tw-items-center
                           tw-bg-transparent
                           tw-text-white
-                          hover:tw-bg-gray-600"
+                          hover:tw-bg-zinc-600"
                       >
                         <span class="tw-flex tw-items-center">
                           <span
                             class="
                               tw-border
-                              tw-border-gray-50
+                              tw-border-zinc-50
                               tw-border-opacity-25
                               tw-px-2
                               tw-py-1
@@ -390,7 +390,7 @@
                             tw-items-center
                             tw-bg-transparent
                             tw-text-white
-                            hover:tw-bg-gray-600
+                            hover:tw-bg-zinc-600
                           "
                           data-test-id="logout"
                         >
@@ -398,7 +398,7 @@
                             <span
                               class="
                                 tw-border
-                                tw-border-gray-50
+                                tw-border-zinc-50
                                 tw-border-opacity-25
                                 tw-px-2
                                 tw-py-1
@@ -435,7 +435,7 @@
                 th:href="@{/web/overview}"
                 id="home-link"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -443,7 +443,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/home::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/home::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span
                     class="tw-ml-5 lg:tw-ml-2 lg:tw-sr-only xl:tw-not-sr-only xl:tw-ml-2"
@@ -458,7 +458,7 @@
                 th:href="@{/web/application/new}"
                 id="application-new-link"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -466,7 +466,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/plus-circle::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/plus-circle::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.apply.title}"></span>
                 </span>
@@ -477,7 +477,7 @@
                 href="#"
                 th:href="@{/web/application}"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -485,7 +485,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/calendar::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/calendar::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.vacation.title}"></span>
                 </span>
@@ -496,7 +496,7 @@
                 href="#"
                 th:href="@{/web/sicknote}"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -505,7 +505,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.sicknote.title}"></span>
                 </span>
@@ -519,7 +519,7 @@
                 href="#"
                 th:href="@{/web/person(active=true)}"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -527,7 +527,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/user::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/user::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.person.title}"></span>
                 </span>
@@ -538,7 +538,7 @@
                 href="#"
                 th:href="@{/web/department}"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -546,7 +546,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/user-group::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/user-group::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.department.title}"></span>
                 </span>
@@ -557,7 +557,7 @@
                 href="#"
                 th:href="@{/web/settings}"
                 class="
-                  tw-group tw-inline-block tw-no-underline tw-text-gray-900 tw-text-lg
+                  tw-group tw-inline-block tw-no-underline tw-text-zinc-900 tw-text-lg
                   lg:tw-text-base
                   hover:tw-text-blue-400
                   tw-transition-colors
@@ -566,7 +566,7 @@
               >
                 <span class="tw-flex tw-items-center">
                   <svg
-                    th:replace="icon/cog::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-gray-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
+                    th:replace="icon/cog::svg(className='tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4 tw-text-zinc-900 tw-text-opacity-50 group-hover:tw-text-blue-400 tw-transition-colors')"
                   ></svg>
                   <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.settings.title}"></span>
                 </span>
@@ -576,11 +576,11 @@
         </div>
       </div>
       <div class="tw-flex tw-w-full lg:tw-hidden">
-        <div class="tw-w-4 tw-bg-gray-100">
+        <div class="tw-w-4 tw-bg-zinc-100">
           <div class="tw-h-4 tw-rounded-tl-full tw-bg-white"></div>
         </div>
         <div class="tw-flex-1"></div>
-        <div class="tw-w-4 tw-bg-gray-100">
+        <div class="tw-w-4 tw-bg-zinc-100">
           <div class="tw-h-4 tw-rounded-tr-full tw-bg-white"></div>
         </div>
       </div>

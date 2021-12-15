@@ -20,7 +20,7 @@
     <select multiple id="${id}" name="${name}" class="form-control tw-appearance-none tw-pr-8 ${cssClass}" ${onchangeAttribute}>
         <jsp:doBody />
     </select>
-    <div class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2 tw-text-gray-700">
+    <div class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2 tw-text-zinc-700">
         <icon:dots-horizontal className="tw-h-4 tw-w-4" />
     </div>
 </div>

@@ -15,7 +15,7 @@ th.vacationOverview-cal-head.today::before {
 th.vacationOverview-cal-head.today::after {
   content: "";
   border-width: 3px;
-  @apply tw-border-gray-500;
+  @apply tw-border-zinc-500;
   @apply tw-border-opacity-40;
   position: absolute;
   top: 0;

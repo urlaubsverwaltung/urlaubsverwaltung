@@ -16,7 +16,7 @@
   background-position: left center;
   border-radius: 9999px;
   transition: background-position .15s ease-in-out, background-color .15s ease-in-out;
-  @apply tw-bg-gray-200;
+  @apply tw-bg-zinc-200;
 }
 
 .checkbox-switch input:checked[type="checkbox"] {

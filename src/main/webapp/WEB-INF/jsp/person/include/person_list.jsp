@@ -140,7 +140,7 @@
                 </td>
                 <td class="hidden-xs">
                     <div class="print:tw-hidden">
-                        <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.account.title" arguments="${person.niceName}"/>">
+                        <a class="action-link tw-text-zinc-900 tw-text-opacity-50" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.account.title" arguments="${person.niceName}"/>">
                             <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1" />
                             <spring:message code="action.account" />
                         </a>
