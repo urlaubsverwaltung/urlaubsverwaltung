@@ -18,13 +18,13 @@ describe("nav-tabs", function () {
     const div = document.createElement("div");
     div.innerHTML = `
       <ul is="uv-nav-tabs">
-        <li class="tw-border-b-4 tw-border-gray-200" data-content="#content-aaa" data-active="">
+        <li class="tw-border-b-4 tw-border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="tw-text-black-almost">
             AAA
           </a>
         </li>
         <li class="tw-border-b-4 tw-border-transparent" data-content="#content-bbb">
-          <a href="#content-bbb" class="tw-text-gray-400">
+          <a href="#content-bbb" class="tw-text-zinc-400">
             BBB
           </a>
         </li>
@@ -51,17 +51,17 @@ describe("nav-tabs", function () {
     navTabBLink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(navTabA.dataset.active).not.toBeDefined();
-    expect(navTabA.classList.contains("tw-border-gray-200")).toBeFalsy();
+    expect(navTabA.classList.contains("tw-border-zinc-200")).toBeFalsy();
     expect(navTabA.classList.contains("tw-border-transparent")).toBeTruthy();
     expect(navTabALink.classList.contains("tw-text-black-almost")).toBeFalsy();
-    expect(navTabALink.classList.contains("tw-text-gray-400")).toBeTruthy();
+    expect(navTabALink.classList.contains("tw-text-zinc-400")).toBeTruthy();
     expect(contentA.hasAttribute("hidden")).toBeTruthy();
 
     expect(navTabB.dataset.active).toBeDefined();
-    expect(navTabB.classList.contains("tw-border-gray-200")).toBeTruthy();
+    expect(navTabB.classList.contains("tw-border-zinc-200")).toBeTruthy();
     expect(navTabB.classList.contains("tw-border-transparent")).toBeFalsy();
     expect(navTabBLink.classList.contains("tw-text-black-almost")).toBeTruthy();
-    expect(navTabBLink.classList.contains("tw-text-gray-400")).toBeFalsy();
+    expect(navTabBLink.classList.contains("tw-text-zinc-400")).toBeFalsy();
     expect(contentB.hasAttribute("hidden")).toBeFalsy();
   });
 
@@ -69,13 +69,13 @@ describe("nav-tabs", function () {
     const div = document.createElement("div");
     div.innerHTML = `
       <ul is="uv-nav-tabs">
-        <li class="tw-border-b-4 tw-border-gray-200" data-content="#content-aaa" data-active="">
+        <li class="tw-border-b-4 tw-border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="tw-text-black-almost">
             AAA
           </a>
         </li>
         <li class="tw-border-b-4 tw-border-transparent" data-content="#content-bbb">
-          <a href="#content-bbb" class="tw-text-gray-400">
+          <a href="#content-bbb" class="tw-text-zinc-400">
             BBB
           </a>
         </li>
@@ -102,17 +102,17 @@ describe("nav-tabs", function () {
     navTabALink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(navTabA.dataset.active).toBeDefined();
-    expect(navTabA.classList.contains("tw-border-gray-200")).toBeTruthy();
+    expect(navTabA.classList.contains("tw-border-zinc-200")).toBeTruthy();
     expect(navTabA.classList.contains("tw-border-transparent")).toBeFalsy();
     expect(navTabALink.classList.contains("tw-text-black-almost")).toBeTruthy();
-    expect(navTabALink.classList.contains("tw-text-gray-400")).toBeFalsy();
+    expect(navTabALink.classList.contains("tw-text-zinc-400")).toBeFalsy();
     expect(contentA.hasAttribute("hidden")).toBeFalsy();
 
     expect(navTabB.dataset.active).not.toBeDefined();
-    expect(navTabB.classList.contains("tw-border-gray-200")).toBeFalsy();
+    expect(navTabB.classList.contains("tw-border-zinc-200")).toBeFalsy();
     expect(navTabB.classList.contains("tw-border-transparent")).toBeTruthy();
     expect(navTabBLink.classList.contains("tw-text-black-almost")).toBeFalsy();
-    expect(navTabBLink.classList.contains("tw-text-gray-400")).toBeTruthy();
+    expect(navTabBLink.classList.contains("tw-text-zinc-400")).toBeTruthy();
     expect(contentB.hasAttribute("hidden")).toBeTruthy();
   });
 
@@ -122,13 +122,13 @@ describe("nav-tabs", function () {
     const div = document.createElement("div");
     div.innerHTML = `
       <ul is="uv-nav-tabs">
-        <li class="tw-border-b-4 tw-border-gray-200" data-content="#content-aaa" data-active="">
+        <li class="tw-border-b-4 tw-border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="tw-text-black-almost">
             AAA
           </a>
         </li>
         <li class="tw-border-b-4 tw-border-transparent" data-content="#content-bbb">
-          <a href="#content-bbb" class="tw-text-gray-400">
+          <a href="#content-bbb" class="tw-text-zinc-400">
             BBB
           </a>
         </li>
@@ -160,7 +160,7 @@ describe("nav-tabs", function () {
     const div = document.createElement("div");
     div.innerHTML = `
       <ul is="uv-nav-tabs">
-        <li class="tw-border-b-4 tw-border-gray-200" data-content="#content-aaa" data-active="">
+        <li class="tw-border-b-4 tw-border-zinc-200" data-content="#content-aaa" data-active="">
           <a href="#content-aaa" class="tw-text-black-almost">
             AAA
           </a>

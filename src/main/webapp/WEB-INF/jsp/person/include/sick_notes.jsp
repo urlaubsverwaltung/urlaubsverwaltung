@@ -48,7 +48,7 @@
                     <c:if test="${sickNote.aubPresent == true}">
                         <span class="tw-flex tw-items-center">
                             <span class="tw-hidden lg:tw-inline">&nbsp;</span>
-                            (<span class="tw-text-green-500 tw-flex tw-items-center"><icon:check className="tw-w-4 tw-h-4" /></span>
+                            (<span class="tw-text-emerald-500 tw-flex tw-items-center"><icon:check className="tw-w-4 tw-h-4" /></span>
                             &nbsp;<spring:message code="sicknote.data.aub.short"/>)
                         </span>
                     </c:if>

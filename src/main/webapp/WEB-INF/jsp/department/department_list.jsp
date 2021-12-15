@@ -162,11 +162,11 @@
                                             </form:form>
 
                                             <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50" href="${URL_PREFIX}/department/${department.id}/edit">
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50" href="${URL_PREFIX}/department/${department.id}/edit">
                                                     <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" />
                                                     <spring:message code="action.edit" />
                                                 </a>
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50" data-toggle="modal" href="#modal-cancel-${department.id}">
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50" data-toggle="modal" href="#modal-cancel-${department.id}">
                                                     <icon:trash className="tw-w-4 tw-h-4 tw-mr-1" />
                                                     <spring:message code='action.department.delete' />
                                                 </a>

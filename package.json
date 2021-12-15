@@ -42,7 +42,6 @@
     "jquery-ui-themes": "1.12.0",
     "list.js": "2.3.1",
     "postcss-loader": "4.3.0",
-    "postcss-nested": "5.0.6",
     "tablesorter": "2.31.3",
     "timepicker": "1.13.18",
     "underscore": "1.13.1"
@@ -81,7 +80,7 @@
     "postcss-import": "14.0.2",
     "postcss-url": "10.1.3",
     "prettier": "2.5.1",
-    "tailwindcss": "2.2.19",
+    "tailwindcss": "3.0.2",
     "terser-webpack-plugin": "4.2.3",
     "url-loader": "4.1.1",
     "webpack": "4.46.0",

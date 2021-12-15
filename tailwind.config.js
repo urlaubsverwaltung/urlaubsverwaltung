@@ -1,16 +1,12 @@
 const defaultConfig = require("tailwindcss/defaultConfig.js");
-const colors = require("tailwindcss/colors");
-const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  purge: {
-    content: [
-      "./src/main/webapp/**/*.jsp",
-      "./src/main/webapp/**/*.tag",
-      "./src/main/javascript/**/*.js",
-      "./src/main/resources/templates/**/*.html",
-    ],
-  },
+  content: [
+    "./src/main/webapp/**/*.jsp",
+    "./src/main/webapp/**/*.tag",
+    "./src/main/javascript/**/*.js",
+    "./src/main/resources/templates/**/*.html",
+  ],
   // use a prefix to not conflict with bootstrap
   prefix: "tw-",
   // use important keyword for tailwind utility classes to override bootstrap selectors
@@ -21,9 +17,6 @@ module.exports = {
   },
   theme: {
     extend: {
-      screens: {
-        print: { raw: "print" },
-      },
       lineHeight: {
         normal: "normal",
       },
@@ -37,8 +30,6 @@ module.exports = {
         "black-almost": "#444444",
         "bootstrap-green": "#5cb85c",
         "bootstrap-green-dark": "#449d44",
-        cyan: { ...colors.cyan },
-        sky: { ...colors.sky },
       },
     },
     screens: {
@@ -48,23 +39,5 @@ module.exports = {
       ...defaultConfig.theme.screens,
     },
   },
-  variants: {
-    boxShadow: ["responsive", "hover", "focus", "focus-within"],
-  },
-  plugins: [
-    plugin(function ({ addUtilities }) {
-      const printStyles = {
-        ".no-break-inside": {
-          "break-inside": "avoid",
-        },
-        ".no-page-break-inside": {
-          "break-inside": "avoid-page",
-        },
-        ".no-col-break-inside": {
-          "break-inside": "avoid-column",
-        },
-      };
-      addUtilities(printStyles, ["responsive"]);
-    }),
-  ],
+  plugins: [],
 };

@@ -151,14 +151,14 @@
                                     <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                                             <c:if test="${application.editAllowed}">
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}/edit">
                                                     <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <spring:message code='action.edit'/>
                                                 </a>
                                             </c:if>
                                             <c:if test="${application.approveAllowed}">
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=allow&shortcut=true">
                                                     <icon:check className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <c:choose>
@@ -172,7 +172,7 @@
                                                 </a>
                                             </c:if>
                                             <c:if test="${application.rejectAllowed}">
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=reject&shortcut=true">
                                                     <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <spring:message code='action.reject'/>
@@ -249,12 +249,12 @@
                                     <td class="hidden-xs hidden-sm text-right print:tw-hidden">
                                         <c:if test="${IS_OFFICE}">
                                             <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=cancel&shortcut=true">
                                                     <icon:trash className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <spring:message code='action.delete'/>
                                                 </a>
-                                                <a class="action-link tw-text-gray-900 tw-text-opacity-50"
+                                                <a class="action-link tw-text-zinc-900 tw-text-opacity-50"
                                                    href="${URL_PREFIX}/application/${application.id}?action=decline-cancellation-request&shortcut=true">
                                                     <icon:ban className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                                     <spring:message code="action.cancellationRequest"/>

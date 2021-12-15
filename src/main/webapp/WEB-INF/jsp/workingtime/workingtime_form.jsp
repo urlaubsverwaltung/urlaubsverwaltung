@@ -142,13 +142,13 @@
 
                                                 <c:choose>
                                                     <c:when test="${status.first}">
-                                                        <span class="tw-block ${workingTimeHistory.valid ? 'tw-text-green-500' : ''}">
+                                                        <span class="tw-block ${workingTimeHistory.valid ? 'tw-text-emerald-500' : ''}">
                                                             <spring:message code="person.form.workingTime.valid-from"/>
                                                             <uv:date date="${workingTimeHistory.validFrom}"/>
                                                         </span>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <span class="tw-block ${workingTimeHistory.valid ? 'tw-text-green-500' : ''}">
+                                                        <span class="tw-block ${workingTimeHistory.valid ? 'tw-text-emerald-500' : ''}">
                                                             <c:set var="actualDate">
                                                                 <uv:date date="${workingTimeHistory.validFrom}"/>
                                                             </c:set>

@@ -193,7 +193,7 @@
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-yellow-300 tw-text-white">
+                            <uv:box-icon className="tw-bg-amber-300 tw-text-white">
                                 <icon:sun className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
@@ -206,7 +206,7 @@
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <span class="tw-flex tw-items-center">
-                                    <span class="tw-text-green-500 tw-flex tw-items-center">
+                                    <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                     </span>
                                     &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
@@ -218,7 +218,7 @@
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-yellow-300 tw-text-white">
+                            <uv:box-icon className="tw-bg-amber-300 tw-text-white">
                                 <icon:flag className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
@@ -231,7 +231,7 @@
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                 <span class="tw-flex tw-items-center">
-                                    <span class="tw-text-green-500 tw-flex tw-items-center">
+                                    <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                     </span>
                                     &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
@@ -287,7 +287,7 @@
                                 </span>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <span class="tw-flex tw-items-center">
-                                        <span class="tw-text-green-500 tw-flex tw-items-center">
+                                        <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                             <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                         </span>
                                         &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.sickDays.days['WITH_AUB']}"/>
@@ -312,7 +312,7 @@
                                 </span>
                                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                                     <span class="tw-flex tw-items-center">
-                                        <span class="tw-text-green-500 tw-flex tw-items-center">
+                                        <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                             <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                         </span>
                                         &nbsp;<spring:message code="overview.sicknotes.sickdays.aub" arguments="${sickDaysOverview.childSickDays.days['WITH_AUB']}"/>

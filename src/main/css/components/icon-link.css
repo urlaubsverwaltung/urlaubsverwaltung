@@ -1,6 +1,6 @@
 .icon-link {
   @apply tw-flex !important;
-  @apply tw-text-gray-700 !important;
+  @apply tw-text-zinc-700 !important;
   @apply tw-no-underline !important;
 }
 

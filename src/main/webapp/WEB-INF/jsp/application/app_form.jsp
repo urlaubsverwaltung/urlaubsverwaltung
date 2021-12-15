@@ -418,7 +418,7 @@
                                                                         <c:if test="${not empty holidayReplacement.departments}">
                                                                             <ul class="tw-m-0 tw-ml-1 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5">
                                                                                 <c:forEach items="${holidayReplacement.departments}" var="department">
-                                                                                    <li class="tw-px-1.5 tw-rounded-full tw-bg-green-100 tw-text-green-800">
+                                                                                    <li class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800">
                                                                                         <c:out value="${department}" />
                                                                                     </li>
                                                                                 </c:forEach>
