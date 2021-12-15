@@ -183,7 +183,7 @@
                                                 <c:choose>
                                                     <c:when test="${IS_INACTIVE}">
                                                     <div class="tw-flex tw-items-center">
-                                                        <icon:information-circle className="tw-text-yellow-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1" solid="true"/>
+                                                        <icon:information-circle className="tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1" solid="true"/>
                                                         <spring:message code="department.members.assigned.inactive"/>
                                                     </div>
                                                     </c:when>

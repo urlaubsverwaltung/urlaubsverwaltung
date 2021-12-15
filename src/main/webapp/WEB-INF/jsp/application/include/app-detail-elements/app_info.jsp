@@ -22,7 +22,7 @@
 
 <uv:box className="tw-h-32 tw-mb-4">
     <jsp:attribute name="icon">
-        <uv:box-icon className="tw-bg-yellow-300 tw-text-white">
+        <uv:box-icon className="tw-bg-amber-300 tw-text-white">
             <c:choose>
                 <c:when test="${application.vacationType.category == 'HOLIDAY'}">
                     <icon:sun className="tw-w-8 tw-h-8" />
