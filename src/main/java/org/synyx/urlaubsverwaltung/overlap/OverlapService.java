@@ -14,8 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -101,11 +101,13 @@ public class OverlapService {
      */
     public List<DateRange> getListOfOverlaps(LocalDate startDate, LocalDate endDate, List<Application> applications, List<SickNote> sickNotes) {
 
-        final List<DateRange> overlappingIntervals = new ArrayList<>();
-        applications.stream().map(application -> new DateRange(application.getStartDate(), application.getEndDate())).collect(toCollection(() -> overlappingIntervals));
-        sickNotes.stream().map(sickNote -> new DateRange(sickNote.getStartDate(), sickNote.getEndDate())).collect(toCollection(() -> overlappingIntervals));
+        final Stream<DateRange> applicationDateRanges = applications.stream()
+            .map(application -> new DateRange(application.getStartDate(), application.getEndDate()));
 
-        return overlappingIntervals.stream()
+        final Stream<DateRange> sickNoteDateRanges = sickNotes.stream()
+            .map(sickNote -> new DateRange(sickNote.getStartDate(), sickNote.getEndDate()));
+
+        return Stream.concat(applicationDateRanges, sickNoteDateRanges)
             .map(dateRange -> dateRange.overlap(new DateRange(startDate, endDate)))
             .filter(dateRange -> !dateRange.isEmpty())
             .collect(toList());
