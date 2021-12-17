@@ -53,7 +53,7 @@ public final class DateRange implements Iterable<LocalDate> {
     }
 
     /**
-     * Returns the overlapping date range of the date ranges.
+     * Returns the overlapping date range of given date ranges.
      *
      * <p>
      * Date ranges are inclusive of the start and the end date.
