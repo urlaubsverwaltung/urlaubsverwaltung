@@ -167,4 +167,24 @@ class DateRangeTest {
         final boolean isEmpty = new DateRange(LocalDate.MIN, LocalDate.MAX).isEmpty();
         assertThat(isEmpty).isFalse();
     }
+
+    @Test
+    void equalsTest() {
+        final DateRange commentOne = new DateRange(LocalDate.MIN, LocalDate.MAX);
+        final DateRange commentOneOne = new DateRange(LocalDate.MIN, LocalDate.MAX);
+        final DateRange commentTwo = new DateRange(LocalDate.MIN.plusDays(1), LocalDate.MAX.minusDays(1));
+
+        assertThat(commentOne)
+            .isEqualTo(commentOne)
+            .isEqualTo(commentOneOne)
+            .isNotEqualTo(commentTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final DateRange dateRange = new DateRange(LocalDate.MIN, LocalDate.MAX);
+        assertThat(dateRange.hashCode()).isEqualTo(-1163458881);
+    }
 }
