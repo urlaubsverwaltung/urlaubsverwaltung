@@ -50,11 +50,6 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
       element.classList.remove(...Object.values(datepickerClassnames));
     }
 
-    // clear public holiday markers
-    for (const element of duetDateElement.querySelectorAll("span.datepicker-public-holiday-marker")) {
-      element.remove();
-    }
-
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
     const lastDayOfMonth = formatISO(endOfMonth(parseISO(firstDayOfMonth)), { representation: "date" });
 
@@ -91,19 +86,6 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         }
         const cssClasses = getCssClassesForDate(date, publicHolidays.value, absences.value);
         dayElement.classList.add(...cssClasses);
-
-        // check if we have to add the public holiday marker element
-        const fitsCriteria = fitsCriteriaMatcher(date);
-        const isPublicHoliday =
-          fitsCriteria(publicHolidays.value, { absencePeriodName: "FULL" }) ||
-          fitsCriteria(publicHolidays.value, { absencePeriodName: "MORNING" }) ||
-          fitsCriteria(publicHolidays.value, { absencePeriodName: "NOON" });
-
-        if (isPublicHoliday) {
-          const holidayMarker = document.createElement("span");
-          holidayMarker.classList.add("datepicker-public-holiday-marker");
-          dayElement.prepend(holidayMarker);
-        }
       }
     });
   };
@@ -189,6 +171,9 @@ function getCssClassesForDate(date, publicHolidays, absences) {
     const fitsCriteria = fitsCriteriaMatcher(date);
 
     const isPast = () => false;
+    const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });
+    const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
+    const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
     const isPersonalHolidayFull = () =>
       fitsCriteria(absences, {
         type: "VACATION",
@@ -255,6 +240,9 @@ function getCssClassesForDate(date, publicHolidays, absences) {
       datepickerClassnames.day,
       isToday(date) && datepickerClassnames.today,
       isPast() && datepickerClassnames.past,
+      isPublicHolidayFull() && datepickerClassnames.publicHolidayFull,
+      isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
+      isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
       isPersonalHolidayFull() && datepickerClassnames.personalHolidayFull,
       isPersonalHolidayFullTemporaryApproved() && datepickerClassnames.personalHolidayFull,
       isPersonalHolidayFullApproved() && datepickerClassnames.personalHolidayFullApproved,

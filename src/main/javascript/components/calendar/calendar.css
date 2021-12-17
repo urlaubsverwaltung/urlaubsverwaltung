@@ -130,22 +130,13 @@
   --absence-bar-color-morning: transparent;
   --absence-bar-color-noon: transparent;
   --absence-bar-color: transparent;
-  --background-color: #e5e5e5;
+  --background-color-left: #e5e5e5;
+  --background-color-right: #e5e5e5;
   display: block;
   padding: 0.75rem;
-  background: var(--background-color);
+  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: #0A0A0A;
-}
-
-.datepicker-public-holiday-marker {
-  position: absolute;
-  transform: rotate(45deg);
-  background-color: #71717A;
-  width: 1rem;
-  height: 1rem;
-  top: -0.625rem;
-  right: -0.625rem;
 }
 
 .datepicker-day-past {
@@ -252,8 +243,46 @@ td.datepicker-day {
   --absence-bar-color: #EF4444;
 }
 
+/* public holidays must be the last calendar day treatment */
+/* to override all other absences */
+/* note: except for weekend which follows beneath */
+.datepicker-day-public-holiday-morning {
+  --background-color-left: #b5d0df;
+  --font-color: #6f6f6f;
+}
+.datepicker-day-public-holiday-noon {
+  --background-color-right: #b5d0df;
+  --font-color: #6f6f6f;
+}
+.datepicker-day-public-holiday-full {
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
+  --font-color: #fff;
+}
+
+.datepicker-day-public-holiday-morning:hover {
+  --background-color-left: #b5d0df;
+  --font-color: #fff;
+}
+.datepicker-day-public-holiday-noon:hover {
+  --background-color-right: #b5d0df;
+  --font-color: #fff;
+}
+.datepicker-day-public-holiday-full:hover {
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
+}
+
+.datepicker-day-public-holiday-morning.datepicker-day-past {
+  --font-color: #afafaf;
+}
+.datepicker-day-public-holiday-noon.datepicker-day-past {
+  --font-color: #afafaf;
+}
+
 .datepicker-day-weekend {
-  --background-color: #b5d0df;
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
 }
 
 /**************************************************************************

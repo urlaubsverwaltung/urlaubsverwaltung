@@ -65,12 +65,13 @@ th.vacationOverview-cal-head.today::after {
   --absence-bar-color-morning: transparent;
   --absence-bar-color-noon: transparent;
   --absence-bar-color: transparent;
-  --background-color: #e5e5e5;
+  --background-color-left: #e5e5e5;
+  --background-color-right: #e5e5e5;
   /* h-full only works when parent td has an explicit height */
   height: 100%;
   overflow: hidden;
   position: relative;
-  background-color: var(--background-color);
+  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
 }
 
 .vacationOverview-table td,
@@ -176,18 +177,20 @@ th.vacationOverview-cal-head.today::after {
   --absence-bar-color-noon: #EF4444;
 }
 
-.datepicker-public-holiday-marker {
-  position: absolute;
-  transform: rotate(45deg);
-  background-color: #71717A;
-  width: 1rem;
-  height: 1rem;
-  top: -0.625rem;
-  right: -0.625rem;
+.public-holiday-morning {
+  --background-color-left: #b5d0df;
+}
+.public-holiday-noon {
+  --background-color-right: #b5d0df;
+}
+.public-holiday-full {
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
 }
 
 .weekend {
-  --background-color: #b5d0df;
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
 }
 
 @media print {
@@ -212,7 +215,19 @@ th.vacationOverview-cal-head.today::after {
     font-weight: 300 !important;
   }
 
+  .public-holiday-morning {
+    --background-color-left: #ffffff;
+  }
+  .public-holiday-noon {
+    --background-color-right: #ffffff;
+  }
+  .public-holiday-full {
+    --background-color-left: #ffffff;
+    --background-color-right: #ffffff;
+  }
+
   .weekend {
-    --background-color: #ffffff;
+    --background-color-left: #ffffff;
+    --background-color-right: #ffffff;
   }
 }

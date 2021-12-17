@@ -58,6 +58,9 @@ $(function () {
     dayToday: "datepicker-day-today",
     dayWeekend: "datepicker-day-weekend",
     dayPast: "datepicker-day-past",
+    dayPublicHolidayFull: "datepicker-day-public-holiday-full",
+    dayPublicHolidayMorning: "datepicker-day-public-holiday-morning",
+    dayPublicHolidayNoon: "datepicker-day-public-holiday-noon",
     dayPersonalHolidayFull: "datepicker-day-personal-holiday-full",
     dayPersonalHolidayFullApproved: "datepicker-day-personal-holiday-full-approved",
     dayPersonalHolidayMorning: "datepicker-day-personal-holiday-morning",
@@ -531,9 +534,6 @@ $(function () {
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
       day: '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>',
-
-      publicHoliday:
-        '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span class="datepicker-public-holiday-marker"></span>{{day}}</span>',
     };
 
     // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -644,6 +644,9 @@ $(function () {
           assert.isToday(date) ? CSS.dayToday : "",
           assert.isWeekend(date) ? CSS.dayWeekend : "",
           assert.isPast(date) ? CSS.dayPast : "",
+          assert.isPublicHolidayFull(date) ? CSS.dayPublicHolidayFull : "",
+          assert.isPublicHolidayMorning(date) ? CSS.dayPublicHolidayMorning : "",
+          assert.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
           assert.isPersonalHolidayFull(date) ? CSS.dayPersonalHolidayFull : "",
           assert.isPersonalHolidayFullTemporaryApproved(date) ? CSS.dayPersonalHolidayFull : "",
           assert.isPersonalHolidayFullApproved(date) ? CSS.dayPersonalHolidayFullApproved : "",
@@ -692,12 +695,7 @@ $(function () {
         return assert.isHalfDayAbsence(date) || !assert.isPublicHolidayFull(date);
       }
 
-      const template =
-        assert.isPublicHolidayFull(date) || assert.isPublicHolidayMorning(date) || assert.isPublicHolidayNoon(date)
-          ? TMPL.publicHoliday
-          : TMPL.day;
-
-      return render(template, {
+      return render(TMPL.day, {
         date: format(date, "yyyy-MM-dd"),
         day: format(date, "dd"),
         css: classes(),

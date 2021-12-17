@@ -147,17 +147,14 @@
                             <th scope="col" class="sortable-field tw-cursor-pointer tw-p-2">&nbsp;</th>
                             <c:forEach items="${month.days}" var="day">
                                 <th scope="col"
-                                    class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head
-                                            ${day.weekend ? 'weekend' : ''}
-                                            ${day.today ? ' today' : ''}
-                                            ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
-                                            ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
+                                    class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head ${day.today ? ' today' : ''}
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
-                                    <div class="tw-p-2 cal-day ${day.weekend ? 'weekend' : 'tw-bg-transparent'}">
-                                        <c:if test="${day.type.publicHolidayFull}">
-                                            <span class="datepicker-public-holiday-marker"></span>
-                                        </c:if>
+                                    <div class="tw-p-2 cal-day ${day.weekend ? 'weekend' : 'tw-bg-transparent'}
+                                            ${(day.type.publicHolidayFull) ? ' public-holiday-full' : ''}
+                                            ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
+                                            ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
+                                    >
                                         <c:out value="${day.dayOfMonth}"/>
                                     </div>
                                 </th>
@@ -204,12 +201,10 @@
                                         ${(absence.type.sickNoteFull) ? ' sick-note-full' : ''}
                                         ${(absence.type.sickNoteMorning) ? ' sick-note-morning' : ''}
                                         ${(absence.type.sickNoteNoon) ? ' sick-note-noon' : ''}
+                                        ${(absence.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                         ${(absence.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                         ${(absence.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}
                                     ">
-                                        <c:if test="${absence.type.publicHolidayFull}">
-                                            <span class="datepicker-public-holiday-marker"></span>
-                                        </c:if>
                                         <span class="tw-hidden print:tw-inline print:tw-font-mono">
                                             <c:if test="${absence.type.absenceMorning}">
                                                 <spring:message code="absences.overview.absence.morning.abbr"/>

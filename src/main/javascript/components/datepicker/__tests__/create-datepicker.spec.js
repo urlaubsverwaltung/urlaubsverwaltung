@@ -335,12 +335,12 @@ describe("create-datepicker", () => {
 
         const monthElement = document.querySelector(".duet-date__select--month");
 
-        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
 
         monthElement.value = "0";
         fireEvent.change(monthElement);
 
-        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
       });
 
       test("after year has been changed", () => {
@@ -354,12 +354,12 @@ describe("create-datepicker", () => {
 
         const yearElement = document.querySelector(".duet-date__select--year");
 
-        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
 
         yearElement.value = "2019";
         fireEvent.change(yearElement);
 
-        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
       });
 
       test("after next button has been clicked", () => {
@@ -373,10 +373,10 @@ describe("create-datepicker", () => {
 
         const previousMonthButton = document.querySelector(".duet-date__prev");
 
-        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
 
         previousMonthButton.click();
-        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
       });
 
       test("after prev button has been clicked", () => {
@@ -390,10 +390,10 @@ describe("create-datepicker", () => {
 
         const nextMonthButton = document.querySelector(".duet-date__next");
 
-        expect(document.querySelector(".datepicker-public-holiday-marker")).not.toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).not.toBeNull();
 
         nextMonthButton.click();
-        expect(document.querySelector(".datepicker-public-holiday-marker")).toBeNull();
+        expect(document.querySelector(".datepicker-day-public-holiday-full")).toBeNull();
       });
     });
 
@@ -471,7 +471,7 @@ describe("create-datepicker", () => {
         // wait for response and css class calculation
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        expect([...document.querySelectorAll("span.datepicker-public-holiday-marker")]).toHaveLength(0);
+        expect([...document.querySelectorAll("span.datepicker-day-public-holiday-full")]).toHaveLength(0);
       });
 
       describe("public holiday", () => {
@@ -507,7 +507,7 @@ describe("create-datepicker", () => {
           await renderCurrentDatepickerMonth();
 
           const element = getDatepickerDayElement("24. Dezember");
-          expect(element.querySelector("span.datepicker-public-holiday-marker")).toBeDefined();
+          expect(element.querySelector("span.datepicker-day-public-holiday-full")).toBeDefined();
         });
 
         test("morning", async () => {
@@ -521,7 +521,7 @@ describe("create-datepicker", () => {
           await renderCurrentDatepickerMonth();
 
           const element = getDatepickerDayElement("24. Dezember");
-          expect(element.querySelector("span.datepicker-public-holiday-marker")).toBeDefined();
+          expect(element.querySelector("span.datepicker-day-public-holiday-full")).toBeDefined();
         });
 
         test("noon", async () => {
@@ -535,7 +535,7 @@ describe("create-datepicker", () => {
           await renderCurrentDatepickerMonth();
 
           const element = getDatepickerDayElement("24. Dezember");
-          expect(element.querySelector("span.datepicker-public-holiday-marker")).toBeDefined();
+          expect(element.querySelector("span.datepicker-day-public-holiday-full")).toBeDefined();
         });
       });
 
