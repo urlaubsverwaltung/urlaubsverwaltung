@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,8 +10,27 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DateRangeTest {
+
+    static Stream<Arguments> canInstantiateDateRange() {
+        return Stream.of(
+            Arguments.of("2020-10-10", "2020-10-15"),
+            Arguments.of("2020-10-10", "2020-10-10")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("canInstantiateDateRange")
+    void canInstantiateDateRange(LocalDate startDate, LocalDate endDate) {
+       new DateRange(startDate, endDate);
+    }
+
+    @Test
+    void canNotInstantiateDateRange() {
+        assertThrows(IllegalArgumentException.class, () -> new DateRange(LocalDate.parse("2020-10-16"), LocalDate.parse("2020-10-15")));
+    }
 
     static Stream<Arguments> overlappingDateRanges() {
         return Stream.of(
