@@ -24,6 +24,12 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
+.vacationOverview-table th:not(.weekend) {
+}
+.vacationOverview-table th.weekend {
+  color: rgba(68,68,68,0.5) !important;
+}
+
 .vacationOverview-table th,
 .vacationOverview-table td {
   border: 1px solid theme("borderColor.calendar.DEFAULT");

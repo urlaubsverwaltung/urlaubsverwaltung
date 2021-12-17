@@ -215,7 +215,7 @@ public class AbsenceOverviewViewController {
                     .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members))
                     .build();
 
-                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date), isWorkday(date, personWorkingTimeList)));
+                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimeList)));
             }
         }
 
