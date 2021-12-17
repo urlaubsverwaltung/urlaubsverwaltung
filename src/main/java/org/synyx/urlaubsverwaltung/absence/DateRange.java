@@ -60,7 +60,7 @@ public final class DateRange implements Iterable<LocalDate> {
      * A date range overlaps another if it shares some common part of the
      * dates. This method returns the amount of the overlap,
      * only if the date ranges actually do overlap.
-     * If the date ranges do not overlap, a empty {@link DateRange} is returned.
+     * If the date ranges do not overlap, an empty {@link DateRange} is returned.
      * <p>
      * When two date ranges are compared the result is one of three states:
      * (a) they abut
