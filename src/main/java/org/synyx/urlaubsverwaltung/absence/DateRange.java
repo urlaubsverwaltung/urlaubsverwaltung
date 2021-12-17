@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -70,17 +71,17 @@ public final class DateRange implements Iterable<LocalDate> {
      * date range at the start of a larger date range abuts and does not overlap.
      *
      * @param dateRange overlapping date range
-     * @return the overlapping date rage
+     * @return the overlapping date rage if given, else empty optional
      */
-    public DateRange overlap(final DateRange dateRange) {
+    public Optional<DateRange> overlap(final DateRange dateRange) {
         if (!isOverlapping(dateRange)) {
-            return new DateRange(null, null);
+            return Optional.empty();
         }
 
         final LocalDate overlapStartDate = startDate.isBefore(dateRange.startDate) ? dateRange.startDate : startDate;
         final LocalDate overlapEndDate = endDate.isBefore(dateRange.endDate) ? endDate : dateRange.endDate;
 
-        return new DateRange(overlapStartDate, overlapEndDate);
+        return Optional.of(new DateRange(overlapStartDate, overlapEndDate));
     }
 
     /**
@@ -101,20 +102,21 @@ public final class DateRange implements Iterable<LocalDate> {
      * date range at the start of a larger date range abuts and does not overlap.
      *
      * @param dateRange date range containing the gap
-     * @return the date rage with the gap
+     * @return the date rage with the gap if given, else empty optional
      */
-    public DateRange gap(final DateRange dateRange) {
+    public Optional<DateRange> gap(final DateRange dateRange) {
         if (isOverlapping(dateRange)) {
-            return new DateRange(null, null);
+            return Optional.empty();
         }
 
+        Optional<DateRange> maybeDateRange = Optional.empty();
         if (startDate.isAfter(dateRange.endDate) && dateRange.endDate.until(startDate, DAYS) > 1) {
-            return new DateRange(dateRange.endDate.plusDays(1), startDate.minusDays(1));
+            maybeDateRange = Optional.of(new DateRange(dateRange.endDate.plusDays(1), startDate.minusDays(1)));
         } else if (dateRange.startDate.isAfter(endDate) && endDate.until(dateRange.startDate, DAYS) > 1) {
-            return new DateRange(endDate.plusDays(1), dateRange.startDate.minusDays(1));
+            maybeDateRange = Optional.of(new DateRange(endDate.plusDays(1), dateRange.startDate.minusDays(1)));
         }
 
-        return new DateRange(null, null);
+        return maybeDateRange;
     }
 
     /**

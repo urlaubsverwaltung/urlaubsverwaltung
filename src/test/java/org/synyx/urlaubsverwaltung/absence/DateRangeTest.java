@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,17 +93,13 @@ class DateRangeTest {
         final DateRange rangeOne = new DateRange(startDateOne, endDateOne);
         final DateRange rangeTwo = new DateRange(startDateTwo, endDateTwo);
 
-        final DateRange overlap = rangeOne.overlap(rangeTwo);
-        assertThat(overlap.getStartDate()).isEqualTo(overlapStartDate);
-        assertThat(overlap.getEndDate()).isEqualTo(overlapEndDate);
+        final Optional<DateRange> maybeOverlap = rangeOne.overlap(rangeTwo);
+        assertThat(maybeOverlap.get().getStartDate()).isEqualTo(overlapStartDate);
+        assertThat(maybeOverlap.get().getEndDate()).isEqualTo(overlapEndDate);
     }
 
     static Stream<Arguments> gapDateRanges() {
         return Stream.of(
-            Arguments.of("2020-10-10", "2020-10-15", "2020-10-08", "2020-10-09", null, null),
-            Arguments.of("2020-10-10", "2020-10-15", "2020-10-16", "2020-10-17", null, null),
-            Arguments.of("2020-10-08", "2020-10-09", "2020-10-10", "2020-10-15", null, null),
-            Arguments.of("2020-10-16", "2020-10-17", "2020-10-10", "2020-10-15", null, null),
             Arguments.of("2020-10-10", "2020-10-15", "2020-10-07", "2020-10-08", "2020-10-09", "2020-10-09"),
             Arguments.of("2020-10-07", "2020-10-08", "2020-10-10", "2020-10-15", "2020-10-09", "2020-10-09"),
             Arguments.of("2020-10-10", "2020-10-15", "2020-10-07", "2020-10-07", "2020-10-08", "2020-10-09"),
@@ -116,9 +113,29 @@ class DateRangeTest {
         final DateRange rangeOne = new DateRange(startDateOne, endDateOne);
         final DateRange rangeTwo = new DateRange(startDateTwo, endDateTwo);
 
-        final DateRange gap = rangeOne.gap(rangeTwo);
-        assertThat(gap.getStartDate()).isEqualTo(gapStartDate);
-        assertThat(gap.getEndDate()).isEqualTo(gapEndDate);
+        final Optional<DateRange> maybeGap = rangeOne.gap(rangeTwo);
+        assertThat(maybeGap)
+            .hasValueSatisfying(localDates -> assertThat(localDates.getStartDate()).isEqualTo(gapStartDate))
+            .hasValueSatisfying(localDates -> assertThat(localDates.getEndDate()).isEqualTo(gapEndDate));
+    }
+
+    static Stream<Arguments> gapDateRangesEmpty() {
+        return Stream.of(
+            Arguments.of("2020-10-10", "2020-10-15", "2020-10-08", "2020-10-09"),
+            Arguments.of("2020-10-10", "2020-10-15", "2020-10-16", "2020-10-17"),
+            Arguments.of("2020-10-08", "2020-10-09", "2020-10-10", "2020-10-15"),
+            Arguments.of("2020-10-16", "2020-10-17", "2020-10-10", "2020-10-15")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("gapDateRangesEmpty")
+    void gapEmpty(LocalDate startDateOne, LocalDate endDateOne, LocalDate startDateTwo, LocalDate endDateTwo) {
+        final DateRange rangeOne = new DateRange(startDateOne, endDateOne);
+        final DateRange rangeTwo = new DateRange(startDateTwo, endDateTwo);
+
+        final Optional<DateRange> maybeGap = rangeOne.gap(rangeTwo);
+        assertThat(maybeGap).isEmpty();
     }
 
     @Test

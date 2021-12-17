@@ -13,10 +13,10 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -110,7 +110,8 @@ public class OverlapService {
 
         return Stream.concat(applicationDateRanges, sickNoteDateRanges)
             .map(dateRange -> dateRange.overlap(new DateRange(startDate, endDate)))
-            .filter(not(DateRange::isEmpty))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .collect(toList());
     }
 
@@ -235,8 +236,8 @@ public class OverlapService {
             // e.g. if period 1: 16.-18. and period 2: 19.-20 --> they abut
             // e.g. if period 1: 16.-18. and period 2: 20.-22 --> they have a gap
             if (intervalsHaveGap(listOfOverlaps.get(i), listOfOverlaps.get(i + 1))) {
-                final DateRange gap = listOfOverlaps.get(i).gap(listOfOverlaps.get(i + 1));
-                listOfGaps.add(gap);
+                final Optional<DateRange> maybeGap = listOfOverlaps.get(i).gap(listOfOverlaps.get(i + 1));
+                maybeGap.ifPresent(listOfGaps::add);
             }
         }
 
