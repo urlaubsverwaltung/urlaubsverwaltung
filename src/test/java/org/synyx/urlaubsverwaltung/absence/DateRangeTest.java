@@ -30,7 +30,9 @@ class DateRangeTest {
 
     @Test
     void canNotInstantiateDateRange() {
-        assertThrows(IllegalArgumentException.class, () -> new DateRange(LocalDate.parse("2020-10-16"), LocalDate.parse("2020-10-15")));
+        final LocalDate startDate = LocalDate.parse("2020-10-16");
+        final LocalDate endDate = LocalDate.parse("2020-10-15");
+        assertThrows(IllegalArgumentException.class, () -> new DateRange(startDate, endDate));
     }
 
     static Stream<Arguments> overlappingDateRanges() {
