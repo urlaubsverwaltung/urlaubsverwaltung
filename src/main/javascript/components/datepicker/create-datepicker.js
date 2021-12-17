@@ -159,13 +159,16 @@ function waitForDatePickerHydration(rootElement) {
   });
 }
 
+function fitsCriteriaMatcher(date) {
+  const dateString = date ? formatISO(date, { representation: "date" }) : "";
+  return (list, filterAttributes) => Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
+}
+
 function getCssClassesForDate(date, publicHolidays, absences) {
   if (date && isWeekend(date)) {
     return ["datepicker-day", "datepicker-day-weekend"];
   } else {
-    const dateString = date ? formatISO(date, { representation: "date" }) : "";
-    const fitsCriteria = (list, filterAttributes) =>
-      Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
+    const fitsCriteria = fitsCriteriaMatcher(date);
 
     const isPast = () => false;
     const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });

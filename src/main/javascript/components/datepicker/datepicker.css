@@ -31,8 +31,30 @@ duet-date-picker.error {
   padding: 0;
   /* override duet stuff */
   opacity: 1;
+  --background-color-left: #e5e5e5;
+  --background-color-right: #e5e5e5;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
-  color: var(--font-color);
+  color: #0A0A0A;
+}
+
+.duet-date__day.datepicker-day-public-holiday-morning,
+.duet-date__day.datepicker-day-public-holiday-morning:not(.is-month) {
+  --background-color-left: #b5d0df;
+}
+.duet-date__day.datepicker-day-public-holiday-noon,
+.duet-date__day.datepicker-day-public-holiday-noon:not(.is-month) {
+  --background-color-right: #b5d0df;
+}
+.duet-date__day.datepicker-day-public-holiday-full,
+.duet-date__day.datepicker-day-public-holiday-full:not(.is-month) {
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
+}
+
+.duet-date__day.datepicker-day-weekend,
+.duet-date__day.datepicker-day-weekend:not(.is-month) {
+  --background-color-left: #b5d0df;
+  --background-color-right: #b5d0df;
 }
 
 .duet-date__day.datepicker-day-today {
