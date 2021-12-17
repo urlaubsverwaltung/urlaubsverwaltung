@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -109,7 +110,7 @@ public class OverlapService {
 
         return Stream.concat(applicationDateRanges, sickNoteDateRanges)
             .map(dateRange -> dateRange.overlap(new DateRange(startDate, endDate)))
-            .filter(dateRange -> !dateRange.isEmpty())
+            .filter(not(DateRange::isEmpty))
             .collect(toList());
     }
 
