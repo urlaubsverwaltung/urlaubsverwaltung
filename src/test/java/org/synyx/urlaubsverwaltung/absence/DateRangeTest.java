@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DateRangeTest {
@@ -24,7 +25,7 @@ class DateRangeTest {
     @ParameterizedTest
     @MethodSource("canInstantiateDateRange")
     void canInstantiateDateRange(LocalDate startDate, LocalDate endDate) {
-       new DateRange(startDate, endDate);
+        assertThatCode(() -> new DateRange(startDate, endDate)).doesNotThrowAnyException();
     }
 
     @Test
