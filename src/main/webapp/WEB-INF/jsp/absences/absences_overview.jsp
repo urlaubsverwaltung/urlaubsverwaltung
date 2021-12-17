@@ -154,7 +154,7 @@
                                     class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head ${day.today ? ' today' : ''}"
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
-                                    <div class="tw-p-2 cal-day ${day.weekend ? 'weekend' : 'tw-bg-transparent'}
+                                    <div class="tw-p-2 cal-day
                                             ${(day.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                             ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                             ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
@@ -192,7 +192,6 @@
                             <c:forEach var="absence" items="${person.days}">
                                 <td>
                                     <div class="cal-day
-                                        ${(absence.weekend) ? ' weekend' : ''}
                                         ${(absence.type.absenceFull) ? ' absence-full' : ''}
                                         ${(absence.type.absenceMorning) ? ' absence-morning' : ''}
                                         ${(absence.type.absenceNoon) ? ' absence-noon' : ''}
@@ -271,10 +270,10 @@
                 </tr>
                 <tr>
                     <td class="vacationOverview-legend-colorbox">
-                        <div class="cal-day weekend"></div>
+                        <div class="cal-day public-holiday-full"></div>
                     </td>
                     <td class="vacationOverview-legend-text">
-                        <spring:message code="absences.overview.weekend"/>
+                        <spring:message code="absences.overview.public-holiday"/>
                     </td>
                 </tr>
                 <c:choose>
