@@ -131,53 +131,53 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .absence-morning {
-  --absence-bar-color-morning: theme("backgroundColor.personal-holiday-approved");
+  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 .absence-noon {
-  --absence-bar-color-noon: theme("backgroundColor.personal-holiday-approved");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 .absence-full {
-  --absence-bar-color: theme("backgroundColor.personal-holiday-approved");
+  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 
 .vacation-morning-waiting {
-  --absence-bar-color-morning: theme("backgroundColor.personal-holiday");
+  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday");
 }
 .vacation-noon-waiting {
-  --absence-bar-color-noon: theme("backgroundColor.personal-holiday");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday");
 }
 .vacation-full-waiting {
-  --absence-bar-color: theme("backgroundColor.personal-holiday");
+  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday");
 }
 
 .vacation-morning-approved {
-  --absence-bar-color-morning: theme("backgroundColor.personal-holiday-approved");
+  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 .vacation-noon-approved {
-  --absence-bar-color-noon: theme("backgroundColor.personal-holiday-approved");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 .vacation-full-approved {
-  --absence-bar-color: theme("backgroundColor.personal-holiday-approved");
+  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 
 .sick-note-morning {
-  --absence-bar-color-morning: theme("backgroundColor.sick-note");
+  --absence-bar-color-morning: theme("backgroundColor.calendar.sick-note");
 }
 .sick-note-noon {
-  --absence-bar-color-noon: theme("backgroundColor.sick-note");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.sick-note");
 }
 .sick-note-full {
-  --absence-bar-color: theme("backgroundColor.sick-note");
+  --absence-bar-color: theme("backgroundColor.calendar.sick-note");
 }
 
 .public-holiday-morning {
-  --absence-bar-color-morning: theme("backgroundColor.public-holiday");
+  --absence-bar-color-morning: theme("backgroundColor.calendar.public-holiday");
 }
 .public-holiday-noon {
-  --absence-bar-color-noon: theme("backgroundColor.public-holiday");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.public-holiday");
 }
 .public-holiday-full {
-  --absence-bar-color: theme("backgroundColor.public-holiday");
+  --absence-bar-color: theme("backgroundColor.calendar.public-holiday");
 }
 
 .weekend {

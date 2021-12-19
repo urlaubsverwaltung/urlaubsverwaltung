@@ -49,19 +49,20 @@ module.exports = {
           DEFAULT: withOpacity("--uv-cal-default-color"),
           past: withOpacity("--uv-cal-past-color"),
           weekend: withOpacity("--uv-cal-weekend-color"),
+          "public-holiday": withOpacity("--uv-cal-public-holiday-color"),
         },
-        "public-holiday": withOpacity("--uv-cal-public-holiday-color"),
       },
       backgroundColor: {
         calendar: {
           DEFAULT: withOpacity("--uv-cal-default-bg"),
           past: withOpacity("--uv-cal-past-bg"),
           weekend: withOpacity("--uv-cal-weekend-bg"),
+          // ----
+          "sick-note": withOpacity("--uv-cal-sick-note-bg"),
+          "public-holiday": withOpacity("--uv-cal-public-holiday-bg"),
+          "personal-holiday": withOpacity("--uv-cal-personal-holiday-bg"),
+          "personal-holiday-approved": withOpacity("--uv-cal-personal-holiday-approved-bg"),
         },
-        "sick-note": withOpacity("--uv-cal-sick-note-bg"),
-        "public-holiday": withOpacity("--uv-cal-public-holiday-bg"),
-        "personal-holiday": withOpacity("--uv-cal-personal-holiday-bg"),
-        "personal-holiday-approved": withOpacity("--uv-cal-personal-holiday-approved-bg"),
       },
     },
     screens: {
