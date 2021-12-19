@@ -185,14 +185,19 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .public-holiday-morning {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
 }
 .public-holiday-noon {
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
 }
 .public-holiday-full {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --font-color: theme("textColor.calendar.public-holiday");
+}
+.vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
+  --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
   --font-color: theme("textColor.calendar.public-holiday");
 }
 

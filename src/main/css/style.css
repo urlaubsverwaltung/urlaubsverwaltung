@@ -37,7 +37,7 @@
   :root {
     --uv-cal-border-color: 255, 255, 255;
     --uv-cal-today-border-color: 113, 113, 122; /* zinc.500 */
-    --uv-cal-default-bg: 229, 229, 229;
+    --uv-cal-default-bg: 250, 250, 250; /* zinc.50 */
     --uv-cal-default-color: 10, 10, 10;
     --uv-cal-weekend-bg: 181, 208, 223;
     --uv-cal-weekend-color: 10, 10, 10;
