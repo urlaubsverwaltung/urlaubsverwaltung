@@ -4,12 +4,14 @@ public class AbsenceOverviewMonthDayDto {
 
     private final AbsenceOverviewDayType type;
     private final String dayOfMonth;
+    private final String dayOfWeek;
     private final boolean weekend;
     private final boolean isToday;
 
-    AbsenceOverviewMonthDayDto(AbsenceOverviewDayType type, String dayOfMonth, boolean weekend, boolean isToday) {
+    AbsenceOverviewMonthDayDto(AbsenceOverviewDayType type, String dayOfMonth, String dayOfWeek, boolean weekend, boolean isToday) {
         this.type = type;
         this.dayOfMonth = dayOfMonth;
+        this.dayOfWeek = dayOfWeek;
         this.weekend = weekend;
         this.isToday = isToday;
     }
@@ -20,6 +22,10 @@ public class AbsenceOverviewMonthDayDto {
 
     public String getDayOfMonth() {
         return dayOfMonth;
+    }
+
+    public String getDayOfWeek() {
+        return dayOfWeek;
     }
 
     public boolean isWeekend() {

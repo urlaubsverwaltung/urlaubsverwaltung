@@ -130,10 +130,10 @@
     <div class="tw-mx-auto tw-px-4 tw-min-w-max xl:tw-max-w-max">
         <hr class="print:tw-hidden"/>
         <c:forEach items="${absenceOverview.months}" var="month">
-            <div class="tw-mb-10 print:tw-break-inside-avoid">
+            <div class="tw-mb-14 print:tw-break-inside-avoid">
                 <h2
                     id="absence-table-${month.nameOfMonth}"
-                    class="tw-text-2xl tw-m-0 tw-mb-5 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
+                    class="tw-text-2xl tw-m-0 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
                 >
                     <c:out value="${month.nameOfMonth}"/>
                     <span class="hidden print:tw-inline"> <c:out value="${selectedYear}"/></span>
@@ -154,12 +154,17 @@
                                     class="non-sortable tw-cursor-default vacationOverview-cal-head ${day.today ? ' today' : ''}  ${day.weekend ? ' weekend' : ''}"
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
-                                    <div class="tw-p-2
+                                    <div class="tw-p-2 tw-leading-none tw-text-center
                                             ${(day.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                             ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                             ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
                                     >
-                                        <c:out value="${day.dayOfMonth}"/>
+                                        <span class="tw-font-bold tw-block">
+                                            <c:out value="${day.dayOfMonth}"/>
+                                        </span>
+                                        <span class="tw-text-sm tw-block tw-text-zinc-500">
+                                            <c:out value="${day.dayOfWeek}"/>
+                                        </span>
                                     </div>
                                 </th>
                             </c:forEach>
