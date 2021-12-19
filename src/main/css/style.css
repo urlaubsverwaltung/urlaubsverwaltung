@@ -46,6 +46,7 @@
     --uv-cal-public-holiday-color: 10, 10, 10;
     --uv-cal-personal-holiday-bg: 234, 179, 8;
     --uv-cal-personal-holiday-approved-bg: 250, 204, 21;
+    --uv-cal-no-workday-bg: 148, 163, 184; /* slate.400 */
   }
 
   .tw-dark {
@@ -60,5 +61,6 @@
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
     --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
+    --uv-cal-no-workday-bg: 14, 165, 233;
   }
 }

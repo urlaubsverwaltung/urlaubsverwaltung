@@ -151,7 +151,7 @@
                             <c:forEach items="${month.days}" var="day">
                                 <th
                                     scope="col"
-                                    class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head ${day.today ? ' today' : ''}  ${day.weekend ? 'weekend' : ''}"
+                                    class="non-sortable tw-cursor-default vacationOverview-cal-head ${day.today ? ' today' : ''}  ${day.weekend ? ' weekend' : ''}"
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
                                     <div class="tw-p-2

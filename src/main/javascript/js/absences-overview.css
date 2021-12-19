@@ -24,20 +24,21 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-.vacationOverview-table th:not(.weekend) {
-}
-.vacationOverview-table th.weekend {
-  color: rgba(68,68,68,0.5) !important;
-}
-
 .vacationOverview-table th,
 .vacationOverview-table td {
+  @apply tw-text-zinc-600 !important;
+  @apply dark:tw-text-zinc-200 !important;
   border: 1px solid theme("borderColor.calendar.DEFAULT");
   font-weight: normal;
 }
 
 .vacationOverview-table thead th {
   @apply dark:tw-font-medium;
+}
+
+.vacationOverview-table th.weekend {
+  @apply tw-text-zinc-400 !important;
+  @apply dark:tw-text-zinc-50 !important;
 }
 
 .vacationOverview-table td {
@@ -140,12 +141,9 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .no-workday {
-  --absence-bar-color: #b5d0df;
+  --absence-bar-color: theme("backgroundColor.calendar.no-workday");
 }
 
-.absence-full {
-  --absence-bar-color: #facc15;
-}
 .absence-morning {
   --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }
