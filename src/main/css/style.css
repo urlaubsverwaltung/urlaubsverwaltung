@@ -38,27 +38,13 @@
     --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
     --uv-cal-default-bg: 229, 229, 229;
     --uv-cal-default-color: 111, 111, 111;
-    --uv-cal-default-color-hover: 111, 111, 111;
     --uv-cal-weekend-bg: 181, 208, 223;
-    --uv-cal-weekend-bg-hover: 181, 208, 223;
     --uv-cal-weekend-color: 255, 255, 255;
-    --uv-cal-weekend-color-hover: 255, 255, 255;
     --uv-cal-sick-note-bg: 255, 197, 191;
-    --uv-cal-sick-note-bg-hover: 255, 197, 191;
-    --uv-cal-sick-note-color: 223, 71, 55;
-    --uv-cal-sick-note-color-hover: 223, 71, 55;
     --uv-cal-public-holiday-bg: 181, 208, 223;
-    --uv-cal-public-holiday-bg-hover: 181, 208, 223;
     --uv-cal-public-holiday-color: 111, 111, 111;
-    --uv-cal-public-holiday-color-hover: 111, 111, 111;
     --uv-cal-personal-holiday-bg: 255, 225, 101;
-    --uv-cal-personal-holiday-bg-hover: 255, 225, 101;
-    --uv-cal-personal-holiday-color: 95, 95, 95;
-    --uv-cal-personal-holiday-color-hover: 95, 95, 95;
     --uv-cal-personal-holiday-approved-bg: 255, 237, 160;
-    --uv-cal-personal-holiday-approved-bg-hover: 255, 237, 160;
-    --uv-cal-personal-holiday-approved-color: 255, 136, 31;
-    --uv-cal-personal-holiday-approved-color-hover: 255, 136, 31;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -67,27 +53,13 @@
       --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
       --uv-cal-default-bg: 38, 38, 38; /* neutral.800 */
       --uv-cal-default-color: 212, 212, 212; /* neutral.300 */
-      --uv-cal-default-color-hover: 212, 212, 212; /* neutral.300 */
       --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
-      --uv-cal-weekend-bg-hover: 14, 165, 233; /* sky.500 */
       --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-weekend-color-hover: 23, 23, 23; /* neutral.900 */
       --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
-      --uv-cal-sick-note-bg-hover: 153, 27, 27; /* red.800 */
-      --uv-cal-sick-note-color: 254, 226, 226; /* red.100 */
-      --uv-cal-sick-note-color-hover: 254, 226, 226; /* red.100 */
       --uv-cal-public-holiday-bg: 14, 165, 233; /* sky.500 */
-      --uv-cal-public-holiday-bg-hover: 14, 165, 233; /* sky.500 */
       --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-public-holiday-color-hover: 23, 23, 23; /* neutral.900 */
       --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
-      --uv-cal-personal-holiday-bg-hover: 250, 204, 21; /* yellow.400 */
-      --uv-cal-personal-holiday-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-personal-holiday-color-hover: 23, 23, 23; /* neutral.900 */
       --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
-      --uv-cal-personal-holiday-approved-bg-hover: 250, 204, 21; /* yellow.400 */
-      --uv-cal-personal-holiday-approved-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-personal-holiday-approved-color-hover: 23, 23, 23; /* neutral.900 */
     }
   }
 }

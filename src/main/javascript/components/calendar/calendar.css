@@ -36,11 +36,6 @@
   margin-left: 1.125rem;
 }
 
-.datepicker-prev:hover,
-.datepicker-next:hover {
-  color: theme("textColor.calendar.hover");
-}
-
 /* MONTHS */
 
 .datepicker-months-container {
@@ -224,7 +219,6 @@ td.datepicker-day {
 .datepicker-day-selected[class*="-morning"],
 .datepicker-day-selected[class*="-noon"] {
   box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.6) !important;
-  --font-color: theme("textColor.personal-holiday");
 }
 
 .datepicker-day-sick-note-morning {
@@ -250,17 +244,6 @@ td.datepicker-day {
   --background-color-left: theme("backgroundColor.public-holiday");
   --background-color-right: theme("backgroundColor.public-holiday");
   --font-color: theme("textColor.public-holiday");
-}
-
-.datepicker-day-public-holiday-morning:hover,
-.datepicker-day-public-holiday-full:hover {
-  --background-color-left: theme("backgroundColor.public-holiday-hover");
-  --font-color: theme("textColor.public-holiday-hover");
-}
-.datepicker-day-public-holiday-noon:hover,
-.datepicker-day-public-holiday-full:hover {
-  --background-color-right: theme("backgroundColor.public-holiday-hover");
-  --font-color: theme("textColor.public-holiday-hover");
 }
 
 .datepicker-day-weekend {
