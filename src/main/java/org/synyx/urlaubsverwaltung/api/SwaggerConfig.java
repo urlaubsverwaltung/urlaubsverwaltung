@@ -12,6 +12,7 @@ import org.springdoc.core.SwaggerUiConfigProperties;
 import org.springdoc.core.SwaggerUiOAuthProperties;
 import org.springdoc.webmvc.ui.SwaggerIndexPageTransformer;
 import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
+import org.springdoc.webmvc.ui.SwaggerWelcomeCommon;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,8 +48,8 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public SwaggerIndexTransformer indexPageTransformer(SpringDocConfigProperties springDocConfigProperties, SwaggerUiConfigProperties swaggerUiConfig, SwaggerUiOAuthProperties swaggerUiOAuthProperties, SwaggerUiConfigParameters swaggerUiConfigParameters, ObjectMapper objectMapper) {
-        return new SwaggerIndexPageTransformer(swaggerUiConfig, swaggerUiOAuthProperties, swaggerUiConfigParameters, objectMapper) {
+    public SwaggerIndexTransformer indexPageTransformer(SpringDocConfigProperties springDocConfigProperties, SwaggerUiConfigProperties swaggerUiConfig, SwaggerUiOAuthProperties swaggerUiOAuthProperties, SwaggerUiConfigParameters swaggerUiConfigParameters, ObjectMapper objectMapper, SwaggerWelcomeCommon swaggerWelcomeCommon) {
+        return new SwaggerIndexPageTransformer(swaggerUiConfig, swaggerUiOAuthProperties, swaggerUiConfigParameters, objectMapper, swaggerWelcomeCommon) {
             @Override
             protected String overwriteSwaggerDefaultUrl(String html) {
                 return html.replace(Constants.SWAGGER_UI_DEFAULT_URL, springDocConfigProperties.getApiDocs().getPath());
