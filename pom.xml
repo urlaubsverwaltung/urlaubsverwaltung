@@ -17,7 +17,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.5.7</version>
+    <version>2.5.8</version>
   </parent>
 
   <properties>
@@ -25,8 +25,6 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>11</java.version>
     <testcontainers.version>1.16.2</testcontainers.version>
-    <!-- Remove on next Spring Boot Upgrade 2.5.8 -->
-    <logback.version>1.2.8</logback.version>
   </properties>
 
   <scm>
