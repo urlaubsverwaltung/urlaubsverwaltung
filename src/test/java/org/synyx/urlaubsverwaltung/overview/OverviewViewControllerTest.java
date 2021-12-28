@@ -35,7 +35,6 @@ import java.util.Optional;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -233,36 +232,38 @@ class OverviewViewControllerTest {
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
 
+        final LocalDate localDate = LocalDate.parse("2021-06-10");
+
         final Application revokedApplication = new Application();
         revokedApplication.setStatus(REVOKED);
         revokedApplication.setVacationType(vacationType);
         revokedApplication.setPerson(person);
-        revokedApplication.setStartDate(LocalDate.now(UTC).plusDays(1L));
-        revokedApplication.setEndDate(LocalDate.now(UTC).plusDays(2L));
+        revokedApplication.setStartDate(localDate.plusDays(1L));
+        revokedApplication.setEndDate(localDate.plusDays(2L));
 
         final Application waitingApplication = new Application();
         waitingApplication.setVacationType(vacationType);
         waitingApplication.setPerson(person);
         waitingApplication.setStatus(WAITING);
-        waitingApplication.setStartDate(LocalDate.now(UTC).plusDays(3L));
-        waitingApplication.setEndDate(LocalDate.now(UTC).plusDays(4L));
+        waitingApplication.setStartDate(localDate.plusDays(3L));
+        waitingApplication.setEndDate(localDate.plusDays(4L));
 
         final Application allowedApplication = new Application();
         allowedApplication.setVacationType(vacationType);
         allowedApplication.setPerson(person);
         allowedApplication.setStatus(ALLOWED);
-        allowedApplication.setStartDate(LocalDate.now(UTC).plusDays(5L));
-        allowedApplication.setEndDate(LocalDate.now(UTC).plusDays(10L));
+        allowedApplication.setStartDate(localDate.plusDays(5L));
+        allowedApplication.setEndDate(localDate.plusDays(10L));
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(asList(waitingApplication, revokedApplication, allowedApplication));
 
         final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.now(UTC).minusDays(1L));
-        sickNote.setEndDate(LocalDate.now(UTC).plusDays(1L));
+        sickNote.setStartDate(localDate.minusDays(1L));
+        sickNote.setEndDate(localDate.plusDays(1L));
         final SickNote sickNote2 = new SickNote();
-        sickNote2.setStartDate(LocalDate.now(UTC).minusDays(10L));
-        sickNote2.setEndDate(LocalDate.now(UTC).plusDays(10L));
+        sickNote2.setStartDate(localDate.minusDays(10L));
+        sickNote2.setEndDate(localDate.plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
         MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
