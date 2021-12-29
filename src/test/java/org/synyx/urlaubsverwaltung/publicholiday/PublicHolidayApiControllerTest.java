@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.jollyday.Holiday;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static de.jollyday.HolidayType.OFFICIAL_HOLIDAY;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static org.hamcrest.Matchers.hasSize;
@@ -61,9 +59,9 @@ class PublicHolidayApiControllerTest {
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
-        final Holiday fromHoliday = new Holiday(from, "", OFFICIAL_HOLIDAY);
-        final Holiday toHoliday = new Holiday(to, "", OFFICIAL_HOLIDAY);
-        when(publicHolidayService.getHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
+        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.FULL, "");
+        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.FULL, "");
+        when(publicHolidayService.getPublicHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
 
         when(publicHolidayService.getWorkingDurationOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(ONE);
         when(publicHolidayService.getAbsenceTypeOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(DayLength.MORNING);
@@ -134,9 +132,9 @@ class PublicHolidayApiControllerTest {
         when(workingTimeService.getFederalStateForPerson(person, from)).thenReturn(BADEN_WUERTTEMBERG);
 
         final LocalDate to = LocalDate.of(2016, 5, 20);
-        final Holiday fromHoliday = new Holiday(from, "", OFFICIAL_HOLIDAY);
-        final Holiday toHoliday = new Holiday(to, "", OFFICIAL_HOLIDAY);
-        when(publicHolidayService.getHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
+        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.FULL, "");
+        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.FULL, "");
+        when(publicHolidayService.getPublicHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
 
         when(publicHolidayService.getWorkingDurationOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(ONE);
         when(publicHolidayService.getAbsenceTypeOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(DayLength.MORNING);
