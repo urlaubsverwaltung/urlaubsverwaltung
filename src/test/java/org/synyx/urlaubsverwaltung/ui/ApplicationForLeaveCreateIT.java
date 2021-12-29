@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -282,7 +281,7 @@ class ApplicationForLeaveCreateIT {
         final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
         LocalDate nextWorkDay = now();
-        while (DayLength.ZERO.compareTo(publicHolidaysService.getAbsenceTypeOfDate(nextWorkDay, federalState)) != 0) {
+        while (publicHolidaysService.getPublicHoliday(nextWorkDay, federalState).isEmpty()) {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;

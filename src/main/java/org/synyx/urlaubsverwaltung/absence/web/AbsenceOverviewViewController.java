@@ -342,14 +342,15 @@ public class AbsenceOverviewViewController {
     }
 
     private AbsenceOverviewMonthDayDto tableHeadDay(LocalDate date, FederalState defaultFederalState, LocalDate today) {
-        final String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
-        final DayLength publicHolidayDayLength = publicHolidaysService.getAbsenceTypeOfDate(date, defaultFederalState);
+        final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, defaultFederalState);
+        final DayLength publicHolidayDayLength = maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getDayLength() : DayLength.ZERO;
 
         AbsenceOverviewDayType publicHolidayType = null;
         if (DayLength.ZERO.compareTo(publicHolidayDayLength) != 0) {
             publicHolidayType = getPublicHolidayType(publicHolidayDayLength).build();
         }
 
+        final String tableHeadDayText = String.format("%02d", date.getDayOfMonth());
         final boolean isToday = date.isEqual(today);
 
         return new AbsenceOverviewMonthDayDto(publicHolidayType, tableHeadDayText, isWeekend(date), isToday);
