@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -279,8 +280,8 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         return new AbsencePeriod.Record(tuple.date, person, morning, noon);
     }
-    private DayLength publicHolidayAbsence(LocalDate date, List<WorkingTime> workingTimeList,
-                                           FederalState federalStateDefault) {
+
+    private DayLength publicHolidayAbsence(LocalDate date, List<WorkingTime> workingTimeList, FederalState federalStateDefault) {
 
         final FederalState federalState = workingTime(date, workingTimeList)
             .or(() -> workingTimeList.isEmpty()
@@ -290,7 +291,8 @@ public class AbsenceServiceImpl implements AbsenceService {
             .map(WorkingTime::getFederalState)
             .orElse(federalStateDefault);
 
-        return publicHolidaysService.getAbsenceTypeOfDate(date, federalState);
+        final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState);
+        return maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getDayLength() : DayLength.ZERO;
     }
 
     private static Optional<WorkingTime> workingTime(LocalDate validFrom, List<WorkingTime> workingTimeList) {

@@ -10,10 +10,10 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -35,22 +35,28 @@ public class PublicHolidaysService {
     }
 
     /**
-     * Returns the working duration for a date: may be full day (1.0) for a non public holiday or zero (0.0) for a
-     * public holiday. The working duration for Christmas Eve and New Year's Eve are configured in the business
-     * properties; normally the working duration for these holidays is a half day (0.5)
+     * Returns the public holiday information for a date and the federal state.
+     * If there is no public holiday at the given date the return value is an empty optional, otherwise
+     * the public holiday will be returned.
      *
-     * @param date         to get working duration for
+     * @param date         to get public holiday for
      * @param federalState the federal state to consider holiday settings for
-     * @return working duration of the given date
+     * @return the public holiday if there is one at the given date, otherwise empty optional
      */
-    public BigDecimal getWorkingDurationOfDate(LocalDate date, FederalState federalState) {
-        return getAbsenceTypeOfDate(date, federalState).getInverse().getDuration();
+    public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState) {
+        return getPublicHolidays(date, date, federalState).stream().findFirst();
     }
 
-    public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
-        return getHolidayDayLength(getWorkingTimeSettings(), date, federalState);
-    }
-
+    /**
+     * Returns a list of public holiday information for the given date range (inclusive from and to) and the federal state.
+     * If there is no public holiday at the given date range the return value is an empty list, otherwise
+     * the public holidays will be returned.
+     *
+     * @param from         to get public holiday from
+     * @param to           to get public holiday to
+     * @param federalState the federal state to consider holiday settings for
+     * @return a list of public holiday if there are any for the given date range, otherwise empty list
+     */
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
         final WorkingTimeSettings workingTimeSettings = getWorkingTimeSettings();
         final Locale locale = LocaleContextHolder.getLocale();

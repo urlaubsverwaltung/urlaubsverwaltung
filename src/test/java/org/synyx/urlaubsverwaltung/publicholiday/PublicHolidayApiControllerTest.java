@@ -19,8 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.TEN;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -37,7 +35,7 @@ class PublicHolidayApiControllerTest {
     private PublicHolidayApiController sut;
 
     @Mock
-    private PublicHolidaysService publicHolidayService;
+    private PublicHolidaysService publicHolidaysService;
     @Mock
     private PersonService personService;
     @Mock
@@ -47,7 +45,7 @@ class PublicHolidayApiControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidayApiController(publicHolidayService, personService, workingTimeService, settingsService);
+        sut = new PublicHolidayApiController(publicHolidaysService, personService, workingTimeService, settingsService);
     }
 
     @Test
@@ -59,14 +57,9 @@ class PublicHolidayApiControllerTest {
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
-        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.FULL, "");
-        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.FULL, "");
-        when(publicHolidayService.getPublicHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
-
-        when(publicHolidayService.getWorkingDurationOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(ONE);
-        when(publicHolidayService.getAbsenceTypeOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(DayLength.MORNING);
-        when(publicHolidayService.getWorkingDurationOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(TEN);
-        when(publicHolidayService.getAbsenceTypeOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(DayLength.NOON);
+        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.MORNING, "");
+        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.NOON, "");
+        when(publicHolidaysService.getPublicHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
 
         perform(get("/api/public-holidays")
             .param("from", "2016-05-19")
@@ -76,10 +69,10 @@ class PublicHolidayApiControllerTest {
             .andExpect(jsonPath("$.publicHolidays").exists())
             .andExpect(jsonPath("$.publicHolidays", hasSize(2)))
             .andExpect(jsonPath("$.publicHolidays[0].date", is("2016-05-19")))
-            .andExpect(jsonPath("$.publicHolidays[0].dayLength", is(1)))
+            .andExpect(jsonPath("$.publicHolidays[0].dayLength", is(0.5)))
             .andExpect(jsonPath("$.publicHolidays[0].absencePeriodName", is("MORNING")))
             .andExpect(jsonPath("$.publicHolidays[1].date", is("2016-05-20")))
-            .andExpect(jsonPath("$.publicHolidays[1].dayLength", is(10)))
+            .andExpect(jsonPath("$.publicHolidays[1].dayLength", is(0.5)))
             .andExpect(jsonPath("$.publicHolidays[1].absencePeriodName", is("NOON")));
     }
 
@@ -132,14 +125,9 @@ class PublicHolidayApiControllerTest {
         when(workingTimeService.getFederalStateForPerson(person, from)).thenReturn(BADEN_WUERTTEMBERG);
 
         final LocalDate to = LocalDate.of(2016, 5, 20);
-        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.FULL, "");
-        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.FULL, "");
-        when(publicHolidayService.getPublicHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
-
-        when(publicHolidayService.getWorkingDurationOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(ONE);
-        when(publicHolidayService.getAbsenceTypeOfDate(from, BADEN_WUERTTEMBERG)).thenReturn(DayLength.MORNING);
-        when(publicHolidayService.getWorkingDurationOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(TEN);
-        when(publicHolidayService.getAbsenceTypeOfDate(to, BADEN_WUERTTEMBERG)).thenReturn(DayLength.NOON);
+        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.MORNING, "");
+        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.NOON, "");
+        when(publicHolidaysService.getPublicHolidays(from, to, BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
 
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-05-19")
@@ -149,10 +137,10 @@ class PublicHolidayApiControllerTest {
             .andExpect(jsonPath("$.publicHolidays").exists())
             .andExpect(jsonPath("$.publicHolidays", hasSize(2)))
             .andExpect(jsonPath("$.publicHolidays[0].date", is("2016-05-19")))
-            .andExpect(jsonPath("$.publicHolidays[0].dayLength", is(1)))
+            .andExpect(jsonPath("$.publicHolidays[0].dayLength", is(0.5)))
             .andExpect(jsonPath("$.publicHolidays[0].absencePeriodName", is("MORNING")))
             .andExpect(jsonPath("$.publicHolidays[1].date", is("2016-05-20")))
-            .andExpect(jsonPath("$.publicHolidays[1].dayLength", is(10)))
+            .andExpect(jsonPath("$.publicHolidays[1].dayLength", is(0.5)))
             .andExpect(jsonPath("$.publicHolidays[1].absencePeriodName", is("NOON")));
     }
 

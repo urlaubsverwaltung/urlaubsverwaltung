@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import de.jollyday.HolidayManager;
-import de.jollyday.ManagerParameter;
-import de.jollyday.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +21,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
+import static de.jollyday.ManagerParameters.create;
 import static java.math.BigDecimal.TEN;
 import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -481,7 +480,6 @@ class WorkDaysCountServiceTest {
     private HolidayManager getHolidayManager() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         final URL url = cl.getResource("Holidays_de.xml");
-        final ManagerParameter managerParameter = ManagerParameters.create(url);
-        return HolidayManager.getInstance(managerParameter);
+        return HolidayManager.getInstance(create(url));
     }
 }

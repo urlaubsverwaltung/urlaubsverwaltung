@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -115,7 +113,7 @@ public class PublicHolidayApiController {
 
     private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
         return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream()
-            .map(publicHoliday -> this.mapPublicHolidayToDto(publicHoliday, federalState))
+            .map(this::mapPublicHolidayToDto)
             .collect(toList());
     }
 
@@ -125,9 +123,7 @@ public class PublicHolidayApiController {
         }
     }
 
-    private PublicHolidayDto mapPublicHolidayToDto(PublicHoliday publicHoliday, FederalState federalState) {
-        final BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(publicHoliday.getDate(), federalState);
-        final DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(publicHoliday.getDate(), federalState);
-        return new PublicHolidayDto(publicHoliday, workingDuration, absenceType.name());
+    private PublicHolidayDto mapPublicHolidayToDto(PublicHoliday publicHoliday) {
+        return new PublicHolidayDto(publicHoliday, publicHoliday.getDayLength().getDuration(), publicHoliday.getDayLength().name());
     }
 }
