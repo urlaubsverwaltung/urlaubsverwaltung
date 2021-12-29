@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 import de.jollyday.Holiday;
 import de.jollyday.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -12,6 +13,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -48,15 +51,12 @@ public class PublicHolidaysService {
         return getHolidayDayLength(getWorkingTimeSettings(), date, federalState);
     }
 
-    public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
-        return List.copyOf(manager.getHolidays(from, to, federalState.getCodes()));
-    }
-
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
         final WorkingTimeSettings workingTimeSettings = getWorkingTimeSettings();
+        final Locale locale = LocaleContextHolder.getLocale();
 
         return getHolidays(from, to, federalState).stream()
-            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
+            .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState), holiday.getDescription(locale)))
             .collect(toUnmodifiableList());
     }
 
@@ -73,6 +73,10 @@ public class PublicHolidaysService {
         }
 
         return workingTime.getInverse();
+    }
+
+    private Set<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
+        return manager.getHolidays(from, to, federalState.getCodes());
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {

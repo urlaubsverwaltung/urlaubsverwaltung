@@ -13,10 +13,16 @@ public final class PublicHoliday {
 
     private final LocalDate date;
     private final DayLength dayLength;
+    private final String description;
 
     public PublicHoliday(LocalDate date, DayLength dayLength) {
+        this(date, dayLength, null);
+    }
+
+    PublicHoliday(LocalDate date, DayLength dayLength, String description) {
         this.date = date;
         this.dayLength = dayLength;
+        this.description = description;
     }
 
     public LocalDate getDate() {
@@ -25,6 +31,10 @@ public final class PublicHoliday {
 
     public DayLength getDayLength() {
         return dayLength;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public boolean isMorning() {

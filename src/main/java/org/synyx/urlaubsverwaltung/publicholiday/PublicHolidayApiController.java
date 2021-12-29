@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.jollyday.Holiday;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -115,8 +114,8 @@ public class PublicHolidayApiController {
     }
 
     private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
-        return publicHolidaysService.getHolidays(startDate, endDate, federalState).stream()
-            .map(holiday -> this.mapPublicHolidayToDto(holiday, federalState))
+        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream()
+            .map(publicHoliday -> this.mapPublicHolidayToDto(publicHoliday, federalState))
             .collect(toList());
     }
 
@@ -126,9 +125,9 @@ public class PublicHolidayApiController {
         }
     }
 
-    private PublicHolidayDto mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
-        final BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(holiday.getDate(), federalState);
-        final DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(holiday.getDate(), federalState);
-        return new PublicHolidayDto(holiday, workingDuration, absenceType.name());
+    private PublicHolidayDto mapPublicHolidayToDto(PublicHoliday publicHoliday, FederalState federalState) {
+        final BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(publicHoliday.getDate(), federalState);
+        final DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(publicHoliday.getDate(), federalState);
+        return new PublicHolidayDto(publicHoliday, workingDuration, absenceType.name());
     }
 }
