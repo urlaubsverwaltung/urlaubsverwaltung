@@ -5,7 +5,6 @@ import de.jollyday.HolidayManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
@@ -46,11 +45,7 @@ public class PublicHolidaysService {
     }
 
     public DayLength getAbsenceTypeOfDate(LocalDate date, FederalState federalState) {
-
-        final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
-
-        return getHolidayDayLength(workingTimeSettings, date, federalState);
+        return getHolidayDayLength(getWorkingTimeSettings(), date, federalState);
     }
 
     public List<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
@@ -58,8 +53,7 @@ public class PublicHolidaysService {
     }
 
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
-        final Settings settings = settingsService.getSettings();
-        final WorkingTimeSettings workingTimeSettings = settings.getWorkingTimeSettings();
+        final WorkingTimeSettings workingTimeSettings = getWorkingTimeSettings();
 
         return getHolidays(from, to, federalState).stream()
             .map(holiday -> new PublicHoliday(holiday.getDate(), getHolidayDayLength(workingTimeSettings, holiday.getDate(), federalState)))
@@ -83,5 +77,9 @@ public class PublicHolidaysService {
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
         return manager.isHoliday(date, federalState.getCodes());
+    }
+
+    private WorkingTimeSettings getWorkingTimeSettings() {
+        return settingsService.getSettings().getWorkingTimeSettings();
     }
 }
