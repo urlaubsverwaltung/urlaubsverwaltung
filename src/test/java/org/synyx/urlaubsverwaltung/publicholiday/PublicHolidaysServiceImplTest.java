@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 
 import static de.jollyday.ManagerParameters.create;
@@ -205,6 +206,17 @@ class PublicHolidaysServiceImplTest {
 
         final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 31), BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON));
+    }
+
+    @Test
+    void ensureGetPublicHolidaysReturnsForNewYearsEve() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2019, DECEMBER, 30), of(2019, DECEMBER, 31), BADEN_WUERTTEMBERG);
+        assertThat(publicHolidays)
+            .hasSize(1)
+            .extracting(p -> p.getDayLength()).containsExactly(DayLength.NOON);
     }
 
     private HolidayManager getHolidayManager() {
