@@ -38,8 +38,8 @@ public enum DayLength {
                 return FULL;
         }
 
-        // this is not relevant, because every case is defined in the switch case, this will be nicer to read and withour
-        // this last return case in java 17
+        // this is not relevant, because every case is defined in the switch case, this will be nicer to read and
+        // without this last return case in java 17
         return ZERO;
     }
 
