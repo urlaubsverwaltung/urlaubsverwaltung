@@ -2168,7 +2168,7 @@ class AbsenceOverviewViewControllerTest {
         when(workingTimeService.getFederalStatesByPersonAndDateRange(personWithCustomPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, BADEN_WUERTTEMBERG));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(personDefaultPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, RHEINLAND_PFALZ));
 
-        when(publicHolidaysService.getPublicHolidays(start, end, BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL)));
+        when(publicHolidaysService.getPublicHolidays(start, end, BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
         when(publicHolidaysService.getPublicHolidays(start, end, RHEINLAND_PFALZ)).thenReturn(emptyList());
 
         final Settings settings = new Settings();

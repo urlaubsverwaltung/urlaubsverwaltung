@@ -46,7 +46,7 @@ class PublicHolidayAbsenceProviderTest {
     void ensurePersonIsNotAvailableOnHolidays() {
 
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
-        when(publicHolidaysService.getPublicHoliday(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(newYearsDay, FULL)));
+        when(publicHolidaysService.getPublicHoliday(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(newYearsDay, FULL, "")));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
@@ -64,7 +64,7 @@ class PublicHolidayAbsenceProviderTest {
     void ensurePersonIsHalfAvailableOnHolidays() {
 
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
-        when(publicHolidaysService.getPublicHoliday(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(newYearsDay, NOON)));
+        when(publicHolidaysService.getPublicHoliday(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(newYearsDay, NOON, "")));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
@@ -82,7 +82,7 @@ class PublicHolidayAbsenceProviderTest {
     void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
         final LocalDate newYearsDay = LocalDate.of(2016, 1, 1);
-        when(publicHolidaysService.getPublicHoliday(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(newYearsDay, FULL)));
+        when(publicHolidaysService.getPublicHoliday(newYearsDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(newYearsDay, FULL, "")));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, newYearsDay)).thenReturn(BADEN_WUERTTEMBERG);
@@ -97,7 +97,7 @@ class PublicHolidayAbsenceProviderTest {
     void ensureCallsNextSickDayAbsenceProviderIfNotAbsentForHoliday() {
 
         final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
-        when(publicHolidaysService.getPublicHoliday(standardWorkingDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(standardWorkingDay, DayLength.ZERO)));
+        when(publicHolidaysService.getPublicHoliday(standardWorkingDay, BADEN_WUERTTEMBERG)).thenReturn(Optional.of(new PublicHoliday(standardWorkingDay, DayLength.ZERO, "")));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(workingTimeService.getFederalStateForPerson(person, standardWorkingDay)).thenReturn(BADEN_WUERTTEMBERG);
