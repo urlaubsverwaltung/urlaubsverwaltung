@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -73,7 +74,7 @@ class CalculationServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final HolidayManager holidayManager = getHolidayManager();
-        final PublicHolidaysService publicHolidaysService = new PublicHolidaysService(settingsService, holidayManager);
+        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, holidayManager);
         final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
 
         // create working time object (MON-FRI)

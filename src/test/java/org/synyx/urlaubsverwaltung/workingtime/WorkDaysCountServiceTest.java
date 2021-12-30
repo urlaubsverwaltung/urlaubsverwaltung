@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -47,7 +47,7 @@ class WorkDaysCountServiceTest {
 
     @BeforeEach
     void setUp() {
-        final var publicHolidaysService = new PublicHolidaysService(settingsService, getHolidayManager());
+        final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, getHolidayManager());
         sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
     }
 
