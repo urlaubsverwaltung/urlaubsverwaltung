@@ -59,7 +59,7 @@ class VacationOverviewServiceTest {
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
 
         final LocalDate localDate = LocalDate.parse("2017-09-01");
-        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class))).thenReturn(Optional.of(new PublicHoliday(localDate, DayLength.ZERO)));
+        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class))).thenReturn(Optional.of(new PublicHoliday(localDate, DayLength.ZERO, "")));
 
         final List<VacationOverviewDto> vacationOverviewDtos = sut.getVacationOverviews(departmentName, localDate.getYear(), localDate.getMonthValue());
         assertThat(vacationOverviewDtos).hasSize(1);

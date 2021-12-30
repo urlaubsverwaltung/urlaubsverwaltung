@@ -20,11 +20,7 @@ public final class PublicHoliday {
     private final DayLength dayLength;
     private final String description;
 
-    public PublicHoliday(LocalDate date, DayLength dayLength) {
-        this(date, dayLength, null);
-    }
-
-    PublicHoliday(LocalDate date, DayLength dayLength, String description) {
+    public PublicHoliday(LocalDate date, DayLength dayLength, String description) {
         this.date = date;
         this.dayLength = dayLength;
         this.description = description;
