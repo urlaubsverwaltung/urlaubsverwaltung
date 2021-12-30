@@ -9,27 +9,37 @@ import java.util.Arrays;
  */
 public enum FederalState {
 
-    BADEN_WUERTTEMBERG("bw"),
-    BAYERN("by"),
-    BAYERN_MUENCHEN("by", "mu"),
-    BAYERN_AUGSBURG("by", "ag"),
-    BAYERN_WUERZBURG("by", "wu"),
-    BAYERN_REGENSBURG("by", "re"),
-    BAYERN_INGOLSTADT("by", "in"),
-    BERLIN("b"),
-    BRANDENBURG("bb"),
-    BREMEN("hb"),
-    HAMBURG("hh"),
-    HESSEN("he"),
-    MECKLENBURG_VORPOMMERN("mv"),
-    NIEDERSACHSEN("ni"),
-    NORDRHEIN_WESTFALEN("nw"),
-    RHEINLAND_PFALZ("rp"),
-    SAARLAND("sl"),
-    SACHSEN("sn"),
-    SACHSEN_ANHALT("st"),
-    SCHLESWIG_HOLSTEIN("sh"),
-    THUERINGEN("th");
+    GERMANY_BADEN_WUERTTEMBERG("de", "bw"),
+    GERMANY_BAYERN("de", "by"),
+    GERMANY_BAYERN_MUENCHEN("de", "by", "mu"),
+    GERMANY_BAYERN_AUGSBURG("de", "by", "ag"),
+    GERMANY_BAYERN_WUERZBURG("de", "by", "wu"),
+    GERMANY_BAYERN_REGENSBURG("de", "by", "re"),
+    GERMANY_BAYERN_INGOLSTADT("de", "by", "in"),
+    GERMANY_BERLIN("de", "b"),
+    GERMANY_BRANDENBURG("de", "bb"),
+    GERMANY_BREMEN("de", "hb"),
+    GERMANY_HAMBURG("de", "hh"),
+    GERMANY_HESSEN("de", "he"),
+    GERMANY_MECKLENBURG_VORPOMMERN("de", "mv"),
+    GERMANY_NIEDERSACHSEN("de", "ni"),
+    GERMANY_NORDRHEIN_WESTFALEN("de", "nw"),
+    GERMANY_RHEINLAND_PFALZ("de", "rp"),
+    GERMANY_SAARLAND("de", "sl"),
+    GERMANY_SACHSEN("de", "sn"),
+    GERMANY_SACHSEN_ANHALT("de", "st"),
+    GERMANY_SCHLESWIG_HOLSTEIN("de", "sh"),
+    GERMANY_THUERINGEN("de", "th"),
+
+    AUSTRIA_BURGENLAND("at", "b"),
+    AUSTRIA_KAERNTEN("at", "k"),
+    AUSTRIA_NIEDEROESTERREICH("at", "la"),
+    AUSTRIA_OBEROESTERREICH("at", "ua"),
+    AUSTRIA_SALZBURG("at", "s"),
+    AUSTRIA_STEIERMARK("at", "st"),
+    AUSTRIA_TIROL("at", "t"),
+    AUSTRIA_VORARLBERG("at", "va"),
+    AUSTRIA_WIEN("at", "w");
 
     private final String[] codes;
 
@@ -38,11 +48,16 @@ public enum FederalState {
     }
 
     public String[] getCodes() {
-
-        if (codes == null) {
+        if (codes == null || codes.length <= 1) {
             return new String[0];
         }
+        return Arrays.copyOfRange(codes, 1, codes.length);
+    }
 
-        return Arrays.copyOf(codes, codes.length);
+    public String getCountry() {
+        if (codes == null || codes.length == 0) {
+            return null;
+        }
+        return codes[0];
     }
 }

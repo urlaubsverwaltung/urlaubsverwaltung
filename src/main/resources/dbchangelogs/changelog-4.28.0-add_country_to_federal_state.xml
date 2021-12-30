@@ -1,0 +1,61 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-country-to-federal-state-in-settings">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="federal_state"/>
+    </preConditions>
+
+    <sql>
+      UPDATE settings SET federal_state = 'GERMANY_BADEN_WUERTTEMBERG' WHERE federal_state = 'BADEN_WUERTTEMBERG';
+      UPDATE settings SET federal_state = 'GERMANY_BAYERN' WHERE federal_state = 'BAYERN';
+      UPDATE settings SET federal_state = 'GERMANY_BAYERN_MUENCHEN' WHERE federal_state = 'BAYERN_MUENCHEN';
+      UPDATE settings SET federal_state = 'GERMANY_BAYERN_AUGSBURG' WHERE federal_state = 'BAYERN_AUGSBURG';
+      UPDATE settings SET federal_state = 'GERMANY_BAYERN_WUERZBURG' WHERE federal_state = 'BAYERN_WUERZBURG';
+      UPDATE settings SET federal_state = 'GERMANY_BAYERN_REGENSBURG' WHERE federal_state = 'BAYERN_REGENSBURG';
+      UPDATE settings SET federal_state = 'GERMANY_BAYERN_INGOLSTADT' WHERE federal_state = 'BAYERN_INGOLSTADT';
+      UPDATE settings SET federal_state = 'GERMANY_BERLIN' WHERE federal_state = 'BERLIN';
+      UPDATE settings SET federal_state = 'GERMANY_BRANDENBURG' WHERE federal_state = 'BRANDENBURG';
+      UPDATE settings SET federal_state = 'GERMANY_BREMEN' WHERE federal_state = 'BREMEN';
+      UPDATE settings SET federal_state = 'GERMANY_HAMBURG' WHERE federal_state = 'HAMBURG';
+      UPDATE settings SET federal_state = 'GERMANY_HESSEN' WHERE federal_state = 'HESSEN';
+      UPDATE settings SET federal_state = 'GERMANY_MECKLENBURG_VORPOMMERN' WHERE federal_state = 'MECKLENBURG_VORPOMMERN';
+      UPDATE settings SET federal_state = 'GERMANY_NIEDERSACHSEN' WHERE federal_state = 'NIEDERSACHSEN';
+      UPDATE settings SET federal_state = 'GERMANY_NORDRHEIN_WESTFALEN' WHERE federal_state = 'NORDRHEIN_WESTFALEN';
+      UPDATE settings SET federal_state = 'GERMANY_RHEINLAND_PFALZ' WHERE federal_state = 'RHEINLAND_PFALZ';
+      UPDATE settings SET federal_state = 'GERMANY_SAARLAND' WHERE federal_state = 'SAARLAND';
+      UPDATE settings SET federal_state = 'GERMANY_SACHSEN' WHERE federal_state = 'SACHSEN';
+    </sql>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-country-to-federal-state-in-working-time">
+    <preConditions>
+      <tableExists tableName="working_time"/>
+      <columnExists tableName="working_time" columnName="federal_state_override"/>
+    </preConditions>
+
+    <sql>
+      UPDATE working_time SET federal_state_override = 'GERMANY_BADEN_WUERTTEMBERG' WHERE federal_state_override = 'BADEN_WUERTTEMBERG';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BAYERN' WHERE federal_state_override = 'BAYERN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BAYERN_MUENCHEN' WHERE federal_state_override = 'BAYERN_MUENCHEN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BAYERN_AUGSBURG' WHERE federal_state_override = 'BAYERN_AUGSBURG';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BAYERN_WUERZBURG' WHERE federal_state_override = 'BAYERN_WUERZBURG';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BAYERN_REGENSBURG' WHERE federal_state_override = 'BAYERN_REGENSBURG';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BAYERN_INGOLSTADT' WHERE federal_state_override = 'BAYERN_INGOLSTADT';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BERLIN' WHERE federal_state_override = 'BERLIN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BRANDENBURG' WHERE federal_state_override = 'BRANDENBURG';
+      UPDATE working_time SET federal_state_override = 'GERMANY_BREMEN' WHERE federal_state_override = 'BREMEN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_HAMBURG' WHERE federal_state_override = 'HAMBURG';
+      UPDATE working_time SET federal_state_override = 'GERMANY_HESSEN' WHERE federal_state_override = 'HESSEN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_MECKLENBURG_VORPOMMERN' WHERE federal_state_override = 'MECKLENBURG_VORPOMMERN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_NIEDERSACHSEN' WHERE federal_state_override = 'NIEDERSACHSEN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_NORDRHEIN_WESTFALEN' WHERE federal_state_override = 'NORDRHEIN_WESTFALEN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_RHEINLAND_PFALZ' WHERE federal_state_override = 'RHEINLAND_PFALZ';
+      UPDATE working_time SET federal_state_override = 'GERMANY_SAARLAND' WHERE federal_state_override = 'SAARLAND';
+      UPDATE working_time SET federal_state_override = 'GERMANY_SACHSEN' WHERE federal_state_override = 'SACHSEN';
+    </sql>
+  </changeSet>
+</databaseChangeLog>

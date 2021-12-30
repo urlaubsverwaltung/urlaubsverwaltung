@@ -118,12 +118,12 @@ class WorkingTimeServiceImplTest {
         person.setId(1);
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setFederalStateOverride(BAYERN);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BAYERN);
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date)).thenReturn(workingTimeEntity);
 
         final FederalState federalState = sut.getFederalStateForPerson(person, date);
 
-        assertThat(federalState).isEqualTo(BAYERN);
+        assertThat(federalState).isEqualTo(GERMANY_BAYERN);
         verifyNoInteractions(settingsService);
     }
 
@@ -139,7 +139,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date)).thenReturn(workingTimeEntity);
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(BREMEN);
+        workingTimeSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
 
@@ -147,7 +147,7 @@ class WorkingTimeServiceImplTest {
 
         final FederalState federalState = sut.getFederalStateForPerson(person, date);
 
-        assertThat(federalState).isEqualTo(BREMEN);
+        assertThat(federalState).isEqualTo(GERMANY_BREMEN);
     }
 
     @Test
@@ -156,7 +156,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(), any())).thenReturn(null);
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(BREMEN);
+        workingTimeSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
 
@@ -164,7 +164,7 @@ class WorkingTimeServiceImplTest {
 
         final FederalState federalState = sut.getFederalStateForPerson(new Person(), LocalDate.now(UTC));
 
-        assertThat(federalState).isEqualTo(BREMEN);
+        assertThat(federalState).isEqualTo(GERMANY_BREMEN);
     }
 
     @Test
@@ -181,7 +181,7 @@ class WorkingTimeServiceImplTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = FederalState.class, names = {"BAYERN"})
+    @EnumSource(value = FederalState.class, names = {"GERMANY_BAYERN"})
     @NullSource
     void ensureTouchSetsFederalStateOverrideOfWorkingTimeEntity(FederalState federalState) {
 
@@ -205,7 +205,7 @@ class WorkingTimeServiceImplTest {
         workingTimeEntity.setId(1);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2021, JUNE, 11));
-        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
         workingTimeEntity.setMonday(DayLength.FULL);
         workingTimeEntity.setTuesday(DayLength.FULL);
         workingTimeEntity.setWednesday(DayLength.FULL);
@@ -220,7 +220,7 @@ class WorkingTimeServiceImplTest {
         assertThat(workingTimes).hasSize(1);
         assertThat(workingTimes.get(0).getPerson()).isSameAs(person);
         assertThat(workingTimes.get(0).getValidFrom()).isEqualTo(LocalDate.of(2021, JUNE, 11));
-        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(BADEN_WUERTTEMBERG);
+        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
         assertThat(workingTimes.get(0).getMonday()).isEqualTo(DayLength.FULL);
         assertThat(workingTimes.get(0).getTuesday()).isEqualTo(DayLength.FULL);
         assertThat(workingTimes.get(0).getWednesday()).isEqualTo(DayLength.FULL);
@@ -249,7 +249,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityOne, workingTimeEntityTwo));
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(BREMEN);
+        workingTimeSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
 
@@ -258,8 +258,8 @@ class WorkingTimeServiceImplTest {
         final List<WorkingTime> workingTimes = sut.getByPerson(person);
 
         assertThat(workingTimes).hasSize(2);
-        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(BREMEN);
-        assertThat(workingTimes.get(1).getFederalState()).isEqualTo(BREMEN);
+        assertThat(workingTimes.get(0).getFederalState()).isEqualTo(GERMANY_BREMEN);
+        assertThat(workingTimes.get(1).getFederalState()).isEqualTo(GERMANY_BREMEN);
         verify(settingsService).getSettings();
     }
 
@@ -274,7 +274,7 @@ class WorkingTimeServiceImplTest {
         workingTimeEntity.setId(1);
         workingTimeEntity.setPerson(batman);
         workingTimeEntity.setValidFrom(date);
-        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(batman, date))
             .thenReturn(workingTimeEntity);
@@ -284,7 +284,7 @@ class WorkingTimeServiceImplTest {
         assertThat(actualWorkingTime).isNotEmpty();
         assertThat(actualWorkingTime.get().getPerson()).isEqualTo(batman);
         assertThat(actualWorkingTime.get().getValidFrom()).isEqualTo(date);
-        assertThat(actualWorkingTime.get().getFederalState()).isEqualTo(BADEN_WUERTTEMBERG);
+        assertThat(actualWorkingTime.get().getFederalState()).isEqualTo(GERMANY_BADEN_WUERTTEMBERG);
     }
 
     @Test
@@ -303,7 +303,7 @@ class WorkingTimeServiceImplTest {
             .thenReturn(workingTimeEntity);
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(BREMEN);
+        workingTimeSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
 
@@ -314,7 +314,7 @@ class WorkingTimeServiceImplTest {
         assertThat(actualWorkingTime).isNotEmpty();
         assertThat(actualWorkingTime.get().getPerson()).isEqualTo(batman);
         assertThat(actualWorkingTime.get().getValidFrom()).isEqualTo(date);
-        assertThat(actualWorkingTime.get().getFederalState()).isEqualTo(BREMEN);
+        assertThat(actualWorkingTime.get().getFederalState()).isEqualTo(GERMANY_BREMEN);
     }
 
     @Test
@@ -331,7 +331,7 @@ class WorkingTimeServiceImplTest {
     void ensureGetSystemDefaultFederalState() {
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(BREMEN);
+        workingTimeSettings.setFederalState(GERMANY_BREMEN);
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
 
@@ -339,7 +339,7 @@ class WorkingTimeServiceImplTest {
 
         final FederalState defaultFederalState = sut.getSystemDefaultFederalState();
 
-        assertThat(defaultFederalState).isEqualTo(BREMEN);
+        assertThat(defaultFederalState).isEqualTo(GERMANY_BREMEN);
     }
 
     @Test
@@ -351,19 +351,19 @@ class WorkingTimeServiceImplTest {
         workingTimeEntity.setId(1);
         workingTimeEntity.setPerson(batman);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 9, 1));
-        workingTimeEntity.setFederalStateOverride(BADEN_WUERTTEMBERG);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
         workingTimeEntityChanged.setId(2);
         workingTimeEntityChanged.setPerson(batman);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2021, 11, 15));
-        workingTimeEntityChanged.setFederalStateOverride(RHEINLAND_PFALZ);
+        workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
         workingTimeEntityFuture.setId(3);
         workingTimeEntityFuture.setPerson(batman);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
-        workingTimeEntityFuture.setFederalStateOverride(BERLIN);
+        workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
 
         final List<WorkingTimeEntity> timeEntities = List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity );
 
@@ -378,8 +378,8 @@ class WorkingTimeServiceImplTest {
             .isNotEmpty()
             .hasSize(2)
             .containsExactly(
-                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), RHEINLAND_PFALZ),
-                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), BADEN_WUERTTEMBERG)
+                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), GERMANY_RHEINLAND_PFALZ),
+                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), GERMANY_BADEN_WUERTTEMBERG)
             );
     }
 

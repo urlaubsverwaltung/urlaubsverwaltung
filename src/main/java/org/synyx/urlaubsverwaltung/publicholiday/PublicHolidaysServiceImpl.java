@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,13 +26,13 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isNewYearsEve;
 @Service
 public class PublicHolidaysServiceImpl implements PublicHolidaysService {
 
-    private final HolidayManager manager;
+    private final Map<String, HolidayManager> holidayManagers;
     private final SettingsService settingsService;
 
     @Autowired
-    public PublicHolidaysServiceImpl(SettingsService settingsService, HolidayManager holidayManager) {
+    public PublicHolidaysServiceImpl(SettingsService settingsService, Map<String, HolidayManager> holidayManagers) {
         this.settingsService = settingsService;
-        this.manager = holidayManager;
+        this.holidayManagers = holidayManagers;
     }
 
     @Override
@@ -65,11 +66,11 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     private Set<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
-        return manager.getHolidays(from, to, federalState.getCodes());
+        return holidayManagers.get(federalState.getCountry()).getHolidays(from, to, federalState.getCodes());
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-        return manager.isHoliday(date, federalState.getCodes());
+        return holidayManagers.get(federalState.getCountry()).isHoliday(date, federalState.getCodes());
     }
 
     private WorkingTimeSettings getWorkingTimeSettings() {

@@ -8,13 +8,13 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 class WorkingTimeFormTest {
 
     private static final LocalDate VALID_FROM = LocalDate.now().minusDays(10);
     private static final List<Integer> WORKING_DAYS = asList(3, 4, 5, 7);
-    private static final FederalState FEDERAL_STATE = FederalState.BERLIN;
+    private static final FederalState FEDERAL_STATE = FederalState.GERMANY_BERLIN;
 
     @Test
     void ensureEqualsUsesCorrectAttributes() {
@@ -43,7 +43,7 @@ class WorkingTimeFormTest {
         form2.setWorkingDays(WORKING_DAYS);
 
         // not equal if differ in attribute federalState
-        form2.setFederalState(BADEN_WUERTTEMBERG);
+        form2.setFederalState(GERMANY_BADEN_WUERTTEMBERG);
         assertThat(form1).isNotEqualTo(form2);
         form2.setFederalState(FEDERAL_STATE);
     }
@@ -75,7 +75,7 @@ class WorkingTimeFormTest {
         form2.setWorkingDays(WORKING_DAYS);
 
         // not same hashCode if differ in attribute federalState
-        form2.setFederalState(BADEN_WUERTTEMBERG);
+        form2.setFederalState(GERMANY_BADEN_WUERTTEMBERG);
         assertThat(form1.hashCode()).isNotEqualTo(form2.hashCode());
         form2.setFederalState(FEDERAL_STATE);
     }

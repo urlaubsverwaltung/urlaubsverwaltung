@@ -30,7 +30,7 @@ class WorkingTimeValidatorTest {
         errors = mock(Errors.class);
 
         form = new WorkingTimeForm();
-        form.setFederalState(FederalState.BAYERN);
+        form.setFederalState(FederalState.GERMANY_BAYERN);
         form.setValidFrom(LocalDate.now(UTC));
         form.setWorkingDays(Arrays.asList(1, 2, 3, 4, 5));
     }

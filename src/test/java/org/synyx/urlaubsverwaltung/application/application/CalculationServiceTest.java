@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
@@ -46,7 +47,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 /**
  * Unit test for {@link CalculationService}.
@@ -73,12 +74,11 @@ class CalculationServiceTest {
     void setUp() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final HolidayManager holidayManager = getHolidayManager();
-        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, holidayManager);
+        final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
         final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
 
         // create working time object (MON-FRI)
-        final WorkingTime workingTime = new WorkingTime(new Person(), LocalDate.MIN, BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(new Person(), LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
 
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
