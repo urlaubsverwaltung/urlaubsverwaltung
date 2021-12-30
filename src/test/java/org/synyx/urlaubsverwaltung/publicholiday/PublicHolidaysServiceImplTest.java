@@ -30,7 +30,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN_MUENCH
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
 
 @ExtendWith(MockitoExtension.class)
-class PublicHolidaysServiceTest {
+class PublicHolidaysServiceImplTest {
 
     private PublicHolidaysService sut;
 
@@ -39,7 +39,7 @@ class PublicHolidaysServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidaysService(settingsService, getHolidayManager());
+        sut = new PublicHolidaysServiceImpl(settingsService, getHolidayManager());
     }
 
     @Test

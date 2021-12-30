@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -78,7 +78,7 @@ class VacationDaysServiceTest {
     @BeforeEach
     void setUp() {
 
-        workDaysCountService = new WorkDaysCountService(new PublicHolidaysService(settingsService, getHolidayManager()), workingTimeService);
+        workDaysCountService = new WorkDaysCountService(new PublicHolidaysServiceImpl(settingsService, getHolidayManager()), workingTimeService);
 
         sut = new VacationDaysService(workDaysCountService, applicationService, Clock.systemUTC());
     }
