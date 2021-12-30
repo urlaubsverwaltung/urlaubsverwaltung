@@ -15,6 +15,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static de.jollyday.ManagerParameters.create;
@@ -26,9 +27,9 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BAYERN_MUENCHEN;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN_MUENCHEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 
 @ExtendWith(MockitoExtension.class)
 class PublicHolidaysServiceImplTest {
@@ -40,7 +41,7 @@ class PublicHolidaysServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PublicHolidaysServiceImpl(settingsService, getHolidayManager());
+        sut = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
     }
 
     @Test
@@ -49,7 +50,7 @@ class PublicHolidaysServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
         final LocalDate localDate = of(2013, Month.NOVEMBER, 27);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(localDate, BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(localDate, GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -58,7 +59,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 25), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 25), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
     }
 
@@ -69,7 +70,7 @@ class PublicHolidaysServiceImplTest {
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.FULL);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ONE));
     }
 
@@ -80,7 +81,7 @@ class PublicHolidaysServiceImplTest {
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.FULL);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ONE));
     }
 
@@ -91,7 +92,7 @@ class PublicHolidaysServiceImplTest {
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.MORNING);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(BigDecimal.valueOf(0.5)));
     }
 
@@ -102,7 +103,7 @@ class PublicHolidaysServiceImplTest {
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.NOON);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(BigDecimal.valueOf(0.5)));
     }
 
@@ -113,7 +114,7 @@ class PublicHolidaysServiceImplTest {
         settings.getWorkingTimeSettings().setWorkingDurationForChristmasEve(DayLength.ZERO);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
     }
 
@@ -124,7 +125,7 @@ class PublicHolidaysServiceImplTest {
         settings.getWorkingTimeSettings().setWorkingDurationForNewYearsEve(DayLength.ZERO);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2013, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getWorkingDuration()).isEqualByComparingTo(ZERO));
     }
 
@@ -133,7 +134,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, AUGUST, 15), BERLIN);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, AUGUST, 15), GERMANY_BERLIN);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -142,7 +143,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, AUGUST, 15), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, AUGUST, 15), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -150,7 +151,7 @@ class PublicHolidaysServiceImplTest {
     void ensureCorrectWorkingDurationForAssumptionDayForBayernMuenchen() {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, DECEMBER, 15), BAYERN_MUENCHEN);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2015, DECEMBER, 15), GERMANY_BAYERN_MUENCHEN);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -159,7 +160,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, MAY, 30), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, MAY, 30), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.FULL));
     }
 
@@ -168,7 +169,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), BAYERN_MUENCHEN);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BAYERN_MUENCHEN);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.FULL));
     }
 
@@ -177,7 +178,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), BERLIN);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BERLIN);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -186,7 +187,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, AUGUST, 15), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).isEmpty();
     }
 
@@ -195,7 +196,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 24), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 24), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON));
     }
 
@@ -204,7 +205,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 31), BADEN_WUERTTEMBERG);
+        final Optional<PublicHoliday> maybePublicHoliday = sut.getPublicHoliday(of(2019, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(maybePublicHoliday).hasValueSatisfying(publicHoliday -> assertThat(publicHoliday.getDayLength()).isEqualTo(DayLength.NOON));
     }
 
@@ -213,7 +214,7 @@ class PublicHolidaysServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2019, DECEMBER, 30), of(2019, DECEMBER, 31), BADEN_WUERTTEMBERG);
+        final List<PublicHoliday> publicHolidays = sut.getPublicHolidays(of(2019, DECEMBER, 30), of(2019, DECEMBER, 31), GERMANY_BADEN_WUERTTEMBERG);
         assertThat(publicHolidays)
             .hasSize(1)
             .extracting(p -> p.getDayLength()).containsExactly(DayLength.NOON);
