@@ -113,7 +113,7 @@ public class WorkingTimeViewController {
 
         model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories));
         model.addAttribute("weekDays", DayOfWeek.values());
-        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("defaultFederalState", defaultFederalState);
     }
 

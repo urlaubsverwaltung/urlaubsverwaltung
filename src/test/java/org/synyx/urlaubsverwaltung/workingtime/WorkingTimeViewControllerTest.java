@@ -92,7 +92,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020,10,2))))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(FederalState.GERMANY_BADEN_WUERTTEMBERG)))
-            .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.values())))
+            .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
             .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
     }
 
