@@ -131,7 +131,7 @@ public class SettingsViewController {
         model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
 
         model.addAttribute("settings", settingsDto);
-        model.addAttribute("federalStateTypes", FederalState.values());
+        model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("dayLengthTypes", DayLength.values());
 
         final List<String> providers = calendarProviders.stream()

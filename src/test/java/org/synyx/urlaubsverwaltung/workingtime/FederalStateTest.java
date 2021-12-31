@@ -1,12 +1,18 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_BURGENLAND;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_KAERNTEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_NIEDEROESTERREICH;
@@ -132,5 +138,14 @@ class FederalStateTest {
     @MethodSource("provideFederalStateCountry")
     void ensureCorrectCountry(FederalState federalState, String country) {
         assertThat(federalState.getCountry()).isEqualTo(country);
+    }
+
+    @Test
+    void ensureCorrectFederalStatesByCountry() {
+        final Map<String, List<FederalState>> federalStatesTypesByCountry = FederalState.federalStatesTypesByCountry();
+        final List<FederalState> germanyFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "de".equals(federalState.getCountry())).collect(Collectors.toList());
+        final List<FederalState> austriaFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).collect(Collectors.toList());
+        assertThat(federalStatesTypesByCountry).hasSize(2)
+            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates));
     }
 }

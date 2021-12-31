@@ -1,6 +1,10 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Enum representing the federal states of Germany. The information about the federal state is needed to check if a day
@@ -59,5 +63,15 @@ public enum FederalState {
             return null;
         }
         return codes[0];
+    }
+
+    public static Map<String, List<FederalState>> federalStatesTypesByCountry() {
+
+        final Map<String, List<FederalState>> federalStatesTypesByCountry = new HashMap<>();
+
+        Arrays.stream(values()).forEach(federalState ->
+            federalStatesTypesByCountry.computeIfAbsent(federalState.getCountry(), country -> new ArrayList<>()).add(federalState));
+
+        return federalStatesTypesByCountry;
     }
 }
