@@ -319,7 +319,7 @@
                                 <spring:message code="person.account.workingTime.federalState"/>
                             </span>
                             <span class="tw-text-base tw-font-medium">
-                                <spring:message code="federalState.${federalState}"/>
+                                <spring:message code="country.${federalState.country}"/> - <spring:message code="federalState.${federalState}"/>
                             </span>
                         </p>
                     </jsp:body>

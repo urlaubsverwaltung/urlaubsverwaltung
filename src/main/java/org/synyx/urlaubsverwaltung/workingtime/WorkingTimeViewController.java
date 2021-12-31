@@ -128,7 +128,7 @@ public class WorkingTimeViewController {
             final boolean isValid = currentWorkingTime.equals(workingTime);
             final FederalState federalState = workingTime.getFederalState();
             final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
-            return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.toString(), isValid);
+            return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.getCountry(), federalState.toString(), isValid);
         };
     }
 }
