@@ -26,6 +26,7 @@
     <java.version>11</java.version>
     <testcontainers.version>1.16.2</testcontainers.version>
     <opentelemetry-agent.version>1.9.1</opentelemetry-agent.version>
+    <docker.name>synyx/urlaubsverwaltung</docker.name>
   </properties>
 
   <scm>
@@ -449,7 +450,7 @@
         <configuration>
           <images>
             <image>
-              <name>synyx/urlaubsverwaltung</name>
+              <name>${docker.name}</name>
               <build>
                 <dockerFileDir>${project.basedir}</dockerFileDir>
                 <assembly>
