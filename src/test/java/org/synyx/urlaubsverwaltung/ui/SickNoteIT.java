@@ -137,7 +137,7 @@ class SickNoteIT {
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, FEBRUARY, 23))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
@@ -168,10 +168,10 @@ class SickNoteIT {
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, MARCH, 10))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, MARCH, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2021, MARCH, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2021, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, MARCH, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(currentYear, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(currentYear, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(currentYear, MARCH, 11))).isTrue();
     }
 
     private void childSickNote(RemoteWebDriver webDriver, Person person) {
@@ -199,8 +199,8 @@ class SickNoteIT {
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, APRIL, 10))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, APRIL, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, APRIL, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(currentYear, APRIL, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
@@ -232,10 +232,10 @@ class SickNoteIT {
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2021, MAY, 10))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2021, MAY, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2021, MAY, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2021, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, MAY, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(currentYear, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(currentYear, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(currentYear, MAY, 11))).isTrue();
     }
 
     private void sickNoteStatisticListView(RemoteWebDriver webDriver, Person person) {
