@@ -25,6 +25,7 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>11</java.version>
     <testcontainers.version>1.16.2</testcontainers.version>
+    <opentelemetry-agent.version>1.9.1</opentelemetry-agent.version>
   </properties>
 
   <scm>
@@ -513,6 +514,31 @@
                   <version>${java.version}</version>
                 </requireJavaVersion>
               </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>get-agent</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.opentelemetry.javaagent</groupId>
+                  <artifactId>opentelemetry-javaagent</artifactId>
+                  <version>${opentelemetry-agent.version}</version>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/docker-extra/opentelemetry-agent</outputDirectory>
+                </artifactItem>
+              </artifactItems>
             </configuration>
           </execution>
         </executions>

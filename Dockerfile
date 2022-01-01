@@ -6,7 +6,8 @@ ENV JAVA_APP_JAR="${project.artifactId}.war"
 
 VOLUME /tmp
 
-RUN mkdir /app
+RUN mkdir /app && mkdir /opt/opentelemetry
+ADD target/docker-extra/opentelemetry-agent/opentelemetry-javaagent-${opentelemetry-agent.version}.jar /opt/opentelemetry/opentelemetry-javaagent.jar
 COPY maven/${project.build.finalName}.war /app/app.war
 
 WORKDIR /app
