@@ -266,8 +266,7 @@ class OverviewViewControllerTest {
         sickNote2.setEndDate(localDate.plusDays(10L));
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
-        MockHttpServletRequestBuilder builder = get("/web/person/1/overview");
-        final ResultActions resultActions = perform(builder);
+        final ResultActions resultActions = perform(get("/web/person/1/overview").param("year", "2021"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(view().name("person/overview"));
         resultActions.andExpect(model().attribute("applications", hasSize(3)));
