@@ -15,6 +15,9 @@ public class MailProperties {
     @NotEmpty
     private String sender;
 
+    @NotEmpty
+    private String senderDisplayName;
+
     @Email
     @NotEmpty
     private String administrator;
@@ -28,6 +31,14 @@ public class MailProperties {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getSenderDisplayName() {
+        return senderDisplayName;
+    }
+
+    public void setSenderDisplayName(String senderDisplayName) {
+        this.senderDisplayName = senderDisplayName;
     }
 
     public String getAdministrator() {

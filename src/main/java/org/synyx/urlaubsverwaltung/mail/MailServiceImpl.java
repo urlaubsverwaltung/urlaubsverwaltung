@@ -45,7 +45,7 @@ class MailServiceImpl implements MailService {
         model.put("baseLinkURL", getApplicationUrl());
 
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
-        final String sender = mailProperties.getSender();
+        final String sender = generateMailAddressAndDisplayName(mailProperties.getSender(), mailProperties.getSenderDisplayName());
 
         getRecipients(mail).forEach(recipient -> {
             model.put("recipient", recipient);
@@ -78,5 +78,9 @@ class MailServiceImpl implements MailService {
     private String getApplicationUrl() {
         final String applicationUrl = mailProperties.getApplicationUrl();
         return applicationUrl.endsWith("/") ? applicationUrl : applicationUrl + "/";
+    }
+
+    private String generateMailAddressAndDisplayName(String address, String displayName) {
+        return String.format("%s <%s>", displayName, address);
     }
 }

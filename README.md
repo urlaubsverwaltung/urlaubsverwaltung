@@ -124,6 +124,7 @@ uv.development.demodata.additional-inactive-user=0
 uv.mail.administrator
 uv.mail.application-url
 uv.mail.sender
+uv.mail.senderDisplayName=Urlaubsverwaltung
 
 # security
 uv.security.auth=default
@@ -233,6 +234,7 @@ Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenomm
 
 ```properties
 uv.mail.sender=absender@example.org         # Absender der E-Mails
+uv.mail.senderDisplayName=Urlaubsverwaltung # Schönere Darstellung im Postfach
 uv.mail.administrator=admin@example.org     # E-Mail-Adresse des Administrators
 uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link-Generierung verwendet
 
