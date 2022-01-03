@@ -34,8 +34,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping("/api")
 public class PublicHolidayApiController {
 
-    public static final String PUBLIC_HOLIDAYS = "public-holidays";
-
     private final PublicHolidaysService publicHolidaysService;
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
@@ -56,7 +54,7 @@ public class PublicHolidayApiController {
         description = "Get all public holidays for a certain period. "
             + "Information only reachable for users with role office."
     )
-    @GetMapping(PUBLIC_HOLIDAYS)
+    @GetMapping("public-holidays")
     @PreAuthorize(IS_OFFICE)
     public PublicHolidaysDto getPublicHolidays(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
@@ -80,7 +78,7 @@ public class PublicHolidayApiController {
         summary = "Get all public holidays for a certain period", description = "Get all public holidays for a certain period. "
         + "Information only reachable for users with role office and for own public holidays."
     )
-    @GetMapping("/persons/{personId}/" + PUBLIC_HOLIDAYS)
+    @GetMapping("/persons/{personId}/public-holidays")
     @PreAuthorize(IS_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
