@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
@@ -31,10 +32,20 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.data.util.Pair.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -71,11 +82,11 @@ class ApplicationForLeaveDetailsViewController {
 
     @Autowired
     ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
-                                                    AccountService accountService, ApplicationService applicationService,
-                                                    ApplicationInteractionService applicationInteractionService,
-                                                    ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
-                                                    ApplicationCommentValidator commentValidator,
-                                                    DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
+                                             AccountService accountService, ApplicationService applicationService,
+                                             ApplicationInteractionService applicationInteractionService,
+                                             ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
+                                             ApplicationCommentValidator commentValidator,
+                                             DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
         this.accountService = accountService;
@@ -363,10 +374,11 @@ class ApplicationForLeaveDetailsViewController {
         // APPLICATION FOR LEAVE
         model.addAttribute("application", new ApplicationForLeave(application, workDaysCountService));
 
-        // WORKING TIME FOR VACATION PERIOD
-        // FIXME - wird in app_info verwenden und auch nur anhand des start datums. Hier sollte eine Liste her.
-        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getWorkingTime(application.getPerson(), application.getStartDate());
-        optionalWorkingTime.ifPresent(workingTime -> model.addAttribute("workingTime", workingTime));
+        final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
+                application.getPerson(), new DateRange(application.getStartDate(), application.getEndDate())).entrySet().stream()
+            .sorted(Map.Entry.comparingByKey(comparing(DateRange::getStartDate)))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> newValue, LinkedHashMap::new));
+        model.addAttribute("dateRangeWorkingTimes", workingTime);
 
         // DEPARTMENT APPLICATIONS FOR LEAVE
         final List<Application> departmentApplications =

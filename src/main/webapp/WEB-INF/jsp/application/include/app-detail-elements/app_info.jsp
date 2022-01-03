@@ -219,32 +219,4 @@
             </div>
         </td>
     </tr>
-    <tr>
-        <td>
-            <spring:message code="application.data.workingTime"/>
-        </td>
-        <td>
-            <c:if test="${workingTime.monday.duration > 0}">
-                <spring:message code="MONDAY.short"/>
-            </c:if>
-            <c:if test="${workingTime.tuesday.duration > 0}">
-                <spring:message code="TUESDAY.short"/>
-            </c:if>
-            <c:if test="${workingTime.wednesday.duration > 0}">
-                <spring:message code="WEDNESDAY.short"/>
-            </c:if>
-            <c:if test="${workingTime.thursday.duration > 0}">
-                <spring:message code="THURSDAY.short"/>
-            </c:if>
-            <c:if test="${workingTime.friday.duration > 0}">
-                <spring:message code="FRIDAY.short"/>
-            </c:if>
-            <c:if test="${workingTime.saturday.duration > 0}">
-                <spring:message code="SATURDAY.short"/>
-            </c:if>
-            <c:if test="${workingTime.sunday.duration > 0}">
-                <spring:message code="SUNDAY.short"/>
-            </c:if>
-        </td>
-    </tr>
 </table>
