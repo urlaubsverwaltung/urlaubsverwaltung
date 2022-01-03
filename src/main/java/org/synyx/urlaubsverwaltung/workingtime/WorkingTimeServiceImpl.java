@@ -76,6 +76,12 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
+    public Optional<WorkingTime> getWorkingTime(Person person, LocalDate date) {
+        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
+            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState));
+    }
+
+    @Override
     public List<WorkingTime> getByPerson(Person person) {
         return toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
     }
@@ -151,14 +157,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
-    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
-        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
-            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState));
-    }
-
-    @Override
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
-        return getByPersonAndValidityDateEqualsOrMinorDate(person, date)
+        return getWorkingTime(person, date)
             .map(WorkingTime::getFederalState)
             .orElseGet(() -> {
                 LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",

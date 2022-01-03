@@ -93,7 +93,7 @@ class VacationDaysServiceTest {
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -163,7 +163,7 @@ class VacationDaysServiceTest {
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         when(settingsService.getSettings()).thenReturn(new Settings());

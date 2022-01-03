@@ -69,8 +69,7 @@ public class WorkingTimeViewController {
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
-
+        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getWorkingTime(person, LocalDate.now(clock));
         if (optionalWorkingTime.isPresent()) {
             model.addAttribute("workingTime", new WorkingTimeForm(optionalWorkingTime.get()));
         } else {
@@ -108,16 +107,16 @@ public class WorkingTimeViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
         final List<WorkingTime> workingTimeHistories = workingTimeService.getByPerson(person);
-        final WorkingTime currentWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock)).orElse(null);
+        final WorkingTime currentWorkingTime = workingTimeService.getWorkingTime(person, LocalDate.now(clock)).orElse(null);
         final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
-        model.addAttribute("workingTimeHistories", map(currentWorkingTime, workingTimeHistories));
+        model.addAttribute("workingTimeHistories", toWorkingTimeHistoryDtos(currentWorkingTime, workingTimeHistories));
         model.addAttribute("weekDays", DayOfWeek.values());
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("defaultFederalState", defaultFederalState);
     }
 
-    private List<WorkingTimeHistoryDto> map(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes) {
+    private List<WorkingTimeHistoryDto> toWorkingTimeHistoryDtos(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes) {
         return workingTimes.stream()
             .map(toWorkingTimeHistoryDto(currentWorkingTime))
             .collect(toList());

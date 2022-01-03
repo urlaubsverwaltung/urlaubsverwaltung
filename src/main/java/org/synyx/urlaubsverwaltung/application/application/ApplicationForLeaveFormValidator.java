@@ -28,10 +28,10 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
@@ -90,8 +90,8 @@ class ApplicationForLeaveFormValidator implements Validator {
 
     @Autowired
     ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysCountService workDaysCountService,
-                                            OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                            OvertimeService overtimeService, Clock clock) {
+                                     OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
+                                     OvertimeService overtimeService, Clock clock) {
 
         this.workingTimeService = workingTimeService;
         this.workDaysCountService = workDaysCountService;
@@ -393,9 +393,7 @@ class ApplicationForLeaveFormValidator implements Validator {
 
     private boolean personHasWorkingTime(ApplicationForLeaveForm applicationForLeaveForm) {
 
-        final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-            applicationForLeaveForm.getPerson(), applicationForLeaveForm.getStartDate());
-
+        final Optional<WorkingTime> workingTime = workingTimeService.getWorkingTime(applicationForLeaveForm.getPerson(), applicationForLeaveForm.getStartDate());
         return workingTime.isPresent();
     }
 

@@ -82,9 +82,7 @@ public class WorkDaysCountService {
 
         // FIXME - wenn eine Application sehr lang ist und dazwischen die WorkingTime geändert wird und an einem Tag
         //  nicht mehr gearbeitet dann stimmt das hier nicht mehr!?
-        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-            person, startDate);
-
+        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getWorkingTime(person, startDate);
         if (optionalWorkingTime.isEmpty()) {
             throw new WorkDaysCountException("No working time found for User '" + person.getId()
                 + "' in period " + startDate.format(ofPattern(DD_MM_YYYY)) + " - " + endDate.format(ofPattern(DD_MM_YYYY)));

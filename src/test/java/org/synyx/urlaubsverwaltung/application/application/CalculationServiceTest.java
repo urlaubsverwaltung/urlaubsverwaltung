@@ -81,7 +81,7 @@ class CalculationServiceTest {
         final WorkingTime workingTime = new WorkingTime(new Person(), LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,

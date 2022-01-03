@@ -279,7 +279,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(batman, date))
             .thenReturn(workingTimeEntity);
 
-        final Optional<WorkingTime> actualWorkingTime = sut.getByPersonAndValidityDateEqualsOrMinorDate(batman, date);
+        final Optional<WorkingTime> actualWorkingTime = sut.getWorkingTime(batman, date);
 
         assertThat(actualWorkingTime).isNotEmpty();
         assertThat(actualWorkingTime.get().getPerson()).isEqualTo(batman);
@@ -309,7 +309,7 @@ class WorkingTimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Optional<WorkingTime> actualWorkingTime = sut.getByPersonAndValidityDateEqualsOrMinorDate(batman, date);
+        final Optional<WorkingTime> actualWorkingTime = sut.getWorkingTime(batman, date);
 
         assertThat(actualWorkingTime).isNotEmpty();
         assertThat(actualWorkingTime.get().getPerson()).isEqualTo(batman);
@@ -322,7 +322,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(any(), any()))
             .thenReturn(null);
 
-        final Optional<WorkingTime> actualWorkingTime = sut.getByPersonAndValidityDateEqualsOrMinorDate(new Person(), LocalDate.now());
+        final Optional<WorkingTime> actualWorkingTime = sut.getWorkingTime(new Person(), LocalDate.now());
 
         assertThat(actualWorkingTime).isEmpty();
     }

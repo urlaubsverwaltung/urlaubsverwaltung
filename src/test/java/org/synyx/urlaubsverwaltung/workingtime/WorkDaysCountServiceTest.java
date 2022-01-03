@@ -77,7 +77,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // testing for full days
         application.setDayLength(FULL);
@@ -104,7 +104,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // testing for full days
         application.setDayLength(FULL);
@@ -131,7 +131,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         // testing for half days morning
@@ -153,7 +153,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // testing for half days morning
         application.setDayLength(MORNING);
@@ -174,7 +174,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // testing for half days noon
         application.setDayLength(NOON);
@@ -195,7 +195,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         // testing for half days noon
@@ -217,7 +217,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         // testing for full days
@@ -240,7 +240,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // testing for full days
         application.setDayLength(FULL);
@@ -262,7 +262,7 @@ class WorkDaysCountServiceTest {
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // testing for full days
         application.setDayLength(FULL);
@@ -283,7 +283,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         workingTime.setWorkingDays(List.of(MONDAY, WEDNESDAY, FRIDAY, SATURDAY), FULL);
 
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
@@ -301,7 +301,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
 
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
@@ -319,7 +319,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // monday
         final LocalDate startDate = LocalDate.of(2013, NOVEMBER, 25);
@@ -337,7 +337,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // saturday
         final LocalDate startDate = LocalDate.of(2013, NOVEMBER, 23);
@@ -355,7 +355,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         // saturday
         final LocalDate startDate = LocalDate.of(2013, NOVEMBER, 23);
@@ -373,7 +373,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
 
@@ -389,7 +389,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
@@ -406,7 +406,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class)))
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
             .thenReturn(Optional.of(workingTime));
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
@@ -423,7 +423,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
 
@@ -439,7 +439,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         final LocalDate from = LocalDate.of(2013, DECEMBER, 23);
         final LocalDate to = LocalDate.of(2014, JANUARY, 2);
@@ -456,7 +456,7 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
 
         final LocalDate from = LocalDate.of(2013, DECEMBER, 23);
         final LocalDate to = LocalDate.of(2014, JANUARY, 2);
