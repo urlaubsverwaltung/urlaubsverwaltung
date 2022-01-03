@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
@@ -120,35 +121,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
-
-        final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
-        final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
-            .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
-            .collect(toList());
-
-        final HashMap<DateRange, FederalState> federalStatesOfPersonByDateRage = new HashMap<>();
-        LocalDate nextEnd = dateRange.getEndDate();
-
-        for (WorkingTime workingTime : workingTimeList) {
-
-            final DateRange range;
-
-            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
-                range = new DateRange(dateRange.getStartDate(), nextEnd);
-            } else {
-                range = new DateRange(workingTime.getValidFrom(), nextEnd);
-            }
-
-            federalStatesOfPersonByDateRage.put(range, workingTime.getFederalState());
-
-            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
-                return federalStatesOfPersonByDateRage;
-            }
-
-            nextEnd = workingTime.getValidFrom().minusDays(1);
-        }
-
-        return federalStatesOfPersonByDateRage;
+        return getWorkingTimesByPersonAndDateRange(person, dateRange).entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, dateRangeWorkingTimeEntry -> dateRangeWorkingTimeEntry.getValue().getFederalState()));
     }
 
     @Override
