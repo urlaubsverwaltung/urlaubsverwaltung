@@ -105,6 +105,7 @@ public class PublicHolidayApiController {
         }
 
         final Person person = optionalPerson.get();
+        // FIXME - federal state cannot be determined by only the start date
         final FederalState federalState = workingTimeService.getFederalStateForPerson(person, startDate);
 
         final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);

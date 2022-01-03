@@ -364,6 +364,7 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("application", new ApplicationForLeave(application, workDaysCountService));
 
         // WORKING TIME FOR VACATION PERIOD
+        // FIXME - wird in app_info verwenden und auch nur anhand des start datums. Hier sollte eine Liste her.
         final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             application.getPerson(), application.getStartDate());
         optionalWorkingTime.ifPresent(workingTime -> model.addAttribute("workingTime", workingTime));

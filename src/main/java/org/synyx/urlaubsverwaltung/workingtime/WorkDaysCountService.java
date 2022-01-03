@@ -80,6 +80,8 @@ public class WorkDaysCountService {
      */
     public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
+        // FIXME - wenn eine Application sehr lang ist und dazwischen die WorkingTime geändert wird und an einem Tag
+        //  nicht mehr gearbeitet dann stimmt das hier nicht mehr!?
         final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
             person, startDate);
 

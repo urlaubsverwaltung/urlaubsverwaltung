@@ -106,12 +106,13 @@ public class AbsenceApiController {
         final Predicate<DayAbsenceDto> isVacation = dto -> dto.getType().equals(VACATION.name());
         final Predicate<DayAbsenceDto> isSick = dto -> dto.getType().equals(SICK_NOTE.name());
 
+        // FIXME - default federal state cannot be used for a person to get their public holidays
+        // this is used for the calendar on the overview page e.g.
         final Map<LocalDate, PublicHoliday> holidaysByDate = holidaysByDate(start, end);
 
         return absenceService.getOpenAbsences(person, start, end)
             .stream()
             .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, holidaysByDate))
-            // TODO do we have to generate the dtos even they are not asked? or is the performance impact insignificantly?
             .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
             .collect(toList());
     }
