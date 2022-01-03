@@ -66,11 +66,19 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     private Set<Holiday> getHolidays(final LocalDate from, final LocalDate to, FederalState federalState) {
-        return holidayManagers.get(federalState.getCountry()).getHolidays(from, to, federalState.getCodes());
+        return getHolidayManager(federalState)
+            .map(holidayManager -> holidayManager.getHolidays(from, to, federalState.getCodes()))
+            .orElseGet(Set::of);
     }
 
     private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-        return holidayManagers.get(federalState.getCountry()).isHoliday(date, federalState.getCodes());
+        return getHolidayManager(federalState)
+            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
+            .orElse(false);
+    }
+
+    private Optional<HolidayManager> getHolidayManager(FederalState federalState) {
+        return Optional.ofNullable(holidayManagers.get(federalState.getCountry()));
     }
 
     private WorkingTimeSettings getWorkingTimeSettings() {
