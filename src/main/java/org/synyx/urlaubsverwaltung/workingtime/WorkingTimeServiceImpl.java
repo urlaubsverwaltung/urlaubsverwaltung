@@ -81,6 +81,38 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
+    public Map<DateRange, WorkingTime> getWorkingTimesByPersonAndDateRange(Person person, DateRange dateRange) {
+
+        final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
+        final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
+            .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
+            .collect(toList());
+
+        final HashMap<DateRange, WorkingTime> workingTimesOfPersonByDateRage = new HashMap<>();
+        LocalDate nextEnd = dateRange.getEndDate();
+
+        for (WorkingTime workingTime : workingTimeList) {
+
+            final DateRange range;
+            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                range = new DateRange(dateRange.getStartDate(), nextEnd);
+            } else {
+                range = new DateRange(workingTime.getValidFrom(), nextEnd);
+            }
+
+            workingTimesOfPersonByDateRage.put(range, workingTime);
+
+            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                return workingTimesOfPersonByDateRage;
+            }
+
+            nextEnd = workingTime.getValidFrom().minusDays(1);
+        }
+
+        return workingTimesOfPersonByDateRage;
+    }
+
+    @Override
     public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
 
         final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
