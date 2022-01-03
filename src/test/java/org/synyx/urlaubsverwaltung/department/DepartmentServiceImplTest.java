@@ -15,7 +15,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +55,7 @@ class DepartmentServiceImplTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private final Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+    private final Clock clock = Clock.fixed(Instant.now(), UTC);
 
     @BeforeEach
     void setUp() {
@@ -316,7 +315,7 @@ class DepartmentServiceImplTest {
 
         final Department updatedDepartment = sut.update(department);
 
-        assertThat(department.getLastModification()).isToday(); // department constructor currently sets the modification date
+        assertThat(department.getLastModification()).isEqualTo(LocalDate.now(clock)); // department constructor currently sets the modification date
         assertThat(updatedDepartment.getLastModification()).isEqualTo(expectedModificationDate);
     }
 

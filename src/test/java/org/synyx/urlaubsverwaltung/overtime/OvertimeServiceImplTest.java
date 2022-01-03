@@ -49,9 +49,11 @@ class OvertimeServiceImplTest {
     @Mock
     private SettingsService settingsService;
 
+    private final Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
-        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, settingsService, Clock.systemUTC());
+        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, settingsService, clock);
     }
 
     // Record overtime -------------------------------------------------------------------------------------------------
@@ -73,7 +75,7 @@ class OvertimeServiceImplTest {
         final Person author = new Person();
 
         final Overtime overtime = sut.record(new Overtime(), Optional.empty(), author);
-        assertThat(overtime.getLastModificationDate()).isToday();
+        assertThat(overtime.getLastModificationDate()).isEqualTo(LocalDate.now(clock));
     }
 
     @Test
