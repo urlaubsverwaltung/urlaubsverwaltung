@@ -281,7 +281,7 @@ class ApplicationForLeaveCreateIT {
         final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
         LocalDate nextWorkDay = now();
-        while (publicHolidaysService.getPublicHoliday(nextWorkDay, federalState).isEmpty()) {
+        while (publicHolidaysService.getPublicHoliday(nextWorkDay, federalState).isPresent()) {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
