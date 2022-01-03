@@ -10,8 +10,29 @@ import java.util.Optional;
 
 public interface WorkingTimeService {
 
+    /**
+     * Returns a list of working times for the given person.
+     * <p>
+     * Note: The federal state of the working times are either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param person to get all working times
+     * @return list of all working times of a person
+     */
     List<WorkingTime> getByPerson(Person person);
 
+    /**
+     * Returns a map of date ranges and the associated federal state.
+     * <p>
+     * Note: The federal state of the {@link DateRange} is either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param person    to get the federal states
+     * @param dateRange to specify the
+     * @return map of date ranges and the associated federal state of a person
+     */
     Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange);
 
     List<WorkingTime> getByPersons(List<Person> persons);
