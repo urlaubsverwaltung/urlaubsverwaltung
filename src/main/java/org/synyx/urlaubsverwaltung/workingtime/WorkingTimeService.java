@@ -59,7 +59,23 @@ public interface WorkingTimeService {
 
     List<WorkingTime> getByPersons(List<Person> persons);
 
+    /**
+     * Returns the federal state of a person.
+     * <p>
+     * Note: That the federal state is either
+     * the default federate state based on the settings
+     * or the user specific.
+     *
+     * @param person to get the current federal state of
+     * @param date   of this given date
+     * @return the federal state of the given date and person
+     */
     FederalState getFederalStateForPerson(Person person, LocalDate date);
 
+    /**
+     * Returns the default federal state based on the settings
+     *
+     * @return default federal state
+     */
     FederalState getSystemDefaultFederalState();
 }
