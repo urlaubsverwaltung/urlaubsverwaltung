@@ -88,6 +88,11 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
+    public List<WorkingTime> getByPersons(List<Person> persons) {
+        return toWorkingTimes(workingTimeRepository.findByPersonIn(persons));
+    }
+
+    @Override
     public Map<DateRange, WorkingTime> getWorkingTimesByPersonAndDateRange(Person person, DateRange dateRange) {
 
         final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
@@ -123,11 +128,6 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
         return getWorkingTimesByPersonAndDateRange(person, dateRange).entrySet().stream()
             .collect(toMap(Map.Entry::getKey, dateRangeWorkingTimeEntry -> dateRangeWorkingTimeEntry.getValue().getFederalState()));
-    }
-
-    @Override
-    public List<WorkingTime> getByPersons(List<Person> persons) {
-        return toWorkingTimes(workingTimeRepository.findByPersonIn(persons));
     }
 
     @Override

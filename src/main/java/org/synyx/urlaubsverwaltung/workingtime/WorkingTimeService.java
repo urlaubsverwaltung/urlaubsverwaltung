@@ -32,6 +32,18 @@ public interface WorkingTimeService {
     List<WorkingTime> getByPerson(Person person);
 
     /**
+     * Returns a list of working times for the given persons.
+     * <p>
+     * Note: The federal state of the working times are either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param persons to get all working times of
+     * @return list of all working times of the persons
+     */
+    List<WorkingTime> getByPersons(List<Person> persons);
+
+    /**
      * Returns a map of date ranges and the associated working time.
      * <p>
      * Note: The federal state of the working time is either
@@ -56,8 +68,6 @@ public interface WorkingTimeService {
      * @return map of date ranges and the associated federal state of a person
      */
     Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange);
-
-    List<WorkingTime> getByPersons(List<Person> persons);
 
     /**
      * Returns the federal state of a person.
