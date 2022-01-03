@@ -121,7 +121,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     @Override
     public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
-            .map(entity -> toWorkingTimes(entity, this::getSystemDefaultFederalState));
+            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState));
     }
 
     @Override
@@ -155,10 +155,10 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         this.touch(defaultWorkingDays, today, person);
     }
 
-    private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> entities) {
+    private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> workingTimeEntities) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        return entities.stream()
-            .map(entity -> toWorkingTimes(entity, federalStateCachedSupplier))
+        return workingTimeEntities.stream()
+            .map(workingTime -> toWorkingTime(workingTime, federalStateCachedSupplier))
             .collect(toList());
     }
 
@@ -198,7 +198,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         }
     }
 
-    private static WorkingTime toWorkingTimes(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
+    private static WorkingTime toWorkingTime(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
 
         final FederalState federalState = workingTimeEntity.getFederalStateOverride() == null
             ? defaultFederalStateProvider.get()
