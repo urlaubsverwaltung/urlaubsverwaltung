@@ -66,4 +66,13 @@ public final class PublicHoliday {
     public int hashCode() {
         return Objects.hash(date);
     }
+
+    @Override
+    public String toString() {
+        return "PublicHoliday{" +
+            "date=" + date +
+            ", dayLength=" + dayLength +
+            ", description='" + description + '\'' +
+            '}';
+    }
 }
