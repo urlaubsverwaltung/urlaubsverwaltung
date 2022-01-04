@@ -46,6 +46,7 @@ class MailServiceImplTest {
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
         when(mailContentBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
         when(mailProperties.getSender()).thenReturn("no-reply@example.org");
+        when(mailProperties.getSenderDisplayName()).thenReturn("Urlaubsverwaltung");
         when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
 
         sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties, personService);
@@ -74,7 +75,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("mail@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("mail@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -96,7 +97,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -122,8 +123,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody");
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -152,8 +153,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -182,8 +183,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -203,7 +204,7 @@ class MailServiceImplTest {
             .build();
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of(to), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of(to), "subject", "emailBody");
     }
 
     @Test
@@ -233,9 +234,9 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("hans@example.org"), "subject", "emailBody");
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("franz@example.org"), "subject", "emailBody");
-        verify(mailSenderService).sendEmail("no-reply@example.org", List.of("admin@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("admin@example.org"), "subject", "emailBody");
     }
 
     private void setupMockServletRequest() {
