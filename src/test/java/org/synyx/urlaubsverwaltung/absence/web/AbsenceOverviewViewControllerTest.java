@@ -1,7 +1,4 @@
-package org.synyx.urlaubsverwaltung.absence.web;
-
-
-import org.junit.jupiter.api.BeforeEach;
+package org.synyx.urlaubsverwaltung.absence.web;import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +17,6 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -28,14 +24,12 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
@@ -49,7 +43,6 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
@@ -107,9 +100,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setFirstName("sam");
@@ -140,9 +130,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setPermissions(List.of(role));
         person.setFirstName("boss");
@@ -171,9 +158,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER, role));
@@ -208,9 +192,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final Person person = new Person();
         person.setFirstName("firstname");
         person.setLastName("lastname");
@@ -239,9 +220,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -268,9 +246,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -297,9 +272,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -329,9 +301,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var expectedCurrentYear = LocalDate.now().getYear();
 
         final var person = new Person();
@@ -355,9 +324,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var expectedCurrentYear = LocalDate.now().getYear();
         final var expectedSelectedYear = expectedCurrentYear - 1;
 
@@ -386,9 +352,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var now = LocalDate.now();
 
         final var person = new Person();
@@ -412,9 +375,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -437,18 +397,12 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
         person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
-
-
-        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+        when(personService.getSignedInUser()).thenReturn(person);        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
         perform(get("/web/absences")
             .param("month", "1"))
@@ -463,9 +417,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -501,9 +452,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final Clock fixedClock = Clock.fixed(Instant.parse("2018-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
@@ -535,9 +483,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
@@ -576,9 +521,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
@@ -617,8 +559,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, clock,
             publicHolidaysService, settingsService, absenceService, workingTimeService);
@@ -662,9 +602,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("bruce");
         person.setLastName("wayne");
@@ -700,9 +637,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("bruce");
         person.setLastName("wayne");
@@ -739,9 +673,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
@@ -783,9 +714,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setFirstName("boss");
         person.setLastName("the hoss");
@@ -839,9 +767,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -898,9 +823,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -957,9 +879,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1019,9 +938,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1078,9 +994,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1137,9 +1050,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1200,9 +1110,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1259,9 +1166,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1318,9 +1222,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1379,9 +1280,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1437,9 +1335,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1495,9 +1390,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1558,9 +1450,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1617,9 +1506,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1676,9 +1562,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1737,9 +1620,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1795,9 +1675,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1853,9 +1730,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -1916,9 +1790,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -1981,9 +1852,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));
@@ -2047,9 +1915,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -2111,9 +1976,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final var person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER));
@@ -2166,19 +2028,13 @@ class AbsenceOverviewViewControllerTest {
                     ))
                 ))
             ));
-    }
-
-
-    @Test
+    }    @Test
     void ensureWeekendsAndHolidays() throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-01T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
@@ -2241,9 +2097,6 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         final Clock fixedClock = Clock.fixed(Instant.parse("2020-12-10T00:00:00.00Z"), ZoneId.systemDefault());
 
         sut = new AbsenceOverviewViewController(personService, departmentService, messageSource, fixedClock,
@@ -2315,7 +2168,7 @@ class AbsenceOverviewViewControllerTest {
         when(workingTimeService.getFederalStatesByPersonAndDateRange(personWithCustomPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, BADEN_WUERTTEMBERG));
         when(workingTimeService.getFederalStatesByPersonAndDateRange(personDefaultPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, RHEINLAND_PFALZ));
 
-        when(publicHolidaysService.getPublicHolidays(start, end, BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL)));
+        when(publicHolidaysService.getPublicHolidays(start, end, BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
         when(publicHolidaysService.getPublicHolidays(start, end, RHEINLAND_PFALZ)).thenReturn(emptyList());
 
         final Settings settings = new Settings();
@@ -2323,9 +2176,6 @@ class AbsenceOverviewViewControllerTest {
         workingTimeSettings.setFederalState(RHEINLAND_PFALZ);
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
-
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-
         perform(get("/web/absences")
             .param("year", "2022")
             .param("month", "1")

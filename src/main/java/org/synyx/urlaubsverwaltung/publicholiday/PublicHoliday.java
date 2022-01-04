@@ -2,8 +2,13 @@ package org.synyx.urlaubsverwaltung.publicholiday;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 
 /**
  * Describes a public holiday with the UV specific setting if it is a half public holiday or not.
@@ -13,10 +18,12 @@ public final class PublicHoliday {
 
     private final LocalDate date;
     private final DayLength dayLength;
+    private final String description;
 
-    public PublicHoliday(LocalDate date, DayLength dayLength) {
+    public PublicHoliday(LocalDate date, DayLength dayLength, String description) {
         this.date = date;
         this.dayLength = dayLength;
+        this.description = description;
     }
 
     public LocalDate getDate() {
@@ -27,16 +34,24 @@ public final class PublicHoliday {
         return dayLength;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public boolean isMorning() {
-        return dayLength.equals(DayLength.MORNING);
+        return dayLength.equals(MORNING);
     }
 
     public boolean isNoon() {
-        return dayLength.equals(DayLength.NOON);
+        return dayLength.equals(NOON);
     }
 
     public boolean isFull() {
-        return dayLength.equals(DayLength.FULL);
+        return dayLength.equals(FULL);
+    }
+
+    public BigDecimal getWorkingDuration() {
+        return dayLength.getInverse().getDuration();
     }
 
     @Override

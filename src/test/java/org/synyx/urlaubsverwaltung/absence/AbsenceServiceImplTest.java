@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -20,6 +21,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static java.time.DayOfWeek.FRIDAY;
@@ -207,13 +209,14 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         sut.getOpenAbsences(List.of(person), start, end);
 
-        verify(publicHolidaysService).getAbsenceTypeOfDate(LocalDate.of(2021, MAY, 10), BADEN_WUERTTEMBERG);
-        verify(publicHolidaysService).getAbsenceTypeOfDate(LocalDate.of(2021, MAY, 11), BADEN_WUERTTEMBERG);
-        verify(publicHolidaysService).getAbsenceTypeOfDate(LocalDate.of(2021, MAY, 12), BADEN_WUERTTEMBERG);
+        verify(publicHolidaysService).getPublicHoliday(LocalDate.of(2021, MAY, 10), BADEN_WUERTTEMBERG);
+        verify(publicHolidaysService).getPublicHoliday(LocalDate.of(2021, MAY, 11), BADEN_WUERTTEMBERG);
+        verify(publicHolidaysService).getPublicHoliday(LocalDate.of(2021, MAY, 12), BADEN_WUERTTEMBERG);
+
         verifyNoMoreInteractions(publicHolidaysService);
     }
 
@@ -239,7 +242,8 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -274,7 +278,7 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -307,7 +311,7 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), eq(BERLIN))).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), eq(BERLIN))).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -338,7 +342,7 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), eq(BADEN_WUERTTEMBERG))).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), eq(BADEN_WUERTTEMBERG))).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
@@ -369,7 +373,7 @@ class AbsenceServiceImplTest {
         sickNote.setDayLength(DayLength.MORNING);
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -402,7 +406,7 @@ class AbsenceServiceImplTest {
         sickNote.setDayLength(DayLength.NOON);
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(1);
@@ -426,7 +430,7 @@ class AbsenceServiceImplTest {
 
         when(workingTimeService.getByPersons(any())).thenReturn(emptyList());
         when(workingTimeService.getSystemDefaultFederalState()).thenReturn(BERLIN);
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), eq(BERLIN))).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), eq(BERLIN))).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final SickNote sickNote = new SickNote();
         sickNote.setId(42);
@@ -472,7 +476,7 @@ class AbsenceServiceImplTest {
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
         assertThat(actualAbsences).hasSize(2);
@@ -515,7 +519,7 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
@@ -548,7 +552,7 @@ class AbsenceServiceImplTest {
         sickNote.setDayLength(FULL);
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
@@ -583,8 +587,8 @@ class AbsenceServiceImplTest {
         application.setStatus(ALLOWED);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-        when(publicHolidaysService.getAbsenceTypeOfDate(eq(LocalDate.of(2021, MAY, 20)), any())).thenReturn(FULL);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
+        when(publicHolidaysService.getPublicHoliday(eq(LocalDate.of(2021, MAY, 20)), any())).thenReturn(Optional.of(new PublicHoliday(start, FULL, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
@@ -635,8 +639,8 @@ class AbsenceServiceImplTest {
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-        when(publicHolidaysService.getAbsenceTypeOfDate(eq(LocalDate.of(2021, DECEMBER, 24)), any())).thenReturn(DayLength.NOON);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
+        when(publicHolidaysService.getPublicHoliday(eq(LocalDate.of(2021, DECEMBER, 24)), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.NOON, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 
@@ -690,8 +694,8 @@ class AbsenceServiceImplTest {
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
-        when(publicHolidaysService.getAbsenceTypeOfDate(any(), any())).thenReturn(DayLength.ZERO);
-        when(publicHolidaysService.getAbsenceTypeOfDate(eq(LocalDate.of(2021, DECEMBER, 24)), any())).thenReturn(DayLength.MORNING);
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.ZERO, "")));
+        when(publicHolidaysService.getPublicHoliday(eq(LocalDate.of(2021, DECEMBER, 24)), any())).thenReturn(Optional.of(new PublicHoliday(start, DayLength.MORNING, "")));
 
         final List<AbsencePeriod> actualAbsences = sut.getOpenAbsences(List.of(batman), start, end);
 

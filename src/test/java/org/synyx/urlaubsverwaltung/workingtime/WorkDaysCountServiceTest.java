@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import de.jollyday.HolidayManager;
-import de.jollyday.ManagerParameter;
-import de.jollyday.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -23,6 +21,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
+import static de.jollyday.ManagerParameters.create;
 import static java.math.BigDecimal.TEN;
 import static java.time.Month.DECEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +47,7 @@ class WorkDaysCountServiceTest {
 
     @BeforeEach
     void setUp() {
-        final var publicHolidaysService = new PublicHolidaysService(settingsService, getHolidayManager());
+        final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, getHolidayManager());
         sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
     }
 
@@ -481,7 +480,6 @@ class WorkDaysCountServiceTest {
     private HolidayManager getHolidayManager() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         final URL url = cl.getResource("Holidays_de.xml");
-        final ManagerParameter managerParameter = ManagerParameters.create(url);
-        return HolidayManager.getInstance(managerParameter);
+        return HolidayManager.getInstance(create(url));
     }
 }

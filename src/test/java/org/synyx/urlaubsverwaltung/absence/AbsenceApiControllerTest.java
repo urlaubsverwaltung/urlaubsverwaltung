@@ -339,7 +339,7 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
-        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
@@ -376,7 +376,7 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
-        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
@@ -415,7 +415,7 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
-        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
@@ -452,7 +452,7 @@ class AbsenceApiControllerTest {
         when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
 
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
-        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON);
+        final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
         when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));

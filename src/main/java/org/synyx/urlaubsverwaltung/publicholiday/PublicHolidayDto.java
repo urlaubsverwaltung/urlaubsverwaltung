@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.jollyday.Holiday;
-
 import java.math.BigDecimal;
-import java.util.Locale;
 
 final class PublicHolidayDto {
 
@@ -12,9 +9,9 @@ final class PublicHolidayDto {
     private final BigDecimal dayLength;
     private final String absencePeriodName;
 
-    PublicHolidayDto(Holiday holiday, BigDecimal dayLength, String absencePeriodName) {
-        this.date = holiday.getDate().toString();
-        this.description = holiday.getDescription(Locale.GERMAN);
+    PublicHolidayDto(PublicHoliday publicHoliday, BigDecimal dayLength, String absencePeriodName) {
+        this.date = publicHoliday.getDate().toString();
+        this.description = publicHoliday.getDescription();
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
     }
