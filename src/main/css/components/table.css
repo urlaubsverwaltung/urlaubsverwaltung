@@ -160,7 +160,7 @@ td.halves h4 {
 .absence-type-approval-checkbox:checked {
   @apply tw-bg-blue-500;
   @apply tw-border-blue-500;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e")
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
 table.absence-type-settings-table thead {
@@ -181,7 +181,11 @@ table.absence-type-settings-table thead {
     display: block;
 
     /* Force table to not be like tables anymore */
-    thead, tbody, th, td, tr {
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
       display: block;
     }
 
@@ -248,7 +252,9 @@ table.absence-type-settings-table thead {
       /*
       Label the data
       */
-      td::before { content: attr(data-th-text); }
+      td::before {
+        content: attr(data-th-text);
+      }
 
       td:nth-of-type(4) {
         text-align: left;
