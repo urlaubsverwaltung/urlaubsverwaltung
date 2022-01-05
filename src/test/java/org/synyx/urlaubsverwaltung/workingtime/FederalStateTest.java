@@ -8,9 +8,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.AUSTRIA_BURGENLAND;
@@ -43,6 +43,32 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SACHS
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SACHSEN_ANHALT;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SCHLESWIG_HOLSTEIN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_THUERINGEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_AARGAU;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_AUSSERRHODEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_INNERRHODEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_BASEL_LANDSCHAFT;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_BASEL_STADT;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_BERN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_FREIBURG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_GENF;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_GLARUS;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_GRAUBUENDEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_JURA;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_LUZERN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_NEUENBURG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_NIDWALDEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_OBWALDEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_SCHAFFHAUSEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_SCHWYZ;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_SOLOTHURN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ST_GALLEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_TESSIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_THURGAU;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_URI;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_WAADT;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_WALLIS;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUERICH;
 
 /**
  * Unit test for {@link FederalState}.
@@ -72,6 +98,7 @@ class FederalStateTest {
             Arguments.of(GERMANY_SACHSEN_ANHALT, "st", null),
             Arguments.of(GERMANY_SCHLESWIG_HOLSTEIN, "sh", null),
             Arguments.of(GERMANY_THUERINGEN, "th", null),
+
             Arguments.of(AUSTRIA_BURGENLAND, "b", null),
             Arguments.of(AUSTRIA_KAERNTEN, "k", null),
             Arguments.of(AUSTRIA_NIEDEROESTERREICH, "la", null),
@@ -80,7 +107,34 @@ class FederalStateTest {
             Arguments.of(AUSTRIA_STEIERMARK, "st", null),
             Arguments.of(AUSTRIA_TIROL, "t", null),
             Arguments.of(AUSTRIA_VORARLBERG, "va", null),
-            Arguments.of(AUSTRIA_WIEN, "w", null)
+            Arguments.of(AUSTRIA_WIEN, "w", null),
+
+            Arguments.of(SWITZERLAND_AARGAU, "ag", null),
+            Arguments.of(SWITZERLAND_APPENZELL_INNERRHODEN, "ai", null),
+            Arguments.of(SWITZERLAND_APPENZELL_AUSSERRHODEN, "ar", null),
+            Arguments.of(SWITZERLAND_BERN, "be", null),
+            Arguments.of(SWITZERLAND_BASEL_LANDSCHAFT, "bl", null),
+            Arguments.of(SWITZERLAND_BASEL_STADT, "bs", null),
+            Arguments.of(SWITZERLAND_FREIBURG, "fr", null),
+            Arguments.of(SWITZERLAND_GENF, "ge", null),
+            Arguments.of(SWITZERLAND_GLARUS, "gl", null),
+            Arguments.of(SWITZERLAND_GRAUBUENDEN, "gr", null),
+            Arguments.of(SWITZERLAND_JURA, "ju", null),
+            Arguments.of(SWITZERLAND_LUZERN, "lu", null),
+            Arguments.of(SWITZERLAND_NEUENBURG, "ne", null),
+            Arguments.of(SWITZERLAND_NIDWALDEN, "nw", null),
+            Arguments.of(SWITZERLAND_OBWALDEN, "ow", null),
+            Arguments.of(SWITZERLAND_ST_GALLEN, "sg", null),
+            Arguments.of(SWITZERLAND_SCHAFFHAUSEN, "sh", null),
+            Arguments.of(SWITZERLAND_SOLOTHURN, "so", null),
+            Arguments.of(SWITZERLAND_SCHWYZ, "sz", null),
+            Arguments.of(SWITZERLAND_THURGAU, "tg", null),
+            Arguments.of(SWITZERLAND_TESSIN, "ti", null),
+            Arguments.of(SWITZERLAND_URI, "ur", null),
+            Arguments.of(SWITZERLAND_WAADT, "vd", null),
+            Arguments.of(SWITZERLAND_WALLIS, "vs", null),
+            Arguments.of(SWITZERLAND_ZUG, "zg", null),
+            Arguments.of(SWITZERLAND_ZUERICH, "zh", null)
         );
     }
 
@@ -122,6 +176,7 @@ class FederalStateTest {
             Arguments.of(GERMANY_SACHSEN_ANHALT, "de"),
             Arguments.of(GERMANY_SCHLESWIG_HOLSTEIN, "de"),
             Arguments.of(GERMANY_THUERINGEN, "de"),
+
             Arguments.of(AUSTRIA_BURGENLAND, "at"),
             Arguments.of(AUSTRIA_KAERNTEN, "at"),
             Arguments.of(AUSTRIA_NIEDEROESTERREICH, "at"),
@@ -130,7 +185,34 @@ class FederalStateTest {
             Arguments.of(AUSTRIA_STEIERMARK, "at"),
             Arguments.of(AUSTRIA_TIROL, "at"),
             Arguments.of(AUSTRIA_VORARLBERG, "at"),
-            Arguments.of(AUSTRIA_WIEN, "at")
+            Arguments.of(AUSTRIA_WIEN, "at"),
+
+            Arguments.of(SWITZERLAND_AARGAU, "ch"),
+            Arguments.of(SWITZERLAND_APPENZELL_INNERRHODEN, "ch"),
+            Arguments.of(SWITZERLAND_APPENZELL_AUSSERRHODEN, "ch"),
+            Arguments.of(SWITZERLAND_BERN, "ch"),
+            Arguments.of(SWITZERLAND_BASEL_LANDSCHAFT, "ch"),
+            Arguments.of(SWITZERLAND_BASEL_STADT, "ch"),
+            Arguments.of(SWITZERLAND_FREIBURG, "ch"),
+            Arguments.of(SWITZERLAND_GENF, "ch"),
+            Arguments.of(SWITZERLAND_GLARUS, "ch"),
+            Arguments.of(SWITZERLAND_GRAUBUENDEN, "ch"),
+            Arguments.of(SWITZERLAND_JURA, "ch"),
+            Arguments.of(SWITZERLAND_LUZERN, "ch"),
+            Arguments.of(SWITZERLAND_NEUENBURG, "ch"),
+            Arguments.of(SWITZERLAND_NIDWALDEN, "ch"),
+            Arguments.of(SWITZERLAND_OBWALDEN, "ch"),
+            Arguments.of(SWITZERLAND_ST_GALLEN, "ch"),
+            Arguments.of(SWITZERLAND_SCHAFFHAUSEN, "ch"),
+            Arguments.of(SWITZERLAND_SOLOTHURN, "ch"),
+            Arguments.of(SWITZERLAND_SCHWYZ, "ch"),
+            Arguments.of(SWITZERLAND_THURGAU, "ch"),
+            Arguments.of(SWITZERLAND_TESSIN, "ch"),
+            Arguments.of(SWITZERLAND_URI, "ch"),
+            Arguments.of(SWITZERLAND_WAADT, "ch"),
+            Arguments.of(SWITZERLAND_WALLIS, "ch"),
+            Arguments.of(SWITZERLAND_ZUG, "ch"),
+            Arguments.of(SWITZERLAND_ZUERICH, "ch")
         );
     }
 
@@ -143,9 +225,10 @@ class FederalStateTest {
     @Test
     void ensureCorrectFederalStatesByCountry() {
         final Map<String, List<FederalState>> federalStatesTypesByCountry = FederalState.federalStatesTypesByCountry();
-        final List<FederalState> germanyFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "de".equals(federalState.getCountry())).collect(Collectors.toList());
-        final List<FederalState> austriaFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).collect(Collectors.toList());
-        assertThat(federalStatesTypesByCountry).hasSize(2)
-            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates));
+        final List<FederalState> germanyFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "de".equals(federalState.getCountry())).collect(toList());
+        final List<FederalState> austriaFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).collect(toList());
+        final List<FederalState> switzerlandFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ch".equals(federalState.getCountry())).collect(toList());
+        assertThat(federalStatesTypesByCountry).hasSize(3)
+            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates));
     }
 }

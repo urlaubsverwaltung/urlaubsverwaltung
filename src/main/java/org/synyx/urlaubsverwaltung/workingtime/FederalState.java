@@ -43,7 +43,34 @@ public enum FederalState {
     AUSTRIA_STEIERMARK("at", "st"),
     AUSTRIA_TIROL("at", "t"),
     AUSTRIA_VORARLBERG("at", "va"),
-    AUSTRIA_WIEN("at", "w");
+    AUSTRIA_WIEN("at", "w"),
+
+    SWITZERLAND_AARGAU("ch", "ag"),
+    SWITZERLAND_APPENZELL_INNERRHODEN("ch", "ai"),
+    SWITZERLAND_APPENZELL_AUSSERRHODEN("ch", "ar"),
+    SWITZERLAND_BERN("ch", "be"),
+    SWITZERLAND_BASEL_LANDSCHAFT("ch", "bl"),
+    SWITZERLAND_BASEL_STADT("ch", "bs"),
+    SWITZERLAND_FREIBURG("ch", "fr"),
+    SWITZERLAND_GENF("ch", "ge"),
+    SWITZERLAND_GLARUS("ch", "gl"),
+    SWITZERLAND_GRAUBUENDEN("ch", "gr"),
+    SWITZERLAND_JURA("ch", "ju"),
+    SWITZERLAND_LUZERN("ch", "lu"),
+    SWITZERLAND_NEUENBURG("ch", "ne"),
+    SWITZERLAND_NIDWALDEN("ch", "nw"),
+    SWITZERLAND_OBWALDEN("ch", "ow"),
+    SWITZERLAND_ST_GALLEN("ch", "sg"),
+    SWITZERLAND_SCHAFFHAUSEN("ch", "sh"),
+    SWITZERLAND_SOLOTHURN("ch", "so"),
+    SWITZERLAND_SCHWYZ("ch", "sz"),
+    SWITZERLAND_THURGAU("ch", "tg"),
+    SWITZERLAND_TESSIN("ch", "ti"),
+    SWITZERLAND_URI("ch", "ur"),
+    SWITZERLAND_WAADT("ch", "vd"),
+    SWITZERLAND_WALLIS("ch", "vs"),
+    SWITZERLAND_ZUG("ch", "zg"),
+    SWITZERLAND_ZUERICH("ch", "zh");
 
     private final String[] codes;
 
