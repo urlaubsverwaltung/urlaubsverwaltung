@@ -19,8 +19,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,6 +35,9 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.absence.DayAbsenceDto.Type.VACATION;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
@@ -49,15 +51,15 @@ public class AbsenceApiController {
     private final PersonService personService;
     private final AbsenceService absenceService;
     private final PublicHolidaysService publicHolidaysService;
-    private final SettingsService settingsService;
+    private final WorkingTimeService workingTimeService;
 
     @Autowired
     public AbsenceApiController(PersonService personService, AbsenceService absenceService,
-                                PublicHolidaysService publicHolidaysService, SettingsService settingsService) {
+                                PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
         this.personService = personService;
         this.absenceService = absenceService;
         this.publicHolidaysService = publicHolidaysService;
-        this.settingsService = settingsService;
+        this.workingTimeService = workingTimeService;
     }
 
     @Operation(
@@ -94,9 +96,7 @@ public class AbsenceApiController {
         }
 
         final Person person = optionalPerson.get();
-        final DayAbsenceDto.Type typeEnum = this.toType(type);
-        final List<DayAbsenceDto> absences = this.getAbsences(startDate, endDate, person, typeEnum);
-
+        final List<DayAbsenceDto> absences = getAbsences(startDate, endDate, person, toType(type));
         return new DayAbsencesDto(absences);
     }
 
@@ -106,27 +106,20 @@ public class AbsenceApiController {
         final Predicate<DayAbsenceDto> isVacation = dto -> dto.getType().equals(VACATION.name());
         final Predicate<DayAbsenceDto> isSick = dto -> dto.getType().equals(SICK_NOTE.name());
 
-        // FIXME - default federal state cannot be used for a person to get their public holidays
-        // this is used for the calendar on the overview page e.g.
-        final Map<LocalDate, PublicHoliday> holidaysByDate = holidaysByDate(start, end);
+        final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByDate(person, start, end);
 
         return absenceService.getOpenAbsences(person, start, end)
             .stream()
-            .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, holidaysByDate))
+            .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, publicHolidaysByDate))
             .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
             .collect(toList());
     }
 
-    private Map<LocalDate, PublicHoliday> holidaysByDate(LocalDate start, LocalDate end) {
-        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-        return publicHolidaysService.getPublicHolidays(start, end, defaultFederalState)
-            .stream()
-            .collect(
-                toMap(
-                    PublicHoliday::getDate,
-                    Function.identity()
-                )
-            );
+    private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {
+        return workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(start, end)).entrySet().stream()
+            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .flatMap(List::stream)
+            .collect(toMap(PublicHoliday::getDate, Function.identity()));
     }
 
     private Stream<DayAbsenceDto> toDayAbsenceDto(AbsencePeriod absence, Map<LocalDate, PublicHoliday> holidaysByDate) {
@@ -163,13 +156,13 @@ public class AbsenceApiController {
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull || (sickMorning && publicHolidayNoon) || (sickNoon && publicHolidayMorning)) {
-            return morning.or(absenceRecord::getNoon).map(morningOrNoon -> toDayAbsenceDto(date, DayLength.FULL, morningOrNoon));
+            return morning.or(absenceRecord::getNoon).map(morningOrNoon -> toDayAbsenceDto(date, FULL, morningOrNoon));
         }
         if (sickMorning) {
-            return morning.map(morningRecord -> toDayAbsenceDto(date, DayLength.MORNING, morningRecord));
+            return morning.map(morningRecord -> toDayAbsenceDto(date, MORNING, morningRecord));
         }
         if (sickNoon) {
-            return noon.map(noonRecord -> toDayAbsenceDto(date, DayLength.NOON, noonRecord));
+            return noon.map(noonRecord -> toDayAbsenceDto(date, NOON, noonRecord));
         }
 
         return Optional.empty();
@@ -190,13 +183,13 @@ public class AbsenceApiController {
         final boolean vacationFull = vacationMorning && vacationNoon;
 
         if (vacationFull || (vacationMorning && publicHolidayNoon) || (vacationNoon && publicHolidayMorning)) {
-            return morning.or(absenceRecord::getNoon).map(morningOrNoon -> toDayAbsenceDto(date, DayLength.FULL, morningOrNoon));
+            return morning.or(absenceRecord::getNoon).map(morningOrNoon -> toDayAbsenceDto(date, FULL, morningOrNoon));
         }
         if (vacationMorning) {
-            return morning.map(morningRecord -> toDayAbsenceDto(date, DayLength.MORNING, morningRecord));
+            return morning.map(morningRecord -> toDayAbsenceDto(date, MORNING, morningRecord));
         }
         if (vacationNoon) {
-            return noon.map(noonRecord -> toDayAbsenceDto(date, DayLength.NOON, noonRecord));
+            return noon.map(noonRecord -> toDayAbsenceDto(date, NOON, noonRecord));
         }
 
         return Optional.empty();
@@ -222,9 +215,9 @@ public class AbsenceApiController {
     private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
         switch (absenceType) {
             case VACATION:
-                return Optional.of(DayAbsenceDto.Type.VACATION);
+                return Optional.of(VACATION);
             case SICK:
-                return Optional.of(DayAbsenceDto.Type.SICK_NOTE);
+                return Optional.of(SICK_NOTE);
             default:
                 return Optional.empty();
         }
