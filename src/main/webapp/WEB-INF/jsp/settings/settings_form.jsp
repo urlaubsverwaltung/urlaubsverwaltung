@@ -723,6 +723,12 @@
 
                                     <div class="col-md-8">
                                         <uv:select id="federalStateType" name="workingTimeSettings.federalState">
+                                            <c:set var="countryLabelGeneral"><spring:message code="country.general" /></c:set>
+                                            <optgroup label="${countryLabelGeneral}">
+                                                <option value="NONE" ${settings.workingTimeSettings.federalState == "NONE" ? 'selected="selected"' : ''}>
+                                                    <spring:message code="federalState.NONE"/>
+                                                </option>
+                                            </optgroup>
                                             <c:forEach items="${federalStateTypes}" var="federalStatesByCountry">
                                                 <c:set var="countryLabel"><spring:message code="country.${federalStatesByCountry.key}" /></c:set>
                                                 <optgroup label="${countryLabel}">

@@ -90,7 +90,7 @@ class VacationDaysServiceTest {
         final LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
 
-        final WorkingTime workingTime = new WorkingTime(person, firstMilestone, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, firstMilestone, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(firstMilestone, lastMilestone), workingTime));
 
@@ -156,7 +156,7 @@ class VacationDaysServiceTest {
         final LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
 
-        final WorkingTime workingTime = new WorkingTime(person, firstMilestone, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, firstMilestone, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(firstMilestone, lastMilestone), workingTime));
 

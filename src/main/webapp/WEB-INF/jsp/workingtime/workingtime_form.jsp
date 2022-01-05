@@ -66,8 +66,16 @@
                         <span class="help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="federalState.${defaultFederalState}" var="defaultFederalStateName"/>
-                            <spring:message code="country.${defaultFederalState.country}" var="defaultCountryName"/>
-                            <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultCountryName}, ${defaultFederalStateName}"/>
+                            <c:choose>
+                                <c:when test="${defaultFederalState == 'NONE'}">
+                                    <c:set var="defaultFederalCountryAndStateName">${defaultFederalStateName}</c:set>
+                                </c:when>
+                                <c:otherwise>
+                                    <spring:message code="country.${defaultFederalState.country}" var="defaultCountryName"/>
+                                    <c:set var="defaultFederalCountryAndStateName">${defaultCountryName} - ${defaultFederalStateName}</c:set>
+                                </c:otherwise>
+                            </c:choose>
+                            <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultFederalCountryAndStateName}"/>
                         </span>
                         <span class="help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
@@ -83,16 +91,20 @@
 
                             <div class="col-md-9">
                                 <uv:select id="federalStateType" name="federalState">
-                                    <optgroup label="">
-                                        <option value="">
-                                            <spring:message code="person.form.workingTime.federalState.default" arguments="${defaultCountryName}, ${defaultFederalStateName}" />
+                                    <c:set var="countryLabelGeneral"><spring:message code="country.general"/></c:set>
+                                    <optgroup label="${countryLabelGeneral}">
+                                        <option value="" ${workingTime.defaultFederalState == true ? 'selected="selected"' : ''}>
+                                            <spring:message code="person.form.workingTime.federalState.default" arguments="${defaultFederalCountryAndStateName}" />
+                                        </option>
+                                        <option value="NONE" ${workingTime.defaultFederalState == false && workingTime.federalState == "NONE" ? 'selected="selected"' : ''}>
+                                            <spring:message code="federalState.NONE"/>
                                         </option>
                                     </optgroup>
                                     <c:forEach items="${federalStateTypes}" var="federalStatesByCountry">
                                         <c:set var="countryLabel"><spring:message code="country.${federalStatesByCountry.key}" /></c:set>
                                         <optgroup label="${countryLabel}">
                                             <c:forEach items="${federalStatesByCountry.value}" var="federalStateType">
-                                                <option value="${federalStateType}" ${settings.workingTimeSettings.federalState == federalStateType ? 'selected="selected"' : ''}>
+                                                <option value="${federalStateType}" ${workingTime.defaultFederalState == false && workingTime.federalState == federalStateType ? 'selected="selected"' : ''}>
                                                     <spring:message code="federalState.${federalStateType}"/>
                                                 </option>
                                             </c:forEach>
@@ -169,7 +181,14 @@
                                                 </c:forEach>
 
                                                 <span class="tw-block">
-                                                    <spring:message code="country.${workingTimeHistory.country}"/> - <spring:message code="federalState.${workingTimeHistory.federalState}"/>
+                                                    <c:choose>
+                                                        <c:when test="${workingTimeHistory.federalState == 'NONE'}">
+                                                            <spring:message code="federalState.NONE"/>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <spring:message code="country.${workingTimeHistory.country}"/> - <spring:message code="federalState.${workingTimeHistory.federalState}"/>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </span>
 
                                                 <c:set var="lastDate"><uv:date date="${workingTimeHistory.validFrom.minusDays(1)}"/></c:set>

@@ -43,6 +43,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SACHS
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SACHSEN_ANHALT;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SCHLESWIG_HOLSTEIN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_THUERINGEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_AARGAU;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_AUSSERRHODEN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_INNERRHODEN;
@@ -67,8 +68,8 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_T
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_URI;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_WAADT;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_WALLIS;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUERICH;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUG;
 
 /**
  * Unit test for {@link FederalState}.
@@ -77,6 +78,7 @@ class FederalStateTest {
 
     private static Stream<Arguments> provideFederalStateCode() {
         return Stream.of(
+            Arguments.of(NONE, "none", null),
             Arguments.of(GERMANY_BADEN_WUERTTEMBERG, "bw", null),
             Arguments.of(GERMANY_BAYERN, "by", null),
             Arguments.of(GERMANY_BAYERN_MUENCHEN, "by", "mu"),
@@ -142,7 +144,10 @@ class FederalStateTest {
     @MethodSource("provideFederalStateCode")
     void ensureCorrectCode(FederalState federalState, String region, String subregion) {
         final String[] codes = federalState.getCodes();
-        if (subregion == null) {
+        if (federalState == NONE) {
+            assertThat(codes)
+                .isEmpty();
+        } else if (subregion == null) {
             assertThat(codes)
                 .hasSize(1)
                 .contains(region);
@@ -155,6 +160,7 @@ class FederalStateTest {
 
     private static Stream<Arguments> provideFederalStateCountry() {
         return Stream.of(
+            Arguments.of(NONE, "none"),
             Arguments.of(GERMANY_BADEN_WUERTTEMBERG, "de"),
             Arguments.of(GERMANY_BAYERN, "de"),
             Arguments.of(GERMANY_BAYERN_MUENCHEN, "de"),

@@ -91,7 +91,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 21);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -124,7 +124,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 19);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 25);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -157,7 +157,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 21);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -205,7 +205,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 28);
         final LocalDate endDate = LocalDate.of(2013, JANUARY, 4);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -238,7 +238,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 29);
         final LocalDate endDate = LocalDate.of(2013, JANUARY, 5);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -271,7 +271,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 28);
         final LocalDate endDate = LocalDate.of(2013, JANUARY, 7);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -332,7 +332,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -372,7 +372,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -412,7 +412,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -452,7 +452,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -494,7 +494,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 6);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, endDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, endDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -534,7 +534,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -552,7 +552,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -594,7 +594,7 @@ class CalculationServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final LocalDate date = LocalDate.of(2012, AUGUST, 20);
 
-        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
@@ -635,7 +635,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 30);
         final LocalDate endDate = LocalDate.of(2013, JANUARY, 2);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -656,7 +656,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, DECEMBER, 30);
         final LocalDate endDate = LocalDate.of(2013, JANUARY, 2);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
@@ -700,7 +700,7 @@ class CalculationServiceTest {
         final LocalDate startDate = LocalDate.of(2012, AUGUST, 20);
         final LocalDate endDate = LocalDate.of(2012, AUGUST, 30);
 
-        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
         when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 

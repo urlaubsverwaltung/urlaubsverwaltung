@@ -206,11 +206,10 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     private static WorkingTime toWorkingTime(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
 
-        final FederalState federalState = workingTimeEntity.getFederalStateOverride() == null
-            ? defaultFederalStateProvider.get()
-            : workingTimeEntity.getFederalStateOverride();
+        final boolean isDefaultFederalState = workingTimeEntity.getFederalStateOverride() == null;
+        final FederalState federalState = isDefaultFederalState ? defaultFederalStateProvider.get() : workingTimeEntity.getFederalStateOverride();
 
-        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom(), federalState);
+        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom(), federalState, isDefaultFederalState);
 
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
             final DayLength dayLength = dayLengthForDayOfWeek(workingTimeEntity, dayOfWeek);

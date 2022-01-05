@@ -314,14 +314,23 @@
                         </uv:box-icon>
                     </jsp:attribute>
                     <jsp:body>
-                        <p>
-                            <span class="tw-block tw-mb-1 tw-text-sm">
-                                <spring:message code="person.account.workingTime.federalState"/>
-                            </span>
-                            <span class="tw-text-base tw-font-medium">
-                                <spring:message code="country.${federalState.country}"/> - <spring:message code="federalState.${federalState}"/>
-                            </span>
-                        </p>
+                        <c:choose>
+                            <c:when test="${federalState == 'NONE'}">
+                                <span class="tw-text-base tw-font-medium">
+                                    <spring:message code="federalState.NONE"/>
+                                </span>
+                            </c:when>
+                            <c:otherwise>
+                                <p>
+                                    <span class="tw-block tw-mb-1 tw-text-sm">
+                                        <spring:message code="person.account.workingTime.federalState"/>
+                                    </span>
+                                    <span class="tw-text-base tw-font-medium">
+                                        <spring:message code="country.${federalState.country}"/> - <spring:message code="federalState.${federalState}"/>
+                                    </span>
+                                </p>
+                            </c:otherwise>
+                        </c:choose>
                     </jsp:body>
                 </uv:box>
             </div>

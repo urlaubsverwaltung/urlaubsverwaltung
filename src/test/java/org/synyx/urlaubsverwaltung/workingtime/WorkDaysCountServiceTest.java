@@ -433,7 +433,7 @@ class WorkDaysCountServiceTest {
     }
 
     public static WorkingTime createWorkingTime(Person person, LocalDate validFrom, DayOfWeek... daysOfWeek) {
-        final WorkingTime workingTime = new WorkingTime(person, validFrom, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, validFrom, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setWorkingDays(List.of(daysOfWeek), FULL);
         return workingTime;
     }
