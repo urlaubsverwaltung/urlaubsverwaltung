@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -21,6 +22,7 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,10 +105,15 @@ public class PublicHolidayApiController {
         }
 
         final Person person = optionalPerson.get();
-        // FIXME - federal state cannot be determined by only the start date
-        final FederalState federalState = workingTimeService.getFederalStateForPerson(person, startDate);
+        final DateRange dateRange = new DateRange(startDate, endDate);
 
-        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
+        final List<PublicHolidayDto> publicHolidays = workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+            .entrySet().stream()
+            .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .flatMap(List::stream)
+            .sorted(Comparator.comparing(PublicHolidayDto::getDate))
+            .collect(toList());
+
         return new PublicHolidaysDto(publicHolidays);
     }
 
