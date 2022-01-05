@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysServiceImpl;
@@ -14,10 +15,10 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static de.jollyday.ManagerParameters.create;
 import static java.math.BigDecimal.TEN;
@@ -36,11 +37,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createWorkingTime;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class WorkDaysCountServiceTest {
@@ -61,10 +62,10 @@ class WorkDaysCountServiceTest {
     @Test
     void getWeekDays() {
 
-        final LocalDate start = LocalDate.of(2011, 11, 16);
-        final LocalDate end = LocalDate.of(2011, 11, 28);
+        final LocalDate startDate = LocalDate.of(2011, 11, 16);
+        final LocalDate endDate = LocalDate.of(2011, 11, 28);
 
-        final double weekDaysCount = sut.getWeekDaysCount(start, end);
+        final double weekDaysCount = sut.getWeekDaysCount(startDate, endDate);
         assertThat(weekDaysCount).isEqualTo(9.0);
     }
 
@@ -76,11 +77,14 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         // testing for full days
         application.setDayLength(FULL);
+
+        final LocalDate startDate = LocalDate.of(2010, 12, 17);
+        final LocalDate endDate = LocalDate.of(2010, 12, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         // Testing for 2010: 17.12. is Friday, 31.12. is Friday
         // between these dates:
@@ -88,10 +92,7 @@ class WorkDaysCountServiceTest {
         //   Weekends : 2 (18-19 and 25-26 - already public holidays)) => 2
         // total days: 15
         // netto days: 10 (considering public holidays and weekends)
-        final LocalDate start = LocalDate.of(2010, 12, 17);
-        final LocalDate end = LocalDate.of(2010, 12, 31);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(TEN);
     }
 
@@ -103,11 +104,14 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         // testing for full days
         application.setDayLength(FULL);
+
+        final LocalDate startDate = LocalDate.of(2009, 12, 17);
+        final LocalDate endDate = LocalDate.of(2009, 12, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         // Testing for 2009: 17.12. is Thursday, 31.12. ist Thursday
         // between these dates:
@@ -115,11 +119,30 @@ class WorkDaysCountServiceTest {
         //   Weekends : 2 (19-20 and 26-27 - one is already public holidays)) => 3
         // total days: 15
         // netto days: 9 (considering public holidays and weekends)
-        final LocalDate start = LocalDate.of(2009, 12, 17);
-        final LocalDate end = LocalDate.of(2009, 12, 31);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(9));
+    }
+
+    @Test
+    void getWorkDaysWithMultipleWorkingTimesOverOneAbsence() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2022, 1, 10);
+        final LocalDate midDate = LocalDate.of(2022, 1, 17);
+        final LocalDate endDate = LocalDate.of(2022, 1, 23);
+
+        final WorkingTime workingTimeFullWeek = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        final WorkingTime workingTimeHalfWeek = createWorkingTime(person, midDate, MONDAY, TUESDAY, WEDNESDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class)))
+            .thenReturn(Map.of(
+                new DateRange(startDate, midDate.minusDays(1)), workingTimeFullWeek,
+                new DateRange(midDate, endDate), workingTimeHalfWeek
+            ));
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
+        assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(8));
     }
 
     @Test
@@ -130,17 +153,16 @@ class WorkDaysCountServiceTest {
         final Person person = new Person();
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
         // testing for half days morning
         application.setDayLength(MORNING);
 
-        final LocalDate start = LocalDate.of(2011, 1, 4);
-        final LocalDate end = LocalDate.of(2011, 1, 4);
+        final LocalDate startDate = LocalDate.of(2011, 1, 4);
+        final LocalDate endDate = LocalDate.of(2011, 1, 4);
 
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
@@ -152,16 +174,16 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         // testing for half days morning
         application.setDayLength(MORNING);
 
-        final LocalDate start = LocalDate.of(2011, 1, 4);
-        final LocalDate end = LocalDate.of(2011, 1, 8);
+        final LocalDate startDate = LocalDate.of(2011, 1, 4);
+        final LocalDate endDate = LocalDate.of(2011, 1, 8);
 
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
     }
 
@@ -173,16 +195,16 @@ class WorkDaysCountServiceTest {
         final Person person = new Person();
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         // testing for half days noon
         application.setDayLength(NOON);
 
-        final LocalDate start = LocalDate.of(2011, 1, 4);
-        final LocalDate end = LocalDate.of(2011, 1, 4);
+        final LocalDate startDate = LocalDate.of(2011, 1, 4);
+        final LocalDate endDate = LocalDate.of(2011, 1, 4);
 
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
     }
 
@@ -194,17 +216,17 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
         // testing for half days noon
         application.setDayLength(NOON);
 
-        final LocalDate start = LocalDate.of(2011, 1, 4);
-        final LocalDate end = LocalDate.of(2011, 1, 8);
+        final LocalDate startDate = LocalDate.of(2011, 1, 4);
+        final LocalDate endDate = LocalDate.of(2011, 1, 8);
 
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(1.5));
     }
 
@@ -216,18 +238,17 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
         // testing for full days
         application.setDayLength(FULL);
 
         // start date is Sunday, end date Saturday
-        final LocalDate start = LocalDate.of(2011, 1, 2);
-        final LocalDate end = LocalDate.of(2011, 1, 8);
+        final LocalDate startDate = LocalDate.of(2011, 1, 2);
+        final LocalDate endDate = LocalDate.of(2011, 1, 8);
 
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
+
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
     }
 
@@ -239,17 +260,17 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        // Labour Day (1st May)
+        final LocalDate startDate = LocalDate.of(2009, 4, 27);
+        final LocalDate endDate = LocalDate.of(2009, 5, 2);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         // testing for full days
         application.setDayLength(FULL);
 
-        // Labour Day (1st May)
-        final LocalDate start = LocalDate.of(2009, 4, 27);
-        final LocalDate end = LocalDate.of(2009, 5, 2);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(4));
     }
 
@@ -261,17 +282,17 @@ class WorkDaysCountServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, createVacationTypeEntity(HOLIDAY));
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        // start date and end date are not in the same year
+        final LocalDate startDate = LocalDate.of(2011, 12, 26);
+        final LocalDate endDate = LocalDate.of(2012, 1, 15);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         // testing for full days
         application.setDayLength(FULL);
 
-        // start date and end date are not in the same year
-        final LocalDate start = LocalDate.of(2011, 12, 26);
-        final LocalDate end = LocalDate.of(2012, 1, 15);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), start, end, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(13));
     }
 
@@ -282,12 +303,11 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-        workingTime.setWorkingDays(List.of(MONDAY, WEDNESDAY, FRIDAY, SATURDAY), FULL);
-
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
         final LocalDate endDate = LocalDate.of(2013, DECEMBER, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, WEDNESDAY, FRIDAY, SATURDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(8));
@@ -299,13 +319,11 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
-
         final LocalDate startDate = LocalDate.of(2013, DECEMBER, 16);
         final LocalDate endDate = LocalDate.of(2013, DECEMBER, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(9));
@@ -318,12 +336,12 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         // monday
         final LocalDate startDate = LocalDate.of(2013, NOVEMBER, 25);
         final LocalDate endDate = LocalDate.of(2013, NOVEMBER, 25);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -336,12 +354,12 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         // saturday
         final LocalDate startDate = LocalDate.of(2013, NOVEMBER, 23);
         final LocalDate endDate = LocalDate.of(2013, NOVEMBER, 23);
+
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
@@ -354,14 +372,13 @@ class WorkDaysCountServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        // Saturday
+        final LocalDate date = LocalDate.of(2013, NOVEMBER, 23);
 
-        // saturday
-        final LocalDate startDate = LocalDate.of(2013, NOVEMBER, 23);
-        final LocalDate endDate = LocalDate.of(2013, NOVEMBER, 23);
+        final WorkingTime workingTime = createWorkingTime(person, date, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, startDate, endDate, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, date, date, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.ZERO);
     }
 
@@ -371,11 +388,10 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
+
+        final WorkingTime workingTime = createWorkingTime(person, date, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, date, date, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -387,12 +403,10 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
         final LocalDate date = LocalDate.of(2013, DECEMBER, 24);
+
+        final WorkingTime workingTime = createWorkingTime(person, date, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, date, date, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -404,12 +418,10 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, date, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, date, date, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -421,11 +433,10 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
-
         final LocalDate date = LocalDate.of(2013, DECEMBER, 31);
+
+        final WorkingTime workingTime = createWorkingTime(person, date, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
 
         final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, date, date, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(0.5));
@@ -437,14 +448,13 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
+        final LocalDate endDate = LocalDate.of(2014, JANUARY, 2);
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
-        final LocalDate from = LocalDate.of(2013, DECEMBER, 23);
-        final LocalDate to = LocalDate.of(2014, JANUARY, 2);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, from, to, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(FULL, startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(5));
     }
 
@@ -454,20 +464,27 @@ class WorkDaysCountServiceTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate startDate = LocalDate.of(2013, DECEMBER, 23);
+        final LocalDate endDate = LocalDate.of(2014, JANUARY, 2);
 
-        final WorkingTime workingTime = createWorkingTime();
-        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        final WorkingTime workingTime = createWorkingTime(person, startDate, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(startDate, endDate), workingTime));
 
-        final LocalDate from = LocalDate.of(2013, DECEMBER, 23);
-        final LocalDate to = LocalDate.of(2014, JANUARY, 2);
-
-        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, from, to, person);
+        final BigDecimal workDaysCount = sut.getWorkDaysCount(MORNING, startDate, endDate, person);
         assertThat(workDaysCount).isEqualByComparingTo(BigDecimal.valueOf(2.5));
     }
+
 
     private HolidayManager getHolidayManager() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         final URL url = cl.getResource("Holidays_de.xml");
         return HolidayManager.getInstance(create(url));
     }
+
+    public static WorkingTime createWorkingTime(Person person, LocalDate validFrom, DayOfWeek... daysOfWeek) {
+        final WorkingTime workingTime = new WorkingTime(person, validFrom, GERMANY_BADEN_WUERTTEMBERG);
+        workingTime.setWorkingDays(List.of(daysOfWeek), FULL);
+        return workingTime;
+    }
+
 }

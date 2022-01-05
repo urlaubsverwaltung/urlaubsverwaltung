@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -22,7 +23,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Clock;
-import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -78,9 +78,7 @@ class VacationDaysServiceTest {
 
     @BeforeEach
     void setUp() {
-
         workDaysCountService = new WorkDaysCountService(new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager())), workingTimeService);
-
         sut = new VacationDaysService(workDaysCountService, applicationService, Clock.systemUTC());
     }
 
@@ -89,17 +87,14 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
-        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
-        workingTime.setWorkingDays(workingDays, FULL);
-
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final LocalDate firstMilestone = LocalDate.of(2012, JANUARY, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, MARCH, 31);
+
+        final WorkingTime workingTime = new WorkingTime(person, firstMilestone, GERMANY_BADEN_WUERTTEMBERG);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(firstMilestone, lastMilestone), workingTime));
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         // 4 days at all: 2 before January + 2 after January
         final Application a1 = new Application();
@@ -158,18 +153,14 @@ class VacationDaysServiceTest {
     void testGetDaysAfterApril() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
-        List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
-        workingTime.setWorkingDays(workingDays, FULL);
-
-        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class)))
-            .thenReturn(Optional.of(workingTime));
-
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final LocalDate firstMilestone = LocalDate.of(2012, APRIL, 1);
         final LocalDate lastMilestone = LocalDate.of(2012, DECEMBER, 31);
+
+        final WorkingTime workingTime = new WorkingTime(person, firstMilestone, GERMANY_BADEN_WUERTTEMBERG);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(firstMilestone, lastMilestone), workingTime));
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         // 4 days at all: 2.5 before January + 2 after January
         final Application a1 = new Application();
@@ -270,7 +261,6 @@ class VacationDaysServiceTest {
         assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(ZERO);
         assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
         assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualTo(ZERO);
-
     }
 
     @Test
