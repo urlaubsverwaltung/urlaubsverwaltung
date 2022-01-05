@@ -12,7 +12,7 @@ import static javax.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 /**
  * Settings concerning working time of persons, like settings for public holidays.
@@ -58,7 +58,7 @@ public class WorkingTimeSettings {
      * Defines the federal state of Germany to be able to check correctly if a day is a public holiday or not.
      */
     @Enumerated(STRING)
-    private FederalState federalState = BADEN_WUERTTEMBERG;
+    private FederalState federalState = GERMANY_BADEN_WUERTTEMBERG;
 
     public DayLength getMonday() {
         return monday;

@@ -62,8 +62,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.RHEINLAND_PFALZ;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_RHEINLAND_PFALZ;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceOverviewViewControllerTest {
@@ -2165,15 +2165,15 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate start = LocalDate.of(2022, JANUARY, 1);
         final LocalDate end = LocalDate.of(2022, JANUARY, 31);
         final DateRange dateRange = new DateRange(start, end);
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(personWithCustomPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, BADEN_WUERTTEMBERG));
-        when(workingTimeService.getFederalStatesByPersonAndDateRange(personDefaultPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, RHEINLAND_PFALZ));
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(personWithCustomPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, GERMANY_BADEN_WUERTTEMBERG));
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(personDefaultPublicHolidays, dateRange)).thenReturn(Map.of(dateRange, GERMANY_RHEINLAND_PFALZ));
 
-        when(publicHolidaysService.getPublicHolidays(start, end, BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
-        when(publicHolidaysService.getPublicHolidays(start, end, RHEINLAND_PFALZ)).thenReturn(emptyList());
+        when(publicHolidaysService.getPublicHolidays(start, end, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(LocalDate.of(2022, JANUARY, 6), FULL, "")));
+        when(publicHolidaysService.getPublicHolidays(start, end, GERMANY_RHEINLAND_PFALZ)).thenReturn(emptyList());
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
-        workingTimeSettings.setFederalState(RHEINLAND_PFALZ);
+        workingTimeSettings.setFederalState(GERMANY_RHEINLAND_PFALZ);
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         perform(get("/web/absences")

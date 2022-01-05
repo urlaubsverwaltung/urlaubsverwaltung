@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static de.jollyday.ManagerParameters.create;
@@ -53,7 +54,7 @@ class WorkDaysCountServiceTest {
 
     @BeforeEach
     void setUp() {
-        final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, getHolidayManager());
+        final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
         sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
     }
 

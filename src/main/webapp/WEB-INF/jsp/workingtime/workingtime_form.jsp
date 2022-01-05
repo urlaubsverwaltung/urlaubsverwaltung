@@ -66,7 +66,8 @@
                         <span class="help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="federalState.${defaultFederalState}" var="defaultFederalStateName"/>
-                            <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultFederalStateName}"/>
+                            <spring:message code="country.${defaultFederalState.country}" var="defaultCountryName"/>
+                            <spring:message code="person.form.workingTime.federalState.description" arguments="${defaultCountryName}, ${defaultFederalStateName}"/>
                         </span>
                         <span class="help-block tw-text-sm">
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
@@ -82,14 +83,20 @@
 
                             <div class="col-md-9">
                                 <uv:select id="federalStateType" name="federalState">
-                                    <option value="">
-                                        <spring:message code="person.form.workingTime.federalState.default" arguments="${defaultFederalStateName}" />
-                                    </option>
-                                    <option disabled="disabled">---------------</option>
-                                    <c:forEach items="${federalStateTypes}" var="federalStateType">
-                                        <option value="${federalStateType}" ${workingTime.federalState == federalStateType ? 'selected="selected"' : ''}>
-                                            <spring:message code="federalState.${federalStateType}" />
+                                    <optgroup label="">
+                                        <option value="">
+                                            <spring:message code="person.form.workingTime.federalState.default" arguments="${defaultCountryName}, ${defaultFederalStateName}" />
                                         </option>
+                                    </optgroup>
+                                    <c:forEach items="${federalStateTypes}" var="federalStatesByCountry">
+                                        <c:set var="countryLabel"><spring:message code="country.${federalStatesByCountry.key}" /></c:set>
+                                        <optgroup label="${countryLabel}">
+                                            <c:forEach items="${federalStatesByCountry.value}" var="federalStateType">
+                                                <option value="${federalStateType}" ${settings.workingTimeSettings.federalState == federalStateType ? 'selected="selected"' : ''}>
+                                                    <spring:message code="federalState.${federalStateType}"/>
+                                                </option>
+                                            </c:forEach>
+                                        </optgroup>
                                     </c:forEach>
                                 </uv:select>
                             </div>
@@ -162,7 +169,7 @@
                                                 </c:forEach>
 
                                                 <span class="tw-block">
-                                                    <spring:message code="federalState.${workingTimeHistory.federalState}"/>
+                                                    <spring:message code="country.${workingTimeHistory.country}"/> - <spring:message code="federalState.${workingTimeHistory.federalState}"/>
                                                 </span>
 
                                                 <c:set var="lastDate"><uv:date date="${workingTimeHistory.validFrom.minusDays(1)}"/></c:set>

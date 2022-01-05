@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 
 @ExtendWith(MockitoExtension.class)
 class WorkingTimeViewControllerTest {
@@ -80,7 +80,7 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2), BERLIN);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2), GERMANY_BERLIN);
         workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
         when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
@@ -88,13 +88,12 @@ class WorkingTimeViewControllerTest {
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm(workingTime))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("valid", equalTo(true)))))
-            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("BERLIN")))))
+            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("GERMANY_BERLIN")))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020,10,2))))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
-            .andExpect(model().attribute("defaultFederalState", equalTo(FederalState.BADEN_WUERTTEMBERG)))
-            .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.values())))
+            .andExpect(model().attribute("defaultFederalState", equalTo(FederalState.GERMANY_BADEN_WUERTTEMBERG)))
+            .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
             .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
-
     }
 
     @Test

@@ -29,6 +29,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.TEN;
@@ -59,7 +60,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysServiceTest {
@@ -78,7 +79,7 @@ class VacationDaysServiceTest {
     @BeforeEach
     void setUp() {
 
-        workDaysCountService = new WorkDaysCountService(new PublicHolidaysServiceImpl(settingsService, getHolidayManager()), workingTimeService);
+        workDaysCountService = new WorkDaysCountService(new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager())), workingTimeService);
 
         sut = new VacationDaysService(workDaysCountService, applicationService, Clock.systemUTC());
     }
@@ -88,7 +89,7 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 
@@ -158,7 +159,7 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
         List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY);
         workingTime.setWorkingDays(workingDays, FULL);
 

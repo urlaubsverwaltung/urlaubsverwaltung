@@ -107,7 +107,7 @@ class SettingsViewControllerTest {
         // TODO test explicit settings attributes
         perform(get(requestUrl))
             .andExpect(model().attributeExists("settings"))
-            .andExpect(model().attribute("federalStateTypes", FederalState.values()))
+            .andExpect(model().attribute("federalStateTypes", FederalState.federalStatesTypesByCountry()))
             .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))

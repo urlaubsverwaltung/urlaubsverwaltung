@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class VacationOverviewServiceTest {
@@ -56,7 +56,7 @@ class VacationOverviewServiceTest {
         department.setMembers(List.of(person));
 
         when(departmentService.getAllDepartments()).thenReturn(singletonList(department));
-        when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(BADEN_WUERTTEMBERG);
+        when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
 
         final LocalDate localDate = LocalDate.parse("2017-09-01");
         when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class))).thenReturn(Optional.of(new PublicHoliday(localDate, DayLength.ZERO, "")));

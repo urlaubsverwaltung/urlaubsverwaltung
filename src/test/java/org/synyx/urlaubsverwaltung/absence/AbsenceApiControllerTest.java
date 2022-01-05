@@ -58,7 +58,7 @@ class AbsenceApiControllerTest {
     // VACATION --------------------------------------------------------------------------------------------------------
     @Test
     void ensureCorrectConversionOfVacationFullDay() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -90,7 +90,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfVacationMorning() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -121,7 +121,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfVacationNoon() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -153,7 +153,7 @@ class AbsenceApiControllerTest {
     // SICK ------------------------------------------------------------------------------------------------------------
     @Test
     void ensureCorrectConversionOfSickFullDay() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -185,7 +185,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfSickMorning() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -216,7 +216,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfSickNoon() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -248,7 +248,7 @@ class AbsenceApiControllerTest {
     // VACATION / SICK - COMBINATION -----------------------------------------------------------------------------------
     @Test
     void ensureCorrectConversionOfVacationMorningAndSickNoon() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -285,7 +285,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfVacationNoonAndSickMorning() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -323,7 +323,7 @@ class AbsenceApiControllerTest {
     // VACATION / PUBLIC-HOLIDAY - COMBINATION -------------------------------------------------------------------------
     @Test
     void ensureCorrectConversionOfVacationFullDayWithHalfDayChristmasEve() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -341,7 +341,7 @@ class AbsenceApiControllerTest {
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
         final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
+        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
 
         perform(get("/api/persons/23/absences")
@@ -361,7 +361,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfVacationMorningWithHalfDayChristmasEve() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -378,7 +378,7 @@ class AbsenceApiControllerTest {
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
         final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
+        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
 
         perform(get("/api/persons/23/absences")
@@ -399,7 +399,7 @@ class AbsenceApiControllerTest {
     // SICK / PUBLIC-HOLIDAY - COMBINATION -----------------------------------------------------------------------------
     @Test
     void ensureCorrectConversionOfSickFullDayWithHalfDayChristmasEve() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -417,7 +417,7 @@ class AbsenceApiControllerTest {
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
         final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
+        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
 
         perform(get("/api/persons/23/absences")
@@ -437,7 +437,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureCorrectConversionOfSickMorningWithHalfDayChristmasEve() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -454,7 +454,7 @@ class AbsenceApiControllerTest {
         final LocalDate date = LocalDate.of(2016, Month.DECEMBER, 24);
         final PublicHoliday christmasEve = new PublicHoliday(date, DayLength.NOON, "");
 
-        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.BADEN_WUERTTEMBERG))
+        when(publicHolidaysService.getPublicHolidays(startDate, endDate, FederalState.GERMANY_BADEN_WUERTTEMBERG))
             .thenReturn(List.of(christmasEve));
 
         perform(get("/api/persons/23/absences")
@@ -475,7 +475,7 @@ class AbsenceApiControllerTest {
     // PARAMETER HANDLING ----------------------------------------------------------------------------------------------
     @Test
     void ensureTypeFilterIsWorkingForVacationOnly() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -502,7 +502,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureTypeFilterIsWorkingForSickNoteOnly() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
@@ -529,7 +529,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureTypeFilterFallbackIsEverything() throws Exception {
-        mockFederalState(FederalState.BADEN_WUERTTEMBERG);
+        mockFederalState(FederalState.GERMANY_BADEN_WUERTTEMBERG);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
