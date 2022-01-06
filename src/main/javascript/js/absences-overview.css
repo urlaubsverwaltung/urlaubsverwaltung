@@ -138,43 +138,43 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .absence-full {
-  --absence-bar-color: #FACC15;
+  --absence-bar-color: #facc15;
 }
 .absence-morning {
-  --absence-bar-color-morning: #FACC15;
+  --absence-bar-color-morning: #facc15;
 }
 .absence-noon {
-  --absence-bar-color-noon: #FACC15;
+  --absence-bar-color-noon: #facc15;
 }
 
 .vacation-full-waiting {
-  --absence-bar-color: #EAB308;
+  --absence-bar-color: #eab308;
 }
 .vacation-morning-waiting {
-  --absence-bar-color-morning: #EAB308;
+  --absence-bar-color-morning: #eab308;
 }
 .vacation-noon-waiting {
-  --absence-bar-color-noon: #EAB308;
+  --absence-bar-color-noon: #eab308;
 }
 
 .vacation-full-approved {
-  --absence-bar-color: #FACC15;
+  --absence-bar-color: #facc15;
 }
 .vacation-morning-approved {
-  --absence-bar-color-morning: #FACC15;
+  --absence-bar-color-morning: #facc15;
 }
 .vacation-noon-approved {
-  --absence-bar-color-noon: #FACC15;
+  --absence-bar-color-noon: #facc15;
 }
 
 .sick-note-full {
-  --absence-bar-color: #EF4444;
+  --absence-bar-color: #ef4444;
 }
 .sick-note-morning {
-  --absence-bar-color-morning: #EF4444;
+  --absence-bar-color-morning: #ef4444;
 }
 .sick-note-noon {
-  --absence-bar-color-noon: #EF4444;
+  --absence-bar-color-noon: #ef4444;
 }
 
 .public-holiday-morning {

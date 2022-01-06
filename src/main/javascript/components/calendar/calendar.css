@@ -136,18 +136,14 @@
   padding: 0.75rem;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
-  color: #0A0A0A;
+  color: #0a0a0a;
 }
 
 .datepicker-day-past {
   opacity: 0.6;
 }
 
-.datepicker-day:is(
-  .datepicker-day-personal-holiday-full,
-  .datepicker-day-personal-holiday-full-approved,
-  .datepicker-day-sick-note-full
-)::after {
+.datepicker-day:is(.datepicker-day-personal-holiday-full, .datepicker-day-personal-holiday-full-approved, .datepicker-day-sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -158,11 +154,7 @@
   background-color: var(--absence-bar-color);
 }
 
-.datepicker-day:is(
-  .datepicker-day-personal-holiday-morning,
-  .datepicker-day-personal-holiday-morning-approved,
-  .datepicker-day-sick-note-morning
-)::before {
+.datepicker-day:is(.datepicker-day-personal-holiday-morning, .datepicker-day-personal-holiday-morning-approved, .datepicker-day-sick-note-morning)::before {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -173,11 +165,7 @@
   background-color: var(--absence-bar-color-morning);
 }
 
-.datepicker-day:is(
-  .datepicker-day-personal-holiday-noon,
-  .datepicker-day-personal-holiday-noon-approved,
-  .datepicker-day-sick-note-noon
-)::after {
+.datepicker-day:is(.datepicker-day-personal-holiday-noon, .datepicker-day-personal-holiday-noon-approved, .datepicker-day-sick-note-noon)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -195,24 +183,24 @@ td.datepicker-day {
 /* NOTE: Order of the day classes is very important because of css classes overloading! */
 
 .datepicker-day-personal-holiday-morning {
-  --absence-bar-color-morning: #EAB308;
+  --absence-bar-color-morning: #eab308;
 }
 .datepicker-day-personal-holiday-noon {
-  --absence-bar-color-noon: #EAB308;
+  --absence-bar-color-noon: #eab308;
 }
 .datepicker-day-personal-holiday-full {
-  --absence-bar-color: #EAB308;
+  --absence-bar-color: #eab308;
 }
 
 .datepicker-day-personal-holiday-morning-approved,
 .datepicker-day-personal-holiday-morning-approved.datepicker-day-past {
-  --absence-bar-color-morning: #FACC15;
+  --absence-bar-color-morning: #facc15;
 }
 .datepicker-day-personal-holiday-noon-approved {
-  --absence-bar-color-noon: #FACC15;
+  --absence-bar-color-noon: #facc15;
 }
 .datepicker-day-personal-holiday-full-approved {
-  --absence-bar-color: #FACC15;
+  --absence-bar-color: #facc15;
 }
 
 .datepicker-day:not([data-datepicker-selectable="false"]) {
@@ -234,13 +222,13 @@ td.datepicker-day {
 }
 
 .datepicker-day-sick-note-morning {
-  --absence-bar-color-morning: #EF4444;
+  --absence-bar-color-morning: #ef4444;
 }
 .datepicker-day-sick-note-noon {
-  --absence-bar-color-noon: #EF4444;
+  --absence-bar-color-noon: #ef4444;
 }
 .datepicker-day-sick-note-full {
-  --absence-bar-color: #EF4444;
+  --absence-bar-color: #ef4444;
 }
 
 /* public holidays must be the last calendar day treatment */

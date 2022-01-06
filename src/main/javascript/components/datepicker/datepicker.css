@@ -34,7 +34,7 @@ duet-date-picker.error {
   --background-color-left: #e5e5e5;
   --background-color-right: #e5e5e5;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
-  color: #0A0A0A;
+  color: #0a0a0a;
 }
 
 .duet-date__day.datepicker-day-public-holiday-morning,
