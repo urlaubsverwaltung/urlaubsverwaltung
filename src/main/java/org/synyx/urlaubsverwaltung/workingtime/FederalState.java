@@ -72,7 +72,16 @@ public enum FederalState {
     SWITZERLAND_WAADT("ch", "vd"),
     SWITZERLAND_WALLIS("ch", "vs"),
     SWITZERLAND_ZUG("ch", "zg"),
-    SWITZERLAND_ZUERICH("ch", "zh");
+    SWITZERLAND_ZUERICH("ch", "zh"),
+
+    UNITED_KINGDOM_ALDERNEY("gb", "al"),
+    UNITED_KINGDOM_ENGLAND("gb", "en"),
+    UNITED_KINGDOM_GUERNSEY("gb", "gu"),
+    UNITED_KINGDOM_ISLE_OF_MAN("gb", "im"),
+    UNITED_KINGDOM_JERSEY("gb", "je"),
+    UNITED_KINGDOM_NORTHERN_IRELAND("gb", "ni"),
+    UNITED_KINGDOM_SCOTLAND("gb", "sc"),
+    UNITED_KINGDOM_WALES("gb", "wa");
 
     private final String[] codes;
 
