@@ -31,7 +31,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.*;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BREMEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_RHEINLAND_PFALZ;
 
 @ExtendWith(MockitoExtension.class)
 class WorkingTimeServiceImplTest {
@@ -343,43 +347,107 @@ class WorkingTimeServiceImplTest {
     }
 
     @Test
-    void getFederalStatesByPersonAndDateRange() {
+    void getFederalStatesByPersonAndDateRangeAndDateRangeIsInBetweenWorkingTimes() {
 
-        final Person batman = new Person();
+        final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setId(1);
-        workingTimeEntity.setPerson(batman);
+        workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
         workingTimeEntityChanged.setId(2);
-        workingTimeEntityChanged.setPerson(batman);
+        workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2021, 11, 15));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
         workingTimeEntityFuture.setId(3);
-        workingTimeEntityFuture.setPerson(batman);
+        workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
 
-        final List<WorkingTimeEntity> timeEntities = List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity );
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity));
 
-        when(workingTimeRepository.findByPersonOrderByValidFromDesc(batman)).thenReturn(timeEntities);
-
-        final Map<DateRange, FederalState> federalStatesByPersonAndDateRange = sut.getFederalStatesByPersonAndDateRange(batman,
-            new DateRange(
-                LocalDate.of(2021, 11, 1),
-                LocalDate.of(2021, 11, 30)));
-
+        final DateRange dateRange = new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 30));
+        final Map<DateRange, FederalState> federalStatesByPersonAndDateRange = sut.getFederalStatesByPersonAndDateRange(person, dateRange);
         assertThat(federalStatesByPersonAndDateRange)
             .isNotEmpty()
             .hasSize(2)
             .containsExactly(
                 entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), GERMANY_RHEINLAND_PFALZ),
                 entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), GERMANY_BADEN_WUERTTEMBERG)
+            );
+    }
+
+    @Test
+    void getFederalStatesByPersonAndDateRangeStartsOnWorkingTimeValidFrom() {
+
+        final Person person = new Person();
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
+        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setPerson(person);
+        workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
+        workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
+
+        final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
+        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setPerson(person);
+        workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
+        workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2020, 9, 1), LocalDate.of(2020, 9, 10));
+        final Map<DateRange, FederalState> federalStatesByPersonAndDateRange = sut.getFederalStatesByPersonAndDateRange(person, dateRange);
+        assertThat(federalStatesByPersonAndDateRange)
+            .isNotEmpty()
+            .hasSize(1)
+            .containsExactly(entry(new DateRange(LocalDate.of(2020, 9, 1), LocalDate.of(2020, 9, 10)), GERMANY_RHEINLAND_PFALZ));
+    }
+
+    @Test
+    void getFederalStatesByPersonAndDateRangeEndsOnWorkingTimeValidFrom() {
+
+        final Person person = new Person();
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
+        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setPerson(person);
+        workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
+        workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
+
+        final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
+        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setPerson(person);
+        workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
+        workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2020, 8, 1), LocalDate.of(2020, 9, 1));
+        final Map<DateRange, FederalState> federalStatesByPersonAndDateRange = sut.getFederalStatesByPersonAndDateRange(person, dateRange);
+        assertThat(federalStatesByPersonAndDateRange)
+            .isNotEmpty()
+            .hasSize(2)
+            .containsExactly(
+                entry(new DateRange(LocalDate.of(2020, 9, 1), LocalDate.of(2020, 9, 1)), GERMANY_RHEINLAND_PFALZ),
+                entry(new DateRange(LocalDate.of(2020, 8, 1), LocalDate.of(2020, 8, 31)), GERMANY_BADEN_WUERTTEMBERG)
             );
     }
 
@@ -394,6 +462,122 @@ class WorkingTimeServiceImplTest {
             new DateRange(
                 LocalDate.of(2021, 11, 1),
                 LocalDate.of(2021, 11, 30)))).isEmpty();
+    }
 
+    @Test
+    void getWorkingTimesByPersonAndDateRangeAndDateRangeIsInBetweenWorkingTimes() {
+
+        final Person person = new Person();
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setValidFrom(LocalDate.of(2020, 9, 1));
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
+        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setPerson(person);
+        workingTimeEntityChanged.setValidFrom(LocalDate.of(2021, 11, 15));
+        workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
+
+        final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
+        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setPerson(person);
+        workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
+        workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 30));
+        final Map<DateRange, WorkingTime> federalStatesByPersonAndDateRange = sut.getWorkingTimesByPersonAndDateRange(person, dateRange);
+        assertThat(federalStatesByPersonAndDateRange)
+            .isNotEmpty()
+            .hasSize(2)
+            .containsExactly(
+                entry(new DateRange(LocalDate.of(2021, 11, 15), LocalDate.of(2021, 11, 30)), new WorkingTime(person, LocalDate.of(2021, 11, 15), GERMANY_RHEINLAND_PFALZ, false)),
+                entry(new DateRange(LocalDate.of(2021, 11, 1), LocalDate.of(2021, 11, 14)), new WorkingTime(person, LocalDate.of(2020, 9, 1), GERMANY_BADEN_WUERTTEMBERG, false))
+            );
+    }
+
+    @Test
+    void getWorkingTimesByPersonAndDateRangeStartsOnWorkingTimeValidFrom() {
+
+        final Person person = new Person();
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
+        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setPerson(person);
+        workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
+        workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
+
+        final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
+        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setPerson(person);
+        workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
+        workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2020, 9, 1), LocalDate.of(2020, 9, 10));
+        final Map<DateRange, WorkingTime> federalStatesByPersonAndDateRange = sut.getWorkingTimesByPersonAndDateRange(person, dateRange);
+        assertThat(federalStatesByPersonAndDateRange)
+            .isNotEmpty()
+            .hasSize(1)
+            .containsExactly(entry(new DateRange(LocalDate.of(2020, 9, 1), LocalDate.of(2020, 9, 10)), new WorkingTime(person, LocalDate.of(2020, 9, 1), GERMANY_RHEINLAND_PFALZ, false)));
+    }
+
+    @Test
+    void getWorkingTimesByPersonAndDateRangeEndsOnWorkingTimeValidFrom() {
+
+        final Person person = new Person();
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setId(1);
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
+        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setPerson(person);
+        workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
+        workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
+
+        final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
+        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setPerson(person);
+        workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
+        workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
+
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(List.of(workingTimeEntityFuture, workingTimeEntityChanged, workingTimeEntity));
+
+        final DateRange dateRange = new DateRange(LocalDate.of(2020, 8, 1), LocalDate.of(2020, 9, 1));
+        final Map<DateRange, WorkingTime> federalStatesByPersonAndDateRange = sut.getWorkingTimesByPersonAndDateRange(person, dateRange);
+        assertThat(federalStatesByPersonAndDateRange)
+            .isNotEmpty()
+            .hasSize(2)
+            .containsExactly(
+                entry(new DateRange(LocalDate.of(2020, 9, 1), LocalDate.of(2020, 9, 1)), new WorkingTime(person, LocalDate.of(2020, 9, 1), GERMANY_RHEINLAND_PFALZ, false)),
+                entry(new DateRange(LocalDate.of(2020, 8, 1), LocalDate.of(2020, 8, 31)), new WorkingTime(person, LocalDate.of(2020, 1, 1), GERMANY_BADEN_WUERTTEMBERG, false))
+            );
+    }
+
+    @Test
+    void getWorkingTimesByPersonAndDateRangeWithoutWorkingTimes() {
+
+        final Person person = new Person();
+        when(workingTimeRepository.findByPersonOrderByValidFromDesc(person)).thenReturn(emptyList());
+
+        assertThat(sut.getWorkingTimesByPersonAndDateRange(person,
+            new DateRange(
+                LocalDate.of(2021, 11, 1),
+                LocalDate.of(2021, 11, 30)))).isEmpty();
     }
 }
