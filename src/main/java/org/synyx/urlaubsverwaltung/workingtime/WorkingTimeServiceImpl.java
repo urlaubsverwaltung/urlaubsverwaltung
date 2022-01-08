@@ -97,10 +97,10 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
         final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
         final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
-            .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
+            .filter(workingTime -> !workingTime.getValidFrom().isAfter(dateRange.getEndDate()))
             .collect(toList());
 
-        final HashMap<DateRange, WorkingTime> workingTimesOfPersonByDateRage = new HashMap<>();
+        final HashMap<DateRange, WorkingTime> workingTimesOfPersonByDateRange = new HashMap<>();
         LocalDate nextEnd = dateRange.getEndDate();
 
         for (WorkingTime workingTime : workingTimeList) {
@@ -112,16 +112,16 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
                 range = new DateRange(workingTime.getValidFrom(), nextEnd);
             }
 
-            workingTimesOfPersonByDateRage.put(range, workingTime);
+            workingTimesOfPersonByDateRange.put(range, workingTime);
 
-            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
-                return workingTimesOfPersonByDateRage;
+            if (!workingTime.getValidFrom().isAfter(dateRange.getStartDate())) {
+                return workingTimesOfPersonByDateRange;
             }
 
             nextEnd = workingTime.getValidFrom().minusDays(1);
         }
 
-        return workingTimesOfPersonByDateRage;
+        return workingTimesOfPersonByDateRange;
     }
 
     @Override
