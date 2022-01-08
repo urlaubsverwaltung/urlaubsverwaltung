@@ -70,6 +70,14 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_W
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_WALLIS;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUERICH;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_ZUG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ALDERNEY;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ENGLAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_GUERNSEY;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ISLE_OF_MAN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_JERSEY;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_NORTHERN_IRELAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_SCOTLAND;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_WALES;
 
 /**
  * Unit test for {@link FederalState}.
@@ -136,7 +144,16 @@ class FederalStateTest {
             Arguments.of(SWITZERLAND_WAADT, "vd", null),
             Arguments.of(SWITZERLAND_WALLIS, "vs", null),
             Arguments.of(SWITZERLAND_ZUG, "zg", null),
-            Arguments.of(SWITZERLAND_ZUERICH, "zh", null)
+            Arguments.of(SWITZERLAND_ZUERICH, "zh", null),
+
+            Arguments.of(UNITED_KINGDOM_ALDERNEY, "al", null),
+            Arguments.of(UNITED_KINGDOM_ENGLAND, "en", null),
+            Arguments.of(UNITED_KINGDOM_GUERNSEY, "gu", null),
+            Arguments.of(UNITED_KINGDOM_ISLE_OF_MAN, "im", null),
+            Arguments.of(UNITED_KINGDOM_JERSEY, "je", null),
+            Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, "ni", null),
+            Arguments.of(UNITED_KINGDOM_SCOTLAND, "sc", null),
+            Arguments.of(UNITED_KINGDOM_WALES, "wa", null)
         );
     }
 
@@ -218,7 +235,16 @@ class FederalStateTest {
             Arguments.of(SWITZERLAND_WAADT, "ch"),
             Arguments.of(SWITZERLAND_WALLIS, "ch"),
             Arguments.of(SWITZERLAND_ZUG, "ch"),
-            Arguments.of(SWITZERLAND_ZUERICH, "ch")
+            Arguments.of(SWITZERLAND_ZUERICH, "ch"),
+
+            Arguments.of(UNITED_KINGDOM_ALDERNEY, "gb"),
+            Arguments.of(UNITED_KINGDOM_ENGLAND, "gb"),
+            Arguments.of(UNITED_KINGDOM_GUERNSEY, "gb"),
+            Arguments.of(UNITED_KINGDOM_ISLE_OF_MAN, "gb"),
+            Arguments.of(UNITED_KINGDOM_JERSEY, "gb"),
+            Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, "gb"),
+            Arguments.of(UNITED_KINGDOM_SCOTLAND, "gb"),
+            Arguments.of(UNITED_KINGDOM_WALES, "gb")
         );
     }
 
@@ -234,7 +260,8 @@ class FederalStateTest {
         final List<FederalState> germanyFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "de".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> austriaFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> switzerlandFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ch".equals(federalState.getCountry())).collect(toList());
-        assertThat(federalStatesTypesByCountry).hasSize(3)
-            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates));
+        final List<FederalState> ukFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gb".equals(federalState.getCountry())).collect(toList());
+        assertThat(federalStatesTypesByCountry).hasSize(4)
+            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates), entry("gb", ukFederalStates));
     }
 }
