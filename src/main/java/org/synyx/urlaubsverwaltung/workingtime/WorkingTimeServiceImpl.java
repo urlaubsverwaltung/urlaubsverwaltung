@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
@@ -76,41 +77,14 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
-    public List<WorkingTime> getByPerson(Person person) {
-        return toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
+    public Optional<WorkingTime> getWorkingTime(Person person, LocalDate date) {
+        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
+            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState));
     }
 
     @Override
-    public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
-
-        final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
-        final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
-            .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
-            .collect(toList());
-
-        final HashMap<DateRange, FederalState> federalStatesOfPersonByDateRage = new HashMap<>();
-        LocalDate nextEnd = dateRange.getEndDate();
-
-        for (WorkingTime workingTime : workingTimeList) {
-
-            final DateRange range;
-
-            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
-                range = new DateRange(dateRange.getStartDate(), nextEnd);
-            } else {
-                range = new DateRange(workingTime.getValidFrom(), nextEnd);
-            }
-
-            federalStatesOfPersonByDateRage.put(range, workingTime.getFederalState());
-
-            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
-                return federalStatesOfPersonByDateRage;
-            }
-
-            nextEnd = workingTime.getValidFrom().minusDays(1);
-        }
-
-        return federalStatesOfPersonByDateRage;
+    public List<WorkingTime> getByPerson(Person person) {
+        return toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
     }
 
     @Override
@@ -119,14 +93,46 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     }
 
     @Override
-    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
-        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
-            .map(entity -> toWorkingTimes(entity, this::getSystemDefaultFederalState));
+    public Map<DateRange, WorkingTime> getWorkingTimesByPersonAndDateRange(Person person, DateRange dateRange) {
+
+        final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
+        final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
+            .filter(workingTime -> workingTime.getValidFrom().isBefore(dateRange.getEndDate()))
+            .collect(toList());
+
+        final HashMap<DateRange, WorkingTime> workingTimesOfPersonByDateRage = new HashMap<>();
+        LocalDate nextEnd = dateRange.getEndDate();
+
+        for (WorkingTime workingTime : workingTimeList) {
+
+            final DateRange range;
+            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                range = new DateRange(dateRange.getStartDate(), nextEnd);
+            } else {
+                range = new DateRange(workingTime.getValidFrom(), nextEnd);
+            }
+
+            workingTimesOfPersonByDateRage.put(range, workingTime);
+
+            if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                return workingTimesOfPersonByDateRage;
+            }
+
+            nextEnd = workingTime.getValidFrom().minusDays(1);
+        }
+
+        return workingTimesOfPersonByDateRage;
+    }
+
+    @Override
+    public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
+        return getWorkingTimesByPersonAndDateRange(person, dateRange).entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, dateRangeWorkingTimeEntry -> dateRangeWorkingTimeEntry.getValue().getFederalState()));
     }
 
     @Override
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
-        return getByPersonAndValidityDateEqualsOrMinorDate(person, date)
+        return getWorkingTime(person, date)
             .map(WorkingTime::getFederalState)
             .orElseGet(() -> {
                 LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
@@ -155,10 +161,10 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         this.touch(defaultWorkingDays, today, person);
     }
 
-    private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> entities) {
+    private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> workingTimeEntities) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
-        return entities.stream()
-            .map(entity -> toWorkingTimes(entity, federalStateCachedSupplier))
+        return workingTimeEntities.stream()
+            .map(workingTime -> toWorkingTime(workingTime, federalStateCachedSupplier))
             .collect(toList());
     }
 
@@ -198,13 +204,12 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         }
     }
 
-    private static WorkingTime toWorkingTimes(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
+    private static WorkingTime toWorkingTime(WorkingTimeEntity workingTimeEntity, Supplier<FederalState> defaultFederalStateProvider) {
 
-        final FederalState federalState = workingTimeEntity.getFederalStateOverride() == null
-            ? defaultFederalStateProvider.get()
-            : workingTimeEntity.getFederalStateOverride();
+        final boolean isDefaultFederalState = workingTimeEntity.getFederalStateOverride() == null;
+        final FederalState federalState = isDefaultFederalState ? defaultFederalStateProvider.get() : workingTimeEntity.getFederalStateOverride();
 
-        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom(), federalState);
+        final WorkingTime workingTime = new WorkingTime(workingTimeEntity.getPerson(), workingTimeEntity.getValidFrom(), federalState, isDefaultFederalState);
 
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
             final DayLength dayLength = dayLengthForDayOfWeek(workingTimeEntity, dayOfWeek);

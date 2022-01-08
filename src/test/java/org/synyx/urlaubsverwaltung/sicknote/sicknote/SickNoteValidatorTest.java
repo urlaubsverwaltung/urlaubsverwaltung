@@ -55,7 +55,7 @@ class SickNoteValidatorTest {
     void ensureValidDatesHaveNoErrors() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -203,7 +203,7 @@ class SickNoteValidatorTest {
     void ensureAUStartDateMustBeBeforeAUEndDateToHaveAValidPeriod() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -222,7 +222,7 @@ class SickNoteValidatorTest {
     void ensureValidAUPeriodHasNoErrors() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -241,7 +241,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDays() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -260,7 +260,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStart() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -279,7 +279,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEnd() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -298,7 +298,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysStartOverlapping() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -317,7 +317,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysEndOverlapping() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -336,7 +336,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodMultipleDaysNoneOverlapping() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -356,7 +356,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodOneDay() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             LocalDate.of(2013, NOVEMBER, 1),
@@ -374,7 +374,7 @@ class SickNoteValidatorTest {
     void ensureAUPeriodMustBeWithinSickNotePeriodButIsNotForOneDay() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -392,7 +392,7 @@ class SickNoteValidatorTest {
     @Test
     void ensureSickNoteMustNotHaveAnyOverlapping() {
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),
@@ -414,13 +414,13 @@ class SickNoteValidatorTest {
             LocalDate.of(2015, MARCH, 10),
             FULL);
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.empty());
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getGlobalErrors().get(0).getCode()).isEqualTo("sicknote.error.noValidWorkingTime");
-        verify(workingTimeService).getByPersonAndValidityDateEqualsOrMinorDate(sickNote.getPerson(), startDate);
+        verify(workingTimeService).getWorkingTime(sickNote.getPerson(), startDate);
     }
 
     @Test
@@ -441,7 +441,7 @@ class SickNoteValidatorTest {
     void ensureInvalidAUBPeriodWithValidPeriodIsNotValid() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class),
+        when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final SickNote sickNote = createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"),

@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -97,13 +96,10 @@ public class PersonDetailsViewController {
         model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageAuthorityOfDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
-        final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, LocalDate.now(clock));
-
-        final FederalState federalState = workingTime.map(WorkingTime::getFederalState)
-            .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState());
-
-        model.addAttribute("workingTime", workingTime.orElse(null));
-        model.addAttribute("federalState", federalState);
+        final Optional<WorkingTime> maybeWorkingTime = workingTimeService.getWorkingTime(person, LocalDate.now(clock));
+        model.addAttribute("workingTime", maybeWorkingTime.orElse(null));
+        model.addAttribute("federalState", maybeWorkingTime.map(WorkingTime::getFederalState)
+            .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState()));
 
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));

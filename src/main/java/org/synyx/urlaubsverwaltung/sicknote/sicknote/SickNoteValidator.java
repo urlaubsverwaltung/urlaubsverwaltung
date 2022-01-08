@@ -152,10 +152,8 @@ public class SickNoteValidator implements Validator {
     private void validateNoOverlapping(SickNote sickNote, Errors errors) {
 
         // Ensure the person has a working time for the period of the sick note
-        final Optional<WorkingTime> workingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-            sickNote.getPerson(), sickNote.getStartDate());
-
-        if (workingTime.isEmpty()) {
+        final Optional<WorkingTime> maybeWorkingTime = workingTimeService.getWorkingTime(sickNote.getPerson(), sickNote.getStartDate());
+        if (maybeWorkingTime.isEmpty()) {
             errors.reject(ERROR_WORKING_TIME);
             return;
         }

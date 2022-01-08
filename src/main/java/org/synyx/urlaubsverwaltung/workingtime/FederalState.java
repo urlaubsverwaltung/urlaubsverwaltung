@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Enum representing the federal states of Germany. The information about the federal state is needed to check if a day
@@ -12,6 +12,8 @@ import java.util.Map;
  * different public holidays).
  */
 public enum FederalState {
+
+    NONE("none"),
 
     GERMANY_BADEN_WUERTTEMBERG("de", "bw"),
     GERMANY_BAYERN("de", "by"),
@@ -92,13 +94,15 @@ public enum FederalState {
         return codes[0];
     }
 
+    /**
+     * Returns a map of a country identifier and a list of federal states that this country has.
+     * Does not return "none" (No publix holiday regulation) and the default
+     *
+     * @return Map of countries with a list of their federal states
+     */
     public static Map<String, List<FederalState>> federalStatesTypesByCountry() {
-
-        final Map<String, List<FederalState>> federalStatesTypesByCountry = new HashMap<>();
-
-        Arrays.stream(values()).forEach(federalState ->
-            federalStatesTypesByCountry.computeIfAbsent(federalState.getCountry(), country -> new ArrayList<>()).add(federalState));
-
-        return federalStatesTypesByCountry;
+        return Arrays.stream(values())
+            .filter(federalState -> federalState != NONE)
+            .collect(groupingBy(FederalState::getCountry));
     }
 }

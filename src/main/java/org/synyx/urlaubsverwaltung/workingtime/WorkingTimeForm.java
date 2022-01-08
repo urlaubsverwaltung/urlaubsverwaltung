@@ -4,16 +4,19 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.time.format.DateTimeFormatter.ISO_DATE;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 public class WorkingTimeForm {
 
     private LocalDate validFrom;
     private List<Integer> workingDays = new ArrayList<>();
     private FederalState federalState;
+    private boolean isDefaultFederalState;
 
     WorkingTimeForm() {
         // OK
@@ -22,16 +25,15 @@ public class WorkingTimeForm {
     WorkingTimeForm(WorkingTime workingTime) {
 
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-
-            DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);
-
-            if (dayLength != DayLength.ZERO) {
+            final DayLength dayLength = workingTime.getDayLengthForWeekDay(dayOfWeek);
+            if (dayLength != ZERO) {
                 workingDays.add(dayOfWeek.getValue());
             }
         }
 
         this.validFrom = workingTime.getValidFrom();
         this.federalState = workingTime.getFederalState();
+        this.isDefaultFederalState = workingTime.isDefaultFederalState();
     }
 
     public String getValidFromIsoValue() {
@@ -39,7 +41,7 @@ public class WorkingTimeForm {
             return "";
         }
 
-        return validFrom.format(DateTimeFormatter.ISO_DATE);
+        return validFrom.format(ISO_DATE);
     }
 
     public LocalDate getValidFrom() {
@@ -66,18 +68,27 @@ public class WorkingTimeForm {
         this.federalState = federalState;
     }
 
+    public boolean isDefaultFederalState() {
+        return isDefaultFederalState;
+    }
+
+    public void setDefaultFederalState(boolean defaultFederalState) {
+        isDefaultFederalState = defaultFederalState;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkingTimeForm that = (WorkingTimeForm) o;
-        return Objects.equals(validFrom, that.validFrom) &&
-            Objects.equals(workingDays, that.workingDays) &&
-            federalState == that.federalState;
+        return isDefaultFederalState == that.isDefaultFederalState
+            && Objects.equals(validFrom, that.validFrom)
+            && Objects.equals(workingDays, that.workingDays)
+            && federalState == that.federalState;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(validFrom, workingDays, federalState);
+        return Objects.hash(validFrom, workingDays, federalState, isDefaultFederalState);
     }
 }

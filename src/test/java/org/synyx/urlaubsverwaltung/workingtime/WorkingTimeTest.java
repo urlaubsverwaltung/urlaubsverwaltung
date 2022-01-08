@@ -36,7 +36,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         assertThat(workingTime.getMonday()).isEqualTo(ZERO);
         assertThat(workingTime.getTuesday()).isEqualTo(ZERO);
         assertThat(workingTime.getWednesday()).isEqualTo(ZERO);
@@ -54,13 +54,13 @@ class WorkingTimeTest {
 
         final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
-        final WorkingTime workingEveryDay = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingEveryDay = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         workingEveryDay.setWorkingDays(workingDays, FULL);
 
         assertThat(workingEveryDay.getWorkingDays())
             .containsExactly(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
-        final WorkingTime workingNoDay = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingNoDay = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         workingNoDay.setWorkingDays(workingDays, ZERO);
 
         assertThat(workingNoDay.getWorkingDays()).isEmpty();
@@ -80,7 +80,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
         assertThat(workingTime.isWorkingDay(dayOfWeek)).isTrue();
     }
@@ -91,7 +91,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setDayLengthForWeekDay(dayOfWeek, ZERO);
         assertThat(workingTime.isWorkingDay(dayOfWeek)).isFalse();
     }
@@ -104,8 +104,8 @@ class WorkingTimeTest {
         final Person robin = new Person();
         robin.setId(2);
 
-        final WorkingTime workingTimeBatman = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG);
-        final WorkingTime workingTimeRobin = new WorkingTime(robin, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTimeBatman = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
+        final WorkingTime workingTimeRobin = new WorkingTime(robin, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
 
         assertThat(workingTimeBatman)
             .isEqualTo(workingTimeBatman)
@@ -117,8 +117,8 @@ class WorkingTimeTest {
         final Person batman = new Person();
         batman.setId(1);
 
-        final WorkingTime workingTimeOne = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG);
-        final WorkingTime workingTimeTwo = new WorkingTime(batman, LocalDate.of(2021, JUNE, 13), GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTimeOne = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
+        final WorkingTime workingTimeTwo = new WorkingTime(batman, LocalDate.of(2021, JUNE, 13), GERMANY_BADEN_WUERTTEMBERG, false);
 
         assertThat(workingTimeOne)
             .isEqualTo(workingTimeOne)
@@ -130,7 +130,7 @@ class WorkingTimeTest {
         final Person person = new Person();
         person.setId(1);
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
 
         assertThat(workingTime.hashCode()).isEqualTo(4141357);
     }

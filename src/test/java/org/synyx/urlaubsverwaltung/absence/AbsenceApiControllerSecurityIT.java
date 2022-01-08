@@ -14,12 +14,16 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -35,12 +39,14 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
 
     @MockBean
     private PersonService personService;
-
     @MockBean
     private DepartmentService departmentService;
-
     @MockBean
     private AbsenceService absenceService;
+    @MockBean
+    private WorkingTimeService workingTimeService;
+    @MockBean
+    private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
     void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
@@ -94,7 +100,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final List<Department> departments = List.of(department);
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
 
-        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, Month.JANUARY, 1), LocalDate.of(2016, Month.DECEMBER, 31)))
+        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(emptyList());
 
         perform(get("/api/persons/1/absences")
@@ -152,7 +158,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, Month.JANUARY, 1), LocalDate.of(2016, Month.DECEMBER, 31)))
+        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(emptyList());
 
         perform(get("/api/persons/1/absences")
@@ -179,8 +185,10 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, Month.JANUARY, 1), LocalDate.of(2016, Month.DECEMBER, 31)))
-            .thenReturn(emptyList());
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(emptyList());
 
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")

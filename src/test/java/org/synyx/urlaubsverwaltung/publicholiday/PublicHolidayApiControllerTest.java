@@ -7,8 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -27,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,8 +60,8 @@ class PublicHolidayApiControllerTest {
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
-        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.MORNING, "");
-        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.NOON, "");
+        final PublicHoliday fromHoliday = new PublicHoliday(from, MORNING, "");
+        final PublicHoliday toHoliday = new PublicHoliday(to, NOON, "");
         when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
 
         perform(get("/api/public-holidays")
@@ -121,13 +124,15 @@ class PublicHolidayApiControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
-
-        when(workingTimeService.getFederalStateForPerson(person, from)).thenReturn(GERMANY_BADEN_WUERTTEMBERG);
-
         final LocalDate to = LocalDate.of(2016, 5, 20);
-        final PublicHoliday fromHoliday = new PublicHoliday(from, DayLength.MORNING, "");
-        final PublicHoliday toHoliday = new PublicHoliday(to, DayLength.NOON, "");
-        when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
+
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(from, to)))
+            .thenReturn(Map.of(
+                new DateRange(from, from), GERMANY_BADEN_WUERTTEMBERG,
+                new DateRange(to, to), GERMANY_BADEN_WUERTTEMBERG
+            ));
+        when(publicHolidaysService.getPublicHolidays(from, from, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(from, MORNING, "")));
+        when(publicHolidaysService.getPublicHolidays(to, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(to, NOON, "")));
 
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-05-19")

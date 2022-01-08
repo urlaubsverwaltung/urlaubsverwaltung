@@ -66,15 +66,12 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private DayLength getExpectedWorkTimeFor(Person person, LocalDate currentDay) {
 
-        Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-            currentDay);
-
-        if (workingTimeOrNot.isEmpty()) {
+        final Optional<WorkingTime> maybeWorkingTime = workingTimeService.getWorkingTime(person, currentDay);
+        if (maybeWorkingTime.isEmpty()) {
             throw new FreeTimeAbsenceException("Person " + person + " does not have workingTime configured");
         }
 
-        WorkingTime workingTime = workingTimeOrNot.get();
-
+        final WorkingTime workingTime = maybeWorkingTime.get();
         return workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek());
     }
 }

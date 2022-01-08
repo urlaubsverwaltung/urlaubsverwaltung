@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -21,6 +22,7 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +35,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RestController
 @RequestMapping("/api")
 public class PublicHolidayApiController {
-
-    public static final String PUBLIC_HOLIDAYS = "public-holidays";
 
     private final PublicHolidaysService publicHolidaysService;
     private final PersonService personService;
@@ -56,7 +56,7 @@ public class PublicHolidayApiController {
         description = "Get all public holidays for a certain period. "
             + "Information only reachable for users with role office."
     )
-    @GetMapping(PUBLIC_HOLIDAYS)
+    @GetMapping("public-holidays")
     @PreAuthorize(IS_OFFICE)
     public PublicHolidaysDto getPublicHolidays(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
@@ -80,7 +80,7 @@ public class PublicHolidayApiController {
         summary = "Get all public holidays for a certain period", description = "Get all public holidays for a certain period. "
         + "Information only reachable for users with role office and for own public holidays."
     )
-    @GetMapping("/persons/{personId}/" + PUBLIC_HOLIDAYS)
+    @GetMapping("/persons/{personId}/public-holidays")
     @PreAuthorize(IS_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
@@ -105,9 +105,15 @@ public class PublicHolidayApiController {
         }
 
         final Person person = optionalPerson.get();
-        final FederalState federalState = workingTimeService.getFederalStateForPerson(person, startDate);
+        final DateRange dateRange = new DateRange(startDate, endDate);
 
-        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
+        final List<PublicHolidayDto> publicHolidays = workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+            .entrySet().stream()
+            .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .flatMap(List::stream)
+            .sorted(Comparator.comparing(PublicHolidayDto::getDate))
+            .collect(toList());
+
         return new PublicHolidaysDto(publicHolidays);
     }
 

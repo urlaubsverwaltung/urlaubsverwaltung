@@ -205,12 +205,7 @@ public class AbsenceOverviewViewController {
             .entrySet().stream()
             .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
             .flatMap(List::stream)
-            .collect(
-                toMap(
-                    PublicHoliday::getDate,
-                    Function.identity()
-                )
-            );
+            .collect(toMap(PublicHoliday::getDate, Function.identity()));
     }
 
     private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {

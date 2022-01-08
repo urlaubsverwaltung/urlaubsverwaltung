@@ -42,7 +42,7 @@ class FreeTimeAbsenceProviderTest {
     @Test
     void ensurePersonIsNotAvailableOnFreeDays() {
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -58,7 +58,7 @@ class FreeTimeAbsenceProviderTest {
 
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person, firstSundayIn2016)).thenReturn(Optional.empty());
+        when(workingTimeService.getWorkingTime(person, firstSundayIn2016)).thenReturn(Optional.empty());
 
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         assertThatThrownBy(() -> sut.addAbsence(knownAbsences, person, firstSundayIn2016))
@@ -68,7 +68,7 @@ class FreeTimeAbsenceProviderTest {
     @Test
     void ensureDoesNotCallNextProviderIfAlreadyAbsentForWholeDay() {
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final LocalDate firstSundayIn2016 = LocalDate.of(2016, 1, 3);
         final TimedAbsenceSpans timedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());
@@ -80,7 +80,7 @@ class FreeTimeAbsenceProviderTest {
     @Test
     void ensureCallsHolidayAbsenceProviderIfNotAbsentForFreeTime() {
 
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
 
         final LocalDate standardWorkingDay = LocalDate.of(2016, 1, 4);
         final TimedAbsenceSpans emptyTimedAbsenceSpans = new TimedAbsenceSpans(new ArrayList<>());

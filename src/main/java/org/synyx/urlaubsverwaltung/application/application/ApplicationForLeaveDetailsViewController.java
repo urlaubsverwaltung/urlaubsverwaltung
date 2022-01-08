@@ -16,10 +16,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -364,8 +364,8 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("application", new ApplicationForLeave(application, workDaysCountService));
 
         // WORKING TIME FOR VACATION PERIOD
-        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(
-            application.getPerson(), application.getStartDate());
+        // FIXME - wird in app_info verwenden und auch nur anhand des start datums. Hier sollte eine Liste her.
+        final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getWorkingTime(application.getPerson(), application.getStartDate());
         optionalWorkingTime.ifPresent(workingTime -> model.addAttribute("workingTime", workingTime));
 
         // DEPARTMENT APPLICATIONS FOR LEAVE

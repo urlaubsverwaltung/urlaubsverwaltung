@@ -28,6 +28,7 @@ public class WorkingTime {
     private final Person person;
     private final LocalDate validFrom;
     private final FederalState federalState;
+    private final boolean isDefaultFederalState;
     private DayLength monday = ZERO;
     private DayLength tuesday = ZERO;
     private DayLength wednesday = ZERO;
@@ -36,10 +37,11 @@ public class WorkingTime {
     private DayLength saturday = ZERO;
     private DayLength sunday = ZERO;
 
-    public WorkingTime(Person person, LocalDate validFrom, FederalState federalState) {
+    public WorkingTime(Person person, LocalDate validFrom, FederalState federalState, boolean isDefaultFederalState) {
         this.person = person;
         this.validFrom = validFrom;
         this.federalState = federalState;
+        this.isDefaultFederalState = isDefaultFederalState;
     }
 
     public Person getPerson() {
@@ -52,6 +54,10 @@ public class WorkingTime {
 
     public FederalState getFederalState() {
         return federalState;
+    }
+
+    public boolean isDefaultFederalState() {
+        return isDefaultFederalState;
     }
 
     public DayLength getMonday() {

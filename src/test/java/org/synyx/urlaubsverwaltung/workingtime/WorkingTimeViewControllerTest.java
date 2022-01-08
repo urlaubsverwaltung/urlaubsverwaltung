@@ -80,9 +80,9 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2), GERMANY_BERLIN);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2), GERMANY_BERLIN, false);
         workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
@@ -103,7 +103,7 @@ class WorkingTimeViewControllerTest {
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
         when(settingsService.getSettings()).thenReturn(new Settings());
-        when(workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(eq(person), any(LocalDate.class))).thenReturn(Optional.empty());
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.empty());
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm())));
