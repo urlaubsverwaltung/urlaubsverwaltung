@@ -18,6 +18,7 @@ const datepickerClassnames = {
   day: "datepicker-day",
   today: "datepicker-day-today",
   past: "datepicker-day-past",
+  weekend: "datepicker-day-weekend",
   publicHolidayFull: "datepicker-day-public-holiday-full",
   publicHolidayMorning: "datepicker-day-public-holiday-morning",
   publicHolidayNoon: "datepicker-day-public-holiday-noon",
@@ -164,99 +165,97 @@ function fitsCriteriaMatcher(date) {
   return (list, filterAttributes) => Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
 }
 
+const isPast = () => false;
+
 function getCssClassesForDate(date, publicHolidays, absences) {
-  if (date && isWeekend(date)) {
-    return ["datepicker-day", "datepicker-day-weekend"];
-  } else {
-    const fitsCriteria = fitsCriteriaMatcher(date);
+  const fitsCriteria = fitsCriteriaMatcher(date);
 
-    const isPast = () => false;
-    const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });
-    const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
-    const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
-    const isPersonalHolidayFull = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "FULL",
-        status: "WAITING",
-      });
-    const isPersonalHolidayFullTemporaryApproved = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "FULL",
-        status: "TEMPORARY_ALLOWED",
-      });
-    const isPersonalHolidayFullApproved = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "FULL",
-        status: "ALLOWED",
-      });
-    const isPersonalHolidayMorning = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "MORNING",
-        status: "WAITING",
-      });
-    const isPersonalHolidayMorningTemporaryApproved = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "MORNING",
-        status: "TEMPORARY_ALLOWED",
-      });
-    const isPersonalHolidayMorningApproved = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "MORNING",
-        status: "ALLOWED",
-      });
-    const isPersonalHolidayNoon = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "NOON",
-        status: "WAITING",
-      });
-    const isPersonalHolidayNoonTemporaryApproved = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "NOON",
-        status: "TEMPORARY_ALLOWED",
-      });
-    const isPersonalHolidayNoonApproved = () =>
-      fitsCriteria(absences, {
-        type: "VACATION",
-        absencePeriodName: "NOON",
-        status: "ALLOWED",
-      });
-    const isSickDayFull = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "FULL" });
-    const isSickDayMorning = () =>
-      fitsCriteria(absences, {
-        type: "SICK_NOTE",
-        absencePeriodName: "MORNING",
-      });
-    const isSickDayNoon = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "NOON" });
+  const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });
+  const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
+  const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
+  const isPersonalHolidayFull = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "FULL",
+      status: "WAITING",
+    });
+  const isPersonalHolidayFullTemporaryApproved = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "FULL",
+      status: "TEMPORARY_ALLOWED",
+    });
+  const isPersonalHolidayFullApproved = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "FULL",
+      status: "ALLOWED",
+    });
+  const isPersonalHolidayMorning = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "MORNING",
+      status: "WAITING",
+    });
+  const isPersonalHolidayMorningTemporaryApproved = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "MORNING",
+      status: "TEMPORARY_ALLOWED",
+    });
+  const isPersonalHolidayMorningApproved = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "MORNING",
+      status: "ALLOWED",
+    });
+  const isPersonalHolidayNoon = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "NOON",
+      status: "WAITING",
+    });
+  const isPersonalHolidayNoonTemporaryApproved = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "NOON",
+      status: "TEMPORARY_ALLOWED",
+    });
+  const isPersonalHolidayNoonApproved = () =>
+    fitsCriteria(absences, {
+      type: "VACATION",
+      absencePeriodName: "NOON",
+      status: "ALLOWED",
+    });
+  const isSickDayFull = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "FULL" });
+  const isSickDayMorning = () =>
+    fitsCriteria(absences, {
+      type: "SICK_NOTE",
+      absencePeriodName: "MORNING",
+    });
+  const isSickDayNoon = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "NOON" });
 
-    return [
-      datepickerClassnames.day,
-      isToday(date) && datepickerClassnames.today,
-      isPast() && datepickerClassnames.past,
-      isPublicHolidayFull() && datepickerClassnames.publicHolidayFull,
-      isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
-      isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
-      isPersonalHolidayFull() && datepickerClassnames.personalHolidayFull,
-      isPersonalHolidayFullTemporaryApproved() && datepickerClassnames.personalHolidayFull,
-      isPersonalHolidayFullApproved() && datepickerClassnames.personalHolidayFullApproved,
-      isPersonalHolidayMorning() && datepickerClassnames.personalHolidayMorning,
-      isPersonalHolidayMorningTemporaryApproved() && datepickerClassnames.personalHolidayMorning,
-      isPersonalHolidayMorningApproved() && datepickerClassnames.personalHolidayMorningApproved,
-      isPersonalHolidayNoon() && datepickerClassnames.personalHolidayNoon,
-      isPersonalHolidayNoonTemporaryApproved() && datepickerClassnames.personalHolidayNoon,
-      isPersonalHolidayNoonApproved() && datepickerClassnames.personalHolidayNoonApproved,
-      isSickDayFull() && datepickerClassnames.sickNoteFull,
-      isSickDayMorning() && datepickerClassnames.sickNoteMorning,
-      isSickDayNoon() && datepickerClassnames.sickNoteNoon,
-    ].filter(Boolean);
-  }
+  return [
+    datepickerClassnames.day,
+    isToday(date) && datepickerClassnames.today,
+    isPast() && datepickerClassnames.past,
+    isWeekend(date) && datepickerClassnames.weekend,
+    isPublicHolidayFull() && datepickerClassnames.publicHolidayFull,
+    isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
+    isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
+    isPersonalHolidayFull() && datepickerClassnames.personalHolidayFull,
+    isPersonalHolidayFullTemporaryApproved() && datepickerClassnames.personalHolidayFull,
+    isPersonalHolidayFullApproved() && datepickerClassnames.personalHolidayFullApproved,
+    isPersonalHolidayMorning() && datepickerClassnames.personalHolidayMorning,
+    isPersonalHolidayMorningTemporaryApproved() && datepickerClassnames.personalHolidayMorning,
+    isPersonalHolidayMorningApproved() && datepickerClassnames.personalHolidayMorningApproved,
+    isPersonalHolidayNoon() && datepickerClassnames.personalHolidayNoon,
+    isPersonalHolidayNoonTemporaryApproved() && datepickerClassnames.personalHolidayNoon,
+    isPersonalHolidayNoonApproved() && datepickerClassnames.personalHolidayNoonApproved,
+    isSickDayFull() && datepickerClassnames.sickNoteFull,
+    isSickDayMorning() && datepickerClassnames.sickNoteMorning,
+    isSickDayNoon() && datepickerClassnames.sickNoteNoon,
+  ].filter(Boolean);
 }
 
 function pick(name) {
