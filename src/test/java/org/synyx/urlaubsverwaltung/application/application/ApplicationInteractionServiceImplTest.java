@@ -406,7 +406,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -429,7 +429,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -453,7 +453,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -477,7 +477,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -502,7 +502,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, person)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -525,7 +525,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, person)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -549,7 +549,7 @@ class ApplicationInteractionServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, person)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, person)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -578,7 +578,7 @@ class ApplicationInteractionServiceImplTest {
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        final boolean isSecondStage = departmentService.isSecondStageAuthorityOfPerson(eq(secondStageAuthority), eq(departmentHead));
+        final boolean isSecondStage = departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(secondStageAuthority), eq(departmentHead));
         when(isSecondStage).thenReturn(true);
 
         final Application applicationForLeave = getDummyApplication(departmentHead);
@@ -604,7 +604,7 @@ class ApplicationInteractionServiceImplTest {
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, secondStageAuthority)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -621,7 +621,7 @@ class ApplicationInteractionServiceImplTest {
         final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, secondStageAuthority)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, secondStageAuthority)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -637,7 +637,7 @@ class ApplicationInteractionServiceImplTest {
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
 
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, departmentHead)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, departmentHead)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -690,7 +690,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(replacementPerson);

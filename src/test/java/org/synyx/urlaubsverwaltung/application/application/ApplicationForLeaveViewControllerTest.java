@@ -120,7 +120,7 @@ class ApplicationForLeaveViewControllerTest {
         applicationCancellationRequest.setEndDate(LocalDate.MAX);
         applicationCancellationRequest.setDayLength(FULL);
 
-        when(departmentService.getManagedMembersOfDepartmentHead(headPerson))
+        when(departmentService.getMembersForDepartmentHead(headPerson))
             .thenReturn(List.of(headPerson, person, secondStagePerson));
 
         // applications for signed-in user
@@ -337,7 +337,7 @@ class ApplicationForLeaveViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(secondStagePerson);
 
-        when(departmentService.getManagedMembersForSecondStageAuthority(secondStagePerson))
+        when(departmentService.getMembersForSecondStageAuthority(secondStagePerson))
             .thenReturn(List.of(secondStagePerson, person, officePerson));
 
         // applications for signed-in user
@@ -409,11 +409,11 @@ class ApplicationForLeaveViewControllerTest {
         applicationCancellationRequest.setEndDate(LocalDate.MAX);
         applicationCancellationRequest.setDayLength(FULL);
 
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
             .thenReturn(List.of(departmentHeadAndSecondStageAuth));
 
         final List<Person> membersDepartment = List.of(userOfDepartmentA);
-        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
 
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(departmentHeadAndSecondStageAuth)))
             .thenReturn(List.of(applicationCancellationRequest));
@@ -484,8 +484,8 @@ class ApplicationForLeaveViewControllerTest {
         waitingApplication.setEndDate(LocalDate.MAX);
 
         final List<Person> members = List.of(departmentHeadAndSecondStageAuth, userOfDepartment);
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(members);
-        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(members);
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(members);
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(members);
 
         // applications for signed-in user
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(departmentHeadAndSecondStageAuth)))

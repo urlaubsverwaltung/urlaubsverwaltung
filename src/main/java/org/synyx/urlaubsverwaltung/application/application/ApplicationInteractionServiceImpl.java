@@ -147,8 +147,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         // Second stage authority has almost the same power (except on own applications)
-        final boolean isSecondStageAuthority = privilegedUser.hasRole(SECOND_STAGE_AUTHORITY)
-            && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(privilegedUser, application.getPerson());
 
         final boolean isOwnApplication = application.getPerson().equals(privilegedUser);
 
@@ -157,8 +156,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         // Department head can be mighty only in some cases
-        final boolean isDepartmentHead = privilegedUser.hasRole(DEPARTMENT_HEAD)
-            && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(privilegedUser, application.getPerson());
 
         // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
         final boolean isSecondStageAuthorityApplication = application.getPerson().hasRole(SECOND_STAGE_AUTHORITY);

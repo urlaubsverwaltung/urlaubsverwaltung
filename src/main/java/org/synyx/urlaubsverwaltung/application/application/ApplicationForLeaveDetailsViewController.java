@@ -135,8 +135,8 @@ class ApplicationForLeaveDetailsViewController {
         final Person person = application.getPerson();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
-        final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) && departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
         if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
             throw new AccessDeniedException(format(
@@ -188,7 +188,7 @@ class ApplicationForLeaveDetailsViewController {
 
         final Person sender = personService.getSignedInUser();
         final boolean isBoss = sender.hasRole(BOSS);
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(sender, application.getPerson());
 
         if (isBoss || isDepartmentHead) {
             applicationInteractionService.refer(application, recipient, sender);
@@ -214,8 +214,8 @@ class ApplicationForLeaveDetailsViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
         if (isBoss || isDepartmentHead || isSecondStageAuthority) {
             comment.setMandatory(true);

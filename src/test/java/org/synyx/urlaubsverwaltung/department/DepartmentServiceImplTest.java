@@ -320,42 +320,6 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureReturnsAllMembersOfTheManagedDepartmentsOfTheDepartmentHead() {
-
-        final Person departmentHead = new Person();
-        final Person secondDepartmentHead = new Person();
-
-        final DepartmentMemberEmbeddable admin1Member = departmentMemberEmbeddable("admin1", "Muster", "Marlene", "marlene.muster@example.org");
-        final DepartmentMemberEmbeddable admin2Member = departmentMemberEmbeddable("admin2", "Muster", "Max", "max.muster@example.org");
-        final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Wayne", "Bruce", "wayne@example.org");
-        final DepartmentMemberEmbeddable secondDepartmentHeadMember = departmentMemberEmbeddable("secondDepartmentHead", "Kent", "Clark", "kent@example.org");
-
-        final DepartmentMemberEmbeddable marketing1Member = departmentMemberEmbeddable("marketing1", "marketing1", "Marlene", "marketing1@example.org");
-        final DepartmentMemberEmbeddable marketing2Member = departmentMemberEmbeddable("marketing2", "marketing2", "Marlene", "marketing2@example.org");
-        final DepartmentMemberEmbeddable marketing3Member = departmentMemberEmbeddable("marketing3", "marketing3", "Marlene", "marketing3@example.org");
-
-        final DepartmentEntity admins = new DepartmentEntity();
-        admins.setName("admins");
-        admins.setMembers(List.of(admin1Member, admin2Member, departmentHeadMember, secondDepartmentHeadMember));
-        admins.setDepartmentHeads(List.of(departmentHead, secondDepartmentHead));
-
-        final Person secondStageAuth = new Person();
-        secondStageAuth.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-
-        final DepartmentEntity marketing = new DepartmentEntity();
-        marketing.setName("marketing");
-        marketing.setMembers(List.of(marketing1Member, marketing2Member, marketing3Member, departmentHeadMember, departmentMemberEmbeddable(secondStageAuth)));
-        marketing.setDepartmentHeads(List.of(departmentHead));
-        marketing.setSecondStageAuthorities(List.of(secondStageAuth));
-
-        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(admins, marketing));
-
-        final List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
-        assertThat(members).containsExactly(admin1Member.getPerson(), admin2Member.getPerson(), departmentHeadMember.getPerson(),
-            secondDepartmentHeadMember.getPerson(), marketing1Member.getPerson(), marketing2Member.getPerson(), marketing3Member.getPerson());
-    }
-
-    @Test
     void getMembersForDepartmentHead() {
 
         final DepartmentMemberEmbeddable departmentHeadMember = departmentMemberEmbeddable("departmentHead", "Department", "Head", "head.department@example.org");
@@ -446,17 +410,6 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureReturnsEmptyListIfPersonHasNoManagedDepartment() {
-
-        final Person departmentHead = new Person();
-
-        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(emptyList());
-
-        final List<Person> members = sut.getManagedMembersOfDepartmentHead(departmentHead);
-        assertThat(members).isEmpty();
-    }
-
-    @Test
     void ensureReturnsTrueIfIsDepartmentHeadOfTheGivenPerson() {
 
         final Person departmentHead = new Person();
@@ -474,7 +427,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(admins));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marlenePerson);
+        boolean isDepartmentHead = sut.isDepartmentHeadAllowedToManagePerson(departmentHead, marlenePerson);
         assertThat(isDepartmentHead).isTrue();
     }
 
@@ -497,7 +450,7 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findByDepartmentHeads(departmentHead))
             .thenReturn(List.of(admins));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(departmentHead, marketing1);
+        boolean isDepartmentHead = sut.isDepartmentHeadAllowedToManagePerson(departmentHead, marketing1);
         assertThat(isDepartmentHead).isFalse();
     }
 
@@ -513,7 +466,7 @@ class DepartmentServiceImplTest {
         Department admins = createDepartment("admins");
         admins.setMembers(List.of(admin1, admin2, noDepartmentHead));
 
-        boolean isDepartmentHead = sut.isDepartmentHeadOfPerson(noDepartmentHead, admin1);
+        boolean isDepartmentHead = sut.isDepartmentHeadAllowedToManagePerson(noDepartmentHead, admin1);
         assertThat(isDepartmentHead).isFalse();
     }
 
@@ -739,11 +692,10 @@ class DepartmentServiceImplTest {
         departmentEntity.setMembers(List.of(secondStageAuthorityMember, departmentHeadMember));
         departmentEntity.setSecondStageAuthorities(List.of(secondStageAuthority));
 
-        when(departmentRepository.findByDepartmentHeads(departmentHead))
-            .thenReturn(List.of(departmentEntity));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(departmentEntity));
 
         boolean isAllowed = sut.isSignedInUserAllowedToAccessPersonData(departmentHead, secondStageAuthority);
-        assertThat(isAllowed).isFalse();
+        assertThat(isAllowed).isTrue();
     }
 
     @Test
