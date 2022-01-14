@@ -159,6 +159,94 @@ describe("calendar", () => {
     },
   );
 
+  describe("highlights days", () => {
+    test("weekend with absences", async () => {
+      // today is 2020-12-13
+      mockDate(1_607_848_867_000);
+
+      // personId -> createHolidayService (param)
+      // year -> holidayService.fetchPersonal (param)
+      // type -> holidayService.fetchPersonal (implementation detail)
+      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&type=VACATION", {
+        absences: [
+          {
+            date: "2020-12-05",
+            absencePeriodName: "FULL",
+            type: "VACATION",
+            status: "ALLOWED",
+          },
+          {
+            date: "2020-12-06",
+            absencePeriodName: "MORNING",
+            type: "VACATION",
+            status: "ALLOWED",
+          },
+          {
+            date: "2020-12-12",
+            absencePeriodName: "NOON",
+            type: "VACATION",
+            status: "ALLOWED",
+          },
+        ],
+      });
+
+      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&type=SICK_NOTE", {
+        absences: [
+          {
+            date: "2020-12-06",
+            absencePeriodName: "NOON",
+            type: "SICK_NOTE",
+            status: "ACTIVE",
+          },
+          {
+            date: "2020-12-12",
+            absencePeriodName: "MORNING",
+            type: "SICK_NOTE",
+            status: "ACTIVE",
+          },
+          {
+            date: "2020-12-13",
+            absencePeriodName: "FULL",
+            type: "SICK_NOTE",
+            status: "ACTIVE",
+          },
+        ],
+      });
+
+      await calendarTestSetup();
+
+      const holidayService = createHolidayService({ personId: 42 });
+      // fetch personal holiday data and cache the (mocked) response
+      // the response is used when the calendar renders
+      await holidayService.fetchPersonal(2020);
+      await holidayService.fetchSickDays(2020);
+
+      renderCalendar(holidayService);
+
+      const $ = document.querySelector.bind(document);
+      expect(
+        $(
+          '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-personal-holiday-full-approved"]',
+        ),
+      ).toBeTruthy();
+      expect(
+        $(
+          '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-personal-holiday-morning-approved datepicker-day-sick-note-noon"]',
+        ),
+      ).toBeTruthy();
+      expect(
+        $(
+          '[data-datepicker-date="2020-12-12"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-personal-holiday-noon-approved datepicker-day-sick-note-morning"]',
+        ),
+      ).toBeTruthy();
+      expect(
+        $(
+          '[data-datepicker-date="2020-12-13"][class="datepicker-day datepicker-day-today datepicker-day-weekend datepicker-day-sick-note-full"]',
+        ),
+      ).toBeTruthy();
+    });
+  });
+
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
     return window.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
   }

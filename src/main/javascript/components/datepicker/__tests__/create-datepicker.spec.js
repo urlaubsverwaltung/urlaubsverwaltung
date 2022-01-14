@@ -398,6 +398,12 @@ describe("create-datepicker", () => {
     });
 
     describe("highlights days", () => {
+      function mockAbsences(absences) {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          absences,
+        });
+      }
+
       test("weekend", async () => {
         fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
           publicHolidays: [],
@@ -445,6 +451,125 @@ describe("create-datepicker", () => {
         assertWeekend("20. Dezember");
         assertWeekend("26. Dezember");
         assertWeekend("27. Dezember");
+      });
+
+      test("weekend with absences", async () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          publicHolidays: [],
+        });
+
+        mockAbsences([
+          {
+            date: "2020-12-05",
+            absencePeriodName: "FULL",
+            type: "VACATION",
+            status: "ALLOWED",
+          },
+          {
+            date: "2020-12-06",
+            absencePeriodName: "MORNING",
+            type: "VACATION",
+            status: "ALLOWED",
+          },
+          {
+            date: "2020-12-12",
+            absencePeriodName: "NOON",
+            type: "VACATION",
+            status: "ALLOWED",
+          },
+          {
+            date: "2020-12-06",
+            absencePeriodName: "NOON",
+            type: "SICK_NOTE",
+            status: "ACTIVE",
+          },
+          {
+            date: "2020-12-12",
+            absencePeriodName: "MORNING",
+            type: "SICK_NOTE",
+            status: "ACTIVE",
+          },
+          {
+            date: "2020-12-13",
+            absencePeriodName: "FULL",
+            type: "SICK_NOTE",
+            status: "ACTIVE",
+          },
+        ]);
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        const urlPrefix = "my-url-prefix";
+        const getPersonId = () => 42;
+
+        await createDatepicker("input", { urlPrefix, getPersonId });
+
+        // fetch public holidays and update view
+        document.querySelector("button.duet-date__toggle").click();
+
+        // wait for response and css class calculation
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const getElement = (dateString) => {
+          for (let span of document.querySelectorAll(".duet-date__vhidden")) {
+            if (span.textContent === dateString) {
+              return span.parentNode;
+            }
+          }
+          throw new Error("could not find date element for dateString=" + dateString);
+        };
+
+        const assertWeekend = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-weekend");
+        };
+        const assertHolidayFull = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-personal-holiday-full-approved");
+        };
+        const assertHolidayNoon = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-personal-holiday-noon-approved");
+        };
+        const assertHolidayMorning = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-personal-holiday-morning-approved");
+        };
+        const assertSickFull = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-sick-note-full");
+        };
+        const assertSickNoon = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-sick-note-noon");
+        };
+        const assertSickMorning = (dateString) => {
+          const element = getElement(dateString);
+          expect(element.classList).toContain("datepicker-day");
+          expect(element.classList).toContain("datepicker-day-sick-note-morning");
+        };
+
+        assertWeekend("5. Dezember");
+        assertHolidayFull("5. Dezember");
+
+        assertWeekend("6. Dezember");
+        assertHolidayMorning("6. Dezember");
+        assertSickNoon("6. Dezember");
+
+        assertWeekend("12. Dezember");
+        assertHolidayNoon("12. Dezember");
+        assertSickMorning("12. Dezember");
+
+        assertWeekend("13. Dezember");
+        assertSickFull("13. Dezember");
       });
 
       test("no public holidays", async () => {

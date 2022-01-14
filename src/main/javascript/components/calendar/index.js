@@ -128,49 +128,49 @@ $(function () {
         return holidayService.isPublicHolidayNoon(date);
       },
       isPersonalHolidayFull: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayFull(date);
+        return holidayService.isPersonalHolidayFull(date);
       },
       isPersonalHolidayFullTemporaryApproved: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayFullTemporaryApproved(date);
+        return holidayService.isPersonalHolidayFullTemporaryApproved(date);
       },
       isPersonalHolidayFullApproved: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayFullApproved(date);
+        return holidayService.isPersonalHolidayFullApproved(date);
       },
       isPersonalHolidayFullCancellationRequest: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayFullCancellationRequest(date);
+        return holidayService.isPersonalHolidayFullCancellationRequest(date);
       },
       isPersonalHolidayMorning: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayMorning(date);
+        return holidayService.isPersonalHolidayMorning(date);
       },
       isPersonalHolidayMorningTemporaryApproved: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayMorningTemporaryApproved(date);
+        return holidayService.isPersonalHolidayMorningTemporaryApproved(date);
       },
       isPersonalHolidayMorningApproved: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayMorningApproved(date);
+        return holidayService.isPersonalHolidayMorningApproved(date);
       },
       isPersonalHolidayMorningCancellationRequest: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayMorningCancellationRequest(date);
+        return holidayService.isPersonalHolidayMorningCancellationRequest(date);
       },
       isPersonalHolidayNoon: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayNoon(date);
+        return holidayService.isPersonalHolidayNoon(date);
       },
       isPersonalHolidayNoonTemporaryApproved: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayNoonTemporaryApproved(date);
+        return holidayService.isPersonalHolidayNoonTemporaryApproved(date);
       },
       isPersonalHolidayNoonApproved: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayNoonApproved(date);
+        return holidayService.isPersonalHolidayNoonApproved(date);
       },
       isPersonalHolidayNoonCancellationRequest: function (date) {
-        return !isWeekend(date) && holidayService.isPersonalHolidayNoonCancellationRequest(date);
+        return holidayService.isPersonalHolidayNoonCancellationRequest(date);
       },
       isSickDayFull: function (date) {
-        return !isWeekend(date) && holidayService.isSickDayFull(date);
+        return holidayService.isSickDayFull(date);
       },
       isSickDayMorning: function (date) {
-        return !isWeekend(date) && holidayService.isSickDayMorning(date);
+        return holidayService.isSickDayMorning(date);
       },
       isSickDayNoon: function (date) {
-        return !isWeekend(date) && holidayService.isSickDayNoon(date);
+        return holidayService.isSickDayNoon(date);
       },
       title: function (date) {
         return holidayService.getDescription(date);
