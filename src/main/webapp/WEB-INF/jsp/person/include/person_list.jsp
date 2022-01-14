@@ -24,7 +24,7 @@
         </div>
     </form>
 
-    <table class="list-table selectable-table sortable tablesorter tw-text-sm">
+    <table id="person-table" class="list-table selectable-table sortable tablesorter tw-text-sm">
         <thead class="hidden-xs hidden-sm print:tw-table-header-group">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
@@ -73,7 +73,7 @@
                 <td class="lastname">
                     <c:out value="${person.lastName}"/>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.entitlementYear}">
                     <c:choose>
                         <c:when test="${person.entitlementYear != null}">
                             <uv:number number="${person.entitlementYear}"/>
@@ -83,7 +83,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.entitlementActual}">
                     <c:choose>
                         <c:when test="${person.entitlementActual != null}">
                             <uv:number number="${person.entitlementActual}"/>
@@ -93,7 +93,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.entitlementRemaining}">
                     <c:choose>
                         <c:when test="${person.entitlementRemaining != null}">
                             <uv:number number="${person.entitlementRemaining}"/>
@@ -103,7 +103,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.vacationDaysLeft}">
                     <c:choose>
                         <c:when test="${person.vacationDaysLeft != null}">
                             <uv:number number="${person.vacationDaysLeft}"/>
@@ -113,7 +113,7 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.vacationDaysLeftRemaining}">
                     <c:choose>
                         <c:when test="${person.vacationDaysLeftRemaining != null}">
                             <uv:number number="${person.vacationDaysLeftRemaining}"/>

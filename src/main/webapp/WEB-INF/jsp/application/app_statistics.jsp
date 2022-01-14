@@ -91,7 +91,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter tw-text-sm">
+                        <table id="application-statistic-table" class="list-table sortable tablesorter tw-text-sm">
                             <thead class="tw-hidden lg:tw-table-header-group">
                             <tr>
                                 <th scope="col" class=""><%-- placeholder to ensure correct number of th --%></th>
@@ -153,7 +153,7 @@
                                             </c:if>
                                         </c:forEach>
                                     </td>
-                                    <td class="tw-hidden md:tw-table-cell print:tw-table-cell number">
+                                    <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalAllowedVacationDays}">
                                         <strong class="sortable">
                                             <uv:number number="${statistic.totalAllowedVacationDays}"/>
                                         </strong>
@@ -167,7 +167,7 @@
                                             </c:if>
                                         </c:forEach>
                                     </td>
-                                    <td class="tw-hidden md:tw-table-cell print:tw-table-cell number">
+                                    <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalWaitingVacationDays}">
                                         <strong class="sortable">
                                             <uv:number number="${statistic.totalWaitingVacationDays}"/>
                                         </strong>
@@ -181,8 +181,8 @@
                                             </c:if>
                                         </c:forEach>
                                     </td>
-                                    <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-                                        <strong class="sortable">
+                                    <td class="tw-hidden md:tw-table-cell print:tw-table-cell" data-sortable-value="${statistic.leftVacationDays}">
+                                        <strong>
                                             <uv:number number="${statistic.leftVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.vacationDays"/>
