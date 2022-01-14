@@ -60,7 +60,7 @@
             <tr onclick="navigate('${URL_PREFIX}/person/${person.id}/overview');">
                 <td class="is-centered">
                     <uv:avatar
-                        url="${person.gravatarURL}?d=mm&s=40"
+                        url="${person.gravatarUrl}?d=mm&s=40"
                         username="${person.niceName}"
                         width="40px"
                         height="40px"
@@ -71,19 +71,12 @@
                     <c:out value="${person.firstName}"/>
                 </td>
                 <td class="lastname">
-                    <c:choose>
-                        <c:when test="${person.firstName == null && person.lastName == null}">
-                            <c:out value="${person.username}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:out value="${person.lastName}"/>
-                        </c:otherwise>
-                    </c:choose>
+                    <c:out value="${person.lastName}"/>
                 </td>
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
-                        <c:when test="${accounts[person] != null}">
-                            <uv:number number="${accounts[person].annualVacationDays}"/>
+                        <c:when test="${person.entitlementYear != null}">
+                            <uv:number number="${person.entitlementYear}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
@@ -92,8 +85,8 @@
                 </td>
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
-                        <c:when test="${accounts[person] != null}">
-                            <uv:number number="${accounts[person].vacationDays}"/>
+                        <c:when test="${person.entitlementActual != null}">
+                            <uv:number number="${person.entitlementActual}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
@@ -102,8 +95,8 @@
                 </td>
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
-                        <c:when test="${accounts[person] != null}">
-                            <uv:number number="${accounts[person].remainingVacationDays}"/>
+                        <c:when test="${person.entitlementRemaining != null}">
+                            <uv:number number="${person.entitlementRemaining}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
@@ -112,8 +105,8 @@
                 </td>
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
-                        <c:when test="${vacationDaysLeftMap[person] != null}">
-                            <uv:number number="${vacationDaysLeftMap[person].vacationDays}"/>
+                        <c:when test="${person.vacationDaysLeft != null}">
+                            <uv:number number="${person.vacationDaysLeft}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
@@ -122,16 +115,8 @@
                 </td>
                 <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <c:choose>
-                        <c:when test="${vacationDaysLeftMap[person] != null}">
-                            <c:choose>
-                                <c:when test="${beforeApril}">
-                                    <c:set var="remainingVacationDays" value="${vacationDaysLeftMap[person].remainingVacationDays}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="remainingVacationDays" value="${vacationDaysLeftMap[person].remainingVacationDaysNotExpiring}" />
-                                </c:otherwise>
-                            </c:choose>
-                            <uv:number number="${remainingVacationDays}"/>
+                        <c:when test="${person.vacationDaysLeftRemaining != null}">
+                            <uv:number number="${person.vacationDaysLeftRemaining}"/>
                         </c:when>
                         <c:otherwise>
                             <spring:message code='person.account.vacation.noInformation'/>
@@ -140,7 +125,11 @@
                 </td>
                 <td class="hidden-xs">
                     <div class="print:tw-hidden">
-                        <a class="action-link tw-text-zinc-900 tw-text-opacity-50" href="${URL_PREFIX}/person/${person.id}" data-title="<spring:message code="action.account.title" arguments="${person.niceName}"/>">
+                        <a
+                            class="action-link tw-text-zinc-900 tw-text-opacity-50"
+                            href="${URL_PREFIX}/person/${person.id}"
+                            data-title="<spring:message code="action.account.title" arguments="${person.niceName}"/>"
+                        >
                             <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1" />
                             <spring:message code="action.account" />
                         </a>

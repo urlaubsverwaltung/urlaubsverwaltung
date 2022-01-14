@@ -27,9 +27,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -51,7 +49,6 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 public class PersonDetailsViewController {
 
     private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
-    private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
@@ -188,25 +185,48 @@ public class PersonDetailsViewController {
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
 
-        final Map<Person, Account> accounts = new HashMap<>();
-        final Map<Person, VacationDaysLeft> vacationDaysLeftMap = new HashMap<>();
+        final LocalDate now = LocalDate.now(clock);
+        final boolean beforeApril = isBeforeApril(now, year);
+
+        final List<PersonDto> personDtos = new ArrayList<>(persons.size());
 
         for (Person person : persons) {
-            // get person's account
+            PersonDto.Builder personDtoBuilder = PersonDto.builder();
+
             final Optional<Account> account = accountService.getHolidaysAccount(year, person);
             if (account.isPresent()) {
                 final Account holidaysAccount = account.get();
-                accounts.put(person, holidaysAccount);
                 final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-                vacationDaysLeftMap.put(person, vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear));
+                final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
+
+                double remainingVacationDays = beforeApril
+                    ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
+                    : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
+
+                personDtoBuilder = personDtoBuilder
+                    .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
+                    .entitlementActual(holidaysAccount.getVacationDays().doubleValue())
+                    .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
+                    .vacationDaysLeft(vacationDaysLeft.getVacationDays().doubleValue())
+                    .vacationDaysLeftRemaining(remainingVacationDays);
             }
+
+            final String lastName = person.getFirstName() == null && person.getLastName() == null
+                ? person.getUsername()
+                : person.getLastName();
+
+            final PersonDto personDto = personDtoBuilder
+                .id(person.getId())
+                .gravatarUrl(person.getGravatarURL())
+                .firstName(person.getFirstName())
+                .niceName(person.getNiceName())
+                .lastName(lastName)
+                .build();
+
+            personDtos.add(personDto);
         }
 
-        final LocalDate now = LocalDate.now(clock);
-
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
-        model.addAttribute("accounts", accounts);
-        model.addAttribute("vacationDaysLeftMap", vacationDaysLeftMap);
+        model.addAttribute("persons", personDtos);
         model.addAttribute(BEFORE_APRIL_ATTRIBUTE, isBeforeApril(now, year));
         model.addAttribute("year", year);
         model.addAttribute("now", now);
