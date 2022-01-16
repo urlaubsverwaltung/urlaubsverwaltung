@@ -27,12 +27,15 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -181,6 +184,36 @@ public class PersonDetailsViewController {
             .collect(toList());
     }
 
+    private List<Department> getRelevantDepartmentsSortedByName(Person signedInUser) {
+
+        final Set<Department> relevantDepartments = new HashSet<>();
+
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+            departmentService.getAllDepartments().stream()
+                .collect(toCollection(() -> relevantDepartments));
+        }
+
+        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
+            departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser).stream()
+                .collect(toCollection(() -> relevantDepartments));
+        }
+
+        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser).stream()
+                .collect(toCollection(() -> relevantDepartments));
+        }
+
+        if (!signedInUser.isPrivileged()) {
+            departmentService.getAssignedDepartmentsOfMember(signedInUser).stream()
+                .collect(toCollection(() -> relevantDepartments));
+        }
+
+        return Stream.of(relevantDepartments).flatMap(Set::stream)
+            .distinct()
+            .sorted(comparing(Department::getName))
+            .collect(toList());
+    }
+
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
 
         final LocalDate now = LocalDate.now(clock);
@@ -228,29 +261,6 @@ public class PersonDetailsViewController {
         model.addAttribute(BEFORE_APRIL_ATTRIBUTE, isBeforeApril(now, year));
         model.addAttribute("year", year);
         model.addAttribute("now", now);
-
-        final List<Department> departments = getRelevantDepartments(signedInUser);
-        departments.sort(comparing(Department::getName));
-        model.addAttribute("departments", departments);
-    }
-
-    private List<Department> getRelevantDepartments(Person signedInUser) {
-
-        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return departmentService.getAllDepartments();
-        }
-
-        // NOTE: If the logged-in user is only department head, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            return departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser);
-        }
-
-        // NOTE: If the logged-in user is second stage authority, he wants to see only the persons of his departments
-        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            return departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser);
-        }
-
-        // normal users can see their own departments only
-        return departmentService.getAssignedDepartmentsOfMember(signedInUser);
+        model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
     }
 }

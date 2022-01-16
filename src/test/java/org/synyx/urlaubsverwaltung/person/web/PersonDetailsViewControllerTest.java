@@ -43,6 +43,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -250,7 +251,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
 
         perform(get("/web/person").param("active", "true"))
-            .andExpect(model().attribute("persons", hasSize(1)));;
+            .andExpect(model().attribute("persons", hasSize(1)));
     }
 
     @Test
@@ -370,7 +371,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("persons", hasSize(1)));;
+            .andExpect(model().attribute("persons", hasSize(1)));
     }
 
     @Test
@@ -480,6 +481,98 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
+    }
+
+    @Test
+    void ensureCorrectDepartmentsForBoss() throws Exception {
+
+        final Person boss = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(boss);
+
+        final Department department = new Department();
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+
+        perform(get("/web/person/").param("active", "true"))
+            .andExpect(model().attribute("departments", hasSize(1)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
+    void ensureCorrectDepartmentsForOffice() throws Exception {
+
+        final Person office = personWithRole(USER, OFFICE);
+        when(personService.getSignedInUser()).thenReturn(office);
+
+        final Department department = new Department();
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+
+        perform(get("/web/person/").param("active", "true"))
+            .andExpect(model().attribute("departments", hasSize(1)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
+    void ensureCorrectDepartmentsForDepartmentHead() throws Exception {
+
+        final Person departmentHead = personWithRole(USER, DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Department department = new Department();
+        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(department));
+
+        perform(get("/web/person/").param("active", "true"))
+            .andExpect(model().attribute("departments", hasSize(1)));
+    }
+
+    @Test
+    void ensureCorrectDepartmentsForSecondStageAuthority() throws Exception {
+
+        final Person secondStageAuthority = personWithRole(USER, SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final Department department = new Department();
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(department));
+
+        perform(get("/web/person/").param("active", "true"))
+            .andExpect(model().attribute("departments", hasSize(1)));
+    }
+
+    @Test
+    void ensureCorrectDepartmentsForDepartmentHeadAndSecondStageAuthority() throws Exception {
+
+        final Person departmentHeadAndSecondStageAuthority = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuthority);
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setName("1");
+        final Department department2 = new Department();
+        department2.setId(2);
+        department2.setName("2");
+        final Department department3 = new Department();
+        department3.setId(3);
+        department3.setName("3");
+
+        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(department, department3));
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(department, department2));
+
+        perform(get("/web/person/").param("active", "true"))
+            .andExpect(model().attribute("departments", hasSize(3)));
+    }
+
+    @Test
+    void ensureCorrectDepartmentsForUser() throws Exception {
+
+        final Person user = personWithRole(USER);
+        when(personService.getSignedInUser()).thenReturn(user);
+
+        final Department department = new Department();
+        when(departmentService.getAssignedDepartmentsOfMember(user)).thenReturn(List.of(department));
+
+        perform(get("/web/person/").param("active", "true"))
+            .andExpect(model().attribute("departments", hasSize(1)));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
