@@ -27,8 +27,10 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
@@ -110,7 +112,6 @@ public class PersonDetailsViewController {
         return "redirect:/web/person?active=true";
     }
 
-
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/person", params = "active")
     public String showPerson(@RequestParam(value = "active") boolean active,
@@ -145,7 +146,7 @@ public class PersonDetailsViewController {
             return personService.getActivePersons();
         }
 
-        final List<Person> relevantPersons = new ArrayList<>();
+        final Set<Person> relevantPersons = new HashSet<>();
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             departmentService.getMembersForDepartmentHead(signedInUser).stream()
                 .filter(person -> !person.hasRole(INACTIVE))
@@ -158,7 +159,7 @@ public class PersonDetailsViewController {
                 .collect(toCollection(() -> relevantPersons));
         }
 
-        return relevantPersons;
+        return new ArrayList<>(relevantPersons);
     }
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
@@ -167,7 +168,7 @@ public class PersonDetailsViewController {
             return personService.getInactivePersons();
         }
 
-        final List<Person> relevantPersons = new ArrayList<>();
+        final Set<Person> relevantPersons = new HashSet<>();
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             departmentService.getMembersForDepartmentHead(signedInUser).stream()
                 .filter(person -> person.hasRole(INACTIVE))
@@ -180,7 +181,7 @@ public class PersonDetailsViewController {
                 .collect(toCollection(() -> relevantPersons));
         }
 
-        return relevantPersons;
+        return new ArrayList<>(relevantPersons);
     }
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {

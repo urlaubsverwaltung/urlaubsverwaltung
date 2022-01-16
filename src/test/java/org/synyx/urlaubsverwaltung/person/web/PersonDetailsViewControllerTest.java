@@ -27,14 +27,18 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -47,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -233,6 +238,21 @@ class PersonDetailsViewControllerTest {
     }
 
     @Test
+    void showPersonWithActiveTrueForUserWithRoleDepartmentHeadAndSecondStageAuthorityDistinctPersons() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
+        person.setId(2);
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person));
+        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("persons", hasSize(1)));;
+    }
+
+    @Test
     void showPersonWithActiveFalseForUserWithRoleBossCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(USER, BOSS));
@@ -284,6 +304,22 @@ class PersonDetailsViewControllerTest {
 
         verify(departmentService).getMembersForDepartmentHead(signedInUser);
         verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
+    }
+
+    @Test
+    void showPersonWithActiveFalseForUserWithRoleDepartmentHeadAndSecondStageAuthorityDistinctPersons() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
+        person.setId(2);
+        person.setPermissions(List.of(INACTIVE));
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person));
+        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
+
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(model().attribute("persons", hasSize(1)));;
     }
 
     @Test
