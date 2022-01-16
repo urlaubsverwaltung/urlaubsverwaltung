@@ -1,3 +1,3 @@
 import "../js/navigate";
-import "../components/table-sortable";
+import "../js/sick-notes/sick-note-overview";
 import "../components/filter-modal";

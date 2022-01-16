@@ -3,7 +3,7 @@ import "tablesorter";
 import "./absences-overview.css";
 
 $(function () {
-  $("table.sortable").tablesorter({
+  $("#absence-table").tablesorter({
     sortList: [[1, 0]],
     headers: {
       ".non-sortable": {

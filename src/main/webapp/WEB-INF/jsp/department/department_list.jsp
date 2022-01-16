@@ -6,6 +6,7 @@
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
@@ -72,7 +73,7 @@
                         <spring:message code="departments.none"/>
                     </c:when>
                     <c:otherwise>
-                        <table class="list-table sortable tablesorter tw-text-sm">
+                        <table id="department-table" class="list-table tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>
@@ -127,7 +128,8 @@
                                             <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                         </c:if>
                                     </td>
-                                    <td class="hidden-xs">
+                                    <fmt:parseDate value="${department.lastModification}" pattern="yyyy-MM-dd" var="parsedDate" type="date"/>
+                                    <td class="hidden-xs" data-date-format="yyyymmdd" data-value="<fmt:formatDate pattern="yyyy-MM-dd" value="${parsedDate}" type="date" />">
                                         <uv:date date="${department.lastModification}"/>
                                     </td>
                                     <sec:authorize access="hasAuthority('OFFICE')">

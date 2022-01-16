@@ -1,15 +1,21 @@
 import $ from "jquery";
 import List from "list.js";
 import "tablesorter";
+import { dataValueNumberParser } from "../../components/table-sortable/parser-data-value-number";
 
 $(document).ready(function () {
-  $("table.sortable").tablesorter({
+  $.tablesorter.addParser(dataValueNumberParser);
+
+  $("#person-table").tablesorter({
     sortList: [[1, 0]],
     headers: {
-      3: { sorter: "commaNumber" },
-      4: { sorter: "commaNumber" },
-      5: { sorter: "commaNumber" },
-      6: { sorter: "commaNumber" },
+      0: { sorter: false },
+      3: { sorter: dataValueNumberParser.id },
+      4: { sorter: dataValueNumberParser.id },
+      5: { sorter: dataValueNumberParser.id },
+      6: { sorter: dataValueNumberParser.id },
+      7: { sorter: dataValueNumberParser.id },
+      8: { sorter: false },
     },
   });
 

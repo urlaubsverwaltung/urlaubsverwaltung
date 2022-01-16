@@ -78,7 +78,7 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <table class="list-table selectable-table sortable tablesorter tw-text-sm" data-test-id="sick-notes-table">
+                <table id="sick-note-table" class="list-table selectable-table tw-text-sm" data-test-id="sick-notes-table">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th scope="col" class="print:tw-hidden"></th>
@@ -112,7 +112,7 @@
                         <td class="visible-xs">
                             <c:out value="${person.niceName}"/>
                         </td>
-                        <td class="hidden-xs">
+                        <td class="hidden-xs" data-sortable-value="${sickDays[person].days['TOTAL']}">
                             <div class="tw-flex tw-items-center">
                                 <icon:medkit className="tw-w-4 tw-h-4" />
                                 &nbsp;<uv:number number="${sickDays[person].days['TOTAL']}"/>
@@ -127,7 +127,7 @@
                                 </p>
                             </c:if>
                         </td>
-                        <td class="hidden-xs">
+                        <td class="hidden-xs" data-sortable-value="${childSickDays[person].days['TOTAL']}">
                             <div class="tw-flex tw-items-center">
                                 <icon:child className="tw-w-3 tw-h-3" />
                                 &nbsp;<uv:number number="${childSickDays[person].days['TOTAL']}"/>
