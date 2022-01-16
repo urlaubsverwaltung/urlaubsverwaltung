@@ -154,7 +154,7 @@
                                         </c:forEach>
                                     </td>
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalAllowedVacationDays}">
-                                        <strong class="sortable">
+                                        <strong>
                                             <uv:number number="${statistic.totalAllowedVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.days"/>
@@ -168,7 +168,7 @@
                                         </c:forEach>
                                     </td>
                                     <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalWaitingVacationDays}">
-                                        <strong class="sortable">
+                                        <strong>
                                             <uv:number number="${statistic.totalWaitingVacationDays}"/>
                                         </strong>
                                         <spring:message code="duration.days"/>

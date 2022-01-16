@@ -24,7 +24,7 @@
         </div>
     </form>
 
-    <table id="person-table" class="list-table selectable-table sortable tablesorter tw-text-sm">
+    <table id="person-table" class="list-table selectable-table tw-text-sm">
         <thead class="hidden-xs hidden-sm print:tw-table-header-group">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>

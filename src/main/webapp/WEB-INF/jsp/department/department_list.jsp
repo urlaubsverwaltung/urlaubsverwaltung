@@ -73,7 +73,7 @@
                         <spring:message code="departments.none"/>
                     </c:when>
                     <c:otherwise>
-                        <table id="department-table" class="list-table sortable tablesorter tw-text-sm">
+                        <table id="department-table" class="list-table tw-text-sm">
                             <thead class="hidden-xs hidden-sm">
                             <tr>
                                 <th scope="col" class="sortable-field"><spring:message code="department.data.name"/></th>

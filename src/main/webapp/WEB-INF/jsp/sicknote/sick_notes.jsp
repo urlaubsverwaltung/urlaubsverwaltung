@@ -78,7 +78,7 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <table id="sick-note-table" class="list-table selectable-table sortable tablesorter tw-text-sm" data-test-id="sick-notes-table">
+                <table id="sick-note-table" class="list-table selectable-table tw-text-sm" data-test-id="sick-notes-table">
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th scope="col" class="print:tw-hidden"></th>
