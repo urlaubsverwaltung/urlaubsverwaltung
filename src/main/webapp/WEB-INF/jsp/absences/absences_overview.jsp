@@ -139,14 +139,19 @@
                     <c:out value="${month.nameOfMonth}"/>
                     <span class="hidden print:tw-inline"> <c:out value="${selectedYear}"/></span>
                 </h2>
-                <table class="sortable vacationOverview-table tw-text-sm" role="grid"
-                       aria-describedby="absence-table-${month.nameOfMonth}">
+                <table
+                    id="absence-table"
+                    class="vacationOverview-table tw-text-sm"
+                    role="grid"
+                    aria-describedby="absence-table-${month.nameOfMonth}"
+                >
                     <thead>
                         <tr>
                             <th scope="col" class="print:tw-hidden tw-cursor-default tw-p-2">&nbsp;</th>
                             <th scope="col" class="sortable-field tw-cursor-pointer tw-p-2">&nbsp;</th>
                             <c:forEach items="${month.days}" var="day">
-                                <th scope="col"
+                                <th
+                                    scope="col"
                                     class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head ${day.today ? ' today' : ''}"
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
