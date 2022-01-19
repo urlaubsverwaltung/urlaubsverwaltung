@@ -156,6 +156,7 @@ public class PersonDetailsViewController {
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
             .filter(person -> !person.hasRole(INACTIVE))
             .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
             .collect(toList());
     }
 
@@ -176,6 +177,7 @@ public class PersonDetailsViewController {
         return Stream.concat(membersForDepartmentHead.stream(), membersForSecondStageAuthority.stream())
             .filter(person -> person.hasRole(INACTIVE))
             .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
             .collect(toList());
     }
 

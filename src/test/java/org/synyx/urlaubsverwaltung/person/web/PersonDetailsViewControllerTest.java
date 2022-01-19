@@ -27,7 +27,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +35,11 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -253,6 +254,56 @@ class PersonDetailsViewControllerTest {
     }
 
     @Test
+    void showPersonWithActiveTrueForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstname() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person bruce = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        bruce.setId(2);
+
+        final Person clark = new Person("superman", "Kent", "Clark", "superman@example.org");
+        clark.setId(3);
+
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(clark));
+        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(clark, bruce));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(
+                model().attribute("persons", contains(
+                    hasProperty("firstName", is("Bruce")),
+                    hasProperty("firstName", is("Clark"))
+                ))
+            );
+    }
+
+    @Test
+    void showPersonWithActiveTrueForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstnameThenLastName() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        wayne.setId(2);
+
+        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
+        wolf.setId(3);
+
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(wolf));
+        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(wolf, wayne));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(
+                model().attribute("persons", contains(
+                    hasProperty("lastName", is("Wayne")),
+                    hasProperty("lastName", is("Xavier"))
+                ))
+            );
+    }
+
+    @Test
     void showPersonWithActiveFalseForUserWithRoleBossCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(USER, BOSS));
@@ -320,6 +371,60 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(model().attribute("persons", hasSize(1)));;
+    }
+
+    @Test
+    void showPersonWithActiveFalseForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstname() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person bruce = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        bruce.setId(2);
+        bruce.setPermissions(List.of(INACTIVE));
+
+        final Person clark = new Person("superman", "Kent", "Clark", "superman@example.org");
+        clark.setId(3);
+        clark.setPermissions(List.of(INACTIVE));
+
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(clark));
+        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(clark, bruce));
+
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(
+                model().attribute("persons", contains(
+                    hasProperty("firstName", is("Bruce")),
+                    hasProperty("firstName", is("Clark"))
+                ))
+            );
+    }
+
+    @Test
+    void showPersonWithActiveFalseForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstnameThenLastName() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        wayne.setId(2);
+        wayne.setPermissions(List.of(INACTIVE));
+
+        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
+        wolf.setId(3);
+        wolf.setPermissions(List.of(INACTIVE));
+
+        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(wolf));
+        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(wolf, wayne));
+
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(
+                model().attribute("persons", contains(
+                    hasProperty("lastName", is("Wayne")),
+                    hasProperty("lastName", is("Xavier"))
+                ))
+            );
     }
 
     @Test
