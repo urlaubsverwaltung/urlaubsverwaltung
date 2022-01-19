@@ -27,15 +27,12 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -168,20 +165,18 @@ public class PersonDetailsViewController {
             return personService.getInactivePersons();
         }
 
-        final Set<Person> relevantPersons = new HashSet<>();
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            departmentService.getMembersForDepartmentHead(signedInUser).stream()
-                .filter(person -> person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
 
-        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
-                .filter(person -> person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> membersForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
 
-        return new ArrayList<>(relevantPersons);
+        return Stream.concat(membersForDepartmentHead.stream(), membersForSecondStageAuthority.stream())
+            .filter(person -> person.hasRole(INACTIVE))
+            .distinct()
+            .collect(toList());
     }
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
