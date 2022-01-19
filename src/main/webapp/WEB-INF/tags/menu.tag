@@ -111,7 +111,7 @@
     }
 </style>
 
-<div class="navigation">
+<div class="navigation print:tw-hidden">
     <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden">
     <label for="menu-toggle-checkbox" class="tw-flex tw-items-center tw-px-4 tw-py-4 tw-absolute tw-top-0 tw-left-0 lg:tw-hidden tw-cursor-pointer">
         <span class="tw-inline-block">

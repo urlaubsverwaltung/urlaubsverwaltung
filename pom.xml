@@ -9,11 +9,6 @@
 
   <name>Urlaubsverwaltung</name>
 
-  <organization>
-    <name>synyx</name>
-    <url>https://synyx.de</url>
-  </organization>
-
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
