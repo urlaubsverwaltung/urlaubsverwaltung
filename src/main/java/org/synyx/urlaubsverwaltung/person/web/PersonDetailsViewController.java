@@ -29,10 +29,11 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -110,7 +111,6 @@ public class PersonDetailsViewController {
         return "redirect:/web/person?active=true";
     }
 
-
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/person", params = "active")
     public String showPerson(@RequestParam(value = "active") boolean active,
@@ -145,20 +145,19 @@ public class PersonDetailsViewController {
             return personService.getActivePersons();
         }
 
-        final List<Person> relevantPersons = new ArrayList<>();
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            departmentService.getMembersForDepartmentHead(signedInUser).stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
 
-        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
 
-        return relevantPersons;
+        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
@@ -167,20 +166,19 @@ public class PersonDetailsViewController {
             return personService.getInactivePersons();
         }
 
-        final List<Person> relevantPersons = new ArrayList<>();
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            departmentService.getMembersForDepartmentHead(signedInUser).stream()
-                .filter(person -> person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
 
-        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
-                .filter(person -> person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> membersForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
 
-        return relevantPersons;
+        return Stream.concat(membersForDepartmentHead.stream(), membersForSecondStageAuthority.stream())
+            .filter(person -> person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
