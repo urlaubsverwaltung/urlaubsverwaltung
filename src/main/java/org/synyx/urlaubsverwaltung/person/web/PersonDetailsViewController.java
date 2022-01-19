@@ -31,10 +31,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -146,20 +148,18 @@ public class PersonDetailsViewController {
             return personService.getActivePersons();
         }
 
-        final Set<Person> relevantPersons = new HashSet<>();
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            departmentService.getMembersForDepartmentHead(signedInUser).stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
 
-        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
+        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
 
-        return new ArrayList<>(relevantPersons);
+        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .collect(toList());
     }
 
     private List<Person> getRelevantInactivePersons(Person signedInUser) {
