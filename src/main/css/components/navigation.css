@@ -12,9 +12,3 @@
     @apply tw-h-auto;
   }
 }
-
-@layer print {
-  .navigation {
-    @apply tw-hidden;
-  }
-}
