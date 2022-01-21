@@ -77,7 +77,7 @@
                                                 class="tw-m-0"
                                             >
                                             <span>
-                                                <spring:message code="calendar.share.range.${loop.current}"/>
+                                                <spring:message code="calendar.share.me.range.${loop.current}"/>
                                             </span>
                                         </label>
                                     </div>
@@ -96,7 +96,7 @@
                                         <spring:message code="calendar.share.me.isshared.paragraph.status.all"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <spring:message var="privateCalendarPeriodText" code="calendar.share.range.${privateCalendarShare.calendarPeriod}" />
+                                        <spring:message var="privateCalendarPeriodText" code="calendar.share.me.range.${privateCalendarShare.calendarPeriod}" />
                                         <spring:message code="calendar.share.me.isshared.paragraph.status" arguments="${privateCalendarPeriodText}"/>
                                     </c:otherwise>
                                 </c:choose>
@@ -178,7 +178,7 @@
                                                             class="tw-m-0"
                                                         >
                                                         <span>
-                                                            <spring:message code="calendar.share.range.${periodLoop.current}"/>
+                                                            <spring:message code="calendar.share.department.range.${periodLoop.current}"/>
                                                         </span>
                                                     </label>
                                                 </div>
@@ -197,7 +197,7 @@
                                                     <spring:message code="calendar.share.department.isshared.paragraph.status.all" arguments="${departmentCal.departmentName}"/>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <spring:message var="departmentCalendarPeriodText" code="calendar.share.range.${departmentCal.calendarPeriod}" />
+                                                    <spring:message var="departmentCalendarPeriodText" code="calendar.share.department.range.${departmentCal.calendarPeriod}" />
                                                     <spring:message code="calendar.share.department.isshared.paragraph.status"
                                                                     arguments="${departmentCal.departmentName}:::${departmentCalendarPeriodText}"
                                                                     argumentSeparator=":::"/>
@@ -297,7 +297,7 @@
                                                         class="tw-m-0"
                                                     >
                                                     <span>
-                                                        <spring:message code="calendar.share.range.${periodLoop.current}"/>
+                                                        <spring:message code="calendar.share.company.range.${periodLoop.current}"/>
                                                     </span>
                                                 </label>
                                             </div>
@@ -316,7 +316,7 @@
                                                 <spring:message code="calendar.share.company.isshared.paragraph.status.all"/>
                                             </c:when>
                                             <c:otherwise>
-                                                <spring:message var="calendarPeriodText" code="calendar.share.range.${companyCalendarShare.calendarPeriod}" />
+                                                <spring:message var="calendarPeriodText" code="calendar.share.company.range.${companyCalendarShare.calendarPeriod}" />
                                                 <spring:message code="calendar.share.company.isshared.paragraph.status" arguments="${calendarPeriodText}"/>
                                             </c:otherwise>
                                         </c:choose>
