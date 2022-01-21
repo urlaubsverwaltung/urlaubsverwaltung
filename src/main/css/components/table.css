@@ -180,7 +180,8 @@ td.halves h4 {
 table.absence-type-settings-table thead {
   position: sticky;
   top: 3.25rem; /* header height */
-  background-color: #ffffff;
+  @apply tw-bg-white;
+  @apply dark:tw-bg-zinc-900;
 }
 
 @screen sm {
@@ -217,6 +218,9 @@ table.absence-type-settings-table thead {
         @apply tw-p-2;
         @apply tw-transition-colors;
         @apply tw-bg-white;
+        @apply dark:tw-border-zinc-800;
+        @apply dark:tw-bg-zinc-800;
+        @apply dark:tw-bg-opacity-20;
       }
 
       tr:not(:last-child) {
@@ -227,6 +231,9 @@ table.absence-type-settings-table thead {
         @apply tw-border-blue-100;
         @apply tw-bg-blue-50;
         @apply tw-bg-opacity-20;
+        @apply dark:tw-border-zinc-800;
+        @apply dark:tw-bg-zinc-800;
+        @apply dark:tw-bg-opacity-20;
       }
 
       td {
@@ -237,6 +244,7 @@ table.absence-type-settings-table thead {
         align-items: center;
         @apply tw-text-base;
         @apply tw-text-black-almost;
+        @apply dark:tw-text-zinc-100;
       }
 
       tr[data-enabled="false"] td {
@@ -259,6 +267,7 @@ table.absence-type-settings-table thead {
         @apply tw-pr-4;
         @apply tw-font-medium;
         @apply tw-text-zinc-800;
+        @apply dark:tw-text-zinc-200;
         @apply tw-text-sm;
         @apply tw-truncate;
       }
@@ -284,20 +293,25 @@ table.absence-type-settings-table thead {
 
   table.absence-type-settings-table tr[data-enabled="false"] {
     @apply tw-text-zinc-500;
+    @apply dark:tw-text-zinc-300;
   }
 
   table.absence-type-settings-table tr[data-enabled="false"]:hover {
     @apply tw-bg-zinc-100;
+    @apply dark:tw-bg-zinc-800;
   }
 
   table.absence-type-settings-table tr[data-enabled="true"] {
     @apply tw-text-blue-900;
     @apply tw-bg-blue-50;
+    @apply dark:tw-text-zinc-300;
+    @apply dark:tw-bg-zinc-800;
     @apply tw-bg-opacity-75;
   }
 
   table.absence-type-settings-table tr[data-enabled="true"]:hover {
     @apply tw-bg-blue-100;
+    @apply dark:tw-bg-zinc-700;
     @apply tw-bg-opacity-70;
   }
 
