@@ -33,7 +33,7 @@ tr.inactive td > * {
   vertical-align: middle !important;
   padding: 12px;
   border-top: 1px solid #dddddd;
-  @apply tw-border-neutral-700;
+  @apply tw-border-zinc-700;
 }
 
 .list-table td.number {
@@ -42,7 +42,7 @@ tr.inactive td > * {
 
 .list-table tr:last-child td {
   border-bottom: 1px solid #dddddd;
-  @apply dark:tw-border-neutral-700;
+  @apply dark:tw-border-zinc-700;
 }
 
 .list-table th {
@@ -59,12 +59,12 @@ tr.inactive td > * {
 
 .striped-table tr td {
   background-color: #ffffff;
-  @apply tw-bg-neutral-900;
+  @apply tw-bg-zinc-900;
 }
 
 .striped-table tr:nth-child(even) td {
   background-color: #fafafa;
-  @apply tw-bg-neutral-800;
+  @apply tw-bg-zinc-800;
 }
 
 /**************************************************************************
@@ -89,7 +89,7 @@ tr.inactive td > * {
 .selectable-table tr:hover td {
   cursor: pointer;
   background-color: #fafafa;
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
 }
 
 .selectable-table tr:hover .action-link {
@@ -127,7 +127,7 @@ th.sortable-field .tablesorter-header-inner:after {
   width: 16px;
   height: 16px;
   mask: url("../icons/selector.svg") no-repeat 50% 50%;
-  @apply dark:tw-bg-neutral-200;
+  @apply dark:tw-bg-zinc-200;
 }
 
 th.tablesorter-headerDesc .tablesorter-header-inner:after {

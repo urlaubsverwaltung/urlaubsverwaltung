@@ -49,8 +49,8 @@
 }
 
 .input-group-addon {
-  @apply dark:tw-bg-neutral-800;
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-bg-zinc-800;
+  @apply dark:tw-text-zinc-200;
 }
 
 .input-group .input-group-addon {
@@ -145,7 +145,7 @@ textarea.error {
 
 .form-section .help-block {
   margin-top: 0;
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-text-zinc-200;
   @apply dark:tw-text-opacity-75;
 }
 
@@ -161,19 +161,19 @@ textarea.error {
   overflow: auto;
   max-height: 400px;
   width: 100%;
-  @apply dark:tw-border-neutral-600;
+  @apply dark:tw-border-zinc-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
-  @apply dark:tw-border-neutral-600;
+  @apply dark:tw-border-zinc-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
 }
 
 .department--member.is-inactive {
@@ -224,12 +224,12 @@ textarea.error {
 
 @media (prefers-color-scheme: dark) {
   input, select, textarea {
-    @apply tw-border-neutral-600 !important;
-    @apply tw-bg-neutral-700 !important;
-    @apply tw-text-neutral-50 !important;
+    @apply tw-border-zinc-600 !important;
+    @apply tw-bg-zinc-700 !important;
+    @apply tw-text-zinc-50 !important;
   }
 
   .select-caret {
-    @apply tw-text-neutral-50;
+    @apply tw-text-zinc-50;
   }
 }

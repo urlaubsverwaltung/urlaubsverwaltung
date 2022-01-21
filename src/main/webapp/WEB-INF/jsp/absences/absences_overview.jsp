@@ -147,7 +147,7 @@
                 >
                     <thead>
                         <tr>
-                            <th scope="col" class="print:tw-hidden tw-cursor-default tw-p-2 tw-sticky tw--left-0.5 tw-bg-gradient-to-r tw-from-white dark:tw-from-neutral-900 dark:tw-via-neutral-900 tw-z-40">&nbsp;</th>
+                            <th scope="col" class="print:tw-hidden tw-cursor-default tw-p-2 tw-sticky tw--left-0.5 tw-bg-gradient-to-r tw-from-white dark:tw-from-zinc-900 dark:tw-via-zinc-900 tw-z-40">&nbsp;</th>
                             <th scope="col" class="sortable-field tw-cursor-default tw-p-2">&nbsp;</th>
                             <c:forEach items="${month.days}" var="day">
                                 <th
@@ -171,7 +171,7 @@
                         <tr role="row">
                             <th
                                 scope="row"
-                                class="tw-p-0.5 print:tw-hidden tw-sticky tw--left-px tw-bg-gradient-to-r tw-from-white dark:tw-from-neutral-900 dark:tw-via-neutral-900 tw-z-40 tw-border-l-0 tw-z-10"
+                                class="tw-p-0.5 print:tw-hidden tw-sticky tw--left-px tw-bg-gradient-to-r tw-from-white dark:tw-from-zinc-900 dark:tw-via-zinc-900 tw-z-40 tw-border-l-0 tw-z-10"
                             >
                                 <uv:avatar
                                     url="${person.gravatarUrl}?d=mm&s=32"

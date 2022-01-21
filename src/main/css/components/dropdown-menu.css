@@ -1,23 +1,23 @@
 .dropdown-menu > li > a {
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-text-zinc-200;
 }
 
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
-  @apply dark:tw-bg-neutral-700;
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-bg-zinc-700;
+  @apply dark:tw-text-zinc-200;
 }
 
 .dropdown-menu .divider {
-  @apply dark:tw-bg-neutral-700;
+  @apply dark:tw-bg-zinc-700;
 }
 
 @media (prefers-color-scheme: dark) {
   .dropdown-menu {
     box-shadow: none;
     @apply tw-border;
-    @apply tw-border-neutral-700;
-    @apply tw-bg-neutral-900;
+    @apply tw-border-zinc-700;
+    @apply tw-bg-zinc-900;
   }
 }
 
@@ -26,7 +26,7 @@
     .dropdown-menu {
       @apply tw-backdrop-filter;
       @apply tw-backdrop-blur-xl;
-      @apply tw-bg-neutral-900;
+      @apply tw-bg-zinc-900;
       @apply tw-bg-opacity-70;
     }
   }

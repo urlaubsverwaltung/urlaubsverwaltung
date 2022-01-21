@@ -4,8 +4,8 @@
   @apply tw-no-underline !important;
   @apply hover:tw-text-black !important;
   @apply focus:tw-text-black !important;
-  @apply dark:tw-text-neutral-50 !important;
-  @apply dark:hover:tw-text-neutral-50 !important;
-  @apply dark:focus:tw-text-neutral-50 !important;
+  @apply dark:tw-text-zinc-50 !important;
+  @apply dark:hover:tw-text-zinc-50 !important;
+  @apply dark:focus:tw-text-zinc-50 !important;
   @apply dark:tw-text-opacity-75 !important;
 }

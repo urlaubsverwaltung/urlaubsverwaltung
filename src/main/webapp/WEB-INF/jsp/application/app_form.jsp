@@ -434,7 +434,7 @@
                                                                             formmethod="post"
                                                                             formaction="${ADD_REPLACEMENT_ACTION}"
                                                                         >
-                                                                            <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-neutral-200 tw-transition-colors">
+                                                                            <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors">
                                                                                 <icon:trash className="tw-w-4 tw-h-4 tw-mr-0.5" />
                                                                                 <spring:message code="application.data.holidayReplacement.remove-button.text" />
                                                                             </span>
@@ -444,11 +444,11 @@
                                                             </div>
                                                             <div class="tw-mt-2 md:tw-pl-14">
                                                                 <div class="tw-flex tw-justify-between tw-items-center">
-                                                                    <label for="replacement-note-${index}" class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-neutral-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal">
+                                                                    <label for="replacement-note-${index}" class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal">
                                                                         <spring:message code="application.data.holidayReplacementNote" arguments="${holidayReplacement.person.firstName}" />
                                                                     </label>
                                                                     <span>
-                                                                        <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-neutral-200 dark:tw-text-opacity-100">
+                                                                        <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                                                                             <span class="tw-flex-grow"></span>
                                                                             <span id="text-holiday-replacement-note-${index}"></span>
                                                                             <spring:message code="action.comment.maxChars"/>
@@ -489,7 +489,7 @@
                                                        onkeyup="count(this.value, 'text-address');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
                                         <div class="tw-mt-1">
-                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-neutral-200 dark:tw-text-opacity-100">
+                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                                                 <span class="tw-flex-grow"></span>
                                                 <span id="text-address"></span><spring:message
                                                 code="action.comment.maxChars"/>
@@ -512,7 +512,7 @@
                                                        onkeyup="count(this.value, 'text-comment');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
                                         <div class="tw-mt-1">
-                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-neutral-200 dark:tw-text-opacity-100">
+                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                                                 <span class="tw-flex-grow"></span>
                                                 <span id="text-comment"></span><spring:message
                                                 code="action.comment.maxChars"/>

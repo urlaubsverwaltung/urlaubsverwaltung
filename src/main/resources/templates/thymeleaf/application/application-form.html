@@ -49,7 +49,7 @@
                 formmethod="post"
                 th:formaction="${deleteButtonFormActionValue}"
               >
-                <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-neutral-200 tw-transition-colors">
+                <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors">
                   <svg th:replace="icon/trash :: svg(className='tw-w-4 tw-h-4 tw-mr-0.5')"></svg>
                   <th:block th:text="#{application.data.holidayReplacement.remove-button.text}"></th:block>
                 </span>
@@ -59,11 +59,11 @@
         </div>
         <div class="tw-mt-2 md:tw-pl-14">
           <div class="tw-flex tw-justify-between tw-items-center">
-            <label th:for="${'replacement-note-' + index}" class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-neutral-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal">
+            <label th:for="${'replacement-note-' + index}" class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal">
               <th:block th:text="#{application.data.holidayReplacementNote(${holidayReplacement.person.firstName})}"></th:block>
             </label>
             <span>
-              <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-neutral-200 dark:tw-text-opacity-100">
+              <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                 <span class="tw-flex-grow"></span>
                 <span th:id="${'text-holiday-replacement-note-' + index}"></span>
                 <span th:text="#{action.comment.maxChars}"></span>

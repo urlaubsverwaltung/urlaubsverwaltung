@@ -1,10 +1,10 @@
 .modal-content {
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
 }
 
 .modal-dialog button.close {
-  @apply dark:tw-text-neutral-200;
-  @apply dark:hover:tw-text-neutral-100;
+  @apply dark:tw-text-zinc-200;
+  @apply dark:hover:tw-text-zinc-100;
 }
 
 

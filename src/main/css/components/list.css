@@ -5,6 +5,6 @@
 
   ul.lg\:list--hover > li:hover {
     @apply tw-bg-zinc-50;
-    @apply dark:tw-bg-neutral-800;
+    @apply dark:tw-bg-zinc-800;
   }
 }

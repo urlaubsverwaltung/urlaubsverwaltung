@@ -4,14 +4,14 @@
   @apply tw-w-full;
   @apply tw-z-50;
   @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
   @apply tw-h-12;
   @apply lg:tw-h-auto;
 }
 
 .navigation-inner {
   @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
 }
 
 .navigation-link {
@@ -19,9 +19,9 @@
   @apply hover:tw-text-blue-400;
   @apply focus:tw-text-blue-400;
   @apply tw-transition-colors;
-  @apply dark:tw-text-neutral-100;
-  @apply dark:hover:tw-text-neutral-400;
-  @apply dark:focus:tw-text-neutral-400;
+  @apply dark:tw-text-zinc-100;
+  @apply dark:hover:tw-text-zinc-400;
+  @apply dark:focus:tw-text-zinc-400;
   text-decoration: none !important;
 }
 
@@ -29,13 +29,13 @@
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-50;
   @apply tw-transition-colors;
-  @apply dark:tw-text-neutral-100;
+  @apply dark:tw-text-zinc-100;
   @apply dark:tw-text-opacity-100;
 }
 
 .navigation-link:is(:hover, :focus) .navigation-link-icon {
   @apply tw-text-blue-400;
-  @apply dark:tw-text-neutral-400;
+  @apply dark:tw-text-zinc-400;
 }
 
 .navigation-content-spacer--left,
@@ -55,13 +55,13 @@
 .navigation-content-spacer--left::before,
 .navigation-content-spacer--right::before {
   @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
 }
 
 .navigation-content-spacer--left::after,
 .navigation-content-spacer--right::after {
   @apply tw-bg-white;
-  @apply dark:tw-bg-neutral-900;
+  @apply dark:tw-bg-zinc-900;
 }
 
 .navigation-content-spacer--left::after {
@@ -173,8 +173,8 @@
 @media (prefers-color-scheme: dark) {
   .nav-popup-menu-inner {
     @apply tw-border;
-    @apply tw-border-neutral-700;
-    @apply tw-bg-neutral-900;
+    @apply tw-border-zinc-700;
+    @apply tw-bg-zinc-900;
   }
 }
 
@@ -191,7 +191,7 @@
     .nav-popup-menu-inner {
       @apply tw-backdrop-filter;
       @apply tw-backdrop-blur-xl;
-      @apply tw-bg-neutral-900;
+      @apply tw-bg-zinc-900;
       @apply tw-bg-opacity-70;
     }
   }
@@ -208,13 +208,13 @@
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-75;
   @apply tw-transition-colors;
-  @apply dark:tw-text-neutral-100;
+  @apply dark:tw-text-zinc-100;
   @apply dark:hover:tw-text-opacity-100;
 }
 
 .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
   @apply tw-text-opacity-100;
-  @apply dark:tw-text-neutral-100;
+  @apply dark:tw-text-zinc-100;
 }
 
 .nav-popup-menu_link,
@@ -229,18 +229,18 @@
 .nav-popup-menu_link {
   @apply hover:tw-bg-zinc-600;
   @apply focus:tw-bg-zinc-600;
-  @apply dark:hover:tw-bg-neutral-700;
-  @apply dark:focus:tw-bg-neutral-700;
+  @apply dark:hover:tw-bg-zinc-700;
+  @apply dark:focus:tw-bg-zinc-700;
 }
 
 .nav-popup-menu_link-icon {
   @apply tw-border;
   @apply tw-border-zinc-50;
   @apply tw-border-opacity-25;
-  @apply dark:tw-border-neutral-700;
+  @apply dark:tw-border-zinc-700;
 }
 
 .nav-popup-menu_link:hover .nav-popup-menu_link-icon,
 .nav-popup-menu_link:focus .nav-popup-menu_link-icon {
-  @apply dark:tw-border-neutral-500;
+  @apply dark:tw-border-zinc-500;
 }

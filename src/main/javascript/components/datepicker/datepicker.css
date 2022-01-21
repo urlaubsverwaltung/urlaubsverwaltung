@@ -22,7 +22,7 @@ duet-date-picker {
   }
 
   .duet-date__dialog-content {
-    @apply tw-border-neutral-600;
+    @apply tw-border-zinc-600;
   }
 }
 

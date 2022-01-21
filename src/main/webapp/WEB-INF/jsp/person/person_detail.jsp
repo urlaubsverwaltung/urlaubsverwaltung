@@ -71,7 +71,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-neutral-900">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900">
                             <icon:key className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
@@ -97,7 +97,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-neutral-900">
+                        <uv:box-icon className="tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900">
                             <icon:user-group className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
@@ -181,7 +181,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-2 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-neutral-900">
+                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900">
                             <icon:clock className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>
@@ -309,7 +309,7 @@
                 </uv:section-heading>
                 <uv:box className="tw-mb-8 tw-border-none" noPadding="true">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-neutral-900">
+                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900">
                             <icon:map className="tw-w-8 tw-h-8" />
                         </uv:box-icon>
                     </jsp:attribute>

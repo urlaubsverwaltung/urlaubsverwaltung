@@ -6,30 +6,30 @@
 .alert-danger {
   @apply tw-text-red-800;
   @apply dark:tw-bg-red-500;
-  @apply dark:tw-text-neutral-900;
+  @apply dark:tw-text-zinc-900;
   @apply dark:tw-border-transparent;
 }
 
 form.alert-danger {
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
   @apply dark:tw-border-red-500;
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-text-zinc-200;
 }
 
 form.alert-info {
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
   @apply dark:tw-border-sky-600;
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-text-zinc-200;
 }
 
 .alert-success {
   @apply dark:tw-bg-green-500;
-  @apply dark:tw-text-neutral-900;
+  @apply dark:tw-text-zinc-900;
   @apply dark:tw-border-transparent;
 }
 
 form.alert-success {
-  @apply dark:tw-bg-neutral-800;
+  @apply dark:tw-bg-zinc-800;
   @apply dark:tw-border-green-500;
-  @apply dark:tw-text-neutral-200;
+  @apply dark:tw-text-zinc-200;
 }

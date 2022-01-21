@@ -52,7 +52,7 @@
 
                 <uv:box className="tw-h-32 tw-mb-8">
                     <jsp:attribute name="icon">
-                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-neutral-900">
+                        <uv:box-icon className="tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900">
                             <icon:briefcase className="tw-w-8 tw-h-8"/>
                         </uv:box-icon>
                     </jsp:attribute>

@@ -32,7 +32,7 @@
 
 .state {
   color: #6f6f6f;
-  @apply dark:tw-text-neutral-400 !important;
+  @apply dark:tw-text-zinc-400 !important;
 }
 
 .state.pull-right {
@@ -41,7 +41,7 @@
 
 .state.WAITING {
   color: #6f6f6f !important;
-  @apply dark:tw-text-neutral-400 !important;
+  @apply dark:tw-text-zinc-400 !important;
 }
 
 .state.ALLOWED {
@@ -51,7 +51,7 @@
 
 .state.TEMPORARY_ALLOWED {
   color: #6f6f6f !important;
-  @apply dark:tw-text-neutral-500 !important;
+  @apply dark:tw-text-zinc-500 !important;
 }
 
 .state.REJECTED {
@@ -61,5 +61,5 @@
 
 .state.CANCELLED {
   color: #3b3b3b !important;
-  @apply dark:tw-text-neutral-600 !important;
+  @apply dark:tw-text-zinc-600 !important;
 }

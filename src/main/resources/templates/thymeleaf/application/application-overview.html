@@ -64,8 +64,8 @@
               <a
                 href="#user-applications-block"
                 th:href="@{/web/application}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-neutral-200"
-                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-neutral-200' : 'tw-text-zinc-400 dark:tw-text-neutral-500'}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
+                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
                 th:text="#{applications.myself.waiting}"
               >
               </a>
@@ -79,11 +79,11 @@
               <a
                 href="#user-replacements-block"
                 th:href="@{/web/application/replacement}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-neutral-200 tw-gap-2"
-                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost dark:tw-text-neutral-200' : 'tw-text-zinc-400 dark:tw-text-neutral-500'}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200 tw-gap-2"
+                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
               >
                 <th:block th:text="#{applications.holiday_replacement}" />
-                <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 dark:tw-bg-sky-400 dark:tw-text-neutral-900 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5">
+                <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 dark:tw-bg-sky-400 dark:tw-text-zinc-900 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5">
                   <th:block th:text="${#lists.size(applications_holiday_replacements)}" />
                 </span>
               </a>
@@ -105,7 +105,7 @@
               tw-sticky tw-py-2 tw-w-full
               md:tw-w-1/4
               lg:tw-p-2
-              tw-bg-gradient-to-b tw-from-white tw-via-white dark:tw-from-neutral-900 dark:tw-via-neutral-900
+              tw-bg-gradient-to-b tw-from-white tw-via-white dark:tw-from-zinc-900 dark:tw-via-zinc-900
             "
             style="top: 3.25rem"
           >
@@ -169,7 +169,7 @@
                     <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
                   </span>
                   <span
-                    class="tw-block tw-text-black-almost dark:tw-text-neutral-200"
+                    class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
                     th:text="${userRequestForLeave.durationOfAbsenceDescription}"
                   ></span>
                 </a>
@@ -234,7 +234,7 @@
               tw-sticky tw-py-2 tw-w-full
               md:tw-w-auto
               lg:tw-w-1/4
-              tw-bg-gradient-to-b tw-from-white tw-via-white dark:tw-from-neutral-900 dark:tw-via-neutral-900
+              tw-bg-gradient-to-b tw-from-white tw-via-white dark:tw-from-zinc-900 dark:tw-via-zinc-900
               tw-z-10
             "
             style="top: 3.25rem"
@@ -368,7 +368,7 @@
                     <th:block th:text="#{${otherRequestForLeave.vacationType.messageKey}}" />
                   </span>
                   <span
-                    class="tw-block tw-text-black-almost dark:tw-text-neutral-200"
+                    class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
                     th:text="${otherRequestForLeave.durationOfAbsenceDescription}"
                   ></span>
                 </a>
@@ -480,7 +480,7 @@
                       <th:block th:text="#{${cancellationRequest.vacationType.messageKey}}" />
                     </span>
                     <span
-                      class="tw-block tw-text-black-almost dark:tw-text-neutral-200"
+                      class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
                       th:text="${cancellationRequest.durationOfAbsenceDescription}"
                     ></span>
                   </a>
