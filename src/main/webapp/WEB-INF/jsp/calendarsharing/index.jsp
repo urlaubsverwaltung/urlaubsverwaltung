@@ -47,11 +47,11 @@
             </uv:privacy-box>
         </div>
 
-        <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me"
+        <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me#calendar-private"
                    modelAttribute="privateCalendarShare" cssClass="tw-mb-8">
             <div class="tw-mb-4">
                 <uv:section-heading>
-                    <h2 class="tw-text-xl">
+                    <h2 id="calendar-private" class="tw-text-xl">
                         <spring:message code="calendar.share.me.title"/>
                     </h2>
                 </uv:section-heading>
@@ -77,7 +77,7 @@
                                                 class="tw-m-0"
                                             >
                                             <span>
-                                                <spring:message code="calendar.share.range.${loop.current}"/>
+                                                <spring:message code="calendar.share.me.range.${loop.current}"/>
                                             </span>
                                         </label>
                                     </div>
@@ -91,8 +91,15 @@
                     <c:otherwise>
                         <div class="tw-max-w-4xl">
                             <p class="tw-mb-8 tw-text-base">
-                                <spring:message var="calendarPeriodText" code="calendar.share.range.${privateCalendarShare.calendarPeriod}" />
-                                <spring:message code="calendar.share.me.isshared.paragraph.status" arguments="${calendarPeriodText}"/>
+                                <c:choose>
+                                    <c:when test="${privateCalendarShare.calendarPeriod == 'ALL'}">
+                                        <spring:message code="calendar.share.me.isshared.paragraph.status.all"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message var="privateCalendarPeriodText" code="calendar.share.me.range.${privateCalendarShare.calendarPeriod}" />
+                                        <spring:message code="calendar.share.me.isshared.paragraph.status" arguments="${privateCalendarPeriodText}"/>
+                                    </c:otherwise>
+                                </c:choose>
                             </p>
                             <p class="tw-mb-2 tw-text-base">
                                 <spring:message code="calendar.share.me.isshared.paragraph.info"/>
@@ -105,9 +112,6 @@
                                 <input type="text" value="${privateCalendarShare.calendarUrl}"
                                        class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none" readonly/>
                             </div>
-                            <p class="tw-mb-8 tw-text-base">
-                                <spring:message code="calendar.share.me.reset.paragraph"/>
-                            </p>
                             <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
                                 <button type="submit" class="button tw-mb-4 sm:tw-mb-0">
                                     <spring:message code="calendar.share.me.reset.form.submit.text"/>
@@ -125,7 +129,7 @@
         <c:if test="${departmentCalendars.size() > 0}">
             <div class="tw-mb-8">
                 <uv:section-heading>
-                    <h2 class="tw-text-xl">
+                    <h2 id="calendar-department" class="tw-text-xl">
                         <spring:message code="calendar.share.department.title"/>
                     </h2>
                 </uv:section-heading>
@@ -139,14 +143,14 @@
                             </li>
                         </c:forEach>
                     </ul>
-                    </c:if>
+                </c:if>
                 <c:set var="tabContentCssClass" value="${departmentCalendars.size() > 1 ? 'tab-content' : ''}" />
                 <div class="${tabContentCssClass}">
                     <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
                         <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
                             <form:form
                                 method="POST"
-                                action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}"
+                                action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}#calendar-department"
                                 id="department-calendar-form-${loop.index}"
                             >
                                 <c:choose>
@@ -161,10 +165,7 @@
                                         <div class="tw-mb-4">
                                             <c:forEach items="${calendarPeriods}" varStatus="periodLoop">
                                                 <div>
-                                                    <label
-                                                        for="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}"
-                                                        class="tw-flex tw-items-center tw-space-x-1"
-                                                    >
+                                                    <label for="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}" class="tw-flex tw-items-center tw-space-x-1">
                                                         <input
                                                             id="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}"
                                                             type="radio"
@@ -174,7 +175,7 @@
                                                             class="tw-m-0"
                                                         >
                                                         <span>
-                                                            <spring:message code="calendar.share.range.${periodLoop.current}"/>
+                                                            <spring:message code="calendar.share.department.range.${periodLoop.current}"/>
                                                         </span>
                                                     </label>
                                                 </div>
@@ -188,12 +189,17 @@
                                 <c:otherwise>
                                     <div class="tw-max-w-4xl">
                                         <p class="tw-mb-8 tw-text-base">
-                                            <spring:message var="calendarPeriodText" code="calendar.share.range.${departmentCal.calendarPeriod}" />
-                                            <spring:message
-                                                code="calendar.share.department.isshared.paragraph.status"
-                                                arguments="${departmentCal.departmentName}:::${calendarPeriodText}"
-                                                argumentSeparator=":::"
-                                            />
+                                            <c:choose>
+                                                <c:when test="${departmentCal.calendarPeriod == 'ALL'}">
+                                                    <spring:message code="calendar.share.department.isshared.paragraph.status.all" arguments="${departmentCal.departmentName}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <spring:message var="departmentCalendarPeriodText" code="calendar.share.department.range.${departmentCal.calendarPeriod}" />
+                                                    <spring:message code="calendar.share.department.isshared.paragraph.status"
+                                                                    arguments="${departmentCal.departmentName}:::${departmentCalendarPeriodText}"
+                                                                    argumentSeparator=":::"/>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </p>
                                         <p class="tw-mb-2 tw-text-base">
                                             <spring:message code="calendar.share.department.isshared.paragraph.info"/>
@@ -206,9 +212,6 @@
                                             <input type="text" value="${departmentCal.calendarUrl}"
                                                    class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none" readonly/>
                                         </div>
-                                        <p class="tw-mb-8 tw-text-base">
-                                            <spring:message code="calendar.share.department.reset.paragraph"/>
-                                        </p>
                                         <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
                                             <button type="submit" class="button tw-mb-4 sm:tw-mb-0">
                                                 <spring:message code="calendar.share.department.reset.form.submit.text"/>
@@ -230,12 +233,12 @@
         <c:if test="${companyCalendarAccessible != null || companyCalendarShare != null}">
             <div>
                 <uv:section-heading>
-                    <h2 class="tw-text-xl">
+                    <h2 id="calendar-company" class="tw-text-xl">
                         <spring:message code="calendar.share.company.title"/>
                     </h2>
-            </uv:section-heading>
+                </uv:section-heading>
                 <c:if test="${companyCalendarAccessible != null}">
-                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible" modelAttribute="companyCalendarAccessible">
+                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible#calendar-company" modelAttribute="companyCalendarAccessible">
                         <form:hidden path="accessible" value="${!companyCalendarAccessible.accessible}" />
                         <div class="tw-max-w-3xl tw-mb-12">
                             <p class="tw-mb-4 tw-text-base">
@@ -265,7 +268,7 @@
                 </c:if>
 
                 <c:if test="${companyCalendarShare != null}">
-                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${companyCalendarShare.personId}/company" modelAttribute="companyCalendarShare">
+                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${companyCalendarShare.personId}/company#calendar-company" modelAttribute="companyCalendarShare">
                         <c:choose>
                             <c:when test="${empty companyCalendarShare.calendarUrl}">
                                 <div class="tw-max-w-3xl">
@@ -291,7 +294,7 @@
                                                         class="tw-m-0"
                                                     >
                                                     <span>
-                                                        <spring:message code="calendar.share.range.${periodLoop.current}"/>
+                                                        <spring:message code="calendar.share.company.range.${periodLoop.current}"/>
                                                     </span>
                                                 </label>
                                             </div>
@@ -305,8 +308,15 @@
                             <c:otherwise>
                                 <div class="tw-max-w-4xl">
                                     <p class="tw-mb-8 tw-text-base">
-                                        <spring:message var="calendarPeriodText" code="calendar.share.range.${companyCalendarShare.calendarPeriod}" />
-                                        <spring:message code="calendar.share.company.isshared.paragraph.status" arguments="${calendarPeriodText}"/>
+                                        <c:choose>
+                                            <c:when test="${companyCalendarShare.calendarPeriod == 'ALL'}">
+                                                <spring:message code="calendar.share.company.isshared.paragraph.status.all"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <spring:message var="calendarPeriodText" code="calendar.share.company.range.${companyCalendarShare.calendarPeriod}" />
+                                                <spring:message code="calendar.share.company.isshared.paragraph.status" arguments="${calendarPeriodText}"/>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </p>
                                     <p class="tw-mb-2 tw-text-base">
                                         <spring:message code="calendar.share.company.isshared.paragraph.info"/>
@@ -319,9 +329,6 @@
                                         <input type="text" value="${companyCalendarShare.calendarUrl}"
                                                class="tw-px-3 tw-py-2 tw-text-base tw-flex-1 tw-border-0 tw-outline-none" readonly/>
                                     </div>
-                                    <p class="tw-mb-8 tw-text-base">
-                                        <spring:message code="calendar.share.company.reset.paragraph"/>
-                                    </p>
                                     <div class="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row">
                                         <button type="submit" class="button tw-mb-4 sm:tw-mb-0">
                                             <spring:message code="calendar.share.company.reset.form.submit.text"/>

@@ -1,10 +1,8 @@
 Hallo ${recipient.niceName},
 
-Es wurde ein neuer Benutzer angelegt.
+es wurde ein neuer Benutzer erstellt.
 
-${personNiceName}
+    ${personNiceName}
 
-Du kannst unter folgender URL die Einstellungen des Benutzer einsehen und anpassen:
+Du kannst unter folgender Adresse die Einstellungen des Benutzers einsehen und anpassen:
 ${baseLinkURL}web/person/${personId?c}
-
-
