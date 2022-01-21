@@ -212,6 +212,32 @@
                         </a>
                       </li>
                       <li role="none" class="tw-mb-1">
+                        <a
+                          href="#"
+                          th:href="@{/web/person/{userId}/settings(userId=${userId})}"
+                          role="menuitem"
+                          class="
+                            nav-popup-menu_link
+                            tw-w-full
+                            tw-block
+                            tw-py-2
+                            tw-pl-5
+                            tw-pr-16
+                            tw-text-sm
+                            tw-no-underline
+                            tw-flex
+                            tw-items-center
+                          "
+                        >
+                          <span class="tw-flex tw-items-center">
+                            <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                              <svg th:replace="icon/adjustments::svg(className='tw-w-6 tw-h-6')"></svg>
+                            </span>
+                            <span class="tw-ml-4 tw-text-base" th:text="#{nav.user-settings.title}"></span>
+                          </span>
+                        </a>
+                      </li>
+                      <li role="none" class="tw-mb-1">
                         <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
                           <button
                             role="menuitem"

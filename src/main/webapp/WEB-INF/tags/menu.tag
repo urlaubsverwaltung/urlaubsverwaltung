@@ -196,6 +196,18 @@
                                             </a>
                                         </li>
                                         <li role="none" class="tw-mb-1">
+                                            <a href="${URL_PREFIX}/person/${userId}/settings"
+                                               role="menuitem"
+                                               class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center">
+                                                <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                                    <icon:adjustments className="tw-h-6 tw-w-6" />
+                                                </span>
+                                                <span class="tw-ml-4 tw-text-base">
+                                                    <spring:message code="nav.user-settings.title" />
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li role="none" class="tw-mb-1">
                                             <form:form action="/logout" method="POST" cssClass="tw-ml-auto tw-w-full">
                                                 <button
                                                     role="menuitem"

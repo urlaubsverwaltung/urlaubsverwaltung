@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="_layout::head(~{::title}, ~{::scripts})">
+  <title th:text="#{user-settings.header.title}"></title>
+  <th:block th:fragment="scripts">
+  </th:block>
+</head>
+<body th:replace="_layout::body(~{::main}, ~{})">
+
+<main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+  <div
+    th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions}, ~{::user-applications-heading-below})"
+  >
+    <th:block th:ref="user-applications-heading-body">
+      <h1 th:text="#{user-settings.title}">Account settings</h1>
+    </th:block>
+  </div>
+
+  <div class="tw-mt-8">
+    <form action="#" th:action="@{/web/person/{personId}/settings (personId=${personId})}" method="post" th:object="${userSettings}">
+      <fieldset>
+        <legend
+          id="theme-description"
+          th:text="#{user-settings.theme.title}"
+          class="tw-text-zinc-100 tw-border-none"
+        >
+          Theme
+        </legend>
+        <ul aria-describedby="theme-description" class="tw-list-none tw-m-0 tw-p-0 tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 tw-gap-4">
+          <li th:each="theme : ${userSettings.themes}" class="tw-relative">
+            <input
+              type="radio"
+              id="theme"
+              name="selectedTheme"
+              th:value="${theme.value}"
+              th:id="|theme-${theme.value}|"
+              th:checked="${userSettings.selectedTheme eq theme.value}"
+              class="tw-peer tw-absolute tw-bottom-7 tw-left-4"
+            >
+            <label
+              for="theme"
+              th:for="|theme-${theme.value}|"
+              class="tw-overflow-hidden tw-flex tw-flex-col tw-cursor-pointer tw-rounded-lg md:tw-rounded-xl tw-border-2 tw-border-zinc-800 peer-checked:tw-border-blue-400"
+            >
+              <img
+                src="#"
+                th:src="|/images/user-settings-theme-${#strings.toLowerCase(theme.value)}.png|"
+                width="753"
+                height="466"
+                class="tw-max-w-full tw-h-auto tw-block"
+                alt=""
+              />
+              <span th:text="${theme.label}" class="tw-py-4 tw-pl-10">
+                Theme Name
+              </span>
+            </label>
+          </li>
+        </ul>
+      </fieldset>
+      <div class="tw-mt-8">
+        <button type="submit" class="button button-main" th:text="#{user-settings.form.submit}">
+          Speichern
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+</body>
+</html>
