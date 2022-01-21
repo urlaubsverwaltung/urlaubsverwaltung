@@ -204,7 +204,7 @@
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-amber-300 tw-text-white dark:tw-bg-yellow-400 dark:tw-text-zinc-900">
+                            <uv:box-icon className="tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900">
                                 <icon:sun className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
@@ -229,7 +229,7 @@
                 <div class="tw-w-full sm:tw-w-1/2">
                     <uv:box-narrow className="tw-border-none">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-amber-300 tw-text-white dark:tw-bg-yellow-400 dark:tw-text-zinc-900">
+                            <uv:box-icon className="tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900">
                                 <icon:flag className="tw-w-8 tw-h-8" />
                             </uv:box-icon>
                         </jsp:attribute>
