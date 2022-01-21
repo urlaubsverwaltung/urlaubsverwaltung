@@ -11,6 +11,9 @@
     @apply tw-bg-zinc-900 !important;
     @apply tw-rounded !important;
     @apply tw-mt-2 !important;
+    @apply tw-backdrop-filter !important;
+    @apply tw-backdrop-blur-xl !important;
+    @apply supports-backdrop-blur:tw-bg-zinc-900/70 !important;
   }
 
   .ui-timepicker-am,
@@ -27,16 +30,5 @@
   .ui-timepicker-pm.ui-timepicker-selected:hover,
   .ui-timepicker-pm.ui-timepicker-selected:focus {
     @apply tw-bg-blue-600 !important;
-  }
-}
-
-@supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
-  @media (prefers-color-scheme: dark) {
-    .ui-timepicker-wrapper {
-      @apply tw-backdrop-filter !important;
-      @apply tw-backdrop-blur-xl !important;
-      @apply tw-bg-zinc-900 !important;
-      @apply tw-bg-opacity-70 !important;
-    }
   }
 }

@@ -18,16 +18,8 @@
     @apply tw-border;
     @apply tw-border-zinc-700;
     @apply tw-bg-zinc-900;
-  }
-}
-
-@supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
-  @media (prefers-color-scheme: dark) {
-    .dropdown-menu {
-      @apply tw-backdrop-filter;
-      @apply tw-backdrop-blur-xl;
-      @apply tw-bg-zinc-900;
-      @apply tw-bg-opacity-70;
-    }
+    @apply tw-backdrop-filter;
+    @apply tw-backdrop-blur-xl;
+    @apply supports-backdrop-blur:tw-bg-zinc-900/70;
   }
 }
