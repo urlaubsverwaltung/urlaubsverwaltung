@@ -143,7 +143,7 @@
                             </li>
                         </c:forEach>
                     </ul>
-                    </c:if>
+                </c:if>
                 <c:set var="tabContentCssClass" value="${departmentCalendars.size() > 1 ? 'tab-content' : ''}" />
                 <div class="${tabContentCssClass}">
                     <c:forEach items="${departmentCalendars}" var="departmentCal" varStatus="loop">
@@ -165,10 +165,7 @@
                                         <div class="tw-mb-4">
                                             <c:forEach items="${calendarPeriods}" varStatus="periodLoop">
                                                 <div>
-                                                    <label
-                                                        for="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}"
-                                                        class="tw-flex tw-items-center tw-space-x-1"
-                                                    >
+                                                    <label for="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}" class="tw-flex tw-items-center tw-space-x-1">
                                                         <input
                                                             id="department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}"
                                                             type="radio"
@@ -239,7 +236,7 @@
                     <h2 id="calendar-company" class="tw-text-xl">
                         <spring:message code="calendar.share.company.title"/>
                     </h2>
-            </uv:section-heading>
+                </uv:section-heading>
                 <c:if test="${companyCalendarAccessible != null}">
                     <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible#calendar-company" modelAttribute="companyCalendarAccessible">
                         <form:hidden path="accessible" value="${!companyCalendarAccessible.accessible}" />
