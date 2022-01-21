@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-Es wurde ein neuer Benutzer angelegt.
+Es wurde ein neuer Benutzer erstellt.
 
 ${personNiceName}
 

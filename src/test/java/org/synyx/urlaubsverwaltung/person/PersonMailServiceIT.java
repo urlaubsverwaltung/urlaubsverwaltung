@@ -49,13 +49,13 @@ class PersonMailServiceIT extends TestContainersBase {
 
         // check attributes
         final Message msg = greenMail.getReceivedMessagesForDomain(office.getEmail())[0];
-        assertThat(msg.getSubject()).contains("Ein neuer Benutzer für wurde angelegt");
+        assertThat(msg.getSubject()).contains("Ein neuer Benutzer für wurde erstellt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
         final String text = (String) msg.getContent();
         assertThat(text).contains("Hallo Marlene Muster");
-        assertThat(text).contains("Es wurde ein neuer Benutzer angelegt.");
+        assertThat(text).contains("Es wurde ein neuer Benutzer erstellt.");
         assertThat(text).contains("Lieschen Müller");
         assertThat(text).contains("Du kannst unter folgender URL die Einstellungen des Benutzer einsehen und anpassen:");
         assertThat(text).contains("/web/person/1");
