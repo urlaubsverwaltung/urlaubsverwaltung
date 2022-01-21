@@ -3,15 +3,23 @@
   @apply tw-top-0;
   @apply tw-w-full;
   @apply tw-z-50;
-  @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-zinc-800;
-  @apply tw-h-12;
-  @apply lg:tw-h-auto;
+}
+
+.navigation::before {
+  content: "";
+  @apply tw-absolute;
+  @apply tw-inset-0;
+  @apply tw-backdrop-blur;
+  @apply tw-bg-zinc-900;
+  @apply supports-backdrop-blur:tw-bg-zinc-900/[0.85];
+  @apply lg:dark:tw-border-b;
+  @apply lg:dark:tw-border-b-zinc-800;
 }
 
 .navigation-inner {
-  @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-zinc-800;
+  @apply dark:tw-border-b;
+  @apply lg:dark:tw-border-b-0;
+  @apply dark:tw-border-b-zinc-800;
 }
 
 .navigation-link {
@@ -41,6 +49,7 @@
 .navigation-content-spacer--left,
 .navigation-content-spacer--right {
   position: relative;
+  @apply dark:tw-hidden;
 }
 
 .navigation-content-spacer--left::before,
@@ -95,6 +104,7 @@
   transition: all 0.4s ease-in-out;
   position: absolute;
   background-color: #353535;
+  @apply dark:tw-bg-zinc-300;
 }
 
 #menu-toggle-checkbox + label > span > span:nth-child(1) {
@@ -167,34 +177,11 @@
 }
 
 .nav-popup-menu-inner {
-  background-color: rgba(31, 41, 55, 0.95);
-}
-
-@media (prefers-color-scheme: dark) {
-  .nav-popup-menu-inner {
-    @apply tw-border;
-    @apply tw-border-zinc-700;
-    @apply tw-bg-zinc-900;
-  }
-}
-
-@supports ((-webkit-backdrop-filter: initial) or (backdrop-filter: initial)) {
-  .nav-popup-menu-inner {
-    --uv-backdrop-blur: 12px;
-    --uv-backdrop-saturate: 180%;
-    -webkit-backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
-    backdrop-filter: saturate(var(--uv-backdrop-saturate)) blur(var(--uv-backdrop-blur));
-    background-color: rgba(31, 41, 55, 0.85);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .nav-popup-menu-inner {
-      @apply tw-backdrop-filter;
-      @apply tw-backdrop-blur-xl;
-      @apply tw-bg-zinc-900;
-      @apply tw-bg-opacity-70;
-    }
-  }
+  @apply tw-backdrop-blur;
+  @apply tw-bg-zinc-900;
+  @apply supports-backdrop-blur:tw-bg-zinc-900/[0.85];
+  @apply dark:tw-border;
+  @apply dark:tw-border-zinc-700;
 }
 
 .nav-popup-menu-button {

@@ -1,3 +1,4 @@
+const plugin = require("tailwindcss/plugin");
 const defaultConfig = require("tailwindcss/defaultConfig.js");
 
 function withOpacity(variable) {
@@ -72,5 +73,12 @@ module.exports = {
       ...defaultConfig.theme.screens,
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant(
+        "supports-backdrop-blur",
+        "@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))",
+      );
+    }),
+  ],
 };

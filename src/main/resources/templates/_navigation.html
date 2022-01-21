@@ -8,213 +8,188 @@
 
 <th:block th:ref="nav">
   <div class="navigation print:tw-hidden">
-    <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden" />
-    <label
-      for="menu-toggle-checkbox"
-      class="tw-flex tw-items-center tw-px-4 tw-py-4 tw-absolute tw-top-0 tw-left-0 lg:tw-hidden tw-cursor-pointer"
-    >
-      <span class="tw-inline-block">
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-      </span>
-    </label>
-    <nav class="tw-max-w-6xl tw-mx-auto">
-      <div class="navigation-inner tw-flex tw-w-full">
-        <div class="tw-order-last" role="menubar">
-          <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
-            <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
-              <button
-                id="add-something-new"
-                class="nav-popup-menu-button tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
-                aria-expanded="false"
-                aria-haspopup="true"
-                data-test-id="add-something-new"
-              >
-                <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
-                <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
-                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
-              </button>
-              <div
-                id="add-something-new-menu"
-                class="
-                  nav-popup-menu
-                  tw-w-screen
-                  tw-absolute
-                  tw-right-2
-                  tw-top-full
-                  tw-mt-1
-                  tw-flex
-                  tw-justify-end
-                  tw-origin-top-right
-                  tw-transition-transform
-                  tw-scale-x-0
-                  tw-scale-y-0
-                  tw-scale-x-1
-                  tw-scale-y-1
-                "
-                  aria-hidden="true"
-                  data-test-id="add-something-new-popupmenu"
+    <div class="tw-relative">
+      <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden" />
+      <label
+        for="menu-toggle-checkbox"
+        class="tw-flex tw-items-center tw-m-0 tw-px-4 tw-py-4 tw-absolute tw-top-0 tw-left-0 lg:tw-hidden tw-cursor-pointer"
+      >
+        <span class="tw-inline-block">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </span>
+      </label>
+      <nav class="tw-max-w-6xl tw-mx-auto">
+        <div class="navigation-inner tw-flex tw-w-full">
+          <div class="tw-order-last" role="menubar">
+            <div class="tw-p-3 lg:tw-p-2 tw-flex tw-items-center tw-space-x-2">
+              <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
+                <button
+                  id="add-something-new"
+                  class="nav-popup-menu-button tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  data-test-id="add-something-new"
                 >
-                  <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner">
-                    <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
-                      <li role="none">
-                        <a
-                          href="#"
-                          th:href="@{/web/application/new}"
-                          role="menuitem"
-                          class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
-                          data-test-id="quick-add-new-application"
-                        >
+                  <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
+                  <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
+                  <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+                </button>
+                <div
+                  id="add-something-new-menu"
+                  class="
+                    nav-popup-menu
+                    tw-w-screen
+                    tw-absolute
+                    tw-right-2
+                    tw-top-full
+                    tw-mt-1
+                    tw-flex
+                    tw-justify-end
+                    tw-origin-top-right
+                    tw-transition-transform
+                    tw-scale-x-0
+                    tw-scale-y-0
+                    tw-scale-x-1
+                    tw-scale-y-1
+                  "
+                    aria-hidden="true"
+                    data-test-id="add-something-new-popupmenu"
+                  >
+                    <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner">
+                      <ul class="tw-list-none tw-m-0 tw-p-0" role="menu">
+                        <li role="none">
+                          <a
+                            href="#"
+                            th:href="@{/web/application/new}"
+                            role="menuitem"
+                            class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
+                            data-test-id="quick-add-new-application"
+                          >
+                            <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                              <svg th:replace="icon/document-text::svg(className='tw-h-5 tw-w-5')"></svg>
+                            </span>
+                            <span class="tw-ml-3" th:text="#{nav.add.vacation}"></span>
+                          </a>
+                        </li>
+                        <li role="none" sec:authorize="hasAuthority('OFFICE')">
+                          <a
+                            href="#"
+                            th:href="@{/web/sicknote/new}"
+                            role="menuitem"
+                            class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
+                            data-test-id="quick-add-new-sicknote"
+                          >
                           <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
-                            <svg th:replace="icon/document-text::svg(className='tw-h-5 tw-w-5')"></svg>
+                            <svg th:replace="icon/medkit::svg(className='tw-h-5 tw-w-5')"></svg>
                           </span>
-                          <span class="tw-ml-3" th:text="#{nav.add.vacation}"></span>
+                          <span class="tw-ml-3" th:text="#{nav.add.sicknote}"></span>
                         </a>
                       </li>
-                      <li role="none" sec:authorize="hasAuthority('OFFICE')">
+                      <li role="none" th:if="${navigationOvertimeItemEnabled}">
                         <a
                           href="#"
-                          th:href="@{/web/sicknote/new}"
+                          th:href="@{/web/overtime/new}"
                           role="menuitem"
                           class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
-                          data-test-id="quick-add-new-sicknote"
+                          data-test-id="quick-add-new-overtime"
                         >
-                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
-                          <svg th:replace="icon/medkit::svg(className='tw-h-5 tw-w-5')"></svg>
-                        </span>
-                        <span class="tw-ml-3" th:text="#{nav.add.sicknote}"></span>
-                      </a>
-                    </li>
-                    <li role="none" th:if="${navigationOvertimeItemEnabled}">
-                      <a
-                        href="#"
-                        th:href="@{/web/overtime/new}"
-                        role="menuitem"
-                        class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
-                        data-test-id="quick-add-new-overtime"
-                      >
-                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
-                          <svg th:replace="icon/clock::svg(className='tw-h-5 tw-w-5')"></svg>
-                        </span>
-                        <span class="tw-ml-3" th:text="#{nav.add.overtime}"></span>
-                      </a>
-                    </li>
-                  </ul>
+                          <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center">
+                            <svg th:replace="icon/clock::svg(className='tw-h-5 tw-w-5')"></svg>
+                          </span>
+                          <span class="tw-ml-3" th:text="#{nav.add.overtime}"></span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-            <a
-              href="#"
-              th:href="@{/web/application/new}"
-              class="tw-flex tw-items-center"
-              data-test-id="new-application"
-              th:if="${not navigationRequestPopupEnabled}"
-            >
-              <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
-              <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
-            </a>
-            <div class="tw-relative">
               <a
-                href="#avatar-menu"
-                class="nav-popup-menu_link--no-hover tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
-                id="avatar-link"
-                aria-expanded="false"
-                aria-haspopup="true"
-                data-test-id="avatar"
+                href="#"
+                th:href="@{/web/application/new}"
+                class="tw-flex tw-items-center"
+                data-test-id="new-application"
+                th:if="${not navigationRequestPopupEnabled}"
               >
-                <img
-                  src="#"
-                  th:src="${menuGravatarUrl + '?d=mm'}"
-                  alt=""
-                  class="gravatar tw-rounded-full"
-                  width="24px"
-                  height="24px"
-                  onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                />
-                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+                <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
+                <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
               </a>
-              <div
-                id="avatar-menu"
-                class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
-                aria-hidden="true"
-                data-test-id="avatar-popupmenu"
-              >
-                <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner" style="max-width: 78%">
-                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
-                    <li role="none" class="tw-mb-4">
-                      <a
-                        href="#"
-                        th:href="@{/web/person/{userId}/overview(userId=${userId})}"
-                        role="menuitem"
-                        class="nav-popup-menu_link--no-hover tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-px-2"
-                      >
-                        <span class="tw-flex tw-items-center">
-                          <img
-                            src="#"
-                            th:src="${menuGravatarUrl + '?d=mm&s=128'}"
-                            alt=""
-                            class="gravatar tw-rounded-full"
-                            width="64px"
-                            height="64px"
-                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                          />
-                          <span class="tw-ml-6 tw-flex-1 tw-flex tw-flex-col tw-font-bold">
-                            <span class="tw-sr-only" th:text="#{nav.user.title}"></span>
-                            <span th:text="${userFirstName}"></span>
-                            <span th:text="${userLastName}"></span>
-                          </span>
-                        </span>
-                      </a>
-                    </li>
-                    <li role="none" class="tw-mb-1">
-                      <a
-                        th:href="${menuHelpUrl}"
-                        role="menuitem"
-                        class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
-                          <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
-                        </span>
-                        <span class="tw-ml-4 tw-text-base" th:text="#{nav.help.title}"></span>
-                        <svg th:replace="icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')"></svg>
-                      </a>
-                    </li>
-                    <li role="none" class="tw-mb-1">
-                      <a
-                        href="#"
-                        th:href="@{/web/person/{userId}(userId=${userId})}"
-                        role="menuitem"
-                        class="
-                          nav-popup-menu_link
-                          tw-w-full
-                          tw-block
-                          tw-py-2
-                          tw-pl-5
-                          tw-pr-16
-                          tw-text-sm
-                          tw-no-underline
-                          tw-flex
-                          tw-items-center
-                        "
-                      >
-                        <span class="tw-flex tw-items-center">
-                          <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
-                            <svg th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"></svg>
-                          </span>
-                          <span class="tw-ml-4 tw-text-base" th:text="#{nav.account.title}"></span>
-                        </span>
-                      </a>
-                    </li>
-                    <li role="none" class="tw-mb-1">
-                      <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
-                        <button
+              <div class="tw-relative">
+                <a
+                  href="#avatar-menu"
+                  class="nav-popup-menu_link--no-hover tw-no-underline tw-text-zinc-800 hover:tw-text-black tw-transition-colors"
+                  id="avatar-link"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  data-test-id="avatar"
+                >
+                  <img
+                    src="#"
+                    th:src="${menuGravatarUrl + '?d=mm'}"
+                    alt=""
+                    class="gravatar tw-rounded-full"
+                    width="24px"
+                    height="24px"
+                    onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                  />
+                  <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+                </a>
+                <div
+                  id="avatar-menu"
+                  class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
+                  aria-hidden="true"
+                  data-test-id="avatar-popupmenu"
+                >
+                  <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner" style="max-width: 78%">
+                    <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
+                      <li role="none" class="tw-mb-4">
+                        <a
+                          href="#"
+                          th:href="@{/web/person/{userId}/overview(userId=${userId})}"
                           role="menuitem"
-                          type="submit"
+                          class="nav-popup-menu_link--no-hover tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-px-2"
+                        >
+                          <span class="tw-flex tw-items-center">
+                            <img
+                              src="#"
+                              th:src="${menuGravatarUrl + '?d=mm&s=128'}"
+                              alt=""
+                              class="gravatar tw-rounded-full"
+                              width="64px"
+                              height="64px"
+                              onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                            />
+                            <span class="tw-ml-6 tw-flex-1 tw-flex tw-flex-col tw-font-bold">
+                              <span class="tw-sr-only" th:text="#{nav.user.title}"></span>
+                              <span th:text="${userFirstName}"></span>
+                              <span th:text="${userLastName}"></span>
+                            </span>
+                          </span>
+                        </a>
+                      </li>
+                      <li role="none" class="tw-mb-1">
+                        <a
+                          th:href="${menuHelpUrl}"
+                          role="menuitem"
+                          class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                            <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                          </span>
+                          <span class="tw-ml-4 tw-text-base" th:text="#{nav.help.title}"></span>
+                          <svg th:replace="icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')"></svg>
+                        </a>
+                      </li>
+                      <li role="none" class="tw-mb-1">
+                        <a
+                          href="#"
+                          th:href="@{/web/person/{userId}(userId=${userId})}"
+                          role="menuitem"
                           class="
                             nav-popup-menu_link
                             tw-w-full
@@ -227,133 +202,160 @@
                             tw-flex
                             tw-items-center
                           "
-                          data-test-id="logout"
                         >
                           <span class="tw-flex tw-items-center">
                             <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
-                              <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
+                              <svg th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                             </span>
-                            <span class="tw-ml-4 tw-text-base" th:text="#{nav.signout.title}"></span>
+                            <span class="tw-ml-4 tw-text-base" th:text="#{nav.account.title}"></span>
                           </span>
-                        </button>
-                      </form>
-                    </li>
-                  </ul>
+                        </a>
+                      </li>
+                      <li role="none" class="tw-mb-1">
+                        <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
+                          <button
+                            role="menuitem"
+                            type="submit"
+                            class="
+                              nav-popup-menu_link
+                              tw-w-full
+                              tw-block
+                              tw-py-2
+                              tw-pl-5
+                              tw-pr-16
+                              tw-text-sm
+                              tw-no-underline
+                              tw-flex
+                              tw-items-center
+                            "
+                            data-test-id="logout"
+                          >
+                            <span class="tw-flex tw-items-center">
+                              <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
+                              </span>
+                              <span class="tw-ml-4 tw-text-base" th:text="#{nav.signout.title}"></span>
+                            </span>
+                          </button>
+                        </form>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="tw-flex-1 navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
-          <ul
-            class="
-              tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4
-              lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2
-              xl:tw-px-0
-            "
-          >
-            <li class="tw-flex tw-items-center">
-              <a
-                href="#"
-                th:href="@{/web/overview}"
-                id="home-link"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-              >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/home::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span
-                    class="tw-ml-5 lg:tw-ml-2 lg:tw-sr-only xl:tw-not-sr-only xl:tw-ml-2"
-                    th:text="#{nav.home.title}"
-                  ></span>
-                </span>
-              </a>
-            </li>
-            <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('USER')">
-              <a
-                href="#"
-                th:href="@{/web/application/new}"
-                id="application-new-link"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-              >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/plus-circle::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.apply.title}"></span>
-                </span>
-              </a>
-            </li>
-            <li class="tw-flex tw-items-center">
-              <a
-                href="#"
-                th:href="@{/web/application}"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-              >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/calendar::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.vacation.title}"></span>
-                </span>
-              </a>
-            </li>
-            <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('OFFICE')">
-              <a
-                href="#"
-                th:href="@{/web/sicknote}"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-                data-test-id="navigation-sick-notes-link"
-              >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/medkit::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.sicknote.title}"></span>
-                </span>
-              </a>
-            </li>
-            <li
-              class="tw-flex tw-items-center"
-              sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')"
+          <div class="tw-flex-1 navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
+            <ul
+              class="
+                tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4
+                lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2
+                xl:tw-px-0
+              "
             >
-              <a
-                href="#"
-                th:href="@{/web/person(active=true)}"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+              <li class="tw-flex tw-items-center">
+                <a
+                  href="#"
+                  th:href="@{/web/overview}"
+                  id="home-link"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/home::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span
+                      class="tw-ml-5 lg:tw-ml-2 lg:tw-sr-only xl:tw-not-sr-only xl:tw-ml-2"
+                      th:text="#{nav.home.title}"
+                    ></span>
+                  </span>
+                </a>
+              </li>
+              <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('USER')">
+                <a
+                  href="#"
+                  th:href="@{/web/application/new}"
+                  id="application-new-link"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/plus-circle::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.apply.title}"></span>
+                  </span>
+                </a>
+              </li>
+              <li class="tw-flex tw-items-center">
+                <a
+                  href="#"
+                  th:href="@{/web/application}"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/calendar::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.vacation.title}"></span>
+                  </span>
+                </a>
+              </li>
+              <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('OFFICE')">
+                <a
+                  href="#"
+                  th:href="@{/web/sicknote}"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                  data-test-id="navigation-sick-notes-link"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/medkit::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.sicknote.title}"></span>
+                  </span>
+                </a>
+              </li>
+              <li
+                class="tw-flex tw-items-center"
+                sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')"
               >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/user::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.person.title}"></span>
-                </span>
-              </a>
-            </li>
-            <li class="tw-flex tw-items-center" sec:authorize="hasAnyAuthority('BOSS', 'OFFICE')">
-              <a
-                href="#"
-                th:href="@{/web/department}"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-              >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/user-group::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.department.title}"></span>
-                </span>
-              </a>
-            </li>
-            <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('OFFICE')">
-              <a
-                href="#"
-                th:href="@{/web/settings}"
-                class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-                data-test-id="navigation-settings-link"
-              >
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/cog::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
-                  <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.settings.title}"></span>
-                </span>
-              </a>
-            </li>
-          </ul>
+                <a
+                  href="#"
+                  th:href="@{/web/person(active=true)}"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/user::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.person.title}"></span>
+                  </span>
+                </a>
+              </li>
+              <li class="tw-flex tw-items-center" sec:authorize="hasAnyAuthority('BOSS', 'OFFICE')">
+                <a
+                  href="#"
+                  th:href="@{/web/department}"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/user-group::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.department.title}"></span>
+                  </span>
+                </a>
+              </li>
+              <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('OFFICE')">
+                <a
+                  href="#"
+                  th:href="@{/web/settings}"
+                  class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                  data-test-id="navigation-settings-link"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <svg th:replace="icon/cog::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"></svg>
+                    <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.settings.title}"></span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="navigation-content-spacer tw-flex tw-justify-between tw-w-full lg:tw-hidden">
-        <div class="navigation-content-spacer--left tw-h-4 tw-w-4"></div>
-        <div class="navigation-content-spacer--right tw-h-4 tw-w-4"></div>
-      </div>
-    </nav>
+        <div class="navigation-content-spacer tw-flex tw-justify-between tw-w-full lg:tw-hidden">
+          <div class="navigation-content-spacer--left tw-h-4 tw-w-4"></div>
+          <div class="navigation-content-spacer--right tw-h-4 tw-w-4"></div>
+        </div>
+      </nav>
+    </div>
   </div>
   <div style="height: 48px; margin-bottom: 2rem"></div>
 </th:block>
