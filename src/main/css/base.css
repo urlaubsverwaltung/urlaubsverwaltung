@@ -55,6 +55,9 @@ html {
   /* override bootstrap 10px font-size */
   /* to match 1rem to the user configured font size */
   font-size: 100%;
+
+  --scroll-padding-top: 5rem;
+  scroll-padding-top: var(--scroll-padding-top);
 }
 
 hr {

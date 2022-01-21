@@ -47,11 +47,11 @@
             </uv:privacy-box>
         </div>
 
-        <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me"
+        <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/me#calendar-private"
                    modelAttribute="privateCalendarShare" cssClass="tw-mb-8">
             <div class="tw-mb-4">
                 <uv:section-heading>
-                    <h2 class="tw-text-xl">
+                    <h2 id="calendar-private" class="tw-text-xl">
                         <spring:message code="calendar.share.me.title"/>
                     </h2>
                 </uv:section-heading>
@@ -129,7 +129,7 @@
         <c:if test="${departmentCalendars.size() > 0}">
             <div class="tw-mb-8">
                 <uv:section-heading>
-                    <h2 class="tw-text-xl">
+                    <h2 id="calendar-department" class="tw-text-xl">
                         <spring:message code="calendar.share.department.title"/>
                     </h2>
                 </uv:section-heading>
@@ -150,7 +150,7 @@
                         <div role="tabpanel" class="tab-pane${departmentCal.active ? ' active' : ''}" id="departmentcal-${departmentCal.departmentId}">
                             <form:form
                                 method="POST"
-                                action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}"
+                                action="${URL_PREFIX}/calendars/share/persons/${privateCalendarShare.personId}/departments/${departmentCal.departmentId}#calendar-department"
                                 id="department-calendar-form-${loop.index}"
                             >
                                 <c:choose>
@@ -236,12 +236,12 @@
         <c:if test="${companyCalendarAccessible != null || companyCalendarShare != null}">
             <div>
                 <uv:section-heading>
-                    <h2 class="tw-text-xl">
+                    <h2 id="calendar-company" class="tw-text-xl">
                         <spring:message code="calendar.share.company.title"/>
                     </h2>
             </uv:section-heading>
                 <c:if test="${companyCalendarAccessible != null}">
-                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible" modelAttribute="companyCalendarAccessible">
+                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${personId}/company/accessible#calendar-company" modelAttribute="companyCalendarAccessible">
                         <form:hidden path="accessible" value="${!companyCalendarAccessible.accessible}" />
                         <div class="tw-max-w-3xl tw-mb-12">
                             <p class="tw-mb-4 tw-text-base">
@@ -271,7 +271,7 @@
                 </c:if>
 
                 <c:if test="${companyCalendarShare != null}">
-                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${companyCalendarShare.personId}/company" modelAttribute="companyCalendarShare">
+                    <form:form method="POST" action="${URL_PREFIX}/calendars/share/persons/${companyCalendarShare.personId}/company#calendar-company" modelAttribute="companyCalendarShare">
                         <c:choose>
                             <c:when test="${empty companyCalendarShare.calendarUrl}">
                                 <div class="tw-max-w-3xl">
