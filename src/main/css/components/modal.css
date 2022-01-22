@@ -1,5 +1,6 @@
 .modal-content {
   @apply dark:tw-bg-zinc-800;
+  @apply dark:tw-shadow-none;
 }
 
 .modal-dialog button.close {
@@ -7,18 +8,10 @@
   @apply dark:hover:tw-text-zinc-100;
 }
 
+.modal-header {
+  @apply dark:tw-border-b-neutral-900;
+}
 
-@media (prefers-color-scheme: dark) {
-
-  .modal-content {
-    box-shadow: none;
-  }
-
-  .modal-header {
-    border-bottom-color: theme("colors.neutral.900");
-  }
-
-  .modal-footer {
-    border-top-color: theme("colors.neutral.900");
-  }
+.modal-footer {
+  @apply dark:tw-border-t-neutral-900;
 }

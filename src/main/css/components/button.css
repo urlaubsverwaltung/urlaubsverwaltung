@@ -117,28 +117,6 @@
   @apply dark:tw-border-sky-600;
 }
 
-@media (prefers-color-scheme: dark) {
-  .dark\:button-main,
-  .dark\:button-main:hover:not(:disabled),
-  .dark\:button-main:active,
-  .dark\:button-main:focus {
-    @apply tw-border-sky-600;
-    @apply tw-bg-sky-600;
-    @apply tw-text-sky-50;
-    @apply dark:tw-bg-sky-700;
-    @apply dark:tw-border-sky-700;
-  }
-
-  .dark\:button-main:hover:not(:disabled),
-  .dark\:button-main:active,
-  .dark\:button-main:focus {
-    @apply tw-border-sky-700;
-    @apply tw-bg-sky-700;
-    @apply dark:tw-bg-sky-600;
-    @apply dark:tw-border-sky-600;
-  }
-}
-
 .button-danger,
 .button-danger:hover:not(:disabled),
 .button-danger:active,

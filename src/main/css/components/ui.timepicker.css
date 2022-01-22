@@ -1,34 +1,28 @@
+.ui-timepicker-wrapper {
+  box-shadow: none !important;
+  @apply dark:tw-border !important;
+  @apply dark:tw-border-zinc-700 !important;
+  @apply dark:tw-bg-zinc-900 !important;
+  @apply dark:tw-rounded !important;
+  @apply dark:tw-mt-2 !important;
+  @apply dark:tw-backdrop-filter !important;
+  @apply dark:tw-backdrop-blur-xl !important;
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70 !important;
+}
+
 .ui-timepicker-am,
 .ui-timepicker-pm {
   @apply tw-px-4 !important;
+  @apply dark:tw-text-zinc-200 !important;
+  @apply dark:hover:tw-bg-zinc-700 !important;
+  @apply dark:hover:tw-text-zinc-200 !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  .ui-timepicker-wrapper {
-    box-shadow: none !important;
-    @apply tw-border !important;
-    @apply tw-border-zinc-700 !important;
-    @apply tw-bg-zinc-900 !important;
-    @apply tw-rounded !important;
-    @apply tw-mt-2 !important;
-    @apply tw-backdrop-filter !important;
-    @apply tw-backdrop-blur-xl !important;
-    @apply supports-backdrop-blur:tw-bg-zinc-900/70 !important;
-  }
-
-  .ui-timepicker-am,
-  .ui-timepicker-pm {
-    @apply tw-text-zinc-200 !important;
-    @apply hover:tw-bg-zinc-700 !important;
-    @apply hover:tw-text-zinc-200 !important;
-  }
-
-  .ui-timepicker-am.ui-timepicker-selected,
-  .ui-timepicker-am.ui-timepicker-selected:hover,
-  .ui-timepicker-am.ui-timepicker-selected:focus,
-  .ui-timepicker-pm.ui-timepicker-selected,
-  .ui-timepicker-pm.ui-timepicker-selected:hover,
-  .ui-timepicker-pm.ui-timepicker-selected:focus {
-    @apply tw-bg-blue-600 !important;
-  }
+.ui-timepicker-am.ui-timepicker-selected,
+.ui-timepicker-am.ui-timepicker-selected:hover,
+.ui-timepicker-am.ui-timepicker-selected:focus,
+.ui-timepicker-pm.ui-timepicker-selected,
+.ui-timepicker-pm.ui-timepicker-selected:hover,
+.ui-timepicker-pm.ui-timepicker-selected:focus {
+  @apply dark:tw-bg-blue-600 !important;
 }

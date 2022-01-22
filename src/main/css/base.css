@@ -41,14 +41,7 @@ body {
   border-width: 0; /* 2 */
   border-style: solid; /* 2 */
   border-color: #e5e7eb; /* 2 */
-}
-
-@media (prefers-color-scheme: dark) {
-  *,
-  ::before,
-  ::after {
-    border-color: theme("colors.neutral.600");
-  }
+  @apply dark:tw-border-neutral-600;
 }
 
 /**

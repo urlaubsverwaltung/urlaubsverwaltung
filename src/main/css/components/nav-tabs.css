@@ -1,3 +1,11 @@
+.nav-tabs {
+  @apply dark:tw-border-b-neutral-600;
+}
+
+.nav-tabs > li.active > a {
+  @apply dark:tw-border-b-transparent;
+}
+
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li.active > a:focus {
@@ -14,14 +22,4 @@
 .nav > li > a:focus {
   @apply dark:tw-bg-zinc-800;
   @apply dark:tw-border-zinc-600;
-}
-
-@media (prefers-color-scheme: dark) {
-  .nav-tabs {
-    border-bottom-color: theme("colors.neutral.600");
-  }
-
-  .nav-tabs > li.active > a {
-    border-bottom-color: transparent;
-  }
 }

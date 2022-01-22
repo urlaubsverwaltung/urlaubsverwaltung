@@ -168,12 +168,7 @@
   top: -15px;
   right: 13px;
   content: "";
-}
-
-@media (prefers-color-scheme: dark) {
-  .nav-popup-menu::before {
-    border-bottom-color: theme("colors.neutral.600");
-  }
+  @apply dark:tw-border-b-neutral-600;
 }
 
 .nav-popup-menu-inner {

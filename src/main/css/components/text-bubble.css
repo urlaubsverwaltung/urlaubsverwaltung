@@ -5,6 +5,7 @@
   padding: 1rem 1.5rem;
   border: 2px solid theme("colors.blue.100");
   border-radius: 1rem;
+  @apply dark:tw-border-sky-800;
 }
 
 .text-bubble.text-bubble--triangle-top-right {
@@ -24,6 +25,10 @@
   border-color: transparent theme("colors.blue.100") theme("colors.blue.100") transparent;
 }
 
+.tw-dark .text-bubble--triangle-top-right:before {
+  border-color: transparent theme("colors.sky.800") theme("colors.sky.800") transparent;
+}
+
 .text-bubble--triangle-top-right:after {
   content: " ";
   position: absolute;
@@ -37,16 +42,6 @@
   border-color: transparent white white transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  .text-bubble {
-    border-color: theme("colors.sky.800");
-  }
-
-  .text-bubble--triangle-top-right:before {
-    border-color: transparent theme("colors.sky.800") theme("colors.sky.800") transparent;
-  }
-
-  .text-bubble--triangle-top-right:after {
-    border-color: transparent theme('colors.neutral.900') theme('colors.neutral.900') transparent;
-  }
+.tw-dark .text-bubble--triangle-top-right:after {
+  border-color: transparent theme('colors.neutral.900') theme('colors.neutral.900') transparent;
 }

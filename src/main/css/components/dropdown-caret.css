@@ -10,19 +10,11 @@
   border-right-color: transparent;
   border-bottom-color: transparent;
   border-left-color: transparent;
+  @apply dark:tw-border-t-neutral-100;
 }
 
 a:hover .dropdown-caret,
 a:focus .dropdown-caret {
   border-top-color: black;
-}
-
-@media (prefers-color-scheme: dark) {
-  .dropdown-caret {
-    border-top-color: theme("colors.neutral.100");
-  }
-
-  a:is(:hover, :focus) .dropdown-caret {
-    border-top-color: theme("colors.neutral.400");
-  }
+  @apply dark:tw-border-t-neutral-400;
 }

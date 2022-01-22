@@ -5,12 +5,7 @@
   @apply tw-duration-150;
   @apply tw-ease-in-out;
   @apply tw-rounded-md;
-}
-
-@media (prefers-color-scheme: dark) {
-  .form-control {
-    border-color: theme("colors.neutral.600") !important;
-  }
+  @apply dark:tw-border-neutral-600 !important;
 }
 
 .form-control:focus,
@@ -29,12 +24,7 @@
   @apply tw-border;
   @apply tw-transition;
   border-color: #ccc;
-}
-
-@media (prefers-color-scheme: dark) {
-  .input-group {
-    border-color: theme("colors.neutral.600");
-  }
+  @apply dark:tw-border-neutral-600;
 }
 
 .input-group.has-error {
@@ -59,12 +49,7 @@
   /* however, left border should still be visible */
   @apply tw-border-l-2 !important;
   border-color: #ccc;
-}
-
-@media (prefers-color-scheme: dark) {
-  .input-group .input-group-addon {
-    border-color: theme("colors.neutral.600");
-  }
+  @apply dark:tw-border-neutral-600;
 }
 
 .input-group:focus-within {
@@ -222,14 +207,12 @@ textarea.error {
   @apply tw-text-zinc-700;
 }
 
-@media (prefers-color-scheme: dark) {
-  input, select, textarea {
-    @apply tw-border-zinc-600 !important;
-    @apply tw-bg-zinc-700 !important;
-    @apply tw-text-zinc-50 !important;
-  }
+input, select, textarea {
+  @apply dark:tw-border-zinc-600 !important;
+  @apply dark:tw-bg-zinc-700 !important;
+  @apply dark:tw-text-zinc-50 !important;
+}
 
-  .select-caret {
-    @apply tw-text-zinc-50;
-  }
+.select-caret {
+  @apply dark:tw-text-zinc-50;
 }

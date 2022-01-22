@@ -1,3 +1,13 @@
+.dropdown-menu {
+  @apply dark:tw-shadow-none;
+  @apply dark:tw-border;
+  @apply dark:tw-border-zinc-700;
+  @apply dark:tw-bg-zinc-900;
+  @apply dark:tw-backdrop-filter;
+  @apply dark:tw-backdrop-blur-xl;
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70;
+}
+
 .dropdown-menu > li > a {
   @apply dark:tw-text-zinc-200;
 }
@@ -10,16 +20,4 @@
 
 .dropdown-menu .divider {
   @apply dark:tw-bg-zinc-700;
-}
-
-@media (prefers-color-scheme: dark) {
-  .dropdown-menu {
-    box-shadow: none;
-    @apply tw-border;
-    @apply tw-border-zinc-700;
-    @apply tw-bg-zinc-900;
-    @apply tw-backdrop-filter;
-    @apply tw-backdrop-blur-xl;
-    @apply supports-backdrop-blur:tw-bg-zinc-900/70;
-  }
 }

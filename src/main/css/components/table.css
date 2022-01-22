@@ -74,12 +74,7 @@ tr.inactive td > * {
 .bordered-table tbody {
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
-}
-
-@media (prefers-color-scheme: dark) {
-  .bordered-table tbody {
-    border-color: theme("colors.neutral.700");
-  }
+  @apply dark:tw-border-neutral-700;
 }
 
 /**************************************************************************
