@@ -56,7 +56,7 @@
         <th:block th:ref="user-applications-heading-body">
           <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0" is="uv-nav-tabs">
             <li
-              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-applications-block"
               th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
@@ -71,7 +71,7 @@
               </a>
             </li>
             <li
-              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'replacement' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-replacements-block"
               th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
