@@ -7,7 +7,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -41,6 +41,7 @@
     <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />"/>
+    <uv:script-theme-toggler />
 </head>
 
 <body>

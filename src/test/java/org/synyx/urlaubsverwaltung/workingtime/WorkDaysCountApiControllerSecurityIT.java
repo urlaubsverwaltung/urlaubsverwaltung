@@ -12,6 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -30,8 +31,12 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
 
     @MockBean
     private WorkDaysCountService workDaysCountService;
+
     @MockBean
     private PersonService personService;
+
+    @MockBean
+    private UserThemeControllerAdvice userThemeControllerAdvice;
 
     @Test
     void getWorkdaysWithoutAuthIsUnauthorized() throws Exception {

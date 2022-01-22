@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 
 import java.util.Optional;
 
@@ -39,6 +40,8 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     private DepartmentService departmentService;
     @MockBean
     private CalendarAccessibleService calendarAccessibleService;
+    @MockBean
+    private UserThemeControllerAdvice userThemeControllerAdvice;
 
     // =========================================================================================================
     // company calendar => link

@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
@@ -48,6 +49,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     private WorkingTimeService workingTimeService;
     @MockBean
     private WorkingTimeWriteService workingTimeWriteService;
+    @MockBean
+    private UserThemeControllerAdvice userThemeControllerAdvice;
 
     @Test
     void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {

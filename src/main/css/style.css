@@ -47,19 +47,17 @@
     --uv-cal-personal-holiday-approved-bg: 255, 237, 160;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --uv-cal-border-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
-      --uv-cal-default-bg: 38, 38, 38; /* neutral.800 */
-      --uv-cal-default-color: 212, 212, 212; /* neutral.300 */
-      --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
-      --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
-      --uv-cal-public-holiday-bg: 14, 165, 233; /* sky.500 */
-      --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
-      --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
-      --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
-    }
+  .tw-dark {
+    --uv-cal-border-color: 23, 23, 23; /* neutral.900 */
+    --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
+    --uv-cal-default-bg: 38, 38, 38; /* neutral.800 */
+    --uv-cal-default-color: 212, 212, 212; /* neutral.300 */
+    --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
+    --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
+    --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
+    --uv-cal-public-holiday-bg: 14, 165, 233; /* sky.500 */
+    --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
+    --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
+    --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
   }
 }

@@ -14,6 +14,7 @@ module.exports = {
   ],
   // use a prefix to not conflict with bootstrap
   prefix: "tw-",
+  darkMode: "class",
   // use important keyword for tailwind utility classes to override bootstrap selectors
   important: true,
   corePlugins: {

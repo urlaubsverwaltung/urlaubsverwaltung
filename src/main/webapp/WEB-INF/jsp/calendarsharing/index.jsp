@@ -8,7 +8,7 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 <head>
     <title>
         <spring:message code="calendar.share.header.title"/>

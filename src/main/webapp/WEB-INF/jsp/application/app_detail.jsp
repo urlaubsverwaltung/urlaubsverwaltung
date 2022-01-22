@@ -12,7 +12,7 @@
 <fmt:parseDate value="${application.endDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date"/>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <head>
     <title>

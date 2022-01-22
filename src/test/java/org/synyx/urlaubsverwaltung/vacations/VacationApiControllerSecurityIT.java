@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +37,8 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     private ApplicationService applicationService;
     @MockBean
     private DepartmentService departmentService;
+    @MockBean
+    private UserThemeControllerAdvice userThemeControllerAdvice;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

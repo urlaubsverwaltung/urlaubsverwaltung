@@ -8,7 +8,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <c:set var="SICK_NOTE_MESSAGEKEY">
     <spring:message code='${sickNote.sickNoteType.messageKey}'/>

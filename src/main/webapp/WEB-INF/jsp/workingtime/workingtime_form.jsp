@@ -8,7 +8,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 <head>
     <title>
         <spring:message code="person.form.workingTime.header.title" arguments="${person.niceName}"/>

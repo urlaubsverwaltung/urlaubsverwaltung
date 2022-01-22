@@ -6,7 +6,7 @@
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
