@@ -184,9 +184,9 @@
 
 .nav-popup-menu-button {
   @apply tw-transition-colors;
-  @apply tw-text-zinc-800;
-  @apply hover:tw-text-black;
-  @apply focus:tw-text-black;
+  @apply tw-text-zinc-800 !important;
+  @apply hover:tw-text-black !important;
+  @apply focus:tw-text-black !important;
 }
 
 .nav-popup-menu-button_icon {
@@ -204,18 +204,18 @@
 
 .nav-popup-menu_link,
 .nav-popup-menu_link--no-hover {
-  @apply tw-bg-transparent;
-  @apply tw-text-white;
+  @apply tw-bg-transparent !important;
+  @apply tw-text-white !important;
   /* override default anchor hover color to keep color for '--no-hover' */
-  @apply hover:tw-text-white;
-  @apply focus:tw-text-white;
+  @apply hover:tw-text-white !important;
+  @apply focus:tw-text-white !important;
 }
 
 .nav-popup-menu_link {
-  @apply hover:tw-bg-zinc-600;
-  @apply focus:tw-bg-zinc-600;
-  @apply dark:hover:tw-bg-zinc-700;
-  @apply dark:focus:tw-bg-zinc-700;
+  @apply hover:tw-bg-zinc-600 !important;
+  @apply focus:tw-bg-zinc-600 !important;
+  @apply dark:hover:tw-bg-zinc-700 !important;
+  @apply dark:focus:tw-bg-zinc-700 !important;
 }
 
 .nav-popup-menu_link-icon {
