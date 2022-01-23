@@ -10,7 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * Customize default Spring Boot error page.
  */
@@ -26,8 +25,19 @@ public class ErrorController extends BasicErrorController {
     @Override
     public ModelAndView errorHtml(HttpServletRequest request, HttpServletResponse response) {
 
-        ModelAndView modelAndView = new ModelAndView("errors");
-        modelAndView.addObject("statusCode", response.getStatus());
+        final String viewName;
+        final int status = response.getStatus();
+
+        if (status == 403) {
+            viewName = "thymeleaf/error/403";
+        } else if (status == 404) {
+            viewName = "thymeleaf/error/404";
+        } else {
+            viewName = "thymeleaf/error";
+        }
+
+        final ModelAndView modelAndView = new ModelAndView(viewName);
+        modelAndView.addObject("status", status);
 
         return modelAndView;
     }

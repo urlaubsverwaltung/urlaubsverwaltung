@@ -24,13 +24,46 @@ class ErrorControllerTest {
     }
 
     @Test
-    void errorHtml() {
+    void errorHtml403() {
         final HttpServletRequest request = new MockHttpServletRequest();
         final HttpServletResponse response = new MockHttpServletResponse();
         response.setStatus(403);
 
         final ModelAndView modelAndView = sut.errorHtml(request, response);
-        assertThat(modelAndView.getViewName()).isEqualTo("errors");
-        assertThat(modelAndView.getModel()).containsEntry("statusCode", 403);
+        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error/403");
+        assertThat(modelAndView.getModel()).containsEntry("status", 403);
+    }
+
+    @Test
+    void errorHtml404() {
+        final HttpServletRequest request = new MockHttpServletRequest();
+        final HttpServletResponse response = new MockHttpServletResponse();
+        response.setStatus(404);
+
+        final ModelAndView modelAndView = sut.errorHtml(request, response);
+        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error/404");
+        assertThat(modelAndView.getModel()).containsEntry("status", 404);
+    }
+
+    @Test
+    void errorHtml400() {
+        final HttpServletRequest request = new MockHttpServletRequest();
+        final HttpServletResponse response = new MockHttpServletResponse();
+        response.setStatus(400);
+
+        final ModelAndView modelAndView = sut.errorHtml(request, response);
+        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error");
+        assertThat(modelAndView.getModel()).containsEntry("status", 400);
+    }
+
+    @Test
+    void errorHtml500() {
+        final HttpServletRequest request = new MockHttpServletRequest();
+        final HttpServletResponse response = new MockHttpServletResponse();
+        response.setStatus(500);
+
+        final ModelAndView modelAndView = sut.errorHtml(request, response);
+        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error");
+        assertThat(modelAndView.getModel()).containsEntry("status", 500);
     }
 }
