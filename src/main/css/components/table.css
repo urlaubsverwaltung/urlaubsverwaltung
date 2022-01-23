@@ -33,7 +33,7 @@ tr.inactive td > * {
   vertical-align: middle !important;
   padding: 12px;
   border-top: 1px solid #dddddd;
-  @apply tw-border-zinc-700;
+  @apply dark:tw-border-zinc-700;
 }
 
 .list-table td.number {
@@ -58,13 +58,13 @@ tr.inactive td > * {
 **************************************************************************/
 
 .striped-table tr td {
-  background-color: #ffffff;
-  @apply tw-bg-zinc-900;
+  @apply tw-bg-white;
+  @apply dark:tw-bg-zinc-900;
 }
 
 .striped-table tr:nth-child(even) td {
-  background-color: #fafafa;
-  @apply tw-bg-zinc-800;
+  @apply tw-bg-zinc-50;
+  @apply dark:tw-bg-zinc-800;
 }
 
 /**************************************************************************
@@ -121,16 +121,27 @@ th.sortable-field .tablesorter-header-inner:after {
   background-size: cover;
   width: 16px;
   height: 16px;
-  mask: url("../icons/selector.svg") no-repeat 50% 50%;
-  @apply dark:tw-bg-zinc-200;
+  background-image: url("../icons/selector.svg");
+}
+
+.tw-dark th.sortable-field .tablesorter-header-inner:after {
+  background-image: url("../icons/selector-dark.svg");
 }
 
 th.tablesorter-headerDesc .tablesorter-header-inner:after {
-  mask: url("../icons/chevron-down.svg") no-repeat 50% 50%;
+  background-image: url("../icons/chevron-down.svg");
+}
+
+.tw-dark th.tablesorter-headerDesc .tablesorter-header-inner:after {
+  background-image: url("../icons/chevron-down-dark.svg");
 }
 
 th.tablesorter-headerAsc .tablesorter-header-inner:after {
-  mask: url("../icons/chevron-up.svg") no-repeat 50% 50%;
+  background-image: url("../icons/chevron-up.svg");
+}
+
+.tw-dark th.tablesorter-headerAsc .tablesorter-header-inner:after {
+  background-image: url("../icons/chevron-up-dark.svg");
 }
 
 /**************************************************************************

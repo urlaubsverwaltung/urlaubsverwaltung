@@ -9,9 +9,10 @@
   content: "";
   @apply tw-absolute;
   @apply tw-inset-0;
-  @apply tw-backdrop-blur;
-  @apply tw-bg-zinc-900;
-  @apply supports-backdrop-blur:tw-bg-zinc-900/[0.85];
+  @apply tw-bg-zinc-100;
+  @apply dark:tw-bg-zinc-900;
+  @apply dark:tw-backdrop-blur;
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
   @apply lg:dark:tw-border-b;
   @apply lg:dark:tw-border-b-zinc-800;
 }
@@ -173,8 +174,10 @@
 
 .nav-popup-menu-inner {
   @apply tw-backdrop-blur;
-  @apply tw-bg-zinc-900;
-  @apply supports-backdrop-blur:tw-bg-zinc-900/[0.85];
+  @apply tw-bg-gray-800;
+  @apply dark:tw-bg-zinc-900;
+  @apply supports-backdrop-blur:tw-bg-gray-800/[0.85];
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
   @apply dark:tw-border;
   @apply dark:tw-border-zinc-700;
 }

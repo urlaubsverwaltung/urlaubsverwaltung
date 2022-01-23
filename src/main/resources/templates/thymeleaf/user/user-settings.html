@@ -22,7 +22,7 @@
         <legend
           id="theme-description"
           th:text="#{user-settings.theme.title}"
-          class="tw-text-zinc-100 tw-border-none"
+          class="dark:tw-text-zinc-100 tw-border-none"
         >
           Theme
         </legend>
@@ -40,7 +40,7 @@
             <label
               for="theme"
               th:for="|theme-${theme.value}|"
-              class="tw-overflow-hidden tw-flex tw-flex-col tw-cursor-pointer tw-rounded-lg md:tw-rounded-xl tw-border-2 tw-border-zinc-800 peer-checked:tw-border-blue-400"
+              class="tw-overflow-hidden tw-flex tw-flex-col tw-cursor-pointer tw-rounded-lg md:tw-rounded-xl tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400"
             >
               <img
                 src="#"

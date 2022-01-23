@@ -35,16 +35,16 @@
 @layer base {
   :root {
     --uv-cal-border-color: 255, 255, 255;
-    --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
+    --uv-cal-today-border-color: 113, 113, 122; /* zinc.500 */
     --uv-cal-default-bg: 229, 229, 229;
-    --uv-cal-default-color: 111, 111, 111;
+    --uv-cal-default-color: 10, 10, 10;
     --uv-cal-weekend-bg: 181, 208, 223;
-    --uv-cal-weekend-color: 255, 255, 255;
-    --uv-cal-sick-note-bg: 255, 197, 191;
+    --uv-cal-weekend-color: 10, 10, 10;
+    --uv-cal-sick-note-bg: 239, 68, 68;
     --uv-cal-public-holiday-bg: 181, 208, 223;
-    --uv-cal-public-holiday-color: 111, 111, 111;
-    --uv-cal-personal-holiday-bg: 255, 225, 101;
-    --uv-cal-personal-holiday-approved-bg: 255, 237, 160;
+    --uv-cal-public-holiday-color: 10, 10, 10;
+    --uv-cal-personal-holiday-bg: 234, 179, 8;
+    --uv-cal-personal-holiday-approved-bg: 250, 204, 21;
   }
 
   .tw-dark {

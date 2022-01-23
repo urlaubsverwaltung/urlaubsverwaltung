@@ -6,7 +6,8 @@ th.vacationOverview-cal-head.today::after {
   content: "";
   @apply tw-border-3;
   @apply tw-border-calendar-today;
-  @apply tw-border-opacity-80;
+  @apply tw-border-opacity-40;
+  @apply dark:tw-border-opacity-80;
   position: absolute;
   top: 0;
   left: 0;
@@ -58,14 +59,15 @@ th.vacationOverview-cal-head.today::after {
   --absence-bar-color-morning: transparent;
   --absence-bar-color-noon: transparent;
   --absence-bar-color: transparent;
-  --background-left: theme("backgroundColor.calendar.DEFAULT");
-  --background-right: theme("backgroundColor.calendar.DEFAULT");
+  --background-color-left: theme("backgroundColor.calendar.DEFAULT");
+  --background-color-right: theme("backgroundColor.calendar.DEFAULT");
   --font-color: theme("textColor.calendar.DEFAULT");
   /* h-full only works when parent td has an explicit height */
   height: 100%;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(90deg, var(--background-left) 50%, var(--background-right) 50%);
+  background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
+  color: var(--font-color);
 }
 
 .vacationOverview-table td,
@@ -124,12 +126,6 @@ th.vacationOverview-cal-head.today::after {
   background-color: var(--absence-bar-color-noon);
 }
 
-@media print {
-  .cal-day,
-  .vacationOverview-legend-colorbox {
-  }
-}
-
 .absence-morning {
   --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }
@@ -171,18 +167,20 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .public-holiday-morning {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
 }
 .public-holiday-noon {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
 }
 .public-holiday-full {
-  --absence-bar-color: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --font-color: theme("textColor.calendar.public-holiday");
 }
 
 .weekend {
-  --background-left: theme("backgroundColor.calendar.weekend");
-  --background-right: theme("backgroundColor.calendar.weekend");
+  --background-color-left: theme("backgroundColor.calendar.weekend");
+  --background-color-right: theme("backgroundColor.calendar.weekend");
   --font-color: theme("textColor.calendar.weekend");
 }
 

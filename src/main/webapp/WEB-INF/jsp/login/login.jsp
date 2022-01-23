@@ -44,7 +44,7 @@
     <uv:script-theme-toggler />
 </head>
 
-<body>
+<body class="md:tw-bg-zinc-100 dark:tw-bg-zinc-900 dark:tw-text-zinc-200">
 
 <nav role="navigation">
     <h1 class="tw-text-3xl tw-my-8 tw-text-center">

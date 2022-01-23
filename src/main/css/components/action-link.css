@@ -4,11 +4,11 @@
   @apply tw-items-center !important;
   @apply tw-transition-opacity !important;
   @apply tw-duration-100 !important;
-  @apply tw-text-zinc-900;
+  @apply tw-text-zinc-900 !important;
   @apply tw-text-opacity-50;
-  @apply dark:tw-text-zinc-50;
-  @apply dark:hover:tw-text-zinc-50;
-  @apply dark:focus:tw-text-zinc-50;
+  @apply dark:tw-text-zinc-50 !important;
+  @apply dark:hover:tw-text-zinc-50 !important;
+  @apply dark:focus:tw-text-zinc-50 !important;
   @apply dark:tw-text-opacity-75;
 }
 
