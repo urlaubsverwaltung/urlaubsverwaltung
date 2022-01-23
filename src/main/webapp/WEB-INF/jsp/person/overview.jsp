@@ -42,7 +42,7 @@
     <script defer src="<asset:url value="npm.date-fns.js" />"></script>
     <script defer src="<asset:url value="app_detail~app_form~person_overview.js" />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js' />"></script>
-    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~95889e93.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js' />"></script>
     <script defer src="<asset:url value="person_overview.js" />"></script>
 </head>
 

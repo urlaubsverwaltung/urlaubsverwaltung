@@ -3,6 +3,8 @@
 <head th:replace="_layout::head(~{::title}, ~{::scripts})">
   <title th:text="#{user-settings.header.title}"></title>
   <th:block th:fragment="scripts">
+    <script defer asset:src="account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js"></script>
+    <script defer asset:src="user_settings.js"></script>
   </th:block>
 </head>
 <body th:replace="_layout::body(~{::main}, ~{})">
@@ -17,7 +19,7 @@
   </div>
 
   <div class="tw-mt-8">
-    <form action="#" th:action="@{/web/person/{personId}/settings (personId=${personId})}" method="post" th:object="${userSettings}">
+    <form id="user-settings-form" action="#" th:action="@{/web/person/{personId}/settings (personId=${personId})}" method="post" th:object="${userSettings}">
       <fieldset>
         <legend
           id="theme-description"
@@ -57,11 +59,13 @@
           </li>
         </ul>
       </fieldset>
-      <div class="tw-mt-8">
-        <button type="submit" class="button button-main" th:text="#{user-settings.form.submit}">
-          Speichern
-        </button>
-      </div>
+      <noscript>
+        <div class="tw-mt-8">
+          <button type="submit" class="button button-main" th:text="#{user-settings.form.submit}">
+            Speichern
+          </button>
+        </div>
+      </noscript>
     </form>
   </div>
 </main>
