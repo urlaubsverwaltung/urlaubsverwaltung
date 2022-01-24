@@ -1,0 +1,31 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-country-to-federal-state-in-settings-for-missing-states">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <columnExists tableName="settings" columnName="federal_state"/>
+    </preConditions>
+
+    <sql>
+      UPDATE settings SET federal_state = 'GERMANY_SACHSEN_ANHALT' WHERE federal_state = 'SACHSEN_ANHALT';
+      UPDATE settings SET federal_state = 'GERMANY_SCHLESWIG_HOLSTEIN' WHERE federal_state = 'SCHLESWIG_HOLSTEIN';
+      UPDATE settings SET federal_state = 'GERMANY_THUERINGEN' WHERE federal_state = 'THUERINGEN';
+    </sql>
+  </changeSet>
+
+  <changeSet author="schneider" id="add-country-to-federal-state-in-working-time-for-missing-states">
+    <preConditions>
+      <tableExists tableName="working_time"/>
+      <columnExists tableName="working_time" columnName="federal_state_override"/>
+    </preConditions>
+
+    <sql>
+      UPDATE working_time SET federal_state_override = 'GERMANY_SACHSEN_ANHALT' WHERE federal_state_override = 'SACHSEN_ANHALT';
+      UPDATE working_time SET federal_state_override = 'GERMANY_SCHLESWIG_HOLSTEIN' WHERE federal_state_override = 'SCHLESWIG_HOLSTEIN';
+      UPDATE working_time SET federal_state_override = 'GERMANY_THUERINGEN' WHERE federal_state_override = 'THUERINGEN';
+    </sql>
+  </changeSet>
+</databaseChangeLog>
