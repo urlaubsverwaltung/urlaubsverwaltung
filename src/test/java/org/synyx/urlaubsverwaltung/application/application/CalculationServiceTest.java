@@ -41,6 +41,7 @@ import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.AUGUST;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -733,6 +734,47 @@ class CalculationServiceTest {
 
         final boolean enoughDaysLeft = sut.checkApplication(applicationForLeaveToCheck);
         assertThat(enoughDaysLeft).isFalse();
+    }
+
+    @Test
+    void ensureValidApplicationWithVacationLeftBeforeAprilAndNoVacationLeftAfterApril() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate date = LocalDate.of(2022, FEBRUARY, 1);
+
+        final WorkingTime workingTime = new WorkingTime(person, date, GERMANY_BADEN_WUERTTEMBERG, false);
+        workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY), FULL);
+        when(workingTimeService.getWorkingTimesByPersonAndDateRange(eq(person), any(DateRange.class))).thenReturn(Map.of(new DateRange(date, date), workingTime));
+
+        final Application applicationForLeaveToCheck = createApplicationStub(person);
+
+        applicationForLeaveToCheck.setStartDate(date);
+        applicationForLeaveToCheck.setEndDate(date);
+
+        final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, TEN, ZERO, "");
+        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
+
+        final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
+        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
+
+        when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
+            .thenReturn(VacationDaysLeft.builder()
+                .withAnnualVacation(TEN)
+                .withRemainingVacation(TEN)
+                .notExpiring(ZERO)
+                .forUsedDaysBeforeApril(ZERO)
+                .forUsedDaysAfterApril(TEN)
+                .withVacationDaysUsedNextYear(ZERO)
+                .build());
+
+        when(vacationDaysService.getRemainingVacationDaysAlreadyUsed(Optional.of(account2023))).thenReturn(ZERO);
+
+        final boolean actual = sut.checkApplication(applicationForLeaveToCheck);
+        assertThat(actual).isTrue();
     }
 
     private Application createApplicationStub(Person person) {
