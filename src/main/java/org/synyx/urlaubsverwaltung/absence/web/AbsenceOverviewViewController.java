@@ -1,11 +1,14 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomCollectionEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
@@ -75,6 +78,11 @@ public class AbsenceOverviewViewController {
         this.settingsService = settingsService;
         this.absenceService = absenceService;
         this.workingTimeService = workingTimeService;
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(List.class, new CustomCollectionEditor(List.class));
     }
 
     @GetMapping
