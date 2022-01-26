@@ -129,7 +129,6 @@
 .datepicker-day {
   overflow: hidden;
   position: relative;
-  /* TODO css variable for absence-bar */
   --absence-bar-color-morning: theme("backgroundColor.calendar.DEFAULT");
   --absence-bar-color-noon: theme("backgroundColor.calendar.DEFAULT");
   --absence-bar-color: theme("backgroundColor.calendar.DEFAULT");
