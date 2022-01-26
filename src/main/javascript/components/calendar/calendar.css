@@ -92,7 +92,7 @@
   color: theme("textColor.calendar.DEFAULT");
   font-size: 0.875rem;
   font-weight: 400;
-  @apply dark:tw-font-medium;
+  @apply dark:tw-font-semibold;
   text-align: center;
 }
 
@@ -123,7 +123,7 @@
 .datepicker-table thead tr th {
   padding: 0.5em;
   font-weight: normal;
-  @apply dark:tw-font-medium;
+  @apply dark:tw-font-semibold;
 }
 
 .datepicker-day {
@@ -141,7 +141,7 @@
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
-  @apply dark:tw-font-medium;
+  @apply dark:tw-font-semibold;
 }
 
 .datepicker-day-past {
