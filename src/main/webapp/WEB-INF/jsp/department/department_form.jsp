@@ -93,7 +93,6 @@
                 <div class="row tw-mb-8">
                     <div class="col-md-4 col-md-push-8">
                         <span class="help-block tw-text-sm">
-                            <spring:message code="department.data.twoStageApproval.help"/><br/>
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                             <spring:message code="department.data.twoStageApproval.help.members"/><br/>
                             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
