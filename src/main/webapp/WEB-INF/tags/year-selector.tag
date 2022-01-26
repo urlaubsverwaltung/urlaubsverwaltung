@@ -16,7 +16,7 @@
         aria-expanded="false"
         class="tw-text-current"
     >
-        <c:out value="${year}" /><span class="tw-opacity-70 caret"></span>
+        <c:out value="${year}" /><span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
     </a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-link">
         <c:forEach begin="0" end="10" varStatus="loop">
