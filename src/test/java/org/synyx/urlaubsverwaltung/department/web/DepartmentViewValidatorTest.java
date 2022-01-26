@@ -59,6 +59,38 @@ class DepartmentViewValidatorTest {
     }
 
     @Test
+    void ensureValidNameDoesNotContainDelimiterStart() {
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName(":::Department");
+        sut.validate(departmentForm, errors);
+        verify(errors).rejectValue("name", "error.entry.delimiterFound");
+    }
+
+    @Test
+    void ensureValidNameDoesNotContainDelimiterEnd() {
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department:::");
+        sut.validate(departmentForm, errors);
+        verify(errors).rejectValue("name", "error.entry.delimiterFound");
+    }
+
+    @Test
+    void ensureValidNameDoesNotContainDelimiterMiddle() {
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Depart:::ment");
+        sut.validate(departmentForm, errors);
+        verify(errors).rejectValue("name", "error.entry.delimiterFound");
+    }
+
+    @Test
+    void ensureValidNameDoesContainShortDelimiter() {
+        final DepartmentForm departmentForm = new DepartmentForm();
+        departmentForm.setName("Department::");
+        sut.validate(departmentForm, errors);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
     void ensureValidNameHasNoValidationError() {
         final DepartmentForm departmentForm = new DepartmentForm();
         departmentForm.setName("Department");

@@ -47,7 +47,7 @@
     "underscore": "1.13.2"
   },
   "devDependencies": {
-    "@babel/core": "7.16.7",
+    "@babel/core": "7.16.12",
     "@babel/eslint-parser": "7.16.5",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.16.11",
@@ -58,7 +58,7 @@
     "babel-loader": "8.2.3",
     "concurrently": "7.0.0",
     "css-loader": "5.2.7",
-    "cssnano": "5.0.15",
+    "cssnano": "5.0.16",
     "date-fns": "2.28.0",
     "eslint": "8.7.0",
     "eslint-config-prettier": "8.3.0",
@@ -85,6 +85,6 @@
     "url-loader": "4.1.1",
     "webpack": "4.46.0",
     "webpack-assets-manifest": "3.1.1",
-    "webpack-cli": "4.9.1"
+    "webpack-cli": "4.9.2"
   }
 }

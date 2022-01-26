@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -25,14 +24,16 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
-
 
 @Controller
 @RequestMapping("/web/calendars/share")
 public class CalendarSharingViewController {
 
-    private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D = "redirect:/web/calendars/share/persons/%d";
+    private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS = "redirect:/web/calendars/share/persons/%d";
+
     private final PersonCalendarService personCalendarService;
     private final DepartmentCalendarService departmentCalendarService;
     private final CompanyCalendarService companyCalendarService;
@@ -42,7 +43,8 @@ public class CalendarSharingViewController {
 
     @Autowired
     public CalendarSharingViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
-                                         CompanyCalendarService companyCalendarService, PersonService personService, DepartmentService departmentService, CalendarAccessibleService calendarAccessibleService) {
+                                         CompanyCalendarService companyCalendarService, PersonService personService, DepartmentService departmentService,
+                                         CalendarAccessibleService calendarAccessibleService) {
         this.personCalendarService = personCalendarService;
         this.departmentCalendarService = departmentCalendarService;
         this.companyCalendarService = companyCalendarService;
@@ -53,8 +55,7 @@ public class CalendarSharingViewController {
 
     @GetMapping
     public String redirect() {
-
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personService.getSignedInUser().getId());
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personService.getSignedInUser().getId());
     }
 
     @GetMapping("/persons/{personId}")
@@ -68,7 +69,9 @@ public class CalendarSharingViewController {
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
         model.addAttribute("calendarPeriods", CalendarPeriodViewType.values());
 
-        setCompanyCalendarViewModel(model, personId);
+        final Person signedInUser = personService.getSignedInUser();
+        prepareModelForOtherCalendarSharePerson(personId, model, signedInUser);
+        prepareModelForCompanyCalendar(model, personId, signedInUser);
 
         return "calendarsharing/index";
     }
@@ -84,9 +87,21 @@ public class CalendarSharingViewController {
         model.addAttribute("departmentCalendars", departmentCalendarDtos);
         model.addAttribute("calendarPeriods", CalendarPeriodViewType.values());
 
-        setCompanyCalendarViewModel(model, personId);
+        final Person signedInUser = personService.getSignedInUser();
+        prepareModelForOtherCalendarSharePerson(personId, model, signedInUser);
+        prepareModelForCompanyCalendar(model, personId, signedInUser);
 
         return "calendarsharing/index";
+    }
+
+    private void prepareModelForOtherCalendarSharePerson(int personId, Model model, Person signedInUser) {
+        final boolean isSignedInUser = personId == signedInUser.getId();
+        model.addAttribute("isSignedInUser", isSignedInUser);
+
+        if (!isSignedInUser) {
+            final Optional<Person> calendarSharePerson = personService.getPersonByID(personId);
+            model.addAttribute("personName", calendarSharePerson.map(Person::getNiceName).orElse(""));
+        }
     }
 
     @PostMapping(value = "/persons/{personId}/me")
@@ -96,7 +111,7 @@ public class CalendarSharingViewController {
         final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
         personCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
     @PostMapping(value = "/persons/{personId}/me", params = "unlink")
@@ -105,7 +120,7 @@ public class CalendarSharingViewController {
 
         personCalendarService.deletePersonalCalendarForPerson(personId);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
     @PostMapping(value = "/persons/{personId}/departments/{departmentId}")
@@ -135,7 +150,7 @@ public class CalendarSharingViewController {
         final Period calendarPeriod = companyCalendarDto.getCalendarPeriod().getPeriod();
         companyCalendarService.createCalendarForPerson(personId, calendarPeriod);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
     @PostMapping(value = "/persons/{personId}/company", params = "unlink")
@@ -144,7 +159,7 @@ public class CalendarSharingViewController {
 
         companyCalendarService.deleteCalendarForPerson(personId);
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
     @PostMapping(value = "/persons/{personId}/company/accessible")
@@ -157,13 +172,12 @@ public class CalendarSharingViewController {
             calendarAccessibleService.disableCompanyCalendar();
         }
 
-        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS_D, personId);
+        return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
-    private void setCompanyCalendarViewModel(Model model, @PathVariable int personId) {
+    private void prepareModelForCompanyCalendar(Model model, int personId, Person signedInUser) {
 
-        final Person signedInUser = personService.getSignedInUser();
-        final boolean isBossOrOffice = signedInUser.hasRole(Role.OFFICE) || signedInUser.hasRole(Role.BOSS);
+        final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
         final boolean companyCalendarAccessible = calendarAccessibleService.isCompanyCalendarAccessible();
 
         if (isBossOrOffice) {
@@ -180,7 +194,7 @@ public class CalendarSharingViewController {
         }
     }
 
-    private PersonCalendarDto getPersonCalendarDto(@PathVariable int personId) {
+    private PersonCalendarDto getPersonCalendarDto(int personId) {
         final PersonCalendarDto dto = new PersonCalendarDto();
         dto.setPersonId(personId);
 
@@ -199,7 +213,6 @@ public class CalendarSharingViewController {
     }
 
     private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId) {
-
         return getDepartmentCalendarDtos(personId, null);
     }
 
@@ -244,7 +257,7 @@ public class CalendarSharingViewController {
         return departmentCalendarDtos;
     }
 
-    private CompanyCalendarDto getCompanyCalendarDto(@PathVariable int personId) {
+    private CompanyCalendarDto getCompanyCalendarDto(int personId) {
 
         final CompanyCalendarDto companyCalendarDto = new CompanyCalendarDto();
         companyCalendarDto.setPersonId(personId);
@@ -264,7 +277,7 @@ public class CalendarSharingViewController {
         return companyCalendarDto;
     }
 
-    private Person getPersonOrThrow(Integer personId) {
+    private Person getPersonOrThrow(int personId) {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personId);
         if (maybePerson.isEmpty()) {

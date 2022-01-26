@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
@@ -28,6 +29,7 @@ public class DepartmentViewValidator implements Validator {
 
     private static final String ERROR_REASON = "error.entry.mandatory";
     private static final String ERROR_LENGTH = "error.entry.tooManyChars";
+    private static final String ERROR_DELIMITER = "error.entry.delimiterFound";
     private static final String ERROR_DEPARTMENT_HEAD_NOT_ASSIGNED = "department.members.error.departmentHeadNotAssigned";
     private static final String ERROR_DEPARTMENT_HEAD_NO_ACCESS = "department.members.error.departmentHeadHasNoAccess";
 
@@ -50,16 +52,21 @@ public class DepartmentViewValidator implements Validator {
         validateSecondStageAuthorities(errors, departmentForm.isTwoStageApproval(), departmentForm.getSecondStageAuthorities());
     }
 
-    private void validateName(Errors errors, String text) {
+    private void validateName(Errors errors, String name) {
 
-        final boolean hasText = StringUtils.hasText(text);
+        final boolean hasText = StringUtils.hasText(name);
 
         if (!hasText) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_REASON);
         }
 
-        if (hasText && text.length() > MAX_CHARS_NAME) {
+        if (hasText && name.length() > MAX_CHARS_NAME) {
             errors.rejectValue(ATTRIBUTE_NAME, ERROR_LENGTH);
+        }
+
+        final Pattern regex = Pattern.compile(":::");
+        if (hasText && regex.matcher(name).find()) {
+            errors.rejectValue(ATTRIBUTE_NAME, ERROR_DELIMITER);
         }
     }
 
