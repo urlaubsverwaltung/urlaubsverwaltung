@@ -24,7 +24,7 @@
 <div class="content container tw-mb-20">
     <header>
         <h1 class="tw-mb-8 tw-text-2xl tw-text-medium">
-            <spring:message code="calendar.share.title"/>
+            <spring:message code="${isSignedInUser ? 'calendar.share.title' : 'calendar.share.title.other'}" arguments="${isSignedInUser ? '' : personName}"/>
         </h1>
     </header>
     <main>
@@ -52,14 +52,14 @@
             <div class="tw-mb-4">
                 <uv:section-heading>
                     <h2 id="calendar-private" class="tw-text-xl">
-                        <spring:message code="calendar.share.me.title"/>
+                        <spring:message code="${isSignedInUser ? 'calendar.share.me.title' : 'calendar.share.me.title.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                     </h2>
                 </uv:section-heading>
                 <c:choose>
                     <c:when test="${empty privateCalendarShare.calendarUrl}">
                         <div class="tw-max-w-3xl">
                             <p class="tw-mb-8 tw-text-base">
-                                <spring:message code="calendar.share.me.paragraph.status"/>
+                                <spring:message code="${isSignedInUser ? 'calendar.share.me.paragraph.status' : 'calendar.share.me.paragraph.status.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                             </p>
                             <p>
                                 <spring:message code="calendar.share.range.paragraph"/>
@@ -84,7 +84,7 @@
                                 </c:forEach>
                             </div>
                             <button type="submit" class="button-main">
-                                <spring:message code="calendar.share.me.form.submit.text"/>
+                                <spring:message code="${isSignedInUser ? 'calendar.share.me.form.submit.text' : 'calendar.share.me.form.submit.text.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                             </button>
                         </div>
                     </c:when>
@@ -93,11 +93,11 @@
                             <p class="tw-mb-8 tw-text-base">
                                 <c:choose>
                                     <c:when test="${privateCalendarShare.calendarPeriod == 'ALL'}">
-                                        <spring:message code="calendar.share.me.isshared.paragraph.status.all"/>
+                                        <spring:message code="${isSignedInUser ? 'calendar.share.me.isshared.paragraph.status.all' : 'calendar.share.me.isshared.paragraph.status.all.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                                     </c:when>
                                     <c:otherwise>
                                         <spring:message var="privateCalendarPeriodText" code="calendar.share.me.range.${privateCalendarShare.calendarPeriod}" />
-                                        <spring:message code="calendar.share.me.isshared.paragraph.status" arguments="${privateCalendarPeriodText}"/>
+                                        <spring:message code="${isSignedInUser ? 'calendar.share.me.isshared.paragraph.status' : 'calendar.share.me.isshared.paragraph.status.other'}" arguments="${isSignedInUser ? '' : personName},${privateCalendarPeriodText}"/>
                                     </c:otherwise>
                                 </c:choose>
                             </p>
@@ -157,7 +157,7 @@
                                 <c:when test="${empty departmentCal.calendarUrl}">
                                     <div class="tw-max-w-3xl">
                                         <p class="tw-mb-8 tw-text-base">
-                                            <spring:message code="calendar.share.department.paragraph.status" arguments="${departmentCal.departmentName}"/>
+                                            <spring:message code="${isSignedInUser ? 'calendar.share.department.paragraph.status' : 'calendar.share.department.paragraph.status.other'}" arguments="${departmentCal.departmentName}:::${isSignedInUser ? '' : personName}" argumentSeparator=":::"/>
                                         </p>
                                         <p>
                                             <spring:message code="calendar.share.range.paragraph"/>
@@ -182,7 +182,7 @@
                                             </c:forEach>
                                         </div>
                                         <button type="submit" class="button-main">
-                                            <spring:message code="calendar.share.department.form.submit.text" arguments="${departmentCal.departmentName}" />
+                                            <spring:message code="${isSignedInUser ? 'calendar.share.department.form.submit.text' : 'calendar.share.department.form.submit.text.other'}" arguments="${departmentCal.departmentName}:::${isSignedInUser ? '' : personName}" argumentSeparator=":::"/>
                                         </button>
                                     </div>
                                 </c:when>
@@ -191,13 +191,11 @@
                                         <p class="tw-mb-8 tw-text-base">
                                             <c:choose>
                                                 <c:when test="${departmentCal.calendarPeriod == 'ALL'}">
-                                                    <spring:message code="calendar.share.department.isshared.paragraph.status.all" arguments="${departmentCal.departmentName}"/>
+                                                    <spring:message code="${isSignedInUser ? 'calendar.share.department.isshared.paragraph.status.all' : 'calendar.share.department.isshared.paragraph.status.all.other'}" arguments="${departmentCal.departmentName}:::${isSignedInUser ? '' : personName}" argumentSeparator=":::"/>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <spring:message var="departmentCalendarPeriodText" code="calendar.share.department.range.${departmentCal.calendarPeriod}" />
-                                                    <spring:message code="calendar.share.department.isshared.paragraph.status"
-                                                                    arguments="${departmentCal.departmentName}:::${departmentCalendarPeriodText}"
-                                                                    argumentSeparator=":::"/>
+                                                    <spring:message code="${isSignedInUser ? 'calendar.share.department.isshared.paragraph.status' : 'calendar.share.department.isshared.paragraph.status.other'}" arguments="${departmentCal.departmentName}:::${departmentCalendarPeriodText}:::${isSignedInUser ? '' : personName}" argumentSeparator=":::"/>
                                                 </c:otherwise>
                                             </c:choose>
                                         </p>
@@ -273,7 +271,7 @@
                             <c:when test="${empty companyCalendarShare.calendarUrl}">
                                 <div class="tw-max-w-3xl">
                                     <p class="tw-mb-8 tw-text-base">
-                                        <spring:message code="calendar.share.company.paragraph.status"/>
+                                        <spring:message code="${isSignedInUser ? 'calendar.share.company.paragraph.status' : 'calendar.share.company.paragraph.status.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                                     </p>
                                     <p>
                                         <spring:message code="calendar.share.range.paragraph"/>
@@ -301,7 +299,7 @@
                                         </c:forEach>
                                     </div>
                                     <button type="submit" class="button-main">
-                                        <spring:message code="calendar.share.company.form.submit.text"/>
+                                        <spring:message code="${isSignedInUser ? 'calendar.share.company.form.submit.text' : 'calendar.share.company.form.submit.text.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                                     </button>
                                 </div>
                             </c:when>
@@ -310,11 +308,11 @@
                                     <p class="tw-mb-8 tw-text-base">
                                         <c:choose>
                                             <c:when test="${companyCalendarShare.calendarPeriod == 'ALL'}">
-                                                <spring:message code="calendar.share.company.isshared.paragraph.status.all"/>
+                                                <spring:message code="${isSignedInUser ? 'calendar.share.company.isshared.paragraph.status.all' : 'calendar.share.company.isshared.paragraph.status.all.other'}" arguments="${isSignedInUser ? '' : personName}"/>
                                             </c:when>
                                             <c:otherwise>
                                                 <spring:message var="calendarPeriodText" code="calendar.share.company.range.${companyCalendarShare.calendarPeriod}" />
-                                                <spring:message code="calendar.share.company.isshared.paragraph.status" arguments="${calendarPeriodText}"/>
+                                                <spring:message code="${isSignedInUser ? 'calendar.share.company.isshared.paragraph.status' : 'calendar.share.company.isshared.paragraph.status.other'}" arguments="${isSignedInUser ? '' : personName},${calendarPeriodText}"/>
                                             </c:otherwise>
                                         </c:choose>
                                     </p>

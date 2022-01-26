@@ -146,6 +146,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     void indexForSameUserIsForbidden() throws Exception {
 
         final Person person = new Person();
+        person.setId(1);
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);

@@ -99,7 +99,9 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     void indexAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
+        person.setId(1);
         person.setUsername("user");
+
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -114,6 +116,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     void indexAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
+        person.setId(1);
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
@@ -129,7 +132,9 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     void indexForSameUserIsForbidden() throws Exception {
 
         final Person person = new Person();
+        person.setId(1);
         person.setUsername("user");
+
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 

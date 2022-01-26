@@ -54,6 +54,10 @@
     <c:set var="IS_OFFICE" value="true"/>
 </sec:authorize>
 
+<sec:authorize access="hasAuthority('BOSS')">
+    <c:set var="IS_BOSS" value="true"/>
+</sec:authorize>
+
 <uv:menu/>
 
 <div class="content">
@@ -126,18 +130,25 @@
 
         <!-- Calendar -->
         <div class="print:tw-hidden">
+
             <uv:section-heading>
                 <jsp:attribute name="actions">
-                    <div class="tw-flex tw-flex-wrap tw-justify-end tw-space-y-2 sm:tw-space-y-0 sm:tw-space-x-2">
-                        <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0" aria-hidden="true" href="${URL_PREFIX}/absences">
-                            <icon:calendar className="tw-w-5 tw-h-5" />
-                            &nbsp;<spring:message code="overview.absences.overview.link.text" />
+                <div class="tw-flex tw-flex-wrap tw-justify-end tw-space-y-2 sm:tw-space-y-0 sm:tw-space-x-2">
+                    <c:if test="${person.id == signedInUser.id}">
+                        <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                           aria-hidden="true" href="${URL_PREFIX}/absences">
+                            <icon:calendar className="tw-w-5 tw-h-5"/>
+                            &nbsp;<spring:message code="overview.absences.overview.link.text"/>
                         </a>
-                        <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row" aria-hidden="true" href="${URL_PREFIX}/calendars/share">
-                            <icon:share className="tw-w-5 tw-h-5" />
-                            &nbsp;<spring:message code="overview.calendar.share.link.text" />
+                    </c:if>
+                    <c:if test="${person.id == signedInUser.id || IS_OFFICE || IS_BOSS}">
+                        <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+                           aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${person.id}">
+                            <icon:share className="tw-w-5 tw-h-5"/>
+                            &nbsp;<spring:message code="overview.calendar.share.link.text"/>
                         </a>
-                    </div>
+                    </c:if>
+                </div>
                 </jsp:attribute>
                 <jsp:body>
                     <h2 id="calendar">
