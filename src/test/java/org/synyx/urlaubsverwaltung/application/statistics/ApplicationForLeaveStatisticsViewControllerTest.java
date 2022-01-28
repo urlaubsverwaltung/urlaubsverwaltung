@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -20,7 +19,6 @@ import java.time.Year;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.replaceAll;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,11 +50,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-
-        final DateFormatAware dateFormatAware = new DateFormatAware();
-
         sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware);
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware());
     }
 
     @Test
