@@ -37,19 +37,28 @@ class ApplicationForLeaveStatisticsCsvExportService {
     }
 
     void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
-        final String[] csvHeader = {getTranslation("person.data.firstName", "Vorname"),
-            getTranslation("person.data.lastName", "Nachname"), "",
-            getTranslation("applications.statistics.allowed", "genehmigt"),
-            getTranslation("applications.statistics.waiting", "noch nicht genehmigt"),
-            getTranslation("applications.statistics.left", "verbleibend") + " (" + period.getStartDate().getYear() + ")", ""};
-
-        final String[] csvSubHeader = {"", "", "", "", "", getTranslation("duration.vacationDays", "Urlaubstage"),
-            getTranslation("duration.overtime", "Überstunden")};
+        final String[] csvHeader = {
+            getTranslation("person.data.firstName"),
+            getTranslation("person.data.lastName"),
+            "",
+            getTranslation("applications.statistics.allowed"),
+            getTranslation("applications.statistics.waiting"),
+            getTranslation("applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
+            ""
+        };
+        final String[] csvSubHeader = {
+            "",
+            "",
+            "",
+            "",
+            "",
+            getTranslation("duration.vacationDays"),
+            getTranslation("duration.overtime")
+        };
 
         final String startDateString = dateFormatAware.format(period.getStartDate());
         final String endDateString = dateFormatAware.format(period.getEndDate());
-
-        final String headerNote = getTranslation("absence.period", "Zeitraum") + ": " + startDateString + " - " + endDateString;
+        final String headerNote = getTranslation("absence.period") + ": " + startDateString + " - " + endDateString;
 
         final DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
         newSymbols.setDecimalSeparator(',');
@@ -64,7 +73,7 @@ class ApplicationForLeaveStatisticsCsvExportService {
 
         final List<VacationType> allVacationTypes = vacationTypeService.getAllVacationTypes();
 
-        final String translatedTextTotal = getTranslation("applications.statistics.total", "gesamt");
+        final String translatedTextTotal = getTranslation("applications.statistics.total");
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
 
             final String[] csvRow = new String[csvHeader.length];
@@ -90,7 +99,7 @@ class ApplicationForLeaveStatisticsCsvExportService {
     }
 
     String getFileName(FilterPeriod period) {
-        return format("%s_%s_%s.csv", getTranslation("applications.statistics", "Statistik"),
+        return format("%s_%s_%s.csv", getTranslation("applications.statistics"),
             period.getStartDate().format(ofPattern(DATE_FORMAT)),
             period.getEndDate().format(ofPattern(DATE_FORMAT)));
     }
