@@ -30,6 +30,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @SpringBootTest
 class AbsenceApiControllerSecurityIT extends TestContainersBase {
@@ -110,12 +111,49 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
+    void getAbsencesAsSSAUserForOtherUserIsForbidden() throws Exception {
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person ssa = new Person();
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
+
+        final Department department = new Department();
+        department.setMembers(List.of());
+
+        final List<Department> departments = List.of(department);
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
+
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
+    void getAbsencesAsSSAUserForOtherUserInSameDepartmentIsOk() throws Exception {
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person ssa = new Person();
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
+
+        final Department department = new Department();
+        department.setMembers(List.of(person));
+        final List<Department> departments = List.of(department);
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
+
+        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(emptyList());
+
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
+            .andExpect(status().isOk());
     }
 
     @Test

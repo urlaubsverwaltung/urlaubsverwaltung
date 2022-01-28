@@ -69,7 +69,8 @@ public class AbsenceApiController {
     @GetMapping(ABSENCES)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
-        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public DayAbsencesDto personsAbsences(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")

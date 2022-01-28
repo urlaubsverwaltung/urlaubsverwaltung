@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Component
 public class UserApiMethodSecurity {
@@ -25,6 +26,22 @@ public class UserApiMethodSecurity {
     public UserApiMethodSecurity(PersonService personService, DepartmentService departmentService) {
         this.personService = personService;
         this.departmentService = departmentService;
+    }
+
+    public boolean isInDepartmentOfSecondStageAuthority(Authentication authentication, Integer userId) {
+        final Optional<Person> loggedInUser = personService.getPersonByUsername(userName(authentication));
+
+        if (loggedInUser.isEmpty() || !loggedInUser.get().hasRole(SECOND_STAGE_AUTHORITY)) {
+            return false;
+        }
+
+        final Optional<Person> person = personService.getPersonByID(userId);
+        if (person.isEmpty()) {
+            return false;
+        }
+
+        final List<Department> departmentsOfSecondStageAuthority = departmentService.getManagedDepartmentsOfSecondStageAuthority(loggedInUser.get());
+        return departmentsOfSecondStageAuthority.stream().anyMatch(d -> d.getMembers().contains(person.get()));
     }
 
     public boolean isInDepartmentOfDepartmentHead(Authentication authentication, Integer userId) {
