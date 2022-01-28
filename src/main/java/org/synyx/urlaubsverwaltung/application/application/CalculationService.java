@@ -119,10 +119,7 @@ class CalculationService {
             .subtract(vacationDaysAlreadyUsedNextYear);
 
         final BigDecimal vacationDaysRequestedAfterApril = workDays.subtract(vacationDaysRequestedBeforeApril);
-        final BigDecimal vacationDaysLeftAfterApril = vacationDaysLeftUntilApril
-            .subtract(vacationDaysRequestedAfterApril)
-            .subtract(vacationDaysLeft.getRemainingVacationDays())
-            .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        final BigDecimal vacationDaysLeftAfterApril = getVacationDaysLeftAfterApril(vacationDaysLeft, vacationDaysLeftUntilApril, vacationDaysRequestedAfterApril);
 
         LOG.debug("vacation days left until april are {} and after april are {}", vacationDaysLeftUntilApril, vacationDaysLeftAfterApril);
 
@@ -135,6 +132,17 @@ class CalculationService {
         }
 
         return true;
+    }
+
+    private BigDecimal getVacationDaysLeftAfterApril(VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysLeftUntilApril, BigDecimal vacationDaysRequestedAfterApril) {
+        BigDecimal vacationDaysLeftAfterApril = ZERO;
+        if (vacationDaysRequestedAfterApril.signum() > 0) {
+            vacationDaysLeftAfterApril = vacationDaysLeftUntilApril
+                .subtract(vacationDaysRequestedAfterApril)
+                .subtract(vacationDaysLeft.getRemainingVacationDays())
+                .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+        }
+        return vacationDaysLeftAfterApril;
     }
 
     private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
