@@ -120,7 +120,8 @@ class ApplicationForLeaveViewController {
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
         final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
-        final boolean canAllow = isBoss || isDepartmentHead || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+        final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+        final boolean canAllow = isBoss || isDepartmentHead || isSecondStageAuthority;
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
@@ -132,7 +133,7 @@ class ApplicationForLeaveViewController {
             .statusWaiting(isWaiting)
             .editAllowed(isWaiting && person.equals(signedInUser))
             .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
-            .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting)
+            .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting && !isSecondStageAuthority)
             .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
             .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))

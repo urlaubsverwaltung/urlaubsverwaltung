@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -410,7 +411,7 @@ class ApplicationForLeaveViewControllerTest {
         applicationCancellationRequest.setDayLength(FULL);
 
         when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
-            .thenReturn(List.of(departmentHeadAndSecondStageAuth));
+            .thenReturn(List.of(departmentHeadAndSecondStageAuth)); // todo check condition
 
         final List<Person> membersDepartment = List.of(userOfDepartmentA);
         when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
@@ -603,6 +604,63 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("note", is("awesome, thanks dude!"))
                 )
             )))
+            .andExpect(view().name("thymeleaf/application/application-overview"));
+    }
+
+    @Test
+    void ensureSecondStageAuthorityViewsAllowButton() throws Exception{
+
+        final Person departmentHeadAndSecondStageAuth = new Person();
+        departmentHeadAndSecondStageAuth.setId(1);
+        departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
+        departmentHeadAndSecondStageAuth.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
+
+        final Person userOfDepartmentA = new Person();
+        userOfDepartmentA.setId(2);
+        userOfDepartmentA.setFirstName("userOfDepartmentA");
+        userOfDepartmentA.setPermissions(List.of(USER));
+        final Application applicationOfUserA = new Application();
+        applicationOfUserA.setId(1);
+        applicationOfUserA.setVacationType(anyVacationType());
+        applicationOfUserA.setPerson(userOfDepartmentA);
+        applicationOfUserA.setStatus(WAITING);
+        applicationOfUserA.setStartDate(LocalDate.MAX);
+        applicationOfUserA.setEndDate(LocalDate.MAX);
+        applicationOfUserA.setTwoStageApproval(true);
+
+
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
+            .thenReturn(List.of(userOfDepartmentA));
+
+        final List<Person> membersDepartment = List.of(userOfDepartmentA);
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
+
+        // #getApplicationsForLeaveForSecondStageAuthority
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(departmentHeadAndSecondStageAuth)))
+            .thenReturn(Lists.emptyList());
+
+        // #getApplicationsForLeaveForSecondStageAuthority
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(userOfDepartmentA)))
+            .thenReturn(List.of(applicationOfUserA));
+
+        perform(get("/web/application"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(departmentHeadAndSecondStageAuth)))
+            .andExpect(model().attribute("userApplications", hasSize(0)))
+            .andExpect(model().attribute("otherApplications", hasSize(1)))
+            .andExpect(model().attribute("otherApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("person",
+                        hasProperty("name", equalTo("userOfDepartmentA"))
+                    ),
+                    hasProperty("temporaryApproveAllowed",equalTo(false)
+                    )
+                )
+            )))
+            .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
 
