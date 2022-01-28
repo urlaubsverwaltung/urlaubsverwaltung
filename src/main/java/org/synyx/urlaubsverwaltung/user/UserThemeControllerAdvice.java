@@ -28,7 +28,6 @@ public class UserThemeControllerAdvice {
     @ModelAttribute
     public void addUserThemeAttribute(Model model) {
 
-        // TODO save selected theme in cookie or session to avoid database query on every request
         final Theme theme = getTheme().orElse(Theme.SYSTEM);
         final String themeValueLowerCase = theme.name().toLowerCase();
 
