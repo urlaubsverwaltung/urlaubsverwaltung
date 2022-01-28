@@ -123,7 +123,7 @@ class ApplicationRecipientService {
 
     private List<Person> getResponsibleSecondStageAuthorities(Person applicationPerson) {
         Predicate<Person> responsibleSecondStageAuthority = secondStageAuthority ->
-            departmentService.isSecondStageAuthorityOfPerson(secondStageAuthority, applicationPerson);
+            departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, applicationPerson);
 
         return personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)
             .stream()
@@ -137,8 +137,8 @@ class ApplicationRecipientService {
     }
 
     private List<Person> getResponsibleDepartmentHeads(Person applicationPerson) {
-        Predicate<Person> responsibleDepartmentHeads = departmentHead ->
-            departmentService.isDepartmentHeadOfPerson(departmentHead, applicationPerson);
+        final Predicate<Person> responsibleDepartmentHeads = departmentHead ->
+            departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, applicationPerson);
 
         return personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)
             .stream()

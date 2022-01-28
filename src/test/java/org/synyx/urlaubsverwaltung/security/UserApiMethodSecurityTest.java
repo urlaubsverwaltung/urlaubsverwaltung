@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +42,81 @@ class UserApiMethodSecurityTest {
     @BeforeEach
     void setUp() {
         sut = new UserApiMethodSecurity(personService, departmentService);
+    }
+
+    @Test
+    void isInDepartmentOfAuthenticatedSSAPersonId() {
+        final Person member = new Person("Member", "lastname", "firstName", "email");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(member));
+
+        final String usernameSSA = "SSA";
+        final Person ssa = new Person(usernameSSA, "lastname", "firstName", "email");
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(ssa));
+
+        final Department department = new Department();
+        department.setMembers(List.of(member, ssa));
+        department.setDepartmentHeads(List.of(ssa));
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(List.of(department));
+
+        final Authentication authentication = getAuthenticationToken(usernameSSA);
+        final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedSSAPersonId).isTrue();
+    }
+
+    @Test
+    void isNotInDepartmentOfAuthenticatedSSAPersonId() {
+        final Person member = new Person("Member", "lastname", "firstName", "email");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(member));
+
+        final String usernameSSA = "SSA";
+        final Person departmentHead = new Person(usernameSSA, "lastname", "firstName", "email");
+        departmentHead.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(departmentHead));
+
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(departmentHead)).thenReturn(List.of(new Department()));
+
+        final Authentication authentication = getAuthenticationToken(usernameSSA);
+        final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedSSAPersonId).isFalse();
+    }
+
+    @Test
+    void isInDepartmentOfAuthenticatedSSAPersonIdButHasNoDepartmentHeadRole() {
+        final String usernameSSA = "SSA";
+        final Person ssa = new Person(usernameSSA, "lastname", "firstName", "email");
+        ssa.setPermissions(List.of(USER));
+        when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(ssa));
+
+        final Authentication authentication = getAuthenticationToken(usernameSSA);
+        final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedSSAPersonId).isFalse();
+    }
+
+    @Test
+    void isInDepartmentOfAuthenticatedSSAPersonIdButNoPersonFound() {
+        final String usernameSSA = "ssa";
+        final Person ssa = new Person(usernameSSA, "lastname", "firstName", "email");
+        ssa.setPermissions(List.of(USER));
+        when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(ssa));
+
+        final Authentication authentication = getAuthenticationToken(usernameSSA);
+        final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedSSAPersonId).isFalse();
+    }
+
+    @Test
+    void isInDepartmentOfAuthenticatedSSAPersonIdButIsNotLoggedIn() {
+        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+
+        final String usernameSSA = "ssa";
+        final Person ssa = new Person(usernameSSA, "lastname", "firstName", "email");
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(ssa));
+
+        final Authentication authentication = getAuthenticationToken(usernameSSA);
+        final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
+        assertThat(inDepartmentOfAuthenticatedSSAPersonId).isFalse();
     }
 
     @Test

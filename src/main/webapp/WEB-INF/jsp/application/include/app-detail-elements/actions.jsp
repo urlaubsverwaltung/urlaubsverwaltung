@@ -3,48 +3,50 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<sec:authorize access="hasAuthority('USER')">
-    <c:set var="IS_USER" value="${true}"/>
-</sec:authorize>
+<c:set var="CAN_ALLOW" value="${isBoss || isDepartmentHead || isSecondStageAuthority}"/>
+<c:set var="IS_OWN" value="${application.person.id == signedInUser.id}"/>
 
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="${true}"/>
-</sec:authorize>
-
+<c:if test="${application.status == 'ALLOWED'}">
+    <c:if test="${isOffice || IS_OWN}">
+        <jsp:include page="actions/cancel_form.jsp"/>
+    </c:if>
+</c:if>
 
 <c:if test="${application.status == 'WAITING'}">
-    <sec:authorize access="hasAuthority('USER')">
+    <c:if test="${IS_OWN && !CAN_ALLOW}">
         <jsp:include page="actions/remind_form.jsp"/>
-    </sec:authorize>
-    <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
+    </c:if>
+    <c:if test="${CAN_ALLOW && !IS_OWN}">
         <jsp:include page="actions/allow_form.jsp"/>
         <jsp:include page="actions/reject_form.jsp"/>
         <jsp:include page="actions/refer_form.jsp"/>
-    </sec:authorize>
-    <sec:authorize access="hasAuthority('USER')">
+    </c:if>
+    <c:if test="${isOffice || IS_OWN}">
         <jsp:include page="actions/cancel_form.jsp"/>
-    </sec:authorize>
+    </c:if>
 </c:if>
 
 <c:if test="${application.status == 'TEMPORARY_ALLOWED'}">
-    <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS')">
+    <c:if test="${IS_OWN && !CAN_ALLOW}">
+        <jsp:include page="actions/remind_form.jsp"/>
+    </c:if>
+    <c:if test="${CAN_ALLOW && !IS_OWN}">
         <jsp:include page="actions/allow_form.jsp"/>
         <jsp:include page="actions/reject_form.jsp"/>
         <jsp:include page="actions/refer_form.jsp"/>
-    </sec:authorize>
-</c:if>
-
-<c:if test="${application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
-    <c:if test="${IS_OFFICE || (IS_USER && application.person.id == signedInUser.id)}">
+    </c:if>
+    <c:if test="${isOffice || IS_OWN}">
         <jsp:include page="actions/cancel_form.jsp"/>
     </c:if>
 </c:if>
 
 <c:if test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
-    <sec:authorize access="hasAuthority('OFFICE')">
+    <c:if test="${isOffice}">
+        <jsp:include page="actions/cancel_form.jsp"/>
+    </c:if>
+    <c:if test="${isOffice}">
         <jsp:include page="actions/decline_cancellation_request_form.jsp"/>
-    </sec:authorize>
+    </c:if>
 </c:if>

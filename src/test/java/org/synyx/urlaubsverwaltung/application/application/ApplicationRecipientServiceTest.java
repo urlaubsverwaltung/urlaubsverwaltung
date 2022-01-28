@@ -55,7 +55,7 @@ class ApplicationRecipientServiceTest {
         // given department head
         final Person departmentHead = createPerson("departmentHead", DEPARTMENT_HEAD);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, normalUser)).thenReturn(true);
 
         // given boss
         final Person boss = createPerson("boss", BOSS);
@@ -73,7 +73,7 @@ class ApplicationRecipientServiceTest {
         final Person departmentHead = createPerson("departmentHead", DEPARTMENT_HEAD);
         final Application application = getHolidayApplication(departmentHead);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, departmentHead)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, departmentHead)).thenReturn(true);
 
         when(personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(emptyList());
 
@@ -95,7 +95,7 @@ class ApplicationRecipientServiceTest {
         // given department head
         final Person departmentHead = createPerson("departmentHead", DEPARTMENT_HEAD);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, normalUser)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, normalUser)).thenReturn(true);
 
         // given boss
         final Person boss = createPerson("boss", BOSS);
@@ -112,12 +112,12 @@ class ApplicationRecipientServiceTest {
         final Person departmentHead = createPerson("departmentHead", DEPARTMENT_HEAD);
         final Application application = getHolidayApplication(departmentHead);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(singletonList(departmentHead));
-        when(departmentService.isDepartmentHeadOfPerson(departmentHead, departmentHead)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, departmentHead)).thenReturn(true);
 
         // given second stage
         final Person secondStage = createPerson("secondStage", SECOND_STAGE_AUTHORITY);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, departmentHead)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, departmentHead)).thenReturn(true);
 
         // given boss
         final Person boss = createPerson("boss", BOSS);
@@ -173,9 +173,9 @@ class ApplicationRecipientServiceTest {
         when(personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(emptyList());
         when(personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(asList(head1, head2));
         when(personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
-        when(departmentService.isDepartmentHeadOfPerson(head1, head1)).thenReturn(true);
-        when(departmentService.isDepartmentHeadOfPerson(head2, head1)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, head1)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(head1, head1)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(head2, head1)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, head1)).thenReturn(true);
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).contains(head2, secondStage);
@@ -190,7 +190,7 @@ class ApplicationRecipientServiceTest {
         // given second stage
         final Person secondStage = createPerson("secondStage", SECOND_STAGE_AUTHORITY);
         when(personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(singletonList(secondStage));
-        when(departmentService.isSecondStageAuthorityOfPerson(secondStage, normalUser)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, normalUser)).thenReturn(true);
 
         final List<Person> recipientsForTemporaryAllow = sut.getRecipientsForTemporaryAllow(application);
         assertThat(recipientsForTemporaryAllow).hasSize(1).contains(secondStage);

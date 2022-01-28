@@ -11,16 +11,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeaveDetailsViewController;
-import org.synyx.urlaubsverwaltung.application.application.UnknownApplicationForLeaveException;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.application.ImpatientAboutApplicationForLeaveProcessException;
-import org.synyx.urlaubsverwaltung.application.application.RemindAlreadySentException;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -31,6 +24,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -100,7 +94,6 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     @Test
     void showApplicationDetailForUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
-
         assertThatThrownBy(() ->
             perform(get("/web/application/" + APPLICATION_ID))
         ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
@@ -165,11 +158,90 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void allowApplicationForUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
+    void showApplicationDetailSignedInUserIsBoss() throws Exception {
 
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
+        boss.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(boss);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isBoss", true));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsOffice() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person office = new Person("office", "office", "office", "office@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isOffice", true));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsDepartmentHeadOfPerson() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(eq(departmentHead), any(Person.class))).thenReturn(true);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isDepartmentHead", true));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsSecondStageAuthorityOfPerson() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person ssa = new Person("ssa", "ssa", "ssa", "ssa@example.org");
+        ssa.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(ssa), any(Person.class))).thenReturn(true);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isSecondStageAuthority", true));
+    }
+
+    @Test
+    void allowApplicationForUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
         assertThatThrownBy(() ->
             perform(post("/web/application/" + APPLICATION_ID + "/allow"))
         ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
+    }
+
+    @Test
+    void allowApplicationThrowsAccessDeniedForOwnApplication() {
+
+        final Person person = somePerson();
+        when(personService.getSignedInUser()).thenReturn(person);
+        final Application application = someApplication();
+        application.setPerson(person);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/allow"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -198,7 +270,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void allowApplicationAllowedForDepartmentHeadOfPerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(DEPARTMENT_HEAD));
-        when(departmentService.isDepartmentHeadOfPerson(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(any(), any())).thenReturn(true);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
 
@@ -210,7 +282,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void allowApplicationThrowsAccessDeniedForDepartmentHeadOfNotOfPerson() {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(DEPARTMENT_HEAD));
-        when(departmentService.isDepartmentHeadOfPerson(any(), any())).thenReturn(false);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(any(), any())).thenReturn(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
 
         assertThatThrownBy(() ->
@@ -222,7 +294,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void allowApplicationAllowedForSecondStageAuthorityOfPerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(SECOND_STAGE_AUTHORITY));
-        when(departmentService.isSecondStageAuthorityOfPerson(any(), any())).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(any(), any())).thenReturn(true);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
         when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
 
@@ -234,7 +306,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void allowApplicationThrowsAccessDeniedForSecondStageAuthorityOfNotOfPerson() {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(SECOND_STAGE_AUTHORITY));
-        when(departmentService.isSecondStageAuthorityOfPerson(any(), any())).thenReturn(false);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(any(), any())).thenReturn(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
 
         assertThatThrownBy(() ->
@@ -356,6 +428,21 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
+    void referApplicationCannotBeTriggeredForOwnApplication() {
+
+        final Person applicationPerson = somePerson();
+        final Application application = applicationOfPerson(applicationPerson);
+
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(personService.getSignedInUser()).thenReturn(applicationPerson);
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(applicationPerson));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/refer"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
     void referApplicationAccessibleForRoleBoss() throws Exception {
 
         final Person signedInPerson = personWithRole(BOSS);
@@ -366,7 +453,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadOfPerson(signedInPerson, applicationPerson)).thenReturn(false);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
@@ -386,7 +473,27 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadOfPerson(signedInPerson, applicationPerson)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
+
+        perform(post("/web/application/" + APPLICATION_ID + "/refer"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+    }
+
+    @Test
+    void referApplicationAccessibleForRoleSecondStageAuthority() throws Exception {
+
+        final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY);
+        final Person applicationPerson = somePerson();
+        final Person recipientPerson = somePerson();
+        final Application application = applicationOfPerson(applicationPerson);
+
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
@@ -404,12 +511,26 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void rejectApplicationThrowsAccessDeniedIfNeitherBossNorDepartmentHeadNorSecondStageAuthority() {
+    void rejectApplicationThrowsAccessDeniedOwnApplication() {
 
-        final Person signedInPerson = personWithRole(OFFICE);
+        final Person signedInPerson = somePerson();
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(signedInPerson)));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/reject"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void rejectApplicationThrowsAccessDeniedIfNeitherBossNorDepartmentHeadNorSecondStageAuthority() {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
 
         assertThatThrownBy(() ->
             perform(post("/web/application/" + APPLICATION_ID + "/reject"))
@@ -423,8 +544,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Person person = somePerson();
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadOfPerson(signedInPerson, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityOfPerson(signedInPerson, person)).thenReturn(false);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
@@ -439,8 +560,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Person person = somePerson();
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadOfPerson(signedInPerson, person)).thenReturn(true);
-        when(departmentService.isSecondStageAuthorityOfPerson(signedInPerson, person)).thenReturn(false);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
@@ -455,8 +576,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         final Person person = somePerson();
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(departmentService.isDepartmentHeadOfPerson(signedInPerson, person)).thenReturn(false);
-        when(departmentService.isSecondStageAuthorityOfPerson(signedInPerson, person)).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(false);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject"))
@@ -734,9 +855,70 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
+    void remindBossForOwnApplication() throws Exception {
+
+        final Person signedInPerson = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(signedInPerson)));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/remind"))
+            .andExpect(status().isFound());
+    }
+
+    @Test
+    void remindBossThrowsAccessDeniedIsBossTriggers() {
+
+        final Person signedInPerson = personWithRole(BOSS);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/remind"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void remindBossThrowsAccessDeniedForDepartmentHeadOfPerson() {
+
+        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/remind"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void remindBossThrowsAccessDeniedForSecondStageAuthorityOfPerson() {
+
+        final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY);
+        final Person person = somePerson();
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(applicationOfPerson(person)));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, person)).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/remind"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
     void remindBossAddsFlashAttributeIfThrowsNoException() throws Exception {
 
-        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        final Person signedInPerson = personWithRole(USER);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Application application = someApplication();
+        application.setPerson(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/remind"))
             .andExpect(flash().attribute("remindIsSent", true));
@@ -745,7 +927,11 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void remindBossAddsFlashAttributeIfThrowsRemindAlreadySentException() throws Exception {
 
+        final Person signedInPerson = personWithRole(USER);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
         final Application application = someApplication();
+        application.setPerson(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(applicationInteractionService.remind(application)).thenThrow(RemindAlreadySentException.class);
 
@@ -756,7 +942,11 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void remindBossAddsFlashAttributeIfThrowsImpatientAboutApplicationForLeaveProcessException() throws Exception {
 
+        final Person signedInPerson = personWithRole(USER);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
         final Application application = someApplication();
+        application.setPerson(signedInPerson);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
         when(applicationInteractionService.remind(application)).thenThrow(ImpatientAboutApplicationForLeaveProcessException.class);
 
@@ -767,7 +957,12 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Test
     void remindBossRedirectsToApplication() throws Exception {
 
-        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        final Person signedInPerson = personWithRole(USER);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Application application = someApplication();
+        application.setPerson(signedInPerson);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/remind"))
             .andExpect(status().isFound())

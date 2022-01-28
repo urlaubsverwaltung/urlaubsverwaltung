@@ -48,7 +48,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 
 /**
@@ -135,10 +134,10 @@ class ApplicationForLeaveDetailsViewController {
         final Person person = application.getPerson();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
-        final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) && departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
-        if (!isBoss && !isDepartmentHead && !isSecondStageAuthority) {
+        if (isOwnApplication(application, signedInUser) || (!isBoss && !isDepartmentHead && !isSecondStageAuthority)) {
             throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to allow application for leave of user '%s'",
                 signedInUser.getId(), person.getId()));
@@ -170,10 +169,10 @@ class ApplicationForLeaveDetailsViewController {
     }
 
     /*
-     * If a boss is not sure about the decision if an application should be allowed or rejected, he can ask another boss
-     * to decide about this application (an email is sent).
+     * If a boss is not sure about the decision if an application should be allowed or rejected,
+     * he can ask another boss to decide about this application (an email is sent).
      */
-    @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD)
+    @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
                                    @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
@@ -186,18 +185,21 @@ class ApplicationForLeaveDetailsViewController {
         final Person recipient = personService.getPersonByUsername(referUsername)
             .orElseThrow(() -> new UnknownPersonException(referUsername));
 
-        final Person sender = personService.getSignedInUser();
-        final boolean isBoss = sender.hasRole(BOSS);
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(sender, application.getPerson());
+        final Person person = application.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
 
-        if (isBoss || isDepartmentHead) {
-            applicationInteractionService.refer(application, recipient, sender);
+        final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+
+        if (!isOwnApplication(application, signedInUser) && (isBoss || isDepartmentHead || isSecondStageAuthority)) {
+            applicationInteractionService.refer(application, recipient, signedInUser);
             redirectAttributes.addFlashAttribute("referSuccess", true);
             return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
         throw new AccessDeniedException(format("User '%s' has not the correct permissions to refer application for " +
-            "leave to user '%s'", sender.getId(), referUsername));
+            "leave to user '%s'", signedInUser.getId(), referUsername));
     }
 
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
@@ -214,10 +216,10 @@ class ApplicationForLeaveDetailsViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadOfPerson(signedInUser, person);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
-        if (isBoss || isDepartmentHead || isSecondStageAuthority) {
+        if (!isOwnApplication(application, signedInUser) && (isBoss || isDepartmentHead || isSecondStageAuthority)) {
             comment.setMandatory(true);
             commentValidator.validate(comment, errors);
 
@@ -270,7 +272,7 @@ class ApplicationForLeaveDetailsViewController {
         // 1: user can cancel her own applications for leave if it has not been allowed yet
         // 2: user can request cancellation if the application is already allowed.
         // 3: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
-        if (signedInUser.equals(application.getPerson())) {
+        if (isOwnApplication(application, signedInUser)) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
         } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed || isAllowedCancellationRequest)) {
@@ -332,16 +334,28 @@ class ApplicationForLeaveDetailsViewController {
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
-        try {
-            applicationInteractionService.remind(application);
-            redirectAttributes.addFlashAttribute("remindIsSent", true);
-        } catch (RemindAlreadySentException ex) {
-            redirectAttributes.addFlashAttribute("remindAlreadySent", true);
-        } catch (ImpatientAboutApplicationForLeaveProcessException ex) {
-            redirectAttributes.addFlashAttribute("remindNoWay", true);
+        final Person person = application.getPerson();
+        final Person signedInUser = personService.getSignedInUser();
+
+        final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+
+        if (isOwnApplication(application, signedInUser) && !(isBoss || isDepartmentHead || isSecondStageAuthority)) {
+            try {
+                applicationInteractionService.remind(application);
+                redirectAttributes.addFlashAttribute("remindIsSent", true);
+            } catch (RemindAlreadySentException ex) {
+                redirectAttributes.addFlashAttribute("remindAlreadySent", true);
+            } catch (ImpatientAboutApplicationForLeaveProcessException ex) {
+                redirectAttributes.addFlashAttribute("remindNoWay", true);
+            }
+
+            return REDIRECT_WEB_APPLICATION + applicationId;
         }
 
-        return REDIRECT_WEB_APPLICATION + applicationId;
+        throw new AccessDeniedException(format("User '%s' has not the correct permissions to remind application for " +
+            "leave of user '%s'", signedInUser.getId(), person.getId()));
     }
 
     private void prepareDetailView(Application application, int year, String action, boolean shortcut, Model model, Person signedInUser) {
@@ -390,9 +404,21 @@ class ApplicationForLeaveDetailsViewController {
             model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
         }
 
+        // Signed in person is allowed to manage
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
+        model.addAttribute("isDepartmentHead", isDepartmentHead);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
+        model.addAttribute("isSecondStageAuthority", isSecondStageAuthority);
+        model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
+        model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
+
         // UNSPECIFIC ATTRIBUTES
         model.addAttribute("year", year);
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);
+    }
+
+    private boolean isOwnApplication(Application application, Person signedInUser) {
+        return signedInUser.equals(application.getPerson());
     }
 }

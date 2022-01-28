@@ -83,7 +83,8 @@ public class PublicHolidayApiController {
     @GetMapping("/persons/{personId}/public-holidays")
     @PreAuthorize(IS_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
-        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public PublicHolidaysDto personsPublicHolidays(
         @Parameter(description = "ID of the person to get the public holidays for.")
         @PathVariable("personId")

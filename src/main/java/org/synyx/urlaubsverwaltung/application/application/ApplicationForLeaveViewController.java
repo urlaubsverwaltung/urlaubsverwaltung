@@ -280,7 +280,7 @@ class ApplicationForLeaveViewController {
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
-        final List<Person> members = departmentService.getManagedMembersOfDepartmentHead(head);
+        final List<Person> members = departmentService.getMembersForDepartmentHead(head);
         return applicationService.getForStatesAndPerson(List.of(WAITING), members).stream()
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
@@ -290,7 +290,7 @@ class ApplicationForLeaveViewController {
     }
 
     private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
-        final List<Person> members = departmentService.getManagedMembersForSecondStageAuthority(secondStage);
+        final List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
             .filter(withoutApplicationsOf(secondStage))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))

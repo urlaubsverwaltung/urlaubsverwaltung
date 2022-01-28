@@ -8,9 +8,9 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
@@ -29,6 +29,11 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED_DIRECTLY;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.APPLIED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED;
@@ -36,14 +41,8 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REVOKED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
@@ -67,13 +66,13 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
     @Autowired
     ApplicationInteractionServiceImpl(ApplicationService applicationService,
-                                             ApplicationCommentService commentService,
-                                             AccountInteractionService accountInteractionService,
-                                             ApplicationMailService applicationMailService,
-                                             CalendarSyncService calendarSyncService,
-                                             AbsenceMappingService absenceMappingService,
-                                             SettingsService settingsService,
-                                             DepartmentService departmentService, Clock clock) {
+                                      ApplicationCommentService commentService,
+                                      AccountInteractionService accountInteractionService,
+                                      ApplicationMailService applicationMailService,
+                                      CalendarSyncService calendarSyncService,
+                                      AbsenceMappingService absenceMappingService,
+                                      SettingsService settingsService,
+                                      DepartmentService departmentService, Clock clock) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -147,8 +146,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         // Second stage authority has almost the same power (except on own applications)
-        final boolean isSecondStageAuthority = privilegedUser.hasRole(SECOND_STAGE_AUTHORITY)
-            && departmentService.isSecondStageAuthorityOfPerson(privilegedUser, application.getPerson());
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(privilegedUser, application.getPerson());
 
         final boolean isOwnApplication = application.getPerson().equals(privilegedUser);
 
@@ -157,8 +155,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         // Department head can be mighty only in some cases
-        final boolean isDepartmentHead = privilegedUser.hasRole(DEPARTMENT_HEAD)
-            && departmentService.isDepartmentHeadOfPerson(privilegedUser, application.getPerson());
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(privilegedUser, application.getPerson());
 
         // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
         final boolean isSecondStageAuthorityApplication = application.getPerson().hasRole(SECOND_STAGE_AUTHORITY);

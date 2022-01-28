@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
 
 @SpringBootTest
@@ -134,15 +135,6 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void personsPublicHolidaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
-            .param("from", "2016-01-01")
-            .param("to", "2016-01-31"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
     @WithMockUser(authorities = "BOSS")
     void personsPublicHolidaysAsBossUserForOtherUserIsForbidden() throws Exception {
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
@@ -184,6 +176,30 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         department.setMembers(List.of(person));
         final List<Department> departments = List.of(department);
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
+
+        when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
+
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31"));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
+    void personsPublicHolidaysAsSSAUserForOtherUserIsOk() throws Exception {
+
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person ssa = new Person();
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
+
+        final Department department = new Department();
+        department.setMembers(List.of(person));
+        final List<Department> departments = List.of(department);
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
 
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 

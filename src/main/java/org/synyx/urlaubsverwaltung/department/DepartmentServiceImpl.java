@@ -168,16 +168,14 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     private List<Person> getMembersOfAssignedDepartments(Person member) {
-        return getAssignedDepartmentsOfMember(member)
-            .stream()
+        return getAssignedDepartmentsOfMember(member).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
             .distinct()
             .collect(toList());
     }
 
-    @Override
-    public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
+    private List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
         return getManagedDepartmentsOfDepartmentHead(departmentHead)
             .stream()
             .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
@@ -194,8 +192,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .collect(toList());
     }
 
-    @Override
-    public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
+    private List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
         return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
             .stream()
             .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
@@ -213,7 +210,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public boolean isDepartmentHeadOfPerson(Person departmentHead, Person person) {
+    public boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person) {
         if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
             return getManagedMembersOfDepartmentHead(departmentHead).contains(person);
         }
@@ -221,10 +218,26 @@ class DepartmentServiceImpl implements DepartmentService {
         return false;
     }
 
+    private boolean isDepartmentHeadAllowedToAccessPersonData(Person departmentHead, Person person) {
+        if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
+            return getMembersForDepartmentHead(departmentHead).contains(person);
+        }
+
+        return false;
+    }
+
     @Override
-    public boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person) {
+    public boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person) {
         if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
             return getManagedMembersForSecondStageAuthority(secondStageAuthority).contains(person);
+        }
+
+        return false;
+    }
+
+    private boolean isSecondStageAuthorityAllowedToAccessPersonData(Person secondStageAuthority, Person person) {
+        if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return getMembersForSecondStageAuthority(secondStageAuthority).contains(person);
         }
 
         return false;
@@ -235,12 +248,10 @@ class DepartmentServiceImpl implements DepartmentService {
 
         final boolean isOwnData = person.getId().equals(signedInUser.getId());
         final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
-        final boolean isDepartmentHeadOfPerson = isDepartmentHeadOfPerson(signedInUser, person);
-        final boolean isSecondStageAuthorityOfPerson = isSecondStageAuthorityOfPerson(signedInUser, person);
+        final boolean isSecondStageAuthorityAllowedToAccessPersonalData = isSecondStageAuthorityAllowedToAccessPersonData(signedInUser, person);
+        final boolean isDepartmentHeadAllowedToAccessPersonalData = isDepartmentHeadAllowedToAccessPersonData(signedInUser, person);
 
-        final boolean isPrivilegedUser = isBossOrOffice || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson;
-
-        return isOwnData || isPrivilegedUser;
+        return isOwnData || isBossOrOffice || isDepartmentHeadAllowedToAccessPersonalData || isSecondStageAuthorityAllowedToAccessPersonalData;
     }
 
     @Override

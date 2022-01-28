@@ -91,16 +91,6 @@ public interface DepartmentService {
     List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate);
 
     /**
-     * Get all managed members of the departments where the given person is a department head.
-     * (including the given person)
-     *
-     * @param departmentHead responsible for absences of the members
-     * @return all unique members of the departments where the given person is the department head
-     * without other second stage authority in the same departments.
-     */
-    List<Person> getManagedMembersOfDepartmentHead(Person departmentHead);
-
-    /**
      * Get all distinct members of the departments where the given person is department head.
      * (including the given person)
      *
@@ -108,19 +98,6 @@ public interface DepartmentService {
      * @return all unique members of the departments where the given person is department head.
      */
     List<Person> getMembersForDepartmentHead(Person departmentHead);
-
-    /**
-     * Get all managed members of the departments where the given person is a second stage authority.
-     * (excluding the given person)
-     * <p>
-     * Managed means every member that is only a member or a department head.
-     * Second stage authority does not manage another second stage authority in the same department.
-     *
-     * @param secondStageAuthority responsible for absences in the two-stage approval process of the members
-     * @return all unique members of the departments where the given person is the second stage authority
-     * without other second stage authority in the same departments.
-     */
-    List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority);
 
     /**
      * Get all distinct members of the departments where the given person is second stage authority.
@@ -140,7 +117,7 @@ public interface DepartmentService {
      * @return {@code true} if the given department head manages a department that the given person is assigned to,
      * else {@code false}
      */
-    boolean isDepartmentHeadOfPerson(Person departmentHead, Person person);
+    boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person);
 
     /**
      * Check if the given secondStageAuthority is responsible for the department that the given person is assigned to.
@@ -151,7 +128,7 @@ public interface DepartmentService {
      * @return {@code true} if the given secondStageAuthority is responsible for a department that the given person is
      * assigned to, else {@code false}
      */
-    boolean isSecondStageAuthorityOfPerson(Person secondStageAuthority, Person person);
+    boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person);
 
     /**
      * Check if the given signed in user is allowed to access the data of the given person.
