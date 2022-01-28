@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -155,6 +156,72 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(get("/web/application/" + APPLICATION_ID))
             .andExpect(view().name("application/app_detail"));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsBoss() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person boss = new Person("boss", "boss", "boss", "boss@example.org");
+        boss.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(boss);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isBoss", true));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsOffice() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person office = new Person("office", "office", "office", "office@example.org");
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isOffice", true));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsDepartmentHeadOfPerson() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(eq(departmentHead), any(Person.class))).thenReturn(true);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isDepartmentHead", true));
+    }
+
+    @Test
+    void showApplicationDetailSignedInUserIsSecondStageAuthorityOfPerson() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person ssa = new Person("ssa", "ssa", "ssa", "ssa@example.org");
+        ssa.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(ssa), any(Person.class))).thenReturn(true);
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(view().name("application/app_detail"))
+            .andExpect(model().attribute("isSecondStageAuthority", true));
     }
 
     @Test
