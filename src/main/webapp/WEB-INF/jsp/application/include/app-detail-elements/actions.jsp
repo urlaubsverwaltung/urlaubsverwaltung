@@ -14,6 +14,11 @@
     <c:set var="IS_OFFICE" value="${true}"/>
 </sec:authorize>
 
+<c:if test="${application.status == 'ALLOWED'}">
+    <c:if test="${IS_OFFICE || (application.person.id == signedInUser.id)}">
+        <jsp:include page="actions/cancel_form.jsp"/>
+    </c:if>
+</c:if>
 
 <c:if test="${application.status == 'WAITING'}">
     <sec:authorize access="hasAuthority('USER')">
@@ -24,9 +29,9 @@
         <jsp:include page="actions/reject_form.jsp"/>
         <jsp:include page="actions/refer_form.jsp"/>
     </sec:authorize>
-    <sec:authorize access="hasAuthority('USER')">
+    <c:if test="${IS_OFFICE || (application.person.id == signedInUser.id)}">
         <jsp:include page="actions/cancel_form.jsp"/>
-    </sec:authorize>
+    </c:if>
 </c:if>
 
 <c:if test="${application.status == 'TEMPORARY_ALLOWED'}">
@@ -35,15 +40,15 @@
         <jsp:include page="actions/reject_form.jsp"/>
         <jsp:include page="actions/refer_form.jsp"/>
     </sec:authorize>
-</c:if>
-
-<c:if test="${application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
-    <c:if test="${IS_OFFICE || (IS_USER && application.person.id == signedInUser.id)}">
+    <c:if test="${IS_OFFICE || (application.person.id == signedInUser.id)}">
         <jsp:include page="actions/cancel_form.jsp"/>
     </c:if>
 </c:if>
 
 <c:if test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
+    <c:if test="${IS_OFFICE || (application.person.id == signedInUser.id)}">
+        <jsp:include page="actions/cancel_form.jsp"/>
+    </c:if>
     <sec:authorize access="hasAuthority('OFFICE')">
         <jsp:include page="actions/decline_cancellation_request_form.jsp"/>
     </sec:authorize>
