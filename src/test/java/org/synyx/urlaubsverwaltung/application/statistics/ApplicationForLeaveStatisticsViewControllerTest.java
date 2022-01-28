@@ -19,6 +19,7 @@ import java.time.Year;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsViewController.UTF8_BOM;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,11 +50,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-
-        final DateFormatAware dateFormatAware = new DateFormatAware();
-
         sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, dateFormatAware);
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware());
     }
 
     @Test
@@ -118,13 +117,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    void downloadCSVAddsErrorToModelAndShowsFormIfPeriodNotTheSameYear() throws Exception {
+    void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
 
         perform(get("/web/application/statistics/download")
             .param("from", "01.01.2000")
             .param("to", "01.01.2019"))
-            .andExpect(model().attribute("errors", "INVALID_PERIOD"))
-            .andExpect(view().name("application/app_statistics"));
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -158,7 +156,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    void downloadCSVSetsModelAndView() throws Exception {
+    void downloadCSVContainsUTF8BOM() throws Exception {
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
@@ -166,11 +164,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(emptyList());
 
-        perform(get("/web/application/statistics/download")
+        byte[] response = perform(get("/web/application/statistics/download")
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
-            .andExpect(model().attribute("period", filterPeriod))
-            .andExpect(view().name("application/app_statistics"));
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray();
+
+        assertThat(response).contains(UTF8_BOM);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -19,9 +19,16 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
+import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -30,6 +37,9 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @Controller
 @RequestMapping("/web/application/statistics")
 class ApplicationForLeaveStatisticsViewController {
+
+    protected static final byte[] UTF8_BOM = new byte[]{(byte) 239, (byte) 187, (byte) 191};
+    public static final char SEPARATOR = ';';
 
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
@@ -59,23 +69,18 @@ class ApplicationForLeaveStatisticsViewController {
 
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());
-
         return "redirect:/web/application/statistics?from=" + startDateIsoString + "&to=" + endDateIsoString;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
     public String applicationForLeaveStatistics(@RequestParam(value = "from", defaultValue = "") String from,
-                                                @RequestParam(value = "to", defaultValue = "") String to,
-                                                Model model) {
+                                                @RequestParam(value = "to", defaultValue = "") String to, Model model) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
-
-        // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
-
             return "application/app_statistics";
         }
 
@@ -90,35 +95,35 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
-    public String downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
-                              @RequestParam(value = "to", defaultValue = "") String to,
-                              HttpServletResponse response,
-                              Model model)
-        throws IOException {
+    public void downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
+                            @RequestParam(value = "to", defaultValue = "") String to,
+                            HttpServletResponse response) throws IOException {
 
         final FilterPeriod period = toFilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
-            model.addAttribute("period", period);
-            model.addAttribute("errors", "INVALID_PERIOD");
-
-            return "application/app_statistics";
+            response.sendError(SC_BAD_REQUEST);
+            return;
         }
 
         final String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
-        response.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding(UTF_8.name());
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
         final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-        try (CSVWriter csvWriter = new CSVWriter(response.getWriter())) {
-            applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
+
+        try (final OutputStream os = response.getOutputStream()) {
+            os.write(UTF8_BOM);
+
+            try (final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, UTF_8))) {
+                try (final CSVWriter csvWriter = new CSVWriter(printWriter, SEPARATOR, NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER)) {
+                    applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
+                }
+                printWriter.flush();
+            }
         }
-
-        model.addAttribute("period", period);
-
-        return "application/app_statistics";
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {

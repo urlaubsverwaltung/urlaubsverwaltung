@@ -136,7 +136,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("applications.statistics", new String[]{"Statistik"}, GERMAN)).thenReturn("test");
+        when(messageSource.getMessage("applications.statistics", new String[]{}, GERMAN)).thenReturn("test");
 
         final String fileName = sut.getFileName(period);
         assertThat(fileName).isEqualTo("test_01012018_31122018.csv");
