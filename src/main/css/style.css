@@ -27,6 +27,7 @@
 @import "./components/print.css";
 @import "./components/section-heading.css";
 @import "./components/text-bubble.css";
+@import "./components/tooltip.css";
 @import "./components/ui.timepicker.css";
 
 @import "tailwindcss/utilities";
