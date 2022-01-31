@@ -69,7 +69,7 @@
     <c:if test="${isOffice || (IS_OWN && application.status != 'ALLOWED_CANCELLATION_REQUESTED')}">
 
         <c:choose>
-            <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
+            <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !isOffice}">
                 <c:set var="CANCEL_TITLE">
                     <spring:message code='action.delete.request'/>
                 </c:set>
