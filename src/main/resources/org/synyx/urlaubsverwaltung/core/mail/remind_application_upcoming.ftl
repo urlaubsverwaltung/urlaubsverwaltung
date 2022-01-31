@@ -1,9 +1,9 @@
 Hallo ${recipient.niceName},
 
 <#if application.holidayReplacements?has_content>
-<#if daysBeforeUpcomingApplication == 0>heute<#elseif daysBeforeUpcomingApplication == 1>in ${daysBeforeUpcomingApplication} Tag<#else>in ${daysBeforeUpcomingApplication} Tagen</#if> beginnt deine Abwesenheit und du wirst vertreten durch:
+<#if daysBeforeUpcomingApplication == 0>heute<#elseif daysBeforeUpcomingApplication == 1>morgen<#else>in ${daysBeforeUpcomingApplication} Tagen</#if> beginnt deine Abwesenheit und du wirst vertreten durch:
 <#else>
-<#if daysBeforeUpcomingApplication == 0>heute<#elseif daysBeforeUpcomingApplication == 1>in ${daysBeforeUpcomingApplication} Tag<#else>in ${daysBeforeUpcomingApplication} Tagen</#if> beginnt deine Abwesenheit.
+<#if daysBeforeUpcomingApplication == 0>heute<#elseif daysBeforeUpcomingApplication == 1>morgen<#else>in ${daysBeforeUpcomingApplication} Tagen</#if> beginnt deine Abwesenheit.
 </#if>
 
 <#if application.holidayReplacements?size == 1>

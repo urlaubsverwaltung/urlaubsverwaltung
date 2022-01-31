@@ -1882,7 +1882,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:");
+        assertThat(content).contains("morgen beginnt deine Abwesenheit und du wirst vertreten durch:");
         assertThat(content).contains("replacement holiday, \"Some notes\"");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
@@ -1942,6 +1942,29 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("heute beginnt deine Abwesenheit.");
+    }
+
+    @Test
+    void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementTomorrow() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+        application.setStartDate(LocalDate.now(clock).plusDays(1));
+        application.setEndDate(LocalDate.now(clock).plusDays(1));
+
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
+
+        // was email sent?
+        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inbox.length).isOne();
+
+        Message msg = inbox[0];
+        assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // check content of email
+        String content = (String) msg.getContent();
+        assertThat(content).contains("morgen beginnt deine Abwesenheit.");
     }
 
     @Test
@@ -2024,7 +2047,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
-                "in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
                 "Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
@@ -2065,7 +2088,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Alfred Pennyworth, \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
@@ -2111,7 +2134,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
@@ -2158,7 +2181,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "in 1 Tag beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
