@@ -1827,13 +1827,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("Some notes");
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1859,12 +1861,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 3));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 3));
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("Some notes");
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 3);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1877,7 +1881,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 3 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
+        assertThat(content).contains("in 2 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
         assertThat(content).contains("replacement holiday, \"Some notes\"");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
@@ -1888,8 +1892,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1902,7 +1908,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 1 Tag beginnt deine Abwesenheit.");
+        assertThat(content).contains("in 30 Tagen beginnt deine Abwesenheit.");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
     }
@@ -1912,8 +1918,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 3);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1926,7 +1934,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 3 Tagen beginnt deine Abwesenheit.");
+        assertThat(content).contains("in 30 Tagen beginnt deine Abwesenheit.");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
     }
@@ -1938,14 +1946,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
-        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1963,7 +1971,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "" + EMAIL_LINE_BREAK +
                 "Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
-                "Da du vom 16.04.2021 bis zum 16.04.2021 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
                 "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
@@ -1977,8 +1985,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
-        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -1986,7 +1994,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -2004,7 +2012,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 "Alfred Pennyworth, \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Da du vom 16.04.2021 bis zum 16.04.2021 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
@@ -2019,8 +2027,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
-        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -2032,7 +2040,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -2053,7 +2061,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "- Robin" + EMAIL_LINE_BREAK +
                 "  \"Uffbasse Rob. Ich sehe dich.\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Da du vom 16.04.2021 bis zum 16.04.2021 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
@@ -2068,8 +2076,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Application application = createApplication(person);
-        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
-        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 2));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 2));
 
         final HolidayReplacementEntity holidayReplacementOneEntity = new HolidayReplacementEntity();
         holidayReplacementOneEntity.setPerson(holidayReplacementOne);
@@ -2079,7 +2087,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -2098,7 +2106,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Da du vom 16.04.2021 bis zum 16.04.2021 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
@@ -2112,11 +2120,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
+        application.setEndDate(LocalDate.of(2022, Month.JANUARY, 31));
+
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application), 3);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application));
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -2129,7 +2140,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 3 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
+        assertThat(content).contains("in 30 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
         assertThat(content).contains("replacement holiday");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");

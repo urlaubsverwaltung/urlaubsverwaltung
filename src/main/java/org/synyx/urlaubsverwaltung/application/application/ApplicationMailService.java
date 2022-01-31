@@ -678,11 +678,11 @@ class ApplicationMailService {
         mailService.send(mailToAllowAndRemind);
     }
 
-    void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications, Integer daysBeforeUpcomingApplication) {
+    void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications) {
         for (Application application : applications) {
             final Map<String, Object> model = new HashMap<>();
             model.put(APPLICATION, application);
-            model.put("daysBeforeUpcomingApplication", daysBeforeUpcomingApplication);
+            model.put("daysBeforeUpcomingApplication", Days.between(LocalDate.now(clock), application.getStartDate()).getAmount());
 
             final Mail mailToUpcomingApplicationsPersons = Mail.builder()
                 .withRecipient(application.getPerson())
