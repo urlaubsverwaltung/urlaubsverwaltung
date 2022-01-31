@@ -16,7 +16,10 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.threeten.extra.Days;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -49,17 +52,19 @@ class ApplicationMailService {
     private final ICalService iCalService;
     private final MessageSource messageSource;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     ApplicationMailService(MailService mailService, DepartmentService departmentService,
                            ApplicationRecipientService applicationRecipientService, ICalService iCalService,
-                           MessageSource messageSource, SettingsService settingsService) {
+                           MessageSource messageSource, SettingsService settingsService, Clock clock) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
         this.iCalService = iCalService;
         this.messageSource = messageSource;
         this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
@@ -673,7 +678,7 @@ class ApplicationMailService {
         mailService.send(mailToAllowAndRemind);
     }
 
-    void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications, Integer daysBeforeUpcomingApplication){
+    void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications, Integer daysBeforeUpcomingApplication) {
         for (Application application : applications) {
             final Map<String, Object> model = new HashMap<>();
             model.put(APPLICATION, application);
@@ -688,13 +693,13 @@ class ApplicationMailService {
         }
     }
 
-    void sendRemindForUpcomingHolidayReplacement(List<Application> applications, Integer daysBeforeUpcomingHolidayReplacement){
+    void sendRemindForUpcomingHolidayReplacement(List<Application> applications) {
         for (Application application : applications) {
             for (HolidayReplacementEntity holidayReplacement : application.getHolidayReplacements()) {
 
                 final Map<String, Object> model = new HashMap<>();
                 model.put(APPLICATION, application);
-                model.put("daysBeforeUpcomingHolidayReplacement", daysBeforeUpcomingHolidayReplacement);
+                model.put("daysBeforeUpcomingHolidayReplacement", Days.between(LocalDate.now(clock), application.getStartDate()).getAmount());
                 model.put("replacementNote", holidayReplacement.getNote());
 
                 final Mail mailToUpcomingHolidayReplacement = Mail.builder()
@@ -754,6 +759,7 @@ class ApplicationMailService {
     private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType) {
         return generateCalendar(application, absenceType, PUBLISHED);
     }
+
     private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType) {
         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
         return iCalService.getSingleAppointment(absence, iCalType);

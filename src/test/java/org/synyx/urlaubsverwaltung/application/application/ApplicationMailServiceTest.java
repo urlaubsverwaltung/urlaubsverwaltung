@@ -23,7 +23,9 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +62,11 @@ class ApplicationMailServiceTest {
     @Mock
     private SettingsService settingsService;
 
-    private final Clock clock = Clock.systemUTC();
+    private final Clock clock = Clock.fixed(Instant.parse("2022-01-01T00:00:00.00Z"), ZoneId.of("UTC"));
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService);
+        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService, clock);
     }
 
     @Test
@@ -962,22 +964,22 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(applicant);
         application.setDayLength(FULL);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2022, 1, 3));
+        application.setEndDate(LocalDate.of(2022, 1, 4));
         application.setStatus(ALLOWED);
         application.setHolidayReplacements(List.of(holidayReplacementEntity, holidayReplacementEntityTwo));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("daysBeforeUpcomingHolidayReplacement", 1);
+        model.put("daysBeforeUpcomingHolidayReplacement", 2);
         model.put("replacementNote", "Note");
 
         final Map<String, Object> modelTwo = new HashMap<>();
         modelTwo.put("application", application);
-        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 1);
+        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 2);
         modelTwo.put("replacementNote", "Note 2");
 
-        sut.sendRemindForUpcomingHolidayReplacement(List.of(application), 1);
+        sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
