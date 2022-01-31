@@ -17,9 +17,8 @@
 <%-- DISPLAYING DEPENDS ON VARIABLES --%>
 
 <%-- ALLOW ACTION --%>
-<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' }">
-    <c:if test="${CAN_ALLOW && !IS_OWN}">
-
+<c:if test="${!IS_OWN && ((application.status == 'WAITING' && isDepartmentHead) || (application.status == 'TEMPORARY_ALLOWED' && (isBoss || isSecondStageAuthority))) }">
+    <c:if test="${!IS_OWN}">
         <c:choose>
             <c:when test="${isDepartmentHead && application.twoStageApproval && application.status == 'WAITING'}">
                 <c:set var="ALLOW_DATA_TITLE">
