@@ -112,7 +112,7 @@ class ApplicationReminderMailServiceTest {
         when(applicationService.getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(now, to, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
 
         sut.sendUpcomingApplicationsReminderNotification();
-        verify(applicationMailService).sendRemindForUpcomingApplicationsReminderNotification(List.of(tomorrowApplication), applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+        verify(applicationMailService).sendRemindForUpcomingApplicationsReminderNotification(List.of(tomorrowApplication));
 
         final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
         verify(applicationService).save(applicationArgumentCaptor.capture());
@@ -143,7 +143,7 @@ class ApplicationReminderMailServiceTest {
         when(applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(now, to, List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED))).thenReturn(List.of(tomorrowApplication));
 
         sut.sendUpcomingHolidayReplacementReminderNotification();
-        verify(applicationMailService).sendRemindForUpcomingHolidayReplacement(List.of(tomorrowApplication), applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+        verify(applicationMailService).sendRemindForUpcomingHolidayReplacement(List.of(tomorrowApplication));
 
         final ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
         verify(applicationService).save(applicationArgumentCaptor.capture());

@@ -73,7 +73,7 @@ class ApplicationReminderMailService {
             final List<ApplicationStatus> allowedStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
             final List<Application> upcomingApplications = applicationService.getApplicationsWhereApplicantShouldBeNotifiedAboutUpcomingApplication(today, to, allowedStatuses);
 
-            applicationMailService.sendRemindForUpcomingApplicationsReminderNotification(upcomingApplications, applicationSettings.getDaysBeforeRemindForUpcomingApplications());
+            applicationMailService.sendRemindForUpcomingApplicationsReminderNotification(upcomingApplications);
             upcomingApplications.forEach(this::markUpcomingApplicationsReminderSent);
         }
     }
@@ -92,7 +92,7 @@ class ApplicationReminderMailService {
             final List<ApplicationStatus> allowedStatuses = List.of(ALLOWED, ALLOWED_CANCELLATION_REQUESTED, TEMPORARY_ALLOWED);
             final List<Application> upcomingApplicationsForHolidayReplacement = applicationService.getApplicationsWhereHolidayReplacementShouldBeNotified(today, to, allowedStatuses);
 
-            applicationMailService.sendRemindForUpcomingHolidayReplacement(upcomingApplicationsForHolidayReplacement, applicationSettings.getDaysBeforeRemindForUpcomingHolidayReplacement());
+            applicationMailService.sendRemindForUpcomingHolidayReplacement(upcomingApplicationsForHolidayReplacement);
             upcomingApplicationsForHolidayReplacement.forEach(this::markUpcomingHolidayReplacementReminderSent);
         }
     }

@@ -23,7 +23,9 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +62,11 @@ class ApplicationMailServiceTest {
     @Mock
     private SettingsService settingsService;
 
-    private final Clock clock = Clock.systemUTC();
+    private final Clock clock = Clock.fixed(Instant.parse("2022-01-01T00:00:00.00Z"), ZoneId.of("UTC"));
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService);
+        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, messageSource, settingsService, clock);
     }
 
     @Test
@@ -132,8 +134,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(person);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
@@ -174,8 +176,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(recipient);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
         Map<String, Object> model = new HashMap<>();
@@ -206,8 +208,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
         application.setPerson(recipient);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
         Map<String, Object> model = new HashMap<>();
@@ -503,8 +505,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
@@ -545,8 +547,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
@@ -588,8 +590,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
@@ -632,8 +634,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
@@ -812,8 +814,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
@@ -823,7 +825,7 @@ class ApplicationMailServiceTest {
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.MIN, LocalDate.MAX)).thenReturn(applicationsForLeave);
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.of(2020, 12, 1), LocalDate.of(2020, 12, 2))).thenReturn(applicationsForLeave);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -864,8 +866,8 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(dayLength);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2020, 12, 1));
+        application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
         when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(recipients);
 
@@ -873,7 +875,7 @@ class ApplicationMailServiceTest {
 
         final Application applicationForLeave = new Application();
         final List<Application> applicationsForLeave = singletonList(applicationForLeave);
-        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.MIN, LocalDate.MAX)).thenReturn(applicationsForLeave);
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, LocalDate.of(2020, 12, 1), LocalDate.of(2020, 12, 2))).thenReturn(applicationsForLeave);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -915,15 +917,15 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(person);
         application.setDayLength(FULL);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2022, 1, 2));
+        application.setEndDate(LocalDate.of(2022, 1, 3));
         application.setStatus(ALLOWED);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("daysBeforeUpcomingApplication", 1);
 
-        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application, application), 1);
+        sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application, application));
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
@@ -962,22 +964,22 @@ class ApplicationMailServiceTest {
         application.setVacationType(vacationType);
         application.setPerson(applicant);
         application.setDayLength(FULL);
-        application.setStartDate(LocalDate.MIN);
-        application.setEndDate(LocalDate.MAX);
+        application.setStartDate(LocalDate.of(2022, 1, 3));
+        application.setEndDate(LocalDate.of(2022, 1, 4));
         application.setStatus(ALLOWED);
         application.setHolidayReplacements(List.of(holidayReplacementEntity, holidayReplacementEntityTwo));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("daysBeforeUpcomingHolidayReplacement", 1);
+        model.put("daysBeforeUpcomingHolidayReplacement", 2);
         model.put("replacementNote", "Note");
 
         final Map<String, Object> modelTwo = new HashMap<>();
         modelTwo.put("application", application);
-        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 1);
+        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 2);
         modelTwo.put("replacementNote", "Note 2");
 
-        sut.sendRemindForUpcomingHolidayReplacement(List.of(application), 1);
+        sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
