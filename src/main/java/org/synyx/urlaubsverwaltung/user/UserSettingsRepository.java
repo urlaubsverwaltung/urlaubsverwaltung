@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 interface UserSettingsRepository extends CrudRepository<UserSettingsEntity, Integer> {
-
 }

@@ -86,7 +86,7 @@ class UserSettingsViewController {
     private Theme themeNameToTheme(String themeName) {
         try {
             return Theme.valueOf(themeName.toUpperCase());
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             LOG.error("tried to map unknown name={} to Theme.", themeName, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "theme does not exist.");
         }
