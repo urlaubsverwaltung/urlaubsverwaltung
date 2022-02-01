@@ -12,7 +12,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 
 import java.util.Optional;
 
@@ -29,9 +28,6 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
 
     @MockBean
     private PersonService personService;
-
-    @MockBean
-    private UserThemeControllerAdvice userThemeControllerAdvice;
 
     @Test
     void getPersonsWithoutBasicAuthIsUnauthorized() throws Exception {

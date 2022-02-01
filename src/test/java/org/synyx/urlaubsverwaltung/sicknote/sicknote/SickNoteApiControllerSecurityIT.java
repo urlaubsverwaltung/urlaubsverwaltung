@@ -12,7 +12,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,12 +32,8 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
 
     @MockBean
     private PersonService personService;
-
     @MockBean
     private SickNoteService sickNoteService;
-
-    @MockBean
-    private UserThemeControllerAdvice userThemeControllerAdvice;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

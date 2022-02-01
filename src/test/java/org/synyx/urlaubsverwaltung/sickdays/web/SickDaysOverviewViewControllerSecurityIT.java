@@ -12,7 +12,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.user.UserThemeControllerAdvice;
 import org.synyx.urlaubsverwaltung.util.DateFormat;
 
 import java.time.LocalDateTime;
@@ -32,9 +31,6 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
 
-    @MockBean
-    private UserThemeControllerAdvice userThemeControllerAdvice;
-
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
 
     @Test
@@ -51,7 +47,9 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"USER", "OFFICE"})
     void periodsSickNotesWithCorrectRole() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(new Person());
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(
