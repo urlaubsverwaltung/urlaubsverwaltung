@@ -131,7 +131,7 @@ class ApplicationForLeaveViewController {
             .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
             .editAllowed(isWaiting && person.equals(signedInUser))
-            .approveAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
+            .approveAllowed(canAllow && !person.equals(signedInUser))
             .temporaryApproveAllowed(canAllow && (isBoss || !person.equals(signedInUser)) && isDepartmentHead && twoStageApproval && isWaiting)
             .rejectAllowed(canAllow && (isBoss || !person.equals(signedInUser)))
             .cancellationRequested(isCancellationRequested)
