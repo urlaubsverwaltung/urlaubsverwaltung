@@ -47,6 +47,11 @@
   @apply dark:tw-text-zinc-400;
 }
 
+.navigation-content-spacer {
+  @apply tw-bg-white;
+  @apply dark:tw-bg-zinc-900;
+}
+
 .navigation-content-spacer--left,
 .navigation-content-spacer--right {
   position: relative;
