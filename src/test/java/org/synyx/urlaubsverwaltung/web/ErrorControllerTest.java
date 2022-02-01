@@ -1,8 +1,9 @@
 package org.synyx.urlaubsverwaltung.web;
 
-
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,47 +25,24 @@ class ErrorControllerTest {
         sut = new ErrorController(mock(ErrorAttributes.class));
     }
 
-    @Test
-    void errorHtml403() {
-        final HttpServletRequest request = new MockHttpServletRequest();
-        final HttpServletResponse response = new MockHttpServletResponse();
-        response.setStatus(403);
-
-        final ModelAndView modelAndView = sut.errorHtml(request, response);
-        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error/403");
-        assertThat(modelAndView.getModel()).containsEntry("status", 403);
+    private static Stream<Arguments> errorCodes() {
+        return Stream.of(
+            Arguments.of(400, "thymeleaf/error"),
+            Arguments.of(403, "thymeleaf/error/403"),
+            Arguments.of(404, "thymeleaf/error/404"),
+            Arguments.of(500, "thymeleaf/error")
+        );
     }
 
-    @Test
-    void errorHtml404() {
+    @ParameterizedTest
+    @MethodSource("errorCodes")
+    void errorHtml(int errorCode, String viewName) {
         final HttpServletRequest request = new MockHttpServletRequest();
         final HttpServletResponse response = new MockHttpServletResponse();
-        response.setStatus(404);
+        response.setStatus(errorCode);
 
         final ModelAndView modelAndView = sut.errorHtml(request, response);
-        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error/404");
-        assertThat(modelAndView.getModel()).containsEntry("status", 404);
-    }
-
-    @Test
-    void errorHtml400() {
-        final HttpServletRequest request = new MockHttpServletRequest();
-        final HttpServletResponse response = new MockHttpServletResponse();
-        response.setStatus(400);
-
-        final ModelAndView modelAndView = sut.errorHtml(request, response);
-        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error");
-        assertThat(modelAndView.getModel()).containsEntry("status", 400);
-    }
-
-    @Test
-    void errorHtml500() {
-        final HttpServletRequest request = new MockHttpServletRequest();
-        final HttpServletResponse response = new MockHttpServletResponse();
-        response.setStatus(500);
-
-        final ModelAndView modelAndView = sut.errorHtml(request, response);
-        assertThat(modelAndView.getViewName()).isEqualTo("thymeleaf/error");
-        assertThat(modelAndView.getModel()).containsEntry("status", 500);
+        assertThat(modelAndView.getViewName()).isEqualTo(viewName);
+        assertThat(modelAndView.getModel()).containsEntry("status", errorCode);
     }
 }
