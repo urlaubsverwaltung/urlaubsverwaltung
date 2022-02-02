@@ -51,8 +51,7 @@ public class UserThemeDataProvider implements HandlerInterceptor {
         }
 
         return !viewName.startsWith("forward:") &&
-            !viewName.startsWith("redirect:") &&
-            !viewName.startsWith("login");
+            !viewName.startsWith("redirect:");
     }
 
     private Optional<Theme> getTheme() {
@@ -60,7 +59,7 @@ public class UserThemeDataProvider implements HandlerInterceptor {
             final Person signedInUser = personService.getSignedInUser();
             return Optional.of(userSettingsService.getUserSettingsForPerson(signedInUser).theme());
         } catch (IllegalStateException e) {
-            LOG.info("could not get theme for unknown user (login page called for instance).", e);
+            LOG.debug("could not get theme for unknown user (login page called for instance).", e);
             return Optional.empty();
         }
     }

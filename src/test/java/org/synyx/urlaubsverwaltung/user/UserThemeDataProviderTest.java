@@ -48,7 +48,6 @@ class UserThemeDataProviderTest {
 
     @Test
     void addSystemDefaultTheme() {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getSignedInUser()).thenThrow(new IllegalStateException());
 
         final ModelAndView modelAndView = new ModelAndView();
@@ -58,8 +57,19 @@ class UserThemeDataProviderTest {
         assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("system");
     }
 
+    @Test
+    void addSystemDefaultThemeForLogin() {
+        when(personService.getSignedInUser()).thenThrow(new IllegalStateException());
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("system");
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = {"forward:", "redirect:", "login"})
+    @ValueSource(strings = {"forward:", "redirect:"})
     @NullSource
     void doNotAddTheme(String viewName) {
 
