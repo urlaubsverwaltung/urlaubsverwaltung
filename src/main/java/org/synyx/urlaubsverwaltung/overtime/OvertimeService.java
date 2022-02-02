@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Provides possibility to create and fetch {@link Overtime} records.
  *
@@ -79,7 +78,8 @@ public interface OvertimeService {
 
     /**
      * Is signedInUser allowed to write (create or update) overtime records of given personOfOvertime.
-     * @param signedInUser person which writes overtime record
+     *
+     * @param signedInUser     person which writes overtime record
      * @param personOfOvertime person which the overtime record belongs to
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */

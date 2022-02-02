@@ -43,7 +43,6 @@ class OvertimeServiceImpl implements OvertimeService {
     public OvertimeServiceImpl(OvertimeRepository overtimeRepository, OvertimeCommentRepository overtimeCommentRepository,
                                ApplicationService applicationService, OvertimeMailService overtimeMailService,
                                SettingsService settingsService, Clock clock) {
-
         this.overtimeRepository = overtimeRepository;
         this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
@@ -119,7 +118,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
     /**
      * Is signedInUser person allowed to write (edit or update) the overtime record of personOfOvertime.
-     *
+     * <pre>
      *  |                        | others | own   |  others | own  |
      *  |------------------------|--------|-------|---------|------|
      *  | PrivilegedOnly         | true   |       |  false  |      |
@@ -128,8 +127,9 @@ class OvertimeServiceImpl implements OvertimeService {
      *  | SECOND_STAGE_AUTHORITY | false  | true  |  false  | true |
      *  | DEPARTMENT_HEAD        | false  | true  |  false  | true |
      *  | USER                   | false  | false |  false  | true |
+     * </pre>
      *
-     * @param signedInUser person which writes overtime record
+     * @param signedInUser     person which writes overtime record
      * @param personOfOvertime person which the overtime record belongs to
      * @return @code{true} if allowed, otherwise @code{false}
      */
