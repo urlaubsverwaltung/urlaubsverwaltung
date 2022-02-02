@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 
 import static java.util.Objects.requireNonNullElse;
 
-
 /**
  * View class to record overtime for a certain period of time.
  */
@@ -32,7 +31,6 @@ public class OvertimeForm {
     private Integer minutes;
 
     OvertimeForm() {
-
         // OK
     }
 

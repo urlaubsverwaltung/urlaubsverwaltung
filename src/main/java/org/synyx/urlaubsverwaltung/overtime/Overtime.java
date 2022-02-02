@@ -15,7 +15,6 @@ import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 
-
 /**
  * Represents the overtime of a person for a certain period of time.
  *
@@ -53,7 +52,6 @@ public class Overtime {
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
-
         this.lastModificationDate = LocalDate.now(UTC);
     }
 

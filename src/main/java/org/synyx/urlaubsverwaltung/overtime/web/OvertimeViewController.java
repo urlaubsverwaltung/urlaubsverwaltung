@@ -38,7 +38,6 @@ import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
-
 /**
  * Manage overtime of persons.
  */
@@ -73,7 +72,6 @@ public class OvertimeViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
@@ -81,7 +79,6 @@ public class OvertimeViewController {
 
     @GetMapping("/overtime")
     public String showPersonalOvertime() {
-
         final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
@@ -118,7 +115,6 @@ public class OvertimeViewController {
 
         return "overtime/overtime_list";
     }
-
 
     @GetMapping("/overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
@@ -175,7 +171,6 @@ public class OvertimeViewController {
 
         return OVERTIME_OVERTIME_FORM;
     }
-
 
     @PostMapping("/overtime")
     public String recordOvertime(@Valid @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,

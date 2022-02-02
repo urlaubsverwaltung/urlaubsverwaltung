@@ -24,7 +24,6 @@ class OvertimeMailService {
         model.put("overtime", overtime);
         model.put("overtimeDurationHours", overtime.getDuration().toHours() + " Std.");
         model.put("overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.");
-
         model.put("comment", overtimeComment);
 
         final Mail toOffice = Mail.builder()
