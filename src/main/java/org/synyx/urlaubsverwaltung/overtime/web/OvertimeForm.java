@@ -34,11 +34,11 @@ public class OvertimeForm {
         // OK
     }
 
-    public OvertimeForm(Person person) {
+    OvertimeForm(Person person) {
         this.person = person;
     }
 
-    public OvertimeForm(Overtime overtime) {
+    OvertimeForm(Overtime overtime) {
         final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();
