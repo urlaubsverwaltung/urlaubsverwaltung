@@ -98,14 +98,9 @@ class OvertimeServiceImpl implements OvertimeService {
     public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
         Assert.isTrue(year > 0, "Year must be a valid number.");
 
-        final List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
-
-        Duration totalOvertime = ZERO;
-        for (Overtime record : overtimeRecords) {
-            totalOvertime = totalOvertime.plus(record.getDuration());
-        }
-
-        return totalOvertime;
+        return getOvertimeRecordsForPersonAndYear(person, year).stream()
+            .map(Overtime::getDuration)
+            .reduce(ZERO, Duration::plus);
     }
 
     @Override
@@ -141,11 +136,9 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     private Duration getTotalOvertimeForPerson(Person person) {
-
         final Long totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person))
             .map(aDouble -> Math.round(aDouble * 60))
             .orElse(0L);
         return Duration.of(totalOvertime, ChronoUnit.MINUTES);
-
     }
 }
