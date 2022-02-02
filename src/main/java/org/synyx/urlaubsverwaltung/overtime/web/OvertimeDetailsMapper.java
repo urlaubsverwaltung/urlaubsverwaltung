@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 class OvertimeDetailsMapper {
 
     private OvertimeDetailsMapper() {
+        // ok
     }
 
     static OvertimeDetailsDto mapToDto(Overtime overtime, List<OvertimeComment> comments, Duration totalOvertime, Duration leftOvertime) {
