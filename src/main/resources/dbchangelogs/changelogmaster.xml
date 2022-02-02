@@ -95,5 +95,5 @@
   <include file="dbchangelogs/changelog-4.28.0-add_country_to_federal_state.xml"/>
   <include file="dbchangelogs/changelog-4.28.4-add_country_to_federal_state_for_missing_states.xml"/>
   <include file="dbchangelogs/changelog-4.29.0-add-new-vacation-type-employment-ban.xml"/>
-  <include file="dbchangelogs/changelog-4.31.0-create-user-settings-table.xml"/>
+  <include file="dbchangelogs/changelog-4.30.0-create-user-settings-table.xml"/>
 </databaseChangeLog>
