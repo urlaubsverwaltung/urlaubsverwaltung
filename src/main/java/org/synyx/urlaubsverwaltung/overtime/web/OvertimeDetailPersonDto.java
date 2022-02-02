@@ -7,7 +7,7 @@ public class OvertimeDetailPersonDto {
     private final String niceName;
     private final String gravatarUrl;
 
-    public OvertimeDetailPersonDto(Integer id, String email, String niceName, String gravatarUrl) {
+    OvertimeDetailPersonDto(Integer id, String email, String niceName, String gravatarUrl) {
         this.id = id;
         this.email = email;
         this.niceName = niceName;

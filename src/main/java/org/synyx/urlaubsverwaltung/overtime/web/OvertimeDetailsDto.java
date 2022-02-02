@@ -10,7 +10,7 @@ public class OvertimeDetailsDto {
     private final Duration overtimeTotal;
     private final Duration overtimeLeft;
 
-    public OvertimeDetailsDto(OvertimeDetailRecordDto record, List<OvertimeCommentDto> comments, Duration overtimeTotal, Duration overtimeLeft) {
+    OvertimeDetailsDto(OvertimeDetailRecordDto record, List<OvertimeCommentDto> comments, Duration overtimeTotal, Duration overtimeLeft) {
         this.record = record;
         this.comments = comments;
         this.overtimeTotal = overtimeTotal;

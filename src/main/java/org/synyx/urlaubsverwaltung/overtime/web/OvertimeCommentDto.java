@@ -9,7 +9,7 @@ public class OvertimeCommentDto {
     private final Instant date;
     private final String text;
 
-    public OvertimeCommentDto(OvertimeCommentPersonDto person, String action, Instant date, String text) {
+    OvertimeCommentDto(OvertimeCommentPersonDto person, String action, Instant date, String text) {
         this.person = person;
         this.action = action;
         this.date = date;

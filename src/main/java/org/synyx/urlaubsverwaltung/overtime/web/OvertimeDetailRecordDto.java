@@ -12,7 +12,7 @@ public class OvertimeDetailRecordDto {
     private final Duration duration;
     private final LocalDate lastModificationDate;
 
-    public OvertimeDetailRecordDto(Integer id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
+    OvertimeDetailRecordDto(Integer id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
         this.id = id;
         this.person = person;
         this.startDate = startDate;

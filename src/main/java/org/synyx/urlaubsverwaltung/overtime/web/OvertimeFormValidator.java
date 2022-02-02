@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
 
-
 /**
  * Validates overtime record.
  */
@@ -40,7 +39,7 @@ public class OvertimeFormValidator implements Validator {
     private final SettingsService settingsService;
 
     @Autowired
-    public OvertimeFormValidator(OvertimeService overtimeService, SettingsService settingsService) {
+    OvertimeFormValidator(OvertimeService overtimeService, SettingsService settingsService) {
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
     }

@@ -11,7 +11,7 @@ public class OvertimeListRecordDto {
     private final Duration duration;
     private final LocalDate lastModificationDate;
 
-    public OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
+    OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;

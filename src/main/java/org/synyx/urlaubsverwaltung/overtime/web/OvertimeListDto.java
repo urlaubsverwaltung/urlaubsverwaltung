@@ -9,7 +9,7 @@ public class OvertimeListDto {
     private final Duration overtimeTotal;
     private final Duration overtimeLeft;
 
-    public OvertimeListDto(List<OvertimeListRecordDto> records, Duration overtimeTotal, Duration overtimeLeft) {
+    OvertimeListDto(List<OvertimeListRecordDto> records, Duration overtimeTotal, Duration overtimeLeft) {
         this.records = records;
         this.overtimeTotal = overtimeTotal;
         this.overtimeLeft = overtimeLeft;
