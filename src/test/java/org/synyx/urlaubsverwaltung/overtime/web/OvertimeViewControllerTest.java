@@ -9,6 +9,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
@@ -59,13 +61,15 @@ class OvertimeViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
+    private ApplicationService applicationService;
+    @Mock
     private SettingsService settingsService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, settingsService, clock);
+        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, applicationService, settingsService, clock);
     }
 
     @Test
@@ -197,7 +201,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
         final List<OvertimeListRecordDto> recordDtos = List.of(
-            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
+            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), ApplicationStatus.ALLOWED, OvertimeListRecordDto.OvertimeListRecordType.OVERTIME, overtime.getLastModificationDate()));
 
         final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
         resultActions
@@ -237,7 +241,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
         final List<OvertimeListRecordDto> recordDtos = List.of(
-            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
+            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), ApplicationStatus.ALLOWED, OvertimeListRecordDto.OvertimeListRecordType.OVERTIME, overtime.getLastModificationDate()));
 
         final ResultActions resultActions = perform(
             get("/web/overtime")

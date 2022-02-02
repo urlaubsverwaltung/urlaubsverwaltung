@@ -27,8 +27,9 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <c:if test="${userIsAllowedToWriteOvertime}">
-                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1" data-title="<spring:message code="action.overtime.new"/>">
-                                <icon:plus-circle className="tw-w-5 tw-h-5" />
+                            <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1"
+                               data-title="<spring:message code="action.overtime.new"/>">
+                                <icon:plus-circle className="tw-w-5 tw-h-5"/>
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -66,30 +67,78 @@
                         <table class="list-table selectable-table tw-text-sm">
                             <caption class="tw-sr-only"><spring:message code="overtime.list.title"/></caption>
                             <thead class="tw-sr-only">
-                                <tr>
-                                    <th scope="col"><spring:message code="overtime.list.col.icon"/></th>
-                                    <th scope="col"><spring:message code="overtime.list.col.date"/></th>
-                                    <th scope="col"><spring:message code="overtime.list.col.duration"/></th>
-                                    <th scope="col"><spring:message code="overtime.list.col.last-edited"/></th>
-                                </tr>
+                            <tr>
+                                <th scope="col"><spring:message code="overtime.list.col.icon"/></th>
+                                <th scope="col"><spring:message code="overtime.list.col.date"/></th>
+                                <th scope="col"><spring:message code="overtime.list.col.duration"/></th>
+                                <th scope="col"><spring:message code="overtime.list.col.last-edited"/></th>
+                            </tr>
                             </thead>
                             <tbody>
                             <c:forEach items="${records}" var="record">
-                                <tr onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
-                                    <td class="is-centered state">
-                                        <span class="print:tw-hidden">
-                                            <icon:briefcase className="tw-w-6 tw-h-6"/>
-                                        </span>
+
+                                <c:choose>
+                                    <c:when test="${record.status == 'CANCELLED' || record.status == 'REJECTED' || record.status == 'REVOKED'}">
+                                        <c:set var="CSS_CLASS" value="inactive"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:set var="CSS_CLASS" value="active"/>
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <tr class="${CSS_CLASS}" onclick="navigate('${URL_PREFIX}/overtime/${record.id}');">
+                                    <td class="is-centered">
+                                        <c:if test="${record.overtimeListRecordType == 'ABSENCE'}">
+                                            <c:choose>
+                                                <c:when test="${record.status == 'WAITING'}">
+                                                    <icon:question-mark-circle className="tw-w-6 tw-h-6" />
+                                                </c:when>
+                                                <c:when test="${record.status == 'ALLOWED'}">
+                                                    <icon:check-circle className="tw-w-6 tw-h-6" />
+                                                </c:when>
+                                                <c:when test="${record.status == 'TEMPORARY_ALLOWED'}">
+                                                    <icon:check-circle className="tw-w-6 tw-h-6" />
+                                                </c:when>
+                                                <c:when test="${record.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
+                                                    <icon:check-circle className="tw-w-6 tw-h-6" />
+                                                    <icon:arrow-narrow-right className="tw-w-5 tw-h-5" />
+                                                    <icon:trash className="tw-w-6 tw-h-6" />
+                                                </c:when>
+                                                <c:when test="${record.status == 'REJECTED'}">
+                                                    <icon:ban className="tw-w-6 tw-h-6" />
+                                                </c:when>
+                                                <c:when test="${record.status == 'CANCELLED'  || record.status == 'REVOKED'}">
+                                                    <icon:trash className="tw-w-6 tw-h-6" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    &nbsp;
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:if>
                                     </td>
                                     <td>
-                                        <h4 class="visible-print">
-                                            <spring:message code="overtime.title"/>
-                                        </h4>
-                                        <a class="print:tw-hidden" href="${URL_PREFIX}/overtime/${record.id}">
-                                            <h4><spring:message code="overtime.title"/></h4>
-                                        </a>
+                                        <c:choose>
+                                            <c:when test="${record.overtimeListRecordType == 'OVERTIME'}">
+                                                <span class="visible-print">
+                                                    <spring:message code="overtime.link.overtime"/>
+                                                </span>
+                                                <a class="print:tw-hidden tw-text-lg tw-mb-1"
+                                                   href="${URL_PREFIX}/overtime/${record.id}">
+                                                    <spring:message code="overtime.link.overtime"/>
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="visible-print">
+                                                    <spring:message code="overtime.link.absence"/>
+                                                </span>
+                                                <a class="print:tw-hidden tw-text-lg tw-mb-1"
+                                                   href="${URL_PREFIX}/application/${record.id}">
+                                                    <spring:message code="overtime.link.absence"/>
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
                                         <p>
-                                            <uv:date-range from="${record.startDate}" to="${record.endDate}" />
+                                            <uv:date-range from="${record.startDate}" to="${record.endDate}"/>
                                         </p>
                                     </td>
                                     <td class="is-centered">

@@ -82,7 +82,6 @@ public class OvertimeFormValidator implements Validator {
     }
 
     private void validateDateNotNull(LocalDate date, String field, Errors errors) {
-
         // may be that date field is null because of cast exception, than there is already a field error
         if (date == null && !errors.hasFieldErrors(field)) {
             errors.rejectValue(field, ERROR_MANDATORY);
@@ -108,24 +107,20 @@ public class OvertimeFormValidator implements Validator {
     private void validateMaximumOvertimeNotReached(OvertimeSettings overtimeSettings, OvertimeForm overtimeForm, Errors errors) {
 
         final Duration numberOfHours = overtimeForm.getDuration();
-
         if (numberOfHours != null) {
             final Duration maximumOvertime = Duration.ofHours(overtimeSettings.getMaximumOvertime());
             final Duration minimumOvertime = Duration.ofHours(overtimeSettings.getMinimumOvertime());
 
             if (maximumOvertime.isZero()) {
                 errors.reject(ERROR_OVERTIME_DEACTIVATED);
-
                 return;
             }
 
             Duration leftOvertime = overtimeService.getLeftOvertimeForPerson(overtimeForm.getPerson());
 
-            Integer overtimeRecordId = overtimeForm.getId();
-
+            final Integer overtimeRecordId = overtimeForm.getId();
             if (overtimeRecordId != null) {
-                Optional<Overtime> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
-
+                final Optional<Overtime> overtimeRecordOptional = overtimeService.getOvertimeById(overtimeRecordId);
                 if (overtimeRecordOptional.isPresent()) {
                     leftOvertime = leftOvertime.minus(overtimeRecordOptional.get().getDuration());
                 }
@@ -137,7 +132,7 @@ public class OvertimeFormValidator implements Validator {
             }
 
             // left overtime + overtime record must be greater than minimum overtime
-            // minimum overtime are missing hours (means negative)
+            // are missing hours (means negative)
             if (leftOvertime.plus(numberOfHours).compareTo(minimumOvertime.negated()) < 0) {
                 errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime}, null);
             }
@@ -145,9 +140,7 @@ public class OvertimeFormValidator implements Validator {
     }
 
     private void validateComment(OvertimeForm overtimeForm, Errors errors) {
-
         final String comment = overtimeForm.getComment();
-
         if (hasText(comment) && comment.length() > MAX_CHARS) {
             errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_MAX_CHARS);
         }
