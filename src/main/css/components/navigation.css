@@ -3,12 +3,234 @@
   @apply tw-top-0;
   @apply tw-w-full;
   @apply tw-z-50;
-  @apply tw-bg-zinc-100;
-  @apply tw-h-12;
 }
 
-@screen lg {
-  .navigation {
-    @apply tw-h-auto;
-  }
+.navigation::before {
+  content: "";
+  @apply tw-absolute;
+  @apply tw-inset-0;
+  @apply tw-bg-zinc-100;
+  @apply dark:tw-bg-zinc-900;
+  @apply dark:tw-backdrop-blur;
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
+  @apply lg:dark:tw-border-b;
+  @apply lg:dark:tw-border-b-zinc-800;
+}
+
+.navigation-inner {
+  @apply dark:tw-border-b;
+  @apply lg:dark:tw-border-b-0;
+  @apply dark:tw-border-b-zinc-800;
+}
+
+.navigation-link {
+  @apply tw-text-zinc-900;
+  @apply hover:tw-text-blue-400;
+  @apply focus:tw-text-blue-400;
+  @apply tw-transition-colors;
+  @apply dark:tw-text-zinc-100;
+  @apply dark:hover:tw-text-zinc-400;
+  @apply dark:focus:tw-text-zinc-400;
+  text-decoration: none !important;
+}
+
+.navigation-link-icon {
+  @apply tw-text-zinc-900;
+  @apply tw-text-opacity-50;
+  @apply tw-transition-colors;
+  @apply dark:tw-text-zinc-100;
+  @apply dark:tw-text-opacity-100;
+}
+
+.navigation-link:is(:hover, :focus) .navigation-link-icon {
+  @apply tw-text-blue-400;
+  @apply dark:tw-text-zinc-400;
+}
+
+.navigation-content-spacer {
+  @apply tw-bg-white;
+  @apply dark:tw-bg-zinc-900;
+}
+
+.navigation-content-spacer--left,
+.navigation-content-spacer--right {
+  position: relative;
+  @apply dark:tw-hidden;
+}
+
+.navigation-content-spacer--left::before,
+.navigation-content-spacer--right::before,
+.navigation-content-spacer--left::after,
+.navigation-content-spacer--right::after {
+  content: "";
+  position: absolute;
+  @apply tw-inset-0;
+}
+
+.navigation-content-spacer--left::before,
+.navigation-content-spacer--right::before {
+  @apply tw-bg-zinc-100;
+  @apply dark:tw-bg-zinc-800;
+}
+
+.navigation-content-spacer--left::after,
+.navigation-content-spacer--right::after {
+  @apply tw-bg-white;
+  @apply dark:tw-bg-zinc-900;
+}
+
+.navigation-content-spacer--left::after {
+  @apply tw-rounded-tl-full;
+}
+
+.navigation-content-spacer--right::after {
+  @apply tw-rounded-tr-full;
+}
+
+#menu-toggle-checkbox ~ label ~ nav .navigation-items {
+  overflow: hidden;
+  transition: max-height 400ms ease-in;
+}
+#menu-toggle-checkbox:checked ~ label ~ nav .navigation-items {
+  max-height: 90vh !important;
+}
+
+#menu-toggle-checkbox + label > span:first-child {
+  width: 30px;
+  height: 18px;
+  position: relative;
+}
+
+#menu-toggle-checkbox + label > span > span {
+  padding: 0;
+  width: 30px;
+  height: 4px;
+  display: block;
+  border-radius: 4px;
+  transition: all 0.4s ease-in-out;
+  position: absolute;
+  background-color: #353535;
+  @apply dark:tw-bg-zinc-300;
+}
+
+#menu-toggle-checkbox + label > span > span:nth-child(1) {
+  top: 0;
+  transition: all 0.4s ease-in-out, transform 0.4s ease-in-out 0.4s;
+}
+
+#menu-toggle-checkbox + label > span > span:nth-child(2) {
+  top: 6.5px;
+  width: 1px;
+  transform: rotate(90deg);
+  left: 6.5px;
+}
+
+#menu-toggle-checkbox + label > span > span:nth-child(3) {
+  top: 6.5px;
+  right: 0;
+  width: 1px;
+  left: 6.5px;
+}
+
+#menu-toggle-checkbox + label > span > span:nth-child(4) {
+  bottom: 0;
+  top: 6.5px;
+}
+
+#menu-toggle-checkbox + label > span > span:nth-child(5) {
+  bottom: 0;
+}
+
+#menu-toggle-checkbox:checked + label > span > span:nth-child(1) {
+  top: 6.5px;
+  background-color: transparent;
+}
+
+#menu-toggle-checkbox:checked + label > span > span:nth-child(2) {
+  left: 0;
+  width: 30px;
+  transform: rotate(45deg);
+}
+
+#menu-toggle-checkbox:checked + label > span > span:nth-child(3) {
+  left: 0;
+  width: 30px;
+  transform: rotate(-45deg);
+}
+
+#menu-toggle-checkbox:checked + label > span > span:nth-child(4) {
+  background-color: transparent !important;
+}
+
+#menu-toggle-checkbox:checked + label > span > span:nth-child(5) {
+  bottom: 6.5px;
+  background-color: transparent !important;
+}
+
+.nav-popup-menu::before {
+  border: 8px solid transparent;
+  border-bottom: 8px solid #3a424e;
+  position: absolute;
+  top: -15px;
+  right: 13px;
+  content: "";
+  @apply dark:tw-border-b-neutral-600;
+}
+
+.nav-popup-menu-inner {
+  @apply tw-backdrop-blur;
+  @apply tw-bg-gray-800;
+  @apply dark:tw-bg-zinc-900;
+  @apply supports-backdrop-blur:tw-bg-gray-800/[0.85];
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
+  @apply dark:tw-border;
+  @apply dark:tw-border-zinc-700;
+}
+
+.nav-popup-menu-button {
+  @apply tw-transition-colors;
+  @apply tw-text-zinc-800 !important;
+  @apply hover:tw-text-black !important;
+  @apply focus:tw-text-black !important;
+}
+
+.nav-popup-menu-button_icon {
+  @apply tw-text-zinc-900;
+  @apply tw-text-opacity-75;
+  @apply tw-transition-colors;
+  @apply dark:tw-text-zinc-100;
+  @apply dark:hover:tw-text-opacity-100;
+}
+
+.nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
+  @apply tw-text-opacity-100;
+  @apply dark:tw-text-zinc-100;
+}
+
+.nav-popup-menu_link,
+.nav-popup-menu_link--no-hover {
+  @apply tw-bg-transparent !important;
+  @apply tw-text-white !important;
+  /* override default anchor hover color to keep color for '--no-hover' */
+  @apply hover:tw-text-white !important;
+  @apply focus:tw-text-white !important;
+}
+
+.nav-popup-menu_link {
+  @apply hover:tw-bg-zinc-600 !important;
+  @apply focus:tw-bg-zinc-600 !important;
+  @apply dark:hover:tw-bg-zinc-700 !important;
+  @apply dark:focus:tw-bg-zinc-700 !important;
+}
+
+.nav-popup-menu_link-icon {
+  @apply tw-border;
+  @apply tw-border-zinc-50;
+  @apply tw-border-opacity-25;
+  @apply dark:tw-border-zinc-700;
+}
+
+.nav-popup-menu_link:hover .nav-popup-menu_link-icon,
+.nav-popup-menu_link:focus .nav-popup-menu_link-icon {
+  @apply dark:tw-border-zinc-500;
 }

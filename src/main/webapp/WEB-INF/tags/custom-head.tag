@@ -1,5 +1,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -31,6 +32,8 @@
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
+<uv:script-theme-toggler />
+
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
 <script defer src="<asset:url value='npm.core-js.js' />"></script>

@@ -23,6 +23,7 @@
 .OVERTIME,
 .OTHER {
   color: #df771b;
+  @apply dark:tw-text-yellow-500 !important;
 }
 
 /**************************************************************************
@@ -31,6 +32,7 @@
 
 .state {
   color: #6f6f6f;
+  @apply dark:tw-text-zinc-400 !important;
 }
 
 .state.pull-right {
@@ -39,20 +41,25 @@
 
 .state.WAITING {
   color: #6f6f6f !important;
+  @apply dark:tw-text-zinc-400 !important;
 }
 
 .state.ALLOWED {
   color: #43c83c !important;
+  @apply dark:tw-text-green-500 !important;
 }
 
 .state.TEMPORARY_ALLOWED {
   color: #6f6f6f !important;
+  @apply dark:tw-text-zinc-500 !important;
 }
 
 .state.REJECTED {
   color: #fa3031 !important;
+  @apply dark:tw-text-red-400 !important;
 }
 
 .state.CANCELLED {
   color: #3b3b3b !important;
+  @apply dark:tw-text-zinc-600 !important;
 }

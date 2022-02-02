@@ -8,7 +8,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 <head>
     <title>
         <spring:message code="person.form.annualVacation.header.title" arguments="${person.niceName}"/>
@@ -25,7 +25,7 @@
     <uv:datepicker-localisation />
     <script defer src="<asset:url value='npm.duetds.js' />"></script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
-    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~95889e93.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js' />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js' />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js' />"></script>
     <script defer src="<asset:url value='account_form.js' />"></script>
@@ -65,7 +65,7 @@
                 <spring:hasBindErrors name="account">
                     <div class="row tw-mb-8">
                         <div class="col-xs-12">
-                            <div class="alert alert-danger tw-text-red-800 tw-text-sm">
+                            <div class="alert alert-danger tw-text-sm">
                                 <spring:message code="error.info.message"/>
                             </div>
                         </div>

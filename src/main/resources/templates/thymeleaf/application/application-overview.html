@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head th:replace="_layout::head(~{::title}, ~{::scripts})">
     <title th:text="#{applications.header.title}"></title>
     <th:block th:fragment="scripts">
@@ -56,7 +56,7 @@
         <th:block th:ref="user-applications-heading-body">
           <ul class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0" is="uv-nav-tabs">
             <li
-              class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
+              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'application' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-applications-block"
               th:attrappend="data-active=${activeContent == 'application'}?${'data-active'}"
@@ -64,14 +64,14 @@
               <a
                 href="#user-applications-block"
                 th:href="@{/web/application}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost"
-                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost' : 'tw-text-zinc-400'}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
+                th:classappend="${activeContent == 'application' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
                 th:text="#{applications.myself.waiting}"
               >
               </a>
             </li>
             <li
-              class="tw-border-l-4 xs:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:tw-pl-0"
+              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'replacement' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-replacements-block"
               th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
@@ -79,11 +79,11 @@
               <a
                 href="#user-replacements-block"
                 th:href="@{/web/application/replacement}"
-                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost tw-gap-2"
-                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost' : 'tw-text-zinc-400'}"
+                class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200 tw-gap-2"
+                th:classappend="${activeContent == 'replacement' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
               >
                 <th:block th:text="#{applications.holiday_replacement}" />
-                <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5">
+                <span class="tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-bg-blue-100 tw-text-blue-700 dark:tw-bg-sky-400 dark:tw-text-zinc-900 tw-text-xs tw-p-0.5 tw-font-bold tw-w-5 tw-h-5 tw--translate-y-0.5">
                   <th:block th:text="${#lists.size(applications_holiday_replacements)}" />
                 </span>
               </a>
@@ -105,7 +105,7 @@
               tw-sticky tw-py-2 tw-w-full
               md:tw-w-1/4
               lg:tw-p-2
-              tw-bg-gradient-to-b tw-from-white tw-via-white
+              tw-bg-gradient-to-b tw-from-white tw-via-white dark:tw-from-zinc-900 dark:tw-via-zinc-900
             "
             style="top: 3.25rem"
           >
@@ -124,6 +124,7 @@
           </div>
           <ul
             class="
+              lg:list--hover
               tw-w-full tw-list-none tw-m-0 tw-p-0 tw-pl-20
               md:tw-pl-0 md:tw-flex-1
               tw-space-y-10
@@ -141,7 +142,7 @@
                   lg:tw-p-2
                   md:tw-block
                   lg:tw-flex lg:tw-items-end
-                  lg:hover:tw-bg-zinc-50
+                  dark:tw-rounded
                 "
                 th:each="userRequestForLeave,loopStatus: ${userApplications}"
               >
@@ -168,7 +169,7 @@
                     <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
                   </span>
                   <span
-                    class="tw-block tw-text-black-almost"
+                    class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
                     th:text="${userRequestForLeave.durationOfAbsenceDescription}"
                   ></span>
                 </a>
@@ -233,7 +234,7 @@
               tw-sticky tw-py-2 tw-w-full
               md:tw-w-auto
               lg:tw-w-1/4
-              tw-bg-gradient-to-b tw-from-white tw-via-white
+              tw-bg-gradient-to-b tw-from-white tw-via-white dark:tw-from-zinc-900 dark:tw-via-zinc-900
               tw-z-10
             "
             style="top: 3.25rem"
@@ -317,6 +318,7 @@
         <ul
           th:if="${not #lists.isEmpty(otherApplications)}"
           class="
+            lg:list--hover
             tw-w-full tw-list-none tw-m-0 tw-p-0
             tw-text-sm
             tw-space-y-10 lg:tw-space-y-4
@@ -329,7 +331,7 @@
               md:tw-flex md:tw-items-top lg:tw-items-center
               md:tw-space-x-12
               lg:tw-p-2
-              lg:hover:tw-bg-zinc-50
+              dark:tw-rounded
             "
           >
             <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
@@ -366,7 +368,7 @@
                     <th:block th:text="#{${otherRequestForLeave.vacationType.messageKey}}" />
                   </span>
                   <span
-                    class="tw-block tw-text-black-almost"
+                    class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
                     th:text="${otherRequestForLeave.durationOfAbsenceDescription}"
                   ></span>
                 </a>
@@ -427,6 +429,7 @@
           <ul
             th:if="${not #lists.isEmpty(applications_cancellation_request)}"
             class="
+              lg:list--hover
               tw-w-full tw-list-none tw-m-0 tw-p-0
               tw-text-sm
               tw-space-y-10 lg:tw-space-y-4
@@ -439,7 +442,7 @@
                 md:tw-flex md:tw-items-top lg:tw-items-center
                 md:tw-space-x-12
                 lg:tw-p-2
-                lg:hover:tw-bg-zinc-50
+                dark:tw-rounded
               "
             >
               <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
@@ -477,7 +480,7 @@
                       <th:block th:text="#{${cancellationRequest.vacationType.messageKey}}" />
                     </span>
                     <span
-                      class="tw-block tw-text-black-almost"
+                      class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
                       th:text="${cancellationRequest.durationOfAbsenceDescription}"
                     ></span>
                   </a>

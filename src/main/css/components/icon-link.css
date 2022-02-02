@@ -2,8 +2,10 @@
   @apply tw-flex !important;
   @apply tw-text-zinc-700 !important;
   @apply tw-no-underline !important;
-}
-
-.icon-link:hover {
-  @apply tw-text-black !important;
+  @apply hover:tw-text-black !important;
+  @apply focus:tw-text-black !important;
+  @apply dark:tw-text-zinc-50 !important;
+  @apply dark:hover:tw-text-zinc-50 !important;
+  @apply dark:focus:tw-text-zinc-50 !important;
+  @apply dark:tw-text-opacity-75 !important;
 }

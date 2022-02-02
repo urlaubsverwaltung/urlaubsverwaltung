@@ -2,25 +2,63 @@
 @import "./base.css";
 
 @import "tailwindcss/components";
+@import "./components/alert.css";
 @import "./components/action-link.css";
 @import "./components/button.css";
 @import "./components/box.css";
 @import "./components/checkbox-switch.css";
 @import "./components/dropdown-caret.css";
+@import "./components/dropdown-menu.css";
 @import "./components/loading.css";
 @import "./components/form.css";
 @import "./components/icon-link.css";
 @import "./components/jquery-ui-datepicker.css";
 @import "./components/link.css";
+@import "./components/list.css";
 @import "./components/navigation.css";
 @import "./components/multi-select.css";
+@import "./components/modal.css";
+@import "./components/nav-tabs.css";
 @import "./components/table.css";
 @import "./components/tabs.css";
 @import "./components/separator.css";
 @import "./components/states.css";
+@import "./components/popover.css";
 @import "./components/print.css";
 @import "./components/section-heading.css";
 @import "./components/text-bubble.css";
+@import "./components/tooltip.css";
+@import "./components/ui.timepicker.css";
 
 @import "tailwindcss/utilities";
 @import "./utility.css";
+
+@layer base {
+  :root {
+    --uv-cal-border-color: 255, 255, 255;
+    --uv-cal-today-border-color: 113, 113, 122; /* zinc.500 */
+    --uv-cal-default-bg: 229, 229, 229;
+    --uv-cal-default-color: 10, 10, 10;
+    --uv-cal-weekend-bg: 181, 208, 223;
+    --uv-cal-weekend-color: 10, 10, 10;
+    --uv-cal-sick-note-bg: 239, 68, 68;
+    --uv-cal-public-holiday-bg: 181, 208, 223;
+    --uv-cal-public-holiday-color: 10, 10, 10;
+    --uv-cal-personal-holiday-bg: 234, 179, 8;
+    --uv-cal-personal-holiday-approved-bg: 250, 204, 21;
+  }
+
+  .tw-dark {
+    --uv-cal-border-color: 23, 23, 23; /* neutral.900 */
+    --uv-cal-today-border-color: 113, 113, 122; /* gray.500 */
+    --uv-cal-default-bg: 38, 38, 38; /* neutral.800 */
+    --uv-cal-default-color: 212, 212, 212; /* neutral.300 */
+    --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
+    --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
+    --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
+    --uv-cal-public-holiday-bg: 14, 165, 233; /* sky.500 */
+    --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
+    --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
+    --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
+  }
+}

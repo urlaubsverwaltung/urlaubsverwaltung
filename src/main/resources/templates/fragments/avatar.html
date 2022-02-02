@@ -19,7 +19,7 @@
 />
 
 <span th:fragment="avatar-bordered(url,username,width,height)">
-  <span class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 tw-rounded-full tw-p-1 tw-inline-block">
+  <span class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-block">
     <img src="#" alt="" th:replace="::avatar(${url},${username},${width},${height})" />
   </span>
 </span>

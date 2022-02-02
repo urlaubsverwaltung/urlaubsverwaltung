@@ -40,6 +40,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @MockBean
     private CalendarAccessibleService calendarAccessibleService;
 
+
     // =========================================================================================================
     // company calendar => link
 

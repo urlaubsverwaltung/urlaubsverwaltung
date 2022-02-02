@@ -1,0 +1,10 @@
+@screen lg {
+  ul.lg\:list--hover > li {
+    @apply tw-transition-colors;
+  }
+
+  ul.lg\:list--hover > li:hover {
+    @apply tw-bg-zinc-50;
+    @apply dark:tw-bg-zinc-800;
+  }
+}

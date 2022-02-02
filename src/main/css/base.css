@@ -4,6 +4,8 @@ body {
   font-size: 100%;
   margin: 0;
   color: #444444;
+  @apply dark:tw-bg-zinc-900;
+  @apply dark:tw-text-zinc-200;
 }
 
 /**
@@ -39,6 +41,7 @@ body {
   border-width: 0; /* 2 */
   border-style: solid; /* 2 */
   border-color: #e5e7eb; /* 2 */
+  @apply dark:tw-border-neutral-600;
 }
 
 /**
@@ -62,6 +65,7 @@ html {
 
 hr {
   border-color: #d5d5d5;
+  @apply dark:tw-border-zinc-600;
 }
 
 footer {

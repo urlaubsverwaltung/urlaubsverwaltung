@@ -7,7 +7,7 @@
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 <head>
     <title>
         <spring:message code="sicknote.convert.header.title"/>
@@ -114,7 +114,7 @@
 
                     <uv:box className="tw-mb-8">
                         <jsp:attribute name="icon">
-                            <uv:box-icon className="tw-bg-red-500 tw-text-white">
+                            <uv:box-icon className="tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900">
                                 <c:choose>
                                     <c:when test="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
                                         <icon:child className="tw-w-8 tw-h-8" />
@@ -126,13 +126,13 @@
                             </uv:box-icon>
                         </jsp:attribute>
                         <jsp:body>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
                                 <spring:message code="sicknotes.details.box.person.has" arguments="${sickNote.person.niceName}" />
                             </span>
                             <span class="tw-my-1 tw-text-lg tw-font-medium">
                                 <spring:message code="${sickNote.sickNoteType.messageKey}" />
                             </span>
-                            <span class="tw-text-sm tw-text-black tw-text-opacity-75">
+                            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
                                 <c:choose>
                                     <c:when test="${sickNote.startDate == sickNote.endDate}">
                                         <c:set var="SICK_NOTE_DATE">

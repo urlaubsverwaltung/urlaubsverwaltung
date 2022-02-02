@@ -9,7 +9,7 @@
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <head>
     <title>
@@ -58,7 +58,7 @@
     <script defer
             src="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js' />"></script>
     <script defer
-            src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~95889e93.js' />"></script>
+            src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js' />"></script>
     <script defer src="<asset:url value='app_form.js' />"></script>
 </head>
 
@@ -416,9 +416,9 @@
                                                                             <c:out value="${holidayReplacement.person.niceName}" />
                                                                         </span>
                                                                         <c:if test="${not empty holidayReplacement.departments}">
-                                                                            <ul class="tw-m-0 tw-ml-1 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5">
+                                                                            <ul class="tw-m-0 tw-ml-2 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-1">
                                                                                 <c:forEach items="${holidayReplacement.departments}" var="department">
-                                                                                    <li class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800">
+                                                                                    <li class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-lime-600 dark:tw-text-lime-600 dark:tw-bg-transparent">
                                                                                         <c:out value="${department}" />
                                                                                     </li>
                                                                                 </c:forEach>
@@ -434,7 +434,7 @@
                                                                             formmethod="post"
                                                                             formaction="${ADD_REPLACEMENT_ACTION}"
                                                                         >
-                                                                            <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 tw-transition-colors">
+                                                                            <span class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors">
                                                                                 <icon:trash className="tw-w-4 tw-h-4 tw-mr-0.5" />
                                                                                 <spring:message code="application.data.holidayReplacement.remove-button.text" />
                                                                             </span>
@@ -444,11 +444,11 @@
                                                             </div>
                                                             <div class="tw-mt-2 md:tw-pl-14">
                                                                 <div class="tw-flex tw-justify-between tw-items-center">
-                                                                    <label for="replacement-note-${index}" class="tw-text-sm tw-text-black tw-text-opacity-50 tw-mb-0 tw-font-normal">
+                                                                    <label for="replacement-note-${index}" class="tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100 tw-mb-0 tw-font-normal">
                                                                         <spring:message code="application.data.holidayReplacementNote" arguments="${holidayReplacement.person.firstName}" />
                                                                     </label>
                                                                     <span>
-                                                                        <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
+                                                                        <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                                                                             <span class="tw-flex-grow"></span>
                                                                             <span id="text-holiday-replacement-note-${index}"></span>
                                                                             <spring:message code="action.comment.maxChars"/>
@@ -489,7 +489,7 @@
                                                        onkeyup="count(this.value, 'text-address');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-address');"/>
                                         <div class="tw-mt-1">
-                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
+                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                                                 <span class="tw-flex-grow"></span>
                                                 <span id="text-address"></span><spring:message
                                                 code="action.comment.maxChars"/>
@@ -512,7 +512,7 @@
                                                        onkeyup="count(this.value, 'text-comment');"
                                                        onkeydown="maxChars(this,200); count(this.value, 'text-comment');"/>
                                         <div class="tw-mt-1">
-                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50">
+                                            <small class="tw-flex tw-justify-between tw-text-sm tw-text-black tw-text-opacity-50 dark:tw-text-zinc-200 dark:tw-text-opacity-100">
                                                 <span class="tw-flex-grow"></span>
                                                 <span id="text-comment"></span><spring:message
                                                 code="action.comment.maxChars"/>

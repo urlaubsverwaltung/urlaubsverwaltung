@@ -47,7 +47,9 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"USER", "OFFICE"})
     void periodsSickNotesWithCorrectRole() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(new Person());
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(

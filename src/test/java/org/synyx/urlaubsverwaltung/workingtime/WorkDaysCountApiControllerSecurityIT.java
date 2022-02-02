@@ -30,6 +30,7 @@ class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
 
     @MockBean
     private WorkDaysCountService workDaysCountService;
+
     @MockBean
     private PersonService personService;
 

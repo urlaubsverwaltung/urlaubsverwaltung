@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:asset="http://www.w3.org/1999/xhtml">
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:asset="http://www.w3.org/1999/xhtml">
 <head th:fragment="head(title, scripts)">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -31,6 +31,29 @@
 
   <link rel="stylesheet" type="text/css" asset:href="common.css"/>
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+
+  <script th:if="${theme eq 'system'}">
+    (function() {
+      let mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mediaQueryDark.matches) {
+        document.querySelector("html").classList.add("tw-dark");
+      }
+      try {
+        mediaQueryDark.addEventListener("change", function () {
+          document.querySelector("html").classList.toggle("tw-dark");
+        });
+      } catch (error) {
+        // safari (https://stackoverflow.com/a/60000747)
+        try {
+          mediaQueryDark.addListener(function() {
+            document.querySelector("html").classList.toggle("tw-dark");
+          });
+        } catch (error2) {
+          console.info("could not add mediaQuery listener to toggle theme.", error2);
+        }
+      }
+    })();
+  </script>
 
   <script defer asset:src="runtime.js"></script>
   <script defer asset:src="polyfill.js"></script>

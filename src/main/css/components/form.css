@@ -5,6 +5,7 @@
   @apply tw-duration-150;
   @apply tw-ease-in-out;
   @apply tw-rounded-md;
+  @apply dark:tw-border-neutral-600 !important;
 }
 
 .form-control:focus,
@@ -23,6 +24,7 @@
   @apply tw-border;
   @apply tw-transition;
   border-color: #ccc;
+  @apply dark:tw-border-neutral-600;
 }
 
 .input-group.has-error {
@@ -36,12 +38,18 @@
   @apply tw-rounded-r-none !important;
 }
 
+.input-group-addon {
+  @apply dark:tw-bg-zinc-800;
+  @apply dark:tw-text-zinc-200;
+}
+
 .input-group .input-group-addon {
   /* remove border of input-group-addon since the input-group defines it */
   @apply tw-border-0 !important;
   /* however, left border should still be visible */
   @apply tw-border-l-2 !important;
   border-color: #ccc;
+  @apply dark:tw-border-neutral-600;
 }
 
 .input-group:focus-within {
@@ -122,6 +130,8 @@ textarea.error {
 
 .form-section .help-block {
   margin-top: 0;
+  @apply dark:tw-text-zinc-200;
+  @apply dark:tw-text-opacity-75;
 }
 
 /**************************************************************************
@@ -136,16 +146,19 @@ textarea.error {
   overflow: auto;
   max-height: 400px;
   width: 100%;
+  @apply dark:tw-border-zinc-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
+  @apply dark:tw-border-zinc-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
+  @apply dark:tw-bg-zinc-800;
 }
 
 .department--member.is-inactive {
@@ -188,4 +201,18 @@ textarea.error {
 
 .search-field {
   margin-bottom: 21px;
+}
+
+.select-caret {
+  @apply tw-text-zinc-700;
+}
+
+input, select, textarea {
+  @apply dark:tw-border-zinc-600 !important;
+  @apply dark:tw-bg-zinc-700 !important;
+  @apply dark:tw-text-zinc-50 !important;
+}
+
+.select-caret {
+  @apply dark:tw-text-zinc-50;
 }

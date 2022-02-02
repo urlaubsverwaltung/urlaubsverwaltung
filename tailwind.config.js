@@ -1,4 +1,9 @@
+const plugin = require("tailwindcss/plugin");
 const defaultConfig = require("tailwindcss/defaultConfig.js");
+
+function withOpacity(variable) {
+  return ({ opacityValue }) => (opacityValue ? `rgba(var(${variable}), ${opacityValue})` : `rgb(var(${variable}))`);
+}
 
 module.exports = {
   content: [
@@ -9,6 +14,7 @@ module.exports = {
   ],
   // use a prefix to not conflict with bootstrap
   prefix: "tw-",
+  darkMode: "class",
   // use important keyword for tailwind utility classes to override bootstrap selectors
   important: true,
   corePlugins: {
@@ -17,6 +23,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      borderWidth: {
+        3: "3px",
+      },
       lineHeight: {
         normal: "normal",
       },
@@ -31,6 +40,32 @@ module.exports = {
         "bootstrap-green": "#5cb85c",
         "bootstrap-green-dark": "#449d44",
       },
+      borderColor: {
+        calendar: {
+          DEFAULT: withOpacity("--uv-cal-border-color"),
+          today: withOpacity("--uv-cal-today-border-color"),
+        },
+      },
+      textColor: {
+        calendar: {
+          DEFAULT: withOpacity("--uv-cal-default-color"),
+          past: withOpacity("--uv-cal-past-color"),
+          weekend: withOpacity("--uv-cal-weekend-color"),
+          "public-holiday": withOpacity("--uv-cal-public-holiday-color"),
+        },
+      },
+      backgroundColor: {
+        calendar: {
+          DEFAULT: withOpacity("--uv-cal-default-bg"),
+          past: withOpacity("--uv-cal-past-bg"),
+          weekend: withOpacity("--uv-cal-weekend-bg"),
+          // ----
+          "sick-note": withOpacity("--uv-cal-sick-note-bg"),
+          "public-holiday": withOpacity("--uv-cal-public-holiday-bg"),
+          "personal-holiday": withOpacity("--uv-cal-personal-holiday-bg"),
+          "personal-holiday-approved": withOpacity("--uv-cal-personal-holiday-approved-bg"),
+        },
+      },
     },
     screens: {
       // cannot use 'extend' as `xs` would override other screens
@@ -39,5 +74,12 @@ module.exports = {
       ...defaultConfig.theme.screens,
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant(
+        "supports-backdrop-blur",
+        "@supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))",
+      );
+    }),
+  ],
 };

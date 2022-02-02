@@ -19,5 +19,7 @@
     margin: 0 auto 30px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
+    @apply dark:tw-bg-neutral-800;
+    @apply dark:tw-border-neutral-800;
   }
 }

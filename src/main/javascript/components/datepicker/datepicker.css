@@ -2,6 +2,28 @@ duet-date-picker {
   --duet-color-button: #eee;
 }
 
+.tw-dark duet-date-picker {
+  --duet-color-primary: #005fcc;
+  --duet-color-text: theme("colors.neutral.50");
+  --duet-color-text-active: theme("colors.neutral.50");
+  --duet-color-placeholder: theme("colors.neutral.50");
+  --duet-color-button: theme("colors.neutral.800");
+  --duet-color-surface: theme("colors.neutral.800");
+  --duet-color-overlay: rgba(0, 0, 0, 0.8);
+  --duet-color-border: #fff;
+
+  --duet-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --duet-font-normal: 400;
+  --duet-font-bold: 600;
+
+  --duet-radius: 4px;
+  --duet-z-index: 600;
+}
+
+.duet-date__dialog-content {
+  @apply dark:tw-border-zinc-600;
+}
+
 duet-date-picker.form-control {
   padding: 0;
 }
@@ -31,30 +53,33 @@ duet-date-picker.error {
   padding: 0;
   /* override duet stuff */
   opacity: 1;
-  --background-color-left: #e5e5e5;
-  --background-color-right: #e5e5e5;
+  --background-color-left: theme("backgroundColor.calendar.DEFAULT");
+  --background-color-right: theme("backgroundColor.calendar.DEFAULT");
+  --font-color: theme("textColor.calendar.DEFAULT");
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
-  color: #0a0a0a;
+  color: var(--font-color);
 }
 
 .duet-date__day.datepicker-day-public-holiday-morning,
 .duet-date__day.datepicker-day-public-holiday-morning:not(.is-month) {
-  --background-color-left: #b5d0df;
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
 }
 .duet-date__day.datepicker-day-public-holiday-noon,
 .duet-date__day.datepicker-day-public-holiday-noon:not(.is-month) {
-  --background-color-right: #b5d0df;
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
 }
 .duet-date__day.datepicker-day-public-holiday-full,
 .duet-date__day.datepicker-day-public-holiday-full:not(.is-month) {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --font-color: theme("textColor.calendar.public-holiday");
 }
 
 .duet-date__day.datepicker-day-weekend,
 .duet-date__day.datepicker-day-weekend:not(.is-month) {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
+  --background-color-left: theme("backgroundColor.calendar.weekend");
+  --background-color-right: theme("backgroundColor.calendar.weekend");
+  --font-color: theme("textColor.calendar.weekend");
 }
 
 .duet-date__day.datepicker-day-today {

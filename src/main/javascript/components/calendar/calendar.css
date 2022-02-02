@@ -25,7 +25,7 @@
   padding: 0;
   cursor: pointer;
   background-color: transparent;
-  color: #7b7b7b;
+  color: theme("textColor.calendar.DEFAULT");
 }
 
 .datepicker-prev {
@@ -34,11 +34,6 @@
 
 .datepicker-next {
   margin-left: 1.125rem;
-}
-
-.datepicker-prev:hover,
-.datepicker-next:hover {
-  color: #4d5258;
 }
 
 /* MONTHS */
@@ -94,9 +89,10 @@
 .datepicker-month h3 {
   margin: 0;
   margin-bottom: 0.5rem;
-  color: #4a5568;
+  color: theme("textColor.calendar.DEFAULT");
   font-size: 0.875rem;
   font-weight: 400;
+  @apply dark:tw-font-semibold;
   text-align: center;
 }
 
@@ -111,32 +107,40 @@
 .datepicker-table td {
   padding: 0;
   margin: 0;
-  color: #4a5568;
+  color: theme("textColor.calendar.DEFAULT");
+  @apply dark:tw-text-center;
 }
 
 .datepicker-table td {
-  border: 1px solid #fff;
-  background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url("./schraffur.png");
+  border: 1px solid theme("borderColor.calendar.DEFAULT");
+  background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAMAAAC6sdbXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF7u7u////KNOqmgAAABlJREFUeNpiYGRkZABCCGIA8UAEI4QACDAAAUoAFV5+ydgAAAAASUVORK5CYII=")
+}
+
+.tw-dark .datepicker-table td {
+  background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='currentColor' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .datepicker-table thead tr th {
   padding: 0.5em;
   font-weight: normal;
+  @apply dark:tw-font-semibold;
 }
 
 .datepicker-day {
   overflow: hidden;
   position: relative;
-  --absence-bar-color-morning: transparent;
-  --absence-bar-color-noon: transparent;
-  --absence-bar-color: transparent;
-  --background-color-left: #e5e5e5;
-  --background-color-right: #e5e5e5;
+  --absence-bar-color-morning: theme("backgroundColor.calendar.DEFAULT");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.DEFAULT");
+  --absence-bar-color: theme("backgroundColor.calendar.DEFAULT");
+  --background-color-left: theme("backgroundColor.calendar.DEFAULT");
+  --background-color-right: theme("backgroundColor.calendar.DEFAULT");
+  --font-color: theme("textColor.calendar.DEFAULT");
   display: block;
   padding: 0.75rem;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
-  color: #0a0a0a;
+  color: var(--font-color);
+  @apply dark:tw-font-semibold;
 }
 
 .datepicker-day-past {
@@ -183,24 +187,24 @@ td.datepicker-day {
 /* NOTE: Order of the day classes is very important because of css classes overloading! */
 
 .datepicker-day-personal-holiday-morning {
-  --absence-bar-color-morning: #eab308;
+  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday");
 }
 .datepicker-day-personal-holiday-noon {
-  --absence-bar-color-noon: #eab308;
+  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday");
 }
 .datepicker-day-personal-holiday-full {
-  --absence-bar-color: #eab308;
+  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday");
 }
 
 .datepicker-day-personal-holiday-morning-approved,
 .datepicker-day-personal-holiday-morning-approved.datepicker-day-past {
-  --absence-bar-color-morning: #facc15;
+  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 .datepicker-day-personal-holiday-noon-approved {
-  --absence-bar-color-noon: #facc15;
+  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 .datepicker-day-personal-holiday-full-approved {
-  --absence-bar-color: #facc15;
+  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday-approved");
 }
 
 .datepicker-day:not([data-datepicker-selectable="false"]) {
@@ -218,59 +222,38 @@ td.datepicker-day {
 .datepicker-day-selected[class*="-morning"],
 .datepicker-day-selected[class*="-noon"] {
   box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.6) !important;
-  --font-color: #5f5f5f;
 }
 
 .datepicker-day-sick-note-morning {
-  --absence-bar-color-morning: #ef4444;
+  --absence-bar-color-morning: theme("backgroundColor.calendar.sick-note");
 }
 .datepicker-day-sick-note-noon {
-  --absence-bar-color-noon: #ef4444;
+  --absence-bar-color-noon: theme("backgroundColor.calendar.sick-note");
 }
 .datepicker-day-sick-note-full {
-  --absence-bar-color: #ef4444;
+  --absence-bar-color: theme("backgroundColor.calendar.sick-note");
 }
 
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 /* note: except for weekend which follows beneath */
 .datepicker-day-public-holiday-morning {
-  --background-color-left: #b5d0df;
-  --font-color: #6f6f6f;
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
 }
 .datepicker-day-public-holiday-noon {
-  --background-color-right: #b5d0df;
-  --font-color: #6f6f6f;
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
 }
 .datepicker-day-public-holiday-full {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
-  --font-color: #fff;
-}
-
-.datepicker-day-public-holiday-morning:hover {
-  --background-color-left: #b5d0df;
-  --font-color: #fff;
-}
-.datepicker-day-public-holiday-noon:hover {
-  --background-color-right: #b5d0df;
-  --font-color: #fff;
-}
-.datepicker-day-public-holiday-full:hover {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
-}
-
-.datepicker-day-public-holiday-morning.datepicker-day-past {
-  --font-color: #afafaf;
-}
-.datepicker-day-public-holiday-noon.datepicker-day-past {
-  --font-color: #afafaf;
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --font-color: theme("textColor.calendar.public-holiday");
 }
 
 .datepicker-day-weekend {
-  --background-color-left: #b5d0df;
-  --background-color-right: #b5d0df;
+  --background-color-left: theme("backgroundColor.calendar.weekend");
+  --background-color-right: theme("backgroundColor.calendar.weekend");
+  /* important is required since `.datepicker-day-public-holiday-noon.datepicker-day-past` is a more specific selector which wins otherwise */
+  --font-color: theme("textColor.calendar.weekend") !important;
 }
 
 /**************************************************************************

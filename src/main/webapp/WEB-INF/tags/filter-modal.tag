@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="button-main is-sticky" type="submit">
+                    <button class="button-main" type="submit">
                         <spring:message code="action.confirm"/>
                     </button>
                 </div>

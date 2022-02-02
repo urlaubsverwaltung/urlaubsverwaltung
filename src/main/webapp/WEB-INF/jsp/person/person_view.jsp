@@ -9,7 +9,7 @@
 
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -67,7 +67,7 @@
                         aria-expanded="false"
                         class="tw-text-current tw-m-0"
                     >
-                        ${visiblePersonsDropdownText}<span class="caret tw-opacity-70"></span>
+                        ${visiblePersonsDropdownText}<span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                         <li>

@@ -36,6 +36,7 @@ module.exports = {
     overtime_form: `${paths.src}/bundles/overtime-form.js`,
     settings_form: `${paths.src}/bundles/settings-form.js`,
     account_form: `${paths.src}/bundles/account-form.js`,
+    user_settings: `${paths.src}/bundles/user-settings.js`,
     workingtime_form: `${paths.src}/bundles/workingtime-form.js`,
     copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,
     tabs: `${paths.src}/components/tabs/index.js`,
@@ -109,7 +110,7 @@ module.exports = {
     chunkIds: "named",
     splitChunks: {
       chunks: "all",
-      maxInitialRequests: Infinity,
+      maxInitialRequests: Number.POSITIVE_INFINITY,
       minSize: 1024,
       cacheGroups: {
         vendor: {
@@ -131,9 +132,11 @@ module.exports = {
               // build separate bundles for dateFn locales
               // which can be included on demand in the view templates
               // or used as dynamic import and handled by webpack
-              const dateFnLocaleMatch = module.context.match(/node_modules\/date-fns\/esm\/locale\/((?!en)(?!_)\w\w)/);
-              if (dateFnLocaleMatch) {
-                const locale = dateFnLocaleMatch[1];
+              const dateFunctionLocaleMatch = module.context.match(
+                /node_modules\/date-fns\/esm\/locale\/((?!en)(?!_)\w\w)/,
+              );
+              if (dateFunctionLocaleMatch) {
+                const locale = dateFunctionLocaleMatch[1];
                 return `npm.${packageName}.${locale}`;
               }
             }
