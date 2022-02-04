@@ -22,7 +22,6 @@
     <c:when test="${shortcut == true}">
         <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow?redirect=/web/application/"/>
     </c:when>
-
     <c:otherwise>
         <c:set var="ACTION_URL" value="${URL_PREFIX}/application/${application.id}/allow"/>
     </c:otherwise>
@@ -32,12 +31,10 @@
     <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
 </sec:authorize>
 
-<form:form id="allow" cssClass="form action-form confirm alert alert-success" method="POST"
-           action="${ACTION_URL}" modelAttribute="comment">
-
+<form:form id="allow" cssClass="form action-form confirm alert alert-success" method="POST" action="${ACTION_URL}" modelAttribute="comment">
     <div class="form-group">
         <c:choose>
-            <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+            <c:when test="${IS_DEPARTMENT_HEAD && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
                 <strong class="tw-font-medium"><spring:message code='action.temporary_allow.confirm'/></strong>
             </c:when>
             <c:otherwise>
@@ -59,7 +56,7 @@
     <div class="form-group is-sticky row">
         <button type="submit" class="button-main-green col-xs-12 col-sm-5">
             <c:choose>
-                <c:when test="${IS_DEPARTMENT_HEAD && application.twoStageApproval && application.status == 'WAITING'}">
+                <c:when test="${IS_DEPARTMENT_HEAD && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
                     <spring:message code='action.temporary_allow'/>
                 </c:when>
                 <c:otherwise>

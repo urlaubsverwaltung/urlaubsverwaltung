@@ -20,7 +20,7 @@
 <c:if test="${!IS_OWN && ((application.status == 'WAITING' && isDepartmentHead) || (application.status == 'TEMPORARY_ALLOWED' && (isBoss || isSecondStageAuthority))) }">
     <c:if test="${!IS_OWN}">
         <c:choose>
-            <c:when test="${isDepartmentHead && application.twoStageApproval && application.status == 'WAITING'}">
+            <c:when test="${isDepartmentHead && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
                 <c:set var="ALLOW_DATA_TITLE">
                     <spring:message code='action.temporary_allow'/>
                 </c:set>
