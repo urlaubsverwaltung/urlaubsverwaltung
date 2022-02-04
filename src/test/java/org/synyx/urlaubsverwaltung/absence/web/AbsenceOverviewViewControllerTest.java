@@ -60,6 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
@@ -180,6 +181,94 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("visibleDepartments", nullValue()))
             .andExpect(model().attribute("selectedDepartments", nullValue()))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
+            .andExpect(view().name("absences/absences_overview"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureWithDepartmentsAndInDepartmentAndFilterInactivePersonsAsBossOrOffice(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person activePerson = new Person();
+        activePerson.setId(2);
+        activePerson.setPermissions(List.of(USER));
+        activePerson.setFirstName("sandra");
+        activePerson.setLastName("smith");
+        activePerson.setEmail("sandra@example.org");
+
+        final Person inactivePerson = new Person();
+        inactivePerson.setId(2);
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setFirstName("sandra");
+        inactivePerson.setLastName("smith");
+        inactivePerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setMembers(List.of(activePerson, inactivePerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+
+        perform(get("/web/absences"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
+            .andExpect(view().name("absences/absences_overview"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
+    void ensureWithDepartmentsAndInDepartmentAndFilterInactivePersonsAsDHOrSSA(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person activePerson = new Person();
+        activePerson.setId(2);
+        activePerson.setPermissions(List.of(USER));
+        activePerson.setFirstName("sandra");
+        activePerson.setLastName("smith");
+        activePerson.setEmail("sandra@example.org");
+
+        final Person inactivePerson = new Person();
+        inactivePerson.setId(2);
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setFirstName("sandra");
+        inactivePerson.setLastName("smith");
+        inactivePerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setMembers(List.of(activePerson, inactivePerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+
+        perform(get("/web/absences"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
             .andExpect(view().name("absences/absences_overview"));
     }

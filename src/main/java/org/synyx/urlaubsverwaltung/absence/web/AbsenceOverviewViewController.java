@@ -50,6 +50,7 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @RequestMapping("/web/absences")
@@ -114,6 +115,7 @@ public class AbsenceOverviewViewController {
                     .filter(department -> selectedDepartmentNames.contains(department.getName()))
                     .map(Department::getMembers)
                     .flatMap(List::stream)
+                    .filter(member -> !member.hasRole(INACTIVE))
                     .distinct()
                     .sorted(comparing(Person::getFirstName))
                     .collect(toList());
