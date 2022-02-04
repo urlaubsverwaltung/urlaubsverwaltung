@@ -50,14 +50,6 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="true"/>
-</sec:authorize>
-
-<sec:authorize access="hasAuthority('BOSS')">
-    <c:set var="IS_BOSS" value="true"/>
-</sec:authorize>
-
 <uv:menu/>
 
 <div class="content">
@@ -141,7 +133,7 @@
                             &nbsp;<spring:message code="overview.absences.overview.link.text"/>
                         </a>
                     </c:if>
-                    <c:if test="${person.id == signedInUser.id || IS_OFFICE || IS_BOSS}">
+                    <c:if test="${person.id == signedInUser.id || isOffice || isBoss}">
                         <a class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
                            aria-hidden="true" href="${URL_PREFIX}/calendars/share/persons/${person.id}">
                             <icon:share className="tw-w-5 tw-h-5"/>
@@ -175,7 +167,7 @@
                         </a>
                     </c:when>
                     <c:otherwise>
-                        <c:if test="${IS_OFFICE}">
+                        <c:if test="${isOffice}">
                             <a class="icon-link  tw-px-1" href="${URL_PREFIX}/application/new?person=${person.id}" data-title="<spring:message code="action.apply.vacation"/>">
                                 <icon:plus-circle className="tw-w-5 tw-h-5" />
                             </a>
@@ -262,11 +254,11 @@
         </div>
 
         <!-- sick note -->
-        <c:if test="${person.id == signedInUser.id || IS_OFFICE}">
+        <c:if test="${person.id == signedInUser.id || isOffice}">
 
             <uv:section-heading>
                 <jsp:attribute name="actions">
-                    <c:if test="${IS_OFFICE}">
+                    <c:if test="${isOffice}">
                         <a class="icon-link tw-px-1" href="${URL_PREFIX}/sicknote/new?person=${person.id}" data-title="<spring:message code="action.apply.sicknote" />">
                             <icon:plus-circle className="tw-w-5 tw-h-5" />
                         </a>

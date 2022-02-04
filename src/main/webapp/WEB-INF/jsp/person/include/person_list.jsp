@@ -49,9 +49,9 @@
             <th scope="col" class="sortable-field is-centered">
                 <spring:message code="persons.account.vacation.vacationDaysLeft.remaining"/>
             </th>
-            <sec:authorize access="hasAuthority('OFFICE')">
+            <c:if test="${isOffice}">
                 <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
-            </sec:authorize>
+            </c:if>
         </tr>
         </thead>
         <%-- NOTE: class 'list' is needed for list.js --%>
