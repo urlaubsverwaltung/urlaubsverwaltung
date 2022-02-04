@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -410,7 +409,7 @@ class ApplicationForLeaveViewControllerTest {
         applicationCancellationRequest.setDayLength(FULL);
 
         when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
-            .thenReturn(List.of(departmentHeadAndSecondStageAuth)); // todo check condition
+            .thenReturn(List.of(departmentHeadAndSecondStageAuth));
 
         final List<Person> membersDepartment = List.of(userOfDepartmentA);
         when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
@@ -613,13 +612,13 @@ class ApplicationForLeaveViewControllerTest {
         departmentHeadAndSecondStageAuth.setId(1);
         departmentHeadAndSecondStageAuth.setFirstName("departmentHeadAndSecondStageAuth");
         departmentHeadAndSecondStageAuth.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
-
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuth);
 
         final Person userOfDepartmentA = new Person();
         userOfDepartmentA.setId(2);
         userOfDepartmentA.setFirstName("userOfDepartmentA");
         userOfDepartmentA.setPermissions(List.of(USER));
+
         final Application applicationOfUserA = new Application();
         applicationOfUserA.setId(1);
         applicationOfUserA.setVacationType(anyVacationType());
@@ -628,17 +627,14 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfUserA.setStartDate(LocalDate.MAX);
         applicationOfUserA.setEndDate(LocalDate.MAX);
         applicationOfUserA.setTwoStageApproval(true);
-
-
-        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth))
-            .thenReturn(List.of(userOfDepartmentA));
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(List.of(userOfDepartmentA));
 
         final List<Person> membersDepartment = List.of(userOfDepartmentA);
-        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuth)).thenReturn(membersDepartment);
 
         // #getApplicationsForLeaveForSecondStageAuthority
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(departmentHeadAndSecondStageAuth)))
-            .thenReturn(Lists.emptyList());
+            .thenReturn(List.of());
 
         // #getApplicationsForLeaveForSecondStageAuthority
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), List.of(userOfDepartmentA)))
