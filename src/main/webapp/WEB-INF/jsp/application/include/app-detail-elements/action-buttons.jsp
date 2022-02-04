@@ -16,7 +16,7 @@
 <%-- DISPLAYING DEPENDS ON VARIABLES --%>
 
 <%-- ALLOW ACTION --%>
-<c:if test="${!IS_OWN && ((application.status == 'WAITING' && isDepartmentHead) || (application.status == 'TEMPORARY_ALLOWED' && (isBoss || isSecondStageAuthority))) }">
+<c:if test="${!IS_OWN && ((application.status == 'WAITING' && (isDepartmentHead || isBoss || isSecondStageAuthority)) || (application.status == 'TEMPORARY_ALLOWED' && (isBoss || isSecondStageAuthority))) }">
     <c:if test="${!IS_OWN}">
         <c:choose>
             <c:when test="${isDepartmentHead && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
