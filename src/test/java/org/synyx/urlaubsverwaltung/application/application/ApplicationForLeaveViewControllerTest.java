@@ -620,6 +620,166 @@ class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
+    void getApplicationForDepartmentHeadAndOfficeRoleAndNotAllAreInHisDepartment() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setFirstName("Atticus");
+        final Application application = new Application();
+        application.setId(1);
+        application.setVacationType(anyVacationType());
+        application.setPerson(person);
+        application.setStatus(WAITING);
+        application.setStartDate(LocalDate.MAX);
+        application.setEndDate(LocalDate.MAX);
+        application.setDayLength(FULL);
+
+        final Person personNotMember = new Person();
+        personNotMember.setId(11);
+        personNotMember.setFirstName("Not Member");
+        final Application applicationNotMember = new Application();
+        applicationNotMember.setId(11);
+        applicationNotMember.setVacationType(anyVacationType());
+        applicationNotMember.setPerson(personNotMember);
+        applicationNotMember.setStatus(WAITING);
+        applicationNotMember.setStartDate(LocalDate.MAX);
+        applicationNotMember.setEndDate(LocalDate.MAX);
+        applicationNotMember.setDayLength(FULL);
+
+        final Person headAndOfficePerson = new Person();
+        headAndOfficePerson.setId(2);
+        headAndOfficePerson.setPermissions(List.of(USER, DEPARTMENT_HEAD, OFFICE));
+        final Application applicationOfHeadAndOffice = new Application();
+        applicationOfHeadAndOffice.setId(2);
+        applicationOfHeadAndOffice.setStatus(WAITING);
+        applicationOfHeadAndOffice.setVacationType(anyVacationType());
+        applicationOfHeadAndOffice.setPerson(headAndOfficePerson);
+        applicationOfHeadAndOffice.setStartDate(LocalDate.MAX);
+        applicationOfHeadAndOffice.setEndDate(LocalDate.MAX);
+
+        when(personService.getSignedInUser()).thenReturn(headAndOfficePerson);
+
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
+        applicationCancellationRequest.setPerson(headAndOfficePerson);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(departmentService.getMembersForDepartmentHead(headAndOfficePerson))
+            .thenReturn(List.of(headAndOfficePerson, person));
+
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(headAndOfficePerson)))
+            .thenReturn(List.of(applicationOfHeadAndOffice, applicationCancellationRequest));
+
+        // other as office
+        when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
+            .thenReturn(List.of(application, applicationNotMember));
+
+        perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(headAndOfficePerson)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(1)),
+                    hasProperty("approveAllowed", equalTo(true)),
+                    hasProperty("rejectAllowed", equalTo(true))
+                ),
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(11)),
+                    hasProperty("approveAllowed", equalTo(false)),
+                    hasProperty("rejectAllowed", equalTo(false))
+                )
+            )))
+            .andExpect(view().name("thymeleaf/application/application-overview"));
+    }
+
+    @Test
+    void getApplicationForSecondStageAuthorityAndOfficeRoleAndNotAllAreInHisDepartment() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setFirstName("Atticus");
+        final Application application = new Application();
+        application.setId(1);
+        application.setVacationType(anyVacationType());
+        application.setPerson(person);
+        application.setStatus(WAITING);
+        application.setStartDate(LocalDate.MAX);
+        application.setEndDate(LocalDate.MAX);
+        application.setDayLength(FULL);
+
+        final Person personNotMember = new Person();
+        personNotMember.setId(11);
+        personNotMember.setFirstName("Not Member");
+        final Application applicationNotMember = new Application();
+        applicationNotMember.setId(11);
+        applicationNotMember.setVacationType(anyVacationType());
+        applicationNotMember.setPerson(personNotMember);
+        applicationNotMember.setStatus(WAITING);
+        applicationNotMember.setStartDate(LocalDate.MAX);
+        applicationNotMember.setEndDate(LocalDate.MAX);
+        applicationNotMember.setDayLength(FULL);
+
+        final Person ssaAndOfficePerson = new Person();
+        ssaAndOfficePerson.setId(2);
+        ssaAndOfficePerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, OFFICE));
+        final Application applicationOfSsaAndOffice = new Application();
+        applicationOfSsaAndOffice.setId(2);
+        applicationOfSsaAndOffice.setStatus(WAITING);
+        applicationOfSsaAndOffice.setVacationType(anyVacationType());
+        applicationOfSsaAndOffice.setPerson(ssaAndOfficePerson);
+        applicationOfSsaAndOffice.setStartDate(LocalDate.MAX);
+        applicationOfSsaAndOffice.setEndDate(LocalDate.MAX);
+
+        when(personService.getSignedInUser()).thenReturn(ssaAndOfficePerson);
+
+        final Application applicationCancellationRequest = new Application();
+        applicationCancellationRequest.setId(10);
+        applicationCancellationRequest.setVacationType(anyVacationType());
+        applicationCancellationRequest.setPerson(ssaAndOfficePerson);
+        applicationCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        applicationCancellationRequest.setStartDate(LocalDate.MAX);
+        applicationCancellationRequest.setEndDate(LocalDate.MAX);
+        applicationCancellationRequest.setDayLength(FULL);
+
+        when(departmentService.getMembersForSecondStageAuthority(ssaAndOfficePerson))
+            .thenReturn(List.of(ssaAndOfficePerson, person));
+
+        // applications for signed-in user
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(ssaAndOfficePerson)))
+            .thenReturn(List.of(applicationOfSsaAndOffice, applicationCancellationRequest));
+
+        // other as office
+        when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
+            .thenReturn(List.of(application, applicationNotMember));
+
+        perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(ssaAndOfficePerson)))
+            .andExpect(model().attribute("otherApplications", hasSize(2)))
+            .andExpect(model().attribute("otherApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(1)),
+                    hasProperty("approveAllowed", equalTo(true)),
+                    hasProperty("rejectAllowed", equalTo(true))
+                ),
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(11)),
+                    hasProperty("approveAllowed", equalTo(false)),
+                    hasProperty("rejectAllowed", equalTo(false))
+                )
+            )))
+            .andExpect(view().name("thymeleaf/application/application-overview"));
+    }
+
+    @Test
     void ensureReplacementItem() throws Exception {
         final Person signedInUser = new Person();
         signedInUser.setId(1337);
