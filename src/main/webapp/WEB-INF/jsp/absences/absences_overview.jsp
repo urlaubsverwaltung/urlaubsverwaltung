@@ -278,7 +278,7 @@
                     </td>
                 </tr>
                 <c:choose>
-                    <c:when test="${isPrivileged}">
+                    <c:when test="${showRichLegend}">
                         <tr>
                             <td class="vacationOverview-legend-colorbox">
                                 <div class="cal-day vacation-full-approved"></div>

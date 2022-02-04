@@ -45,13 +45,16 @@ import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @RequestMapping("/web/absences")
 @Controller
@@ -133,11 +136,11 @@ public class AbsenceOverviewViewController {
         final String selectedMonth = getSelectedMonth(month, startDate);
         model.addAttribute("selectedMonth", selectedMonth);
 
-        final boolean isPrivilegedUser = signedInUser.isPrivileged();
-        model.addAttribute("isPrivileged", isPrivilegedUser);
+        final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
+        model.addAttribute("showRichLegend", !membersOfSignedInUser.isEmpty());
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, isPrivilegedUser);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, membersOfSignedInUser);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
@@ -149,7 +152,7 @@ public class AbsenceOverviewViewController {
         return preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
     }
 
-    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange, List<Person> personList, Locale locale, boolean isPrivilegedUser) {
+    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange, List<Person> personList, Locale locale, List<Person> members) {
 
         final LocalDate today = LocalDate.now(clock);
 
@@ -199,8 +202,8 @@ public class AbsenceOverviewViewController {
                     .collect(toUnmodifiableList());
 
                 final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
-                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser, publicHoliday))
-                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, isPrivilegedUser))
+                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members, publicHoliday))
+                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members))
                     .build();
 
                 personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWeekend(date)));
@@ -237,8 +240,8 @@ public class AbsenceOverviewViewController {
         return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>());
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, boolean isPrivileged, PublicHoliday publicHoliday) {
-        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, isPrivileged);
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, List<Person> members, PublicHoliday publicHoliday) {
+        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, members);
         if (publicHoliday.getDayLength().equals(DayLength.MORNING)) {
             builder = builder.publicHolidayMorning();
         }
@@ -251,53 +254,53 @@ public class AbsenceOverviewViewController {
         return builder;
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, boolean isPrivileged) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, List<Person> members) {
         if (absenceRecords.isEmpty()) {
             return AbsenceOverviewDayType.builder();
         }
 
         AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
-
         for (AbsencePeriod.Record absenceRecord : absenceRecords) {
+            final boolean showAllInformation = members.contains(absenceRecord.getPerson());
             if (absenceRecord.isHalfDayAbsence()) {
-                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, isPrivileged);
+                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, showAllInformation);
             } else {
-                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, isPrivileged);
+                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, showAllInformation);
             }
         }
 
         return builder;
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation) {
         final AbsencePeriod.AbsenceType morningAbsenceType = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::getType).orElse(null);
         final AbsencePeriod.AbsenceType noonAbsenceType = absenceRecord.getNoon().map(AbsencePeriod.RecordInfo::getType).orElse(null);
 
         if (AbsencePeriod.AbsenceType.SICK.equals(morningAbsenceType)) {
-            return isPrivileged ? builder.sickNoteMorning() : builder.absenceMorning();
+            return showAllInformation ? builder.sickNoteMorning() : builder.absenceMorning();
         }
         if (AbsencePeriod.AbsenceType.SICK.equals(noonAbsenceType)) {
-            return isPrivileged ? builder.sickNoteNoon() : builder.absenceNoon();
+            return showAllInformation ? builder.sickNoteNoon() : builder.absenceNoon();
         }
 
         final boolean morningWaiting = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (morningWaiting) {
-            return isPrivileged ? builder.waitingVacationMorning() : builder.absenceMorning();
+            return showAllInformation ? builder.waitingVacationMorning() : builder.absenceMorning();
         }
         final boolean morningAllowed = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::hasStatusAllowed).orElse(false);
         if (morningAllowed) {
-            return isPrivileged ? builder.allowedVacationMorning() : builder.absenceMorning();
+            return showAllInformation ? builder.allowedVacationMorning() : builder.absenceMorning();
         }
 
         final boolean noonWaiting = absenceRecord.getNoon().map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
-            return isPrivileged ? builder.waitingVacationNoon() : builder.absenceNoon();
+            return showAllInformation ? builder.waitingVacationNoon() : builder.absenceNoon();
         }
 
-        return isPrivileged ? builder.allowedVacationNoon() : builder.absenceNoon();
+        return showAllInformation ? builder.allowedVacationNoon() : builder.absenceNoon();
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean isPrivileged) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation) {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
         final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
@@ -308,16 +311,16 @@ public class AbsenceOverviewViewController {
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull) {
-            return isPrivileged ? builder.sickNoteFull() : builder.absenceFull();
+            return showAllInformation ? builder.sickNoteFull() : builder.absenceFull();
         }
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
 
         if (morningWaiting && noonWaiting) {
-            return isPrivileged ? builder.waitingVacationFull() : builder.absenceFull();
+            return showAllInformation ? builder.waitingVacationFull() : builder.absenceFull();
         } else if (!morningWaiting && !noonWaiting) {
-            return isPrivileged ? builder.allowedVacationFull() : builder.absenceFull();
+            return showAllInformation ? builder.allowedVacationFull() : builder.absenceFull();
         }
 
         return builder;
@@ -428,5 +431,29 @@ public class AbsenceOverviewViewController {
     private static boolean isWeekend(LocalDate date) {
         final DayOfWeek dayOfWeek = date.getDayOfWeek();
         return dayOfWeek == SATURDAY || dayOfWeek == SUNDAY;
+    }
+
+    private List<Person> getActiveMembersOfPerson(final Person person) {
+
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            return personService.getActivePersons();
+        }
+
+        final List<Person> relevantPersons = new ArrayList<>();
+        if (person.hasRole(DEPARTMENT_HEAD)) {
+            departmentService.getMembersForDepartmentHead(person).stream()
+                .filter(member -> !member.hasRole(INACTIVE))
+                .collect(toCollection(() -> relevantPersons));
+        }
+
+        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departmentService.getMembersForSecondStageAuthority(person).stream()
+                .filter(member -> !member.hasRole(INACTIVE))
+                .collect(toCollection(() -> relevantPersons));
+        }
+
+        return relevantPersons.stream()
+            .distinct()
+            .collect(toList());
     }
 }
