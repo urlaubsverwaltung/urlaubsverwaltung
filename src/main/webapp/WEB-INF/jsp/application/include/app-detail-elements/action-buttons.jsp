@@ -10,16 +10,16 @@
 <spring:url var="URL_PREFIX" value="/web"/>
 
 <%-- SETTING VARIABLES --%>
-<c:set var="CAN_MANAGE" value="${isBoss || isDepartmentHead || isSecondStageAuthority}"/>
+<c:set var="CAN_MANAGE" value="${isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson}"/>
 <c:set var="IS_OWN" value="${application.person.id == signedInUser.id}"/>
 
-<c:set var="IS_ALLOWED_TO_ALLOW_WAITING" value="${application.status == 'WAITING' && (isBoss || ((isDepartmentHead || isSecondStageAuthority) && !IS_OWN))}"/>
-<c:set var="IS_ALLOWED_TO_ALLOW_TEMPORARY_ALLOWED" value="${application.status == 'TEMPORARY_ALLOWED' && (isBoss || (isSecondStageAuthority && !IS_OWN))}"/>
+<c:set var="IS_ALLOWED_TO_ALLOW_WAITING" value="${application.status == 'WAITING' && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN))}"/>
+<c:set var="IS_ALLOWED_TO_ALLOW_TEMPORARY_ALLOWED" value="${application.status == 'TEMPORARY_ALLOWED' && (isBoss || (isSecondStageAuthorityOfPerson && !IS_OWN))}"/>
 
 <%-- ALLOW ACTION --%>
 <c:if test="${IS_ALLOWED_TO_ALLOW_WAITING || IS_ALLOWED_TO_ALLOW_TEMPORARY_ALLOWED}">
     <c:choose>
-        <c:when test="${application.twoStageApproval && application.status == 'WAITING' && (isDepartmentHead && !IS_OWN) && !isBoss && !isSecondStageAuthority}">
+        <c:when test="${application.twoStageApproval && application.status == 'WAITING' && (isDepartmentHeadOfPerson && !IS_OWN) && !isBoss && !isSecondStageAuthorityOfPerson}">
             <c:set var="ALLOW_DATA_TITLE">
                 <spring:message code='action.temporary_allow'/>
             </c:set>
@@ -103,7 +103,7 @@
     </c:if>
 </c:if>
 
-<c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || ((isDepartmentHead || isSecondStageAuthority) && !IS_OWN)}"/>
+<c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
 <%-- REFER ACTION --%>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
     <c:if test="${IS_ALLOWED_TO_REFER}">

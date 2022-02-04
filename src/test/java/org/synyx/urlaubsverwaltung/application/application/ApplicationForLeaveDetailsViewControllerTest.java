@@ -203,7 +203,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(get("/web/application/" + APPLICATION_ID))
             .andExpect(view().name("application/app_detail"))
-            .andExpect(model().attribute("isDepartmentHead", true));
+            .andExpect(model().attribute("isDepartmentHeadOfPerson", true));
     }
 
     @Test
@@ -220,7 +220,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(get("/web/application/" + APPLICATION_ID))
             .andExpect(view().name("application/app_detail"))
-            .andExpect(model().attribute("isSecondStageAuthority", true));
+            .andExpect(model().attribute("isSecondStageAuthorityOfPerson", true));
     }
 
     @Test
