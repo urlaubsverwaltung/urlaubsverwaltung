@@ -39,10 +39,10 @@ class ApplicationForLeaveStatisticsCsvExportService {
 
     void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
         final String[] csvHeader = {
-            BasedataType.PERSONNEL_NUMBER.name(),
+            getTranslation("person.account.basedata." + BasedataType.PERSONNEL_NUMBER.name()),
             getTranslation("person.data.firstName"),
             getTranslation("person.data.lastName"),
-            BasedataType.ADDITIONAL_INFORMATION.name(),
+            getTranslation("person.account.basedata." + BasedataType.ADDITIONAL_INFORMATION.name()),
             "",
             getTranslation("applications.statistics.allowed"),
             getTranslation("applications.statistics.waiting"),

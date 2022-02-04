@@ -53,10 +53,10 @@
                     </dd>
                     <c:forEach items="${person.basedata}" var="basedataElement">
                         <dt class="tw-font-normal">
-                                ${basedataElement.key}
+                            <spring:message code="person.account.basedata.${basedataElement.key}"/>:
                         </dt>
                         <dd>
-                                ${basedataElement.value}
+                            ${basedataElement.value}
                         </dd>
                     </c:forEach>
                 </dl>
