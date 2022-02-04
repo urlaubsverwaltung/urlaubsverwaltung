@@ -38,7 +38,7 @@
             }
             function setLightStuff() {
                 htmlElement.classList.remove("tw-dark");
-                document.querySelector("meta[name='theme-color']").setAttribute("content", "#ffffff");
+                document.querySelector("meta[name='theme-color']").setAttribute("content", "#fafafa");
             }
         })();
     </script>

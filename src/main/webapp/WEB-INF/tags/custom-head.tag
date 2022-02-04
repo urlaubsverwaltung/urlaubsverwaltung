@@ -34,7 +34,7 @@
         <meta name="theme-color" content="#18181b">
     </c:when>
     <c:otherwise>
-        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#fafafa">
     </c:otherwise>
 </c:choose>
 

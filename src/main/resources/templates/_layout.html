@@ -27,7 +27,7 @@
   <link rel="icon" type="image/png" sizes="196x196" th:href="@{/favicons/favicon-196x196.png}"/>
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" th:content="@{/favicons/ms-icon-144x144.png}"/>
-  <meta th:if="${theme != 'dark'}" name="theme-color" content="#ffffff">
+  <meta th:if="${theme != 'dark'}" name="theme-color" content="#fafafa">
   <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b">
 
   <link rel="stylesheet" type="text/css" asset:href="common.css"/>
@@ -67,7 +67,7 @@
       }
       function setLightStuff() {
         htmlElement.classList.remove("tw-dark");
-        document.querySelector("meta[name='theme-color']").setAttribute("content", "#ffffff");
+        document.querySelector("meta[name='theme-color']").setAttribute("content", "#fafafa");
       }
     })();
   </script>

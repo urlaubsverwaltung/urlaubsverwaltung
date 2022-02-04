@@ -65,7 +65,7 @@ function render() {
       themeColorMetaElement.setAttribute("content", "#18181b");
     } else {
       html.classList.remove("tw-dark");
-      themeColorMetaElement.setAttribute("content", "#ffffff");
+      themeColorMetaElement.setAttribute("content", "#fafafa");
     }
 
     setTimeout(function () {
