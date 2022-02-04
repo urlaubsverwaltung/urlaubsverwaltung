@@ -44,13 +44,21 @@
                     </h1>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
-                <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">
+                <dl class="tw-m-0 tw-ml-25 tw-grid tw-grid-cols-2 tw-gap-2">
                     <dt class="tw-font-normal">
                         <spring:message code="person.account.masterData.username"/>:
                     </dt>
                     <dd>
                         ${person.username}
                     </dd>
+                    <c:forEach items="${person.basedata}" var="basedataElement">
+                        <dt class="tw-font-normal">
+                                ${basedataElement.key}
+                        </dt>
+                        <dd>
+                                ${basedataElement.value}
+                        </dd>
+                    </c:forEach>
                 </dl>
             </div>
             <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">

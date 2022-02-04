@@ -2,16 +2,26 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.hibernate.annotations.LazyCollection;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyEnumerated;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableCollection;
+import static java.util.Collections.unmodifiableMap;
 import static javax.persistence.EnumType.STRING;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
@@ -34,8 +44,16 @@ public class Person {
     private String email;
 
     @ElementCollection
+    @CollectionTable(name = "person_basedata",
+        joinColumns = {@JoinColumn(name = "person_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "basedata_key")
+    @Column(name = "basedata_value")
     @LazyCollection(FALSE)
-    @Enumerated(STRING)
+    @MapKeyEnumerated(EnumType.STRING)
+    private Map<BasedataType, String> basedata = new HashMap<>(2);
+
+    @ElementCollection
+    @LazyCollection(FALSE)
     private Collection<Role> permissions;
 
     @ElementCollection
@@ -139,6 +157,14 @@ public class Person {
     public boolean hasNotificationType(final MailNotification notification) {
         return getNotifications().stream()
             .anyMatch(element -> element.equals(notification));
+    }
+
+    public Map<BasedataType, String> getBasedata() {
+        if (basedata == null) {
+            basedata = emptyMap();
+        }
+
+        return unmodifiableMap(basedata);
     }
 
     public String getNiceName() {
