@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -608,7 +607,7 @@ class ApplicationForLeaveViewControllerTest {
     }
 
     @Test
-    void ensureSecondStageAuthorityViewsAllowButton() throws Exception{
+    void ensureSecondStageAuthorityViewsAllowButton() throws Exception {
 
         final Person departmentHeadAndSecondStageAuth = new Person();
         departmentHeadAndSecondStageAuth.setId(1);
@@ -656,7 +655,7 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("person",
                         hasProperty("name", equalTo("userOfDepartmentA"))
                     ),
-                    hasProperty("temporaryApproveAllowed",equalTo(false)
+                    hasProperty("temporaryApproveAllowed", equalTo(false)
                     )
                 )
             )))
