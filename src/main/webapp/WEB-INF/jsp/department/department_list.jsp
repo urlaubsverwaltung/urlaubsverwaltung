@@ -21,7 +21,6 @@
     <script defer src="<asset:url value='department_list.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
 </head>
-
 <body>
 <uv:menu/>
 <div class="content">
@@ -29,11 +28,11 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <sec:authorize access="hasAuthority('OFFICE')">
+                <c:if test="${isOffice}">
                 <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
                     <icon:plus-circle className="tw-w-5 tw-h-5" />
                 </a>
-                </sec:authorize>
+                </c:if>
                 <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
                     <icon:calendar className="tw-w-5 tw-h-5" />
                 </a>
@@ -80,9 +79,9 @@
                                 <th scope="col" class="sortable-field"><spring:message code="department.members"/></th>
                                 <th scope="col" class="sortable-field"><spring:message code='department.data.twoStageApproval'/></th>
                                 <th scope="col" class="sortable-field"><spring:message code='department.data.lastModification'/></th>
-                                <sec:authorize access="hasAuthority('OFFICE')">
+                                <c:if test="${isOffice}">
                                     <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
-                                </sec:authorize>
+                                </c:if>
                             </tr>
                             </thead>
                             <tbody>
@@ -132,50 +131,50 @@
                                     <td class="hidden-xs" data-date-format="yyyymmdd" data-value="<fmt:formatDate pattern="yyyy-MM-dd" value="${parsedDate}" type="date" />">
                                         <uv:date date="${department.lastModification}"/>
                                     </td>
-                                    <sec:authorize access="hasAuthority('OFFICE')">
+                                    <c:if test="${isOffice}">
                                     <td>
-                                            <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
-                                                <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"
-                                                     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                                                    <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
-                                                                </button>
-                                                                <h4 id="myModalLabel" class="modal-title">
-                                                                    <spring:message code="action.department.delete"/>?
-                                                                </h4>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <spring:message code="action.department.delete.confirm" arguments="${department.name}"/>
-                                                            </div>
-                                                            <div class="modal-footer tw-flex tw-justify-end tw-space-x-2">
-                                                                <button class="button-danger" type="submit">
-                                                                    <spring:message code="action.department.delete"/>
-                                                                </button>
-                                                                <button class="button" data-dismiss="modal" aria-hidden="true">
-                                                                    <spring:message code="action.cancel"/>
-                                                                </button>
-                                                            </div>
+                                        <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
+                                            <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"
+                                                 role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                                                <icon:x-circle className="tw-w-8 tw-h-8" solid="true" />
+                                                            </button>
+                                                            <h4 id="myModalLabel" class="modal-title">
+                                                                <spring:message code="action.department.delete"/>?
+                                                            </h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <spring:message code="action.department.delete.confirm" arguments="${department.name}"/>
+                                                        </div>
+                                                        <div class="modal-footer tw-flex tw-justify-end tw-space-x-2">
+                                                            <button class="button-danger" type="submit">
+                                                                <spring:message code="action.department.delete"/>
+                                                            </button>
+                                                            <button class="button" data-dismiss="modal" aria-hidden="true">
+                                                                <spring:message code="action.cancel"/>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </form:form>
-
-                                            <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                                                <a class="action-link" href="${URL_PREFIX}/department/${department.id}/edit">
-                                                    <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" />
-                                                    <spring:message code="action.edit" />
-                                                </a>
-                                                <a class="action-link" data-toggle="modal" href="#modal-cancel-${department.id}">
-                                                    <icon:trash className="tw-w-4 tw-h-4 tw-mr-1" />
-                                                    <spring:message code='action.department.delete' />
-                                                </a>
                                             </div>
+                                        </form:form>
+
+                                        <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                                            <a class="action-link" href="${URL_PREFIX}/department/${department.id}/edit">
+                                                <icon:pencil className="tw-w-4 tw-h-4 tw-mr-1" />
+                                                <spring:message code="action.edit" />
+                                            </a>
+                                            <a class="action-link" data-toggle="modal" href="#modal-cancel-${department.id}">
+                                                <icon:trash className="tw-w-4 tw-h-4 tw-mr-1" />
+                                                <spring:message code='action.department.delete' />
+                                            </a>
+                                        </div>
 
                                         </td>
-                                    </sec:authorize>
+                                    </c:if>
                                 </tr>
                             </c:forEach>
                             </tbody>

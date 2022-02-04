@@ -37,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentViewControllerTest {
@@ -66,15 +68,39 @@ class DepartmentViewControllerTest {
         final List<Department> departments = List.of(new Department());
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
+        final Person signedInUser = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         perform(get("/web/department"))
-            .andExpect(model().attribute("departments", mapToDepartmentOverviewDtos(departments)));
+            .andExpect(model().attribute("departments", mapToDepartmentOverviewDtos(departments)))
+            .andExpect(model().attribute("isOffice", false));
     }
 
     @Test
     void showAllDepartmentsUsesCorrectView() throws Exception {
 
+        final Person signedInUser = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         perform(get("/web/department"))
-            .andExpect(view().name("department/department_list"));
+            .andExpect(view().name("department/department_list"))
+            .andExpect(model().attribute("isOffice", false));
+    }
+
+    @Test
+    void ensureThatOfficeRoleIsSet() throws Exception {
+
+        final List<Department> departments = List.of(new Department());
+        when(departmentService.getAllDepartments()).thenReturn(departments);
+
+        final Person signedInUser = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        signedInUser.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        perform(get("/web/department"))
+            .andExpect(model().attribute("isOffice", true));
     }
 
     @Test
