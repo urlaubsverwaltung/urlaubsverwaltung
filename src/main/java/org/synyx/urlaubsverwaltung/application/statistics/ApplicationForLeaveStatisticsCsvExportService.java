@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.person.BasedataType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -38,8 +39,10 @@ class ApplicationForLeaveStatisticsCsvExportService {
 
     void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
         final String[] csvHeader = {
+            BasedataType.PERSONNEL_NUMBER.name(),
             getTranslation("person.data.firstName"),
             getTranslation("person.data.lastName"),
+            BasedataType.ADDITIONAL_INFORMATION.name(),
             "",
             getTranslation("applications.statistics.allowed"),
             getTranslation("applications.statistics.waiting"),
@@ -47,6 +50,8 @@ class ApplicationForLeaveStatisticsCsvExportService {
             ""
         };
         final String[] csvSubHeader = {
+            "",
+            "",
             "",
             "",
             "",
@@ -77,21 +82,23 @@ class ApplicationForLeaveStatisticsCsvExportService {
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
 
             final String[] csvRow = new String[csvHeader.length];
-            csvRow[0] = applicationForLeaveStatistics.getPerson().getFirstName();
-            csvRow[1] = applicationForLeaveStatistics.getPerson().getLastName();
-            csvRow[2] = translatedTextTotal;
-            csvRow[3] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
-            csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
-            csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-            csvRow[6] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
+            csvRow[0] = applicationForLeaveStatistics.getPerson().getBasedata().getOrDefault(BasedataType.PERSONNEL_NUMBER, "");
+            csvRow[1] = applicationForLeaveStatistics.getPerson().getFirstName();
+            csvRow[2] = applicationForLeaveStatistics.getPerson().getLastName();
+            csvRow[3] = applicationForLeaveStatistics.getPerson().getBasedata().getOrDefault(BasedataType.ADDITIONAL_INFORMATION, "");
+            csvRow[4] = translatedTextTotal;
+            csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
+            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
+            csvRow[7] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
+            csvRow[8] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
             csvWriter.writeNext(csvRow);
 
             for (VacationType type : allVacationTypes) {
                 if (applicationForLeaveStatistics.hasVacationType(type)) {
                     final String[] csvRowVacationTypes = new String[csvHeader.length];
-                    csvRowVacationTypes[2] = getTranslation(type.getMessageKey());
-                    csvRowVacationTypes[3] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
-                    csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
+                    csvRowVacationTypes[4] = getTranslation(type.getMessageKey());
+                    csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
+                    csvRowVacationTypes[6] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
                     csvWriter.writeNext(csvRowVacationTypes);
                 }
             }

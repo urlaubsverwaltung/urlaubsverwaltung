@@ -167,6 +167,10 @@ public class Person {
         return unmodifiableMap(basedata);
     }
 
+    public void setBasedata(Map<BasedataType, String> basedata) {
+        this.basedata = basedata;
+    }
+
     public String getNiceName() {
 
         final StringBuilder builder = new StringBuilder();
