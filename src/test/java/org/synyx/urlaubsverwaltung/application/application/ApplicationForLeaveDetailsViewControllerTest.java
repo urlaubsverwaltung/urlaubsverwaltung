@@ -267,6 +267,20 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
+    void allowOwnApplicationAllowedForBoss() throws Exception {
+
+        final Person boss = personWithRole(BOSS);
+        final Application application = someApplication();
+        application.setPerson(boss);
+        when(personService.getSignedInUser()).thenReturn(boss);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
+
+        perform(post("/web/application/" + APPLICATION_ID + "/allow"))
+            .andExpect(status().isFound());
+    }
+
+    @Test
     void allowApplicationAllowedForDepartmentHeadOfPerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(DEPARTMENT_HEAD));
@@ -454,6 +468,24 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
+
+        perform(post("/web/application/" + APPLICATION_ID + "/refer"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+    }
+
+    @Test
+    void referOwnApplicationAccessibleForRoleBoss() throws Exception {
+
+        final Person signedInPerson = personWithRole(BOSS);
+        final Person recipientPerson = somePerson();
+        final Application application = applicationOfPerson(signedInPerson);
+
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())

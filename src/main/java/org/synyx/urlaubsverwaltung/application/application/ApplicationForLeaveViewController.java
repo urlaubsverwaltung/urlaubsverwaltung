@@ -121,8 +121,8 @@ class ApplicationForLeaveViewController {
         final boolean isBoss = signedInUser.hasRole(BOSS);
         final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
         final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
-        final boolean canAllow = isBoss || isDepartmentHead || isSecondStageAuthority;
-        final boolean notOwn = !person.equals(signedInUser);
+        final boolean isOwn = person.equals(signedInUser);
+        final boolean isAllowedToAllow = isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn);
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
@@ -132,10 +132,10 @@ class ApplicationForLeaveViewController {
             .dayLength(application.getDayLength())
             .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
-            .editAllowed(isWaiting && person.equals(signedInUser))
-            .approveAllowed(canAllow && notOwn)
-            .temporaryApproveAllowed(twoStageApproval && isWaiting && (isBoss || isDepartmentHead) && !isSecondStageAuthority && notOwn)
-            .rejectAllowed(canAllow && notOwn)
+            .editAllowed(isWaiting && isOwn)
+            .approveAllowed(isAllowedToAllow)
+            .temporaryApproveAllowed(twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority)
+            .rejectAllowed(isAllowedToAllow)
             .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();

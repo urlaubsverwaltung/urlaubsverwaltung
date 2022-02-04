@@ -137,9 +137,9 @@ class ApplicationForLeaveDetailsViewController {
         final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
-        if (isOwnApplication(application, signedInUser) || (!isBoss && !isDepartmentHead && !isSecondStageAuthority)) {
-            throw new AccessDeniedException(format(
-                "User '%s' has not the correct permissions to allow application for leave of user '%s'",
+        final boolean isAllowedToAllow = isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwnApplication(application, signedInUser));
+        if (!isAllowedToAllow) {
+            throw new AccessDeniedException(format("User '%s' has not the correct permissions to allow application for leave of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
@@ -192,7 +192,8 @@ class ApplicationForLeaveDetailsViewController {
         final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
-        if (!isOwnApplication(application, signedInUser) && (isBoss || isDepartmentHead || isSecondStageAuthority)) {
+        final boolean isAllowedToRefer = isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwnApplication(application, signedInUser));
+        if (isAllowedToRefer) {
             applicationInteractionService.refer(application, recipient, signedInUser);
             redirectAttributes.addFlashAttribute("referSuccess", true);
             return REDIRECT_WEB_APPLICATION + applicationId;
