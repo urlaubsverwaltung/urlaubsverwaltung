@@ -1,7 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
@@ -57,11 +56,11 @@
             <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                             <a href="${URL_PREFIX}/person/${person.id}/permissions" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
-                        </sec:authorize>
+                        </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
@@ -110,13 +109,9 @@
                                 <ul class="tw-space-y-0.5 tw-text-sm">
                                     <c:forEach items="${departments}" var="department">
 
-                                        <sec:authorize access="hasAuthority('OFFICE')">
-                                            <c:set var="IS_OFFICE" value="${true}"/>
-                                        </sec:authorize>
-
                                         <c:set var="departmentLink">
                                             <c:choose>
-                                                <c:when test="${IS_OFFICE}">
+                                                <c:when test="${isOffice}">
                                                     <a href="${URL_PREFIX}/department/${department.id}/edit"><c:out value="${department.name}"/></a>
                                                 </c:when>
                                                 <c:otherwise>
@@ -149,11 +144,11 @@
             <div class="md:tw-col-start-2 md:tw-row-start-1">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                             <a href="${URL_PREFIX}/person/${person.id}/account?year=${year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
-                        </sec:authorize>
+                        </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
@@ -167,11 +162,11 @@
             <div class="md:tw-col-start-2 md:tw-row-start-3">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
-                        </sec:authorize>
+                        </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
@@ -295,11 +290,11 @@
             <div class="md:tw-col-start-2 md:tw-row-start-2">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
-                        </sec:authorize>
+                        </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h2>

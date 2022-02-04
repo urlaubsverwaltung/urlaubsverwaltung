@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="_layout::head(~{::title}, ~{::scripts})">
     <title th:text="#{applications.header.title}"></title>
     <th:block th:fragment="scripts">
@@ -30,7 +30,7 @@
             th:href="@{/web/application/new}"
             class="icon-link tw-px-1"
             th:data-title="#{action.apply.vacation}"
-            sec:authorize="hasAuthority('OFFICE')"
+            th:if="${isOffice}"
           >
             <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
           </a>
@@ -47,7 +47,7 @@
             th:href="@{/web/application/statistics}"
             class="icon-link tw-px-1"
             th:data-title="#{action.applications.statistics}"
-            sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY', 'BOSS', 'OFFICE')"
+            th:if="${isDepartmentHead or isSecondStageAuthority or isBoss or isOffice}"
           >
             <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')"></svg>
           </a>
@@ -486,7 +486,7 @@
                   </a>
                 </div>
                 <div class="print:tw-hidden">
-                  <div sec:authorize="hasAuthority('OFFICE')" class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
+                  <div th:if="${isOffice}" class="tw-flex tw-gap-2 tw-justify-end tw-mt-2 lg:tw-mt-0">
                     <a
                       class="button tw-flex-1"
                       href="#"

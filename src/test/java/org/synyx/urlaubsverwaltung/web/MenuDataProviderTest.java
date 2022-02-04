@@ -23,7 +23,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +64,28 @@ class MenuDataProviderTest {
         assertThat(modelAndView.getModelMap().get("userId")).isEqualTo(10);
         assertThat(modelAndView.getModelMap().get("userFirstName")).isEqualTo("Marie");
         assertThat(modelAndView.getModelMap().get("userLastName")).isEqualTo("Reichenbach");
+    }
+
+    @Test
+    void postHandleHasAllRoles() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, BOSS, OFFICE, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap().get("isBoss")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("isOffice")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("isDepartmentHead")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("isSecondStageAuthority")).isEqualTo(true);
     }
 
     @Test

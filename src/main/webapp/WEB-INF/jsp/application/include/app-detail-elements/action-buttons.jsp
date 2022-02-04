@@ -3,7 +3,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
@@ -17,10 +16,10 @@
 <%-- DISPLAYING DEPENDS ON VARIABLES --%>
 
 <%-- ALLOW ACTION --%>
-<c:if test="${!IS_OWN && ((application.status == 'WAITING' && isDepartmentHead) || (application.status == 'TEMPORARY_ALLOWED' && (isBoss || isSecondStageAuthority))) }">
+<c:if test="${!IS_OWN && ((application.status == 'WAITING' && (isDepartmentHead || isBoss || isSecondStageAuthority)) || (application.status == 'TEMPORARY_ALLOWED' && (isBoss || isSecondStageAuthority))) }">
     <c:if test="${!IS_OWN}">
         <c:choose>
-            <c:when test="${isDepartmentHead && application.twoStageApproval && application.status == 'WAITING'}">
+            <c:when test="${isDepartmentHead && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
                 <c:set var="ALLOW_DATA_TITLE">
                     <spring:message code='action.temporary_allow'/>
                 </c:set>
