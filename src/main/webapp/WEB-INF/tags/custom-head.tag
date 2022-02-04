@@ -1,3 +1,4 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
@@ -28,7 +29,14 @@
 <link rel="icon" type="image/png" sizes="196x196" href="<spring:url value='/favicons/favicon-196x196.png' />"/>
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png' />"/>
-<meta name="theme-color" content="#ffffff">
+<c:choose>
+    <c:when test="${theme == 'dark'}">
+        <meta name="theme-color" content="#18181b">
+    </c:when>
+    <c:otherwise>
+        <meta name="theme-color" content="#ffffff">
+    </c:otherwise>
+</c:choose>
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
