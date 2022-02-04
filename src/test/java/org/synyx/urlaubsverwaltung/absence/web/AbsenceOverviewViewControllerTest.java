@@ -1,4 +1,6 @@
-package org.synyx.urlaubsverwaltung.absence.web;import org.junit.jupiter.api.BeforeEach;
+package org.synyx.urlaubsverwaltung.absence.web;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -60,6 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
@@ -131,7 +134,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -147,7 +150,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("selectedDepartments", hasItem(department.getName())))
             .andExpect(view().name("absences/absences_overview"));
 
-        verify(personService, never()).getActivePersons();
+        verify(personService).getActivePersons();
     }
 
     @ParameterizedTest
@@ -185,6 +188,94 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureWithDepartmentsAndInDepartmentAndFilterInactivePersonsAsBossOrOffice(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person activePerson = new Person();
+        activePerson.setId(2);
+        activePerson.setPermissions(List.of(USER));
+        activePerson.setFirstName("sandra");
+        activePerson.setLastName("smith");
+        activePerson.setEmail("sandra@example.org");
+
+        final Person inactivePerson = new Person();
+        inactivePerson.setId(2);
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setFirstName("sandra");
+        inactivePerson.setLastName("smith");
+        inactivePerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setMembers(List.of(activePerson, inactivePerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+
+        perform(get("/web/absences"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
+            .andExpect(view().name("absences/absences_overview"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
+    void ensureWithDepartmentsAndInDepartmentAndFilterInactivePersonsAsDHOrSSA(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("sam");
+        person.setLastName("smith");
+        person.setEmail("smith@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Person activePerson = new Person();
+        activePerson.setId(2);
+        activePerson.setPermissions(List.of(USER));
+        activePerson.setFirstName("sandra");
+        activePerson.setLastName("smith");
+        activePerson.setEmail("sandra@example.org");
+
+        final Person inactivePerson = new Person();
+        inactivePerson.setId(2);
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setFirstName("sandra");
+        inactivePerson.setLastName("smith");
+        inactivePerson.setEmail("sandra@example.org");
+
+        final var department = department();
+        department.setMembers(List.of(activePerson, inactivePerson));
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+
+        perform(get("/web/absences"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
+            .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
+            .andExpect(view().name("absences/absences_overview"));
+    }
+
+    @ParameterizedTest
     @EnumSource(value = Role.class, names = {"SECOND_STAGE_AUTHORITY", "DEPARTMENT_HEAD"})
     void ensureAbsenceOverviewForDepartmentHeadAndSecondStageAuthority(Role role) throws Exception {
 
@@ -207,8 +298,6 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", hasItem(department)))
             .andExpect(view().name("absences/absences_overview"));
-
-        verifyNoMoreInteractions(departmentService);
     }
 
     @ParameterizedTest
@@ -402,7 +491,8 @@ class AbsenceOverviewViewControllerTest {
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
         person.setPermissions(List.of(OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
         perform(get("/web/absences")
             .param("month", "1"))
@@ -769,7 +859,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -786,6 +876,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -825,7 +917,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -842,6 +934,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -881,7 +975,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -899,6 +993,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -931,7 +1027,7 @@ class AbsenceOverviewViewControllerTest {
     // waiting / temporary allowed vacation, not privileged user
 
     @ParameterizedTest
-    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = { "WAITING", "TEMPORARY_ALLOWED" })
+    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
     void ensureVacationMorningWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
@@ -987,7 +1083,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = { "WAITING", "TEMPORARY_ALLOWED" })
+    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
     void ensureVacationNoonWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
@@ -1043,7 +1139,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = { "WAITING", "TEMPORARY_ALLOWED" })
+    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
     void ensureVacationFullWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
@@ -1103,7 +1199,7 @@ class AbsenceOverviewViewControllerTest {
     // ALLOWED vacation, privileged user
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureVacationMorningAllowedForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1112,7 +1208,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1129,6 +1225,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1159,7 +1257,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureVacationNoonAllowedForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1168,7 +1266,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1185,6 +1283,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1215,7 +1315,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureVacationFullAllowedForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1224,7 +1324,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1242,6 +1342,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1443,7 +1545,7 @@ class AbsenceOverviewViewControllerTest {
     // sick note, privileged user
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureSickNoteMorningForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1452,7 +1554,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1469,6 +1571,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1499,7 +1603,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureSickNoteNoonForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1508,7 +1612,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1525,6 +1629,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1555,7 +1661,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureSickNoteFullForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1564,7 +1670,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1582,6 +1688,8 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -1783,7 +1891,7 @@ class AbsenceOverviewViewControllerTest {
     // half VACATION, half SICK
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureVacationMorningAndSickNoteNoonForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1792,7 +1900,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1814,9 +1922,9 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
 
-        final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
-        perform
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
@@ -1845,7 +1953,7 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = { "BOSS", "OFFICE" })
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
     void ensureVacationNoonAndSickNoteMorningForPrivilegedPerson(Role role) throws Exception {
 
         final Settings settings = new Settings();
@@ -1854,7 +1962,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
         person.setId(1);
-        person.setPermissions(List.of(role));
+        person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
         person.setEmail("springfield@example.org");
@@ -1876,9 +1984,9 @@ class AbsenceOverviewViewControllerTest {
         final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
         when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
 
-        final ResultActions perform = perform(get("/web/absences").locale(Locale.GERMANY));
+        when(personService.getActivePersons()).thenReturn(List.of(person));
 
-        perform
+        perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
             .andExpect(model().attribute("absenceOverview",
                 hasProperty("months", contains(
@@ -2028,7 +2136,9 @@ class AbsenceOverviewViewControllerTest {
                     ))
                 ))
             ));
-    }    @Test
+    }
+
+    @Test
     void ensureWeekendsAndHolidays() throws Exception {
 
         final Settings settings = new Settings();

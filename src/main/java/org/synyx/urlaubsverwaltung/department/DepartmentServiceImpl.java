@@ -167,35 +167,11 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentApplications;
     }
 
-    private List<Person> getMembersOfAssignedDepartments(Person member) {
-        return getAssignedDepartmentsOfMember(member).stream()
-            .map(Department::getMembers)
-            .flatMap(List::stream)
-            .distinct()
-            .collect(toList());
-    }
-
-    private List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
-        return getManagedDepartmentsOfDepartmentHead(departmentHead)
-            .stream()
-            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
-            .distinct()
-            .collect(toList());
-    }
-
     @Override
     public List<Person> getMembersForDepartmentHead(Person departmentHead) {
         return getManagedDepartmentsOfDepartmentHead(departmentHead).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
-            .distinct()
-            .collect(toList());
-    }
-
-    private List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
-        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
-            .stream()
-            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
             .distinct()
             .collect(toList());
     }
@@ -218,26 +194,10 @@ class DepartmentServiceImpl implements DepartmentService {
         return false;
     }
 
-    private boolean isDepartmentHeadAllowedToAccessPersonData(Person departmentHead, Person person) {
-        if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
-            return getMembersForDepartmentHead(departmentHead).contains(person);
-        }
-
-        return false;
-    }
-
     @Override
     public boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person) {
         if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
             return getManagedMembersForSecondStageAuthority(secondStageAuthority).contains(person);
-        }
-
-        return false;
-    }
-
-    private boolean isSecondStageAuthorityAllowedToAccessPersonData(Person secondStageAuthority, Person person) {
-        if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
-            return getMembersForSecondStageAuthority(secondStageAuthority).contains(person);
         }
 
         return false;
@@ -350,5 +310,45 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentMemberEmbeddable::getPerson)
             .filter(oldMember -> !department.getMembers().contains(oldMember))
             .forEach(person -> applicationEventPublisher.publishEvent(new PersonLeftDepartmentEvent(this, person.getId(), department.getId())));
+    }
+
+    private List<Person> getMembersOfAssignedDepartments(Person member) {
+        return getAssignedDepartmentsOfMember(member).stream()
+            .map(Department::getMembers)
+            .flatMap(List::stream)
+            .distinct()
+            .collect(toList());
+    }
+
+    private List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
+        return getManagedDepartmentsOfDepartmentHead(departmentHead)
+            .stream()
+            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .distinct()
+            .collect(toList());
+    }
+
+    private List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
+        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
+            .stream()
+            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .distinct()
+            .collect(toList());
+    }
+
+    private boolean isSecondStageAuthorityAllowedToAccessPersonData(Person secondStageAuthority, Person person) {
+        if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return getMembersForSecondStageAuthority(secondStageAuthority).contains(person);
+        }
+
+        return false;
+    }
+
+    private boolean isDepartmentHeadAllowedToAccessPersonData(Person departmentHead, Person person) {
+        if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
+            return getMembersForDepartmentHead(departmentHead).contains(person);
+        }
+
+        return false;
     }
 }
