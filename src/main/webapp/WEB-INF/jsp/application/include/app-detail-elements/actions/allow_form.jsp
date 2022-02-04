@@ -2,7 +2,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <c:if test="${action == 'allow'}">
 <script type="text/javascript">
@@ -27,14 +26,10 @@
     </c:otherwise>
 </c:choose>
 
-<sec:authorize access="hasAuthority('DEPARTMENT_HEAD')">
-    <c:set var="IS_DEPARTMENT_HEAD" value="${true}"/>
-</sec:authorize>
-
 <form:form id="allow" cssClass="form action-form confirm alert alert-success" method="POST" action="${ACTION_URL}" modelAttribute="comment">
     <div class="form-group">
         <c:choose>
-            <c:when test="${IS_DEPARTMENT_HEAD && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
+            <c:when test="${isDepartmentHead && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
                 <strong class="tw-font-medium"><spring:message code='action.temporary_allow.confirm'/></strong>
             </c:when>
             <c:otherwise>
@@ -56,7 +51,7 @@
     <div class="form-group is-sticky row">
         <button type="submit" class="button-main-green col-xs-12 col-sm-5">
             <c:choose>
-                <c:when test="${IS_DEPARTMENT_HEAD && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
+                <c:when test="${isDepartmentHead && !isSecondStageAuthority && application.twoStageApproval && application.status == 'WAITING'}">
                     <spring:message code='action.temporary_allow'/>
                 </c:when>
                 <c:otherwise>

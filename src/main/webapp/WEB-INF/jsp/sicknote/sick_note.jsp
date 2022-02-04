@@ -2,7 +2,6 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
@@ -37,7 +36,7 @@
 
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                             <c:if test="${sickNote.active}">
                                 <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
                                     <icon:pencil className="tw-w-5 tw-h-5" />
@@ -50,7 +49,7 @@
                                 </a>
                                 <uv:print/>
                             </c:if>
-                        </sec:authorize>
+                        </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h1>
@@ -185,11 +184,11 @@
 
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <icon:annotation className="tw-w-5 tw-h-5" />
                             </a>
-                        </sec:authorize>
+                        </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
@@ -242,7 +241,7 @@
                     </tbody>
                 </table>
 
-                <sec:authorize access="hasAuthority('OFFICE')">
+                <c:if test="${isOffice}">
 
                     <c:choose>
                         <c:when test="${not empty errors}">
@@ -280,7 +279,7 @@
                         </form:form>
                     </div>
 
-                </sec:authorize>
+                </c:if>
 
                 <div class="print:tw-hidden">
                     <uv:section-heading>

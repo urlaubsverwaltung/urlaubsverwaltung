@@ -1,6 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
@@ -49,9 +48,9 @@
             <th scope="col" class="sortable-field is-centered">
                 <spring:message code="persons.account.vacation.vacationDaysLeft.remaining"/>
             </th>
-            <sec:authorize access="hasAuthority('OFFICE')">
+            <c:if test="${isOffice}">
                 <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
-            </sec:authorize>
+            </c:if>
         </tr>
         </thead>
         <%-- NOTE: class 'list' is needed for list.js --%>

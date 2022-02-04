@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+
 /**
  * Interceptor to add menu specific information to all requests
  */
@@ -48,6 +53,11 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("menuHelpUrl", menuProperties.getHelp().getUrl());
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
+
+            modelAndView.addObject("isBoss", user.hasRole(BOSS));
+            modelAndView.addObject("isOffice", user.hasRole(OFFICE));
+            modelAndView.addObject("isDepartmentHead", user.hasRole(DEPARTMENT_HEAD));
+            modelAndView.addObject("isSecondStageAuthority", user.hasRole(SECOND_STAGE_AUTHORITY));
         }
     }
 
@@ -62,7 +72,7 @@ public class MenuDataProvider implements HandlerInterceptor {
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
-        return signedInUser.hasRole(Role.OFFICE) || overtimeEnabled(signedInUser);
+        return signedInUser.hasRole(OFFICE) || overtimeEnabled(signedInUser);
     }
 
     private boolean overtimeEnabled(Person signedInUser) {

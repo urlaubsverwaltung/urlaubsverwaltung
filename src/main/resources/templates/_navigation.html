@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <title>Navigation fragment</title>
@@ -75,7 +75,7 @@
                             <span class="tw-ml-3" th:text="#{nav.add.vacation}"></span>
                           </a>
                         </li>
-                        <li role="none" sec:authorize="hasAuthority('OFFICE')">
+                        <li role="none" th:if="${isOffice}">
                           <a
                             href="#"
                             th:href="@{/web/sicknote/new}"
@@ -295,7 +295,7 @@
                   </span>
                 </a>
               </li>
-              <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('USER')">
+              <li class="tw-flex tw-items-center">
                 <a
                   href="#"
                   th:href="@{/web/application/new}"
@@ -320,7 +320,7 @@
                   </span>
                 </a>
               </li>
-              <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('OFFICE')">
+              <li class="tw-flex tw-items-center" th:if="${isOffice}">
                 <a
                   href="#"
                   th:href="@{/web/sicknote}"
@@ -335,7 +335,7 @@
               </li>
               <li
                 class="tw-flex tw-items-center"
-                sec:authorize="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')"
+                th:if="${isDepartmentHead or isSecondStageAuthority or isBoss or isOffice}"
               >
                 <a
                   href="#"
@@ -348,7 +348,7 @@
                   </span>
                 </a>
               </li>
-              <li class="tw-flex tw-items-center" sec:authorize="hasAnyAuthority('BOSS', 'OFFICE')">
+              <li class="tw-flex tw-items-center" th:if="${isBoss or isOffice}">
                 <a
                   href="#"
                   th:href="@{/web/department}"
@@ -360,7 +360,7 @@
                   </span>
                 </a>
               </li>
-              <li class="tw-flex tw-items-center" sec:authorize="hasAuthority('OFFICE')">
+              <li class="tw-flex tw-items-center" th:if="${isOffice}">
                 <a
                   href="#"
                   th:href="@{/web/settings}"

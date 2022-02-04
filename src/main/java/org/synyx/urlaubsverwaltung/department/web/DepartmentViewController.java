@@ -24,9 +24,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -60,8 +63,10 @@ public class DepartmentViewController {
     public String showAllDepartments(Model model) {
 
         final List<Department> departments = departmentService.getAllDepartments();
-
         model.addAttribute("departments", mapToDepartmentOverviewDtos(departments));
+
+        final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
 
         return "department/department_list";
     }
@@ -156,10 +161,9 @@ public class DepartmentViewController {
 
     private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
+            model.addAttribute(DEPARTMENT, departmentForm);
 
             final List<Person> persons = personService.getActivePersons();
-
-            model.addAttribute(DEPARTMENT, departmentForm);
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return true;
@@ -170,8 +174,8 @@ public class DepartmentViewController {
     private List<Person> getInactiveDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
 
         final List<Person> persons = departmentMembers.stream()
-            .filter(person -> person.getPermissions().contains(Role.INACTIVE))
-            .collect(Collectors.toList());
+            .filter(person -> person.getPermissions().contains(INACTIVE))
+            .collect(toList());
 
         persons.addAll(personService.getActivePersons());
 
