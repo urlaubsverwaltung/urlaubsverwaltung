@@ -4,10 +4,6 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-<sec:authorize access="hasAuthority('OFFICE')">
-    <c:set var="IS_OFFICE" value="${true}"/>
-</sec:authorize>
-
 <c:if test="${action == 'cancel'}">
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
@@ -24,7 +20,7 @@
     <div class="form-group">
         <strong class="tw-font-medium">
             <c:choose>
-                <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
+                <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !isOffice}">
                     <spring:message code='action.delete.request.confirm'/>
                 </c:when>
                 <c:otherwise>
@@ -57,7 +53,7 @@
     <div class="form-group is-sticky row">
         <button type="submit" class="button-danger col-xs-12 col-sm-5">
             <c:choose>
-                <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !IS_OFFICE}">
+                <c:when test="${(application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !isOffice}">
                     <spring:message code='action.delete.request'/>
                 </c:when>
                 <c:otherwise>
