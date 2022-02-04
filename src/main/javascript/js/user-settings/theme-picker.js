@@ -1,6 +1,7 @@
 import { post } from "../fetch";
 
 const html = document.querySelector("html");
+const themeColorMetaElement = document.querySelector("meta[name='theme-color']");
 const mediaQueryDark = window.matchMedia("(prefers-color-scheme: dark)");
 const userSettingsForm = document.querySelector("#user-settings-form");
 
@@ -61,8 +62,10 @@ function render() {
   setTimeout(function () {
     if (darkTheme) {
       html.classList.add("tw-dark");
+      themeColorMetaElement.setAttribute("content", "#18181b");
     } else {
       html.classList.remove("tw-dark");
+      themeColorMetaElement.setAttribute("content", "#fafafa");
     }
 
     setTimeout(function () {

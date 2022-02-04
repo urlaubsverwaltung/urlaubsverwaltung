@@ -5,23 +5,40 @@
 <c:if test="${theme == 'system'}">
     <script>
         (function() {
-            let mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)');
+            const htmlElement = document.querySelector("html");
+            const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)');
             if (mediaQueryDark.matches) {
-                document.querySelector("html").classList.add("tw-dark");
+                setDarkStuff();
             }
             try {
                 mediaQueryDark.addEventListener("change", function () {
-                    document.querySelector("html").classList.toggle("tw-dark");
+                    toggleStuff();
                 });
             } catch (error) {
                 // safari (https://stackoverflow.com/a/60000747)
                 try {
                     mediaQueryDark.addListener(function() {
-                        document.querySelector("html").classList.toggle("tw-dark");
+                        toggleStuff();
                     });
                 } catch (error2) {
                     console.info("could not add mediaQuery listener to toggle theme.", error2);
                 }
+            }
+
+            function toggleStuff() {
+                if (htmlElement.classList.contains("tw-dark")) {
+                    setLightStuff();
+                } else {
+                    setDarkStuff();
+                }
+            }
+            function setDarkStuff() {
+                htmlElement.classList.add("tw-dark");
+                document.querySelector("meta[name='theme-color']").setAttribute("content", "#18181b");
+            }
+            function setLightStuff() {
+                htmlElement.classList.remove("tw-dark");
+                document.querySelector("meta[name='theme-color']").setAttribute("content", "#fafafa");
             }
         })();
     </script>
