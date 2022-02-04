@@ -65,7 +65,7 @@
                                                         </span>
                                                     </a>
                                                 </li>
-                                                <sec:authorize access="hasAuthority('OFFICE')">
+                                                <c:if test="${isOffice}">
                                                     <li role="none">
                                                         <a
                                                             href="${URL_PREFIX}/sicknote/new"
@@ -81,7 +81,7 @@
                                                             </span>
                                                         </a>
                                                     </li>
-                                                </sec:authorize>
+                                                </c:if>
                                                 <c:if test="${navigationOvertimeItemEnabled}">
                                                     <li role="none">
                                                         <a
@@ -244,7 +244,6 @@
                                 </span>
                             </a>
                         </li>
-                        <sec:authorize access="hasAuthority('USER')">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/application/new" id="application-new-link" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
@@ -255,7 +254,6 @@
                                 </span>
                             </a>
                         </li>
-                        </sec:authorize>
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/application" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
@@ -266,7 +264,7 @@
                                 </span>
                             </a>
                         </li>
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        <c:if test="${isOffice}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/sicknote" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base" data-test-id="navigation-sick-notes-link">
                                 <span class="tw-flex tw-items-center">
@@ -277,8 +275,8 @@
                                 </span>
                             </a>
                         </li>
-                        </sec:authorize>
-                        <sec:authorize access="hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')">
+                        </c:if>
+                        <c:if test="${isOffice || isBoss || isDepartmentHead || isSecondStageAuthority}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/person?active=true" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
@@ -289,8 +287,8 @@
                                 </span>
                             </a>
                         </li>
-                        </sec:authorize>
-                        <sec:authorize access="hasAnyAuthority('BOSS', 'OFFICE')">
+                        </c:if>
+                        <c:if test="${isOffice || isBoss}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/department" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
@@ -301,8 +299,8 @@
                                 </span>
                             </a>
                         </li>
-                        </sec:authorize>
-                        <sec:authorize access="hasAuthority('OFFICE')">
+                        </c:if>
+                        <c:if test="${isOffice}">
                         <li class="tw-flex tw-items-center">
                             <a
                                 href="${URL_PREFIX}/settings"
@@ -317,7 +315,7 @@
                                 </span>
                             </a>
                         </li>
-                        </sec:authorize>
+                        </c:if>
                     </ul>
                 </div>
             </div>
