@@ -40,13 +40,13 @@
             <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
                     <h1>
-                        <spring:message code="person.account.masterData.title"/>
+                        <spring:message code="person.account.basedata.title"/>
                     </h1>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
                 <dl class="tw-m-0 tw-ml-25 tw-grid tw-grid-cols-2 tw-gap-2">
                     <dt class="tw-font-normal">
-                        <spring:message code="person.account.masterData.username"/>:
+                        <spring:message code="person.account.basedata.username"/>:
                     </dt>
                     <dd>
                         ${person.username}
