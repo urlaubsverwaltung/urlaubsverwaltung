@@ -27,7 +27,7 @@
 
         <uv:section-heading>
             <jsp:attribute name="actions">
-                <c:if test="${isOffice}">
+                <c:if test="${canCreateAndModifyDepartment}">
                 <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
                     <icon:plus-circle className="tw-w-5 tw-h-5" />
                 </a>
@@ -78,7 +78,7 @@
                                 <th scope="col" class="sortable-field"><spring:message code="department.members"/></th>
                                 <th scope="col" class="sortable-field"><spring:message code='department.data.twoStageApproval'/></th>
                                 <th scope="col" class="sortable-field"><spring:message code='department.data.lastModification'/></th>
-                                <c:if test="${isOffice}">
+                                <c:if test="${canCreateAndModifyDepartment}">
                                     <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
                                 </c:if>
                             </tr>
@@ -130,7 +130,7 @@
                                     <td class="hidden-xs" data-date-format="yyyymmdd" data-value="<fmt:formatDate pattern="yyyy-MM-dd" value="${parsedDate}" type="date" />">
                                         <uv:date date="${department.lastModification}"/>
                                     </td>
-                                    <c:if test="${isOffice}">
+                                    <c:if test="${canCreateAndModifyDepartment}">
                                     <td>
                                         <form:form method="POST" action="${URL_PREFIX}/department/${department.id}/delete">
                                             <div id="modal-cancel-${department.id}" class="modal fade" tabindex="-1"

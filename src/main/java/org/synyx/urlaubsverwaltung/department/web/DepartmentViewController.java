@@ -17,12 +17,10 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
@@ -66,7 +64,7 @@ public class DepartmentViewController {
         model.addAttribute("departments", mapToDepartmentOverviewDtos(departments));
 
         final Person signedInUser = personService.getSignedInUser();
-        model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canCreateAndModifyDepartment", signedInUser.hasRole(OFFICE));
 
         return "department/department_list";
     }
