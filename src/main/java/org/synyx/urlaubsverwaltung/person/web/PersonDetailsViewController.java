@@ -102,6 +102,11 @@ public class PersonDetailsViewController {
         model.addAttribute("federalState", maybeWorkingTime.map(WorkingTime::getFederalState)
             .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState()));
 
+        model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));
+
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));
 
