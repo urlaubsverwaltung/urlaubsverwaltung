@@ -406,7 +406,7 @@ class ApplicationForLeaveFormViewController {
         final List<Person> persons = personService.getActivePersons();
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
-        model.addAttribute(IS_OFFICE_ATTRIBUTE, personService.getSignedInUser().hasRole(OFFICE));
+        model.addAttribute("canAddApplicationForLeaveForAnotherUser", personService.getSignedInUser().hasRole(OFFICE));
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
