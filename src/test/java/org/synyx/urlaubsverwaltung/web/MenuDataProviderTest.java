@@ -67,12 +67,12 @@ class MenuDataProviderTest {
     }
 
     @Test
-    void postHandleHasAllRoles() {
+    void postHandleNavigationAccessForBoss() {
         mockOvertime(true, false);
 
         final Person person = new Person();
         person.setId(10);
-        person.setPermissions(List.of(USER, BOSS, OFFICE, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        person.setPermissions(List.of(USER, BOSS));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
         person.setEmail("person@example.org");
@@ -82,10 +82,76 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("isBoss")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("isOffice")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("isDepartmentHead")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("isSecondStageAuthority")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(true);
+    }
+
+    @Test
+    void postHandleNavigationAccessForOffice() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, OFFICE));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(true);
+    }
+
+    @Test
+    void postHandleNavigationAccessForDepartmentHead() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(false);
+    }
+
+    @Test
+    void postHandleNavigationAccessForSecondStageAuthority() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(false);
     }
 
     @Test

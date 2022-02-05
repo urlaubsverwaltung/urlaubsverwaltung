@@ -8,7 +8,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,10 +53,10 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
 
-            modelAndView.addObject("isBoss", user.hasRole(BOSS));
-            modelAndView.addObject("isOffice", user.hasRole(OFFICE));
-            modelAndView.addObject("isDepartmentHead", user.hasRole(DEPARTMENT_HEAD));
-            modelAndView.addObject("isSecondStageAuthority", user.hasRole(SECOND_STAGE_AUTHORITY));
+            modelAndView.addObject("navigationSickNoteAccess", user.hasRole(OFFICE));
+            modelAndView.addObject("navigationSettingsAccess", user.hasRole(OFFICE));
+            modelAndView.addObject("navigationPersonListAccess", user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY));
+            modelAndView.addObject("navigationDepartmentAccess", user.hasRole(OFFICE) || user.hasRole(BOSS));
         }
     }
 
