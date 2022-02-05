@@ -30,13 +30,13 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
@@ -55,7 +55,9 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -162,7 +164,7 @@ class OverviewViewControllerTest {
     void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
         final Person person = new Person();
         person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
@@ -180,10 +182,95 @@ class OverviewViewControllerTest {
     }
 
     @Test
+    void showOverviewCanAccessAbsenceOverview() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAccessAbsenceOverview", true));
+    }
+
+
+    @Test
+    void showOverviewCanAccessCalendarShareForOwn() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAccessCalendarShare", true));
+    }
+
+    @Test
+    void showOverviewCanAccessCalendarShareAssOffice() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAccessCalendarShare", true));
+    }
+
+    @Test
+    void showOverviewCanAccessCalendarShareAsBoss() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAccessCalendarShare", true));
+    }
+
+    @Test
+    void showOverviewCanAddApplicationForAnotherUser() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
+    }
+
+    @Test
+    void showOverviewCanAddSickNoteForAnotherUser() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
+    }
+
+    @Test
     void showOverviewDoesNotAddApplicationsToModelIfThereAreNoApplications() throws Exception {
         final Person person = new Person();
         person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
@@ -221,7 +308,7 @@ class OverviewViewControllerTest {
 
         final Person person = new Person();
         person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -281,7 +368,7 @@ class OverviewViewControllerTest {
 
         final Person person = new Person();
         person.setId(1);
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
