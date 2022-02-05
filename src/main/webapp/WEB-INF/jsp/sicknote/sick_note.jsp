@@ -36,19 +36,23 @@
 
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${isOffice}">
-                            <c:if test="${sickNote.active}">
-                                <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
-                                    <icon:pencil className="tw-w-5 tw-h-5" />
-                                </a>
-                                <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
-                                    <icon:refresh className="tw-w-5 tw-h-5" />
-                                </a>
-                                <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
-                                    <icon:trash className="tw-w-5 tw-h-5" />
-                                </a>
-                                <uv:print/>
+                        <c:if test="${sickNote.active}">
+                            <c:if test="${canEditSickNote}">
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
                             </c:if>
+                            <c:if test="${canConvertSickNote}">
+                            <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
+                                <icon:refresh className="tw-w-5 tw-h-5" />
+                            </a>
+                            </c:if>
+                            <c:if test="${canDeleteSickNote}">
+                            <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
+                                <icon:trash className="tw-w-5 tw-h-5" />
+                            </a>
+                            </c:if>
+                            <uv:print/>
                         </c:if>
                     </jsp:attribute>
                     <jsp:body>
@@ -184,7 +188,7 @@
 
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${isOffice}">
+                        <c:if test="${canCommentSickNote}">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <icon:annotation className="tw-w-5 tw-h-5" />
                             </a>
@@ -241,7 +245,7 @@
                     </tbody>
                 </table>
 
-                <c:if test="${isOffice}">
+                <c:if test="${canCommentSickNote}">
 
                     <c:choose>
                         <c:when test="${not empty errors}">
