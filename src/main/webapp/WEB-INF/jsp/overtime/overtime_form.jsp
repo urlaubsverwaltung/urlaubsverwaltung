@@ -91,7 +91,7 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-md-pull-4">
-                        <c:if test="${isOffice}">
+                        <c:if test="${canAddOvertimeForAnotherUser}">
                             <c:choose>
                                 <c:when test="${overtime.id == null}">
                                     <div class="form-group is-required">

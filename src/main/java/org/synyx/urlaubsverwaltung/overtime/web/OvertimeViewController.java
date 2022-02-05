@@ -50,7 +50,6 @@ public class OvertimeViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME = "overtime";
-    private static final String IS_OFFICE_ATTRIBUTE = "isOffice";
     private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
 
     private final OvertimeService overtimeService;
@@ -268,7 +267,7 @@ public class OvertimeViewController {
         model.addAttribute(OVERTIME, overtimeForm);
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
-        model.addAttribute(IS_OFFICE_ATTRIBUTE, signedInUser.hasRole(OFFICE));
+        model.addAttribute("canAddOvertimeForAnotherUser", signedInUser.hasRole(OFFICE));
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
