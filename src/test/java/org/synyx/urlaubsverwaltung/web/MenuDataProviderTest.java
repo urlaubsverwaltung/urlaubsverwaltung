@@ -82,10 +82,10 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(false);
-        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(false);
-        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
     }
 
     @Test
@@ -104,10 +104,10 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
     }
 
     @Test
@@ -126,10 +126,10 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(false);
-        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(false);
-        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
     }
 
     @Test
@@ -148,10 +148,10 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("navigationSickNoteAccess")).isEqualTo(false);
-        assertThat(modelAndView.getModelMap().get("navigationSettingsAccess")).isEqualTo(false);
-        assertThat(modelAndView.getModelMap().get("navigationPersonListAccess")).isEqualTo(true);
-        assertThat(modelAndView.getModelMap().get("navigationDepartmentAccess")).isEqualTo(false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
     }
 
     @Test
