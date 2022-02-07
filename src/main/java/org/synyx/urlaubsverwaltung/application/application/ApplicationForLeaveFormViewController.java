@@ -71,7 +71,6 @@ class ApplicationForLeaveFormViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String PERSON_ATTRIBUTE = "person";
     private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
-    private static final String IS_OFFICE_ATTRIBUTE = "isOffice";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
