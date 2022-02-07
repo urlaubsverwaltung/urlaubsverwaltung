@@ -11,7 +11,7 @@ enum DemoUser {
     DEPARTMENT_HEAD("departmentHead", Role.USER, Role.DEPARTMENT_HEAD),
     SECOND_STAGE_AUTHORITY("secondStageAuthority", Role.USER, Role.SECOND_STAGE_AUTHORITY),
     BOSS("boss", Role.USER, Role.BOSS),
-    OFFICE("office", Role.USER, Role.BOSS, Role.OFFICE),
+    OFFICE("office", Role.USER, Role.OFFICE),
     ADMIN("admin", Role.USER, Role.ADMIN);
 
     public static final String SECRET = "{pbkdf2}7fa3ad492f74237b2fae54a07d81df1b17e5b3790fa629eb1b3fea19f86d4fccb62cf12bcfbd5913";
