@@ -43,7 +43,7 @@ class UserSettingsService {
         userSettingsEntity.setPerson(person);
         userSettingsEntity.setTheme(Theme.SYSTEM);
 
-        LOG.info("created (not persisted) default userSettingsEntity={}", userSettingsEntity);
+        LOG.debug("created (not persisted) default userSettingsEntity={}", userSettingsEntity);
 
         return userSettingsEntity;
     }
