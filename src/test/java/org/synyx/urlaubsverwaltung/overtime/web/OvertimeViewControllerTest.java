@@ -510,10 +510,10 @@ class OvertimeViewControllerTest {
 
         mockSettings();
 
-        final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
-        resultActions
+        perform(get("/web/overtime/2/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_form"));
+            .andExpect(view().name("overtime/overtime_form"))
+            .andExpect(model().attribute("canAddOvertimeForAnotherUser", true));
     }
 
     @Test

@@ -64,7 +64,7 @@
                                                         </span>
                                                     </a>
                                                 </li>
-                                                <c:if test="${isOffice}">
+                                                <c:if test="${navigationSickNoteAccess}">
                                                     <li role="none">
                                                         <a
                                                             href="${URL_PREFIX}/sicknote/new"
@@ -263,7 +263,7 @@
                                 </span>
                             </a>
                         </li>
-                        <c:if test="${isOffice}">
+                        <c:if test="${navigationSickNoteAccess}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/sicknote" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base" data-test-id="navigation-sick-notes-link">
                                 <span class="tw-flex tw-items-center">
@@ -275,7 +275,7 @@
                             </a>
                         </li>
                         </c:if>
-                        <c:if test="${isOffice || isBoss || isDepartmentHead || isSecondStageAuthority}">
+                        <c:if test="${navigationPersonListAccess}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/person?active=true" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
@@ -287,7 +287,7 @@
                             </a>
                         </li>
                         </c:if>
-                        <c:if test="${isOffice || isBoss}">
+                        <c:if test="${navigationDepartmentAccess}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/department" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base">
                                 <span class="tw-flex tw-items-center">
@@ -299,7 +299,7 @@
                             </a>
                         </li>
                         </c:if>
-                        <c:if test="${isOffice}">
+                        <c:if test="${navigationSettingsAccess}">
                         <li class="tw-flex tw-items-center">
                             <a
                                 href="${URL_PREFIX}/settings"

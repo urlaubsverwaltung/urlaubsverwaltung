@@ -56,7 +56,7 @@
             <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${isOffice}">
+                        <c:if test="${canEditPermissions}">
                             <a href="${URL_PREFIX}/person/${person.id}/permissions" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
@@ -111,7 +111,7 @@
 
                                         <c:set var="departmentLink">
                                             <c:choose>
-                                                <c:when test="${isOffice}">
+                                                <c:when test="${canEditDepartments}">
                                                     <a href="${URL_PREFIX}/department/${department.id}/edit"><c:out value="${department.name}"/></a>
                                                 </c:when>
                                                 <c:otherwise>
@@ -144,7 +144,7 @@
             <div class="md:tw-col-start-2 md:tw-row-start-1">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${isOffice}">
+                        <c:if test="${canEditAccounts}">
                             <a href="${URL_PREFIX}/person/${person.id}/account?year=${year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
@@ -162,7 +162,7 @@
             <div class="md:tw-col-start-2 md:tw-row-start-3">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${isOffice}">
+                        <c:if test="${canEditWorkingtime}">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
@@ -290,7 +290,7 @@
             <div class="md:tw-col-start-2 md:tw-row-start-2">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${isOffice}">
+                        <c:if test="${canEditWorkingtime}">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>

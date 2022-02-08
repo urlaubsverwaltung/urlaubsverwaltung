@@ -106,6 +106,11 @@ class SickNoteViewController {
             List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE));
+            model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
+            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
+            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
+
             return "sicknote/sick_note";
         }
 

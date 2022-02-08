@@ -186,6 +186,66 @@ class PersonDetailsViewControllerTest {
     }
 
     @Test
+    void showPersonInformationOfficeCanEditPermissions() throws Exception {
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+
+        perform(get("/web/person/" + PERSON_ID))
+            .andExpect(view().name("person/person_detail"))
+            .andExpect(model().attribute("canEditPermissions", true));
+    }
+
+    @Test
+    void showPersonInformationOfficeCanEditDepartments() throws Exception {
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+
+        perform(get("/web/person/" + PERSON_ID))
+            .andExpect(view().name("person/person_detail"))
+            .andExpect(model().attribute("canEditDepartments", true));
+    }
+
+    @Test
+    void showPersonInformationOfficeCanEditAccounts() throws Exception {
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+
+        perform(get("/web/person/" + PERSON_ID))
+            .andExpect(view().name("person/person_detail"))
+            .andExpect(model().attribute("canEditAccounts", true));
+    }
+
+    @Test
+    void showPersonInformationOfficeCanEditWorkingtimes() throws Exception {
+
+        final Person office = new Person();
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
+
+        perform(get("/web/person/" + PERSON_ID))
+            .andExpect(view().name("person/person_detail"))
+            .andExpect(model().attribute("canEditWorkingtime", true));
+    }
+
+    @Test
     void showPersonWithActiveTrueForUserWithRoleBossCallsCorrectService() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(USER, BOSS));

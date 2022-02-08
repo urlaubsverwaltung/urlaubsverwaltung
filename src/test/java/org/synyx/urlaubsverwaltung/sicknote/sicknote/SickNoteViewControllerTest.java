@@ -194,6 +194,54 @@ class SickNoteViewControllerTest {
     }
 
     @Test
+    void ensureGetSickNoteDetailsCanEditSickNotes() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(model().attribute("canEditSickNote", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanConvertSickNotes() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(model().attribute("canConvertSickNote", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanDeleteSickNotes() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(model().attribute("canDeleteSickNote", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanCommentSickNotes() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(model().attribute("canCommentSickNote", true));
+    }
+
+    @Test
     void ensurePostNewSickNoteShowsFormIfValidationFails() throws Exception {
 
         doAnswer(invocation -> {

@@ -232,6 +232,26 @@ class ApplicationForLeaveFormViewControllerTest {
     }
 
     @Test
+    void getNewApplicationFormOfficeUserCanAddForAnotherUser() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
+        final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        perform(get("/web/application/new")
+            .param("person", "1"))
+            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
+    }
+
+    @Test
     void getNewApplicationFormForUnknownPersonIdFallsBackToSignedInUser() throws Exception {
 
         final Person signedInUser = new Person();

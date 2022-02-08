@@ -12,17 +12,17 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -36,6 +36,8 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -81,15 +83,12 @@ public class OverviewViewController {
 
     @GetMapping
     public String index() {
-
         return "redirect:/web/overview";
     }
 
     @GetMapping("/web/overview")
     public String showOverview(@RequestParam(value = "year", required = false) String year) {
-
         final Person signedInUser = personService.getSignedInUser();
-
         if (hasText(year)) {
             return "redirect:/web/person/" + signedInUser.getId() + "/overview?year=" + year;
         }
@@ -125,6 +124,11 @@ public class OverviewViewController {
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
+
+        model.addAttribute("canAccessAbsenceOverview", person.equals(signedInUser));
+        model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
+        model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE));
 
         return "person/overview";
     }

@@ -127,7 +127,7 @@
                         </uv:section-heading>
 
                         <div class="row">
-                            <c:if test="${isOffice}">
+                            <c:if test="${canAddApplicationForLeaveForAnotherUser}">
                                 <div class="col-md-8">
                                 <c:choose>
                                     <c:when test="${application.id == null}">

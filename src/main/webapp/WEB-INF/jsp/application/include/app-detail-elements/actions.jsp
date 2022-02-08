@@ -5,9 +5,9 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
-<c:set var="CAN_MANAGE" value="${isBoss || isDepartmentHead || isSecondStageAuthority}"/>
+<c:set var="CAN_MANAGE" value="${isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson}"/>
 <c:set var="IS_OWN" value="${application.person.id == signedInUser.id}"/>
-<c:set var="IS_ALLOWED_TO_ALLOW" value="${isBoss || ((isDepartmentHead || isSecondStageAuthority) && !IS_OWN)}"/>
+<c:set var="IS_ALLOWED_TO_ALLOW" value="${isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
 
 <c:if test="${application.status == 'ALLOWED'}">
     <c:if test="${isOffice || IS_OWN}">

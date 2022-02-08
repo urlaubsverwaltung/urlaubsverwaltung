@@ -407,9 +407,9 @@ class ApplicationForLeaveDetailsViewController {
 
         // Signed in person is allowed to manage
         final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
-        model.addAttribute("isDepartmentHead", isDepartmentHead);
+        model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHead);
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
-        model.addAttribute("isSecondStageAuthority", isSecondStageAuthority);
+        model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthority);
         model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
         model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
 

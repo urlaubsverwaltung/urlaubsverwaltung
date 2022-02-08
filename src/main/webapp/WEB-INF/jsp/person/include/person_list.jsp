@@ -17,7 +17,7 @@
                 <%-- NOTE: class 'search' is needed for list.js --%>
                 <input type="text" class="search form-control" placeholder="<spring:message code='action.search'/>"/>
                 <span class="input-group-addon">
-                    <icon:search className="tw-w-4 tw-h-4" />
+                    <icon:search className="tw-w-4 tw-h-4"/>
                 </span>
             </div>
         </div>
@@ -48,9 +48,7 @@
             <th scope="col" class="sortable-field is-centered">
                 <spring:message code="persons.account.vacation.vacationDaysLeft.remaining"/>
             </th>
-            <c:if test="${isOffice}">
-                <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
-            </c:if>
+            <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
         </tr>
         </thead>
         <%-- NOTE: class 'list' is needed for list.js --%>
@@ -72,7 +70,8 @@
                 <td class="lastname">
                     <c:out value="${person.lastName}"/>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.entitlementYear}">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    data-sortable-value="${person.entitlementYear}">
                     <c:choose>
                         <c:when test="${person.entitlementYear != null}">
                             <uv:number number="${person.entitlementYear}"/>
@@ -82,7 +81,8 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.entitlementActual}">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    data-sortable-value="${person.entitlementActual}">
                     <c:choose>
                         <c:when test="${person.entitlementActual != null}">
                             <uv:number number="${person.entitlementActual}"/>
@@ -92,7 +92,8 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.entitlementRemaining}">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    data-sortable-value="${person.entitlementRemaining}">
                     <c:choose>
                         <c:when test="${person.entitlementRemaining != null}">
                             <uv:number number="${person.entitlementRemaining}"/>
@@ -102,7 +103,8 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.vacationDaysLeft}">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    data-sortable-value="${person.vacationDaysLeft}">
                     <c:choose>
                         <c:when test="${person.vacationDaysLeft != null}">
                             <uv:number number="${person.vacationDaysLeft}"/>
@@ -112,7 +114,8 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell" data-sortable-value="${person.vacationDaysLeftRemaining}">
+                <td class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    data-sortable-value="${person.vacationDaysLeftRemaining}">
                     <c:choose>
                         <c:when test="${person.vacationDaysLeftRemaining != null}">
                             <uv:number number="${person.vacationDaysLeftRemaining}"/>
@@ -129,8 +132,8 @@
                             href="${URL_PREFIX}/person/${person.id}"
                             data-title="<spring:message code="action.account.title" arguments="${person.niceName}"/>"
                         >
-                            <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1" />
-                            <spring:message code="action.account" />
+                            <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1"/>
+                            <spring:message code="action.account"/>
                         </a>
                     </div>
                 </td>

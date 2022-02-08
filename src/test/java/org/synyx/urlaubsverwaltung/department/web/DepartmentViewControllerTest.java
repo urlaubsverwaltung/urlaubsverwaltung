@@ -74,7 +74,7 @@ class DepartmentViewControllerTest {
 
         perform(get("/web/department"))
             .andExpect(model().attribute("departments", mapToDepartmentOverviewDtos(departments)))
-            .andExpect(model().attribute("isOffice", false));
+            .andExpect(model().attribute("canCreateAndModifyDepartment", false));
     }
 
     @Test
@@ -86,11 +86,11 @@ class DepartmentViewControllerTest {
 
         perform(get("/web/department"))
             .andExpect(view().name("department/department_list"))
-            .andExpect(model().attribute("isOffice", false));
+            .andExpect(model().attribute("canCreateAndModifyDepartment", false));
     }
 
     @Test
-    void ensureThatOfficeRoleIsSet() throws Exception {
+    void ensureThatOfficeCanCreateAndModifyDepartment() throws Exception {
 
         final List<Department> departments = List.of(new Department());
         when(departmentService.getAllDepartments()).thenReturn(departments);
@@ -100,7 +100,7 @@ class DepartmentViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         perform(get("/web/department"))
-            .andExpect(model().attribute("isOffice", true));
+            .andExpect(model().attribute("canCreateAndModifyDepartment", true));
     }
 
     @Test
