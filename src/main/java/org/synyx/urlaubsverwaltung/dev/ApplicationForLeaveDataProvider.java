@@ -82,9 +82,9 @@ class ApplicationForLeaveDataProvider {
         }
     }
 
-    void createCancelledApplication(Person person, Person office, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
+    void createCancelledApplication(Person person, Person boss, Person office, VacationCategory vacationCategory, DayLength dayLength, LocalDate startDate, LocalDate endDate) {
 
-        final Application application = createAllowedApplication(person, office, vacationCategory, dayLength, startDate, endDate);
+        final Application application = createAllowedApplication(person, boss, vacationCategory, dayLength, startDate, endDate);
         if (application != null) {
             applicationInteractionService.cancel(application, office, Optional.of("Urlaub wurde nicht genommen, daher storniert"));
         }
