@@ -119,10 +119,13 @@ class ApplicationForLeaveViewController {
     private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, MessageSource messageSource, Locale locale) {
         final Person person = application.getPerson();
         final boolean isWaiting = application.hasStatus(WAITING);
+        final boolean isAllowed = application.hasStatus(WAITING);
+        final boolean isTemporaryAllowed = application.hasStatus(WAITING);
         final boolean isCancellationRequested = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
         final boolean twoStageApproval = application.isTwoStageApproval();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isOffice = signedInUser.hasRole(OFFICE);
         final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
         final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
         final boolean isOwn = person.equals(signedInUser);
@@ -139,7 +142,8 @@ class ApplicationForLeaveViewController {
             .editAllowed(isWaiting && isOwn)
             .approveAllowed(isAllowedToAllow)
             .temporaryApproveAllowed(twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority)
-            .rejectAllowed(isAllowedToAllow)
+            .rejectAllowed(!isOwn && (isBoss || isDepartmentHead || isSecondStageAuthority))
+            .canCancel(isOwn || (isOffice && (isWaiting || isAllowed || isTemporaryAllowed || isCancellationRequested)))
             .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();

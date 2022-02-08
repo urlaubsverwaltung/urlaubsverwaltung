@@ -12,6 +12,7 @@ public class ApplicationForLeaveDto {
     private final String workDays;
     private final String durationOfAbsenceDescription;
     private final boolean statusWaiting;
+    private final boolean canCancel;
     private final boolean editAllowed;
     private final boolean approveAllowed;
     private final boolean temporaryApproveAllowed;
@@ -21,7 +22,7 @@ public class ApplicationForLeaveDto {
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
     private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, String duration,
                                    DayLength dayLength, String workDays, String durationOfAbsenceDescription,
-                                   boolean statusWaiting, boolean editAllowed, boolean approveAllowed,
+                                   boolean statusWaiting, boolean canCancel, boolean editAllowed, boolean approveAllowed,
                                    boolean temporaryApproveAllowed, boolean rejectAllowed, boolean cancellationRequested) {
         this.id = id;
         this.person = person;
@@ -31,6 +32,7 @@ public class ApplicationForLeaveDto {
         this.workDays = workDays;
         this.durationOfAbsenceDescription = durationOfAbsenceDescription;
         this.statusWaiting = statusWaiting;
+        this.canCancel = canCancel;
         this.editAllowed = editAllowed;
         this.approveAllowed = approveAllowed;
         this.temporaryApproveAllowed = temporaryApproveAllowed;
@@ -70,6 +72,10 @@ public class ApplicationForLeaveDto {
         return statusWaiting;
     }
 
+    public boolean isCanCancel() {
+        return canCancel;
+    }
+
     public boolean isEditAllowed() {
         return editAllowed;
     }
@@ -103,6 +109,7 @@ public class ApplicationForLeaveDto {
         private String workDays;
         private String durationOfAbsenceDescription;
         private boolean statusWaiting;
+        private boolean canCancel;
         private boolean editAllowed;
         private boolean approveAllowed;
         private boolean temporaryApproveAllowed;
@@ -149,6 +156,11 @@ public class ApplicationForLeaveDto {
             return this;
         }
 
+        Builder canCancel(boolean canCancel) {
+            this.canCancel = canCancel;
+            return this;
+        }
+
         Builder editAllowed(boolean editAllowed) {
             this.editAllowed = editAllowed;
             return this;
@@ -184,6 +196,7 @@ public class ApplicationForLeaveDto {
                 workDays,
                 durationOfAbsenceDescription,
                 statusWaiting,
+                canCancel,
                 editAllowed,
                 approveAllowed,
                 temporaryApproveAllowed,
