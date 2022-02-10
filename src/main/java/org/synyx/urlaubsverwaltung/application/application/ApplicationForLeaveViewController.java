@@ -118,6 +118,7 @@ class ApplicationForLeaveViewController {
 
     private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, MessageSource messageSource, Locale locale) {
         final Person person = application.getPerson();
+
         final boolean isWaiting = application.hasStatus(WAITING);
         final boolean isAllowed = application.hasStatus(WAITING);
         final boolean isTemporaryAllowed = application.hasStatus(WAITING);
@@ -129,7 +130,13 @@ class ApplicationForLeaveViewController {
         final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
         final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
         final boolean isOwn = person.equals(signedInUser);
-        final boolean isAllowedToAllow = isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn);
+
+        final boolean isAllowedToEdit = isWaiting && isOwn;
+        final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority;
+        final boolean isAllowedToApprove = isWaiting && (isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn));
+        final boolean isAllowedToCancel = (isOwn && !isCancellationRequested) || (isOffice && (isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested));
+        final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHead || isSecondStageAuthority);
+        final boolean isAllowedToDeclineCancellationRequest = isOffice && isCancellationRequested;
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
@@ -139,12 +146,12 @@ class ApplicationForLeaveViewController {
             .dayLength(application.getDayLength())
             .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
-            .editAllowed(isWaiting && isOwn)
-            .approveAllowed(isAllowedToAllow)
-            .temporaryApproveAllowed(twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority)
-            .rejectAllowed(!isOwn && (isBoss || isDepartmentHead || isSecondStageAuthority))
-            .canCancel(isOwn || (isOffice && (isWaiting || isAllowed || isTemporaryAllowed || isCancellationRequested)))
-            .cancellationRequested(isCancellationRequested)
+            .editAllowed(isAllowedToEdit)
+            .approveAllowed(isAllowedToApprove)
+            .temporaryApproveAllowed(isAllowedToTemporaryApprove)
+            .rejectAllowed(isAllowedToReject)
+            .canCancel(isAllowedToCancel)
+            .cancellationRequested(isAllowedToDeclineCancellationRequest)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();
     }

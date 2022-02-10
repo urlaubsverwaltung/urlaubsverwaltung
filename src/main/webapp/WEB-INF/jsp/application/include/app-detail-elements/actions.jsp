@@ -46,8 +46,6 @@
 <c:if test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
     <c:if test="${isOffice}">
         <jsp:include page="actions/cancel_form.jsp"/>
-    </c:if>
-    <c:if test="${isOffice}">
         <jsp:include page="actions/decline_cancellation_request_form.jsp"/>
     </c:if>
 </c:if>
