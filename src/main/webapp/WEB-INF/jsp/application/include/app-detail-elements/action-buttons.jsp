@@ -57,7 +57,7 @@
 </c:if>
 
 <%-- CANCEL ACTION --%>
-<c:if test="${(IS_OWN && application.status != 'ALLOWED_CANCELLATION_REQUESTED') || (isOffice && (application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'))}">
+<c:if test="${((application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED') && IS_OWN) || (isOffice && (application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'))}">
 
     <c:choose>
         <c:when test="${!isOffice && (application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED')}">
