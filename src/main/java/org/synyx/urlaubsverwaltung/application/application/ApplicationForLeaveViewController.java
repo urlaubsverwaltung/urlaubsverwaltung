@@ -92,17 +92,20 @@ class ApplicationForLeaveViewController {
         model.addAttribute("canAccessApplicationStatistics", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
         model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE));
 
+        final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
+        final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
+
         final List<ApplicationForLeave> userApplications = getApplicationsForLeaveForUser(signedInUser);
-        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, locale);
+        final List<ApplicationForLeaveDto> userApplicationsDtos = mapToApplicationForLeaveDtoList(userApplications, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
         model.addAttribute("userApplications", userApplicationsDtos);
 
-        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser);
-        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, locale);
+        final List<ApplicationForLeave> otherApplications = getOtherRelevantApplicationsForLeave(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+        final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
         model.addAttribute("otherApplications", otherApplicationsDtos);
 
         if (signedInUser.hasRole(OFFICE)) {
             final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser);
-            final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, locale);
+            final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
             model.addAttribute("applications_cancellation_request", cancellationDtoList);
         }
 
@@ -111,13 +114,15 @@ class ApplicationForLeaveViewController {
         model.addAttribute("applications_holiday_replacements", replacements);
     }
 
-    private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, Locale locale) {
+    private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, List<Person> membersAsDepartmentHead,
+                                                                         List<Person> membersAsSecondStageAuthority, Locale locale) {
         return applications.stream()
-            .map(applicationForLeave -> toView(applicationForLeave, signedInUser, messageSource, locale))
+            .map(applicationForLeave -> toView(applicationForLeave, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, messageSource, locale))
             .collect(toList());
     }
 
-    private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, MessageSource messageSource, Locale locale) {
+    private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, List<Person> membersAsDepartmentHead,
+                                                 List<Person> membersAsSecondStageAuthority, MessageSource messageSource, Locale locale) {
         final Person person = application.getPerson();
 
         final boolean isWaiting = application.hasStatus(WAITING);
@@ -128,15 +133,15 @@ class ApplicationForLeaveViewController {
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
         final boolean isOffice = signedInUser.hasRole(OFFICE);
-        final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
-        final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
+        final boolean isDepartmentHeadOfPerson = membersAsDepartmentHead.contains(person);
+        final boolean isSecondStageAuthorityOfPerson = membersAsSecondStageAuthority.contains(person);
         final boolean isOwn = person.equals(signedInUser);
 
         final boolean isAllowedToEdit = isWaiting && isOwn;
-        final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority;
-        final boolean isAllowedToApprove = isWaiting && (isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn));
+        final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHeadOfPerson && !isOwn) && !isBoss && !isSecondStageAuthorityOfPerson;
+        final boolean isAllowedToApprove = isWaiting && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !isOwn));
         final boolean isAllowedToCancel = ((isWaiting || isTemporaryAllowed || isAllowed) && isOwn) || ((isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice);
-        final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHead || isSecondStageAuthority);
+        final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
@@ -254,7 +259,7 @@ class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private List<ApplicationForLeave> getOtherRelevantApplicationsForLeave(Person signedInUser) {
+    private List<ApplicationForLeave> getOtherRelevantApplicationsForLeave(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             // Boss and Office can see all waiting and temporary allowed applications leave
@@ -267,12 +272,12 @@ class ApplicationForLeaveViewController {
 
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             // Department head can see waiting and temporary allowed applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(signedInUser));
+            applicationsForLeave.addAll(getApplicationsForLeaveForSecondStageAuthority(signedInUser, membersAsSecondStageAuthority));
         }
 
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             // Department head can see only waiting applications for leave of certain department(s)
-            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(signedInUser));
+            applicationsForLeave.addAll(getApplicationsForLeaveForDepartmentHead(signedInUser, membersAsDepartmentHead));
         }
 
         return applicationsForLeave.stream()
@@ -296,8 +301,7 @@ class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head) {
-        final List<Person> members = departmentService.getMembersForDepartmentHead(head);
+    private List<ApplicationForLeave> getApplicationsForLeaveForDepartmentHead(Person head, List<Person> members) {
         return applicationService.getForStatesAndPerson(List.of(WAITING), members).stream()
             .filter(withoutApplicationsOf(head))
             .filter(withoutSecondStageAuthorityApplications())
@@ -306,8 +310,7 @@ class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage) {
-        final List<Person> members = departmentService.getMembersForSecondStageAuthority(secondStage);
+    private List<ApplicationForLeave> getApplicationsForLeaveForSecondStageAuthority(Person secondStage, List<Person> members) {
         return applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED), members).stream()
             .filter(withoutApplicationsOf(secondStage))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
