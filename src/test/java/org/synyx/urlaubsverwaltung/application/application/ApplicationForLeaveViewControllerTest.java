@@ -95,6 +95,7 @@ class ApplicationForLeaveViewControllerTest {
         applicationOfHead.setId(2);
         applicationOfHead.setVacationType(anyVacationType());
         applicationOfHead.setPerson(headPerson);
+        applicationOfHead.setStatus(WAITING);
         applicationOfHead.setStartDate(LocalDate.MAX);
         applicationOfHead.setEndDate(LocalDate.MAX);
 
@@ -136,12 +137,14 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(2)),
-                    hasProperty("cancellationRequested", is(false))
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(true))
                 ),
                 allOf(
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10)),
-                    hasProperty("cancellationRequested", is(true))
+                    hasProperty("cancellationRequested", is(true)),
+                    hasProperty("cancelAllowed", is(false))
                 )
             )))
             .andExpect(model().attribute("otherApplications", hasSize(1)))
@@ -197,24 +200,42 @@ class ApplicationForLeaveViewControllerTest {
 
         // applications for signed-in user
         when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(bossPerson)))
-            .thenReturn(List.of(applicationCancellationRequest));
+            .thenReturn(List.of(applicationOfBoss, applicationCancellationRequest));
 
         // other applications
         when(applicationService.getForStates(List.of(WAITING, TEMPORARY_ALLOWED)))
-            .thenReturn(List.of(application, applicationOfBoss, applicationOfSecondStage));
+            .thenReturn(List.of(application, applicationOfSecondStage));
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
-            .andExpect(model().attribute("userApplications", hasSize(1)))
-            .andExpect(model().attribute("userApplications", hasItem(
+            .andExpect(model().attribute("userApplications", hasSize(2)))
+            .andExpect(model().attribute("userApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(2)),
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(true))
+                ),
                 allOf(
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10)),
-                    hasProperty("cancellationRequested", is(true))
+                    hasProperty("cancellationRequested", is(true)),
+                    hasProperty("cancelAllowed", is(false))
                 ))
             ))
             .andExpect(model().attribute("otherApplications", hasSize(2)))
-            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("otherApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(1)),
+                    hasProperty("cancelAllowed", is(false))
+                ),
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(3)),
+                    hasProperty("cancelAllowed", is(false))
+                ))
+            ))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
@@ -277,8 +298,30 @@ class ApplicationForLeaveViewControllerTest {
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
+            .andExpect(model().attribute("userApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(2)),
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(true))
+                )
+            )))
             .andExpect(model().attribute("otherApplications", hasSize(2)))
             .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("otherApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(1)),
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(true))
+                ),
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(3)),
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(true))
+                )
+            )))
             .andExpect(model().attribute("applications_cancellation_request", hasSize(1)))
             .andExpect(model().attribute("applications_cancellation_request", hasItem(
                 allOf(
@@ -354,13 +397,27 @@ class ApplicationForLeaveViewControllerTest {
                 allOf(
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10)),
-                    hasProperty("cancellationRequested", is(true))
+                    hasProperty("cancellationRequested", is(true)),
+                    hasProperty("cancelAllowed", is(false))
                 )
             )))
             .andExpect(model().attribute("otherApplications", hasSize(2)))
             .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("office"))))))
             .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("person"))))))
-            .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
+            .andExpect(model().attribute("otherApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(1)),
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(false))
+                ),
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(2)),
+                    hasProperty("cancellationRequested", is(false)),
+                    hasProperty("cancelAllowed", is(false))
+                )
+            )))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }

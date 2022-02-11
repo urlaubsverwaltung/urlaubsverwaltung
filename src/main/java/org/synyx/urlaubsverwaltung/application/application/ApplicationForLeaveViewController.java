@@ -31,6 +31,7 @@ import java.util.function.Predicate;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
@@ -118,15 +119,24 @@ class ApplicationForLeaveViewController {
 
     private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, MessageSource messageSource, Locale locale) {
         final Person person = application.getPerson();
+
         final boolean isWaiting = application.hasStatus(WAITING);
+        final boolean isAllowed = application.hasStatus(ALLOWED);
+        final boolean isTemporaryAllowed = application.hasStatus(TEMPORARY_ALLOWED);
         final boolean isCancellationRequested = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
         final boolean twoStageApproval = application.isTwoStageApproval();
 
         final boolean isBoss = signedInUser.hasRole(BOSS);
+        final boolean isOffice = signedInUser.hasRole(OFFICE);
         final boolean isDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD);
         final boolean isSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
         final boolean isOwn = person.equals(signedInUser);
-        final boolean isAllowedToAllow = isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn);
+
+        final boolean isAllowedToEdit = isWaiting && isOwn;
+        final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority;
+        final boolean isAllowedToApprove = isWaiting && (isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn));
+        final boolean isAllowedToCancel = ((isWaiting || isTemporaryAllowed || isAllowed) && isOwn) || ((isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice);
+        final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHead || isSecondStageAuthority);
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
@@ -136,10 +146,11 @@ class ApplicationForLeaveViewController {
             .dayLength(application.getDayLength())
             .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
-            .editAllowed(isWaiting && isOwn)
-            .approveAllowed(isAllowedToAllow)
-            .temporaryApproveAllowed(twoStageApproval && isWaiting && (isDepartmentHead && !isOwn) && !isBoss && !isSecondStageAuthority)
-            .rejectAllowed(isAllowedToAllow)
+            .editAllowed(isAllowedToEdit)
+            .approveAllowed(isAllowedToApprove)
+            .temporaryApproveAllowed(isAllowedToTemporaryApprove)
+            .rejectAllowed(isAllowedToReject)
+            .cancelAllowed(isAllowedToCancel)
             .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();

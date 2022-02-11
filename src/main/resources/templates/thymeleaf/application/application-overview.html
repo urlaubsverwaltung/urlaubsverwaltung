@@ -12,12 +12,13 @@
 
       <div
         class="feedback"
-        th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess)}"
+        th:if="${#bools.isTrue(allowSuccess) or #bools.isTrue(temporaryAllowSuccess) or #bools.isTrue(rejectSuccess) or #bools.isTrue(cancelSuccess)}"
       >
         <div class="alert alert-success">
           <th:block th:if="${allowSuccess}" th:text="#{application.action.allow.success}"></th:block>
           <th:block th:if="${temporaryAllowSuccess}" th:text="#{application.action.temporary_allow.success}"></th:block>
           <th:block th:if="${rejectSuccess}" th:text="#{application.action.reject.success}"></th:block>
+          <th:block th:if="${cancelSuccess}" th:text="#{application.action.cancel.success}"></th:block>
         </div>
       </div>
 
@@ -210,6 +211,16 @@
                     <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
                     <span class="sr-only xs:tw-not-sr-only">
                       <th:block th:text="#{action.reject}"></th:block>
+                    </span>
+                  </a>
+                  <a
+                    class="button tw-flex-1 tw-justify-center"
+                    th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel', shortcut=true)}"
+                    th:if="${userRequestForLeave.cancelAllowed}"
+                  >
+                    <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <span class="sr-only xs:tw-not-sr-only">
+                      <th:block th:text="#{action.delete}"></th:block>
                     </span>
                   </a>
                 </div>
@@ -406,6 +417,16 @@
                     <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
                     <span class="tw-sr-only xs:tw-not-sr-only">
                       <th:block th:text="#{action.reject}" />
+                    </span>
+                  </a>
+                  <a
+                    class="button tw-flex-1 tw-justify-center"
+                    th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', shortcut=true)}"
+                    th:if="${otherRequestForLeave.cancelAllowed}"
+                  >
+                    <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <span class="sr-only xs:tw-not-sr-only">
+                      <th:block th:text="#{action.delete}"></th:block>
                     </span>
                   </a>
                 </div>
