@@ -57,10 +57,10 @@
     --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
     --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
-    --uv-cal-public-holiday-bg: 14, 165, 233; /* sky.500 */
+    --uv-cal-public-holiday-bg: 3, 105, 161; /* slate.800 */
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
     --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
-    --uv-cal-no-workday-bg: 14, 165, 233;
+    --uv-cal-no-workday-bg: 212, 212, 212;
   }
 }

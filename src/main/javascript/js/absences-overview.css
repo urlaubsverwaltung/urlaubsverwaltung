@@ -38,7 +38,6 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table th.weekend {
   @apply tw-text-zinc-400 !important;
-  @apply dark:tw-text-zinc-50 !important;
 }
 
 .vacationOverview-table td {
@@ -199,6 +198,52 @@ th.vacationOverview-cal-head.today::after {
   --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
   --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
   --font-color: theme("textColor.calendar.public-holiday");
+}
+
+.vacationOverview-tbody tr:hover th:first-child {
+  border-right-color: theme("colors.zinc.100");
+}
+.vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning,.public-holiday-noon,.public-holiday-full)) {
+  --background-color-left: theme("colors.zinc.100");
+  --background-color-right: theme("colors.zinc.100");
+}
+.vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
+  --background-color-left: theme("colors.slate.300");
+  --background-color-right: theme("colors.zinc.100");
+}
+.vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
+  --background-color-left: theme("colors.zinc.100");
+  --background-color-right: theme("colors.slate.300");
+}
+.vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
+  --background-color-left: theme("colors.slate.300");
+  --background-color-right: theme("colors.slate.300");
+}
+.vacationOverview-tbody tr:hover th {
+  background-color: theme("colors.gray.100");
+}
+
+.tw-dark .vacationOverview-tbody tr:hover th:first-child {
+  border-right-color: theme("colors.zinc.800");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning,.public-holiday-noon,.public-holiday-full)) {
+  --background-color-left: theme("colors.neutral.700");
+  --background-color-right: theme("colors.neutral.700");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
+  --background-color-left: theme("colors.sky.600");
+  --background-color-right: theme("colors.neutral.700");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
+  --background-color-left: theme("colors.neutral.700");
+  --background-color-right: theme("colors.sky.600");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
+  --background-color-left: theme("colors.sky.600");
+  --background-color-right: theme("colors.sky.600");
+}
+.tw-dark .vacationOverview-tbody tr:hover th {
+  background-color: theme("colors.zinc.800");
 }
 
 @media print {
