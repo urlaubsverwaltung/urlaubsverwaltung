@@ -188,19 +188,19 @@ svg.no-workday-icon {
 }
 
 .public-holiday-morning {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
 }
 .public-holiday-noon {
-  --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
 }
 .public-holiday-full {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
-  --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
   --font-color: theme("textColor.calendar.public-holiday");
 }
 .vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
-  --background-color-right: theme("backgroundColor.calendar.public-holiday"); /* TODO slate.200 */
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
   --font-color: theme("textColor.calendar.public-holiday");
 }
 
