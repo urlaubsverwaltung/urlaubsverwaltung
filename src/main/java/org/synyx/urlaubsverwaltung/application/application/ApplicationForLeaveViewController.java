@@ -136,7 +136,6 @@ class ApplicationForLeaveViewController {
         final boolean isAllowedToApprove = isWaiting && (isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwn));
         final boolean isAllowedToCancel = ((isWaiting || isTemporaryAllowed || isAllowed) && isOwn) || ((isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice);
         final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHead || isSecondStageAuthority);
-        final boolean isAllowedToDeclineCancellationRequest = isOffice && isCancellationRequested;
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
@@ -151,7 +150,7 @@ class ApplicationForLeaveViewController {
             .temporaryApproveAllowed(isAllowedToTemporaryApprove)
             .rejectAllowed(isAllowedToReject)
             .canCancel(isAllowedToCancel)
-            .cancellationRequested(isAllowedToDeclineCancellationRequest)
+            .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();
     }
