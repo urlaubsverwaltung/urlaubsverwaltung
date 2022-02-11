@@ -99,7 +99,7 @@ th.vacationOverview-cal-head.today::after {
   height: 100%;
 }
 
-.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full, .no-workday)::after {
+.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -139,8 +139,12 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-.no-workday {
-  --absence-bar-color: theme("backgroundColor.calendar.no-workday");
+svg.no-workday-icon {
+  @apply tw-stroke-neutral-200;
+  @apply dark:tw-stroke-neutral-700;
+}
+.public-holiday-full.no-workday svg.no-workday-icon {
+  @apply tw-opacity-75;
 }
 
 .absence-morning {
@@ -244,6 +248,10 @@ th.vacationOverview-cal-head.today::after {
 }
 .tw-dark .vacationOverview-tbody tr:hover th {
   background-color: theme("colors.zinc.800");
+}
+
+.tw-dark .vacationOverview-tbody tr:hover svg.no-workday-icon {
+  @apply tw-stroke-zinc-600;
 }
 
 @media print {

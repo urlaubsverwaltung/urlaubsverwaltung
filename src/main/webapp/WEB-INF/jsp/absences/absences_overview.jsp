@@ -214,6 +214,12 @@
                                         ${(absence.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}
                                         ${(absence.workday) ? '' : ' no-workday'}
                                     ">
+
+                                        <c:if test="${not absence.workday}">
+                                            <div class="" style="height: 100%; display: flex; align-items: center; justify-content: center">
+                                                <icon:ban className="no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px" />
+                                            </div>
+                                        </c:if>
                                         <span class="tw-hidden print:tw-inline print:tw-font-mono">
                                             <c:if test="${absence.type.absenceMorning}">
                                                 <spring:message code="absences.overview.absence.morning.abbr"/>
@@ -279,6 +285,16 @@
                     </td>
                     <td class="vacationOverview-legend-text">
                         <spring:message code="absences.overview.public-holiday"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="vacationOverview-legend-colorbox">
+                        <div class="cal-day tw-flex tw-items-center tw-justify-center">
+                            <icon:ban className="no-workday-icon" />
+                        </div>
+                    </td>
+                    <td class="vacationOverview-legend-text">
+                        <spring:message code="absences.overview.no-workday"/>
                     </td>
                 </tr>
                 <c:choose>
