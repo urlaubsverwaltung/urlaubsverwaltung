@@ -8,7 +8,6 @@ public final class SecurityRules {
 
     public static final String IS_OFFICE = "hasAuthority('OFFICE')";
     public static final String IS_BOSS_OR_OFFICE = "hasAnyAuthority('BOSS', 'OFFICE')";
-    public static final String IS_BOSS_OR_DEPARTMENT_HEAD = "hasAnyAuthority('BOSS', 'DEPARTMENT_HEAD')";
     public static final String IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY =
         "hasAnyAuthority('BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')";
 
@@ -16,7 +15,6 @@ public final class SecurityRules {
         "hasAnyAuthority('DEPARTMENT_HEAD', 'BOSS', 'OFFICE', 'SECOND_STAGE_AUTHORITY')";
 
     private SecurityRules() {
-
         // Hide constructor for util classes
     }
 }
