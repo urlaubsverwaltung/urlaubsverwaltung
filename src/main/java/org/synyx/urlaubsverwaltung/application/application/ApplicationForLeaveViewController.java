@@ -149,7 +149,7 @@ class ApplicationForLeaveViewController {
             .approveAllowed(isAllowedToApprove)
             .temporaryApproveAllowed(isAllowedToTemporaryApprove)
             .rejectAllowed(isAllowedToReject)
-            .canCancel(isAllowedToCancel)
+            .cancelAllowed(isAllowedToCancel)
             .cancellationRequested(isCancellationRequested)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .build();

@@ -216,7 +216,7 @@
                   <a
                     class="button tw-flex-1 tw-justify-center"
                     th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel', shortcut=true)}"
-                    th:if="${userRequestForLeave.canCancel}"
+                    th:if="${userRequestForLeave.cancelAllowed}"
                   >
                     <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
                     <span class="sr-only xs:tw-not-sr-only">
@@ -422,7 +422,7 @@
                   <a
                     class="button tw-flex-1 tw-justify-center"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', shortcut=true)}"
-                    th:if="${otherRequestForLeave.canCancel}"
+                    th:if="${otherRequestForLeave.cancelAllowed}"
                   >
                     <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
                     <span class="sr-only xs:tw-not-sr-only">
