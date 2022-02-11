@@ -31,6 +31,7 @@ import java.util.function.Predicate;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
@@ -120,8 +121,8 @@ class ApplicationForLeaveViewController {
         final Person person = application.getPerson();
 
         final boolean isWaiting = application.hasStatus(WAITING);
-        final boolean isAllowed = application.hasStatus(WAITING);
-        final boolean isTemporaryAllowed = application.hasStatus(WAITING);
+        final boolean isAllowed = application.hasStatus(ALLOWED);
+        final boolean isTemporaryAllowed = application.hasStatus(TEMPORARY_ALLOWED);
         final boolean isCancellationRequested = application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
         final boolean twoStageApproval = application.isTwoStageApproval();
 
