@@ -8,7 +8,7 @@ jobs:
   apply-label:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         name: Add label 'status new' to issue when demilestoned
         with:
           github-token: ${{github.token}}
@@ -19,7 +19,7 @@ jobs:
               labels: ['status: new']
             })
             .catch(e => { console.log(e.message) })
-      - uses: actions/github-script@v5
+      - uses: actions/github-script@v6
         name: Remove label 'status planned' to issue when demilestoned
         with:
           github-token: ${{github.token}}
