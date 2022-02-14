@@ -37,15 +37,16 @@
   :root {
     --uv-cal-border-color: 255, 255, 255;
     --uv-cal-today-border-color: 113, 113, 122; /* zinc.500 */
-    --uv-cal-default-bg: 229, 229, 229;
+    --uv-cal-default-bg: 250, 250, 250; /* zinc.50 */
     --uv-cal-default-color: 10, 10, 10;
     --uv-cal-weekend-bg: 181, 208, 223;
     --uv-cal-weekend-color: 10, 10, 10;
     --uv-cal-sick-note-bg: 239, 68, 68;
-    --uv-cal-public-holiday-bg: 181, 208, 223;
+    --uv-cal-public-holiday-bg: 203, 213, 225; /* slate.300 */
     --uv-cal-public-holiday-color: 10, 10, 10;
     --uv-cal-personal-holiday-bg: 234, 179, 8;
     --uv-cal-personal-holiday-approved-bg: 250, 204, 21;
+    --uv-cal-no-workday-bg: 148, 163, 184; /* slate.400 */
   }
 
   .tw-dark {
@@ -56,9 +57,10 @@
     --uv-cal-weekend-bg: 14, 165, 233; /* sky.500 */
     --uv-cal-weekend-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
-    --uv-cal-public-holiday-bg: 14, 165, 233; /* sky.500 */
+    --uv-cal-public-holiday-bg: 3, 105, 161; /* slate.800 */
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
     --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
     --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
+    --uv-cal-no-workday-bg: 212, 212, 212;
   }
 }

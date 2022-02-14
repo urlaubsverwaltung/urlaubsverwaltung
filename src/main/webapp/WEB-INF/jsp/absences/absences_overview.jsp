@@ -130,10 +130,10 @@
     <div class="tw-mx-auto tw-px-4 tw-min-w-max xl:tw-max-w-max">
         <hr class="print:tw-hidden"/>
         <c:forEach items="${absenceOverview.months}" var="month">
-            <div class="tw-mb-10 print:tw-break-inside-avoid">
+            <div class="tw-mb-14 print:tw-break-inside-avoid">
                 <h2
                     id="absence-table-${month.nameOfMonth}"
-                    class="tw-text-2xl tw-m-0 tw-mb-5 print:tw-mb-1 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
+                    class="tw-text-2xl tw-m-0 ${fn:length(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
                 >
                     <c:out value="${month.nameOfMonth}"/>
                     <span class="hidden print:tw-inline"> <c:out value="${selectedYear}"/></span>
@@ -151,15 +151,20 @@
                             <c:forEach items="${month.days}" var="day">
                                 <th
                                     scope="col"
-                                    class="non-sortable tw-cursor-default text-zinc-700 vacationOverview-cal-head ${day.today ? ' today' : ''}"
+                                    class="non-sortable tw-cursor-default vacationOverview-cal-head ${day.today ? ' today' : ''}  ${day.weekend ? ' weekend' : ''}"
                                     style="${day.today ? '--vacation-overview-rows: '.concat(month.persons.size()) : ''}"
                                 >
-                                    <div class="tw-p-2 cal-day ${day.weekend ? 'weekend' : 'tw-bg-transparent'}
+                                    <div class="tw-p-2 tw-leading-none tw-text-center
                                             ${(day.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                             ${(day.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                             ${(day.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}"
                                     >
-                                        <c:out value="${day.dayOfMonth}"/>
+                                        <span class="tw-font-bold tw-block">
+                                            <c:out value="${day.dayOfMonth}"/>
+                                        </span>
+                                        <span class="tw-text-sm tw-block tw-text-zinc-500">
+                                            <c:out value="${day.dayOfWeek}"/>
+                                        </span>
                                     </div>
                                 </th>
                             </c:forEach>
@@ -192,7 +197,6 @@
                             <c:forEach var="absence" items="${person.days}">
                                 <td>
                                     <div class="cal-day
-                                        ${(absence.weekend) ? ' weekend' : ''}
                                         ${(absence.type.absenceFull) ? ' absence-full' : ''}
                                         ${(absence.type.absenceMorning) ? ' absence-morning' : ''}
                                         ${(absence.type.absenceNoon) ? ' absence-noon' : ''}
@@ -208,7 +212,14 @@
                                         ${(absence.type.publicHolidayFull) ? ' public-holiday-full' : ''}
                                         ${(absence.type.publicHolidayMorning) ? ' public-holiday-morning' : ''}
                                         ${(absence.type.publicHolidayNoon) ? ' public-holiday-noon' : ''}
+                                        ${(absence.workday) ? '' : ' no-workday'}
                                     ">
+
+                                        <c:if test="${not absence.workday}">
+                                            <div class="" style="height: 100%; display: flex; align-items: center; justify-content: center">
+                                                <icon:ban className="no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px" />
+                                            </div>
+                                        </c:if>
                                         <span class="tw-hidden print:tw-inline print:tw-font-mono">
                                             <c:if test="${absence.type.absenceMorning}">
                                                 <spring:message code="absences.overview.absence.morning.abbr"/>
@@ -270,10 +281,20 @@
                 </tr>
                 <tr>
                     <td class="vacationOverview-legend-colorbox">
-                        <div class="cal-day weekend"></div>
+                        <div class="cal-day public-holiday-full"></div>
                     </td>
                     <td class="vacationOverview-legend-text">
-                        <spring:message code="absences.overview.weekend"/>
+                        <spring:message code="absences.overview.public-holiday"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="vacationOverview-legend-colorbox">
+                        <div class="cal-day tw-flex tw-items-center tw-justify-center">
+                            <icon:ban className="no-workday-icon" />
+                        </div>
+                    </td>
+                    <td class="vacationOverview-legend-text">
+                        <spring:message code="absences.overview.no-workday"/>
                     </td>
                 </tr>
                 <c:choose>

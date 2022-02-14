@@ -26,12 +26,18 @@ th.vacationOverview-cal-head.today::after {
 
 .vacationOverview-table th,
 .vacationOverview-table td {
+  @apply tw-text-zinc-600 !important;
+  @apply dark:tw-text-zinc-200 !important;
   border: 1px solid theme("borderColor.calendar.DEFAULT");
   font-weight: normal;
 }
 
 .vacationOverview-table thead th {
   @apply dark:tw-font-medium;
+}
+
+.vacationOverview-table th.weekend {
+  @apply tw-text-zinc-400 !important;
 }
 
 .vacationOverview-table td {
@@ -126,6 +132,21 @@ th.vacationOverview-cal-head.today::after {
   background-color: var(--absence-bar-color-noon);
 }
 
+@media print {
+  .cal-day {
+    --bg-left-lightness: 100%;
+    --bg-right-lightness: 100%;
+  }
+}
+
+svg.no-workday-icon {
+  @apply tw-stroke-neutral-200;
+  @apply dark:tw-stroke-neutral-700;
+}
+.public-holiday-full.no-workday svg.no-workday-icon {
+  @apply tw-opacity-75;
+}
+
 .absence-morning {
   --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
 }
@@ -177,11 +198,60 @@ th.vacationOverview-cal-head.today::after {
   --background-color-right: theme("backgroundColor.calendar.public-holiday");
   --font-color: theme("textColor.calendar.public-holiday");
 }
+.vacationOverview-tbody td .cal-day.weekend.public-holiday-full {
+  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --font-color: theme("textColor.calendar.public-holiday");
+}
 
-.weekend {
-  --background-color-left: theme("backgroundColor.calendar.weekend");
-  --background-color-right: theme("backgroundColor.calendar.weekend");
-  --font-color: theme("textColor.calendar.weekend");
+.vacationOverview-tbody tr:hover th:first-child {
+  border-right-color: theme("colors.zinc.100");
+}
+.vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning,.public-holiday-noon,.public-holiday-full)) {
+  --background-color-left: theme("colors.zinc.100");
+  --background-color-right: theme("colors.zinc.100");
+}
+.vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
+  --background-color-left: theme("colors.slate.300");
+  --background-color-right: theme("colors.zinc.100");
+}
+.vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
+  --background-color-left: theme("colors.zinc.100");
+  --background-color-right: theme("colors.slate.300");
+}
+.vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
+  --background-color-left: theme("colors.slate.300");
+  --background-color-right: theme("colors.slate.300");
+}
+.vacationOverview-tbody tr:hover th {
+  background-color: theme("colors.gray.100");
+}
+
+.tw-dark .vacationOverview-tbody tr:hover th:first-child {
+  border-right-color: theme("colors.zinc.800");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning,.public-holiday-noon,.public-holiday-full)) {
+  --background-color-left: theme("colors.neutral.700");
+  --background-color-right: theme("colors.neutral.700");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-morning {
+  --background-color-left: theme("colors.sky.600");
+  --background-color-right: theme("colors.neutral.700");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-noon {
+  --background-color-left: theme("colors.neutral.700");
+  --background-color-right: theme("colors.sky.600");
+}
+.tw-dark .vacationOverview-tbody tr:hover td .cal-day.public-holiday-full {
+  --background-color-left: theme("colors.sky.600");
+  --background-color-right: theme("colors.sky.600");
+}
+.tw-dark .vacationOverview-tbody tr:hover th {
+  background-color: theme("colors.zinc.800");
+}
+
+.tw-dark .vacationOverview-tbody tr:hover svg.no-workday-icon {
+  @apply tw-stroke-zinc-600;
 }
 
 @media print {
@@ -213,11 +283,6 @@ th.vacationOverview-cal-head.today::after {
     --background-color-right: #ffffff;
   }
   .public-holiday-full {
-    --background-color-left: #ffffff;
-    --background-color-right: #ffffff;
-  }
-
-  .weekend {
     --background-color-left: #ffffff;
     --background-color-right: #ffffff;
   }
