@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -39,6 +40,19 @@ public interface ApplicationService {
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
+
+    /**
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
+     * vacation category.
+     *
+     * @param startDate          {@link LocalDate}
+     * @param endDate            {@link LocalDate}
+     * @param person             {@link Person}
+     * @param vacationCategory {@link VacationCategory}
+     * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
+     */
+    List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, VacationCategory vacationCategory);
+
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.

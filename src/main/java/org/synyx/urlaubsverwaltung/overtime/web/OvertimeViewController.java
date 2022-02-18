@@ -297,9 +297,7 @@ public class OvertimeViewController {
         final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
         final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
-        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationService.getForStatesAndPerson(statuses, List.of(person), firstDayOfYear, lastDayOfYear).stream()
-            .filter(application -> application.getVacationType().isOfCategory(VacationCategory.OVERTIME))
-            .collect(toList());
+        // TODO for OVERTIME and WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION...
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, VacationCategory.OVERTIME);
     }
 }

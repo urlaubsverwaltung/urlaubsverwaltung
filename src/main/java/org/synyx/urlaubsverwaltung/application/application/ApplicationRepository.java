@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -43,6 +44,15 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
             + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
+
+    @Query(
+        "select x from Application x "
+            + "where x.person = ?3 and "
+            + "((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
+            + "and x.vacationType.category = ?4 "
+            + "order by x.startDate"
+    )
+    List<Application> getApplicationsForACertainTimeAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, VacationCategory vacationCategory);
 
     @Query(
         "select x from Application x "

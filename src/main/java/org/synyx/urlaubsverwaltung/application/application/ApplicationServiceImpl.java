@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -41,6 +42,11 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person) {
         return applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+    }
+
+    @Override
+    public List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, VacationCategory vacationCategory) {
+        return applicationRepository.getApplicationsForACertainTimeAndPersonAndVacationCategory(startDate, endDate, person, vacationCategory);
     }
 
     @Override
