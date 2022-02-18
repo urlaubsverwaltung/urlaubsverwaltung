@@ -153,18 +153,19 @@
                                     </td>
                                 </tr>
                             </c:forEach>
-                            <tr class="active" onclick="navigate('${URL_PREFIX}/overtime?person=${person.id}&year=${year-1}');">
+                            <c:set var="LAST_YEAR" value="${year-1}"/>
+                            <tr class="active" onclick="navigate('${URL_PREFIX}/overtime?person=${person.id}&year=${LAST_YEAR}');">
                                 <td></td>
                                 <td>
                                     <span class="visible-print">
                                         <spring:message code="overtime.link.last-year"/>
                                     </span>
                                     <a class="print:tw-hidden tw-text-lg tw-mb-1"
-                                       href="${URL_PREFIX}/overtime?person=${person.id}&year=${year-1}">
+                                       href="${URL_PREFIX}/overtime?person=${person.id}&year=${LAST_YEAR}">
                                         <spring:message code="overtime.link.last-year"/>
                                     </a>
                                     <p>
-                                        <spring:message code="overtime.list.last-year-details" arguments="${year-1}"/>
+                                        <spring:message code="overtime.list.last-year-details"/> ${LAST_YEAR}
                                     </p>
                                 </td>
                                 <td class="is-centered">
