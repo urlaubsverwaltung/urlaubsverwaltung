@@ -58,6 +58,7 @@ $(function () {
     dayToday: "datepicker-day-today",
     dayWeekend: "datepicker-day-weekend",
     dayPast: "datepicker-day-past",
+    dayNoWorkday: "datepicker-day-no-workday",
     dayPublicHolidayFull: "datepicker-day-public-holiday-full",
     dayPublicHolidayMorning: "datepicker-day-public-holiday-morning",
     dayPublicHolidayNoon: "datepicker-day-public-holiday-noon",
@@ -108,6 +109,9 @@ $(function () {
       isPast: function (date) {
         /* NOTE: Today is not in the past! */
         return !isToday(date) && isPast(date);
+      },
+      isNoWorkday: function (date) {
+        return holidayService.isNoWorkday(date);
       },
       isHalfDayAbsence: function (date) {
         if (assert.isPersonalHolidayMorning(date) || assert.isPersonalHolidayNoon(date)) {
@@ -274,6 +278,8 @@ $(function () {
     });
 
     const HolidayService = {
+      isNoWorkday: isOfType("no_workday"),
+
       isSickDayFull: isOfType("sick", {
         absencePeriodName: absencePeriod.FULL,
       }),
@@ -502,6 +508,23 @@ $(function () {
           type: "SICK_NOTE",
         }).then(cacheAbsences("sick", year));
       },
+
+      fetchNonWorkingDays: function (year) {
+        _CACHE["no_workday"] = _CACHE["no_workday"] || {};
+
+        if (_CACHE["no_workday"][year]) {
+          return Promise.resolve(_CACHE[year]);
+        }
+
+        const firstDayOfYear = formatISO(startOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
+        const lastDayOfYear = formatISO(endOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
+
+        return fetch("/persons/" + personId + "/absences", {
+          from: firstDayOfYear,
+          to: lastDayOfYear,
+          noWorkdaysInclusive: true,
+        }).then(cacheAbsences("no_workday", year));
+      },
     };
 
     return {
@@ -644,6 +667,7 @@ $(function () {
           assert.isToday(date) ? CSS.dayToday : "",
           assert.isWeekend(date) ? CSS.dayWeekend : "",
           assert.isPast(date) ? CSS.dayPast : "",
+          assert.isNoWorkday(date) ? CSS.dayNoWorkday : "",
           assert.isPublicHolidayFull(date) ? CSS.dayPublicHolidayFull : "",
           assert.isPublicHolidayMorning(date) ? CSS.dayPublicHolidayMorning : "",
           assert.isPublicHolidayNoon(date) ? CSS.dayPublicHolidayNoon : "",
@@ -836,6 +860,7 @@ $(function () {
           holidayService.fetchPublic(getYear(date)),
           holidayService.fetchPersonal(getYear(date)),
           holidayService.fetchSickDays(getYear(date)),
+          holidayService.fetchNonWorkingDays(getYear(date)),
         ]).then(view.displayNext);
       },
 
@@ -853,6 +878,7 @@ $(function () {
           holidayService.fetchPublic(getYear(date)),
           holidayService.fetchPersonal(getYear(date)),
           holidayService.fetchSickDays(getYear(date)),
+          holidayService.fetchNonWorkingDays(getYear(date)),
         ]).then(view.displayPrevious);
       },
     };

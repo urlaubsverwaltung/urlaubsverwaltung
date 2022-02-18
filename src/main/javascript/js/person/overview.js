@@ -31,10 +31,12 @@ $(document).ready(function () {
       holidayService.fetchPublic(yearOfStartDate),
       holidayService.fetchPersonal(yearOfStartDate),
       holidayService.fetchSickDays(yearOfStartDate),
+      holidayService.fetchNonWorkingDays(yearOfStartDate),
 
       holidayService.fetchPublic(yearOfEndDate),
       holidayService.fetchPersonal(yearOfEndDate),
       holidayService.fetchSickDays(yearOfEndDate),
+      holidayService.fetchNonWorkingDays(yearOfEndDate),
     ).always(function () {
       Urlaubsverwaltung.Calendar.init(holidayService, date);
     });
