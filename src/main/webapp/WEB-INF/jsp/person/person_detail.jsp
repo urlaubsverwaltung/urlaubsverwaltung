@@ -39,9 +39,18 @@
         <div class="tw-space-y-12 md:tw-space-y-0 md:tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
             <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
-                    <h1>
-                        <spring:message code="person.account.masterData.title"/>
-                    </h1>
+                    <jsp:attribute name="actions">
+                        <c:if test="${canEditPermissions}">
+                            <a href="${URL_PREFIX}/person/${person.id}/masterdata" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </c:if>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="person.account.masterData.title"/>
+                        </h2>
+                    </jsp:body>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
                 <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">

@@ -9,6 +9,9 @@ public class PersonDto {
     private final String lastName;
     private final String niceName;
 
+    private String personnelNummber;
+    private String additionalInfo;
+
     private final Double entitlementYear;
     private final Double entitlementActual;
     private final Double entitlementRemaining;
