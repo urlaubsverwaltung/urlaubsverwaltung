@@ -130,7 +130,7 @@ class OvertimeServiceImpl implements OvertimeService {
      */
     @Override
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
-        OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         return signedInUser.hasRole(OFFICE)
             || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }

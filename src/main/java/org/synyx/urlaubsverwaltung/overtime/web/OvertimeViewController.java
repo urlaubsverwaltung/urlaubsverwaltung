@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import org.apache.http.impl.conn.tsccm.WaitingThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
@@ -34,6 +36,7 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -42,6 +45,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -112,18 +121,22 @@ public class OvertimeViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
 
+        final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
+
         final OvertimeListDto overtimeListDto = mapToDto(
             getOvertimeAbsences(year, person),
             overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year-1),
-            overtimeService.getLeftOvertimeForPerson(person));
+            overtimeService.getLeftOvertimeForPerson(person),
+            signedInUser,
+            userIsAllowedToWriteOvertime);
 
         model.addAttribute("records", overtimeListDto.getRecords());
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
         model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
-        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
+        model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
 
         return "overtime/overtime_list";
     }
@@ -284,9 +297,9 @@ public class OvertimeViewController {
         final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
         final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
-        // TODO for OVERTIME and WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION...
-        return applicationService.getApplicationsForACertainPeriodAndPerson(firstDayOfYear, lastDayOfYear, person).stream()
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationService.getForStatesAndPerson(statuses, List.of(person), firstDayOfYear, lastDayOfYear).stream()
             .filter(application -> application.getVacationType().isOfCategory(VacationCategory.OVERTIME))
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 }

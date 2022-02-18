@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
@@ -29,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -200,21 +200,20 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final List<OvertimeListRecordDto> recordDtos = List.of(
-            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), ApplicationStatus.ALLOWED, OvertimeListRecordDto.OvertimeListRecordType.OVERTIME, overtime.getLastModificationDate()));
+        final OvertimeListRecordDto overtimeListRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
+            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(10), "", "OVERTIME", true);
 
-        final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
-        resultActions
+        perform(get("/web/overtime").param("person", "5"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_list"))
             .andExpect(model().attribute("year", is(year)))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
+            .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ZERO)))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
-
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
+            .andExpect(model().attribute("records", hasItem(overtimeListRecordDto)));
     }
 
     @Test
@@ -238,27 +237,24 @@ class OvertimeViewControllerTest {
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
+        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year-1)).thenReturn(Duration.ofHours(10));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final List<OvertimeListRecordDto> recordDtos = List.of(
-            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), ApplicationStatus.ALLOWED, OvertimeListRecordDto.OvertimeListRecordType.OVERTIME, overtime.getLastModificationDate()));
+        final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
+            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(20), "", "OVERTIME", true);
 
-        final ResultActions resultActions = perform(
-            get("/web/overtime")
-                .param("person", "5")
-                .param("year", "2012")
-        );
-
-        resultActions
+        perform(get("/web/overtime")
+            .param("person", "5")
+            .param("year", "2012"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_list"))
             .andExpect(model().attribute("year", is(year)))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
-
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+            .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ofHours(10))))
+            .andExpect(model().attribute("records", hasItem(listRecordDto)));
     }
 
     @Test
@@ -303,19 +299,17 @@ class OvertimeViewControllerTest {
 
         final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL());
         final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate());
-        final List<OvertimeCommentDto> commentDtos = List.of(new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText()));
+        final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText());
 
-        final ResultActions resultActions = perform(get("/web/overtime/2"));
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("record")).usingRecursiveComparison().isEqualTo(record);
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("comments")).usingRecursiveComparison().isEqualTo(commentDtos);
-
-        resultActions
+        perform(get("/web/overtime/2"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_details"))
             .andExpect(model().attribute("signedInUser", is(overtimePerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
+            .andExpect(model().attribute("record", is(record)))
+            .andExpect(model().attribute("comments", hasItem(commentDto)));
     }
 
     @Test

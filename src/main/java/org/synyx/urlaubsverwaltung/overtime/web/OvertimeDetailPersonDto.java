@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import java.util.Objects;
+
 public class OvertimeDetailPersonDto {
 
     private final Integer id;
@@ -28,5 +30,28 @@ public class OvertimeDetailPersonDto {
 
     public String getGravatarUrl() {
         return gravatarUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OvertimeDetailPersonDto that = (OvertimeDetailPersonDto) o;
+        return Objects.equals(email, that.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
+    }
+
+    @Override
+    public String toString() {
+        return "OvertimeDetailPersonDto{" +
+            "id=" + id +
+            ", email='" + email + '\'' +
+            ", niceName='" + niceName + '\'' +
+            ", gravatarUrl='" + gravatarUrl + '\'' +
+            '}';
     }
 }
