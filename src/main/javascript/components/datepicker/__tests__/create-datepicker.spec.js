@@ -189,7 +189,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -222,7 +222,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -241,7 +241,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -260,7 +260,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -277,7 +277,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -305,7 +305,7 @@ describe("create-datepicker", () => {
           ],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -329,7 +329,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-01-01&to=2020-01-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -348,7 +348,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2019-12-01&to=2019-12-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -367,7 +367,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-11-01&to=2020-11-30&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -384,7 +384,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2021-01-01&to=2021-01-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -399,7 +399,7 @@ describe("create-datepicker", () => {
 
     describe("highlights days", () => {
       function mockAbsences(absences) {
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
           absences,
         });
       }
@@ -409,7 +409,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -577,7 +577,7 @@ describe("create-datepicker", () => {
           publicHolidays: [],
         });
 
-        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
           absences: [],
         });
 
@@ -607,7 +607,7 @@ describe("create-datepicker", () => {
         }
 
         beforeEach(async () => {
-          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
             absences: [],
           });
 
@@ -666,7 +666,7 @@ describe("create-datepicker", () => {
 
       describe("vacation waiting", () => {
         function mockVacationWaitingAbsences(absences) {
-          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
             absences,
           });
         }
@@ -746,7 +746,7 @@ describe("create-datepicker", () => {
 
       describe("vacation approved", () => {
         function mockVacationApprovedAbsences(absences) {
-          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
             absences,
           });
         }
@@ -826,7 +826,7 @@ describe("create-datepicker", () => {
 
       describe("sick day", () => {
         function mockSickDayAbsences(absences) {
-          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31`, {
+          fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
             absences,
           });
         }
@@ -899,6 +899,37 @@ describe("create-datepicker", () => {
           expect(element.classList).not.toContain("datepicker-day-sick-note-morning");
           expect(element.classList).toContain("datepicker-day-sick-note-noon");
         });
+      });
+
+      test("no-workday", async () => {
+        fetchMock.mock(`my-url-prefix/persons/42/public-holidays?from=2020-12-01&to=2020-12-31`, {
+          publicHolidays: [],
+        });
+
+        fetchMock.mock(`my-url-prefix/persons/42/absences?from=2020-12-01&to=2020-12-31&noWorkdaysInclusive=true`, {
+          absences: [
+            {
+              date: "2020-12-24",
+              absencePeriodName: "FULL",
+              type: "NO_WORKDAY",
+            },
+          ],
+        });
+
+        document.body.innerHTML = `
+          <input value="24.12.2020" data-iso-value="2020-12-24" />
+        `;
+
+        const urlPrefix = "my-url-prefix";
+        const getPersonId = () => 42;
+
+        await createDatepicker("input", { urlPrefix, getPersonId });
+
+        await renderCurrentDatepickerMonth();
+
+        const element = getDatepickerDayElement("24. Dezember");
+        expect(element.classList).toContain("datepicker-day");
+        expect(element.classList).toContain("datepicker-day-no-workday");
       });
     });
   });

@@ -19,6 +19,7 @@ const datepickerClassnames = {
   today: "datepicker-day-today",
   past: "datepicker-day-past",
   weekend: "datepicker-day-weekend",
+  noWorkday: "datepicker-day-no-workday",
   publicHolidayFull: "datepicker-day-public-holiday-full",
   publicHolidayMorning: "datepicker-day-public-holiday-morning",
   publicHolidayNoon: "datepicker-day-public-holiday-noon",
@@ -63,9 +64,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
       getJSON(`${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
         pick("publicHolidays"),
       ),
-      getJSON(`${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
-        pick("absences"),
-      ),
+      getJSON(
+        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}&noWorkdaysInclusive=true`,
+      ).then(pick("absences")),
     ]).then(([publicHolidays, absences]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
@@ -234,6 +235,7 @@ function getCssClassesForDate(date, publicHolidays, absences) {
       absencePeriodName: "MORNING",
     });
   const isSickDayNoon = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "NOON" });
+  const isNoWorkday = () => fitsCriteria(absences, { type: "NO_WORKDAY" });
 
   return [
     datepickerClassnames.day,
@@ -255,6 +257,7 @@ function getCssClassesForDate(date, publicHolidays, absences) {
     isSickDayFull() && datepickerClassnames.sickNoteFull,
     isSickDayMorning() && datepickerClassnames.sickNoteMorning,
     isSickDayNoon() && datepickerClassnames.sickNoteNoon,
+    isNoWorkday() && datepickerClassnames.noWorkday,
   ].filter(Boolean);
 }
 
