@@ -241,6 +241,64 @@ describe("calendar", () => {
     });
   });
 
+  test("ensure rendering of no-workdays", async () => {
+    // today is 2020-12-13
+    mockDate(1_607_848_867_000);
+
+    // personId -> createHolidayService (param)
+    // year -> holidayService.fetchPersonal (param)
+    // type -> holidayService.fetchPersonal (implementation detail)
+    fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&noWorkdaysInclusive=true", {
+      absences: [
+        {
+          // saturday
+          date: "2020-12-05",
+          absencePeriodName: "FULL",
+          type: "NO_WORKDAY",
+          status: "",
+        },
+        {
+          // sunday
+          date: "2020-12-06",
+          absencePeriodName: "FULL",
+          type: "NO_WORKDAY",
+          status: "",
+        },
+        {
+          // wednesday
+          date: "2020-12-09",
+          absencePeriodName: "FULL",
+          type: "NO_WORKDAY",
+          status: "",
+        },
+      ],
+    });
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2020);
+
+    renderCalendar(holidayService);
+
+    const $ = document.querySelector.bind(document);
+    expect(
+      $(
+        '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-no-workday"]',
+      ),
+    ).toBeTruthy();
+    expect(
+      $(
+        '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-no-workday"]',
+      ),
+    ).toBeTruthy();
+    expect(
+      $('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past datepicker-day-no-workday"]'),
+    ).toBeTruthy();
+  });
+
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
     return window.Urlaubsverwaltung.HolidayService.create(webPrefix, apiPrefix, personId);
   }
