@@ -116,11 +116,12 @@ public class OvertimeViewController {
             getOvertimeAbsences(year, person),
             overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
-            overtimeService.getLeftOvertimeForPerson(person)
-        );
+            overtimeService.getTotalOvertimeForPersonAndYear(person, year-1),
+            overtimeService.getLeftOvertimeForPerson(person));
 
         model.addAttribute("records", overtimeListDto.getRecords());
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
+        model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 

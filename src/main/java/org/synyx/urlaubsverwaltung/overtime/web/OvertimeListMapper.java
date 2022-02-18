@@ -20,7 +20,7 @@ final class OvertimeListMapper {
         // ok
     }
 
-    static OvertimeListDto mapToDto(List<Application> overtimeAbsences, List<Overtime> overtimes, Duration totalOvertime, Duration leftOvertime) {
+    static OvertimeListDto mapToDto(List<Application> overtimeAbsences, List<Overtime> overtimes, Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime) {
 
         final List<OvertimeListRecordDto> overtimeListRecords = overtimes.stream()
             .map(overtime -> new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), ApplicationStatus.ALLOWED, OVERTIME, overtime.getLastModificationDate()))
@@ -34,6 +34,6 @@ final class OvertimeListMapper {
             .sorted(comparing(OvertimeListRecordDto::getStartDate).reversed())
             .collect(toList());
 
-        return new OvertimeListDto(allOvertimes, totalOvertime, leftOvertime);
+        return new OvertimeListDto(allOvertimes, totalOvertime, totalOvertimeLastYear, leftOvertime);
     }
 }

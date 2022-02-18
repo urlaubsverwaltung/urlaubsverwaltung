@@ -7,11 +7,13 @@ public class OvertimeListDto {
 
     private final List<OvertimeListRecordDto> records;
     private final Duration overtimeTotal;
+    private final Duration overtimeTotalLastYear;
     private final Duration overtimeLeft;
 
-    OvertimeListDto(List<OvertimeListRecordDto> records, Duration overtimeTotal, Duration overtimeLeft) {
+    OvertimeListDto(List<OvertimeListRecordDto> records, Duration overtimeTotal, Duration overtimeTotalLastYear, Duration overtimeLeft) {
         this.records = records;
         this.overtimeTotal = overtimeTotal;
+        this.overtimeTotalLastYear = overtimeTotalLastYear;
         this.overtimeLeft = overtimeLeft;
     }
 
@@ -21,6 +23,10 @@ public class OvertimeListDto {
 
     public Duration getOvertimeTotal() {
         return overtimeTotal;
+    }
+
+    public Duration getOvertimeTotalLastYear() {
+        return overtimeTotalLastYear;
     }
 
     public Duration getOvertimeLeft() {
