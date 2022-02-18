@@ -29,14 +29,10 @@ $(document).ready(function () {
     // TODO Performance reduce calls when yearOfStartDate === yearOfEndDate
     $.when(
       holidayService.fetchPublic(yearOfStartDate),
-      holidayService.fetchPersonal(yearOfStartDate),
-      holidayService.fetchSickDays(yearOfStartDate),
-      holidayService.fetchNonWorkingDays(yearOfStartDate),
+      holidayService.fetchAbsences(yearOfStartDate),
 
       holidayService.fetchPublic(yearOfEndDate),
-      holidayService.fetchPersonal(yearOfEndDate),
-      holidayService.fetchSickDays(yearOfEndDate),
-      holidayService.fetchNonWorkingDays(yearOfEndDate),
+      holidayService.fetchAbsences(yearOfEndDate),
     ).always(function () {
       Urlaubsverwaltung.Calendar.init(holidayService, date);
     });
