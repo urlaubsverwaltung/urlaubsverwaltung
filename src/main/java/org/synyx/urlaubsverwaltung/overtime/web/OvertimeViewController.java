@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.apache.http.impl.conn.tsccm.WaitingThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -36,21 +35,17 @@ import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.Clock;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -127,7 +122,7 @@ public class OvertimeViewController {
             getOvertimeAbsences(year, person),
             overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
-            overtimeService.getTotalOvertimeForPersonAndYear(person, year-1),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, year - 1),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
             userIsAllowedToWriteOvertime);
@@ -297,7 +292,7 @@ public class OvertimeViewController {
         final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
         final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
-        // TODO for OVERTIME and WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION...
-        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, VacationCategory.OVERTIME);
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, statuses, VacationCategory.OVERTIME);
     }
 }

@@ -42,17 +42,16 @@ public interface ApplicationService {
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
     /**
-     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person and
-     * vacation category.
+     * TODO
      *
-     * @param startDate          {@link LocalDate}
-     * @param endDate            {@link LocalDate}
-     * @param person             {@link Person}
-     * @param vacationCategory {@link VacationCategory}
-     * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
+     * @param startDate
+     * @param endDate
+     * @param person
+     * @param statuses
+     * @param vacationCategory
+     * @return filteres {@link Application}s by status of the given person with vacation category between startDate x and endDate y
      */
-    List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, VacationCategory vacationCategory);
-
+    List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory);
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
