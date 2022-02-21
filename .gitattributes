@@ -1,6 +1,2 @@
-# Set all files to unix line endings by default
-* text eol=lf
-
-# Denote all files that are truly binary and should not be modified.
-*.png binary
-*.jpg binary
+# Set all text files to unix line endings by default
+* text=auto eol=lf
