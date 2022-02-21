@@ -10,11 +10,11 @@
     "build": "concurrently 'npm:js' 'npm:css'",
     "build:dev": "concurrently 'npm:js:dev' 'npm:css:dev'",
     "build:watch": "concurrently 'npm:js:watch' 'npm:css:watch'",
-    "js": "npx cross-env NODE_ENV=production webpack --mode production",
-    "js:dev": "npx cross-env NODE_ENV=development webpack --mode development",
-    "js:watch": "npx cross-env NODE_ENV=development webpack --mode development --watch",
-    "css": "npx cross-env NODE_ENV=production postcss src/main/css/{style,login}.css --dir target/classes/static/css",
-    "css:dev": "npx cross-env NODE_ENV=development postcss src/main/css/{style,login}.css --dir target/classes/static/css",
+    "js": "cross-env NODE_ENV=production webpack --mode production",
+    "js:dev": "cross-env NODE_ENV=development webpack --mode development",
+    "js:watch": "cross-env NODE_ENV=development webpack --mode development --watch",
+    "css": "cross-env NODE_ENV=production postcss src/main/css/{style,login}.css --dir target/classes/static/css",
+    "css:dev": "cross-env NODE_ENV=development postcss src/main/css/{style,login}.css --dir target/classes/static/css",
     "css:watch": "onchange -i src/main/css -- npm run css:dev",
     "format": "concurrently 'npm:format:*'",
     "format:js": "prettier --write src/main/javascript",
@@ -85,6 +85,7 @@
     "url-loader": "4.1.1",
     "webpack": "4.46.0",
     "webpack-assets-manifest": "3.1.1",
-    "webpack-cli": "4.9.2"
+    "webpack-cli": "4.9.2",
+    "cross-env": "7.0.3"
   }
 }
