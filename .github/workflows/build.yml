@@ -25,7 +25,8 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: 11
+          java-version: '11'
+          cache: 'maven'
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
@@ -33,15 +34,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Cache pom dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2/repository
-            node/
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
       - name: Build
         run: >
           ./mvnw $MAVEN_CLI_OPTS
