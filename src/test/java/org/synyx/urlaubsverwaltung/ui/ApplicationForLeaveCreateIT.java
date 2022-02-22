@@ -290,6 +290,7 @@ class ApplicationForLeaveCreateIT {
     private ChromeOptions chromeOptions() {
         final ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("prefs", Map.of("intl.accept_languages", "de-DE"));
+        options.addArguments("--disable-dev-shm-usage");
         return options;
     }
 }
