@@ -57,6 +57,7 @@
     "babel-jest": "27.5.1",
     "babel-loader": "8.2.3",
     "concurrently": "7.0.0",
+    "cross-env": "7.0.3",
     "css-loader": "5.2.7",
     "cssnano": "5.0.17",
     "date-fns": "2.28.0",
@@ -85,7 +86,6 @@
     "url-loader": "4.1.1",
     "webpack": "4.46.0",
     "webpack-assets-manifest": "3.1.1",
-    "webpack-cli": "4.9.2",
-    "cross-env": "7.0.3"
+    "webpack-cli": "4.9.2"
   }
 }
