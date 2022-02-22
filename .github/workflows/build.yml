@@ -14,11 +14,11 @@ jobs:
   build:
     name: build and analyse
     runs-on: ${{ matrix.os }}
-    env:
-      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     strategy:
       matrix:
         os: ['ubuntu-20.04', 'windows-2022']
+    env:
+      MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -38,13 +38,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Build
-        run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          -Pcoverage
-          dependency:go-offline
-          clean verify
+        run: ./mvnw $MAVEN_CLI_OPTS -Pcoverage dependency:go-offline clean verify
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
+      - name: Build
+        run: ./mvnw.cmd $MAVEN_CLI_OPTS dependency:go-offline clean verify
+        if: ${{ matrix.os == 'windows-2022' }}
       - name: Analyse with SonarCloud
-        if: ${{ matrix.os == 'ubuntu-20.04' && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')) }}
+        if: ${{ matrix.os == 'ubuntu-20.04' }} && ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
         run: >
           ./mvnw $MAVEN_CLI_OPTS
           -Pcoverage
@@ -63,7 +63,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload video of failed tests
         uses: actions/upload-artifact@v2
-        if: ${{ matrix.os }} == 'ubuntu-20.04' && hashFiles('target/FAILED-*.flv') != ''
+        if: ${{ matrix.os == 'ubuntu-20.04' }} && hashFiles('target/FAILED-*.flv') != ''
         with:
           name: failed-selenium-tests
           path: target/FAILED-*.flv
