@@ -13,7 +13,7 @@ import java.util.Map;
 @Configuration
 class PublicHolidayConfiguration {
 
-    private static final List<String> COUNTRIES = List.of("de", "at", "ch", "gb");
+    private static final List<String> COUNTRIES = List.of("de", "at", "ch", "gb", "gr");
 
     @Bean
     Map<String, HolidayManager> holidayManagerMap() {

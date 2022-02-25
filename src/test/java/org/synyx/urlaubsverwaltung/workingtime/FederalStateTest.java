@@ -78,6 +78,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDO
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_NORTHERN_IRELAND;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_SCOTLAND;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_WALES;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GREECE_GREECE;
 
 /**
  * Unit test for {@link FederalState}.
@@ -108,6 +109,8 @@ class FederalStateTest {
             Arguments.of(GERMANY_SACHSEN_ANHALT, "st", null),
             Arguments.of(GERMANY_SCHLESWIG_HOLSTEIN, "sh", null),
             Arguments.of(GERMANY_THUERINGEN, "th", null),
+
+            Arguments.of(GREECE_GREECE, "gr", null),
 
             Arguments.of(AUSTRIA_BURGENLAND, "b", null),
             Arguments.of(AUSTRIA_KAERNTEN, "k", null),
@@ -200,6 +203,8 @@ class FederalStateTest {
             Arguments.of(GERMANY_SCHLESWIG_HOLSTEIN, "de"),
             Arguments.of(GERMANY_THUERINGEN, "de"),
 
+            Arguments.of(GREECE_GREECE, "gr"),
+
             Arguments.of(AUSTRIA_BURGENLAND, "at"),
             Arguments.of(AUSTRIA_KAERNTEN, "at"),
             Arguments.of(AUSTRIA_NIEDEROESTERREICH, "at"),
@@ -261,7 +266,8 @@ class FederalStateTest {
         final List<FederalState> austriaFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "at".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> switzerlandFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ch".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> ukFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gb".equals(federalState.getCountry())).collect(toList());
-        assertThat(federalStatesTypesByCountry).hasSize(4)
-            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates), entry("gb", ukFederalStates));
+        final List<FederalState> grFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gr".equals(federalState.getCountry())).collect(toList());
+        assertThat(federalStatesTypesByCountry).hasSize(5)
+            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates), entry("gb", ukFederalStates), entry("gr", grFederalStates));
     }
 }

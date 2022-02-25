@@ -37,6 +37,8 @@ public enum FederalState {
     GERMANY_SCHLESWIG_HOLSTEIN("de", "sh"),
     GERMANY_THUERINGEN("de", "th"),
 
+    GREECE_GREECE("gr", "gr"),
+
     AUSTRIA_BURGENLAND("at", "b"),
     AUSTRIA_KAERNTEN("at", "k"),
     AUSTRIA_NIEDEROESTERREICH("at", "la"),
