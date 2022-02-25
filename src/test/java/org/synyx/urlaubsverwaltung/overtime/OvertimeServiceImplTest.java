@@ -41,7 +41,7 @@ class OvertimeServiceImplTest {
     @Mock
     private OvertimeRepository overtimeRepository;
     @Mock
-    private OvertimeCommentRepository commentDAO;
+    private OvertimeCommentRepository overtimeCommentRepository;
     @Mock
     private ApplicationService applicationService;
     @Mock
@@ -53,7 +53,7 @@ class OvertimeServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeServiceImpl(overtimeRepository, commentDAO, applicationService, overtimeMailService, settingsService, clock);
+        sut = new OvertimeServiceImpl(overtimeRepository, overtimeCommentRepository, applicationService, overtimeMailService, settingsService, clock);
     }
 
     // Record overtime -------------------------------------------------------------------------------------------------
@@ -66,27 +66,33 @@ class OvertimeServiceImplTest {
         sut.record(overtime, Optional.of("Foo Bar"), author);
 
         verify(overtimeRepository).save(overtime);
-        verify(commentDAO).save(any(OvertimeComment.class));
+        verify(overtimeCommentRepository).save(any(OvertimeComment.class));
     }
 
     @Test
     void ensureRecordingUpdatesLastModificationDate() {
 
         final Person author = new Person();
+        final Overtime overtime = new Overtime();
+        when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
-        final Overtime overtime = sut.record(new Overtime(), Optional.empty(), author);
-        assertThat(overtime.getLastModificationDate()).isEqualTo(LocalDate.now(clock));
+        final Overtime savedOvertime = sut.record(overtime, Optional.empty(), author);
+        assertThat(savedOvertime.getLastModificationDate()).isEqualTo(LocalDate.now(clock));
     }
 
     @Test
     void ensureRecordingOvertimeSendsNotification() {
 
-        final Overtime overtime = new Overtime();
         final Person author = new Person();
+        final Overtime overtime = new Overtime();
+        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+
+        final OvertimeComment overtimeComment = new OvertimeComment();
+        when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
 
         sut.record(overtime, Optional.of("Foo Bar"), author);
 
-        verify(overtimeMailService).sendOvertimeNotification(eq(overtime), any(OvertimeComment.class));
+        verify(overtimeMailService).sendOvertimeNotification(overtime, overtimeComment);
     }
 
     @Test
@@ -98,7 +104,7 @@ class OvertimeServiceImplTest {
         sut.record(overtime, Optional.empty(), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
-        verify(commentDAO).save(commentCaptor.capture());
+        verify(overtimeCommentRepository).save(commentCaptor.capture());
 
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
@@ -115,7 +121,7 @@ class OvertimeServiceImplTest {
         sut.record(overtime, Optional.empty(), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
-        verify(commentDAO).save(commentCaptor.capture());
+        verify(overtimeCommentRepository).save(commentCaptor.capture());
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getAction()).isEqualTo(OvertimeCommentAction.EDITED);
@@ -124,13 +130,15 @@ class OvertimeServiceImplTest {
     @Test
     void ensureCreatedCommentWithoutTextHasCorrectProperties() {
 
-        final Overtime overtime = new Overtime();
         final Person author = new Person();
+
+        final Overtime overtime = new Overtime();
+        when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
         sut.record(overtime, Optional.empty(), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
-        verify(commentDAO).save(commentCaptor.capture());
+        verify(overtimeCommentRepository).save(commentCaptor.capture());
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getPerson()).isEqualTo(author);
@@ -141,13 +149,15 @@ class OvertimeServiceImplTest {
     @Test
     void ensureCreatedCommentWithTextHasCorrectProperties() {
 
-        final Overtime overtime = new Overtime();
         final Person author = new Person();
+
+        final Overtime overtime = new Overtime();
+        when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
         sut.record(overtime, Optional.of("Foo"), author);
 
         final ArgumentCaptor<OvertimeComment> commentCaptor = ArgumentCaptor.forClass(OvertimeComment.class);
-        verify(commentDAO).save(commentCaptor.capture());
+        verify(overtimeCommentRepository).save(commentCaptor.capture());
         final OvertimeComment comment = commentCaptor.getValue();
         assertThat(comment).isNotNull();
         assertThat(comment.getPerson()).isEqualTo(author);
@@ -204,7 +214,7 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime();
         sut.getCommentsForOvertime(overtime);
 
-        verify(commentDAO).findByOvertime(overtime);
+        verify(overtimeCommentRepository).findByOvertime(overtime);
     }
 
     // Get total overtime for year -------------------------------------------------------------------------------------

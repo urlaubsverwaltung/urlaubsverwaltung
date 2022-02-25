@@ -68,20 +68,18 @@ class OvertimeServiceImpl implements OvertimeService {
 
         // save overtime record
         overtime.onUpdate();
-        overtimeRepository.save(overtime);
+        final Overtime savedOvertime = overtimeRepository.save(overtime);
 
         // save comment
         final OvertimeCommentAction action = isNewOvertime ? CREATED : EDITED;
-        OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action, clock);
+        final OvertimeComment overtimeComment = new OvertimeComment(author, savedOvertime, action, clock);
         comment.ifPresent(overtimeComment::setText);
+        final OvertimeComment savedOvertimeComment = overtimeCommentRepository.save(overtimeComment);
 
-        overtimeCommentRepository.save(overtimeComment);
+        overtimeMailService.sendOvertimeNotification(savedOvertime, savedOvertimeComment);
+        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", savedOvertime);
 
-        overtimeMailService.sendOvertimeNotification(overtime, overtimeComment);
-
-        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", overtime);
-
-        return overtime;
+        return savedOvertime;
     }
 
     @Override
