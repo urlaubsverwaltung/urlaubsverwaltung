@@ -122,7 +122,7 @@ public class OvertimeViewController {
             getOvertimeAbsences(year, person),
             overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
-            overtimeService.getTotalOvertimeForPersonAndYear(person, year - 1),
+            overtimeService.getTotalOvertimeForPersonBeforeYear(person, year),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
             userIsAllowedToWriteOvertime);

@@ -28,4 +28,6 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
             + "ORDER BY overtime.startDate desc"
     )
     List<Overtime> findByPersonAndPeriod(@Param("person") Person person, @Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
 }

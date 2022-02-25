@@ -266,6 +266,25 @@ class OvertimeServiceImplTest {
         verify(overtimeRepository).findByPersonAndPeriod(person, firstDayOfYear, lastDayOfYear);
     }
 
+
+    @Test
+    void ensureGetTotalOvertimeForPersonBeforeYear() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Overtime overtime = new Overtime(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(10));
+        final Overtime overtime2 = new Overtime(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(4));
+
+        when(overtimeRepository.findByPersonAndStartDateIsBefore(person, LocalDate.of(2016, 1,1 )))
+            .thenReturn(List.of(overtime, overtime2));
+
+        final Duration totalHours = sut.getTotalOvertimeForPersonBeforeYear(person, 2016);
+        assertThat(totalHours).isEqualTo(Duration.ofHours(14));
+
+        final LocalDate firstDayOfYear = LocalDate.of(2016, 1, 1);
+        verify(overtimeRepository).findByPersonAndStartDateIsBefore(person, firstDayOfYear);
+    }
+
     // Get left overtime -----------------------------------------------------------------------------------------------
     @Test
     void ensureReturnsZeroAsLeftOvertimeIfPersonHasNoOvertimeRecordsYet() {

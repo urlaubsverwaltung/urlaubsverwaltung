@@ -16,7 +16,6 @@ import static java.time.LocalDate.of;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @SpringBootTest
 @Transactional
 class OvertimeRepositoryIT extends TestContainersBase {
@@ -96,5 +95,33 @@ class OvertimeRepositoryIT extends TestContainersBase {
         assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(3));
         assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
         assertThat(overtimes.get(2).getDuration()).isEqualTo(Duration.ofHours(1));
+    }
+
+    @Test
+    void ensureFindByPersonAndStartDateIsBefore() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person savedPerson = personService.save(person);
+
+        // records starting before 2016
+        sut.save(new Overtime(savedPerson, of(2012, 1, 1), of(2012, 1, 3), Duration.ofHours(1)));
+        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(2)));
+        sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(3)));
+        sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(4)));
+
+        // record after or in 2016
+        sut.save(new Overtime(savedPerson, of(2016, 12, 5), of(2016, 12, 31), Duration.ofHours(99)));
+        sut.save(new Overtime(savedPerson, of(2016, 1, 1), of(2016, 1, 1), Duration.ofHours(99)));
+
+        final List<Overtime> overtimes = sut.findByPersonAndStartDateIsBefore(savedPerson, of(2016, 1, 1));
+        assertThat(overtimes).hasSize(4);
+        assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2012, 1, 1));
+        assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(1));
+        assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2014, 12, 30));
+        assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
+        assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2015, 10, 5));
+        assertThat(overtimes.get(2).getDuration()).isEqualTo(Duration.ofHours(3));
+        assertThat(overtimes.get(3).getStartDate()).isEqualTo(of(2015, 12, 28));
+        assertThat(overtimes.get(3).getDuration()).isEqualTo(Duration.ofHours(4));
     }
 }

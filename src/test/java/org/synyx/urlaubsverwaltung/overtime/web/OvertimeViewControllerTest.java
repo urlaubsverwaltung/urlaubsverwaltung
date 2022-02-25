@@ -237,7 +237,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
-        when(overtimeService.getTotalOvertimeForPersonAndYear(person, year-1)).thenReturn(Duration.ofHours(10));
+        when(overtimeService.getTotalOvertimeForPersonBeforeYear(person, year)).thenReturn(Duration.ofHours(10));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
         final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),

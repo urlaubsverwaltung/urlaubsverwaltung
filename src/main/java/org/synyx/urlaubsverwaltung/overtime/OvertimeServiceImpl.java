@@ -22,6 +22,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 
 /**
  * @since 2.11.0
@@ -58,7 +59,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
-        return overtimeRepository.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
+        return overtimeRepository.findByPersonAndPeriod(person, getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
     }
 
     @Override
@@ -97,6 +98,13 @@ class OvertimeServiceImpl implements OvertimeService {
         Assert.isTrue(year > 0, "Year must be a valid number.");
 
         return getOvertimeRecordsForPersonAndYear(person, year).stream()
+            .map(Overtime::getDuration)
+            .reduce(ZERO, Duration::plus);
+    }
+
+    @Override
+    public Duration getTotalOvertimeForPersonBeforeYear(Person person, int year) {
+        return overtimeRepository.findByPersonAndStartDateIsBefore(person, getFirstDayOfYear(year)).stream()
             .map(Overtime::getDuration)
             .reduce(ZERO, Duration::plus);
     }
