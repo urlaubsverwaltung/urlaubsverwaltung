@@ -62,15 +62,17 @@
 
                 <table class="list-table selectable-table tw-text-sm">
                     <caption class="tw-sr-only"><spring:message code="overtime.list.title"/></caption>
-                    <thead>
-                    <tr>
-                        <th class="tw-sr-only" scope="col"><spring:message code="overtime.list.col.icon"/></th>
-                        <th class="tw-font-medium" scope="col"><spring:message code="overtime.list.col.date"/></th>
-                        <th class="tw-font-medium tw-text-right" scope="col"><spring:message code="overtime.list.col.duration"/></th>
-                        <th class="tw-font-medium tw-text-right" scope="col"><spring:message code="overtime.list.col.sum"/></th>
-                        <th class="tw-sr-only" scope="col"><spring:message code="overtime.list.col.actions"/></th>
-                    </tr>
-                    </thead>
+                    <c:if test="${not empty records}">
+                        <thead>
+                        <tr>
+                            <th class="tw-sr-only" scope="col"><spring:message code="overtime.list.col.icon"/></th>
+                            <th class="tw-font-medium" scope="col"><spring:message code="overtime.list.col.date"/></th>
+                            <th class="tw-font-medium tw-text-right" scope="col"><spring:message code="overtime.list.col.duration"/></th>
+                            <th class="tw-font-medium tw-text-right" scope="col"><spring:message code="overtime.list.col.sum"/></th>
+                            <th class="tw-sr-only" scope="col"><spring:message code="overtime.list.col.actions"/></th>
+                        </tr>
+                        </thead>
+                    </c:if>
                     <tbody>
                     <c:forEach items="${records}" var="record">
 
