@@ -179,12 +179,12 @@
                     </c:if>
 
                     <c:set var="LAST_YEAR" value="${year-1}"/>
-                    <tr class="active"
+                    <tr
                         onclick="navigate('${URL_PREFIX}/overtime?person=${person.id}&year=${LAST_YEAR}');">
-                        <td class="is-centered">
+                        <td class="tw-border-b-0">
                             <icon:reply className="tw-w-5 tw-h-5 tw--scale-x-100"/>
                         </td>
-                        <td>
+                        <td class="tw-border-b-0">
                             <span class="visible-print">
                                 <spring:message code="overtime.link.last-year"/>
                             </span>
@@ -196,10 +196,10 @@
                                 <spring:message code="overtime.list.last-year-details"/> ${LAST_YEAR}
                             </p>
                         </td>
-                        <td colspan="2" class="tw-text-right">
+                        <td colspan="2" class="tw-border-b-0 tw-text-right">
                             <uv:duration duration="${overtimeTotalLastYear}"/>
                         </td>
-                        <td></td>
+                        <td class="tw-border-b-0"></td>
                     </tr>
                     </tbody>
                 </table>
