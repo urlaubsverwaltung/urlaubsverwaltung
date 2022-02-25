@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDate.of;
 import static java.time.ZoneOffset.UTC;
@@ -59,8 +60,8 @@ class OvertimeRepositoryIT extends TestContainersBase {
         // Overtime for other person
         sut.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), Duration.ofHours(5)));
 
-        final Double totalHours = sut.calculateTotalHoursForPerson(person);
-        assertThat(totalHours).isEqualTo((double) Duration.ofMinutes(150).toMinutes() / 60);
+        final Optional<Double> totalHours = sut.calculateTotalHoursForPerson(person);
+        assertThat(totalHours).hasValue(2.5);
     }
 
     @Test
@@ -69,8 +70,8 @@ class OvertimeRepositoryIT extends TestContainersBase {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         personService.save(person);
 
-        final Double totalHours = sut.calculateTotalHoursForPerson(person);
-        assertThat(totalHours).isNull();
+        final Optional<Double> totalHours = sut.calculateTotalHoursForPerson(person);
+        assertThat(totalHours).isEmpty();
     }
 
     @Test
@@ -79,22 +80,21 @@ class OvertimeRepositoryIT extends TestContainersBase {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person savedPerson = personService.save(person);
 
-        // records for 2015
-        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(1)));
+        // records to find
         sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(2)));
         sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(3)));
 
-        // record for 2014
+        // record not to find
+        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(1)));
         sut.save(new Overtime(savedPerson, of(2014, 12, 5), of(2014, 12, 31), Duration.ofHours(4)));
+        sut.save(new Overtime(savedPerson, of(2014, 12, 5), of(2016, 12, 31), Duration.ofHours(4)));
 
-        final List<Overtime> overtimes = sut.findByPersonAndPeriod(savedPerson, of(2015, 1, 1), of(2015, 12, 31));
-        assertThat(overtimes).hasSize(3);
+        final List<Overtime> overtimes = sut.findByPersonAndStartDateBetweenOrderByStartDateDesc(savedPerson, of(2015, 1, 1), of(2015, 12, 31));
+        assertThat(overtimes).hasSize(2);
         assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2015, 12, 28));
         assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2015, 10, 5));
-        assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2014, 12, 30));
         assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(3));
         assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
-        assertThat(overtimes.get(2).getDuration()).isEqualTo(Duration.ofHours(1));
     }
 
     @Test

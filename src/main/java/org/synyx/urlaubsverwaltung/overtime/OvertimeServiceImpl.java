@@ -12,12 +12,12 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.Duration.ZERO;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
@@ -59,7 +59,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
-        return overtimeRepository.findByPersonAndPeriod(person, getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
+        return overtimeRepository.findByPersonAndStartDateBetweenOrderByStartDateDesc(person, getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
     }
 
     @Override
@@ -95,8 +95,6 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
-        Assert.isTrue(year > 0, "Year must be a valid number.");
-
         return getOvertimeRecordsForPersonAndYear(person, year).stream()
             .map(Overtime::getDuration)
             .reduce(ZERO, Duration::plus);
@@ -104,9 +102,12 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public Duration getTotalOvertimeForPersonBeforeYear(Person person, int year) {
-        return overtimeRepository.findByPersonAndStartDateIsBefore(person, getFirstDayOfYear(year)).stream()
+        final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonBefore(person, getFirstDayOfYear(year));
+        final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, getFirstDayOfYear(year)).stream()
             .map(Overtime::getDuration)
             .reduce(ZERO, Duration::plus);
+
+        return totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
     }
 
     @Override
@@ -142,9 +143,9 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     private Duration getTotalOvertimeForPerson(Person person) {
-        final Long totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person))
-            .map(aDouble -> Math.round(aDouble * 60))
-            .orElse(0L);
-        return Duration.of(totalOvertime, ChronoUnit.MINUTES);
+        return overtimeRepository.calculateTotalHoursForPerson(person)
+            .map(totalHours -> Math.round(totalHours * 60))
+            .map(totalMinutes -> Duration.of(totalMinutes, MINUTES))
+            .orElse(ZERO);
     }
 }

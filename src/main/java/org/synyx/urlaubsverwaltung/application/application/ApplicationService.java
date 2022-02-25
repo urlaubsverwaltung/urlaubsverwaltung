@@ -143,6 +143,8 @@ public interface ApplicationService {
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
+    Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate before);
+
     /**
      * Get a list of all active replacements of the given person and that are active at the given date
      * <p>

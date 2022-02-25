@@ -46,7 +46,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
-        return applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
+        return applicationRepository.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
     }
 
     @Override
@@ -97,6 +97,12 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Duration getTotalOvertimeReductionOfPerson(Person person) {
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).orElse(BigDecimal.ZERO);
+        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
+    }
+
+    @Override
+    public Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate date) {
+        final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).orElse(BigDecimal.ZERO);
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 

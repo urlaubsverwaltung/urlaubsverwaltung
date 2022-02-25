@@ -73,6 +73,20 @@ class ApplicationServiceImplTest {
     }
 
     @Test
+    void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveBeforeDate() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate date = LocalDate.of(2022, 1, 1);
+        when(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).thenReturn(null);
+
+        final Duration totalHours = sut.getTotalOvertimeReductionOfPersonBefore(person, date);
+
+        verify(applicationRepository).calculateTotalOvertimeReductionOfPersonBefore(person, date);
+
+        assertThat(totalHours).isEqualTo(Duration.ZERO);
+    }
+
+    @Test
     void getForStates() {
 
         final Application application = new Application();
@@ -109,6 +123,21 @@ class ApplicationServiceImplTest {
         final Duration totalHours = sut.getTotalOvertimeReductionOfPerson(person);
 
         verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
+
+        assertThat(totalHours).isEqualTo(Duration.ofHours(1));
+    }
+
+    @Test
+    void ensureReturnsCorrectTotalOvertimeReductionForPersonBeforeDate() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate date = LocalDate.of(2022, 1, 1);
+
+        when(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).thenReturn(BigDecimal.ONE);
+
+        final Duration totalHours = sut.getTotalOvertimeReductionOfPersonBefore(person, date);
+
+        verify(applicationRepository).calculateTotalOvertimeReductionOfPersonBefore(person, date);
 
         assertThat(totalHours).isEqualTo(Duration.ofHours(1));
     }
@@ -163,7 +192,7 @@ class ApplicationServiceImplTest {
 
         final Application application = new Application();
         final List<ApplicationStatus> statuses = List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        when(applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, from, to, HOLIDAY)).thenReturn(List.of(application));
+        when(applicationRepository.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, person, from, to, HOLIDAY)).thenReturn(List.of(application));
 
         final List<Application> holidayReplacementApplications = sut.getApplicationsForACertainPeriodAndPersonAndVacationCategory(from, to, person, statuses, HOLIDAY);
         assertThat(holidayReplacementApplications).hasSize(1).contains(application);

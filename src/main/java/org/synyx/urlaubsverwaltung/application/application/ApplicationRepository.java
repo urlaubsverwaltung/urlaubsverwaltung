@@ -45,7 +45,7 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
-    List<Application> findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
+    List<Application> findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
 
     @Query(
         "select x from Application x "
@@ -53,8 +53,7 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
             + "or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person,
-                                                                      ApplicationStatus status);
+    List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
 
     @Query(
         "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
@@ -62,6 +61,14 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
             + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
+
+    @Query(
+        "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
+            + "AND application.startDate < :date "
+            + "AND application.vacationType.category = 'OVERTIME' "
+            + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
+    )
+    BigDecimal calculateTotalOvertimeReductionOfPersonBefore(@Param("person") Person person, @Param("date") LocalDate before);
 
     List<Application> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
 }
