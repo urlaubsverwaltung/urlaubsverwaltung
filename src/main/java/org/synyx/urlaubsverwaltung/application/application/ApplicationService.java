@@ -42,14 +42,14 @@ public interface ApplicationService {
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
     /**
-     * TODO
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given status and vacation category
      *
-     * @param startDate
-     * @param endDate
-     * @param person
-     * @param statuses
-     * @param vacationCategory
-     * @return filteres {@link Application}s by status of the given person with vacation category between startDate x and endDate y
+     * @param startDate {@link LocalDate}
+     * @param endDate {@link LocalDate}
+     * @param person {@link Person}
+     * @param statuses {@link ApplicationStatus} that should be filtered for
+     * @param vacationCategory {@link VacationCategory} that should be filtered for
+     * @return filters {@link Application}s by status of the given person with vacation category between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory);
 
