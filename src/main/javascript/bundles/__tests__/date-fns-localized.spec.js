@@ -2,6 +2,8 @@
 import localeDE from "date-fns/locale/de";
 // eslint-disable-next-line @urlaubsverwaltung/no-date-fns
 import localeDEAT from "date-fns/locale/de-AT";
+// eslint-disable-next-line @urlaubsverwaltung/no-date-fns
+import localeEL from "date-fns/locale/el";
 
 jest.mock("../../lib/date-fns/locale-resolver");
 
@@ -24,6 +26,7 @@ describe("date-fns-localized", () => {
     ["de", localeDE],
     ["de-DE", localeDE],
     ["de-AT", localeDEAT],
+    ["el", localeEL],
   ])("loads date-fn locale for window.navigator.language=%s", async (givenLanguage, expectedLocaleStuff) => {
     navigatorLanguage = givenLanguage;
 
