@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-es liegt ein zu genehmigende Abwesenheit vor.
+es liegt eine zu genehmigende Abwesenheit vor.
 
     ${baseLinkURL}web/application/${application.id?c}
 
