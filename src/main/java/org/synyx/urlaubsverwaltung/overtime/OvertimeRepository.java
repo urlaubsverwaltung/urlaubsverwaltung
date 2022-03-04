@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Allows access to overtime records.
@@ -18,14 +19,9 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
     List<Overtime> findByPerson(Person person);
 
     @Query("SELECT SUM(overtime.duration) FROM Overtime overtime WHERE overtime.person = :person")
-    Double calculateTotalHoursForPerson(@Param("person") Person person);
+    Optional<Double> calculateTotalHoursForPerson(@Param("person") Person person);
 
-    @Query(
-        "SELECT overtime FROM Overtime overtime WHERE overtime.person = :person "
-            + "AND ((overtime.startDate BETWEEN :start AND :end) "
-            + "OR (overtime.endDate BETWEEN :start AND :end) "
-            + "OR (overtime.startDate < :start and overtime.endDate > :end)) "
-            + "ORDER BY overtime.startDate desc"
-    )
-    List<Overtime> findByPersonAndPeriod(@Param("person") Person person, @Param("start") LocalDate start, @Param("end") LocalDate end);
+    List<Overtime> findByPersonAndStartDateBetweenOrderByStartDateDesc(Person person, LocalDate start, LocalDate end);
+
+    List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
 }

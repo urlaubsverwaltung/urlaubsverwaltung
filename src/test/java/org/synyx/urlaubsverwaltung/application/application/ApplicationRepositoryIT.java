@@ -396,6 +396,62 @@ class ApplicationRepositoryIT extends TestContainersBase {
     }
 
     @Test
+    void ensureCountsTotalOvertimeReductionBeforeDateCorrectly() {
+
+        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.save(person);
+
+        final Person otherPerson = new Person("freddy", "Gwin", "freddy", "gwin@example.org");
+        final Person savedOtherPerson = personService.save(otherPerson);
+
+        final LocalDate now = LocalDate.now(UTC);
+
+        // Should be in the calculation
+        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        fullDayOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayOvertimeReduction.setStatus(ALLOWED);
+        sut.save(fullDayOvertimeReduction);
+
+        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), MORNING);
+        halfDayOvertimeReduction.setHours(Duration.ofMinutes(150));
+        halfDayOvertimeReduction.setStatus(WAITING);
+        sut.save(halfDayOvertimeReduction);
+
+        // Should NOT be in the calculation
+        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        cancelledOvertimeReduction.setHours(Duration.ofHours(1));
+        cancelledOvertimeReduction.setStatus(CANCELLED);
+        sut.save(cancelledOvertimeReduction);
+
+        final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        rejectedOvertimeReduction.setHours(Duration.ofHours(1));
+        rejectedOvertimeReduction.setStatus(REJECTED);
+        sut.save(rejectedOvertimeReduction);
+
+        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        revokedOvertimeReduction.setHours(Duration.ofHours(1));
+        revokedOvertimeReduction.setStatus(REVOKED);
+        sut.save(revokedOvertimeReduction);
+
+        // NOTE: Holiday should not have hours set, but who knows....More than once heard: "this should never happen" ;)
+        final Application holiday = createApplication(savedPerson, getVacationType(HOLIDAY), LocalDate.of(2021, 12, 31), now.minusDays(4), FULL);
+        holiday.setHours(Duration.ofHours(1));
+        sut.save(holiday);
+
+        final Application overtimeReduction = createApplication(savedOtherPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), NOON);
+        overtimeReduction.setHours(Duration.ofMinutes(150));
+        sut.save(overtimeReduction);
+
+        final Application overtimeReductionAfterDate = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2022, 1, 1), now.plusDays(10), NOON);
+        overtimeReductionAfterDate.setHours(Duration.ofMinutes(150));
+        sut.save(overtimeReductionAfterDate);
+
+        // Let's calculate! --------------------------------------------------------------------------------------------
+        final BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPersonBefore(person, LocalDate.of(2022, 1, 1));
+        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.5));
+    }
+
+    @Test
     void findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn() {
 
         final Person holidayReplacement = new Person("holly", "holly", "replacement", "holly@example.org");
@@ -565,6 +621,47 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final List<Application> applications = sut.findByStatusInAndStartDateBetweenAndHolidayReplacementsIsNotEmptyAndUpcomingHolidayReplacementNotificationSendIsNull(requestStatuses, requestedStartDateFrom, requestedStartDateTo);
         assertThat(applications)
             .containsOnly(tomorrowDateApplication, tomorrowCancellationRequestDateApplication, tomorrowTemporaryAllowedDateApplication);
+    }
+
+    @Test
+    void ensureFindByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory() {
+
+        final Person max = personService.save(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
+        final Person marlene = personService.save(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final VacationTypeEntity overtime = getVacationType(OVERTIME);
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        // application for leave that should not be found
+        final Application appWrongVacationType = createApplication(marlene, getVacationType(HOLIDAY), askedStartDate.plusDays(1), askedEndDate.minusDays(1), FULL);
+        sut.save(appWrongVacationType);
+
+        final Application appWrongPerson = createApplication(max, overtime, askedStartDate.plusDays(1), askedEndDate.minusDays(1), FULL);
+        sut.save(appWrongPerson);
+
+        final Application appWrongStatus = createApplication(marlene, overtime, askedStartDate.plusDays(1), askedEndDate.plusDays(1), FULL);
+        appWrongStatus.setStatus(CANCELLED);
+        sut.save(appWrongStatus);
+
+        final Application appStartBeforeAsked = createApplication(marlene, overtime, askedStartDate.minusDays(1), askedEndDate.minusDays(1), FULL);
+        sut.save(appStartBeforeAsked);
+
+        // application for leave that should be found
+        final Application appEndAfterAsked = createApplication(marlene, overtime, askedStartDate.plusDays(1), askedEndDate.plusDays(1), FULL);
+        final Application appInBetween = createApplication(marlene, overtime, askedStartDate.plusDays(10), askedStartDate.plusDays(12), FULL);
+        final Application appStartingAtPeriod = createApplication(marlene, overtime, askedStartDate, askedStartDate.plusDays(2), FULL);
+        final Application appEndingAtPeriod = createApplication(marlene, overtime, askedEndDate.minusDays(5), askedEndDate, FULL);
+
+        sut.save(appEndAfterAsked);
+        sut.save(appInBetween);
+        sut.save(appStartingAtPeriod);
+        sut.save(appEndingAtPeriod);
+
+        final List<ApplicationStatus> statuses = List.of(WAITING);
+
+        final List<Application> actualApplications = sut.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, marlene, askedStartDate, askedEndDate, OVERTIME);
+        assertThat(actualApplications).containsOnly(appEndAfterAsked, appInBetween, appStartingAtPeriod, appEndingAtPeriod);
     }
 
     private VacationTypeEntity getVacationType(VacationCategory category) {

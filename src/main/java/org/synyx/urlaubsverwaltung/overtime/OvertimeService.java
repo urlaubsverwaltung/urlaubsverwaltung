@@ -67,6 +67,15 @@ public interface OvertimeService {
     Duration getTotalOvertimeForPersonAndYear(Person person, int year);
 
     /**
+     * Get the total duration of all overtime records for a person and all years before the given year
+     *
+     * @param person to get the total overtime for
+     * @param year   to get the total overtime before this year (exclusive $year)
+     * @return the total overtime for the years, never {@code null}
+     */
+    Duration getTotalOvertimeForPersonBeforeYear(Person person, int year);
+
+    /**
      * Get the left overtime hours of the given person: the difference between the total overtime and the overtime
      * reduction.
      *

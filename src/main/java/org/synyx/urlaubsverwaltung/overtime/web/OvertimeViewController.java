@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
@@ -24,6 +28,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
@@ -36,8 +41,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.lang.String.format;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-
 
 /**
  * Manage overtime of persons.
@@ -56,24 +66,25 @@ public class OvertimeViewController {
     private final PersonService personService;
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
+    private final ApplicationService applicationService;
     private final Clock clock;
     private final SettingsService settingsService;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
                                   OvertimeFormValidator validator, DepartmentService departmentService,
-                                  SettingsService settingsService, Clock clock) {
+                                  ApplicationService applicationService, SettingsService settingsService, Clock clock) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;
         this.departmentService = departmentService;
+        this.applicationService = applicationService;
         this.settingsService = settingsService;
         this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
@@ -81,7 +92,6 @@ public class OvertimeViewController {
 
     @GetMapping("/overtime")
     public String showPersonalOvertime() {
-
         final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
@@ -97,7 +107,7 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to see overtime records of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -106,19 +116,25 @@ public class OvertimeViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
 
-        final OvertimeListDto overtimeListDto = OvertimeListMapper.mapToDto(
+        final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
+
+        final OvertimeListDto overtimeListDto = mapToDto(
+            getOvertimeAbsences(year, person),
             overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
             overtimeService.getTotalOvertimeForPersonAndYear(person, year),
-            overtimeService.getLeftOvertimeForPerson(person));
+            overtimeService.getTotalOvertimeForPersonBeforeYear(person, year),
+            overtimeService.getLeftOvertimeForPerson(person),
+            signedInUser,
+            userIsAllowedToWriteOvertime);
 
         model.addAttribute("records", overtimeListDto.getRecords());
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
+        model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
-        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
+        model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
 
         return "overtime/overtime_list";
     }
-
 
     @GetMapping("/overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
@@ -128,7 +144,7 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to see overtime records of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -165,7 +181,7 @@ public class OvertimeViewController {
         }
 
         if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -176,7 +192,6 @@ public class OvertimeViewController {
         return OVERTIME_OVERTIME_FORM;
     }
 
-
     @PostMapping("/overtime")
     public String recordOvertime(@Valid @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
                                  RedirectAttributes redirectAttributes) {
@@ -185,7 +200,7 @@ public class OvertimeViewController {
         final Person person = overtimeForm.getPerson();
 
         if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -214,7 +229,7 @@ public class OvertimeViewController {
         final Person person = overtime.getPerson();
 
         if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -234,7 +249,7 @@ public class OvertimeViewController {
         final Person person = overtime.getPerson();
 
         if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
@@ -271,5 +286,13 @@ public class OvertimeViewController {
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
+    }
+
+    private List<Application> getOvertimeAbsences(int year, Person person) {
+        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
+        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
+
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, statuses, VacationCategory.OVERTIME);
     }
 }

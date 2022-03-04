@@ -9,6 +9,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
@@ -17,6 +19,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -26,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +44,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -59,13 +70,15 @@ class OvertimeViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
+    private ApplicationService applicationService;
+    @Mock
     private SettingsService settingsService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, settingsService, clock);
+        sut = new OvertimeViewController(overtimeService, personService, validator, departmentService, applicationService, settingsService, clock);
     }
 
     @Test
@@ -196,21 +209,36 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final List<OvertimeListRecordDto> recordDtos = List.of(
-            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
+        var today = LocalDate.now(clock);
+        var applicationNonEditable = createApplication(person, createVacationTypeEntity(OVERTIME), today, today, FULL);
+        applicationNonEditable.setHours(Duration.ofHours(8));
+        var applicationEditable = createApplication(signedInPerson, createVacationTypeEntity(OVERTIME), today.minusDays(1), today.minusDays(1), FULL);
+        applicationEditable.setHours(Duration.ofHours(8));
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year), person, statuses, OVERTIME))
+            .thenReturn(List.of(applicationNonEditable, applicationEditable));
 
-        final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
-        resultActions
+        final OvertimeListRecordDto overtimeRecord = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
+            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(10), "", "OVERTIME", true);
+        final OvertimeListRecordDto absenceRecordNonEditable = new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate(),
+            applicationNonEditable.getEndDate(), Duration.ofHours(-8), Duration.ofHours(-6), "WAITING", "ABSENCE", false);
+        final OvertimeListRecordDto absenceRecordEditable = new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate().minusDays(1),
+            applicationNonEditable.getEndDate().minusDays(1), Duration.ofHours(-8), Duration.ofHours(2), "WAITING", "ABSENCE", true);
+
+
+        perform(get("/web/overtime").param("person", "5"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_list"))
             .andExpect(model().attribute("year", is(year)))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
+            .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ZERO)))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
-
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
+            .andExpect(model().attribute("records", hasItem(overtimeRecord)))
+            .andExpect(model().attribute("records", hasItem(absenceRecordNonEditable)))
+            .andExpect(model().attribute("records", hasItem(absenceRecordEditable)));
     }
 
     @Test
@@ -234,27 +262,24 @@ class OvertimeViewControllerTest {
         when(overtimeService.getOvertimeRecordsForPersonAndYear(person, year)).thenReturn(records);
 
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
+        when(overtimeService.getTotalOvertimeForPersonBeforeYear(person, year)).thenReturn(Duration.ofHours(10));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final List<OvertimeListRecordDto> recordDtos = List.of(
-            new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate()));
+        final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
+            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(20), "", "OVERTIME", true);
 
-        final ResultActions resultActions = perform(
-            get("/web/overtime")
-                .param("person", "5")
-                .param("year", "2012")
-        );
-
-        resultActions
+        perform(get("/web/overtime")
+            .param("person", "5")
+            .param("year", "2012"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_list"))
             .andExpect(model().attribute("year", is(year)))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
-            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)));
-
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("records")).usingRecursiveComparison().isEqualTo(recordDtos);
+            .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
+            .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ofHours(10))))
+            .andExpect(model().attribute("records", hasItem(listRecordDto)));
     }
 
     @Test
@@ -299,19 +324,17 @@ class OvertimeViewControllerTest {
 
         final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL());
         final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate());
-        final List<OvertimeCommentDto> commentDtos = List.of(new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText()));
+        final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText());
 
-        final ResultActions resultActions = perform(get("/web/overtime/2"));
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("record")).usingRecursiveComparison().isEqualTo(record);
-        assertThat(resultActions.andReturn().getModelAndView().getModel().get("comments")).usingRecursiveComparison().isEqualTo(commentDtos);
-
-        resultActions
+        perform(get("/web/overtime/2"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_details"))
             .andExpect(model().attribute("signedInUser", is(overtimePerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
-            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
+            .andExpect(model().attribute("record", is(record)))
+            .andExpect(model().attribute("comments", hasItem(commentDto)));
     }
 
     @Test

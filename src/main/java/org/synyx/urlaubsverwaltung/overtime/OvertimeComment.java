@@ -5,11 +5,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import java.time.Clock;
 
+import static javax.persistence.EnumType.STRING;
 
 /**
  * Recorded comment after executed an overtime action, e.g. create a new overtime record.
@@ -23,7 +23,7 @@ public class OvertimeComment extends AbstractComment {
     private Overtime overtime;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private OvertimeCommentAction action;
 
     protected OvertimeComment() {

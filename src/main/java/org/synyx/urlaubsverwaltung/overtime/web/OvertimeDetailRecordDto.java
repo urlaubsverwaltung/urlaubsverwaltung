@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class OvertimeDetailRecordDto {
 
@@ -12,7 +13,7 @@ public class OvertimeDetailRecordDto {
     private final Duration duration;
     private final LocalDate lastModificationDate;
 
-    public OvertimeDetailRecordDto(Integer id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
+    OvertimeDetailRecordDto(Integer id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
         this.id = id;
         this.person = person;
         this.startDate = startDate;
@@ -43,5 +44,30 @@ public class OvertimeDetailRecordDto {
 
     public LocalDate getLastModificationDate() {
         return lastModificationDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OvertimeDetailRecordDto that = (OvertimeDetailRecordDto) o;
+        return Objects.equals(person, that.person) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate) && Objects.equals(duration, that.duration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(person, startDate, endDate, duration);
+    }
+
+    @Override
+    public String toString() {
+        return "OvertimeDetailRecordDto{" +
+            "id=" + id +
+            ", person=" + person +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", duration=" + duration +
+            ", lastModificationDate=" + lastModificationDate +
+            '}';
     }
 }

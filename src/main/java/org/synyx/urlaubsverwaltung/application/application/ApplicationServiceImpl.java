@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -41,6 +42,11 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person) {
         return applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+    }
+
+    @Override
+    public List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
+        return applicationRepository.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
     }
 
     @Override
@@ -91,6 +97,12 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Duration getTotalOvertimeReductionOfPerson(Person person) {
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPerson(person)).orElse(BigDecimal.ZERO);
+        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
+    }
+
+    @Override
+    public Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate date) {
+        final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).orElse(BigDecimal.ZERO);
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 

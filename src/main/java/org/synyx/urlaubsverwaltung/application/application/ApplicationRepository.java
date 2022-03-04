@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -44,14 +45,15 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
+    List<Application> findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
+
     @Query(
         "select x from Application x "
             + "where x.person = ?3 and x.status = ?4 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
             + "or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
-    List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person,
-                                                                      ApplicationStatus status);
+    List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
 
     @Query(
         "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
@@ -59,6 +61,14 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
             + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
+
+    @Query(
+        "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
+            + "AND application.startDate < :date "
+            + "AND application.vacationType.category = 'OVERTIME' "
+            + "AND (application.status = 'WAITING' OR application.status = 'ALLOWED')"
+    )
+    BigDecimal calculateTotalOvertimeReductionOfPersonBefore(@Param("person") Person person, @Param("date") LocalDate before);
 
     List<Application> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
 }

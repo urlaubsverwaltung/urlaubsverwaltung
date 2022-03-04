@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
@@ -39,6 +40,18 @@ public interface ApplicationService {
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
+
+    /**
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given status and vacation category
+     *
+     * @param startDate {@link LocalDate}
+     * @param endDate {@link LocalDate}
+     * @param person {@link Person}
+     * @param statuses {@link ApplicationStatus} that should be filtered for
+     * @param vacationCategory {@link VacationCategory} that should be filtered for
+     * @return filters {@link Application}s by status of the given person with vacation category between startDate x and endDate y
+     */
+    List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory);
 
     /**
      * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
@@ -129,6 +142,8 @@ public interface ApplicationService {
      * @return the total overtime reduction of a person, never {@code null}
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
+
+    Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate before);
 
     /**
      * Get a list of all active replacements of the given person and that are active at the given date

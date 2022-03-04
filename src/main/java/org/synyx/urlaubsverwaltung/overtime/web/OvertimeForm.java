@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 
 import static java.util.Objects.requireNonNullElse;
 
-
 /**
  * View class to record overtime for a certain period of time.
  */
@@ -32,15 +31,14 @@ public class OvertimeForm {
     private Integer minutes;
 
     OvertimeForm() {
-
         // OK
     }
 
-    public OvertimeForm(Person person) {
+    OvertimeForm(Person person) {
         this.person = person;
     }
 
-    public OvertimeForm(Overtime overtime) {
+    OvertimeForm(Overtime overtime) {
         final BigDecimal overtimeHours = overtime.getDuration() == null ? BigDecimal.ZERO : BigDecimal.valueOf((double) overtime.getDuration().toMinutes() / 60);
 
         this.id = overtime.getId();
