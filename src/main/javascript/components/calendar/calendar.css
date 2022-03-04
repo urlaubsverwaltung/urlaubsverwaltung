@@ -150,7 +150,7 @@
   opacity: 0.6;
 }
 
-.datepicker-day:is(.datepicker-day-personal-holiday-full, .datepicker-day-personal-holiday-full-approved, .datepicker-day-sick-note-full, .datepicker-day-no-workday)::after {
+.datepicker-day:is(.datepicker-day-personal-holiday-full, .datepicker-day-personal-holiday-full-approved, .datepicker-day-sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -185,10 +185,6 @@
 
 td.datepicker-day {
   display: table-cell;
-}
-
-.datepicker-day-no-workday {
-  --absence-bar-color: theme("backgroundColor.calendar.no-workday");
 }
 
 /* NOTE: Order of the day classes is very important because of css classes overloading! */

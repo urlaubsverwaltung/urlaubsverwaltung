@@ -285,20 +285,12 @@ describe("calendar", () => {
 
     const $ = document.querySelector.bind(document);
     expect(
-      $(
-        '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-no-workday"] > svg',
-      ),
+      $('[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
     ).toBeTruthy();
     expect(
-      $(
-        '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-no-workday"] > svg',
-      ),
+      $('[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
     ).toBeTruthy();
-    expect(
-      $(
-        '[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past datepicker-day-no-workday"] > svg',
-      ),
-    ).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past"] > svg')).toBeTruthy();
   });
 
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {
