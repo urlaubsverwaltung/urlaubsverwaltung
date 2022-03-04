@@ -86,6 +86,7 @@ duet-date-picker.error {
   --font-color: theme("textColor.calendar.DEFAULT");
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   color: var(--font-color);
+  padding: 0.5rem 0.375rem 1rem 0.5rem;
 }
 
 .duet-date__day.datepicker-day-public-holiday-morning,
