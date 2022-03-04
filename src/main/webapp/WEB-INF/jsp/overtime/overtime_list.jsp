@@ -59,20 +59,6 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <style>
-                    span.foo::before {
-                        content: "Σ";
-                        display: inline-block;
-                        text-align: right;
-                        margin-right: 0.25rem;
-                    }
-
-                    span.foo {
-                        display: flex;
-                        flex-grow: 1;
-                        text-align: right;
-                    }
-                </style>
                 <table class="list-table selectable-table tw-text-sm">
                     <caption class="tw-sr-only"><spring:message code="overtime.list.title"/></caption>
                     <c:if test="${not empty records}">
@@ -171,9 +157,10 @@
                                 <uv:duration fixedLength="true" duration="${record.duration}"/>
                             </td>
                             <td class="tw-text-right">
-                                <span class="foo">
-                                    <uv:duration fixedLength="true" duration="${record.sum}"/>
-                                </span>
+                                <div class="tw-relative">
+                                    <span class="tw-absolute tw-right-28">Σ</span>
+                                </div>
+                                <uv:duration fixedLength="true" duration="${record.sum}"/>
                             </td>
                             <td class="tw-text-right">
                                 <c:if test="${record.allowedToEdit}">
