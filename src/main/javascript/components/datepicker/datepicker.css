@@ -124,7 +124,7 @@ duet-date-picker.error {
 }
 
 .duet-date__table-header {
-  text-align: center;
+  padding-left: 0.5rem;
 }
 
 .duet-date__day {
