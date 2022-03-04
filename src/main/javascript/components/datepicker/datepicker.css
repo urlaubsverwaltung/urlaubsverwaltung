@@ -47,10 +47,38 @@ duet-date-picker.error {
   height: 100%;
 }
 
+.duet-date__dialog-content {
+  max-width: none;
+}
+
+@media screen and (min-width: 576px) {
+  /* due datepicker not shown on the bottom of the screen anymore */
+  .duet-date__dialog {
+    width: 25rem;
+  }
+  .duet-date__dialog-content {
+    width: 25rem;
+  }
+}
+
+@screen sm {
+  .duet-date__dialog {
+    /* stretch dialog content container */
+    /* dialog-content has `margin-left: auto` which aligns it on the right */
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  /* bootstrap breakpoint */
+  .duet-date__dialog {
+    width: 25rem;
+  }
+}
+
+.duet-date__day,
 .duet-date__day.datepicker-day,
 .duet-date__day.datepicker-day:not(.is-month) {
-  /* override padding of .datepicker-day */
-  padding: 0;
   /* override duet stuff */
   opacity: 1;
   --background-color-left: theme("backgroundColor.calendar.DEFAULT");

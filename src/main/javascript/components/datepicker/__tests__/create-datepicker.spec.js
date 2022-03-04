@@ -929,7 +929,7 @@ describe("create-datepicker", () => {
 
         const element = getDatepickerDayElement("24. Dezember");
         expect(element.classList).toContain("datepicker-day");
-        expect(element.classList).toContain("datepicker-day-no-workday");
+        expect(element.closest("button").querySelector("svg")).toBeTruthy();
       });
     });
   });
