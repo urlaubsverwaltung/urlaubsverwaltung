@@ -155,10 +155,10 @@
                                 </p>
                             </td>
                             <td class="tw-text-right">
-                                <uv:duration duration="${record.duration}"/>
+                                <uv:monoDuration duration="${record.duration}"/>
                             </td>
                             <td class="tw-text-right">
-                                Σ <uv:duration duration="${record.sum}"/>
+                                Σ <uv:monoDuration duration="${record.sum}"/>
                             </td>
                             <td class="tw-text-right">
                                 <c:if test="${record.allowedToEdit}">
@@ -199,7 +199,7 @@
                             </p>
                         </td>
                         <td colspan="2" class="tw-border-b-0 tw-text-right">
-                            <uv:duration duration="${overtimeTotalLastYear}"/>
+                            <uv:monoDuration duration="${overtimeTotalLastYear}"/>
                         </td>
                         <td class="tw-border-b-0"></td>
                     </tr>
