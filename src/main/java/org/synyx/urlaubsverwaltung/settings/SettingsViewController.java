@@ -19,6 +19,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettings;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsDto;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
@@ -26,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import static java.util.Comparator.reverseOrder;
@@ -44,11 +48,12 @@ public class SettingsViewController {
     private final SettingsValidator settingsValidator;
     private final Clock clock;
     private final String applicationVersion;
+    private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion) {
+                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion, SpecialLeaveSettingsService specialLeaveService) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
@@ -57,6 +62,7 @@ public class SettingsViewController {
         this.settingsValidator = settingsValidator;
         this.clock = clock;
         this.applicationVersion = applicationVersion;
+        this.specialLeaveSettingsService = specialLeaveService;
     }
 
     @GetMapping
@@ -107,6 +113,14 @@ public class SettingsViewController {
             .collect(toList());
         vacationTypeService.updateVacationTypes(vacationTypeUpdates);
 
+        final SpecialLeaveSettingsDto specialLeaveSettingsDto = settingsDto.getSpecialLeaveSettings();
+        specialLeaveSettingsService.save(new SpecialLeaveSettings(specialLeaveSettingsDto.getId(),
+            specialLeaveSettingsDto.getOwnWedding(),
+            specialLeaveSettingsDto.getBirthOfChild(),
+            specialLeaveSettingsDto.getDeathOfChild(),
+            specialLeaveSettingsDto.getDeathOfParent(),
+            specialLeaveSettingsDto.getRelocationForBusinessReasons()));
+
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
         }
@@ -123,8 +137,14 @@ public class SettingsViewController {
     private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
         final SettingsDto settingsDto = settingsToDto(settings);
         settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
 
         fillModel(model, settingsDto, authorizedRedirectUrl);
+    }
+
+    private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
+        final Optional<SpecialLeaveSettings> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        return specialLeaveSettings.map(SpecialLeaveSettingsDto::mapToDto).orElseGet(SpecialLeaveSettingsDto::new);
     }
 
     private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {

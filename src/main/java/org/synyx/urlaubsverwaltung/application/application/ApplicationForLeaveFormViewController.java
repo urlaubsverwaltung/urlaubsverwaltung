@@ -27,6 +27,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsDto;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettings;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
@@ -84,6 +87,7 @@ class ApplicationForLeaveFormViewController {
     private final SettingsService settingsService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
+    private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
     ApplicationForLeaveFormViewController(PersonService personService, DepartmentService departmentService, AccountService accountService,
@@ -91,7 +95,7 @@ class ApplicationForLeaveFormViewController {
                                           ApplicationInteractionService applicationInteractionService,
                                           ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
                                           SettingsService settingsService, DateFormatAware dateFormatAware,
-                                          Clock clock) {
+                                          Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.accountService = accountService;
@@ -101,6 +105,7 @@ class ApplicationForLeaveFormViewController {
         this.settingsService = settingsService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
+        this.specialLeaveSettingsService = specialLeaveSettingsService;
     }
 
     @InitBinder
@@ -414,6 +419,8 @@ class ApplicationForLeaveFormViewController {
         }
         model.addAttribute("vacationTypes", activeVacationTypes);
 
+        model.addAttribute("specialLeaveSettings", getSpecialLeaveSettingsDto());
+
         appendDepartmentsToReplacements(appForm);
         model.addAttribute("application", appForm);
 
@@ -511,5 +518,10 @@ class ApplicationForLeaveFormViewController {
         holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
         holidayReplacementDto.setDepartments(departmentNamesForPerson(holidayReplacementEntity.getPerson(), departments));
         return holidayReplacementDto;
+    }
+
+    private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
+        final Optional<SpecialLeaveSettings> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        return specialLeaveSettings.map(SpecialLeaveSettingsDto::mapToDto).orElseGet(SpecialLeaveSettingsDto::new);
     }
 }

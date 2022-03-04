@@ -1,0 +1,34 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="weigel" id="create_special_leave_settings_table">
+
+    <createTable tableName="special_leave_settings">
+      <column name="id" type="INT(10)" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="own_wedding" value="1" type="Int(2)">
+        <constraints nullable="true" />
+      </column>
+      <column name="birth_of_child" value="1" type="Int(2)">
+        <constraints nullable="true" />
+      </column>
+      <column name="death_of_child" value="2" type="Int(2)">
+        <constraints nullable="true" />
+      </column>
+      <column name="death_of_parent" value="1" type="Int(2)">
+        <constraints nullable="true" />
+      </column>
+      <column name="relocation_for_business_reasons" value="1" type="Int(2)">
+        <constraints nullable="true" />
+      </column>
+    </createTable>
+
+    <sql>
+        INSERT INTO special_leave_settings(id, own_wedding, birth_of_child, death_of_child, death_of_parent, relocation_for_business_reasons)
+        VALUES (1,1,1,2,1,1);
+    </sql>
+  </changeSet>
+</databaseChangeLog>
