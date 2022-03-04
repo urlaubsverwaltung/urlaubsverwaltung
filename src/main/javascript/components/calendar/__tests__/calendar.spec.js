@@ -56,7 +56,7 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&noWorkdaysInclusive=true", {
           absences: [
             {
               date: "2017-11-01",
@@ -73,7 +73,7 @@ describe("calendar", () => {
         const holidayService = createHolidayService({ personId: 42 });
         // fetch personal holiday data and cache the (mocked) response
         // the response is used when the calendar renders
-        await holidayService.fetchPersonal(2017);
+        await holidayService.fetchAbsences(2017);
 
         renderCalendar(holidayService);
 
@@ -92,7 +92,7 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&noWorkdaysInclusive=true", {
           absences: [
             {
               date: "2017-12-05",
@@ -109,7 +109,7 @@ describe("calendar", () => {
         const holidayService = createHolidayService({ personId: 42 });
         // fetch personal holiday data and cache the (mocked) response
         // the response is used when the calendar renders
-        await holidayService.fetchPersonal(2017);
+        await holidayService.fetchAbsences(2017);
 
         renderCalendar(holidayService);
 
@@ -128,7 +128,7 @@ describe("calendar", () => {
         // personId -> createHolidayService (param)
         // year -> holidayService.fetchPersonal (param)
         // type -> holidayService.fetchPersonal (implementation detail)
-        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&type=VACATION", {
+        fetchMock.mock("/persons/42/absences?from=2017-01-01&to=2017-12-31&noWorkdaysInclusive=true", {
           absences: [
             {
               date: "2017-12-01",
@@ -145,7 +145,7 @@ describe("calendar", () => {
         const holidayService = createHolidayService({ personId: 42 });
         // fetch personal holiday data and cache the (mocked) response
         // the response is used when the calendar renders
-        await holidayService.fetchPersonal(2017);
+        await holidayService.fetchAbsences(2017);
 
         renderCalendar(holidayService);
 
@@ -167,7 +167,7 @@ describe("calendar", () => {
       // personId -> createHolidayService (param)
       // year -> holidayService.fetchPersonal (param)
       // type -> holidayService.fetchPersonal (implementation detail)
-      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&type=VACATION", {
+      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&noWorkdaysInclusive=true", {
         absences: [
           {
             date: "2020-12-05",
@@ -182,17 +182,6 @@ describe("calendar", () => {
             status: "ALLOWED",
           },
           {
-            date: "2020-12-12",
-            absencePeriodName: "NOON",
-            type: "VACATION",
-            status: "ALLOWED",
-          },
-        ],
-      });
-
-      fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&type=SICK_NOTE", {
-        absences: [
-          {
             date: "2020-12-06",
             absencePeriodName: "NOON",
             type: "SICK_NOTE",
@@ -203,6 +192,12 @@ describe("calendar", () => {
             absencePeriodName: "MORNING",
             type: "SICK_NOTE",
             status: "ACTIVE",
+          },
+          {
+            date: "2020-12-12",
+            absencePeriodName: "NOON",
+            type: "VACATION",
+            status: "ALLOWED",
           },
           {
             date: "2020-12-13",
@@ -218,8 +213,7 @@ describe("calendar", () => {
       const holidayService = createHolidayService({ personId: 42 });
       // fetch personal holiday data and cache the (mocked) response
       // the response is used when the calendar renders
-      await holidayService.fetchPersonal(2020);
-      await holidayService.fetchSickDays(2020);
+      await holidayService.fetchAbsences(2020);
 
       renderCalendar(holidayService);
 
@@ -245,6 +239,58 @@ describe("calendar", () => {
         ),
       ).toBeTruthy();
     });
+  });
+
+  test("ensure rendering of no-workdays", async () => {
+    // today is 2020-12-13
+    mockDate(1_607_848_867_000);
+
+    // personId -> createHolidayService (param)
+    // year -> holidayService.fetchPersonal (param)
+    // type -> holidayService.fetchPersonal (implementation detail)
+    fetchMock.mock("/persons/42/absences?from=2020-01-01&to=2020-12-31&noWorkdaysInclusive=true", {
+      absences: [
+        {
+          // saturday
+          date: "2020-12-05",
+          absencePeriodName: "FULL",
+          type: "NO_WORKDAY",
+          status: "",
+        },
+        {
+          // sunday
+          date: "2020-12-06",
+          absencePeriodName: "FULL",
+          type: "NO_WORKDAY",
+          status: "",
+        },
+        {
+          // wednesday
+          date: "2020-12-09",
+          absencePeriodName: "FULL",
+          type: "NO_WORKDAY",
+          status: "",
+        },
+      ],
+    });
+
+    await calendarTestSetup();
+
+    const holidayService = createHolidayService({ personId: 42 });
+    // fetch personal holiday data and cache the (mocked) response
+    // the response is used when the calendar renders
+    await holidayService.fetchAbsences(2020);
+
+    renderCalendar(holidayService);
+
+    const $ = document.querySelector.bind(document);
+    expect(
+      $('[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
+    ).toBeTruthy();
+    expect(
+      $('[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past"] > svg'),
+    ).toBeTruthy();
+    expect($('[data-datepicker-date="2020-12-09"][class="datepicker-day datepicker-day-past"] > svg')).toBeTruthy();
   });
 
   function createHolidayService({ webPrefix = "", apiPrefix = "", personId = 1 } = {}) {

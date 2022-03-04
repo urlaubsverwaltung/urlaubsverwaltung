@@ -13,7 +13,8 @@ public class DayAbsenceDto {
 
     public enum Type {
         VACATION,
-        SICK_NOTE
+        SICK_NOTE,
+        NO_WORKDAY
     }
 
     private final String date;

@@ -76,7 +76,7 @@ public class PersonApiController {
     private PersonDto createPersonResponse(Person person) {
         final PersonDto personDto = PersonMapper.mapToDto(person);
         personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
-        personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, null)).withRel(ABSENCES));
+        personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, null, false)).withRel(ABSENCES));
         personDto.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
         personDto.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(person.getId(), null, null)).withRel(SICKNOTES));
         personDto.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));

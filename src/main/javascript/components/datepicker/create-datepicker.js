@@ -49,6 +49,7 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
     // clear all days
     for (const element of duetDateElement.querySelectorAll(".duet-date__day")) {
       element.classList.remove(...Object.values(datepickerClassnames));
+      element.querySelector("[data-uv-icon]")?.remove();
     }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
@@ -63,9 +64,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
       getJSON(`${urlPrefix}/persons/${personId}/public-holidays?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
         pick("publicHolidays"),
       ),
-      getJSON(`${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}`).then(
-        pick("absences"),
-      ),
+      getJSON(
+        `${urlPrefix}/persons/${personId}/absences?from=${firstDayOfMonth}&to=${lastDayOfMonth}&noWorkdaysInclusive=true`,
+      ).then(pick("absences")),
     ]).then(([publicHolidays, absences]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
@@ -87,6 +88,23 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         }
         const cssClasses = getCssClassesForDate(date, publicHolidays.value, absences.value);
         dayElement.classList.add(...cssClasses);
+
+        const isNoWorkday = fitsCriteriaMatcher(date)(absences.value, { type: "NO_WORKDAY" });
+        let icon;
+        if (isNoWorkday) {
+          const temporary = document.createElement("span");
+          temporary.innerHTML = `<svg viewBox="0 0 20 20" class="tw-w-3 tw-h-3 tw-opacity-50 tw-stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
+          icon = temporary.firstChild;
+        } else {
+          icon = document.createElement("span");
+          icon.classList.add("tw-w-3", "tw-h-3", "tw-inline-block");
+        }
+        icon.dataset.uvIcon = "";
+        dayElement.append(icon);
+
+        const dayNumberElement = dayElement.querySelector("span[aria-hidden]");
+        const dayNUmber = Number(dayNumberElement.textContent);
+        dayNumberElement.textContent = twoDigit(dayNUmber);
       }
     });
   };

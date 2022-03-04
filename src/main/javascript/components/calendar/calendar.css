@@ -49,41 +49,42 @@
 /* MONTH */
 
 .datepicker-month {
+  --width: 22.5rem;
   position: absolute;
-  width: 20rem;
+  width: var(--width);
   height: 100%;
   transition: left 0.4s ease-in-out;
 }
 
 .datepicker-month:nth-child(1) {
-  left: -60rem;
+  left: calc(-3*var(--width));
 }
 .datepicker-month:nth-child(2) {
-  left: -40rem;
+  left: calc(-2*var(--width));
 }
 .datepicker-month:nth-child(3) {
-  left: -20rem;
+  left: calc(-1*var(--width));
 }
 .datepicker-month:nth-child(4) {
   left: 0;
 }
 .datepicker-month:nth-child(5) {
-  left: 20rem;
+  left: var(--width);
 }
 .datepicker-month:nth-child(6) {
-  left: 40rem;
+  left: calc(2*var(--width));
 }
 .datepicker-month:nth-child(7) {
-  left: 60rem;
+  left: calc(3*var(--width));
 }
 .datepicker-month:nth-child(8) {
-  left: 80rem;
+  left: calc(4*var(--width));
 }
 .datepicker-month:nth-child(9) {
-  left: 100rem;
+  left: calc(5*var(--width));
 }
 .datepicker-month:nth-child(10) {
-  left: 120rem;
+  left: calc(6*var(--width));
 }
 
 .datepicker-month h3 {
@@ -135,12 +136,15 @@
   --background-color-left: theme("backgroundColor.calendar.DEFAULT");
   --background-color-right: theme("backgroundColor.calendar.DEFAULT");
   --font-color: theme("textColor.calendar.DEFAULT");
-  display: block;
-  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.375rem 0.875rem 0.5rem;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
   @apply dark:tw-font-semibold;
+  @apply tw-space-x-1;
+  @apply tw-tabular-nums;
 }
 
 .datepicker-day-past {
@@ -150,10 +154,10 @@
 .datepicker-day:is(.datepicker-day-personal-holiday-full, .datepicker-day-personal-holiday-full-approved, .datepicker-day-sick-note-full)::after {
   content: "";
   position: absolute;
-  bottom: 4px;
-  left: 4px;
-  right: 4px;
-  height: 4px;
+  bottom: 0.375rem;
+  left: 0.375rem;
+  right: 0.375rem;
+  height: 0.25rem;
   border-radius: 99999px;
   background-color: var(--absence-bar-color);
 }
@@ -161,10 +165,10 @@
 .datepicker-day:is(.datepicker-day-personal-holiday-morning, .datepicker-day-personal-holiday-morning-approved, .datepicker-day-sick-note-morning)::before {
   content: "";
   position: absolute;
-  bottom: 4px;
-  left: 4px;
+  bottom: 0.375rem;
+  left: 0.375rem;
   right: 50%;
-  height: 4px;
+  height: 0.25rem;
   border-radius: 99999px;
   background-color: var(--absence-bar-color-morning);
 }
@@ -172,10 +176,10 @@
 .datepicker-day:is(.datepicker-day-personal-holiday-noon, .datepicker-day-personal-holiday-noon-approved, .datepicker-day-sick-note-noon)::after {
   content: "";
   position: absolute;
-  bottom: 4px;
+  bottom: 0.375rem;
   left: 50%;
-  right: 4px;
-  height: 4px;
+  right: 0.375rem;
+  height: 0.25rem;
   border-radius: 99999px;
   background-color: var(--absence-bar-color-noon);
 }

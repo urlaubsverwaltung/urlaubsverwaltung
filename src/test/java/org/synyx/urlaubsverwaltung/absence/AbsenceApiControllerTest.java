@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
@@ -20,6 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
@@ -32,7 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_RHEINLAND_PFALZ;
 
@@ -53,6 +63,101 @@ class AbsenceApiControllerTest {
     @BeforeEach
     void setUp() {
         sut = new AbsenceApiController(personService, absenceService, publicHolidaysService, workingTimeService);
+    }
+
+    @Test
+    void ensureCorrectConversionOfNonWorkingdays() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
+
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of());
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
+
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, true);
+        workingTime.setDayLengthForWeekDay(MONDAY, FULL);
+        workingTime.setDayLengthForWeekDay(TUESDAY, FULL);
+        workingTime.setDayLengthForWeekDay(WEDNESDAY, ZERO);
+        workingTime.setDayLengthForWeekDay(THURSDAY, FULL);
+        workingTime.setDayLengthForWeekDay(FRIDAY, FULL);
+        workingTime.setDayLengthForWeekDay(SATURDAY, ZERO);
+        workingTime.setDayLengthForWeekDay(SUNDAY, ZERO);
+        when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
+
+        perform(get("/api/persons/23/absences?noWorkdaysInclusive=true")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(jsonPath("$.absences").exists())
+            .andExpect(jsonPath("$.absences", hasSize(14)))
+            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
+            .andExpect(jsonPath("$.absences[0].type", is("NO_WORKDAY")))
+            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
+            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
+            .andExpect(jsonPath("$.absences[0].href", is("")))
+            .andExpect(jsonPath("$.absences[1].date", is("2016-01-03")))
+            .andExpect(jsonPath("$.absences[1].type", is("NO_WORKDAY")))
+            .andExpect(jsonPath("$.absences[1].dayLength", is(1)))
+            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("FULL")))
+            .andExpect(jsonPath("$.absences[1].href", is("")))
+            .andExpect(jsonPath("$.absences[2].date", is("2016-01-06")))
+            .andExpect(jsonPath("$.absences[2].type", is("NO_WORKDAY")))
+            .andExpect(jsonPath("$.absences[2].dayLength", is(1)))
+            .andExpect(jsonPath("$.absences[2].absencePeriodName", is("FULL")))
+            .andExpect(jsonPath("$.absences[2].href", is("")))
+        ;
+    }
+
+    @Test
+    void ensureCorrectVacationOverridesNonWorkingdays() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
+
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(42, WAITING);
+        final AbsencePeriod.Record recordOne = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
+        final AbsencePeriod.Record recordTwo = new AbsencePeriod.Record(startDate.plusDays(2), person, recordMorningVacation, recordNoonVacation);
+        final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(recordOne, recordTwo));
+
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(List.of(absencePeriod));
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
+
+        final WorkingTime workingTime = new WorkingTime(person, startDate, GERMANY_BADEN_WUERTTEMBERG, true);
+        workingTime.setDayLengthForWeekDay(MONDAY, FULL);
+        workingTime.setDayLengthForWeekDay(TUESDAY, FULL);
+        workingTime.setDayLengthForWeekDay(WEDNESDAY, ZERO);
+        workingTime.setDayLengthForWeekDay(THURSDAY, FULL);
+        workingTime.setDayLengthForWeekDay(FRIDAY, FULL);
+        workingTime.setDayLengthForWeekDay(SATURDAY, ZERO);
+        workingTime.setDayLengthForWeekDay(SUNDAY, ZERO);
+        when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
+
+        perform(get("/api/persons/23/absences?noWorkdaysInclusive=true")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(jsonPath("$.absences").exists())
+            .andExpect(jsonPath("$.absences", hasSize(14)))
+            .andExpect(jsonPath("$.absences[0].date", is("2016-01-02")))
+            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[0].dayLength", is(1)))
+            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("FULL")))
+            .andExpect(jsonPath("$.absences[0].href", is("42")))
+            .andExpect(jsonPath("$.absences[1].date", is("2016-01-03")))
+            .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[1].dayLength", is(1)))
+            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("FULL")))
+            .andExpect(jsonPath("$.absences[1].href", is("42")))
+        ;
     }
 
     // VACATION --------------------------------------------------------------------------------------------------------

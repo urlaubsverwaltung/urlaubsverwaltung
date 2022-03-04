@@ -13,15 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.api.RestApiDateFormat;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +88,10 @@ public class AbsenceApiController {
             LocalDate endDate,
         @Parameter(description = "Type of absences, vacation or sick notes")
         @RequestParam(value = "type", required = false)
-            String type) {
+            String type,
+        @Parameter(description = "Whether to include no-workdays or not. Default is 'false' which will ignore no-workdays.")
+        @RequestParam(value = "noWorkdaysInclusive", required = false, defaultValue = "false")
+            boolean noWorkdaysInclusive) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -97,11 +103,11 @@ public class AbsenceApiController {
         }
 
         final Person person = optionalPerson.get();
-        final List<DayAbsenceDto> absences = getAbsences(startDate, endDate, person, toType(type));
+        final List<DayAbsenceDto> absences = getAbsences(startDate, endDate, person, toType(type), noWorkdaysInclusive);
         return new DayAbsencesDto(absences);
     }
 
-    private List<DayAbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, DayAbsenceDto.Type type) {
+    private List<DayAbsenceDto> getAbsences(LocalDate start, LocalDate end, Person person, DayAbsenceDto.Type type, boolean includeNonWorkingDays) {
         final Predicate<DayAbsenceDto> vacationAsked = dto -> type == null || type.equals(VACATION);
         final Predicate<DayAbsenceDto> sickAsked = dto -> type == null || type.equals(SICK_NOTE);
         final Predicate<DayAbsenceDto> isVacation = dto -> dto.getType().equals(VACATION.name());
@@ -109,11 +115,44 @@ public class AbsenceApiController {
 
         final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByDate(person, start, end);
 
-        return absenceService.getOpenAbsences(person, start, end)
+        final List<DayAbsenceDto> absences = absenceService.getOpenAbsences(person, start, end)
             .stream()
             .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, publicHolidaysByDate))
             .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
             .collect(toList());
+
+        if (!includeNonWorkingDays) {
+            return absences;
+        }
+
+        final List<DayAbsenceDto> absencesWithNoWorkdays = new ArrayList<>();
+
+        final List<WorkingTime> workingTimeList = workingTimeService.getByPerson(person);
+
+        for (LocalDate date : new DateRange(start, end)) {
+            final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
+            final String formattedDate = dateTimeFormatter.format(date);
+            final Optional<DayAbsenceDto> maybeAbsenceDto = dayAbsenceDtoForDate(formattedDate, absences);
+            if (maybeAbsenceDto.isPresent()) {
+                absencesWithNoWorkdays.add(maybeAbsenceDto.get());
+            } else if (!isWorkday(date, workingTimeList)) {
+                absencesWithNoWorkdays.add(new DayAbsenceDto(date, FULL.getDuration(), FULL.name(), DayAbsenceDto.Type.NO_WORKDAY.name(), "", null));
+            }
+        }
+
+        return absencesWithNoWorkdays;
+    }
+
+    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
+        return workingTimeList
+            .stream()
+            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
+            .findFirst()
+            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
+            .orElse(false);
+    }
+    private Optional<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
+        return absences.stream().filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate)).findFirst();
     }
 
     private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {

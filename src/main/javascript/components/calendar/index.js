@@ -109,6 +109,9 @@ $(function () {
         /* NOTE: Today is not in the past! */
         return !isToday(date) && isPast(date);
       },
+      isNoWorkday: function (date) {
+        return holidayService.isNoWorkday(date);
+      },
       isHalfDayAbsence: function (date) {
         if (assert.isPersonalHolidayMorning(date) || assert.isPersonalHolidayNoon(date)) {
           return true;
@@ -220,8 +223,9 @@ $(function () {
 
         if (absences.length > 0) {
           $.each(absences, function (index, absence) {
-            c[year] = c[year] || [];
-            c[year].push(absence);
+            c[absence.type] = c[absence.type] || {};
+            c[absence.type][year] = c[absence.type][year] || [];
+            c[absence.type][year].push(absence);
           });
         } else {
           c[year] = [];
@@ -267,6 +271,27 @@ $(function () {
       };
     }
 
+    function isOfAbsenceType(absenceType, matcherAttributes) {
+      return function (date) {
+        const year = getYear(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
+
+        if (!_CACHE["absences"] || !_CACHE["absences"][absenceType]) {
+          return false;
+        }
+
+        if (_CACHE["absences"][absenceType][year]) {
+          const absence = findWhere(_CACHE["absences"][absenceType][year], {
+            ...matcherAttributes,
+            date: formattedDate,
+          });
+          return Boolean(absence);
+        }
+
+        return false;
+      };
+    }
+
     const absencePeriod = Object.freeze({
       FULL: "FULL",
       MORNING: "MORNING",
@@ -274,63 +299,65 @@ $(function () {
     });
 
     const HolidayService = {
-      isSickDayFull: isOfType("sick", {
+      isNoWorkday: isOfAbsenceType("NO_WORKDAY"),
+
+      isSickDayFull: isOfAbsenceType("SICK_NOTE", {
         absencePeriodName: absencePeriod.FULL,
       }),
-      isSickDayMorning: isOfType("sick", {
+      isSickDayMorning: isOfAbsenceType("SICK_NOTE", {
         absencePeriodName: absencePeriod.MORNING,
       }),
-      isSickDayNoon: isOfType("sick", {
+      isSickDayNoon: isOfAbsenceType("SICK_NOTE", {
         absencePeriodName: absencePeriod.NOON,
       }),
 
-      isPersonalHolidayFull: isOfType("holiday", {
+      isPersonalHolidayFull: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.FULL,
         status: "WAITING",
       }),
-      isPersonalHolidayFullTemporaryApproved: isOfType("holiday", {
+      isPersonalHolidayFullTemporaryApproved: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.FULL,
         status: "TEMPORARY_ALLOWED",
       }),
-      isPersonalHolidayFullApproved: isOfType("holiday", {
+      isPersonalHolidayFullApproved: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.FULL,
         status: "ALLOWED",
       }),
-      isPersonalHolidayFullCancellationRequest: isOfType("holiday", {
+      isPersonalHolidayFullCancellationRequest: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.FULL,
         status: "ALLOWED_CANCELLATION_REQUESTED",
       }),
 
-      isPersonalHolidayMorning: isOfType("holiday", {
+      isPersonalHolidayMorning: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.MORNING,
         status: "WAITING",
       }),
-      isPersonalHolidayMorningTemporaryApproved: isOfType("holiday", {
+      isPersonalHolidayMorningTemporaryApproved: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.MORNING,
         status: "TEMPORARY_ALLOWED",
       }),
-      isPersonalHolidayMorningApproved: isOfType("holiday", {
+      isPersonalHolidayMorningApproved: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.MORNING,
         status: "ALLOWED",
       }),
-      isPersonalHolidayMorningCancellationRequest: isOfType("holiday", {
+      isPersonalHolidayMorningCancellationRequest: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.MORNING,
         status: "ALLOWED_CANCELLATION_REQUESTED",
       }),
 
-      isPersonalHolidayNoon: isOfType("holiday", {
+      isPersonalHolidayNoon: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.NOON,
         status: "WAITING",
       }),
-      isPersonalHolidayNoonTemporaryApproved: isOfType("holiday", {
+      isPersonalHolidayNoonTemporaryApproved: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.NOON,
         status: "TEMPORARY_ALLOWED",
       }),
-      isPersonalHolidayNoonApproved: isOfType("holiday", {
+      isPersonalHolidayNoonApproved: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.NOON,
         status: "ALLOWED",
       }),
-      isPersonalHolidayNoonCancellationRequest: isOfType("holiday", {
+      isPersonalHolidayNoonCancellationRequest: isOfAbsenceType("VACATION", {
         absencePeriodName: absencePeriod.NOON,
         status: "ALLOWED_CANCELLATION_REQUESTED",
       }),
@@ -365,8 +392,8 @@ $(function () {
         const year = getYear(date);
         const formattedDate = format(date, "yyyy-MM-dd");
 
-        if (_CACHE["holiday"] && _CACHE["holiday"][year]) {
-          const holiday = findWhere(_CACHE["holiday"][year], {
+        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
+          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
             date: formattedDate,
           });
           if (holiday) {
@@ -379,8 +406,8 @@ $(function () {
         const year = getYear(date);
         const formattedDate = format(date, "yyyy-MM-dd");
 
-        if (_CACHE["holiday"] && _CACHE["holiday"][year]) {
-          const holiday = findWhere(_CACHE["holiday"][year], {
+        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
+          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
             date: formattedDate,
           });
           if (holiday) {
@@ -388,8 +415,8 @@ $(function () {
           }
         }
 
-        if (_CACHE["sick"] && _CACHE["sick"][year]) {
-          const sickDay = findWhere(_CACHE["sick"][year], {
+        if (_CACHE["absences"] && _CACHE["absences"]["SICK_NOTE"] && _CACHE["absences"]["SICK_NOTE"][year]) {
+          const sickDay = findWhere(_CACHE["absences"]["SICK_NOTE"][year], {
             date: formattedDate,
           });
           if (sickDay) {
@@ -404,8 +431,8 @@ $(function () {
         const year = getYear(date);
         const formattedDate = format(date, "yyyy-MM-dd");
 
-        if (_CACHE["holiday"] && _CACHE["holiday"][year]) {
-          const holiday = findWhere(_CACHE["holiday"][year], {
+        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
+          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
             date: formattedDate,
           });
           if (holiday) {
@@ -413,8 +440,8 @@ $(function () {
           }
         }
 
-        if (_CACHE["sick"] && _CACHE["sick"][year]) {
-          const sickDay = findWhere(_CACHE["sick"][year], {
+        if (_CACHE["absences"] && _CACHE["absences"]["SICK_NOTE"] && _CACHE["absences"]["SICK_NOTE"][year]) {
+          const sickDay = findWhere(_CACHE["absences"]["SICK_NOTE"][year], {
             date: formattedDate,
           });
           if (sickDay) {
@@ -457,7 +484,7 @@ $(function () {
         _CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {};
 
         if (_CACHE["publicHoliday"][year]) {
-          return Promise.resolve(_CACHE[year]);
+          return Promise.resolve(_CACHE["publicHoliday"][year]);
         }
 
         const firstDayOfYear = formatISO(startOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
@@ -469,11 +496,11 @@ $(function () {
         }).then(cachePublicHoliday(year));
       },
 
-      fetchPersonal: function (year) {
-        _CACHE["holiday"] = _CACHE["holiday"] || {};
+      fetchAbsences: function (year) {
+        _CACHE["absences"] = _CACHE["absences"] || {};
 
-        if (_CACHE["holiday"][year]) {
-          return Promise.resolve(_CACHE[year]);
+        if (_CACHE["absences"][year]) {
+          return Promise.resolve(_CACHE["absences"][year]);
         }
 
         const firstDayOfYear = formatISO(startOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
@@ -482,25 +509,8 @@ $(function () {
         return fetch("/persons/" + personId + "/absences", {
           from: firstDayOfYear,
           to: lastDayOfYear,
-          type: "VACATION",
-        }).then(cacheAbsences("holiday", year));
-      },
-
-      fetchSickDays: function (year) {
-        _CACHE["sick"] = _CACHE["sick"] || {};
-
-        if (_CACHE["sick"][year]) {
-          return Promise.resolve(_CACHE[year]);
-        }
-
-        const firstDayOfYear = formatISO(startOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
-        const lastDayOfYear = formatISO(endOfYear(parse(year, "yyyy", new Date())), { representation: "date" });
-
-        return fetch("/persons/" + personId + "/absences", {
-          from: firstDayOfYear,
-          to: lastDayOfYear,
-          type: "SICK_NOTE",
-        }).then(cacheAbsences("sick", year));
+          noWorkdaysInclusive: true,
+        }).then(cacheAbsences("absences", year));
       },
     };
 
@@ -533,7 +543,12 @@ $(function () {
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
-      day: '<span class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}">{{day}}</span>',
+      day: '<div class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
+
+      iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
+
+      noWorkdayIcon:
+        '<svg viewBox="0 0 20 20" class="tw-w-3 tw-h-3 tw-opacity-50 tw-stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>',
     };
 
     // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -703,6 +718,7 @@ $(function () {
         title: assert.title(date),
         absenceId: assert.absenceId(date),
         absenceType: assert.absenceType(date),
+        icon: assert.isNoWorkday(date) ? TMPL.noWorkdayIcon : TMPL.iconPlaceholder,
       });
     }
 
@@ -832,11 +848,9 @@ $(function () {
         // to load data for the new (invisible) prev month
         const date = addMonths(new Date(y, m, 1), 1);
 
-        Promise.all([
-          holidayService.fetchPublic(getYear(date)),
-          holidayService.fetchPersonal(getYear(date)),
-          holidayService.fetchSickDays(getYear(date)),
-        ]).then(view.displayNext);
+        Promise.all([holidayService.fetchPublic(getYear(date)), holidayService.fetchAbsences(getYear(date))]).then(
+          view.displayNext,
+        );
       },
 
       clickPrevious: function () {
@@ -849,11 +863,9 @@ $(function () {
         // to load data for the new (invisible) prev month
         const date = subMonths(new Date(y, m, 1), 1);
 
-        Promise.all([
-          holidayService.fetchPublic(getYear(date)),
-          holidayService.fetchPersonal(getYear(date)),
-          holidayService.fetchSickDays(getYear(date)),
-        ]).then(view.displayPrevious);
+        Promise.all([holidayService.fetchPublic(getYear(date)), holidayService.fetchAbsences(getYear(date))]).then(
+          view.displayPrevious,
+        );
       },
     };
 
