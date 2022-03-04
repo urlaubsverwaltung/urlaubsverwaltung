@@ -101,6 +101,10 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         }
         icon.dataset.uvIcon = "";
         dayElement.append(icon);
+
+        const dayNumberElement = dayElement.querySelector("span[aria-hidden]");
+        const dayNUmber = Number(dayNumberElement.textContent);
+        dayNumberElement.textContent = twoDigit(dayNUmber);
       }
     });
   };
