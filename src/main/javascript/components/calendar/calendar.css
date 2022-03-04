@@ -144,6 +144,7 @@
   color: var(--font-color);
   @apply dark:tw-font-semibold;
   @apply tw-space-x-1;
+  @apply tw-tabular-nums;
 }
 
 .datepicker-day-past {
