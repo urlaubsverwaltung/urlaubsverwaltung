@@ -398,7 +398,8 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(10)),
                     hasProperty("cancellationRequested", is(true)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(false)),
+                    hasProperty("approveAllowed", is(false))
                 )
             )))
             .andExpect(model().attribute("otherApplications", hasSize(2)))
@@ -409,13 +410,15 @@ class ApplicationForLeaveViewControllerTest {
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(1)),
                     hasProperty("cancellationRequested", is(false)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(false)),
+                    hasProperty("approveAllowed", is(true))
                 ),
                 allOf(
                     instanceOf(ApplicationForLeaveDto.class),
                     hasProperty("id", is(2)),
                     hasProperty("cancellationRequested", is(false)),
-                    hasProperty("cancelAllowed", is(false))
+                    hasProperty("cancelAllowed", is(false)),
+                    hasProperty("approveAllowed", is(true))
                 )
             )))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))

@@ -139,7 +139,7 @@ class ApplicationForLeaveViewController {
 
         final boolean isAllowedToEdit = isWaiting && isOwn;
         final boolean isAllowedToTemporaryApprove = twoStageApproval && isWaiting && (isDepartmentHeadOfPerson && !isOwn) && !isBoss && !isSecondStageAuthorityOfPerson;
-        final boolean isAllowedToApprove = isWaiting && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !isOwn));
+        final boolean isAllowedToApprove = (isWaiting && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !isOwn))) || (isTemporaryAllowed && (isBoss || (isSecondStageAuthorityOfPerson && !isOwn)));
         final boolean isAllowedToCancel = ((isWaiting || isTemporaryAllowed || isAllowed) && isOwn) || ((isWaiting || isTemporaryAllowed || isAllowed || isCancellationRequested) && isOffice);
         final boolean isAllowedToReject = (isWaiting || isTemporaryAllowed) && !isOwn && (isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
 
