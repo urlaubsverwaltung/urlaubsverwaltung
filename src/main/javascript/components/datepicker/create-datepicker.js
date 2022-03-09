@@ -36,6 +36,8 @@ const datepickerClassnames = {
 export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
   const { localisation } = window.uv.datepicker;
 
+  /* TODO add el as new language*/
+
   // currently the UV supports 'en' and 'de' only. and the default is 'de'.
   const dateAdapter = localisation.locale === "en" ? EN.dateAdapter : DE.dateAdapter;
   const dateFormatShort = localisation.locale === "en" ? EN.dateFormatShort : DE.dateFormatShort;
