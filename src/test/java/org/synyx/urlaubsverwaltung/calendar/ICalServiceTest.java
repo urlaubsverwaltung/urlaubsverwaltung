@@ -11,15 +11,11 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -43,10 +39,15 @@ class ICalServiceTest {
 
     @Test
     void getCalendarForPersonAndNoAbsenceFound() {
-        final List<Absence> absences = List.of();
 
-        assertThatThrownBy(() -> sut.getCalendar("Abwesenheitskalender", absences))
-            .isInstanceOf(CalendarException.class);
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of());
+        assertThat(convertCalendar(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+            .contains("X-WR-CALNAME:Abwesenheitskalender")
+            .contains("REFRESH-INTERVAL:P1D");
     }
 
     @Test
@@ -55,8 +56,7 @@ class ICalServiceTest {
         final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
-
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -77,8 +77,7 @@ class ICalServiceTest {
         final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence));
-
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -100,7 +99,7 @@ class ICalServiceTest {
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
 
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -122,7 +121,7 @@ class ICalServiceTest {
         final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -147,7 +146,7 @@ class ICalServiceTest {
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
         final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -174,7 +173,7 @@ class ICalServiceTest {
         final ICalService sut = new ICalService(calendarProperties);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, CANCELLED);
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -202,7 +201,7 @@ class ICalServiceTest {
         final ICalService sut = new ICalService(calendarProperties);
 
         final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED);
-        assertThat(new String(calendar.getByteArray()))
+        assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
@@ -230,11 +229,7 @@ class ICalServiceTest {
         return new Absence(person, period, timeConfig, absenceType);
     }
 
-    private String fileToString(File file) {
-        try {
-            return Files.readString(file.toPath());
-        } catch (IOException e) {
-            return "";
-        }
+    private String convertCalendar(ByteArrayResource calendar) {
+        return new String(calendar.getByteArray());
     }
 }
