@@ -72,7 +72,7 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
     ]).then(([publicHolidays, absences]) => {
       const selectedMonth = Number(monthElement.value);
       const selectedYear = Number(yearElement.value);
-      for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day")) {
+      for (let dayElement of duetDateElement.querySelectorAll(".duet-date__day.is-month")) {
         const dayAndMonthString = dayElement.querySelector(".duet-date__vhidden").textContent;
         const date = parse(dayAndMonthString, dateFormatShort, new Date());
         // dayAndMonthString is a hard coded duet-date-picker screen-reader-only value which does not contain the year.
