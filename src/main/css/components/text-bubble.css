@@ -43,5 +43,5 @@
 }
 
 .tw-dark .text-bubble--triangle-top-right:after {
-  border-color: transparent theme('colors.neutral.900') theme('colors.neutral.900') transparent;
+  border-color: transparent theme("colors.neutral.900") theme("colors.neutral.900") transparent;
 }

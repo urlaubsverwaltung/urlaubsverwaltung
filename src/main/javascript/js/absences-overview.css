@@ -207,7 +207,10 @@ svg.no-workday-icon {
 .vacationOverview-tbody tr:hover th:first-child {
   border-right-color: theme("colors.zinc.100");
 }
-.vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning,.public-holiday-noon,.public-holiday-full)) {
+.vacationOverview-tbody
+  tr:hover
+  td
+  .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
   --background-color-left: theme("colors.zinc.100");
   --background-color-right: theme("colors.zinc.100");
 }
@@ -230,7 +233,11 @@ svg.no-workday-icon {
 .tw-dark .vacationOverview-tbody tr:hover th:first-child {
   border-right-color: theme("colors.zinc.800");
 }
-.tw-dark .vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning,.public-holiday-noon,.public-holiday-full)) {
+.tw-dark
+  .vacationOverview-tbody
+  tr:hover
+  td
+  .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
   --background-color-left: theme("colors.neutral.700");
   --background-color-right: theme("colors.neutral.700");
 }

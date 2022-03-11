@@ -207,7 +207,9 @@ textarea.error {
   @apply tw-text-zinc-700;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   @apply dark:tw-border-zinc-600 !important;
   @apply dark:tw-bg-zinc-700 !important;
   @apply dark:tw-text-zinc-50 !important;

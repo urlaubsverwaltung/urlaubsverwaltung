@@ -12,7 +12,11 @@
   }
 }
 
-.button, .button-main, .button-main-green, .button-danger, .button-info {
+.button,
+.button-main,
+.button-main-green,
+.button-danger,
+.button-info {
   display: inline-flex;
   align-items: center;
   justify-content: center;
