@@ -238,6 +238,13 @@ td.datepicker-day {
   --absence-bar-color: theme("backgroundColor.calendar.sick-note");
 }
 
+.datepicker-day-weekend {
+  --background-color-left: theme("backgroundColor.calendar.weekend");
+  --background-color-right: theme("backgroundColor.calendar.weekend");
+  /* important is required since `.datepicker-day-public-holiday-noon.datepicker-day-past` is a more specific selector which wins otherwise */
+  --font-color: theme("textColor.calendar.weekend") !important;
+}
+
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 /* note: except for weekend which follows beneath */
@@ -251,13 +258,6 @@ td.datepicker-day {
   --background-color-left: theme("backgroundColor.calendar.public-holiday");
   --background-color-right: theme("backgroundColor.calendar.public-holiday");
   --font-color: theme("textColor.calendar.public-holiday");
-}
-
-.datepicker-day-weekend {
-  --background-color-left: theme("backgroundColor.calendar.weekend");
-  --background-color-right: theme("backgroundColor.calendar.weekend");
-  /* important is required since `.datepicker-day-public-holiday-noon.datepicker-day-past` is a more specific selector which wins otherwise */
-  --font-color: theme("textColor.calendar.weekend") !important;
 }
 
 /**************************************************************************
