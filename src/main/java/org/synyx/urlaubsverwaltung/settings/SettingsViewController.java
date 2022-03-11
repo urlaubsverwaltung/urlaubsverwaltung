@@ -19,8 +19,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettings;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsDto;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
@@ -29,12 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Optional;
 import java.util.TimeZone;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsItems;
 
 @Controller
 @RequestMapping("/web/settings")
@@ -74,7 +73,10 @@ public class SettingsViewController {
         final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
 
         final Settings settings = settingsService.getSettings();
-        fillModel(model, settings, authorizedRedirectUrl);
+        final SettingsDto settingsDto = settingsToDto(settings);
+        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
+        fillModel(model, settingsDto, authorizedRedirectUrl);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute("errors", googleOAuthError);
@@ -114,12 +116,8 @@ public class SettingsViewController {
         vacationTypeService.updateVacationTypes(vacationTypeUpdates);
 
         final SpecialLeaveSettingsDto specialLeaveSettingsDto = settingsDto.getSpecialLeaveSettings();
-        specialLeaveSettingsService.save(new SpecialLeaveSettings(specialLeaveSettingsDto.getId(),
-            specialLeaveSettingsDto.getOwnWedding(),
-            specialLeaveSettingsDto.getBirthOfChild(),
-            specialLeaveSettingsDto.getDeathOfChild(),
-            specialLeaveSettingsDto.getDeathOfParent(),
-            specialLeaveSettingsDto.getRelocationForBusinessReasons()));
+        List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = mapToSpecialLeaveSettingsItems(specialLeaveSettingsDto.getSpecialLeaveSettingsItems());
+        specialLeaveSettingsService.saveAll(specialLeaveSettingsItems);
 
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
@@ -134,17 +132,10 @@ public class SettingsViewController {
         return requestURL.replace("/settings", redirectPath);
     }
 
-    private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
-        final SettingsDto settingsDto = settingsToDto(settings);
-        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
-        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
-
-        fillModel(model, settingsDto, authorizedRedirectUrl);
-    }
 
     private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
-        final Optional<SpecialLeaveSettings> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
-        return specialLeaveSettings.map(SpecialLeaveSettingsDto::mapToDto).orElseGet(SpecialLeaveSettingsDto::new);
+        final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = specialLeaveSettingsService.getSpecialLeaveSettings();
+        return SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsDto(specialLeaveSettingsItems);
     }
 
     private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
@@ -185,6 +176,7 @@ public class SettingsViewController {
         settingsDto.setTimeSettings(settings.getTimeSettings());
         settingsDto.setSickNoteSettings(settings.getSickNoteSettings());
         settingsDto.setCalendarSettings(settings.getCalendarSettings());
+
         return settingsDto;
     }
 

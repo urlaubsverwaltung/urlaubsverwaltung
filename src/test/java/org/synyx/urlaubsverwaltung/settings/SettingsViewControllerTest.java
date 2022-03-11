@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvide
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettings;
 import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
@@ -280,7 +279,7 @@ class SettingsViewControllerTest {
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
-                .param("specialLeaveSettings.id", "11")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         );
 
         verify(settingsService).save(any(Settings.class));
@@ -294,14 +293,14 @@ class SettingsViewControllerTest {
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
-                .param("specialLeaveSettings.id", "11")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         )
             .andExpect(flash().attribute("success", true));
 
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
-                .param("specialLeaveSettings.id", "11")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
             )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/settings"));

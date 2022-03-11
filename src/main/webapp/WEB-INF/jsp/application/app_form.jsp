@@ -8,7 +8,7 @@
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
 
 <!DOCTYPE html>
-<html lang="${language}" class="tw-<c:out value='${theme}' />" xmlns:th="http://www.thymeleaf.org">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <head>
     <title>
@@ -326,11 +326,11 @@
                                 <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
                                 <spring:message code="application.data.specialleave.description"/>
                                 <ul>
-                                    <li><spring:message code="application.data.specialleave.own_wedding" arguments="${specialLeaveSettings.ownWedding}"/></li>
-                                    <li><spring:message code="application.data.specialleave.birth_of_child" arguments="${specialLeaveSettings.birthOfChild}"/></li>
-                                    <li><spring:message code="application.data.specialleave.death_of_child" arguments="${specialLeaveSettings.deathOfChild}"/></li>
-                                    <li><spring:message code="application.data.specialleave.death_of_parent" arguments="${specialLeaveSettings.deathOfParent}"/></li>
-                                    <li><spring:message code="application.data.specialleave.relocation_for_business_reason" arguments="${specialLeaveSettings.relocationForBusinessReasons}"/></li>
+                                    <c:forEach items="${specialLeave.specialLeaveItems}" var="specialLeaveItem" varStatus="loop">
+                                        <c:if test="${specialLeaveItem.active}">
+                                            <li><spring:message code="${specialLeaveItem.messageKey}.info" arguments="${specialLeaveItem.days}"/></li>
+                                        </c:if>
+                                    </c:forEach>
                                 </ul>
                             </span>
                             </div>

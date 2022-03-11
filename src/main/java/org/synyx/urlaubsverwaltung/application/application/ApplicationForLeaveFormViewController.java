@@ -7,13 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
@@ -27,9 +21,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsDto;
+import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettings;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 import org.synyx.urlaubsverwaltung.web.TimePropertyEditor;
@@ -58,6 +51,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.merge;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -419,7 +413,8 @@ class ApplicationForLeaveFormViewController {
         }
         model.addAttribute("vacationTypes", activeVacationTypes);
 
-        model.addAttribute("specialLeaveSettings", getSpecialLeaveSettingsDto());
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
         appendDepartmentsToReplacements(appForm);
         model.addAttribute("application", appForm);
@@ -518,10 +513,5 @@ class ApplicationForLeaveFormViewController {
         holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
         holidayReplacementDto.setDepartments(departmentNamesForPerson(holidayReplacementEntity.getPerson(), departments));
         return holidayReplacementDto;
-    }
-
-    private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
-        final Optional<SpecialLeaveSettings> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
-        return specialLeaveSettings.map(SpecialLeaveSettingsDto::mapToDto).orElseGet(SpecialLeaveSettingsDto::new);
     }
 }

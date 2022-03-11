@@ -538,77 +538,50 @@
                                 </span>
                             </div>
                             <div class="col-md-8 col-md-pull-4">
-                                <form:hidden path="specialLeaveSettings.id" />
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4" for="specialLeaveSettings.ownWedding">
-                                            <spring:message code='settings.specialleave.own_wedding'/>:
-                                        </label>
-                                        <div class="col-md-8">
-                                            <form:input id="specialLeaveSettings.ownWedding"
-                                                        path="specialLeaveSettings.ownWedding" class="form-control"
-                                                        cssErrorClass="form-control error"
-                                                        type="number" step="1"/>
-                                            <uv:error-text>
-                                                <form:errors path="specialLeaveSettings.ownWedding" />
-                                            </uv:error-text>
-                                        </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="specialLeaveSettings.birthOfChild">
-                                        <spring:message code='settings.specialleave.birth_of_child'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="specialLeaveSettings.birthOfChild"
-                                                    path="specialLeaveSettings.birthOfChild" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <uv:error-text>
-                                            <form:errors path="specialLeaveSettings.birthOfChild" />
-                                        </uv:error-text>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="specialLeaveSettings.deathOfChild">
-                                        <spring:message code='settings.specialleave.death_of_child'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="specialLeaveSettings.deathOfChild"
-                                                    path="specialLeaveSettings.deathOfChild" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <uv:error-text>
-                                            <form:errors path="specialLeaveSettings.deathOfChild" />
-                                        </uv:error-text>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="specialLeaveSettings.deathOfParent">
-                                        <spring:message code='settings.specialleave.death_of_parent'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="specialLeaveSettings.deathOfParent"
-                                                    path="specialLeaveSettings.deathOfParent" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <uv:error-text>
-                                            <form:errors path="specialLeaveSettings.deathOfParent" />
-                                        </uv:error-text>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-4" for="specialLeaveSettings.relocationForBusinessReasons">
-                                        <spring:message code='settings.specialleave.relocation_for_business_reason'/>:
-                                    </label>
-                                    <div class="col-md-8">
-                                        <form:input id="specialLeaveSettings.relocationForBusinessReasons"
-                                                    path="specialLeaveSettings.relocationForBusinessReasons" class="form-control"
-                                                    cssErrorClass="form-control error"
-                                                    type="number" step="1"/>
-                                        <uv:error-text>
-                                            <form:errors path="specialLeaveSettings.relocationForBusinessReasons" />
-                                        </uv:error-text>
-                                    </div>
-                                </div>
+
+                                <table id="special-leave-table" class="absence-type-settings-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <spring:message code='settings.specialleave.table.head.state' />
+                                            </th>
+                                            <th scope="col">
+                                                <spring:message code='settings.specialleave.table.head.type' />
+                                            </th>
+                                            <th scope="col">
+                                                <spring:message code='settings.specialleave.table.head.days' />
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${settings.specialLeaveSettings.specialLeaveSettingsItems}" var="specialLeaveSettingsItem" varStatus="loop">
+                                        <tr data-enabled="${specialLeaveSettingsItem.active}">
+                                            <td data-col-status data-th-text="<spring:message code='settings.specialleave.table.head.state' />">
+                                                <form:hidden path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].id" value="${specialLeaveSettingsItem.id}" />
+                                                <span class="checkbox-switch">
+                                                    <form:checkbox path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].active" id="specialLeave-active-${loop.index}" />
+                                                    <label for="specialLeave-active-${loop.index}" class="tw-sr-only">
+                                                        <spring:message code="settings.specialleave.action.state.label" />
+                                                    </label>
+                                                </span>
+                                            </td>
+                                            <td data-th-text="<spring:message code='settings.specialleave.table.head.type' />">
+                                                <spring:message code="${specialLeaveSettingsItem.messageKey}" />
+                                            </td>
+                                            <td data-th-text="<spring:message code='settings.specialleave.table.head.days' />">
+                                                <form:input id="specialLeave-days-${loop.index}"
+                                                            path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" class="form-control"
+                                                            cssErrorClass="form-control error"
+                                                            type="number" step="1"/>
+                                                <uv:error-text>
+                                                    <form:errors path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" />
+                                                </uv:error-text>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
+
                             </div>
                         </div>
                     </div>

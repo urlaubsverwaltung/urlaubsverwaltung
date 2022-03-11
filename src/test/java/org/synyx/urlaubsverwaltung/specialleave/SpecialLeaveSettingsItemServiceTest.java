@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class SpecialLeaveSettingsServiceTest {
+class SpecialLeaveSettingsItemServiceTest {
 
     @Mock
     private SpecialLeaveSettingsRepository specialLeaveSettingsRepository;
@@ -33,9 +33,9 @@ class SpecialLeaveSettingsServiceTest {
 
     @Test
     void save() {
-        SpecialLeaveSettings specialLeaveSettings = new SpecialLeaveSettings(1,2,3,4,5,6);
+        SpecialLeaveSettingsItem specialLeaveSettings = new SpecialLeaveSettingsItem(1,true, "message.key", 5);
 
-        specialLeaveSettingsService.save(specialLeaveSettings);
+        specialLeaveSettingsService.saveAll(List.of(specialLeaveSettings));
 
         verify(specialLeaveSettingsRepository).save(this.specialLeaveSettingsEntity.capture());
         assertThat(specialLeaveSettings).usingRecursiveComparison().isEqualTo(this.specialLeaveSettingsEntity.getValue());
@@ -45,15 +45,15 @@ class SpecialLeaveSettingsServiceTest {
     void getSpecialLeaveSettings() {
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
         when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
-        final Optional<SpecialLeaveSettings> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
         assertThat(specialLeaveSettings).isNotEmpty();
-        assertThat(specialLeaveSettingsEntity).usingRecursiveComparison().isEqualTo(specialLeaveSettings.get());
+        assertThat(specialLeaveSettingsEntity).usingRecursiveComparison().isEqualTo(specialLeaveSettings);
     }
 
     @Test
     void getSpecialLeaveSettingsReturnsEmpty() {
         when(specialLeaveSettingsRepository.findAll()).thenReturn(Collections.emptyList());
-        final Optional<SpecialLeaveSettings> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
         assertThat(specialLeaveSettings).isEmpty();
     }
 }

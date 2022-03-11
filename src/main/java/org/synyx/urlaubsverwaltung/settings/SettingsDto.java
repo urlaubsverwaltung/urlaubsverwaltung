@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsDto;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.util.Objects;
@@ -45,8 +44,8 @@ public class SettingsDto {
         return specialLeaveSettings;
     }
 
-    public void setSpecialLeaveSettings(SpecialLeaveSettingsDto specialLeaveSettingsDto) {
-        this.specialLeaveSettings = specialLeaveSettingsDto;
+    public void setSpecialLeaveSettings(SpecialLeaveSettingsDto specialLeaveSettings) {
+        this.specialLeaveSettings = specialLeaveSettings;
     }
 
     public ApplicationSettings getApplicationSettings() {

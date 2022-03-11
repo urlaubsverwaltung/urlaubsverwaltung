@@ -12,11 +12,9 @@ class SpecialLeaveSettingsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer ownWedding;
-    private Integer birthOfChild;
-    private Integer deathOfChild;
-    private Integer deathOfParent;
-    private Integer relocationForBusinessReasons;
+    private boolean active;
+    private String messageKey;
+    private Integer days;
 
     public Integer getId() {
         return id;
@@ -26,23 +24,27 @@ class SpecialLeaveSettingsEntity {
         this.id = id;
     }
 
-    public Integer getOwnWedding() {
-        return ownWedding;
+    public boolean isActive() {
+        return active;
     }
 
-    public Integer getBirthOfChild() {
-        return birthOfChild;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public Integer getDeathOfChild() {
-        return deathOfChild;
+    public String getMessageKey() {
+        return messageKey;
     }
 
-    public Integer getDeathOfParent() {
-        return deathOfParent;
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
     }
 
-    public Integer getRelocationForBusinessReasons() {
-        return relocationForBusinessReasons;
+    public Integer getDays() {
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
     }
 }
