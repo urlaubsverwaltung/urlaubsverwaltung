@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 /**
  * View class representing an application for leave.
@@ -24,10 +26,12 @@ public class ApplicationForLeaveForm {
     private Person person;
 
     // period: date and time
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate startDate;
 
     private Time startTime;
 
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate endDate;
 
     private Time endTime;
