@@ -186,7 +186,7 @@
                             </div>
                         </div>
 
-                            <%-- start and end date--%>
+                        <%-- start and end date--%>
                         <div class="row">
 
                             <div class="col-md-8">
@@ -199,6 +199,9 @@
                                                     cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
                                                     autocomplete="off"
                                                     data-iso-value="${application.startDateIsoValue}"/>
+                                        <uv:error-text>
+                                            <form:errors path="startDate" />
+                                        </uv:error-text>
                                     </div>
                                     <div class="col-xs-4 col-md-4">
                                         <form:input id="startTime" path="startTime" class="form-control"
@@ -215,6 +218,9 @@
                                         <form:input id="to" path="endDate" class="form-control"
                                                     cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"
                                                     autocomplete="off" data-iso-value="${application.endDateIsoValue}"/>
+                                        <uv:error-text>
+                                            <form:errors path="endDate" />
+                                        </uv:error-text>
                                     </div>
                                     <div class="col-xs-4 col-md-4">
                                         <form:input id="endTime" path="endTime" class="form-control"
