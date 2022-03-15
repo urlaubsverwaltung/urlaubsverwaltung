@@ -10,10 +10,10 @@
 <html lang="${language}" class="tw-<c:out value='${theme}' />">
 <head>
     <title>
-        <spring:message code="person.form.basedata.title"/>
+        <spring:message code="person.form.basedata.title" arguments="${personBasedata.niceName}"/>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value='person_form.js' />"></script>
+    <script defer src="<asset:url value='person_basedata.js' />"></script>
 </head>
 
 <body>
@@ -27,70 +27,88 @@
 
         <uv:section-heading>
             <h2>
-                <spring:message code="person.form.basedata.title" arguments="${person.niceName}"/>
+                <spring:message code="person.form.basedata.title" arguments="${personBasedata.niceName}"/>
             </h2>
         </uv:section-heading>
 
         <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
             <div class="tw-p-1">
-                <uv:avatar url="${person.gravatarURL}?d=mm&s=120" username="${person.niceName}" width="60px" height="60px" border="true" />
+                <uv:avatar url="${personBasedata.gravatarURL}?d=mm&s=120" username="${personBasedata.niceName}" width="60px" height="60px" border="true" />
             </div>
             <div>
                 <div class="tw-mb-1">
-                    <a href="${URL_PREFIX}/person/${person.id}/overview" class="tw-text-lg print:no-link">
-                        <c:out value="${person.niceName}"/>
+                    <a href="${URL_PREFIX}/person/${personBasedata.personId}/overview" class="tw-text-lg print:no-link">
+                        <c:out value="${personBasedata.niceName}"/>
                     </a>
                 </div>
-                <a href="mailto:<c:out value='${person.email}'/>" class="tw-text-sm print:no-link">
+                <a href="mailto:<c:out value='${personBasedata.email}'/>" class="tw-text-sm print:no-link">
                     <span class="tw-flex tw-items-center">
                         <icon:mail className="tw-w-4 tw-h-4" />
-                        &nbsp;<c:out value="${person.email}"/>
+                        &nbsp;<c:out value="${personBasedata.email}"/>
                     </span>
                 </a>
             </div>
         </div>
 
-        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/basedata" modelAttribute="person" class="form-horizontal">
-            <form:hidden path="id" />
+
+        <form:form method="POST" action="${URL_PREFIX}/person/${personBasedata.personId}/basedata" modelAttribute="personBasedata" class="form-horizontal">
+            <form:hidden path="personId" />
             <form:hidden path="niceName" />
             <form:hidden path="gravatarURL" />
             <form:hidden path="email" />
 
-            <div class="form-section tw-mb-16">
-                <div class="row">
-                    <div class="form-group">
-                        <label class="control-label col-md-3 tw-leading-snug" for="personnelNumber">
-                            <spring:message code='person.form.basedata.personnelNumber'/>:
-                        </label>
+            <div class="form-section ">
+                <div class="row tw-mb-16">
+                    <div class="col-md-4 col-md-push-8">
+                        <span class="help-block tw-text-sm">
+                        </span>
+                    </div>
+                    <div class="col-md-8 col-md-pull-4">
+                        <div class="form-group">
+                            <label class="control-label col-md-3 tw-leading-snug" for="personnelNumber">
+                                <spring:message code='person.form.basedata.personnelNumber'/>:
+                            </label>
 
-                        <div class="col-md-9">
-                            <form:input id="personnelNumber"
-                                             path="personnelNumber" cssClass="form-control"
-                                             cssErrorClass="form-control error"
-                                             value="${account.personnelNumber}"/>
-                            <uv:error-text>
-                                <form:errors path="personnelNumber" />
-                            </uv:error-text>
+                            <div class="col-md-9">
+                                <form:input id="personnelNumber"
+                                            path="personnelNumber" cssClass="form-control"
+                                            cssErrorClass="form-control error"
+                                            value="${personBasedata.personnelNumber}"/>
+                                <uv:error-text>
+                                    <form:errors path="personnelNumber" />
+                                </uv:error-text>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="form-section tw-mb-16">
-                <div class="row">
-                    <div class="form-group">
-                        <label class="control-label col-md-3 tw-leading-snug" for="additionalInfo">
-                            <spring:message code='person.form.basedata.additionalInformation'/>:
-                        </label>
+            <div class="form-section ">
+                <div class="row tw-mb-16">
+                    <div class="col-md-4 col-md-push-8">
+                        <span class="help-block tw-text-sm">
+                        </span>
+                    </div>
+                    <div class="col-md-8 col-md-pull-4">
 
-                        <div class="col-md-9">
-                            <form:input id="additionalInfo"
-                                        path="additionalInfo" cssClass="form-control"
-                                        cssErrorClass="form-control error"
-                                        value="${account.additionalInfo}"/>
-                            <uv:error-text>
-                                <form:errors path="additionalInfo" />
-                            </uv:error-text>
+                        <div class="form-group">
+                            <label class="control-label col-md-3 tw-leading-snug" for="additionalInfo">
+                                <spring:message code='person.form.basedata.additionalInformation'/>:
+                            </label>
+
+                            <div class="col-md-9">
+                                <small>
+                                    <span id="text-additional-info"></span><spring:message code='person.form.basedata.additionalInformation.maxChars'/>
+                                </small>
+                                <form:textarea id="additionalInfo" rows="3" path="additionalInfo" cssClass="form-control"
+                                               cssErrorClass="form-control error"
+                                               onkeyup="count(this.value, 'text-additional-info');"
+                                               onkeydown="maxChars(this,255); count(this.value, 'text-additional-info');"
+                                            value="${account.additionalInfo}"/>
+                                <uv:error-text>
+                                    <form:errors path="additionalInfo" />
+                                </uv:error-text>
+                            </div>
                         </div>
                     </div>
                 </div>

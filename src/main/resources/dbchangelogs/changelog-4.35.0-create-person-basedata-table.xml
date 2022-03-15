@@ -1,0 +1,36 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="weigel" id="create_person_basedata_table">
+
+    <createTable tableName="person_basedata">
+      <column name="person_id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="personnel_number" type="VARCHAR(255)">
+        <constraints nullable="true" />
+      </column>
+      <column name="additional_information" type="VARCHAR(255)">
+        <constraints nullable="true" />
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="person_basedata"
+      baseColumnNames="person_id"
+      constraintName="fk_person_basedata_person_id"
+      onDelete="CASCADE"
+      referencedTableName="person"
+      referencedColumnNames="id"
+    />
+
+    <addUniqueConstraint
+      tableName="person_basedata"
+      columnNames="person_id"
+      constraintName="unique_person_basedata_per_person"
+    />
+
+  </changeSet>
+</databaseChangeLog>

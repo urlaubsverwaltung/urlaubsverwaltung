@@ -53,13 +53,32 @@
                     </jsp:body>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
-                <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">
-                    <dt class="tw-font-normal">
-                        <spring:message code="person.account.basedata.username"/>:
-                    </dt>
-                    <dd>
-                        ${person.username}
-                    </dd>
+                <dl class="tw-m-0 tw-ml-25 tw-list-none tw-grid tw-grid-cols-2 tw-gap-2">
+
+                        <dt class="tw-font-normal">
+                            <spring:message code="person.account.basedata.username"/>:
+                        </dt>
+                        <dd>
+                            ${person.username}
+                        </dd>
+
+                    <c:if test="${not empty personBasedata.personnelNumber}">
+                        <dt class="tw-font-normal">
+                            <spring:message code="person.account.basedata.personnelNumber"/>:
+                        </dt>
+                        <dd class="tw-grid-col-span-2">
+                            ${personBasedata.personnelNumber}
+                        </dd>
+                    </c:if>
+
+                    <c:if test="${not empty personBasedata.additionalInfo}">
+                        <dt class="tw-font-normal">
+                            <spring:message code="person.account.basedata.additionalInfo"/>:
+                        </dt>
+                        <dd class="tw-grid-col-span-2">
+                            ${personBasedata.additionalInfo}
+                        </dd>
+                    </c:if>
                 </dl>
             </div>
             <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">

@@ -1,21 +1,21 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person.masterdata;
 
 public class PersonBasedataDto {
-
-    private Integer id;
-    private String niceName;
-    private String gravatarURL;
-    private String email;
 
     private String personnelNumber;
     private String additionalInfo;
 
-    public Integer getId() {
-        return id;
+    private int personId;
+    private String niceName;
+    private String gravatarURL;
+    private String email;
+
+    public int getPersonId() {
+        return personId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 
     public String getNiceName() {

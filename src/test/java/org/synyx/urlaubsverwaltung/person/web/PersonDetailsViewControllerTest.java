@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
@@ -86,6 +87,8 @@ class PersonDetailsViewControllerTest {
     private WorkingTimeService workingTimeService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonBasedataService personBasedataService;
 
     private Person person;
 
@@ -94,7 +97,7 @@ class PersonDetailsViewControllerTest {
 
         clock = Clock.systemUTC();
         sut = new PersonDetailsViewController(personService, accountService, vacationDaysService, departmentService,
-            workingTimeService, settingsService, clock);
+            workingTimeService, settingsService, personBasedataService, clock);
 
         person = new Person();
         person.setId(1);
