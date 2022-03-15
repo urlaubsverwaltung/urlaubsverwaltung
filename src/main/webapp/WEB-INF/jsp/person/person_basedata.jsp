@@ -10,7 +10,7 @@
 <html lang="${language}" class="tw-<c:out value='${theme}' />">
 <head>
     <title>
-        <spring:message code="person.form.masterdata.title"/>
+        <spring:message code="person.form.basedata.title"/>
     </title>
     <uv:custom-head/>
     <script defer src="<asset:url value='person_form.js' />"></script>
@@ -27,7 +27,7 @@
 
         <uv:section-heading>
             <h2>
-                <spring:message code="person.form.masterdata.title" arguments="${person.niceName}"/>
+                <spring:message code="person.form.basedata.title" arguments="${person.niceName}"/>
             </h2>
         </uv:section-heading>
 
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/masterdata" modelAttribute="person" class="form-horizontal">
+        <form:form method="POST" action="${URL_PREFIX}/person/${person.id}/basedata" modelAttribute="person" class="form-horizontal">
             <form:hidden path="id" />
             <form:hidden path="niceName" />
             <form:hidden path="gravatarURL" />
@@ -60,7 +60,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label class="control-label col-md-3 tw-leading-snug" for="personnelNumber">
-                            <spring:message code='person.form.masterdata.personnel_number'/>:
+                            <spring:message code='person.form.basedata.personnelNumber'/>:
                         </label>
 
                         <div class="col-md-9">
@@ -80,7 +80,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label class="control-label col-md-3 tw-leading-snug" for="additionalInfo">
-                            <spring:message code='person.form.masterdata.additional_info'/>:
+                            <spring:message code='person.form.basedata.additionalInformation'/>:
                         </label>
 
                         <div class="col-md-9">

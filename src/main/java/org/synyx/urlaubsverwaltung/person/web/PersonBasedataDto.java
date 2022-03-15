@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-public class PersonMasterdataDto {
+public class PersonBasedataDto {
 
     private Integer id;
     private String niceName;
@@ -30,7 +30,7 @@ public class PersonMasterdataDto {
         return gravatarURL;
     }
 
-    public PersonMasterdataDto setGravatarURL(String gravatarURL) {
+    public PersonBasedataDto setGravatarURL(String gravatarURL) {
         this.gravatarURL = gravatarURL;
         return this;
     }
@@ -39,7 +39,7 @@ public class PersonMasterdataDto {
         return email;
     }
 
-    public PersonMasterdataDto setEmail(String email) {
+    public PersonBasedataDto setEmail(String email) {
         this.email = email;
         return this;
     }

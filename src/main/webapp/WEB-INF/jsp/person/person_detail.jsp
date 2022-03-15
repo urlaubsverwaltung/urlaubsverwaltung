@@ -41,21 +41,21 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <c:if test="${canEditPermissions}">
-                            <a href="${URL_PREFIX}/person/${person.id}/masterdata" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                            <a href="${URL_PREFIX}/person/${person.id}/basedata" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
                         </c:if>
                     </jsp:attribute>
                     <jsp:body>
                         <h2>
-                            <spring:message code="person.account.masterData.title"/>
+                            <spring:message code="person.account.basedata.title"/>
                         </h2>
                     </jsp:body>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
                 <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">
                     <dt class="tw-font-normal">
-                        <spring:message code="person.account.masterData.username"/>:
+                        <spring:message code="person.account.basedata.username"/>:
                     </dt>
                     <dd>
                         ${person.username}
