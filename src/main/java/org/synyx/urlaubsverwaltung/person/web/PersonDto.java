@@ -9,8 +9,8 @@ public class PersonDto {
     private final String lastName;
     private final String niceName;
 
-    private String personnelNummber;
-    private String additionalInfo;
+    private final String personnelNumber;
+    private final String additionalInformation;
 
     private final Double entitlementYear;
     private final Double entitlementActual;
@@ -19,7 +19,7 @@ public class PersonDto {
     private final Double vacationDaysLeftRemaining;
 
     private PersonDto(long id, String gravatarUrl, String firstName, String lastName, String niceName,
-                      Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
+                      String personnelNumber, String additionalInformation, Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
                       Double vacationDaysLeft, Double vacationDaysLeftRemaining) {
 
         this.id = id;
@@ -27,6 +27,8 @@ public class PersonDto {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
+        this.personnelNumber = personnelNumber;
+        this.additionalInformation = additionalInformation;
         this.entitlementYear = entitlementYear;
         this.entitlementActual = entitlementActual;
         this.entitlementRemaining = entitlementRemaining;
@@ -52,6 +54,14 @@ public class PersonDto {
 
     public String getNiceName() {
         return niceName;
+    }
+
+    public String getPersonnelNumber() {
+        return personnelNumber;
+    }
+
+    public String getAdditionalInformation() {
+        return additionalInformation;
     }
 
     public Double getEntitlementYear() {
@@ -84,6 +94,8 @@ public class PersonDto {
         private String firstName;
         private String lastName;
         private String niceName;
+        private String personnelNumber;
+        private String additionalInformation;
         private Double entitlementYear;
         private Double entitlementActual;
         private Double entitlementRemaining;
@@ -112,6 +124,16 @@ public class PersonDto {
 
         public Builder niceName(String niceName) {
             this.niceName = niceName;
+            return this;
+        }
+
+        public Builder personellNumber(String personnelNumber) {
+            this.personnelNumber = personnelNumber;
+            return this;
+        }
+
+        public Builder additionalInformation(String additionalInformation) {
+            this.additionalInformation = additionalInformation;
             return this;
         }
 
@@ -147,6 +169,8 @@ public class PersonDto {
                 firstName,
                 lastName,
                 niceName,
+                personnelNumber,
+                additionalInformation,
                 entitlementYear,
                 entitlementActual,
                 entitlementRemaining,
