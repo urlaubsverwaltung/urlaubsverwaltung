@@ -18,10 +18,10 @@ public class PersonBasedataService {
 
     public Optional<PersonBasedata> getBasedataByPersonId(int personId) {
 
-        final Optional<PersonBasedataEntity> personMasterdataEntity = personBasedataRepository.findById(personId);
+        final Optional<PersonBasedataEntity> personBasedataEntity = personBasedataRepository.findById(personId);
 
-        if(personMasterdataEntity.isPresent()) {
-            PersonBasedata personBasedata = mapFromEntity(personMasterdataEntity.get());
+        if(personBasedataEntity.isPresent()) {
+            PersonBasedata personBasedata = mapFromEntity(personBasedataEntity.get());
             return Optional.of(personBasedata);
         }
 
