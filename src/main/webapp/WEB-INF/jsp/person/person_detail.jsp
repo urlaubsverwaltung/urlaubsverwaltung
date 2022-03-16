@@ -73,7 +73,7 @@
 
                     <c:if test="${not empty personBasedata.additionalInfo}">
                         <dt class="tw-font-normal">
-                            <spring:message code="person.account.basedata.additionalInfo"/>:
+                            <spring:message code="person.account.basedata.additionalInformation"/>:
                         </dt>
                         <dd class="tw-grid-col-span-2">
                             ${personBasedata.additionalInfo}
