@@ -6,14 +6,13 @@ $(document).ready(function () {
   $.tablesorter.addParser(dataValueNumberParser);
 
   $("#application-statistic-table").tablesorter({
-    sortList: [[1, 0]],
+    sortList: [[2, 0]],
     headers: {
       0: { sorter: false },
-      3: { sorter: false },
       4: { sorter: false },
+      5: { sorter: dataValueNumberParser.id },
       6: { sorter: dataValueNumberParser.id },
       7: { sorter: dataValueNumberParser.id },
-      8: { sorter: dataValueNumberParser.id },
     },
   });
 });
