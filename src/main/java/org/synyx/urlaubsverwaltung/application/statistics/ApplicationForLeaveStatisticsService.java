@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -43,12 +44,10 @@ class ApplicationForLeaveStatisticsService {
     List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
         final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         return getRelevantPersons().stream()
-            .map(person ->
-                personBasedataService
-                    .getBasedataByPersonId(person.getId())
-                    .map(personBasedata ->
-                        applicationForLeaveStatisticsBuilder.build(person, personBasedata, period.getStartDate(), period.getEndDate(), activeVacationTypes))
-                    .orElse(applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate(), activeVacationTypes)))
+            .map(person -> {
+                final PersonBasedata personBasedata = personBasedataService.getBasedataByPersonId(person.getId()).orElse(null);
+                return applicationForLeaveStatisticsBuilder.build(person, personBasedata, period.getStartDate(), period.getEndDate(), activeVacationTypes);
+            })
             .collect(toList());
     }
 

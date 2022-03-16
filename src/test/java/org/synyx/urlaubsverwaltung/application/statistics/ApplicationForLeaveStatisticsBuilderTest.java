@@ -67,7 +67,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Test
     void ensureThrowsIfTheGivenFromAndToDatesAreNotInTheSameYear() {
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(new Person(), of(2014, 1, 1), of(2015, 1, 1), List.of(type)));
+        assertThatIllegalArgumentException().isThrownBy(() -> sut.build(new Person(), null, of(2014, 1, 1), of(2015, 1, 1), List.of(type)));
     }
 
     @Test
@@ -161,7 +161,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
 
-        final ApplicationForLeaveStatistics statistics = sut.build(person, from, to, List.of(type));
+        final ApplicationForLeaveStatistics statistics = sut.build(person, null, from, to, List.of(type));
         assertThat(statistics.getPerson()).isEqualTo(person);
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(new BigDecimal("4"));
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(new BigDecimal("3"));
@@ -218,7 +218,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
 
-        final ApplicationForLeaveStatistics statistics = sut.build(person, periodFrom, periodTo, List.of(type));
+        final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(16));
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
         assertThat(statistics.getLeftVacationDays()).isEqualTo(TEN);
@@ -241,7 +241,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true);
 
-        final ApplicationForLeaveStatistics statistics = sut.build(person, periodFrom, periodTo, List.of(type));
+        final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
         assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofMinutes(390));
         assertThat(statistics.getLeftVacationDays()).isEqualTo(new BigDecimal("8.5"));
     }

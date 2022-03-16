@@ -49,10 +49,6 @@ class ApplicationForLeaveStatisticsBuilder {
         this.overtimeService = overtimeService;
     }
 
-    public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
-        return this.build(person, null, from, to, vacationTypes);
-    }
-
     public ApplicationForLeaveStatistics build(Person person, PersonBasedata personBasedata, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
