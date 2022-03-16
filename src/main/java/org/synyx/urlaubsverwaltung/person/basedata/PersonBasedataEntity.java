@@ -1,8 +1,13 @@
-package org.synyx.urlaubsverwaltung.person.masterdata;
+package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 import static javax.persistence.FetchType.LAZY;
 

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.masterdata;
+package org.synyx.urlaubsverwaltung.person.basedata;
 
 public class PersonBasedata {
 

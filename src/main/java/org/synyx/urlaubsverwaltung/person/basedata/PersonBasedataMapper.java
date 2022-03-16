@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.masterdata;
+package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 

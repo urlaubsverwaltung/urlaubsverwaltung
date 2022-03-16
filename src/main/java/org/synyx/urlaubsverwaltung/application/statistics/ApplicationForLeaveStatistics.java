@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 
 import java.math.BigDecimal;
 import java.time.Duration;

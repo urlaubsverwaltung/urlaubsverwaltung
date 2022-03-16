@@ -1,11 +1,11 @@
-package org.synyx.urlaubsverwaltung.person.masterdata;
+package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataMapper.mapFromEntity;
-import static org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataMapper.mapToEntity;
+import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataMapper.mapFromEntity;
+import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataMapper.mapToEntity;
 
 @Service
 public class PersonBasedataService {

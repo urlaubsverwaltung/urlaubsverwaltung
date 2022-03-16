@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 
 final class PersonDetailsBasedataDtoMapper {
 

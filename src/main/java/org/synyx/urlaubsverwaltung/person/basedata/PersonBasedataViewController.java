@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.masterdata;
+package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +15,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.function.Supplier;
 
-import static org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataDtoMapper.mapToPersonBasedata;
-import static org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataDtoMapper.mapToPersonBasedataDto;
+import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedata;
+import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedataDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
