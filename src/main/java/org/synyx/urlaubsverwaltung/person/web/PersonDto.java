@@ -127,7 +127,7 @@ public class PersonDto {
             return this;
         }
 
-        public Builder personellNumber(String personnelNumber) {
+        public Builder personnelNumber(String personnelNumber) {
             this.personnelNumber = personnelNumber;
             return this;
         }
