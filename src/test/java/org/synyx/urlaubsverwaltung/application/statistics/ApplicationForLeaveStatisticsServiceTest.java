@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.masterdata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
@@ -35,6 +36,8 @@ class ApplicationForLeaveStatisticsServiceTest {
     @Mock
     private PersonService personService;
     @Mock
+    private PersonBasedataService personBasedataService;
+    @Mock
     private DepartmentService departmentService;
     @Mock
     private ApplicationForLeaveStatisticsBuilder applicationForLeaveStatisticsBuilder;
@@ -43,7 +46,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsService(personService, departmentService, applicationForLeaveStatisticsBuilder, vacationTypeService);
+        sut = new ApplicationForLeaveStatisticsService(personService, personBasedataService, departmentService, applicationForLeaveStatisticsBuilder, vacationTypeService);
     }
 
     @Test
