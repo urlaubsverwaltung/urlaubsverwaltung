@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -58,7 +59,11 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @PostMapping
-    public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period, Errors errors) {
+    public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
+
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("filterPeriodIncorrect", true);
+        }
 
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());

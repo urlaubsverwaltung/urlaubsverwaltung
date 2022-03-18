@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -57,7 +58,11 @@ public class SickDaysOverviewViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/filter")
-    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors) {
+    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
+
+        if(errors.hasErrors()){
+            redirectAttributes.addFlashAttribute("filterPeriodIncorrect", true);
+        }
 
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateISoString = dateFormatAware.formatISO(period.getEndDate());
