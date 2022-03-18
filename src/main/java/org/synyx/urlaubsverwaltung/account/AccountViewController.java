@@ -80,7 +80,7 @@ public class AccountViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
-                                @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
+                                @ModelAttribute("account") AccountForm accountForm, Errors errors, Model model,
                                 RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
