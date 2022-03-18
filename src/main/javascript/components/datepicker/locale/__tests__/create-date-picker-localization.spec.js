@@ -2,7 +2,7 @@
 import { createDatepickerLocalization } from "..";
 
 describe("createDatepickerLocalization", () => {
-  describe.each([["de", "de-AU", "el"]])("dateAdapter for duet-date-picker for locale=%s", (givenLocale) => {
+  describe.each([["de", "de-AT", "el"]])("dateAdapter for duet-date-picker for locale=%s", (givenLocale) => {
     test("defines dateFormat", () => {
       const datepickerLocalization = createDatepickerLocalization({ locale: givenLocale });
       expect(datepickerLocalization.dateFormat).toBe("dd.MM.yyyy");
