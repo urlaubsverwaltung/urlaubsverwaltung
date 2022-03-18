@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static java.util.Objects.requireNonNullElse;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 /**
  * View class to record overtime for a certain period of time.
@@ -19,7 +21,9 @@ public class OvertimeForm {
 
     private Integer id;
     private Person person;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate startDate;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate endDate;
     private String comment;
     private boolean reduce;
