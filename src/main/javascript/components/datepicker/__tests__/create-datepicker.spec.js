@@ -1,6 +1,4 @@
 import { createDatepicker } from "../create-datepicker";
-import DatepickerEN from "../locale/en";
-import DatepickerDE from "../locale/de";
 import fetchMock from "fetch-mock";
 import de from "date-fns/locale/de";
 import { setLocale } from "../../../lib/date-fns/locale-resolver";
@@ -142,40 +140,6 @@ describe("create-datepicker", () => {
     fireEvent(datepicker, event);
 
     expect(onSelect).toHaveBeenCalledWith(event);
-  });
-
-  test("initialises duet-date-picker with EN adapter for uv localisation 'en' config", async () => {
-    window.uv.datepicker.localisation.locale = "en";
-
-    document.body.innerHTML = `
-      <input id="awesome-date-picker" />
-    `;
-
-    const urlPrefix = "";
-    const getPersonId = () => 42;
-
-    await createDatepicker("#awesome-date-picker", { urlPrefix, getPersonId });
-
-    const duetDatePicker = document.querySelector("duet-date-picker");
-    expect(duetDatePicker).toBeTruthy();
-    expect(duetDatePicker.dateAdapter).toBe(DatepickerEN.dateAdapter);
-  });
-
-  test("initialises duet-date-picker with DE adapter for uv localisation 'de' config", async () => {
-    window.uv.datepicker.localisation.locale = "de";
-
-    document.body.innerHTML = `
-      <input id="awesome-date-picker" />
-    `;
-
-    const urlPrefix = "";
-    const getPersonId = () => 42;
-
-    await createDatepicker("#awesome-date-picker", { urlPrefix, getPersonId });
-
-    const duetDatePicker = document.querySelector("duet-date-picker");
-    expect(duetDatePicker).toBeTruthy();
-    expect(duetDatePicker.dateAdapter).toBe(DatepickerDE.dateAdapter);
   });
 
   describe.each([["en"], ["de"], ["de-de"]])("with browser locale '%s'", (givenLanguage) => {

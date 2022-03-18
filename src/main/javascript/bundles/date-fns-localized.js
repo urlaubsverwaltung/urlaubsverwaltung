@@ -1,17 +1,37 @@
 import { setLocale } from "../lib/date-fns/locale-resolver";
 
 const language = window.navigator.language.slice(0, 2);
+const subtag = window.navigator.language.slice(3);
 
-if (language === "de") {
-  if (window.navigator.language.slice(3, 5) === "AT") {
-    import(/* webpackChunkName: "date-fn-locale-de-AT" */ "date-fns/locale/de-AT").then((module) =>
-      setLocale(module.default),
-    );
-  } else {
-    import(/* webpackChunkName: "date-fn-locale-de" */ "date-fns/locale/de").then((module) =>
-      setLocale(module.default),
-    );
+switch (language) {
+  case "de": {
+    if (subtag.startsWith("AT")) {
+      import(/* webpackChunkName: "date-fn-locale-de-AT" */ "date-fns/locale/de-AT").then((module) =>
+        setLocale(module.default),
+      );
+    } else {
+      import(/* webpackChunkName: "date-fn-locale-de" */ "date-fns/locale/de").then((module) =>
+        setLocale(module.default),
+      );
+    }
+
+    break;
   }
-} else if (language === "el") {
-  import(/* webpackChunkName: "date-fn-locale-el" */ "date-fns/locale/el").then((module) => setLocale(module.default));
+  case "en": {
+    if (subtag.startsWith("GB")) {
+      import(/* webpackChunkName: "date-fn-locale-en-gb" */ "date-fns/locale/en-GB").then((module) =>
+        setLocale(module.default),
+      );
+    }
+
+    break;
+  }
+  case "el": {
+    import(/* webpackChunkName: "date-fn-locale-el" */ "date-fns/locale/el").then((module) =>
+      setLocale(module.default),
+    );
+
+    break;
+  }
+  // No default
 }
