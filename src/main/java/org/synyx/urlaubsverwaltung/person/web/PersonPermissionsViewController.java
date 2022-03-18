@@ -58,7 +58,8 @@ public class PersonPermissionsViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/permissions")
     public String editPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId,
-                                                        @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                                        @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors,
+                                                        RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         validator.validate(personPermissionsDto, errors);
 

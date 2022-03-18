@@ -79,9 +79,9 @@ public class SettingsViewController {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@ModelAttribute("settings") SettingsDto settingsDto,
+    public String settingsSaved(@ModelAttribute("settings") SettingsDto settingsDto, Errors errors,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
-                                Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+                                Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
         final Settings settings = settingsDtoToSettings(settingsDto);
         settingsValidator.validate(settings, errors);

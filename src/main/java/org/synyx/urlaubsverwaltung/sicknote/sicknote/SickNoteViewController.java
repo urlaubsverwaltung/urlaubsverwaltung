@@ -190,7 +190,7 @@ class SickNoteViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Integer id,
-                             @ModelAttribute("comment") SickNoteCommentEntity comment, RedirectAttributes redirectAttributes, Errors errors)
+                             @ModelAttribute("comment") SickNoteCommentEntity comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownSickNoteException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));

@@ -123,8 +123,8 @@ class ApplicationForLeaveDetailsViewController {
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/allow")
     public String allowApplication(@PathVariable("applicationId") Integer applicationId,
-                                   @ModelAttribute("comment") ApplicationCommentForm comment,
-                                   @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
+                                   @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+                                   @RequestParam(value = "redirect", required = false) String redirectUrl,
                                    RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
@@ -206,8 +206,8 @@ class ApplicationForLeaveDetailsViewController {
     @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
     @PostMapping("/{applicationId}/reject")
     public String rejectApplication(@PathVariable("applicationId") Integer applicationId,
-                                    @ModelAttribute("comment") ApplicationCommentForm comment,
-                                    @RequestParam(value = "redirect", required = false) String redirectUrl, Errors errors,
+                                    @ModelAttribute("comment") ApplicationCommentForm comment, Errors errors,
+                                    @RequestParam(value = "redirect", required = false) String redirectUrl,
                                     RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         final Application application = applicationService.getApplicationById(applicationId)
