@@ -583,6 +583,46 @@ class OvertimeViewControllerTest {
     }
 
     @Test
+    void createOvertimeRecordWithWrongStartDateFormatIsHandled() throws Exception {
+
+        mockSettings();
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        overtime.setId(2);
+        when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
+
+        perform(post("/web/overtime")
+            .param("person.id", "4")
+            .param("startDate", "02.07.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"));
+    }
+
+    @Test
+    void createOvertimeRecordWithWrongEndDateFormatIsHandled() throws Exception {
+
+        mockSettings();
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        overtime.setId(2);
+        when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
+
+        perform(post("/web/overtime")
+            .param("person.id", "4")
+            .param("endDate", "02.07.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"));
+    }
+
+    @Test
     void ensureCreateOvertimeValidationErrorPageDoesNotShowReductionWhenFeatureIsDisabled() throws Exception {
 
         final Person person = new Person();
@@ -756,6 +796,50 @@ class OvertimeViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/overtime/2"))
             .andExpect(flash().attribute("overtimeRecord", "EDITED"));
+    }
+
+    @Test
+    void updateOvertimeWrongStartDateFormatIsHandled() throws Exception {
+
+        mockSettings();
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        overtime.setId(2);
+        when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
+        when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
+
+        perform(post("/web/overtime/2")
+            .param("id", "2")
+            .param("person.id", "4")
+            .param("startDate", "02.07.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"));
+    }
+
+    @Test
+    void updateOvertimeWrongEndDateFormatIsHandled() throws Exception {
+
+        mockSettings();
+
+        final Person overtimePerson = new Person();
+        overtimePerson.setId(4);
+        when(personService.getSignedInUser()).thenReturn(overtimePerson);
+
+        final Overtime overtime = new Overtime(overtimePerson, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
+        overtime.setId(2);
+        when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
+        when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
+
+        perform(post("/web/overtime/2")
+            .param("id", "2")
+            .param("person.id", "4")
+            .param("endDate", "02.07.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test
