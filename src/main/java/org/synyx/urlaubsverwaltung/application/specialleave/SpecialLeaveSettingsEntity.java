@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.specialleave;
+package org.synyx.urlaubsverwaltung.application.specialleave;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

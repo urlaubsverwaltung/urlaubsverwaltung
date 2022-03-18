@@ -1,6 +1,5 @@
-package org.synyx.urlaubsverwaltung.specialleave;
+package org.synyx.urlaubsverwaltung.application.specialleave;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ public class SpecialLeaveSettingsService {
 
     private final SpecialLeaveSettingsRepository specialLeaveSettingsRepository;
 
-    public SpecialLeaveSettingsService(SpecialLeaveSettingsRepository specialLeaveSettingsRepository, ObjectMapper objectMapper) {
+    public SpecialLeaveSettingsService(SpecialLeaveSettingsRepository specialLeaveSettingsRepository) {
         this.specialLeaveSettingsRepository = specialLeaveSettingsRepository;
     }
 
@@ -30,16 +29,16 @@ public class SpecialLeaveSettingsService {
         specialLeaveSettingsRepository.saveAll(specialLeaveSettingsEntities);
     }
 
+    public List<SpecialLeaveSettingsItem> getSpecialLeaveSettings() {
+        final Iterable<SpecialLeaveSettingsEntity> allSpecialLeaveSettings = this.specialLeaveSettingsRepository.findAll();
+        return Streamable.of(allSpecialLeaveSettings).map(this::toSpecialLeaveSettingsItem).toList();
+    }
+
     private SpecialLeaveSettingsEntity mergeUpdates(Map<Integer, SpecialLeaveSettingsItem> itemsById, SpecialLeaveSettingsEntity entity) {
         final SpecialLeaveSettingsItem specialLeaveSettingsItem = itemsById.get(entity.getId());
         entity.setActive(specialLeaveSettingsItem.isActive());
         entity.setDays(specialLeaveSettingsItem.getDays());
         return entity;
-    }
-
-    public List<SpecialLeaveSettingsItem> getSpecialLeaveSettings() {
-        final Iterable<SpecialLeaveSettingsEntity> allSpecialLeaveSettings = this.specialLeaveSettingsRepository.findAll();
-        return Streamable.of(allSpecialLeaveSettings).map(this::toSpecialLeaveSettingsItem).toList();
     }
 
     private SpecialLeaveSettingsItem toSpecialLeaveSettingsItem(SpecialLeaveSettingsEntity specialLeaveSettingsEntity) {

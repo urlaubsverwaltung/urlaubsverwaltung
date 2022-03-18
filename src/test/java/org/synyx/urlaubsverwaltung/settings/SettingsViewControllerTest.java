@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvide
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;

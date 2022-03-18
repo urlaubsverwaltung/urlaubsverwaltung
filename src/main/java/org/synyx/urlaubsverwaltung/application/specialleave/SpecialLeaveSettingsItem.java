@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.specialleave;
+package org.synyx.urlaubsverwaltung.application.specialleave;
 
 public class SpecialLeaveSettingsItem {
 

@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsItemDto;
-
 import java.util.List;
 
 public class SpecialLeaveDto {
@@ -14,5 +12,12 @@ public class SpecialLeaveDto {
 
     public void setSpecialLeaveItems(List<SpecialLeaveItemDto> specialLeaveItems) {
         this.specialLeaveItems = specialLeaveItems;
+    }
+
+    @Override
+    public String toString() {
+        return "SpecialLeaveDto{" +
+            "specialLeaveItems=" + specialLeaveItems +
+            '}';
     }
 }

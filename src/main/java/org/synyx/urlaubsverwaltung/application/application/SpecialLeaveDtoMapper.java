@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 
 import java.util.List;
 import java.util.function.Function;
@@ -8,6 +8,9 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 
 public class SpecialLeaveDtoMapper {
+
+    private SpecialLeaveDtoMapper() {
+    }
 
     public static SpecialLeaveDto mapToSpecialLeaveSettingsDto(List<SpecialLeaveSettingsItem> specialLeaveItems) {
 

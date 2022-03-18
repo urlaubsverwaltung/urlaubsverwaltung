@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.specialleave;
+package org.synyx.urlaubsverwaltung.application.specialleave;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -28,7 +27,7 @@ class SpecialLeaveSettingsItemServiceTest {
 
     @BeforeEach
     void setUp() {
-        specialLeaveSettingsService = new SpecialLeaveSettingsService(specialLeaveSettingsRepository, new ObjectMapper());
+        specialLeaveSettingsService = new SpecialLeaveSettingsService(specialLeaveSettingsRepository);
     }
 
     @Test

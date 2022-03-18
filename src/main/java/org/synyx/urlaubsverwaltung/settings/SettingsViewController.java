@@ -19,8 +19,8 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsItem;
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsService;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 

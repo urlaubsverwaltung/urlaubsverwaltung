@@ -29,4 +29,13 @@ public class SpecialLeaveItemDto {
     public void setDays(int days) {
         this.days = days;
     }
+
+    @Override
+    public String toString() {
+        return "SpecialLeaveItemDto{" +
+            "active=" + active +
+            ", messageKey='" + messageKey + '\'' +
+            ", days=" + days +
+            '}';
+    }
 }

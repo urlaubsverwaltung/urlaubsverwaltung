@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.synyx.urlaubsverwaltung.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 
 import java.util.List;
 import java.util.function.Function;
