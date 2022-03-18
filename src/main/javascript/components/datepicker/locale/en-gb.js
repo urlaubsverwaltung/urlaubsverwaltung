@@ -4,6 +4,7 @@ export const localisation = {
    *
    * @type {RegExp}
    */
+  // the same as german since we support this format only currently
   dateFormatPattern: /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/,
 
   /**
@@ -21,7 +22,7 @@ export const localisation = {
    *
    *  @type {string}
    */
-  dateFormatShort: "dd. MMMM",
+  dateFormatShort: "dd MMMM",
 
   /**
    * Map the user input (string value) to a date object.

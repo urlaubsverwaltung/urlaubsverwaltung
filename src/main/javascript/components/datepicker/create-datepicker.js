@@ -3,8 +3,7 @@ import { endOfMonth, formatISO, isToday, isWeekend, parseISO } from "date-fns";
 import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
-import DE from "./locale/de";
-import EN from "./locale/en";
+import { createDatepickerLocalization } from "./locale";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -35,12 +34,7 @@ const datepickerClassnames = {
 
 export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
   const { localisation } = window.uv.datepicker;
-
-  /* TODO add el as new language*/
-
-  // currently the UV supports 'en' and 'de' only. and the default is 'de'.
-  const dateAdapter = localisation.locale === "en" ? EN.dateAdapter : DE.dateAdapter;
-  const dateFormatShort = localisation.locale === "en" ? EN.dateFormatShort : DE.dateFormatShort;
+  const { dateAdapter, dateFormatShort } = createDatepickerLocalization({ locale: localisation.locale });
 
   const duetDateElement = await replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation);
 
