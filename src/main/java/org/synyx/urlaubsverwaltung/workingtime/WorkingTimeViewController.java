@@ -82,8 +82,8 @@ public class WorkingTimeViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/workingtime")
     public String updateWorkingTime(@PathVariable("personId") Integer personId,
-                                    @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm,
-                                    Model model, Errors errors, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+                                    @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm, Errors errors,
+                                    Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
