@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +57,7 @@ public class SickDaysOverviewViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/filter")
-    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period) {
+    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors) {
 
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateISoString = dateFormatAware.formatISO(period.getEndDate());
