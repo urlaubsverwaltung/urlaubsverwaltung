@@ -110,6 +110,7 @@
                            class="form-horizontal" role="form">
                     <form:hidden path="id" value="${application.id}"/>
                     <form:hidden path="person" value="${person.id}"/>
+                    <button type="submit" hidden></button>
 
                     <c:if test="${not empty errors.globalErrors}">
                         <div class="row">
