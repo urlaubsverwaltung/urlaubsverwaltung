@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -109,6 +110,7 @@ class SettingsViewControllerTest {
             .andExpect(model().attributeExists("settings"))
             .andExpect(model().attribute("federalStateTypes", FederalState.federalStatesTypesByCountry()))
             .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
+            .andExpect(model().attribute("weekDays", DayOfWeek.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("defaultVacationDaysFromSettings", is(false)))

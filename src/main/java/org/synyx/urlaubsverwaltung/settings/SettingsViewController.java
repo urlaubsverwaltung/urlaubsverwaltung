@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -68,6 +69,7 @@ public class SettingsViewController {
 
         final Settings settings = settingsService.getSettings();
         fillModel(model, settings, authorizedRedirectUrl);
+        model.addAttribute("weekDays", DayOfWeek.values());
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute("errors", googleOAuthError);
@@ -92,6 +94,7 @@ public class SettingsViewController {
             final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
 
             fillModel(model, settingsDto, authorizedRedirectUrl);
+            model.addAttribute("weekDays", DayOfWeek.values());
 
             model.addAttribute("errors", errors);
 
