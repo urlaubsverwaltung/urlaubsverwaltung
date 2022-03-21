@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.workflow_run.head_branch }}
       - name: Cache npm dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
