@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -53,7 +52,6 @@ public class AccountViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
 
@@ -82,7 +80,7 @@ public class AccountViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
-                                @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
+                                @ModelAttribute("account") AccountForm accountForm, Errors errors, Model model,
                                 RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -7,6 +8,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 /**
  * View class representing an sick note.
@@ -16,10 +18,14 @@ public class SickNoteForm {
     private Integer id;
     private Person person;
     private SickNoteType sickNoteType;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate startDate;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate endDate;
     private DayLength dayLength;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate aubStartDate;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate aubEndDate;
     private String comment;
 

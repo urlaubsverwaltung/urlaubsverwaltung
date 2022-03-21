@@ -30,7 +30,6 @@ import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -85,7 +84,6 @@ public class OvertimeViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
@@ -193,8 +191,8 @@ public class OvertimeViewController {
     }
 
     @PostMapping("/overtime")
-    public String recordOvertime(@Valid @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
-                                 RedirectAttributes redirectAttributes) {
+    public String recordOvertime(@Valid @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors,
+                                 Model model, RedirectAttributes redirectAttributes) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtimeForm.getPerson();
@@ -241,8 +239,8 @@ public class OvertimeViewController {
 
     @PostMapping("/overtime/{id}")
     public String updateOvertime(@PathVariable("id") Integer id,
-                                 @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
-                                 RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
+                                 @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors,
+                                 Model model, RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person signedInUser = personService.getSignedInUser();

@@ -83,8 +83,8 @@ public class DepartmentViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department")
-    public String newDepartment(@ModelAttribute(DEPARTMENT) DepartmentForm departmentForm,
-                                Errors errors, Model model, RedirectAttributes redirectAttributes) {
+    public String newDepartment(@ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors,
+                                Model model, RedirectAttributes redirectAttributes) {
 
         validator.validate(departmentForm, errors);
 
@@ -118,8 +118,8 @@ public class DepartmentViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
-                                   @ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors, Model model,
-                                   RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
+                                   @ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors,
+                                   Model model, RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
         final Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId)
             .orElseThrow(() -> new UnknownDepartmentException(departmentId)).getId();

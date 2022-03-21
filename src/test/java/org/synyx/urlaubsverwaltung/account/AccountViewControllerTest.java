@@ -193,6 +193,28 @@ class AccountViewControllerTest {
             .andExpect(redirectedUrl("/web/person/" + SOME_PERSON_ID));
     }
 
+    @Test
+    void updateAccountWithWrongValidFromFormat() throws Exception {
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .param("holidaysAccountValidFrom", "01.01.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("account/account_form"));
+    }
+
+    @Test
+    void updateAccountWithWrongValidToFormat() throws Exception {
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .param("holidaysAccountValidTo", "01.01.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("account/account_form"));
+    }
+
     private Person somePerson() {
         return new Person();
     }

@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -57,14 +56,13 @@ public class SickDaysOverviewViewController {
         this.clock = clock;
     }
 
-    @InitBinder
-    public void initBinder(DataBinder binder) {
-        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
-    }
-
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/filter")
-    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period) {
+    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
+
+        if(errors.hasErrors()){
+            redirectAttributes.addFlashAttribute("filterPeriodIncorrect", true);
+        }
 
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateISoString = dateFormatAware.formatISO(period.getEndDate());

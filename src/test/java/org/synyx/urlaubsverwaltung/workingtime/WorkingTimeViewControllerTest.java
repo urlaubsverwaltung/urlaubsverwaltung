@@ -80,7 +80,7 @@ class WorkingTimeViewControllerTest {
         final Person person = new Person();
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
 
-        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020,10,2), GERMANY_BERLIN, false);
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020, 10, 2), GERMANY_BERLIN, false);
         workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
         when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
@@ -89,7 +89,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm(workingTime))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("valid", equalTo(true)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("GERMANY_BERLIN")))))
-            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020,10,2))))))
+            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020, 10, 2))))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(FederalState.GERMANY_BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
@@ -164,6 +164,18 @@ class WorkingTimeViewControllerTest {
             .andExpect(flash().attribute("updateSuccess", true))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/person/" + KNOWN_PERSON_ID));
+    }
+
+    @Test
+    void updateAccountWithWrongValidFromFormat() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
+
+        perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime")
+            .param("validFrom", "01.01.20"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("workingtime/workingtime_form"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -1,15 +1,20 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
+
 public class AccountForm {
 
     private int holidaysAccountYear;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate holidaysAccountValidFrom;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate holidaysAccountValidTo;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;

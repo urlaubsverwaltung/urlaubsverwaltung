@@ -81,6 +81,16 @@
             </jsp:body>
         </uv:section-heading>
 
+        <div class="feedback">
+            <c:choose>
+                <c:when test="${filterPeriodIncorrect}">
+                    <div class="alert alert-warning">
+                        <spring:message code='filter.period.incorrect.warning'/>
+                    </div>
+                </c:when>
+            </c:choose>
+        </div>
+
         <div class="row">
 
             <div class="col-xs-12">

@@ -5,17 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -58,17 +57,17 @@ class ApplicationForLeaveStatisticsViewController {
         this.dateFormatAware = dateFormatAware;
     }
 
-    @InitBinder
-    public void initBinder(DataBinder binder) {
-        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
-    }
-
     @PreAuthorize(IS_PRIVILEGED_USER)
     @PostMapping
-    public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period) {
+    public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
+
+        if (errors.hasErrors()) {
+            redirectAttributes.addFlashAttribute("filterPeriodIncorrect", true);
+        }
 
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());
+
         return "redirect:/web/application/statistics?from=" + startDateIsoString + "&to=" + endDateIsoString;
     }
 

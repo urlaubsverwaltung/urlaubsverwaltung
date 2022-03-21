@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.DayOfWeek;
@@ -10,9 +11,11 @@ import java.util.Objects;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 
 public class WorkingTimeForm {
 
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private LocalDate validFrom;
     private List<Integer> workingDays = new ArrayList<>();
     private FederalState federalState;

@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -7,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -15,7 +18,9 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
  */
 public final class FilterPeriod {
 
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private final LocalDate startDate;
+    @DateTimeFormat(pattern = DD_MM_YYYY)
     private final LocalDate endDate;
 
     public FilterPeriod(LocalDate startDate, LocalDate endDate) {
