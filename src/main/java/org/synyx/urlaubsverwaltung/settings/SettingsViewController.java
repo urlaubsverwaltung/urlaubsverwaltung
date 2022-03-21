@@ -133,6 +133,8 @@ public class SettingsViewController {
         model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
         model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
 
+        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("dayLengthTypes", DayLength.values());
