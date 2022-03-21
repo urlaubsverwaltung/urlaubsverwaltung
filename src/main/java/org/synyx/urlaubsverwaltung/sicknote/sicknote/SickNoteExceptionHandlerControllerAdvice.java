@@ -23,6 +23,13 @@ public class SickNoteExceptionHandlerControllerAdvice {
 
     private static final String ERROR_PAGE_NAME = "errors";
 
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(SickNoteAlreadyInactiveException.class)
+    public ModelAndView handleException(AbstractNoResultFoundException exception) {
+        LOG.error("An exception was thrown", exception);
+        return getErrorPage(exception, BAD_REQUEST);
+    }
+
     /**
      * Get the common error page.
      *
@@ -36,16 +43,5 @@ public class SickNoteExceptionHandlerControllerAdvice {
         modelAndView.addObject("statusCode", httpStatus.value());
 
         return modelAndView;
-    }
-
-    @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler(SickNoteAlreadyInactiveException.class)
-    public ModelAndView handleException(AbstractNoResultFoundException exception) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("An exception was thrown: {}", exception.getClass().getName());
-            LOG.debug("An error occurred: {}", exception.getMessage());
-        }
-        return getErrorPage(exception, BAD_REQUEST);
     }
 }

@@ -13,7 +13,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
-
 /**
  * Handles exceptions and redirects to error page.
  */
@@ -25,21 +24,15 @@ public class ViewExceptionHandlerControllerAdvice {
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler({AbstractNoResultFoundException.class, NumberFormatException.class})
     public ModelAndView handleException(AbstractNoResultFoundException exception) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("An exception was thrown", exception);
-        }
-        return ViewExceptionHandlerControllerAdvice.getErrorPage(exception, BAD_REQUEST);
+        LOG.error("An exception was thrown", exception);
+        return getErrorPage(exception, BAD_REQUEST);
     }
 
     @ResponseStatus(FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public ModelAndView handleException(AccessDeniedException exception) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("An exception was thrown", exception);
-        }
-        return ViewExceptionHandlerControllerAdvice.getErrorPage(exception, FORBIDDEN);
+        LOG.error("An exception was thrown", exception);
+        return getErrorPage(exception, FORBIDDEN);
     }
 
     /**
@@ -50,7 +43,7 @@ public class ViewExceptionHandlerControllerAdvice {
      */
     private static ModelAndView getErrorPage(Exception exception, HttpStatus httpStatus) {
 
-        ModelAndView modelAndView = new ModelAndView("errors");
+        final ModelAndView modelAndView = new ModelAndView("errors");
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("statusCode", httpStatus.value());
 
