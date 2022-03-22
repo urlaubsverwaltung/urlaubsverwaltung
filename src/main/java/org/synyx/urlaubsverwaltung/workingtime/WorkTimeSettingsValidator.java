@@ -5,6 +5,7 @@ import org.springframework.validation.Errors;
 public class WorkTimeSettingsValidator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
+    private static final String ERROR_WORKING_TIME_MANDATORY = "settings.workingTime.error.mandatory";
 
     private WorkTimeSettingsValidator() {
         // private
@@ -25,7 +26,7 @@ public class WorkTimeSettingsValidator {
         }
 
         if (workingTimeSettings.getWorkingDays() == null || workingTimeSettings.getWorkingDays().isEmpty()) {
-            errors.rejectValue("workingTimeSettings.workingDays", ERROR_MANDATORY_FIELD);
+            errors.rejectValue("workingTimeSettings.workingDays", ERROR_WORKING_TIME_MANDATORY);
         }
     }
 }

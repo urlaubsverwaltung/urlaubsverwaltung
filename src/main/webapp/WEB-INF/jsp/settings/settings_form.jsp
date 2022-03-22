@@ -524,6 +524,16 @@
                                 <spring:message code="settings.workingTime.title"/>
                             </h2>
                         </uv:section-heading>
+                        <c:set var="workingTimeError">
+                            <form:errors path="workingTimeSettings.workingDays" />
+                        </c:set>
+                        <c:if test="${not empty workingTimeError}">
+                            <div class="row tw-mb-8">
+                                <div class="col-xs-12">
+                                    <div class="alert alert-danger tw-text-red-800">${workingTimeError}</div>
+                                </div>
+                            </div>
+                        </c:if>
                         <div class="row">
                             <div class="col-md-4 col-md-push-8">
                                 <span class="help-block tw-text-sm">
