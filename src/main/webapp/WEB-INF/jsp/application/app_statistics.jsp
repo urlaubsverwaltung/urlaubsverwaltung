@@ -105,7 +105,7 @@
                             <thead class="tw-hidden lg:tw-table-header-group">
                             <tr>
                                 <th scope="col" class=""><%-- placeholder to ensure correct number of th --%></th>
-                                <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.account.basedata.personnelNumber"/></th>
+                                    <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.account.basedata.personnelNumber.abbreviation"/></th>
                                 <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.data.firstName"/></th>
                                 <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.data.lastName"/></th>
                                 <th scope="col" class="lg:tw-hidden print:tw-hidden"><%-- placeholder to ensure correct number of th --%></th>
