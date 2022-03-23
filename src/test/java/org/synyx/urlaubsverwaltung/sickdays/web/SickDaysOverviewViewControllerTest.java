@@ -67,7 +67,7 @@ class SickDaysOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, workDaysCountService,
+        sut = new SickDaysOverviewViewController(sickNoteService, personService, personBasedataService, workDaysCountService,
             new DateFormatAware(), clock);
     }
 

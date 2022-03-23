@@ -1,8 +1,15 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.Size;
+
+@Validated
 public class PersonBasedataDto {
 
+    @Size(max = 255)
     private String personnelNumber;
+    @Size(max = 255)
     private String additionalInfo;
 
     private int personId;

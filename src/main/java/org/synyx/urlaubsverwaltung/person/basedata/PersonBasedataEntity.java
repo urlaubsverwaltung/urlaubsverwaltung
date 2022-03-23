@@ -24,6 +24,10 @@ class PersonBasedataEntity {
     private String personnelNumber;
     private String additionalInformation;
 
+    protected PersonBasedataEntity() {
+        // OK
+    }
+
     public Integer getPersonId() {
         return personId;
     }

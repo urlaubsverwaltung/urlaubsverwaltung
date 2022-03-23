@@ -1,18 +1,20 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.synyx.urlaubsverwaltung.person.Person;
+
 final class PersonBasedataDtoMapper {
 
     private PersonBasedataDtoMapper() {
     }
 
-    static PersonBasedataDto mapToPersonBasedataDto(PersonBasedata personBasedata) {
+    static PersonBasedataDto mapToPersonBasedataDto(PersonBasedata personBasedata, Person person) {
         final PersonBasedataDto personBasedataDto = new PersonBasedataDto();
         personBasedataDto.setPersonId(personBasedata.getPersonId());
-        personBasedataDto.setNiceName(personBasedata.getNiceName());
-        personBasedataDto.setGravatarURL(personBasedata.getGravatarURL());
-        personBasedataDto.setEmail(personBasedata.getEmail());
         personBasedataDto.setPersonnelNumber(personBasedata.getPersonnelNumber());
         personBasedataDto.setAdditionalInfo(personBasedata.getAdditionalInformation());
+        personBasedataDto.setNiceName(person.getNiceName());
+        personBasedataDto.setGravatarURL(person.getGravatarURL());
+        personBasedataDto.setEmail(person.getEmail());
         return personBasedataDto;
     }
 
@@ -20,9 +22,6 @@ final class PersonBasedataDtoMapper {
         return new PersonBasedata(
             personBasedataDto.getPersonId(),
             personBasedataDto.getPersonnelNumber(),
-            personBasedataDto.getAdditionalInfo(),
-            personBasedataDto.getNiceName(),
-            personBasedataDto.getGravatarURL(),
-            personBasedataDto.getEmail());
+            personBasedataDto.getAdditionalInfo());
     }
 }

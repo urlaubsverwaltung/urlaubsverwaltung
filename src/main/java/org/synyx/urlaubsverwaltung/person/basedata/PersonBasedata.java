@@ -6,18 +6,10 @@ public class PersonBasedata {
     private final String personnelNumber;
     private final String additionalInformation;
 
-    private final String niceName;
-    private final String gravatarURL;
-    private final String email;
-
-    public PersonBasedata(int personId, String personnelNumber, String additionalInformation, String niceName,
-                          String gravatarURL, String email) {
+    public PersonBasedata(int personId, String personnelNumber, String additionalInformation) {
         this.personId = personId;
         this.personnelNumber = personnelNumber;
         this.additionalInformation = additionalInformation;
-        this.niceName = niceName;
-        this.gravatarURL = gravatarURL;
-        this.email = email;
     }
 
     static PersonBasedata.Builder builder() {
@@ -28,10 +20,6 @@ public class PersonBasedata {
         private int personId;
         private String personnelNumber;
         private String additionalInformation;
-
-        private String niceName;
-        private String gravatarURL;
-        private String email;
 
         public Builder withPersonId(int personId) {
             this.personId = personId;
@@ -48,23 +36,8 @@ public class PersonBasedata {
             return this;
         }
 
-        public Builder withNiceName(String niceName) {
-            this.niceName = niceName;
-            return this;
-        }
-
-        public Builder withGravatarURL(String gravatarURL) {
-            this.gravatarURL = gravatarURL;
-            return this;
-        }
-
-        public Builder withEmail(String email) {
-            this.email = email;
-            return this;
-        }
-
         public PersonBasedata build() {
-            return new PersonBasedata(personId, personnelNumber, additionalInformation, niceName, gravatarURL, email);
+            return new PersonBasedata(personId, personnelNumber, additionalInformation);
         }
     }
 
@@ -78,17 +51,5 @@ public class PersonBasedata {
 
     public String getAdditionalInformation() {
         return additionalInformation;
-    }
-
-    public String getNiceName() {
-        return niceName;
-    }
-
-    public String getGravatarURL() {
-        return gravatarURL;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }

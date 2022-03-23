@@ -117,7 +117,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         person.setPermissions(List.of(USER));
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
-        final PersonBasedata personBasedata = new PersonBasedata(1, "42", "additional information", null, null, null);
+        final PersonBasedata personBasedata = new PersonBasedata(1, "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
