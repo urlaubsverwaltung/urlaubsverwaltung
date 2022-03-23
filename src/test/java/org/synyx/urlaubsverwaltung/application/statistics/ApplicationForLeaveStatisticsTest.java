@@ -22,7 +22,7 @@ class ApplicationForLeaveStatisticsTest {
     void ensureReturnsDefaultValuesForNotUsedVacationType() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
 
         // Total
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(ZERO);
@@ -42,7 +42,7 @@ class ApplicationForLeaveStatisticsTest {
     @Test
     void ensureCanSetTotalLeftVacationDays() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.setLeftVacationDays(ONE);
 
         assertThat(statistics.getLeftVacationDays()).isEqualByComparingTo(ONE);
@@ -53,7 +53,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
@@ -68,7 +68,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
 
         assertThat(statistics.hasVacationType(vacationTypes.get(1))).isTrue();
@@ -79,7 +79,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addAllowedVacationDays(vacationTypes.get(1), ONE);
 
         assertThat(statistics.hasVacationType(vacationTypes.get(1))).isTrue();
@@ -90,7 +90,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addAllowedVacationDays(vacationTypes.get(1), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(1), ONE);
 
@@ -102,7 +102,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(2), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(3), ONE);
@@ -117,7 +117,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
         statistics.addWaitingVacationDays(vacationTypes.get(0), ONE);
@@ -134,7 +134,7 @@ class ApplicationForLeaveStatisticsTest {
         final List<VacationType> vacationTypes = createVacationTypes();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
         statistics.addAllowedVacationDays(vacationTypes.get(0), ONE);
@@ -149,14 +149,14 @@ class ApplicationForLeaveStatisticsTest {
     @Test
     void ensureCanSetTotalLeftOvertime() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, null);
+        ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.setLeftOvertime(Duration.ofHours(1));
         assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofHours(1));
     }
 
     @Test
     void ensureReturnsOptionalEmptyForMissingPersonBasedata() {
-        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(null, null);
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(null);
         assertThat(applicationForLeaveStatistics.getPersonBasedata()).isEmpty();
     }
 }

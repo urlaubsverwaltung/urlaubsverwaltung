@@ -94,7 +94,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(anyPerson, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(anyPerson, null));
+        when(applicationForLeaveStatisticsBuilder.build(anyPerson, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(anyPerson));
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
@@ -124,7 +124,10 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(person, personBasedata, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(person, personBasedata));
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
+        applicationForLeaveStatistics.setPersonBasedata(personBasedata);
+
+        when(applicationForLeaveStatisticsBuilder.build(person, personBasedata, startDate, endDate, vacationTypes)).thenReturn(applicationForLeaveStatistics);
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
@@ -153,7 +156,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(anyPerson, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(anyPerson, null));
+        when(applicationForLeaveStatisticsBuilder.build(anyPerson, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(anyPerson));
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
@@ -180,7 +183,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(departmentMember, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember, null));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMember, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember));
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
@@ -235,7 +238,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(departmentMember, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember, null));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMember, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember));
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(1);
@@ -298,9 +301,9 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(departmentMember, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember, null));
-        when(applicationForLeaveStatisticsBuilder.build(departmentMemberTwo, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberTwo, null));
-        when(applicationForLeaveStatisticsBuilder.build(departmentMemberThree, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberThree, null));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMember, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMemberTwo, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberTwo));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMemberThree, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberThree));
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(3);
@@ -335,8 +338,8 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(departmentMember, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember, null));
-        when(applicationForLeaveStatisticsBuilder.build(departmentMemberTwo, null, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberTwo, null));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMember, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember));
+        when(applicationForLeaveStatisticsBuilder.build(departmentMemberTwo, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberTwo));
 
         final List<ApplicationForLeaveStatistics> statistics = sut.getStatistics(filterPeriod);
         assertThat(statistics).hasSize(2);

@@ -19,7 +19,7 @@ import static java.math.BigDecimal.ZERO;
 public class ApplicationForLeaveStatistics {
 
     private final Person person;
-    private final PersonBasedata personBasedata;
+    private PersonBasedata personBasedata;
 
     private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
@@ -27,13 +27,16 @@ public class ApplicationForLeaveStatistics {
     private BigDecimal leftVacationDays = ZERO;
     private Duration leftOvertime = Duration.ZERO;
 
-    ApplicationForLeaveStatistics(Person person, PersonBasedata personBasedata) {
+    ApplicationForLeaveStatistics(Person person) {
         this.person = person;
-        this.personBasedata = personBasedata;
     }
 
     public Person getPerson() {
         return person;
+    }
+
+    void setPersonBasedata(PersonBasedata personBasedata) {
+        this.personBasedata = personBasedata;
     }
 
     public Optional<PersonBasedata> getPersonBasedata() {

@@ -58,7 +58,8 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
 
-        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, basedata);
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
+        applicationForLeaveStatistics.setPersonBasedata(basedata);
         applicationForLeaveStatistics.addWaitingVacationDays(vacationType, ONE);
         statistics.add(applicationForLeaveStatistics);
 
@@ -104,11 +105,13 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
 
-        final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne, basedataOne);
+        final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
+        personOneStatistics.setPersonBasedata(basedataOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);
         statistics.add(personOneStatistics);
 
-        final ApplicationForLeaveStatistics personTwoStatistics = new ApplicationForLeaveStatistics(personTwo, basedataTwo);
+        final ApplicationForLeaveStatistics personTwoStatistics = new ApplicationForLeaveStatistics(personTwo);
+        personTwoStatistics.setPersonBasedata(basedataTwo);
         personTwoStatistics.addAllowedVacationDays(vacationType, TEN);
         statistics.add(personTwoStatistics);
 

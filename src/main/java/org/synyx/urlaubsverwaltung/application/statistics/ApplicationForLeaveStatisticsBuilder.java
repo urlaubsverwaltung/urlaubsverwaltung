@@ -52,7 +52,14 @@ class ApplicationForLeaveStatisticsBuilder {
     public ApplicationForLeaveStatistics build(Person person, PersonBasedata personBasedata, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person, personBasedata);
+        final ApplicationForLeaveStatistics statistics = build(person, from, to, vacationTypes);
+        statistics.setPersonBasedata(personBasedata);
+
+        return statistics;
+    }
+
+    public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.setLeftVacationDays(calculateLeftVacationDays(person, from));
         statistics.setLeftOvertime(overtimeService.getLeftOvertimeForPerson(person));
 
@@ -69,7 +76,6 @@ class ApplicationForLeaveStatisticsBuilder {
                 statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to));
             }
         }
-
         return statistics;
     }
 

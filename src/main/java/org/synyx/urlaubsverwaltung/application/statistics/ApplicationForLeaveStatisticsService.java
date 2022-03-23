@@ -13,6 +13,8 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -44,11 +46,21 @@ class ApplicationForLeaveStatisticsService {
     List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
         final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
         return getRelevantPersons().stream()
-            .map(person -> {
-                final PersonBasedata personBasedata = personBasedataService.getBasedataByPersonId(person.getId()).orElse(null);
-                return applicationForLeaveStatisticsBuilder.build(person, personBasedata, period.getStartDate(), period.getEndDate(), activeVacationTypes);
-            })
+            .map(toApplicationForLeaveStatistics(period, activeVacationTypes))
             .collect(toList());
+    }
+
+    private Function<Person, ApplicationForLeaveStatistics> toApplicationForLeaveStatistics(FilterPeriod period, List<VacationType> activeVacationTypes) {
+        return person -> {
+
+            final Optional<PersonBasedata> personBasedata = personBasedataService.getBasedataByPersonId(person.getId());
+
+            if (personBasedata.isPresent()) {
+                return applicationForLeaveStatisticsBuilder.build(person, personBasedata.get(), period.getStartDate(), period.getEndDate(), activeVacationTypes);
+            } else {
+                return applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate(), activeVacationTypes);
+            }
+        };
     }
 
     private List<Person> getRelevantPersons() {
