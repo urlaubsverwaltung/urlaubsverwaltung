@@ -9,8 +9,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Entity
 @Table(name = "person_basedata")
 class PersonBasedataEntity {
@@ -19,7 +17,7 @@ class PersonBasedataEntity {
     @Column(name = "person_id")
     private Integer personId;
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne
     @PrimaryKeyJoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
 
