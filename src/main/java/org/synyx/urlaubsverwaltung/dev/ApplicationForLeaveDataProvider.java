@@ -1,7 +1,9 @@
 package org.synyx.urlaubsverwaltung.dev;
 
+import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
+import org.synyx.urlaubsverwaltung.application.application.NotPrivilegedToApproveException;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -13,6 +15,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -21,6 +25,8 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
  * Provides application for leave demo data.
  */
 class ApplicationForLeaveDataProvider {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationInteractionService applicationInteractionService;
     private final DurationChecker durationChecker;
@@ -68,7 +74,11 @@ class ApplicationForLeaveDataProvider {
 
         final Application application = createWaitingApplication(person, vacationCategory, dayLength, startDate, endDate);
         if (application != null) {
-            applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
+            try {
+                applicationInteractionService.allow(application, boss, Optional.of("Ist in Ordnung"));
+            } catch (NotPrivilegedToApproveException e) {
+                LOG.info("Application cannot be allowed by user {}", boss);
+            }
         }
 
         return application;

@@ -152,8 +152,13 @@ class ApplicationForLeaveDetailsViewController {
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=allow";
         }
 
-        final Application allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser,
-            Optional.ofNullable(comment.getText()));
+        final Application allowedApplicationForLeave;
+        try {
+            allowedApplicationForLeave = applicationInteractionService.allow(application, signedInUser, Optional.ofNullable(comment.getText()));
+        } catch (NotPrivilegedToApproveException e) {
+            redirectAttributes.addFlashAttribute("notPrivilegedToApprove", true);
+            return REDIRECT_WEB_APPLICATION + applicationId;
+        }
 
         if (allowedApplicationForLeave.hasStatus(ALLOWED)) {
             redirectAttributes.addFlashAttribute("allowSuccess", true);

@@ -30,7 +30,7 @@ public interface ApplicationInteractionService {
      * @param comment        giving further information to allowing of application for leave (is optional)
      * @return the allowed application for leave
      */
-    Application allow(Application application, Person privilegedUser, Optional<String> comment);
+    Application allow(Application application, Person privilegedUser, Optional<String> comment) throws NotPrivilegedToApproveException;
 
     /**
      * Sets the application's state to allowed  and informs the
