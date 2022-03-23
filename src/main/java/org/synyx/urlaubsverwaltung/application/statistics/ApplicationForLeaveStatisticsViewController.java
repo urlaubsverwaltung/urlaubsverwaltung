@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
@@ -83,10 +85,18 @@ class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
+        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
+        final boolean showPersonnelNumberColumn = statistics.stream()
+            .map(applicationForLeaveStatistics -> applicationForLeaveStatistics.getPersonBasedata())
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .anyMatch(personBasedata -> StringUtils.hasText(personBasedata.getPersonnelNumber()));
+
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
-        model.addAttribute("statistics", applicationForLeaveStatisticsService.getStatistics(period));
+        model.addAttribute("statistics", statistics);
+        model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
         return "application/app_statistics";
