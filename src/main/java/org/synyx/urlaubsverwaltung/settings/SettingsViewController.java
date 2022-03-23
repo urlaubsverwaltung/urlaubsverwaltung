@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -130,9 +131,12 @@ public class SettingsViewController {
         model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
         model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
 
+        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("dayLengthTypes", DayLength.values());
+        model.addAttribute("weekDays", DayOfWeek.values());
 
         final List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())

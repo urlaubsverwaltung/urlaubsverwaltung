@@ -74,7 +74,7 @@ class SettingsValidatorTest {
         verify(mockError).rejectValue("workingTimeSettings.federalState", "error.entry.mandatory");
         verify(mockError).rejectValue("workingTimeSettings.workingDurationForChristmasEve", "error.entry.mandatory");
         verify(mockError).rejectValue("workingTimeSettings.workingDurationForNewYearsEve", "error.entry.mandatory");
-        verify(mockError).rejectValue("workingTimeSettings.workingDays", "error.entry.mandatory");
+        verify(mockError).rejectValue("workingTimeSettings.workingDays", "settings.workingTime.error.mandatory");
     }
 
     // Working time settings: Overtime settings ------------------------------------------------------------------------
