@@ -1,35 +1,10 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
-import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataMapper.mapFromEntity;
-import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataMapper.mapToEntity;
+public interface PersonBasedataService {
 
-@Service
-public class PersonBasedataService {
+    Optional<PersonBasedata> getBasedataByPersonId(int personId);
 
-    private final PersonBasedataRepository personBasedataRepository;
-
-    public PersonBasedataService(PersonBasedataRepository personBasedataRepository) {
-        this.personBasedataRepository = personBasedataRepository;
-    }
-
-    public Optional<PersonBasedata> getBasedataByPersonId(int personId) {
-
-        final Optional<PersonBasedataEntity> personBasedataEntity = personBasedataRepository.findById(personId);
-
-        if(personBasedataEntity.isPresent()) {
-            PersonBasedata personBasedata = mapFromEntity(personBasedataEntity.get());
-            return Optional.of(personBasedata);
-        }
-
-        return Optional.empty();
-    }
-
-    public void update(PersonBasedata personBasedata) {
-        PersonBasedataEntity personBasedataEntity = mapToEntity(personBasedata);
-        personBasedataRepository.save(personBasedataEntity);
-    }
+    void update(PersonBasedata personBasedata);
 }
