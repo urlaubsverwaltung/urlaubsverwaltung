@@ -1,6 +1,6 @@
 import $ from "jquery";
 import "tablesorter";
-import {dataValueNumberParser} from "../../components/table-sortable/parser-data-value-number";
+import { dataValueNumberParser } from "../../components/table-sortable/parser-data-value-number";
 
 $(document).ready(function () {
   $.tablesorter.addParser(dataValueNumberParser);
