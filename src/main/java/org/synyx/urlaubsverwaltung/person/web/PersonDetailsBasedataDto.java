@@ -5,7 +5,7 @@ public class PersonDetailsBasedataDto {
     private final String personnelNumber;
     private final String additionalInfo;
 
-    public PersonDetailsBasedataDto(String personnelNumber, String additionalInfo) {
+    PersonDetailsBasedataDto(String personnelNumber, String additionalInfo) {
         this.personnelNumber = personnelNumber;
         this.additionalInfo = additionalInfo;
     }

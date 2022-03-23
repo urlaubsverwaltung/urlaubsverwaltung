@@ -8,6 +8,6 @@ final class PersonDetailsBasedataDtoMapper {
     }
 
     static PersonDetailsBasedataDto mapToPersonDetailsBasedataDto(PersonBasedata basedata) {
-        return  new PersonDetailsBasedataDto(basedata.getPersonnelNumber(), basedata.getAdditionalInformation());
+        return new PersonDetailsBasedataDto(basedata.getPersonnelNumber(), basedata.getAdditionalInformation());
     }
 }
