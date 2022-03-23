@@ -540,6 +540,9 @@
                             <div class="col-md-8 col-md-pull-4">
 
                                 <table id="special-leave-table" class="absence-type-settings-table">
+                                    <caption class="tw-sr-only">
+                                        <spring:message code='settings.specialleave.title'/>
+                                    </caption>
                                     <thead>
                                         <tr>
                                             <th scope="col">
