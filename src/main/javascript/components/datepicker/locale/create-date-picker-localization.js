@@ -1,5 +1,7 @@
 import format from "../../../lib/date-fns/format";
 import { localisation as de } from "./de";
+// eslint-disable-next-line unicorn/prevent-abbreviations
+import { localisation as el } from "./el";
 import { localisation as en } from "./en";
 import { localisation as enGB } from "./en-gb";
 
@@ -9,11 +11,12 @@ const EN_DAY_MONTH_LOCALES = new Set(["en-AU", "en-BZ", "en-GB", "en-IN", "en-IE
 export function createDatepickerLocalization({ locale }) {
   let localisation;
 
-  /* TODO add el as new language*/
   if (EN_MONTH_DAY_LOCALES.has(locale)) {
     localisation = en;
   } else if (EN_DAY_MONTH_LOCALES.has(locale)) {
     localisation = enGB;
+  } else if (locale === "el") {
+    localisation = el;
   } else {
     localisation = de;
   }
