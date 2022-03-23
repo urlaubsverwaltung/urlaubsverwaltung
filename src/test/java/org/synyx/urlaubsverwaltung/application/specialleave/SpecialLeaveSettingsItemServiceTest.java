@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +21,7 @@ class SpecialLeaveSettingsItemServiceTest {
     @Mock
     private SpecialLeaveSettingsRepository specialLeaveSettingsRepository;
     @Captor
-    private ArgumentCaptor<SpecialLeaveSettingsEntity> specialLeaveSettingsEntity;
+    private ArgumentCaptor<List<SpecialLeaveSettingsEntity>> specialLeaveSettingsEntityList;
     private SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @BeforeEach
@@ -32,21 +31,33 @@ class SpecialLeaveSettingsItemServiceTest {
 
     @Test
     void save() {
-        SpecialLeaveSettingsItem specialLeaveSettings = new SpecialLeaveSettingsItem(1,true, "message.key", 5);
+        final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
+        specialLeaveSettingsEntity.setId(1);
+        when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
 
-        specialLeaveSettingsService.saveAll(List.of(specialLeaveSettings));
+        SpecialLeaveSettingsItem specialLeaveSettings = new SpecialLeaveSettingsItem(1,true, "foo", 5);
+        final List<SpecialLeaveSettingsItem> specialLeaveSettingsItemList = List.of(specialLeaveSettings);
+        specialLeaveSettingsService.saveAll(specialLeaveSettingsItemList);
 
-        verify(specialLeaveSettingsRepository).save(this.specialLeaveSettingsEntity.capture());
-        assertThat(specialLeaveSettings).usingRecursiveComparison().isEqualTo(this.specialLeaveSettingsEntity.getValue());
+        verify(specialLeaveSettingsRepository).saveAll(this.specialLeaveSettingsEntityList.capture());
+        final List<SpecialLeaveSettingsEntity> leaveSettingsEntityListValue = this.specialLeaveSettingsEntityList.getValue();
+        assertThat(leaveSettingsEntityListValue).hasSize(1);
+
+        assertThat(leaveSettingsEntityListValue)
+            .usingRecursiveComparison()
+            .ignoringFields("messageKey")
+            .isEqualTo(specialLeaveSettingsItemList);
     }
 
     @Test
     void getSpecialLeaveSettings() {
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
         when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
+
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
-        assertThat(specialLeaveSettings).isNotEmpty();
-        assertThat(specialLeaveSettingsEntity).usingRecursiveComparison().isEqualTo(specialLeaveSettings);
+
+        assertThat(specialLeaveSettings).hasSize(1);
+        assertThat(specialLeaveSettingsEntity).usingRecursiveComparison().isEqualTo(specialLeaveSettings.get(0));
     }
 
     @Test
