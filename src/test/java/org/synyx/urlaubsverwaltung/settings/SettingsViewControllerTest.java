@@ -252,6 +252,7 @@ class SettingsViewControllerTest {
                 .param("_workingTimeSettings.workingDays", "on")
                 .param("_workingTimeSettings.workingDays", "on")
                 .param("_workingTimeSettings.workingDays", "on")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         )
             .andExpect(redirectedUrl("/web/settings"));
 
