@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-interface PersonBasedataRepository extends JpaRepository<PersonBasedataEntity, Integer> {
+interface PersonBasedataRepository extends CrudRepository<PersonBasedataEntity, Integer> {
 }
