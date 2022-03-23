@@ -9,6 +9,9 @@ import static java.util.stream.Collectors.toList;
 
 public class SpecialLeaveSettingsDtoMapper {
 
+    private SpecialLeaveSettingsDtoMapper() {
+    }
+
     public static List<SpecialLeaveSettingsItem> mapToSpecialLeaveSettingsItems(List<SpecialLeaveSettingsItemDto> specialLeaveSettingsItemDto) {
         return specialLeaveSettingsItemDto.stream()
             .map(toSpecialLeaveSettingsItem())
