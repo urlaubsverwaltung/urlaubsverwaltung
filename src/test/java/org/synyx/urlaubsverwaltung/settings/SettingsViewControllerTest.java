@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -221,6 +222,50 @@ class SettingsViewControllerTest {
         )
             .andExpect(view().name("settings/settings_form"));
     }
+
+    @Test
+    void ensureSavingWorkingTimeSettings() throws Exception {
+
+        final Settings storedSettings = someSettings();
+        when(settingsService.getSettings()).thenReturn(storedSettings);
+
+        perform(
+            post("/web/settings")
+                // required settings stuff for the form POST
+                .param("absenceTypeSettings.items[0].id", "1000")
+                .param("absenceTypeSettings.items[0].active", "true")
+                .param("_absenceTypeSettings.items[0].active", "on")
+                .param("_absenceTypeSettings.items[0].requiresApproval", "on")
+                // actual system under test
+                .param("workingTimeSettings.workingDays", "1")
+                .param("_workingTimeSettings.workingDays", "on")
+                .param("_workingTimeSettings.workingDays", "on")
+                .param("workingTimeSettings.workingDays", "3")
+                .param("_workingTimeSettings.workingDays", "on")
+                .param("workingTimeSettings.workingDays", "4")
+                .param("_workingTimeSettings.workingDays", "on")
+                .param("workingTimeSettings.workingDays", "5")
+                .param("_workingTimeSettings.workingDays", "on")
+                .param("_workingTimeSettings.workingDays", "on")
+                .param("_workingTimeSettings.workingDays", "on")
+        )
+            .andExpect(redirectedUrl("/web/settings"));
+
+        final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
+
+        verify(settingsService).save(settingsArgumentCaptor.capture());
+
+        final Settings savedSettings = settingsArgumentCaptor.getValue();
+        final WorkingTimeSettings savedWorkingTimeSettings = savedSettings.getWorkingTimeSettings();
+        assertThat(savedWorkingTimeSettings.getMonday()).isEqualTo(DayLength.FULL);
+        assertThat(savedWorkingTimeSettings.getTuesday()).isEqualTo(DayLength.ZERO);
+        assertThat(savedWorkingTimeSettings.getWednesday()).isEqualTo(DayLength.FULL);
+        assertThat(savedWorkingTimeSettings.getThursday()).isEqualTo(DayLength.FULL);
+        assertThat(savedWorkingTimeSettings.getFriday()).isEqualTo(DayLength.FULL);
+        assertThat(savedWorkingTimeSettings.getSaturday()).isEqualTo(DayLength.ZERO);
+        assertThat(savedWorkingTimeSettings.getSunday()).isEqualTo(DayLength.ZERO);
+    }
+
 
     @Test
     void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
