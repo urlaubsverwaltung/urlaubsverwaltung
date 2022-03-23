@@ -69,7 +69,6 @@ public class SettingsViewController {
 
         final Settings settings = settingsService.getSettings();
         fillModel(model, settings, authorizedRedirectUrl);
-        model.addAttribute("weekDays", DayOfWeek.values());
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute("errors", googleOAuthError);
@@ -94,7 +93,6 @@ public class SettingsViewController {
             final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL.toString(), "oautherrors");
 
             fillModel(model, settingsDto, authorizedRedirectUrl);
-            model.addAttribute("weekDays", DayOfWeek.values());
 
             model.addAttribute("errors", errors);
 
@@ -138,6 +136,7 @@ public class SettingsViewController {
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("dayLengthTypes", DayLength.values());
+        model.addAttribute("weekDays", DayOfWeek.values());
 
         final List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())
