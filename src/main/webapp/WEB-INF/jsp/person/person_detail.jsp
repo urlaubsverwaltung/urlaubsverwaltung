@@ -53,29 +53,26 @@
                     </jsp:body>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
-                <dl class="tw-m-0 tw-ml-25 tw-list-none tw-grid tw-grid-cols-2 tw-gap-2">
-
-                        <dt class="tw-font-normal">
-                            <spring:message code="person.account.basedata.username"/>:
+                <dl class="tw-m-0 tw-mt-10 tw-list-none tw-grid tw-gap-x-8 tw-gap-y-4" style="grid-template-columns: fit-content(30%) 1fr;">
+                    <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
+                        <spring:message code="person.account.basedata.username"/>
+                    </dt>
+                    <dd>
+                        ${person.username}
+                    </dd>
+                    <c:if test="${not empty personBasedata.personnelNumber}">
+                        <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
+                            <spring:message code="person.account.basedata.personnelNumber"/>
                         </dt>
                         <dd>
-                            ${person.username}
-                        </dd>
-
-                    <c:if test="${not empty personBasedata.personnelNumber}">
-                        <dt class="tw-font-normal">
-                            <spring:message code="person.account.basedata.personnelNumber"/>:
-                        </dt>
-                        <dd class="tw-grid-col-span-2">
                             ${personBasedata.personnelNumber}
                         </dd>
                     </c:if>
-
                     <c:if test="${not empty personBasedata.additionalInfo}">
-                        <dt class="tw-font-normal">
-                            <spring:message code="person.account.basedata.additionalInformation"/>:
+                        <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
+                            <spring:message code="person.account.basedata.additionalInformation"/>
                         </dt>
-                        <dd class="tw-grid-col-span-2">
+                        <dd>
                             ${personBasedata.additionalInfo}
                         </dd>
                     </c:if>
