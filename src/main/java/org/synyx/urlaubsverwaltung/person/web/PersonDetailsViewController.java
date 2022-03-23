@@ -115,6 +115,7 @@ public class PersonDetailsViewController {
         model.addAttribute("federalState", maybeWorkingTime.map(WorkingTime::getFederalState)
             .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState()));
 
+        model.addAttribute("canEditBasedata", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));

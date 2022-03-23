@@ -40,7 +40,7 @@
             <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
                     <jsp:attribute name="actions">
-                        <c:if test="${canEditPermissions}">
+                        <c:if test="${canEditBasedata}">
                             <a href="${URL_PREFIX}/person/${person.id}/basedata" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
                             </a>
