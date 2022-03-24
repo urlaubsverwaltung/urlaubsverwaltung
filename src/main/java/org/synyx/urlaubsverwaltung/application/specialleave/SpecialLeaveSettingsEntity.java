@@ -16,6 +16,10 @@ class SpecialLeaveSettingsEntity {
     private String messageKey;
     private Integer days;
 
+    protected SpecialLeaveSettingsEntity() {
+        // ok
+    }
+
     public Integer getId() {
         return id;
     }

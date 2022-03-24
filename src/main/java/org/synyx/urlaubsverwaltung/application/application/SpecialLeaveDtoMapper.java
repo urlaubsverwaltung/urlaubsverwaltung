@@ -7,13 +7,13 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
-public class SpecialLeaveDtoMapper {
+class SpecialLeaveDtoMapper {
 
     private SpecialLeaveDtoMapper() {
+        // ok
     }
 
-    public static SpecialLeaveDto mapToSpecialLeaveSettingsDto(List<SpecialLeaveSettingsItem> specialLeaveItems) {
-
+    static SpecialLeaveDto mapToSpecialLeaveSettingsDto(List<SpecialLeaveSettingsItem> specialLeaveItems) {
         final List<SpecialLeaveItemDto> specialLeaveItemDtos = specialLeaveItems.stream()
             .map(toSpecialLeaveItemDto())
             .collect(toList());

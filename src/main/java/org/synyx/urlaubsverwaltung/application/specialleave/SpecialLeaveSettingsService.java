@@ -14,7 +14,7 @@ public class SpecialLeaveSettingsService {
 
     private final SpecialLeaveSettingsRepository specialLeaveSettingsRepository;
 
-    public SpecialLeaveSettingsService(SpecialLeaveSettingsRepository specialLeaveSettingsRepository) {
+    SpecialLeaveSettingsService(SpecialLeaveSettingsRepository specialLeaveSettingsRepository) {
         this.specialLeaveSettingsRepository = specialLeaveSettingsRepository;
     }
 
@@ -47,5 +47,4 @@ public class SpecialLeaveSettingsService {
             specialLeaveSettingsEntity.getMessageKey(),
             specialLeaveSettingsEntity.getDays());
     }
-
 }
