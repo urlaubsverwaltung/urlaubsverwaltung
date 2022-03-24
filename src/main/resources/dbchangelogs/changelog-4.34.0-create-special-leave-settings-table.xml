@@ -39,7 +39,7 @@
       <column name="id" valueNumeric="3"/>
       <column name="message_key" value="application.data.specialleave.death_of_child"/>
       <column name="active" valueBoolean="true"/>
-      <column name="days" valueNumeric="1"/>
+      <column name="days" valueNumeric="2"/>
     </insert>
 
     <insert tableName="special_leave_settings">
