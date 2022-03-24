@@ -34,9 +34,9 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,6 +52,7 @@ import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED;
@@ -327,7 +328,7 @@ class ApplicationInteractionServiceImplTest {
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(false);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -350,7 +351,7 @@ class ApplicationInteractionServiceImplTest {
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -442,7 +443,7 @@ class ApplicationInteractionServiceImplTest {
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
-        assertApplicationForLeaveHasChangedStatus(applicationForLeave, ApplicationStatus.TEMPORARY_ALLOWED, person, departmentHead);
+        assertApplicationForLeaveHasChangedStatus(applicationForLeave, TEMPORARY_ALLOWED, person, departmentHead);
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead);
         assertNoCalendarSyncOccurs();
         assertTemporaryAllowedNotificationIsSent(applicationForLeave);
@@ -458,12 +459,12 @@ class ApplicationInteractionServiceImplTest {
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
 
         sut.allow(applicationForLeave, departmentHead, comment);
 
-        assertThat(applicationForLeave.getStatus()).isEqualTo(ApplicationStatus.TEMPORARY_ALLOWED);
+        assertThat(applicationForLeave.getStatus()).isEqualTo(TEMPORARY_ALLOWED);
 
         verifyNoInteractions(applicationService);
         verifyNoInteractions(commentService);
@@ -482,7 +483,7 @@ class ApplicationInteractionServiceImplTest {
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(false);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -554,7 +555,7 @@ class ApplicationInteractionServiceImplTest {
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
-        applicationForLeave.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
+        applicationForLeave.setStatus(TEMPORARY_ALLOWED);
         applicationForLeave.setTwoStageApproval(true);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
@@ -596,7 +597,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureSecondStageAuthorityCanNotBeAllowedByDepartmentHead() {
+    void ensureSecondStageAuthorityIfDifferentDepartmentButMemberOfOwnDepartmentCanBeAllowedByDepartmentHead() throws NotPrivilegedToApproveException {
 
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
@@ -605,6 +606,33 @@ class ApplicationInteractionServiceImplTest {
         secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(false);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, departmentHead)).thenReturn(false);
+
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(secondStageAuthority);
+        applicationForLeave.setStatus(WAITING);
+        applicationForLeave.setTwoStageApproval(true);
+
+        when(applicationService.save(applicationForLeave)).then(returnsFirstArg());
+
+        final Application allowedApplicationForLeave = sut.allow(applicationForLeave, departmentHead, comment);
+        assertApplicationForLeaveHasChangedStatus(allowedApplicationForLeave, TEMPORARY_ALLOWED, secondStageAuthority, departmentHead);
+    }
+
+    @Test
+    void ensureSecondStageAuthorityOfSameDepartmentCanNotBeAllowedByDepartmentHead() {
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
+
+        final Person secondStageAuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageAuthority.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(departmentHead, secondStageAuthority)).thenReturn(false);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, departmentHead)).thenReturn(true);
 
         final Optional<String> comment = of("Foo");
 
@@ -1329,7 +1357,6 @@ class ApplicationInteractionServiceImplTest {
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
                                                            Person person, Person privilegedUser) {
-
         assertThat(applicationForLeave.getStatus()).isEqualTo(status);
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
         assertThat(applicationForLeave.getBoss()).isEqualTo(privilegedUser);
