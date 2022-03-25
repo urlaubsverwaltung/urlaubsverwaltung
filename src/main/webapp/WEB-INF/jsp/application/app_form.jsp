@@ -324,7 +324,12 @@
                             <div class="col-md-6 col-md-push-2">
                             <span class="help-block tw-text-sm">
                                 <icon:information-circle className="tw-w-4 tw-h-4" solid="true"/>
-                                <spring:message code="application.data.description"/>
+                                <spring:message code="application.data.specialleave.description"/>
+                                <ul>
+                                    <c:forEach items="${specialLeave.specialLeaveItems}" var="specialLeaveItem" varStatus="loop">
+                                        <li><spring:message code="${specialLeaveItem.messageKey}.info" arguments="${specialLeaveItem.days}"/></li>
+                                    </c:forEach>
+                                </ul>
                             </span>
                             </div>
                         </div>

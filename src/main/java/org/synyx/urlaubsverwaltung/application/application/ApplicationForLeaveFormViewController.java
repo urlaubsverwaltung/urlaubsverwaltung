@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -55,6 +57,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.merge;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -84,6 +87,7 @@ class ApplicationForLeaveFormViewController {
     private final SettingsService settingsService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
+    private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
     ApplicationForLeaveFormViewController(PersonService personService, DepartmentService departmentService, AccountService accountService,
@@ -91,7 +95,7 @@ class ApplicationForLeaveFormViewController {
                                           ApplicationInteractionService applicationInteractionService,
                                           ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
                                           SettingsService settingsService, DateFormatAware dateFormatAware,
-                                          Clock clock) {
+                                          Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.accountService = accountService;
@@ -101,6 +105,7 @@ class ApplicationForLeaveFormViewController {
         this.settingsService = settingsService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
+        this.specialLeaveSettingsService = specialLeaveSettingsService;
     }
 
     @InitBinder
@@ -413,6 +418,11 @@ class ApplicationForLeaveFormViewController {
             activeVacationTypes = vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
         }
         model.addAttribute("vacationTypes", activeVacationTypes);
+
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()
+            .filter(SpecialLeaveSettingsItem::isActive)
+            .collect(toList());
+        model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
         appendDepartmentsToReplacements(appForm);
         model.addAttribute("application", appForm);

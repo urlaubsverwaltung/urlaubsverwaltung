@@ -284,10 +284,6 @@ table.absence-type-settings-table thead {
       td::before {
         content: attr(data-th-text);
       }
-
-      td:nth-of-type(4) {
-        text-align: left;
-      }
     }
   }
 }
@@ -340,11 +336,8 @@ table.absence-type-settings-table thead {
         @apply tw-py-1;
       }
 
-      th:nth-of-type(1) {
+      th:first-of-type {
         @apply tw-pr-4;
-      }
-      th:nth-of-type(4) {
-        @apply tw-text-right;
       }
     }
 
@@ -354,21 +347,16 @@ table.absence-type-settings-table thead {
         @apply tw-py-1;
       }
 
-      td:nth-of-type(1) {
+      td:first-of-type {
         @apply tw-rounded-l;
         @apply tw-pl-4;
         @apply tw-pr-4;
       }
-      td:nth-of-type(2) {
+      td:not(:first-of-type):not(:last-of-type) {
         @apply tw-pl-4;
         @apply tw-pr-8;
       }
-      td:nth-of-type(3) {
-        @apply tw-pl-4;
-        @apply tw-pr-8;
-      }
-      td:nth-of-type(4) {
-        text-align: right;
+      td:last-of-type {
         @apply tw-rounded-r;
         @apply tw-pl-4;
         @apply tw-pr-4;
@@ -378,14 +366,7 @@ table.absence-type-settings-table thead {
 }
 
 @screen md {
-  table.absence-type-settings-table {
-    tbody {
-      td:nth-of-type(2) {
-        @apply tw-pr-16;
-      }
-      td:nth-of-type(3) {
-        @apply tw-pr-16;
-      }
-    }
+  table.absence-type-settings-table tbody td:not(:first-of-type):not(:last-of-type) {
+    @apply tw-pr-16;
   }
 }

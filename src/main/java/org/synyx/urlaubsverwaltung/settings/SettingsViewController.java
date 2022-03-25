@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
@@ -23,6 +25,7 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -31,6 +34,7 @@ import java.util.TimeZone;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsItems;
 
 @Controller
 @RequestMapping("/web/settings")
@@ -44,11 +48,12 @@ public class SettingsViewController {
     private final SettingsValidator settingsValidator;
     private final Clock clock;
     private final String applicationVersion;
+    private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion) {
+                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion, SpecialLeaveSettingsService specialLeaveService) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
@@ -57,6 +62,7 @@ public class SettingsViewController {
         this.settingsValidator = settingsValidator;
         this.clock = clock;
         this.applicationVersion = applicationVersion;
+        this.specialLeaveSettingsService = specialLeaveService;
     }
 
     @GetMapping
@@ -68,7 +74,10 @@ public class SettingsViewController {
         final String authorizedRedirectUrl = getAuthorizedRedirectUrl(requestURL, "/google-api-handshake");
 
         final Settings settings = settingsService.getSettings();
-        fillModel(model, settings, authorizedRedirectUrl);
+        final SettingsDto settingsDto = settingsToDto(settings);
+        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
+        fillModel(model, settingsDto, authorizedRedirectUrl);
 
         if (shouldShowOAuthError(googleOAuthError, settings)) {
             model.addAttribute("errors", googleOAuthError);
@@ -80,7 +89,7 @@ public class SettingsViewController {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@ModelAttribute("settings") SettingsDto settingsDto, Errors errors,
+    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsDto settingsDto, Errors errors,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
@@ -107,6 +116,10 @@ public class SettingsViewController {
             .collect(toList());
         vacationTypeService.updateVacationTypes(vacationTypeUpdates);
 
+        final SpecialLeaveSettingsDto specialLeaveSettingsDto = settingsDto.getSpecialLeaveSettings();
+        final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = mapToSpecialLeaveSettingsItems(specialLeaveSettingsDto.getSpecialLeaveSettingsItems());
+        specialLeaveSettingsService.saveAll(specialLeaveSettingsItems);
+
         if (googleOAuthButton != null) {
             return "redirect:/web/google-api-handshake";
         }
@@ -120,11 +133,9 @@ public class SettingsViewController {
         return requestURL.replace("/settings", redirectPath);
     }
 
-    private void fillModel(Model model, Settings settings, String authorizedRedirectUrl) {
-        final SettingsDto settingsDto = settingsToDto(settings);
-        settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
-
-        fillModel(model, settingsDto, authorizedRedirectUrl);
+    private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
+        final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = specialLeaveSettingsService.getSpecialLeaveSettings();
+        return SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsDto(specialLeaveSettingsItems);
     }
 
     private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
@@ -132,6 +143,7 @@ public class SettingsViewController {
         model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
 
         settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
+        settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
 
         model.addAttribute("settings", settingsDto);
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
@@ -165,6 +177,7 @@ public class SettingsViewController {
         settingsDto.setTimeSettings(settings.getTimeSettings());
         settingsDto.setSickNoteSettings(settings.getSickNoteSettings());
         settingsDto.setCalendarSettings(settings.getCalendarSettings());
+
         return settingsDto;
     }
 

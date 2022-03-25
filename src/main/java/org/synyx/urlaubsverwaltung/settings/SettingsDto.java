@@ -8,12 +8,15 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 public class SettingsDto {
 
     private Integer id;
     private AbsenceTypeSettingsDto absenceTypeSettings;
+    @Valid
+    private SpecialLeaveSettingsDto specialLeaveSettings;
 
     private ApplicationSettings applicationSettings;
     private AccountSettings accountSettings;
@@ -37,6 +40,14 @@ public class SettingsDto {
 
     public void setAbsenceTypeSettings(AbsenceTypeSettingsDto absenceTypeSettings) {
         this.absenceTypeSettings = absenceTypeSettings;
+    }
+
+    public SpecialLeaveSettingsDto getSpecialLeaveSettings() {
+        return specialLeaveSettings;
+    }
+
+    public void setSpecialLeaveSettings(SpecialLeaveSettingsDto specialLeaveSettings) {
+        this.specialLeaveSettings = specialLeaveSettings;
     }
 
     public ApplicationSettings getApplicationSettings() {
@@ -108,12 +119,13 @@ public class SettingsDto {
             && Objects.equals(overtimeSettings, that.overtimeSettings)
             && Objects.equals(timeSettings, that.timeSettings)
             && Objects.equals(sickNoteSettings, that.sickNoteSettings)
-            && Objects.equals(calendarSettings, that.calendarSettings);
+            && Objects.equals(calendarSettings, that.calendarSettings)
+            && Objects.equals(specialLeaveSettings, that.specialLeaveSettings);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, absenceTypeSettings, applicationSettings, accountSettings, workingTimeSettings,
-            overtimeSettings, timeSettings, sickNoteSettings, calendarSettings);
+            overtimeSettings, timeSettings, sickNoteSettings, calendarSettings, specialLeaveSettings);
     }
 }

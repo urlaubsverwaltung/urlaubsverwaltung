@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,8 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -32,6 +35,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -58,6 +62,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -93,6 +98,8 @@ class ApplicationForLeaveFormViewControllerTest {
     private ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private SpecialLeaveSettingsService specialLeaveSettingsService;
 
     private final DateFormatAware dateFormatAware = new DateFormatAware();
 
@@ -102,8 +109,68 @@ class ApplicationForLeaveFormViewControllerTest {
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
-            applicationInteractionService, applicationForLeaveFormValidator, settingsService, dateFormatAware, clock);
+            applicationInteractionService, applicationForLeaveFormValidator, settingsService, dateFormatAware, clock, specialLeaveSettingsService);
     }
+
+    @Test
+    void specialLeaveInModel() throws Exception {
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        final Settings settings = new Settings();
+        settings.setOvertimeSettings(overtimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final SpecialLeaveSettingsItem inactiveSetting = new SpecialLeaveSettingsItem(2, false, "", 2);
+        final SpecialLeaveSettingsItem activeSetting = new SpecialLeaveSettingsItem(1, true, "", 1);
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = List.of(inactiveSetting, activeSetting);
+        when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(specialLeaveSettings);
+
+        final ResultActions resultActions = perform(get("/web/application/new"));
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(model().attribute("specialLeave",
+            hasProperty("specialLeaveItems",
+                hasItems(
+                    allOf(
+                        instanceOf(SpecialLeaveItemDto.class),
+                        hasProperty("active", is(true)),
+                        hasProperty("messageKey", is("")),
+                        hasProperty("days", is(1))
+                    )
+                ))));
+    }
+
+    @Test
+    void specialLeaveIsEmptyInModel() throws Exception {
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final int year = Year.now(clock).getValue();
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
+
+        final OvertimeSettings overtimeSettings = new OvertimeSettings();
+        final Settings settings = new Settings();
+        settings.setOvertimeSettings(overtimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(Collections.emptyList());
+
+        final ResultActions resultActions = perform(get("/web/application/new"));
+        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(model().attribute("specialLeave",
+            hasProperty("specialLeaveItems", hasSize(0))));
+    }
+
 
     @Test
     void overtimeIsActivated() throws Exception {

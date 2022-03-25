@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -68,25 +69,24 @@ class SettingsViewControllerTest {
 
     @Mock
     private SettingsService settingsService;
-
     @Mock
     private VacationTypeService vacationTypeService;
-
     @Mock
     private SettingsValidator settingsValidator;
+    @Mock
+    private SpecialLeaveSettingsService specialLeaveService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version");
+        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version", specialLeaveService);
     }
 
     @Test
     void getAuthorizedRedirectUrl() {
-
-        String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings", OATUH_REDIRECT_REL);
-        String expected = "http://localhost:8080/web" + OATUH_REDIRECT_REL;
+        final String actual = sut.getAuthorizedRedirectUrl("http://localhost:8080/web/settings", OATUH_REDIRECT_REL);
+        final String expected = "http://localhost:8080/web" + OATUH_REDIRECT_REL;
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -192,10 +192,9 @@ class SettingsViewControllerTest {
 
     @Test
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
-
         when(settingsService.getSettings()).thenReturn(someSettings());
-
-        perform(get("/web/settings")).andExpect(view().name("settings/settings_form"));
+        perform(get("/web/settings"))
+            .andExpect(view().name("settings/settings_form"));
     }
 
     @Test
@@ -248,6 +247,7 @@ class SettingsViewControllerTest {
                 .param("_workingTimeSettings.workingDays", "on")
                 .param("_workingTimeSettings.workingDays", "on")
                 .param("_workingTimeSettings.workingDays", "on")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         )
             .andExpect(redirectedUrl("/web/settings"));
 
@@ -266,7 +266,6 @@ class SettingsViewControllerTest {
         assertThat(savedWorkingTimeSettings.getSunday()).isEqualTo(DayLength.ZERO);
     }
 
-
     @Test
     void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
 
@@ -275,9 +274,23 @@ class SettingsViewControllerTest {
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         );
 
         verify(settingsService).save(any(Settings.class));
+    }
+
+    @Test
+    void validateSpecialLeaves() throws Exception {
+
+        perform(
+            post("/web/settings")
+                .param("calendarSettings.exchangeCalendarSettings.timeZoneId", "Z")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "-1")
+
+        )
+            .andExpect(model().attributeHasFieldErrors("settings", "specialLeaveSettings.specialLeaveSettingsItems[0].days"))
+            .andExpect(model().attributeHasFieldErrorCode("settings", "specialLeaveSettings.specialLeaveSettingsItems[0].days", "Min"));
     }
 
     @Test
@@ -288,21 +301,21 @@ class SettingsViewControllerTest {
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         )
             .andExpect(flash().attribute("success", true));
 
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
         )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/settings"));
     }
 
     private static Settings someSettings() {
-
         final Settings settings = new Settings();
-
         settings.setId(1);
         settings.setApplicationSettings(new ApplicationSettings());
         settings.setAccountSettings(new AccountSettings());
@@ -311,33 +324,26 @@ class SettingsViewControllerTest {
         settings.setTimeSettings(new TimeSettings());
         settings.setSickNoteSettings(new SickNoteSettings());
         settings.setCalendarSettings(new CalendarSettings());
-
         return settings;
     }
 
     private static Settings someSettingsWithNoExchangeTimezone() {
-
         return someSettings();
     }
 
     private static Settings someSettingsWithExchangeTimeZone(String timeZoneId) {
-
-        Settings settings = someSettings();
+        final Settings settings = someSettings();
         settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(timeZoneId);
-
         return settings;
     }
 
     private static Settings someSettingsWithoutGoogleCalendarRefreshToken() {
-
         return someSettings();
     }
 
     private static Settings someSettingsWithGoogleCalendarRefreshToken() {
-
-        Settings settings = someSettings();
+        final Settings settings = someSettings();
         settings.getCalendarSettings().getGoogleCalendarSettings().setRefreshToken(SOME_GOOGLE_REFRESH_TOKEN);
-
         return settings;
     }
 

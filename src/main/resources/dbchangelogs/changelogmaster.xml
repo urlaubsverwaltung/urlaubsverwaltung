@@ -97,4 +97,5 @@
   <include file="dbchangelogs/changelog-4.29.0-add-new-vacation-type-employment-ban.xml"/>
   <include file="dbchangelogs/changelog-4.30.0-create-user-settings-table.xml"/>
   <include file="dbchangelogs/changelog-4.34.0-add-new-vacation-type-educational-leave.xml"/>
+  <include file="dbchangelogs/changelog-4.34.0-create-special-leave-settings-table.xml"/>
 </databaseChangeLog>
