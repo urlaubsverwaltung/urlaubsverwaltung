@@ -217,7 +217,12 @@ Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der ei
 #### Datenbank konfigurieren
 
 Die Anwendung verwendet zur Speicherung der Daten ein MariaDB-Datenbankmanagementsystem. 
-Erstelle in deinem MariaDB-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`
+Erstelle in deinem MariaDB-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`.
+
+```sql
+CREATE DATABASE urlaubsverwaltung DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;
+```
+
 sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
 
 ```properties

@@ -90,6 +90,29 @@ class ApplicationRepositoryIT extends TestContainersBase {
     }
 
     @Test
+    void ensureApplicationForLeaveWithEmoji() {
+
+        final Person marlene = personService.save(new Person("marlene", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        // application for leave that should be found
+        final Application application = createApplication(marlene, vacationType, askedStartDate, askedStartDate.plusDays(2), FULL);
+        application.setReason("\uD83C\uDF1E");
+
+        sut.save(application);
+
+        List<ApplicationStatus> statuses = List.of(WAITING);
+        List<Person> persons = List.of(marlene);
+
+        final List<Application> actualApplications = sut.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, askedStartDate, askedEndDate);
+
+        assertThat(actualApplications).contains(application);
+    }
+
+    @Test
     void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
