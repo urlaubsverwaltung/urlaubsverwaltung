@@ -19,17 +19,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SpecialLeaveSettingsServiceTest {
 
-    private SpecialLeaveSettingsService specialLeaveSettingsService;
+    private SpecialLeaveSettingsService sut;
 
     @Mock
     private SpecialLeaveSettingsRepository specialLeaveSettingsRepository;
-
     @Captor
     private ArgumentCaptor<List<SpecialLeaveSettingsEntity>> specialLeaveSettingsListArgument;
 
     @BeforeEach
     void setUp() {
-        specialLeaveSettingsService = new SpecialLeaveSettingsService(specialLeaveSettingsRepository);
+        sut = new SpecialLeaveSettingsService(specialLeaveSettingsRepository);
     }
 
     @Test
@@ -43,7 +42,7 @@ class SpecialLeaveSettingsServiceTest {
         when(specialLeaveSettingsRepository.findAllById(Set.of(1))).thenReturn(List.of(specialLeaveSettingsEntity));
 
         final SpecialLeaveSettingsItem specialLeaveSettingsItem = new SpecialLeaveSettingsItem(1, false, "messageKey", 2);
-        specialLeaveSettingsService.saveAll(List.of(specialLeaveSettingsItem));
+        sut.saveAll(List.of(specialLeaveSettingsItem));
 
         verify(specialLeaveSettingsRepository).saveAll(specialLeaveSettingsListArgument.capture());
         final List<SpecialLeaveSettingsEntity> specialLeaveSettingsEntities = specialLeaveSettingsListArgument.getValue();
@@ -62,7 +61,7 @@ class SpecialLeaveSettingsServiceTest {
         specialLeaveSettingsEntity.setDays(2);
         when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
 
-        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = sut.getSpecialLeaveSettings();
         assertThat(specialLeaveSettings)
             .extracting("id", "active", "messageKey", "days")
             .contains(tuple(1, false, "messageKey", 2));

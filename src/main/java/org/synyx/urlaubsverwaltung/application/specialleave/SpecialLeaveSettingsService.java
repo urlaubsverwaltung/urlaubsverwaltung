@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
