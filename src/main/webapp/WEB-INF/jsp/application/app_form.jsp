@@ -327,9 +327,7 @@
                                 <spring:message code="application.data.specialleave.description"/>
                                 <ul>
                                     <c:forEach items="${specialLeave.specialLeaveItems}" var="specialLeaveItem" varStatus="loop">
-                                        <c:if test="${specialLeaveItem.active}">
-                                            <li><spring:message code="${specialLeaveItem.messageKey}.info" arguments="${specialLeaveItem.days}"/></li>
-                                        </c:if>
+                                        <li><spring:message code="${specialLeaveItem.messageKey}.info" arguments="${specialLeaveItem.days}"/></li>
                                     </c:forEach>
                                 </ul>
                             </span>

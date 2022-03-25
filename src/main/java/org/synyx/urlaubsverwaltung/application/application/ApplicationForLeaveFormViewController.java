@@ -419,7 +419,9 @@ class ApplicationForLeaveFormViewController {
         }
         model.addAttribute("vacationTypes", activeVacationTypes);
 
-        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()
+            .filter(SpecialLeaveSettingsItem::isActive)
+            .collect(toList());
         model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
         appendDepartmentsToReplacements(appForm);

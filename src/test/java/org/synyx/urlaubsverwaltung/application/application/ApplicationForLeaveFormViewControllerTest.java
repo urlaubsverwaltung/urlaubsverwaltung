@@ -128,19 +128,21 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setOvertimeSettings(overtimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final List<SpecialLeaveSettingsItem> specialLeaveSettings = List.of(new SpecialLeaveSettingsItem(1, true, "", 2));
+        final SpecialLeaveSettingsItem inactiveSetting = new SpecialLeaveSettingsItem(2, false, "", 2);
+        final SpecialLeaveSettingsItem activeSetting = new SpecialLeaveSettingsItem(1, true, "", 1);
+        final List<SpecialLeaveSettingsItem> specialLeaveSettings = List.of(inactiveSetting, activeSetting);
         when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(specialLeaveSettings);
 
         final ResultActions resultActions = perform(get("/web/application/new"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("specialLeave",
             hasProperty("specialLeaveItems",
-                Matchers.hasItems(
-                    Matchers.allOf(
-                        Matchers.instanceOf(SpecialLeaveItemDto.class),
-                        hasProperty("active", Matchers.is(true)),
-                        hasProperty("messageKey", Matchers.is("")),
-                        hasProperty("days", Matchers.is(2))
+                hasItems(
+                    allOf(
+                        instanceOf(SpecialLeaveItemDto.class),
+                        hasProperty("active", is(true)),
+                        hasProperty("messageKey", is("")),
+                        hasProperty("days", is(1))
                     )
                 ))));
     }
