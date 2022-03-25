@@ -560,8 +560,8 @@
                                     <c:forEach items="${settings.specialLeaveSettings.specialLeaveSettingsItems}" var="specialLeaveSettingsItem" varStatus="loop">
                                         <tr data-enabled="${specialLeaveSettingsItem.active}">
                                             <td data-col-status data-th-text="<spring:message code='settings.specialleave.table.head.state' />">
-                                                <form:hidden path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].id" value="${specialLeaveSettingsItem.id}" />
                                                 <span class="checkbox-switch">
+                                                    <form:hidden path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].id" value="${specialLeaveSettingsItem.id}" />
                                                     <form:checkbox path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].active" id="specialLeave-active-${loop.index}" />
                                                     <label for="specialLeave-active-${loop.index}" class="tw-sr-only">
                                                         <spring:message code="settings.specialleave.action.state.label" />
@@ -569,10 +569,12 @@
                                                 </span>
                                             </td>
                                             <td data-th-text="<spring:message code='settings.specialleave.table.head.type' />">
-                                                <spring:message code="${specialLeaveSettingsItem.messageKey}" />
+                                                <span class="tw-w-1/2 md:tw-w-full">
+                                                    <spring:message code="${specialLeaveSettingsItem.messageKey}" />
+                                                </span>
                                             </td>
                                             <td data-th-text="<spring:message code='settings.specialleave.table.head.days' />">
-                                                <form:input id="specialLeave-days-${loop.index}"
+                                                <form:input id="specialLeave-days-${loop.index}" cssClass="form-control tw-w-1/2 md:tw-w-full"
                                                             path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" class="form-control"
                                                             cssErrorClass="form-control error"
                                                             type="number" step="1"/>
