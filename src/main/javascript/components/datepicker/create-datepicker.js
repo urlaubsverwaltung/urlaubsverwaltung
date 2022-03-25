@@ -118,10 +118,6 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   const dateElement = document.querySelector(selector);
   const duetDateElement = document.createElement("duet-date-picker");
 
-  if (dateElement.value && !dateElement.dataset.isoValue) {
-    throw new Error("date input defines a value but no `data-iso-value` attribute is given.");
-  }
-
   duetDateElement.dateAdapter = dateAdapter;
   duetDateElement.localization = localization;
 
