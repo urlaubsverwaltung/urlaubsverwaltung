@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -18,9 +20,9 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
  */
 public final class FilterPeriod {
 
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private final LocalDate startDate;
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private final LocalDate endDate;
 
     public FilterPeriod(LocalDate startDate, LocalDate endDate) {

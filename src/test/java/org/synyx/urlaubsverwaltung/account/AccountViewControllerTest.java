@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -193,26 +195,29 @@ class AccountViewControllerTest {
             .andExpect(redirectedUrl("/web/person/" + SOME_PERSON_ID));
     }
 
-    @Test
-    void updateAccountWithWrongValidFromFormat() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
+    void ensureUpdateAccountSucceedsWithValidFromDateFormat(String givenDate) throws Exception {
 
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByID(5)).thenReturn(Optional.of(somePerson()));
 
-        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
-            .param("holidaysAccountValidFrom", "01.01.20"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("account/account_form"));
+        perform(post("/web/person/5/account")
+            .param("holidaysAccountValidFrom", givenDate))
+            .andExpect(redirectedUrl("/web/person/5"));
     }
 
-    @Test
-    void updateAccountWithWrongValidToFormat() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
+    void ensureUpdateAccountSucceedsWithValidToDateFormat(String givenDate) throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
-        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
-            .param("holidaysAccountValidTo", "01.01.20"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("account/account_form"));
+        perform(
+            post("/web/person/" + SOME_PERSON_ID + "/account")
+                .param("holidaysAccountValidFrom", "01.01.2022")
+                .param("holidaysAccountValidTo", givenDate)
+            )
+            .andExpect(redirectedUrl("/web/person/5"));
     }
 
     private Person somePerson() {

@@ -4,6 +4,10 @@ import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,6 +21,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +32,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -68,24 +72,34 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(redirectedUrl("/web/application/statistics?from=2019-01-01&to=2019-08-01"));
     }
 
-    @Test
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate() throws Exception {
-
-        perform(post("/web/application/statistics")
-            .param("startDate", "01.01.20"))
-            .andExpect(status().isFound())
-            .andExpect(flash().attribute("filterPeriodIncorrect", true))
-            .andExpect(redirectedUrl("/web/application/statistics?from=2022-01-01&to=2022-12-31"));
+    private static Stream<Arguments> dateInputAndIsoDateTuple() {
+        return Stream.of(
+            Arguments.of("25.03.2022", "2022-03-25"),
+            Arguments.of("25.03.22", "2022-03-25"),
+            Arguments.of("25.3.2022", "2022-03-25"),
+            Arguments.of("25.3.22", "2022-03-25"),
+            Arguments.of("1.4.22", "2022-04-01")
+        );
     }
 
-    @Test
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForEndDate() throws Exception {
+    @ParameterizedTest
+    @MethodSource("dateInputAndIsoDateTuple")
+    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
 
         perform(post("/web/application/statistics")
-            .param("endDate", "01.01.20"))
+            .param("startDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("filterPeriodIncorrect", true))
-            .andExpect(redirectedUrl("/web/application/statistics?from=2022-01-01&to=2022-12-31"));
+            .andExpect(redirectedUrl("/web/application/statistics?from=" + givenIsoDate + "&to=2022-12-31"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("dateInputAndIsoDateTuple")
+    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDate, String givenIsoDate) throws Exception {
+
+        perform(post("/web/application/statistics")
+            .param("endDate", givenDate))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/statistics?from=2022-01-01&to=" + givenIsoDate));
     }
 
     @Test
@@ -146,15 +160,16 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void downloadCSVSetsDownloadHeaders() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
+    void downloadCSVSetsDownloadHeaders(String givenDate) throws Exception {
 
         final String expectedFilename = "filename.csv";
         when(applicationForLeaveStatisticsCsvExportService.getFileName(any(FilterPeriod.class))).thenReturn(expectedFilename);
 
         perform(get("/web/application/statistics/download")
-            .param("from", "01.01.2019")
-            .param("to", "01.08.2019"))
+            .param("from", givenDate)
+            .param("to", givenDate))
             .andExpect(header().string("Content-disposition", "attachment;filename=" + expectedFilename));
     }
 

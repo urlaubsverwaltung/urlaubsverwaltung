@@ -13,6 +13,8 @@ import java.time.format.DateTimeFormatter;
 
 import static java.util.Objects.requireNonNullElse;
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
 
 /**
  * View class to record overtime for a certain period of time.
@@ -21,9 +23,9 @@ public class OvertimeForm {
 
     private Integer id;
     private Person person;
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate startDate;
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate endDate;
     private String comment;
     private boolean reduce;

@@ -8,13 +8,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
 
 public class AccountForm {
 
     private int holidaysAccountYear;
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidFrom;
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidTo;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;

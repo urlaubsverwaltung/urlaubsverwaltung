@@ -16,6 +16,8 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
 import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
 
 /**
  * View class representing an application for leave.
@@ -26,12 +28,12 @@ public class ApplicationForLeaveForm {
     private Person person;
 
     // period: date and time
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate startDate;
 
     private Time startTime;
 
-    @DateTimeFormat(pattern = DD_MM_YYYY)
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate endDate;
 
     private Time endTime;
