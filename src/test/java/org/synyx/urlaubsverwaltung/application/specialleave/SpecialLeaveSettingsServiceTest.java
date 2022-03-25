@@ -54,7 +54,7 @@ class SpecialLeaveSettingsServiceTest {
 
         final Iterable<SpecialLeaveSettingsEntity> specialLeaveSettingsListArgumentValue = specialLeaveSettingsListArgument.getValue();
         assertThat(specialLeaveSettingsListArgumentValue)
-            .extracting("id","active", "messageKey", "days")
+            .extracting("id", "active", "messageKey", "days")
             .contains(tuple(id, active, messageKey, days));
     }
 
@@ -76,7 +76,7 @@ class SpecialLeaveSettingsServiceTest {
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
 
         assertThat(specialLeaveSettings)
-            .extracting("id","active", "messageKey", "days")
+            .extracting("id", "active", "messageKey", "days")
             .contains(tuple(id, active, messageKey, days));
     }
 }

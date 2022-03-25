@@ -35,7 +35,7 @@ class SpecialLeaveSettingsItemServiceTest {
         specialLeaveSettingsEntity.setId(1);
         when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
 
-        SpecialLeaveSettingsItem specialLeaveSettings = new SpecialLeaveSettingsItem(1,true, "foo", 5);
+        SpecialLeaveSettingsItem specialLeaveSettings = new SpecialLeaveSettingsItem(1, true, "foo", 5);
         final List<SpecialLeaveSettingsItem> specialLeaveSettingsItemList = List.of(specialLeaveSettings);
         specialLeaveSettingsService.saveAll(specialLeaveSettingsItemList);
 
