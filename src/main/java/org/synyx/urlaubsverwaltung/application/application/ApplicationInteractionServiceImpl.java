@@ -138,7 +138,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     @Override
-    public Application allow(Application application, Person privilegedUser, Optional<String> comment) {
+    public Application allow(Application application, Person privilegedUser, Optional<String> comment) throws NotPrivilegedToApproveException {
 
         // Boss is a very might dude
         if (privilegedUser.hasRole(BOSS)) {
@@ -168,7 +168,10 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             return allowFinally(application, privilegedUser, comment);
         }
 
-        throw new IllegalStateException("Applications for leave can be allowed only by a privileged user!");
+        throw new NotPrivilegedToApproveException(format(
+            "because is not department is %s " +
+                "or is own application %s " +
+                "or is the application of ssa %s", isDepartmentHead, isOwnApplication, isSecondStageAuthorityApplication));
     }
 
     @Override
@@ -242,7 +245,6 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
         return savedApplication;
     }
-
 
     private Application allowFinally(Application applicationForLeave, Person privilegedUser, Optional<String> comment) {
 

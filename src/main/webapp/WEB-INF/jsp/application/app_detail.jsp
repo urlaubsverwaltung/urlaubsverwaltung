@@ -94,6 +94,11 @@
                                 <spring:message code="application.action.reason.error"/>
                             </div>
                         </c:when>
+                        <c:when test="${notPrivilegedToApprove}">
+                            <div class="alert alert-danger">
+                                <spring:message code="application.action.remind.error.notPrivilegedToApprove"/>
+                            </div>
+                        </c:when>
                         <c:when test="${allowSuccess}">
                             <div class="alert alert-success">
                                 <spring:message code="application.action.allow.success"/>

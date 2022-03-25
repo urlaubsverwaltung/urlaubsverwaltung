@@ -36,6 +36,7 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -298,7 +299,7 @@ class ApplicationInteractionServiceImplTest {
     // ALLOW APPLICATION FOR LEAVE -------------------------------------------------------------------------------------
     // ALLOWING - BOSS
     @Test
-    void ensureWaitingApplicationForLeaveCanBeAllowedByBoss() {
+    void ensureWaitingApplicationForLeaveCanBeAllowedByBoss() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person boss = createPerson("boss", USER, Role.BOSS);
@@ -319,7 +320,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBoss() {
+    void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBoss() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person boss = createPerson("boss", USER, Role.BOSS);
@@ -342,7 +343,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBossEvenWithTwoStageApprovalActive() {
+    void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedByBossEvenWithTwoStageApprovalActive() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person boss = createPerson("boss", USER, Role.BOSS);
@@ -364,7 +365,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureIfAllowedApplicationForLeaveIsAllowedAgainNothingHappens() {
+    void ensureIfAllowedApplicationForLeaveIsAllowedAgainNothingHappens() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person boss = createPerson("boss", USER, Role.BOSS);
@@ -397,12 +398,11 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setStatus(WAITING);
 
-        assertThatIllegalStateException()
-            .isThrownBy(() -> sut.allow(applicationForLeave, user, comment));
+        assertThrows(NotPrivilegedToApproveException.class, () -> sut.allow(applicationForLeave, user, comment));
     }
 
     @Test
-    void ensureWaitingApplicationForLeaveCanBeAllowedByDepartmentHead() {
+    void ensureWaitingApplicationForLeaveCanBeAllowedByDepartmentHead() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
@@ -425,7 +425,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureWaitingApplicationForLeaveCanOnlyBeAllowedTemporaryByDepartmentHeadIfTwoStageApprovalIsActive() {
+    void ensureWaitingApplicationForLeaveCanOnlyBeAllowedTemporaryByDepartmentHeadIfTwoStageApprovalIsActive() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
@@ -449,7 +449,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalIsActiveNothingHappens() {
+    void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalIsActiveNothingHappens() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
@@ -473,7 +473,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalNotActiveStatusIsChanged() {
+    void ensureIfTemporaryAllowedApplicationForLeaveIsAllowedByDepartmentHeadWithTwoStageApprovalNotActiveStatusIsChanged() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person departmentHead = createPerson("head", USER, DEPARTMENT_HEAD);
@@ -498,7 +498,7 @@ class ApplicationInteractionServiceImplTest {
 
     // ALLOWING - SECOND STAGE AUTHORITY
     @Test
-    void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthority() {
+    void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthority() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
@@ -521,7 +521,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() {
+    void ensureWaitingApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
@@ -545,7 +545,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() {
+    void ensureTemporaryAllowedApplicationForLeaveCanBeAllowedBySecondStageAuthorityIfTwoStageApprovalIsActive() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person secondStage = createPerson("manager", USER, SECOND_STAGE_AUTHORITY);
@@ -570,7 +570,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureDepartmentHeadCanBeAllowedBySecondStageAuthority() {
+    void ensureDepartmentHeadCanBeAllowedBySecondStageAuthority() throws NotPrivilegedToApproveException {
 
         final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
         departmentHead.setPermissions(asList(USER, DEPARTMENT_HEAD));
@@ -612,7 +612,7 @@ class ApplicationInteractionServiceImplTest {
         applicationForLeave.setStatus(WAITING);
         applicationForLeave.setTwoStageApproval(true);
 
-        assertThatIllegalStateException().isThrownBy(() -> sut.allow(applicationForLeave, departmentHead, comment));
+        assertThrows(NotPrivilegedToApproveException.class, () -> sut.allow(applicationForLeave, departmentHead, comment));
     }
 
     @Test
@@ -628,7 +628,7 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = getDummyApplication(secondStageAuthority);
         applicationForLeave.setStatus(WAITING);
 
-        assertThatIllegalStateException().isThrownBy(() -> sut.allow(applicationForLeave, secondStageAuthority, comment));
+        assertThrows(NotPrivilegedToApproveException.class, () -> sut.allow(applicationForLeave, secondStageAuthority, comment));
     }
 
     @Test
@@ -644,12 +644,12 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = getDummyApplication(departmentHead);
         applicationForLeave.setStatus(WAITING);
 
-        assertThatIllegalStateException().isThrownBy(() -> sut.allow(applicationForLeave, departmentHead, comment));
+        assertThrows(NotPrivilegedToApproveException.class, () -> sut.allow(applicationForLeave, departmentHead, comment));
     }
 
     // ALLOWING - REPLACEMENT NOTIFICATION
     @Test
-    void ensureAllowingApplicationForLeaveWithHolidayReplacementSendsNotificationToReplacement() {
+    void ensureAllowingApplicationForLeaveWithHolidayReplacementSendsNotificationToReplacement() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -669,7 +669,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureAllowingApplicationForLeaveWithoutHolidayReplacementDoesNotSendNotification() {
+    void ensureAllowingApplicationForLeaveWithoutHolidayReplacementDoesNotSendNotification() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person boss = createPerson("boss", USER, Role.BOSS);
@@ -685,7 +685,7 @@ class ApplicationInteractionServiceImplTest {
     }
 
     @Test
-    void ensureTemporaryAllowingApplicationForLeaveWithHolidayReplacementDoesNotSendNotification() {
+    void ensureTemporaryAllowingApplicationForLeaveWithHolidayReplacementDoesNotSendNotification() throws NotPrivilegedToApproveException {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Person replacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
