@@ -132,7 +132,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(specialLeaveSettings);
 
         final ResultActions resultActions = perform(get("/web/application/new"));
-        resultActions.andExpect(status().isOk()).andDo(print());
+        resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("specialLeave",
             hasProperty("specialLeaveItems",
                 Matchers.hasItems(
@@ -164,7 +164,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(Collections.emptyList());
 
         final ResultActions resultActions = perform(get("/web/application/new"));
-        resultActions.andExpect(status().isOk()).andDo(print());
+        resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("specialLeave",
             hasProperty("specialLeaveItems", hasSize(0))));
     }
