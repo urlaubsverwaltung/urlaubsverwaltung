@@ -366,11 +366,7 @@ table.absence-type-settings-table thead {
 }
 
 @screen md {
-  table.absence-type-settings-table {
-    tbody {
-      td:not(:first-of-type):not(:last-of-type) {
-        @apply tw-pr-16;
-      }
-    }
+  table.absence-type-settings-table tbody td:not(:first-of-type):not(:last-of-type) {
+    @apply tw-pr-16;
   }
 }
