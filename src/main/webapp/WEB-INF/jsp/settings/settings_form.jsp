@@ -442,11 +442,11 @@
                                 <spring:message code='settings.absenceTypes.title'/>
                             </h2>
                         </uv:section-heading>
-                        <div class="row">
-                            <div class="col-md-4 col-md-push-8">
-                                <span class="help-block tw-text-sm">
+                        <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-8 tw-pt-2 tw-text-sm">
+                                <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                <div class="tw-flex tw-flex-col">
                                     <p>
-                                        <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                         <spring:message code="settings.absenceTypes.help.1"/>
                                         <a class="tw-inline-flex tw-items-center" target="_blank" rel="noopener" href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
                                             <spring:message code="settings.absenceTypes.help.2"/>
@@ -460,11 +460,10 @@
                                             <spring:message code="settings.absenceTypes.description.2"/>
                                         </a>
                                     </p>
-                                </span>
+                                </div>
                             </div>
-                            <div class="col-md-8 col-md-pull-4">
-                                <table id="absence-type-table" class="absence-type-settings-table">
-                                    <thead>
+                            <table id="absence-type-table" class="lg:tw-flex-1 absence-type-settings-table">
+                                <thead>
                                     <tr>
                                         <th scope="col">
                                             <spring:message code='settings.absenceTypes.table.head.state' />
@@ -479,43 +478,42 @@
                                             <spring:message code='settings.absenceTypes.table.head.approval' />
                                         </th>
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${settings.absenceTypeSettings.items}" var="absenceType" varStatus="loop">
-                                        <tr data-enabled="${absenceType.active}">
-                                            <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
-                                                <span class="checkbox-switch">
-                                                    <form:hidden path="absenceTypeSettings.items[${loop.index}].id" value="${absenceType.id}" />
-                                                    <form:checkbox path="absenceTypeSettings.items[${loop.index}].active" id="absenceType-active-${loop.index}" />
-                                                    <label for="absenceType-active-${loop.index}" class="tw-sr-only">
-                                                        <spring:message code="settings.absenceTypes.action.state.label" />
-                                                    </label>
-                                                </span>
-                                            </td>
-                                            <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
-                                                <spring:message code="${absenceType.messageKey}" />
-                                            </td>
-                                            <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
-                                                <spring:message code="${absenceType.category}" />
-                                            </td>
-                                            <td
-                                                data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />"
-                                                class="sm:tw-text-right"
-                                            >
-                                                <form:checkbox
-                                                    path="absenceTypeSettings.items[${loop.index}].requiresApproval"
-                                                    id="absenceType-approval-${loop.index}"
-                                                    cssClass="absence-type-approval-checkbox"
-                                                />
-                                                <label for="absenceType-approval-${loop.index}" class="tw-sr-only">
-                                                    <spring:message code="settings.absenceTypes.action.approve.label" />
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${settings.absenceTypeSettings.items}" var="absenceType" varStatus="loop">
+                                    <tr data-enabled="${absenceType.active}">
+                                        <td data-col-status data-th-text="<spring:message code='settings.absenceTypes.table.head.state' />">
+                                            <span class="checkbox-switch">
+                                                <form:hidden path="absenceTypeSettings.items[${loop.index}].id" value="${absenceType.id}" />
+                                                <form:checkbox path="absenceTypeSettings.items[${loop.index}].active" id="absenceType-active-${loop.index}" />
+                                                <label for="absenceType-active-${loop.index}" class="tw-sr-only">
+                                                    <spring:message code="settings.absenceTypes.action.state.label" />
                                                 </label>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
+                                            </span>
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.type' />">
+                                            <spring:message code="${absenceType.messageKey}" />
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
+                                            <spring:message code="${absenceType.category}" />
+                                        </td>
+                                        <td
+                                            data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />"
+                                            class="sm:tw-text-right"
+                                        >
+                                            <form:checkbox
+                                                path="absenceTypeSettings.items[${loop.index}].requiresApproval"
+                                                id="absenceType-approval-${loop.index}"
+                                                cssClass="absence-type-approval-checkbox"
+                                            />
+                                            <label for="absenceType-approval-${loop.index}" class="tw-sr-only">
+                                                <spring:message code="settings.absenceTypes.action.approve.label" />
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="form-section">
@@ -524,11 +522,11 @@
                                 <spring:message code='settings.specialleave.title'/>:
                             </h2>
                         </uv:section-heading>
-                        <div class="row">
-                            <div class="col-md-4 col-md-push-8">
-                                <span class="help-block tw-text-sm">
+                        <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-8 tw-pt-2 tw-text-sm">
+                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                <div class="tw-flex tw-flex-col">
                                     <p>
-                                        <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                         <spring:message code="settings.specialleave.help"/>
                                     </p>
                                     <p>
@@ -538,57 +536,55 @@
                                             <spring:message code="settings.specialleave.description.2"/>
                                         </a>
                                     </p>
-                                </span>
+                                </div>
                             </div>
-                            <div class="col-md-8 col-md-pull-4">
-                                <table id="special-leave-table" class="absence-type-settings-table">
-                                    <caption class="tw-sr-only">
-                                        <spring:message code='settings.specialleave.title'/>
-                                    </caption>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">
-                                                <spring:message code='settings.specialleave.table.head.state' />
-                                            </th>
-                                            <th scope="col">
-                                                <spring:message code='settings.specialleave.table.head.type' />
-                                            </th>
-                                            <th scope="col">
-                                                <spring:message code='settings.specialleave.table.head.days' />
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${settings.specialLeaveSettings.specialLeaveSettingsItems}" var="specialLeaveSettingsItem" varStatus="loop">
-                                        <tr data-enabled="${specialLeaveSettingsItem.active}">
-                                            <td data-col-status data-th-text="<spring:message code='settings.specialleave.table.head.state' />">
-                                                <span class="checkbox-switch">
-                                                    <form:hidden path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].id" value="${specialLeaveSettingsItem.id}" />
-                                                    <form:checkbox path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].active" id="specialLeave-active-${loop.index}" />
-                                                    <label for="specialLeave-active-${loop.index}" class="tw-sr-only">
-                                                        <spring:message code="settings.specialleave.action.state.label" />
-                                                    </label>
-                                                </span>
-                                            </td>
-                                            <td data-th-text="<spring:message code='settings.specialleave.table.head.type' />">
-                                                <span class="tw-w-1/2 md:tw-w-full">
-                                                    <spring:message code="${specialLeaveSettingsItem.messageKey}" />
-                                                </span>
-                                            </td>
-                                            <td data-th-text="<spring:message code='settings.specialleave.table.head.days' />">
-                                                <form:input id="specialLeave-days-${loop.index}" cssClass="form-control tw-w-1/2 sm:tw-w-full"
-                                                            path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" class="form-control"
-                                                            cssErrorClass="form-control error"
-                                                            type="number" step="1" min="0"/>
-                                                <uv:error-text>
-                                                    <form:errors path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" />
-                                                </uv:error-text>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <table id="special-leave-table" class="lg:tw-flex-1 absence-type-settings-table">
+                                <caption class="tw-sr-only">
+                                    <spring:message code='settings.specialleave.title'/>
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <spring:message code='settings.specialleave.table.head.state' />
+                                        </th>
+                                        <th scope="col">
+                                            <spring:message code='settings.specialleave.table.head.type' />
+                                        </th>
+                                        <th scope="col">
+                                            <spring:message code='settings.specialleave.table.head.days' />
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${settings.specialLeaveSettings.specialLeaveSettingsItems}" var="specialLeaveSettingsItem" varStatus="loop">
+                                    <tr data-enabled="${specialLeaveSettingsItem.active}">
+                                        <td data-col-status data-th-text="<spring:message code='settings.specialleave.table.head.state' />">
+                                            <span class="checkbox-switch">
+                                                <form:hidden path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].id" value="${specialLeaveSettingsItem.id}" />
+                                                <form:checkbox path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].active" id="specialLeave-active-${loop.index}" />
+                                                <label for="specialLeave-active-${loop.index}" class="tw-sr-only">
+                                                    <spring:message code="settings.specialleave.action.state.label" />
+                                                </label>
+                                            </span>
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.specialleave.table.head.type' />">
+                                            <span class="tw-w-1/2 md:tw-w-full">
+                                                <spring:message code="${specialLeaveSettingsItem.messageKey}" />
+                                            </span>
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.specialleave.table.head.days' />">
+                                            <form:input id="specialLeave-days-${loop.index}" cssClass="form-control tw-w-1/2 sm:tw-w-full"
+                                                        path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" class="form-control"
+                                                        cssErrorClass="form-control error"
+                                                        type="number" step="1" min="0"/>
+                                            <uv:error-text>
+                                                <form:errors path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" />
+                                            </uv:error-text>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
