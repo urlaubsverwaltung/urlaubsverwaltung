@@ -436,7 +436,7 @@
                 </div>
 
                 <div class="tab-pane" id="absenceTypes">
-                    <div class="form-section tw-mb-8">
+                    <div class="form-section tw-mb-12">
                         <uv:section-heading>
                             <h2>
                                 <spring:message code='settings.absenceTypes.title'/>
