@@ -117,7 +117,7 @@ public class SettingsViewController {
         vacationTypeService.updateVacationTypes(vacationTypeUpdates);
 
         final SpecialLeaveSettingsDto specialLeaveSettingsDto = settingsDto.getSpecialLeaveSettings();
-        List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = mapToSpecialLeaveSettingsItems(specialLeaveSettingsDto.getSpecialLeaveSettingsItems());
+        final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = mapToSpecialLeaveSettingsItems(specialLeaveSettingsDto.getSpecialLeaveSettingsItems());
         specialLeaveSettingsService.saveAll(specialLeaveSettingsItems);
 
         if (googleOAuthButton != null) {
@@ -132,7 +132,6 @@ public class SettingsViewController {
     String getAuthorizedRedirectUrl(String requestURL, String redirectPath) {
         return requestURL.replace("/settings", redirectPath);
     }
-
 
     private SpecialLeaveSettingsDto getSpecialLeaveSettingsDto() {
         final List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = specialLeaveSettingsService.getSpecialLeaveSettings();

@@ -24,15 +24,17 @@ public class SpecialLeaveSettingsService {
         final Map<Integer, SpecialLeaveSettingsItem> itemsById = Streamable.of(specialLeaveSettingsItems).stream()
             .collect(toMap(SpecialLeaveSettingsItem::getId, identity()));
 
-        final List<SpecialLeaveSettingsEntity> specialLeaveSettingsEntities = Streamable.of(specialLeaveSettingsRepository.findAll()).stream()
+        final List<SpecialLeaveSettingsEntity> specialLeaveSettingsEntities = specialLeaveSettingsRepository.findAll().stream()
             .map(entity -> mergeUpdates(itemsById, entity))
             .collect(toList());
+
         specialLeaveSettingsRepository.saveAll(specialLeaveSettingsEntities);
     }
 
     public List<SpecialLeaveSettingsItem> getSpecialLeaveSettings() {
-        final Iterable<SpecialLeaveSettingsEntity> allSpecialLeaveSettings = this.specialLeaveSettingsRepository.findAll();
-        return Streamable.of(allSpecialLeaveSettings).map(this::toSpecialLeaveSettingsItem).toList();
+        return specialLeaveSettingsRepository.findAll().stream()
+            .map(this::toSpecialLeaveSettingsItem)
+            .collect(toList());
     }
 
     private SpecialLeaveSettingsEntity mergeUpdates(Map<Integer, SpecialLeaveSettingsItem> itemsById, SpecialLeaveSettingsEntity entity) {

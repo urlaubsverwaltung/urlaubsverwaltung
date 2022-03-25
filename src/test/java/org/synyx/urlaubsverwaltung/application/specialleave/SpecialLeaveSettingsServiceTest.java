@@ -24,7 +24,7 @@ class SpecialLeaveSettingsServiceTest {
     private SpecialLeaveSettingsRepository specialLeaveSettingsRepository;
 
     @Captor
-    private ArgumentCaptor<Iterable<SpecialLeaveSettingsEntity>> specialLeaveSettingsListArgument;
+    private ArgumentCaptor<List<SpecialLeaveSettingsEntity>> specialLeaveSettingsListArgument;
 
     @BeforeEach
     void setUp() {
@@ -33,50 +33,37 @@ class SpecialLeaveSettingsServiceTest {
 
     @Test
     void saveAll() {
-        Integer id = 1;
-        Boolean active = false;
-        String messageKey = "messageKey";
-        Integer days = 2;
-        SpecialLeaveSettingsItem specialLeaveSettingsItem = new SpecialLeaveSettingsItem(id, active, messageKey, days);
 
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
-        specialLeaveSettingsEntity.setId(id);
-        specialLeaveSettingsEntity.setActive(active);
-        specialLeaveSettingsEntity.setMessageKey(messageKey);
-        specialLeaveSettingsEntity.setDays(days);
+        specialLeaveSettingsEntity.setId(1);
+        specialLeaveSettingsEntity.setActive(false);
+        specialLeaveSettingsEntity.setMessageKey("messageKey");
+        specialLeaveSettingsEntity.setDays(2);
         when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
 
-        List<SpecialLeaveSettingsItem> specialLeaveSettingsItems = List.of(specialLeaveSettingsItem);
-
-        specialLeaveSettingsService.saveAll(specialLeaveSettingsItems);
+        final SpecialLeaveSettingsItem specialLeaveSettingsItem = new SpecialLeaveSettingsItem(1, false, "messageKey", 2);
+        specialLeaveSettingsService.saveAll(List.of(specialLeaveSettingsItem));
 
         verify(specialLeaveSettingsRepository).saveAll(specialLeaveSettingsListArgument.capture());
-
-        final Iterable<SpecialLeaveSettingsEntity> specialLeaveSettingsListArgumentValue = specialLeaveSettingsListArgument.getValue();
-        assertThat(specialLeaveSettingsListArgumentValue)
+        final List<SpecialLeaveSettingsEntity> specialLeaveSettingsEntities = specialLeaveSettingsListArgument.getValue();
+        assertThat(specialLeaveSettingsEntities)
+            .hasSize(1)
             .extracting("id", "active", "messageKey", "days")
-            .contains(tuple(id, active, messageKey, days));
+            .contains(tuple(1, false, "messageKey", 2));
     }
 
     @Test
     void getSpecialLeaveSettings() {
-        Integer id = 1;
-        Boolean active = false;
-        String messageKey = "messageKey";
-        Integer days = 2;
-
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
-        specialLeaveSettingsEntity.setId(id);
-        specialLeaveSettingsEntity.setActive(active);
-        specialLeaveSettingsEntity.setMessageKey(messageKey);
-        specialLeaveSettingsEntity.setDays(days);
+        specialLeaveSettingsEntity.setId(1);
+        specialLeaveSettingsEntity.setActive(false);
+        specialLeaveSettingsEntity.setMessageKey("messageKey");
+        specialLeaveSettingsEntity.setDays(2);
         when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
 
-
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings();
-
         assertThat(specialLeaveSettings)
             .extracting("id", "active", "messageKey", "days")
-            .contains(tuple(id, active, messageKey, days));
+            .contains(tuple(1, false, "messageKey", 2));
     }
 }
