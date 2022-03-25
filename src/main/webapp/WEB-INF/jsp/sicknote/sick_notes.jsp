@@ -92,6 +92,9 @@
                     <thead class="hidden-xs hidden-sm">
                     <tr>
                         <th scope="col" class="print:tw-hidden"></th>
+                        <c:if test="${showPersonnelNumberColumn}">
+                            <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.account.basedata.personnelNumber.abbreviation"/></th>
+                        </c:if>
                         <th scope="col" class="sortable-field"><spring:message code="person.data.firstName"/></th>
                         <th scope="col" class="sortable-field"><spring:message code="person.data.lastName"/></th>
                         <th scope="col" class="hidden"><%-- tablesorter placeholder for first name and last name column in xs screen --%></th>
@@ -113,6 +116,14 @@
                                 border="true"
                             />
                         </td>
+                        <c:choose>
+                            <c:when test="${showPersonnelNumberColumn && basedataOfPersons.containsKey(person.id)}">
+                                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${basedataOfPersons[person.id].personnelNumber}"/></td>
+                            </c:when>
+                            <c:otherwise>
+                                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
+                            </c:otherwise>
+                        </c:choose>
                         <td class="hidden-xs">
                             <c:out value="${person.firstName}"/>
                         </td>

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -60,6 +61,8 @@ class SickDaysOverviewViewControllerTest {
     private SickNoteService sickNoteService;
     @Mock
     private PersonService personService;
+    @Mock
+    private PersonBasedataService personBasedataService;
     @Mock
     private WorkDaysCountService workDaysCountService;
 
@@ -130,6 +133,7 @@ class SickDaysOverviewViewControllerTest {
     void periodsSickNotesWithDateRange() throws Exception {
 
         final Person person = new Person();
+        person.setId(1);
         final List<Person> persons = singletonList(person);
         when(personService.getActivePersons()).thenReturn(persons);
 

@@ -132,9 +132,15 @@
                                             border="true"
                                         />
                                     </td>
-                                    <c:if test="${showPersonnelNumberColumn}">
-                                        <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personBasedata.isPresent() ? statistic.personBasedata.get().personnelNumber : null}"/></td>
-                                    </c:if>
+                                    <c:choose>
+                                        <c:when test="${showPersonnelNumberColumn && statistic.personBasedata.isPresent()}">
+                                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personBasedata.get().personnelNumber}"/></td>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
+                                        </c:otherwise>
+                                    </c:choose>
+
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.firstName}"/></td>
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.lastName}"/></td>
                                     <td class="lg:tw-hidden print:tw-hidden">
