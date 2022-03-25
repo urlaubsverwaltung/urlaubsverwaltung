@@ -9,6 +9,7 @@ class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
 
     TestMariaDBContainer() {
         super(MariaDBContainer.NAME + ":" + VERSION);
+        withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
     }
 
     /**
