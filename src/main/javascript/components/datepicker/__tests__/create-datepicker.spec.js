@@ -94,8 +94,6 @@ describe("create-datepicker", () => {
   });
 
   test("fails to render with preset date value but missing iso-value", async () => {
-    expect.hasAssertions();
-
     document.body.innerHTML = `
       <input value="24.12.2020" />
     `;
@@ -103,11 +101,9 @@ describe("create-datepicker", () => {
     const urlPrefix = "";
     const getPersonId = () => 42;
 
-    try {
-      await createDatepicker("input", { urlPrefix, getPersonId });
-    } catch (error) {
-      expect(error.message).toEqual("date input defines a value but no `data-iso-value` attribute is given.");
-    }
+    const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
+    expect(datepicker.getAttribute("value")).toBe("");
+    expect(datepicker.getAttribute("dataset.isoValue")).toBeNull();
   });
 
   test("assigns original 'value' attribute", async () => {
