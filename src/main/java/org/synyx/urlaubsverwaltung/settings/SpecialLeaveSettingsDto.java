@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public class SpecialLeaveSettingsDto {
 
+    @Valid
     private List<SpecialLeaveSettingsItemDto> specialLeaveSettingsItems;
 
     public List<SpecialLeaveSettingsItemDto> getSpecialLeaveSettingsItems() {

@@ -1,10 +1,13 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import javax.validation.constraints.Min;
+
 public class SpecialLeaveSettingsItemDto {
 
     private int id;
     private boolean active;
     private String messageKey;
+    @Min(0)
     private int days;
 
     public int getId() {

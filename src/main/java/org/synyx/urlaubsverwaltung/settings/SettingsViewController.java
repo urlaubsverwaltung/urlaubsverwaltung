@@ -13,18 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.account.AccountProperties;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
+import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
-import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -88,7 +89,7 @@ public class SettingsViewController {
 
     @PostMapping
     @PreAuthorize(IS_OFFICE)
-    public String settingsSaved(@ModelAttribute("settings") SettingsDto settingsDto, Errors errors,
+    public String settingsSaved(@Valid @ModelAttribute("settings") SettingsDto settingsDto, Errors errors,
                                 @RequestParam(value = "googleOAuthButton", required = false) String googleOAuthButton,
                                 Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 

@@ -577,7 +577,7 @@
                                                 <form:input id="specialLeave-days-${loop.index}" cssClass="form-control tw-w-1/2 md:tw-w-full"
                                                             path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" class="form-control"
                                                             cssErrorClass="form-control error"
-                                                            type="number" step="1"/>
+                                                            type="number" step="1" min="0"/>
                                                 <uv:error-text>
                                                     <form:errors path="specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].days" />
                                                 </uv:error-text>

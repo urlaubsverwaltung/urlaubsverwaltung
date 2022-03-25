@@ -281,6 +281,19 @@ class SettingsViewControllerTest {
     }
 
     @Test
+    void validateSpecialLeaves() throws Exception {
+
+        perform(
+            post("/web/settings")
+                .param("calendarSettings.exchangeCalendarSettings.timeZoneId", "Z")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].days", "-1")
+
+        )
+            .andExpect(model().attributeHasFieldErrors("settings", "specialLeaveSettings.specialLeaveSettingsItems[0].days"))
+            .andExpect(model().attributeHasFieldErrorCode("settings", "specialLeaveSettings.specialLeaveSettingsItems[0].days", "Min"));
+    }
+
+    @Test
     void ensureSettingsSavedAddFlashAttributeAndRedirectsToSettings() throws Exception {
 
         when(settingsService.getSettings()).thenReturn(someSettings());

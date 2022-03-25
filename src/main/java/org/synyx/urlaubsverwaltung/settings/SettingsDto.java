@@ -8,12 +8,14 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 public class SettingsDto {
 
     private Integer id;
     private AbsenceTypeSettingsDto absenceTypeSettings;
+    @Valid
     private SpecialLeaveSettingsDto specialLeaveSettings;
 
     private ApplicationSettings applicationSettings;
