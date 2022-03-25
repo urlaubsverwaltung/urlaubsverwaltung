@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -21,7 +22,7 @@ public class SpecialLeaveSettingsService {
     public void saveAll(List<SpecialLeaveSettingsItem> specialLeaveSettingsItems) {
 
         final Map<Integer, SpecialLeaveSettingsItem> itemsById = Streamable.of(specialLeaveSettingsItems).stream()
-            .collect(toMap(SpecialLeaveSettingsItem::getId, entity -> entity));
+            .collect(toMap(SpecialLeaveSettingsItem::getId, identity()));
 
         final List<SpecialLeaveSettingsEntity> specialLeaveSettingsEntities = Streamable.of(specialLeaveSettingsRepository.findAll()).stream()
             .map(entity -> mergeUpdates(itemsById, entity))
