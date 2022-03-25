@@ -265,6 +265,24 @@ class SickNoteViewControllerTest {
         verify(sickNoteInteractionService).create(any(SickNote.class), eq(signedInPerson), any());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
+    void ensureCreateSickNoteSucceedsWithDate(String givenDate) throws Exception {
+
+        final Person signedInPerson = somePerson();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        perform(
+            post("/web/sicknote/")
+                .param("startDate", givenDate)
+                .param("endDate", givenDate)
+                .param("aubStartDate", givenDate)
+                .param("aubEndDate", givenDate)
+        );
+
+        verify(sickNoteInteractionService).create(any(SickNote.class), eq(signedInPerson), any());
+    }
+
     @Test
     void ensurePostNewSickNoteRedirectsToCreatedSickNote() throws Exception {
 

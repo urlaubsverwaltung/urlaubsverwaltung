@@ -1027,6 +1027,33 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(redirectedUrl("/web/application/1"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
+    void ensureSendEditApplicationFormSucceedsForDateFormat(String givenDate) throws Exception {
+
+        final Person person = new Person();
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setStatus(WAITING);
+
+        final Application editedApplication = new Application();
+        editedApplication.setId(applicationId);
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.edit(eq(application), any(Application.class), eq(person), eq(Optional.of("comment")))).thenReturn(editedApplication);
+
+        perform(post("/web/application/1")
+            .param("person.id", "1")
+            .param("startDate", givenDate)
+            .param("endDate", givenDate)
+            .param("vacationType.category", "HOLIDAY")
+            .param("dayLength", "FULL")
+            .param("comment", "comment"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/application/1"));
+    }
+
     @Test
     void sendEditApplicationFormIsNotWaiting() throws Exception {
 

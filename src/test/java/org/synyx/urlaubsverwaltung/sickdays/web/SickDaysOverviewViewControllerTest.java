@@ -4,6 +4,9 @@ package org.synyx.urlaubsverwaltung.sickdays.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,6 +26,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -37,7 +41,6 @@ import static org.hamcrest.Matchers.hasValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -81,24 +84,34 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(view().name("redirect:/web/sicknote?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
-    @Test
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate() throws Exception {
-
-        perform(post("/web/sicknote/filter")
-            .param("startDate", "01.01.20"))
-            .andExpect(status().isFound())
-            .andExpect(flash().attribute("filterPeriodIncorrect", true))
-            .andExpect(redirectedUrl("/web/sicknote?from=2022-01-01&to=2022-12-31"));
+    private static Stream<Arguments> dateInputAndIsoDateTuple() {
+        return Stream.of(
+            Arguments.of("25.03.2022", "2022-03-25"),
+            Arguments.of("25.03.22", "2022-03-25"),
+            Arguments.of("25.3.2022", "2022-03-25"),
+            Arguments.of("25.3.22", "2022-03-25"),
+            Arguments.of("1.4.22", "2022-04-01")
+        );
     }
 
-    @Test
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForEndDate() throws Exception {
+    @ParameterizedTest
+    @MethodSource("dateInputAndIsoDateTuple")
+    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
 
         perform(post("/web/sicknote/filter")
-            .param("endDate", "01.01.20"))
+            .param("startDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("filterPeriodIncorrect", true))
-            .andExpect(redirectedUrl("/web/sicknote?from=2022-01-01&to=2022-12-31"));
+            .andExpect(redirectedUrl("/web/sicknote?from=" + givenIsoDate + "&to=2022-12-31"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("dateInputAndIsoDateTuple")
+    void applicationForLeaveStatisticsRedirectsToStatisticsForEndDate(String givenDate, String givenIsoDate) throws Exception {
+
+        perform(post("/web/sicknote/filter")
+            .param("endDate", givenDate))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/sicknote?from=2022-01-01&to=" + givenIsoDate));
     }
 
     @Test

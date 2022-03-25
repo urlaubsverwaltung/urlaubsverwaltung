@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,6 +23,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.MONDAY;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,7 +96,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("GERMANY_BERLIN")))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020, 10, 2))))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
-            .andExpect(model().attribute("defaultFederalState", equalTo(FederalState.GERMANY_BADEN_WUERTTEMBERG)))
+            .andExpect(model().attribute("defaultFederalState", equalTo(GERMANY_BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
             .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
     }
@@ -166,16 +171,34 @@ class WorkingTimeViewControllerTest {
             .andExpect(redirectedUrl("/web/person/" + KNOWN_PERSON_ID));
     }
 
-    @Test
-    void updateAccountWithWrongValidFromFormat() throws Exception {
+    private static Stream<Arguments> dateInputAndLocalDateTuple() {
+        return Stream.of(
+            Arguments.of("25.03.2022", LocalDate.of(2022, 3, 25)),
+            Arguments.of("25.03.22", LocalDate.of(2022, 3, 25)),
+            Arguments.of("25.3.2022", LocalDate.of(2022, 3, 25)),
+            Arguments.of("25.3.22", LocalDate.of(2022, 3, 25)),
+            Arguments.of("1.4.22", LocalDate.of(2022, 4, 1))
+        );
+    }
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
+    @ParameterizedTest
+    @MethodSource("dateInputAndLocalDateTuple")
+    void updateAccountSucceedsWithValidFrom(String givenDate, LocalDate givenLocalDate) throws Exception {
 
-        perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime")
-            .param("validFrom", "01.01.20"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("workingtime/workingtime_form"));
+        final Person person = new Person();
+        person.setId(1);
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/workingtime")
+                .param("validFrom", givenDate)
+                .param("workingDays", "1", "2", "3", "4", "5")
+                .param("federalState", "GERMANY_BADEN_WUERTTEMBERG")
+            )
+            .andExpect(redirectedUrl("/web/person/1"));
+
+        verify(workingTimeWriteService).touch(List.of(1,2,3,4,5), givenLocalDate, person, GERMANY_BADEN_WUERTTEMBERG);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
