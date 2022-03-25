@@ -444,7 +444,9 @@
                         </uv:section-heading>
                         <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
                             <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-8 tw-pt-2 tw-text-sm">
-                                <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                <div>
+                                    <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
+                                </div>
                                 <div class="tw-flex tw-flex-col">
                                     <p>
                                         <spring:message code="settings.absenceTypes.help.1"/>
@@ -524,7 +526,9 @@
                         </uv:section-heading>
                         <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
                             <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-8 tw-pt-2 tw-text-sm">
-                                <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                <div>
+                                    <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
+                                </div>
                                 <div class="tw-flex tw-flex-col">
                                     <p>
                                         <spring:message code="settings.specialleave.help"/>
