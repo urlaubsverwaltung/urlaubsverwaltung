@@ -6,6 +6,7 @@ services:
       - mariadb_data:/var/lib/mysql
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     env_file:
       - db.env
     ports:
