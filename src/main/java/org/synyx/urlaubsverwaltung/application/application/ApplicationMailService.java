@@ -91,6 +91,7 @@ class ApplicationMailService {
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject("subject.application.allowed.office")
             .withTemplate("allowed_office", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToOffice);
     }
