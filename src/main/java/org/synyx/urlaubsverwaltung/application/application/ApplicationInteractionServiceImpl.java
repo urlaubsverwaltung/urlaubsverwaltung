@@ -146,32 +146,26 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         // Second stage authority has almost the same power (except on own applications)
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(privilegedUser, application.getPerson());
-
+        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(privilegedUser, application.getPerson());
         final boolean isOwnApplication = application.getPerson().equals(privilegedUser);
-
-        if (isSecondStageAuthority && !isOwnApplication) {
+        if (isSecondStageAuthorityOfPerson && !isOwnApplication) {
             return allowFinally(application, privilegedUser, comment);
         }
 
         // Department head can be mighty only in some cases
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(privilegedUser, application.getPerson());
-
-        // DEPARTMENT_HEAD can _not_ allow SECOND_STAGE_AUTHORITY
-        final boolean isSecondStageAuthorityApplication = application.getPerson().hasRole(SECOND_STAGE_AUTHORITY);
-
-        if (isDepartmentHead && !isOwnApplication && !isSecondStageAuthorityApplication) {
+        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(privilegedUser, application.getPerson());
+        final boolean isPersonSecondStageAuthorityOfApprover = departmentService.isSecondStageAuthorityAllowedToManagePerson(application.getPerson(), privilegedUser);
+        if (isDepartmentHeadOfPerson && !isOwnApplication && !isPersonSecondStageAuthorityOfApprover) {
             if (application.isTwoStageApproval()) {
                 return allowTemporary(application, privilegedUser, comment);
             }
-
             return allowFinally(application, privilegedUser, comment);
         }
 
         throw new NotPrivilegedToApproveException(format(
             "because is not department is %s " +
                 "or is own application %s " +
-                "or is the application of ssa %s", isDepartmentHead, isOwnApplication, isSecondStageAuthorityApplication));
+                "or is the application of ssa %s", isDepartmentHeadOfPerson, isOwnApplication, isPersonSecondStageAuthorityOfApprover));
     }
 
     @Override
