@@ -8,4 +8,7 @@ interface SpecialLeaveSettingsRepository extends CrudRepository<SpecialLeaveSett
 
     @Override
     List<SpecialLeaveSettingsEntity> findAll();
+
+    @Override
+    List<SpecialLeaveSettingsEntity> findAllById(Iterable<Integer> ids);
 }

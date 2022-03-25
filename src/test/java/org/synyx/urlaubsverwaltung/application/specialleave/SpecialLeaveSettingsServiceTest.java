@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -39,7 +40,7 @@ class SpecialLeaveSettingsServiceTest {
         specialLeaveSettingsEntity.setActive(false);
         specialLeaveSettingsEntity.setMessageKey("messageKey");
         specialLeaveSettingsEntity.setDays(2);
-        when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
+        when(specialLeaveSettingsRepository.findAllById(Set.of(1))).thenReturn(List.of(specialLeaveSettingsEntity));
 
         final SpecialLeaveSettingsItem specialLeaveSettingsItem = new SpecialLeaveSettingsItem(1, false, "messageKey", 2);
         specialLeaveSettingsService.saveAll(List.of(specialLeaveSettingsItem));

@@ -21,14 +21,14 @@ public class SpecialLeaveSettingsService {
 
     public void saveAll(List<SpecialLeaveSettingsItem> specialLeaveSettingsItems) {
 
-        final Map<Integer, SpecialLeaveSettingsItem> itemsById = Streamable.of(specialLeaveSettingsItems).stream()
+        final Map<Integer, SpecialLeaveSettingsItem> itemsById = specialLeaveSettingsItems.stream()
             .collect(toMap(SpecialLeaveSettingsItem::getId, identity()));
 
-        final List<SpecialLeaveSettingsEntity> specialLeaveSettingsEntities = specialLeaveSettingsRepository.findAll().stream()
+        final List<SpecialLeaveSettingsEntity> entities = specialLeaveSettingsRepository.findAllById(itemsById.keySet()).stream()
             .map(entity -> mergeUpdates(itemsById, entity))
             .collect(toList());
 
-        specialLeaveSettingsRepository.saveAll(specialLeaveSettingsEntities);
+        specialLeaveSettingsRepository.saveAll(entities);
     }
 
     public List<SpecialLeaveSettingsItem> getSpecialLeaveSettings() {
