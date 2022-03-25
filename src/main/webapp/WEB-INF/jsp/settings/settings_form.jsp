@@ -476,8 +476,10 @@
                                         <th scope="col">
                                             <spring:message code='settings.absenceTypes.table.head.category' />
                                         </th>
-                                        <th scope="col" class="sm:tw-text-right">
-                                            <spring:message code='settings.absenceTypes.table.head.approval' />
+                                        <th scope="col" class="sm:tw-text-right sm:tw-relative">
+                                            <span class="th-cell-overflow-text sm:tw-absolute sm:tw-top-1 sm:tw-right-4 tw-whitespace-nowrap">
+                                                <spring:message code='settings.absenceTypes.table.head.approval' />
+                                            </span>
                                         </th>
                                     </tr>
                                 </thead>
