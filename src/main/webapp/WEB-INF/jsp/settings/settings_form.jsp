@@ -443,7 +443,7 @@
                             </h2>
                         </uv:section-heading>
                         <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
-                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-8 tw-pt-2 tw-text-sm">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-3 lg:tw-pl-5 tw-pt-2 lg:tw-pt-0 tw-text-sm">
                                 <div>
                                     <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                 </div>
@@ -525,7 +525,7 @@
                             </h2>
                         </uv:section-heading>
                         <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
-                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-8 tw-pt-2 tw-text-sm">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-3 lg:tw-pl-5 tw-pt-2 lg:tw-pt-0 tw-text-sm">
                                 <div>
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                 </div>
