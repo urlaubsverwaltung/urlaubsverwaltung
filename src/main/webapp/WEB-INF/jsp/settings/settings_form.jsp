@@ -523,7 +523,7 @@
                     <div class="form-section">
                         <uv:section-heading>
                             <h2>
-                                <spring:message code='settings.specialleave.title'/>:
+                                <spring:message code='settings.specialleave.title'/>
                             </h2>
                         </uv:section-heading>
                         <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
