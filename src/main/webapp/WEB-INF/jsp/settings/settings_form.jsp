@@ -475,7 +475,7 @@
                                         <th scope="col">
                                             <spring:message code='settings.absenceTypes.table.head.category' />
                                         </th>
-                                        <th scope="col">
+                                        <th scope="col" class="sm:tw-text-right">
                                             <spring:message code='settings.absenceTypes.table.head.approval' />
                                         </th>
                                     </tr>
@@ -498,7 +498,10 @@
                                             <td data-th-text="<spring:message code='settings.absenceTypes.table.head.category' />">
                                                 <spring:message code="${absenceType.category}" />
                                             </td>
-                                            <td data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />">
+                                            <td
+                                                data-th-text="<spring:message code='settings.absenceTypes.table.head.approval' />"
+                                                class="sm:tw-text-right"
+                                            >
                                                 <form:checkbox
                                                     path="absenceTypeSettings.items[${loop.index}].requiresApproval"
                                                     id="absenceType-approval-${loop.index}"

@@ -284,10 +284,6 @@ table.absence-type-settings-table thead {
       td::before {
         content: attr(data-th-text);
       }
-
-      td:nth-of-type(4) {
-        text-align: left;
-      }
     }
   }
 }
@@ -343,9 +339,6 @@ table.absence-type-settings-table thead {
       th:nth-of-type(1) {
         @apply tw-pr-4;
       }
-      th:nth-of-type(4) {
-        @apply tw-text-right;
-      }
     }
 
     tbody {
@@ -368,7 +361,6 @@ table.absence-type-settings-table thead {
         @apply tw-pr-8;
       }
       td:nth-of-type(4) {
-        text-align: right;
         @apply tw-rounded-r;
         @apply tw-pl-4;
         @apply tw-pr-4;
