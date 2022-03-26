@@ -44,7 +44,7 @@ public class PersonBasedataViewController {
 
         model.addAttribute("personBasedata", mapToPersonBasedataDto(personBasedata, person));
 
-        return "person/person_basedata";
+        return "thymeleaf/person/person-basedata";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -53,7 +53,7 @@ public class PersonBasedataViewController {
                                      @Valid @ModelAttribute("personBasedata") PersonBasedataDto basedataDto, Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
         if (errors.hasErrors()) {
-            return "person/person_basedata";
+            return "thymeleaf/person/person-basedata";
         }
 
         personBasedataService.update(mapToPersonBasedata(basedataDto));
