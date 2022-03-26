@@ -23,7 +23,7 @@
       </div>
 
       <div
-        th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
+        th:replace="fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
       >
         <th:block th:ref="user-applications-heading-actions">
           <a
