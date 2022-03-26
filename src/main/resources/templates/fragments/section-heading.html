@@ -7,7 +7,7 @@
 <body>
 
 <div
-  th:fragment="section-heading(headingBody, headingActions, headingBelow)"
+  th:fragment="section-heading(headingBody, headingActions)"
   class="section-heading tw-mb-4 lg:tw-mb-6"
 >
   <div class="tw-flex tw-flex-col-reverse sm:tw-flex-row tw-items-baseline tw-border-b">
@@ -17,9 +17,6 @@
     <div class="tw-self-end sm:tw-self-auto print:tw-hidden tw-flex tw-gap-2" th:if="${headingActions}">
       <th:block th:replace="${headingActions}"></th:block>
     </div>
-  </div>
-  <div class="tw-mt-2" th:if="${headingBelow}">
-    <th:block th:replace="${headingBelow}"></th:block>
   </div>
 </div>
 

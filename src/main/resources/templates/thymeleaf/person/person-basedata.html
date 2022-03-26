@@ -10,7 +10,7 @@
 
 <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5 tw-pb-32">
   <div
-    th:replace="fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions}, ~{::person-basedata-heading-below})"
+    th:replace="fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})"
   >
     <th:block th:ref="person-basedata-heading-body">
       <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
