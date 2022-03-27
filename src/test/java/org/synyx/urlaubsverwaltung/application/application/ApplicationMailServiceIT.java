@@ -112,12 +112,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxUser.length).isOne();
 
         // check email user attributes
-        MimeMessage msg = inboxUser[0];
+        final MimeMessage msg = inboxUser[0];
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
-        String contentUser = readPlainContent(msg);
+        final String contentUser = readPlainContent(msg);
         assertThat(contentUser).contains("Lieschen Mueller");
         assertThat(contentUser).contains("gestellte Abwesenheit wurde von Hugo Boss genehmigt");
         assertThat(contentUser).contains(comment.getText());
@@ -128,10 +128,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
-        Message msgOffice = inboxOffice[0];
+        final MimeMessage msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
-        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+        assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "es liegt eine zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -146,6 +146,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
+        assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
@@ -201,10 +204,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
-        Message msgOffice = inboxOffice[0];
+        final MimeMessage msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
-        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+        assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "es liegt eine zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -220,6 +223,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
+        assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
@@ -279,10 +285,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
-        Message msgOffice = inboxOffice[0];
+        final MimeMessage msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
-        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+        assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "es liegt eine zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -298,6 +304,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
+        assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
     }
 
     @Test

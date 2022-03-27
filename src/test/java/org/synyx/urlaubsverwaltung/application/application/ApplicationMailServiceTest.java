@@ -117,6 +117,8 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.office");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("allowed_office");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
 
