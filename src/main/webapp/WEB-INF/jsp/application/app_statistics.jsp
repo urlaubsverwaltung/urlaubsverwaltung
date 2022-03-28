@@ -125,26 +125,26 @@
                                 <tr>
                                     <td class="is-centered">
                                         <uv:avatar
-                                            url="${statistic.person.gravatarURL}?d=mm&s=60"
-                                            username="${statistic.person.firstName}"
+                                            url="${statistic.gravatarURL}?d=mm&s=60"
+                                            username="${statistic.firstName}"
                                             width="60px"
                                             height="60px"
                                             border="true"
                                         />
                                     </td>
                                     <c:choose>
-                                        <c:when test="${showPersonnelNumberColumn && statistic.personBasedata.isPresent()}">
-                                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personBasedata.get().personnelNumber}"/></td>
+                                        <c:when test="${showPersonnelNumberColumn && statistic.personnelNumber}">
+                                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personnelNumber}"/></td>
                                         </c:when>
                                         <c:otherwise>
                                             <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
                                         </c:otherwise>
                                     </c:choose>
 
-                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.firstName}"/></td>
-                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.lastName}"/></td>
+                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.firstName}"/></td>
+                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.lastName}"/></td>
                                     <td class="lg:tw-hidden print:tw-hidden">
-                                        <c:out value="${statistic.person.niceName}"/>
+                                        <c:out value="${statistic.niceName}"/>
                                     </td>
                                     <td class="md:tw-hidden print:tw-hidden">
                                         <div class="tw-flex tw-items-center">

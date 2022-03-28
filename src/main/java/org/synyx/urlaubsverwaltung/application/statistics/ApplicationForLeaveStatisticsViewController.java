@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,11 +24,14 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
 import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -85,17 +87,16 @@ class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
-        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
-        final boolean showPersonnelNumberColumn = statistics.stream()
-            .map(ApplicationForLeaveStatistics::getPersonBasedata)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .anyMatch(personBasedata -> StringUtils.hasText(personBasedata.getPersonnelNumber()));
+        final List<ApplicationForLeaveStatisticsDto> statisticsDtos = applicationForLeaveStatisticsService.getStatistics(period).stream()
+            .map(ApplicationForLeaveStatisticsMapper::mapToApplicationForLeaveStatisticsDto).collect(toList());
+
+        final boolean showPersonnelNumberColumn = statisticsDtos.stream()
+            .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
 
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
-        model.addAttribute("statistics", statistics);
+        model.addAttribute("statistics", statisticsDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
