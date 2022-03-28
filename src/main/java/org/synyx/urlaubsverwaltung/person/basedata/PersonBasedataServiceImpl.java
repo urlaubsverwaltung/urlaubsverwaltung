@@ -23,7 +23,6 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
 
     @Override
     public void update(PersonBasedata personBasedata) {
-        final PersonBasedataEntity personBasedataEntity = mapToEntity(personBasedata);
-        personBasedataRepository.save(personBasedataEntity);
+        personBasedataRepository.save(mapToEntity(personBasedata));
     }
 }
