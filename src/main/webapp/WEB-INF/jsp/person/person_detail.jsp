@@ -65,7 +65,7 @@
                             <spring:message code="person.account.basedata.personnelNumber"/>
                         </dt>
                         <dd>
-                            ${personBasedata.personnelNumber}
+                            <c:out value="${personBasedata.personnelNumber}"/>
                         </dd>
                     </c:if>
                     <c:if test="${not empty personBasedata.additionalInfo}">
@@ -73,7 +73,7 @@
                             <spring:message code="person.account.basedata.additionalInformation"/>
                         </dt>
                         <dd>
-                            ${personBasedata.additionalInfo}
+                            <c:out value="${personBasedata.additionalInfo}"/>
                         </dd>
                     </c:if>
                 </dl>
