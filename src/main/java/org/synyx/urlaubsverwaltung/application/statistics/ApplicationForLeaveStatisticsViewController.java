@@ -87,7 +87,7 @@ class ApplicationForLeaveStatisticsViewController {
 
         final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
         final boolean showPersonnelNumberColumn = statistics.stream()
-            .map(applicationForLeaveStatistics -> applicationForLeaveStatistics.getPersonBasedata())
+            .map(ApplicationForLeaveStatistics::getPersonBasedata)
             .filter(Optional::isPresent)
             .map(Optional::get)
             .anyMatch(personBasedata -> StringUtils.hasText(personBasedata.getPersonnelNumber()));
