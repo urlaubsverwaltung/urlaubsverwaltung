@@ -132,15 +132,9 @@
                                             border="true"
                                         />
                                     </td>
-                                    <c:choose>
-                                        <c:when test="${showPersonnelNumberColumn && statistic.personnelNumber}">
-                                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personnelNumber}"/></td>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
-                                        </c:otherwise>
-                                    </c:choose>
-
+                                    <c:if test="${showPersonnelNumberColumn}">
+                                        <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personnelNumber}"/></td>
+                                    </c:if>
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.firstName}"/></td>
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.lastName}"/></td>
                                     <td class="lg:tw-hidden print:tw-hidden">
