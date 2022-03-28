@@ -24,7 +24,6 @@ import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -84,7 +83,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{person.account.basedata.additionalInformation}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2018)", ""});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter).writeNext(new String[]{null, null, null, null, null, "0", "1", null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "OneInformation", "{applications.statistics.total}", "0", "1", "0", "0"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "1", "0", "0", "OneInformation"});
     }
 
     @Test
@@ -135,9 +134,9 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{person.account.basedata.additionalInformation}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2019)", ""});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter).writeNext(new String[]{null, null, null, null, null, "0", "1", null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "OneInformation", "{applications.statistics.total}", "0", "1", "0", "0"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "1", "0", "0", "OneInformation"});
         verify(csvWriter).writeNext(new String[]{null, null, null, null, null, "10", "0", null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personTwoFirstName", "personTwoLastName", "SecondInformation", "{applications.statistics.total}", "10", "0", "0", "0"});
+        verify(csvWriter).writeNext(new String[]{"42", "personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "10", "0", "0", "0", "SecondInformation"});
     }
 
     @Test

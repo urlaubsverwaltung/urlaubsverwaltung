@@ -85,12 +85,12 @@ class ApplicationForLeaveStatisticsCsvExportService {
             csvRow[0] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getPersonnelNumber).orElse("");
             csvRow[1] = applicationForLeaveStatistics.getPerson().getFirstName();
             csvRow[2] = applicationForLeaveStatistics.getPerson().getLastName();
-            csvRow[3] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
-            csvRow[4] = translatedTextTotal;
-            csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
-            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
-            csvRow[7] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-            csvRow[8] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
+            csvRow[3] = translatedTextTotal;
+            csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
+            csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
+            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
+            csvRow[7] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
+            csvRow[8] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
             csvWriter.writeNext(csvRow);
 
             for (VacationType type : allVacationTypes) {
