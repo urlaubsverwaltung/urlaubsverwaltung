@@ -7,9 +7,9 @@ import javax.validation.constraints.Size;
 @Validated
 public class PersonBasedataDto {
 
-    @Size(max = 255)
+    @Size(max = 255, message = "{person.basedata.personnelNumber.error}")
     private String personnelNumber;
-    @Size(max = 255)
+    @Size(max = 255, message = "{person.basedata.additionalInformation.error}")
     private String additionalInfo;
 
     private int personId;
