@@ -133,7 +133,7 @@
                                         />
                                     </td>
                                     <c:if test="${showPersonnelNumberColumn}">
-                                        <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.personnelNumber}"/></td>
+                                        <td class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs"><c:out value="${statistic.personnelNumber}"/></td>
                                     </c:if>
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.firstName}"/></td>
                                     <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.lastName}"/></td>
