@@ -116,8 +116,7 @@
                 th:field="*{additionalInfo}"
               />
               <small class="tw-self-end">
-                <span id="text-additional-info"></span>
-                <th:block th:text="#{person.form.basedata.additionalInformation.maxChars}"></th:block>
+                <span id="text-additional-info"></span><th:block th:text="#{person.form.basedata.additionalInformation.maxChars}"></th:block>
               </small>
             </div>
             <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('additionalInfo')}">
