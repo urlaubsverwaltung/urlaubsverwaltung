@@ -64,7 +64,7 @@
                         <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
                             <spring:message code="person.account.basedata.personnelNumber"/>
                         </dt>
-                        <dd>
+                        <dd class="tw-text-ellipsis tw-overflow-hidden">
                             <c:out value="${personBasedata.personnelNumber}"/>
                         </dd>
                     </c:if>
@@ -72,7 +72,7 @@
                         <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
                             <spring:message code="person.account.basedata.additionalInformation"/>
                         </dt>
-                        <dd>
+                        <dd class="tw-text-ellipsis tw-overflow-hidden">
                             <c:out value="${personBasedata.additionalInfo}"/>
                         </dd>
                     </c:if>
