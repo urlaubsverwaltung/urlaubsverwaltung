@@ -73,7 +73,7 @@
                             <spring:message code="person.account.basedata.additionalInformation"/>
                         </dt>
                         <dd class="tw-text-ellipsis tw-overflow-hidden">
-                            <c:out value="${personBasedata.additionalInfo}"/>
+                           <span class="tw-whitespace-pre-line"><c:out value="${personBasedata.additionalInfo}"/></span>
                         </dd>
                     </c:if>
                 </dl>
