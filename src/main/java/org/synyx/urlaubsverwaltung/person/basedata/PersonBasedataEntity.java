@@ -4,11 +4,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -24,6 +24,7 @@ class PersonBasedataEntity {
     @PrimaryKeyJoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
 
+    @Size(max = 20)
     private String personnelNumber;
     private String additionalInformation;
 

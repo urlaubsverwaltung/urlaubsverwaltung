@@ -110,13 +110,11 @@ class PersonBasedataViewControllerTest {
     @Test
     void ensuresUpdateHandlesErrorCorrectlyOfPersonnelNumber() throws Exception {
 
-        final String personnelNumberTooLong256 = "1337133713371337133713371337133713371337133713371337133713371" +
-            "337133713371337133713371337133713371337133713371337133713371337133713371337133713371337133713" +
-            "371337133713371337133713371337133713371337133713371337133713371337133713371337133713371337133713371337";
+        final String personnelNumberTooLong21 = "133713371337133713371";
 
         perform(
             post("/web/person/1/basedata")
-                .param("personnelNumber", personnelNumberTooLong256)
+                .param("personnelNumber", personnelNumberTooLong21)
                 .param("additionalInfo", "Additional Information")
         )
             .andExpect(status().isOk())
