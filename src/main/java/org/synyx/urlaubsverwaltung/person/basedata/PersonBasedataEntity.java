@@ -26,6 +26,7 @@ class PersonBasedataEntity {
 
     @Size(max = 20)
     private String personnelNumber;
+    @Size(max = 500)
     private String additionalInformation;
 
     protected PersonBasedataEntity() {

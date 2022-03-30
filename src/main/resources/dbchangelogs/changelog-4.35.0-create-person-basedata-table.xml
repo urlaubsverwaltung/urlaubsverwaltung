@@ -33,4 +33,9 @@
     />
 
   </changeSet>
+
+  <changeSet author="seber" id="increase_person_basedata_additional_information_charcount">
+    <modifyDataType tableName="person_basedata" columnName="additional_information" newDataType="VARCHAR(500)" />
+  </changeSet>
+
 </databaseChangeLog>

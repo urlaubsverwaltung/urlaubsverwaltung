@@ -125,14 +125,17 @@ class PersonBasedataViewControllerTest {
     @Test
     void ensuresUpdateHandlesErrorCorrectlyOfAdditionalInformation() throws Exception {
 
-        final String additionalInformationTooLong256 = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam n" +
-            "onumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et" +
-            " accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata ";
+        final String additionalInformationTooLong501 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In" +
+            " dignissim fringilla neque at molestie. Curabitur rhoncus ipsum et nulla pellentesque dictum sed sed mi." +
+            " Donec pharetra justo et massa luctus cursus. Suspendisse nulla ante, scelerisque a ornare in, vehicula" +
+            " sit amet eros. Donec et metus euismod diam facilisis condimentum. Quisque ipsum ligula, congue vel" +
+            " fermentum ut, sollicitudin nec ante. Nunc ullamcorper et mi et lacinia. Donec euismod sit amet ante" +
+            " vitae posuere. Donec in tincidunt..";
 
         perform(
             post("/web/person/1/basedata")
                 .param("personnelNumber", "1337")
-                .param("additionalInfo", additionalInformationTooLong256)
+                .param("additionalInfo", additionalInformationTooLong501)
         )
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("personBasedata", "additionalInfo"))
