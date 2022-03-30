@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
@@ -27,6 +28,8 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ONE;
@@ -201,6 +204,46 @@ class SickDaysOverviewViewControllerTest {
         resultActions.andExpect(model().attribute("period", hasProperty("startDate", is(startDate))));
         resultActions.andExpect(model().attribute("period", hasProperty("endDate", is(endDate))));
         resultActions.andExpect(view().name("sicknote/sick_notes"));
+    }
+
+    @Test
+    void sickNotesWithoutPersonnelNumberColumn() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        final List<Person> persons = singletonList(person);
+        when(personService.getActivePersons()).thenReturn(persons);
+
+        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+
+        perform(get("/web/sicknote")
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString()))
+            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("showPersonnelNumberColumn", false))
+            .andExpect(view().name("sicknote/sick_notes"));
+    }
+
+    @Test
+    void sickNotesWithPersonnelNumberColumn() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        final List<Person> persons = singletonList(person);
+        when(personService.getActivePersons()).thenReturn(persons);
+        when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(new PersonBasedata(1, "42", null)));
+
+        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+
+        perform(get("/web/sicknote")
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString()))
+            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("personnelNumberOfPersons", Map.of(1, "42")))
+            .andExpect(model().attribute("showPersonnelNumberColumn", true))
+            .andExpect(view().name("sicknote/sick_notes"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -29,10 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
@@ -101,10 +101,11 @@ public class SickDaysOverviewViewController {
         model.addAttribute("period", period);
 
         final List<Person> persons = personService.getActivePersons();
-        final Map<Integer, PersonBasedata> basedataOfPersons = persons.stream().map(person -> personBasedataService.getBasedataByPersonId(person.getId()))
+        final Map<Integer, String> personnelNumberOfPersons = persons.stream().map(person -> personBasedataService.getBasedataByPersonId(person.getId()))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .collect(Collectors.toMap(PersonBasedata::getPersonId, Function.identity()));
+            .filter(personBasedata -> hasText(personBasedata.getPersonnelNumber()))
+            .collect(Collectors.toMap(PersonBasedata::getPersonId, PersonBasedata::getPersonnelNumber));
 
         final List<SickNote> sickNotesOfActivePersons = sickNotes.stream()
             .filter(sickNote -> persons.contains(sickNote.getPerson()) && sickNote.isActive())
@@ -133,8 +134,8 @@ public class SickDaysOverviewViewController {
         model.addAttribute("childSickDays", childSickDays);
         model.addAttribute("persons", persons);
 
-        model.addAttribute("showPersonnelNumberColumn", !basedataOfPersons.isEmpty());
-        model.addAttribute("basedataOfPersons", basedataOfPersons);
+        model.addAttribute("showPersonnelNumberColumn", !personnelNumberOfPersons.isEmpty());
+        model.addAttribute("personnelNumberOfPersons", personnelNumberOfPersons);
     }
 
     private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote, Person person) {

@@ -116,14 +116,9 @@
                                 border="true"
                             />
                         </td>
-                        <c:choose>
-                            <c:when test="${showPersonnelNumberColumn && basedataOfPersons.containsKey(person.id)}">
-                                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${basedataOfPersons[person.id].personnelNumber}"/></td>
-                            </c:when>
-                            <c:otherwise>
-                                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
-                            </c:otherwise>
-                        </c:choose>
+                        <c:if test="${showPersonnelNumberColumn}">
+                            <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${personnelNumberOfPersons[person.id]}"/></td>
+                        </c:if>
                         <td class="hidden-xs">
                             <c:out value="${person.firstName}"/>
                         </td>
