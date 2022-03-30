@@ -56,7 +56,6 @@ class ApplicationForLeaveStatisticsCsvExportService {
             "",
             "",
             "",
-            "",
             getTranslation("duration.vacationDays"),
             getTranslation("duration.overtime")
         };
