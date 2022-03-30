@@ -146,6 +146,21 @@ class PersonDetailsViewControllerTest {
     }
 
     @Test
+    void showPersonInformationShowsBasedata() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        final PersonBasedata personBasedata = new PersonBasedata(PERSON_ID, "42", "additional information");
+        when(personBasedataService.getBasedataByPersonId(PERSON_ID)).thenReturn(Optional.of(personBasedata));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
+
+        perform(get("/web/person/" + PERSON_ID))
+            .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is("42"))))
+            .andExpect(model().attribute("personBasedata", hasProperty("additionalInformation", is("additional information"))));
+    }
+
+    @Test
     void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
