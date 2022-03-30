@@ -2,11 +2,13 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 
@@ -17,6 +19,7 @@ import static java.math.BigDecimal.ZERO;
 public class ApplicationForLeaveStatistics {
 
     private final Person person;
+    private PersonBasedata personBasedata;
 
     private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
@@ -30,6 +33,14 @@ public class ApplicationForLeaveStatistics {
 
     public Person getPerson() {
         return person;
+    }
+
+    void setPersonBasedata(PersonBasedata personBasedata) {
+        this.personBasedata = personBasedata;
+    }
+
+    public Optional<PersonBasedata> getPersonBasedata() {
+        return Optional.ofNullable(personBasedata);
     }
 
     public Map<VacationType, BigDecimal> getWaitingVacationDays() {

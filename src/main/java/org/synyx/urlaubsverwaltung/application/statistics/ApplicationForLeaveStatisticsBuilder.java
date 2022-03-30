@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -48,9 +49,16 @@ class ApplicationForLeaveStatisticsBuilder {
         this.overtimeService = overtimeService;
     }
 
-    public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
+    public ApplicationForLeaveStatistics build(Person person, PersonBasedata personBasedata, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
+        final ApplicationForLeaveStatistics statistics = build(person, from, to, vacationTypes);
+        statistics.setPersonBasedata(personBasedata);
+
+        return statistics;
+    }
+
+    public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
         statistics.setLeftVacationDays(calculateLeftVacationDays(person, from));
         statistics.setLeftOvertime(overtimeService.getLeftOvertimeForPerson(person));
@@ -68,7 +76,6 @@ class ApplicationForLeaveStatisticsBuilder {
                 statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to));
             }
         }
-
         return statistics;
     }
 

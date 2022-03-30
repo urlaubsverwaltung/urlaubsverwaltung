@@ -153,4 +153,10 @@ class ApplicationForLeaveStatisticsTest {
         statistics.setLeftOvertime(Duration.ofHours(1));
         assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofHours(1));
     }
+
+    @Test
+    void ensureReturnsOptionalEmptyForMissingPersonBasedata() {
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(null);
+        assertThat(applicationForLeaveStatistics.getPersonBasedata()).isEmpty();
+    }
 }

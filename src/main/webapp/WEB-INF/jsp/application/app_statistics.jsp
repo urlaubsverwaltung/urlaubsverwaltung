@@ -105,6 +105,9 @@
                             <thead class="tw-hidden lg:tw-table-header-group">
                             <tr>
                                 <th scope="col" class=""><%-- placeholder to ensure correct number of th --%></th>
+                                <c:if test="${showPersonnelNumberColumn}">
+                                    <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.account.basedata.personnelNumber.abbreviation"/></th>
+                                </c:if>
                                 <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.data.firstName"/></th>
                                 <th scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"><spring:message code="person.data.lastName"/></th>
                                 <th scope="col" class="lg:tw-hidden print:tw-hidden"><%-- placeholder to ensure correct number of th --%></th>
@@ -122,17 +125,22 @@
                                 <tr>
                                     <td class="is-centered">
                                         <uv:avatar
-                                            url="${statistic.person.gravatarURL}?d=mm&s=60"
-                                            username="${statistic.person.firstName}"
+                                            url="${statistic.gravatarURL}?d=mm&s=60"
+                                            username="${statistic.firstName}"
                                             width="60px"
                                             height="60px"
                                             border="true"
                                         />
                                     </td>
-                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.firstName}"/></td>
-                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.person.lastName}"/></td>
+                                    <c:if test="${showPersonnelNumberColumn}">
+                                        <td class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs">
+                                            <c:out value="${statistic.personnelNumber}"/>
+                                        </td>
+                                    </c:if>
+                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.firstName}"/></td>
+                                    <td class="tw-hidden lg:tw-table-cell print:tw-table-cell"><c:out value="${statistic.lastName}"/></td>
                                     <td class="lg:tw-hidden print:tw-hidden">
-                                        <c:out value="${statistic.person.niceName}"/>
+                                        <c:out value="${statistic.niceName}"/>
                                     </td>
                                     <td class="md:tw-hidden print:tw-hidden">
                                         <div class="tw-flex tw-items-center">

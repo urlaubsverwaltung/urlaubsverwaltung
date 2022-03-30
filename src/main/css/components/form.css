@@ -1,4 +1,16 @@
-.form-control {
+.tw-form-control {
+  @apply tw-outline-0;
+  @apply tw-block;
+  @apply tw-text-sm;
+  @apply tw-w-full;
+  @apply tw-py-1;
+  @apply tw-px-2.5;
+  @apply tw-border;
+  @apply tw-border-neutral-300;
+}
+
+.form-control,
+.tw-form-control {
   /* ring-0 is required to enable transition to ring-x of the focused form-control */
   @apply tw-ring-0;
   @apply tw-transition;
@@ -14,7 +26,12 @@
   /* reset bootstrap stuff */
   border-color: inherit !important;
   box-shadow: none;
-  /* and add custom styling */
+}
+
+.form-control:focus,
+.tw-form-control:focus,
+.duet-date__input:focus,
+.duet-date__toggle:focus {
   @apply tw-ring-2 !important;
   @apply tw-ring-blue-300 !important;
 }

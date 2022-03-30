@@ -14,6 +14,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -26,8 +28,11 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
@@ -42,15 +47,17 @@ public class SickDaysOverviewViewController {
 
     private final SickNoteService sickNoteService;
     private final PersonService personService;
+    private final PersonBasedataService personBasedataService;
     private final WorkDaysCountService workDaysCountService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
     public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonService personService,
-                                          WorkDaysCountService workDaysCountService, DateFormatAware dateFormatAware, Clock clock) {
+                                          PersonBasedataService personBasedataService, WorkDaysCountService workDaysCountService, DateFormatAware dateFormatAware, Clock clock) {
         this.sickNoteService = sickNoteService;
         this.personService = personService;
+        this.personBasedataService = personBasedataService;
         this.workDaysCountService = workDaysCountService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
@@ -94,6 +101,11 @@ public class SickDaysOverviewViewController {
         model.addAttribute("period", period);
 
         final List<Person> persons = personService.getActivePersons();
+        final Map<Integer, String> personnelNumberOfPersons = persons.stream().map(person -> personBasedataService.getBasedataByPersonId(person.getId()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .filter(personBasedata -> hasText(personBasedata.getPersonnelNumber()))
+            .collect(Collectors.toMap(PersonBasedata::getPersonId, PersonBasedata::getPersonnelNumber));
 
         final List<SickNote> sickNotesOfActivePersons = sickNotes.stream()
             .filter(sickNote -> persons.contains(sickNote.getPerson()) && sickNote.isActive())
@@ -121,6 +133,9 @@ public class SickDaysOverviewViewController {
         model.addAttribute("sickDays", sickDays);
         model.addAttribute("childSickDays", childSickDays);
         model.addAttribute("persons", persons);
+
+        model.addAttribute("showPersonnelNumberColumn", !personnelNumberOfPersons.isEmpty());
+        model.addAttribute("personnelNumberOfPersons", personnelNumberOfPersons);
     }
 
     private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote, Person person) {

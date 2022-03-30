@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
@@ -86,6 +88,8 @@ class PersonDetailsViewControllerTest {
     private WorkingTimeService workingTimeService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private PersonBasedataService personBasedataService;
 
     private Person person;
 
@@ -94,7 +98,7 @@ class PersonDetailsViewControllerTest {
 
         clock = Clock.systemUTC();
         sut = new PersonDetailsViewController(personService, accountService, vacationDaysService, departmentService,
-            workingTimeService, settingsService, clock);
+            workingTimeService, settingsService, personBasedataService, clock);
 
         person = new Person();
         person.setId(1);
@@ -139,6 +143,21 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person/" + PERSON_ID).param(YEAR_ATTRIBUTE, "1985"))
             .andExpect(model().attribute(YEAR_ATTRIBUTE, 1985));
+    }
+
+    @Test
+    void showPersonInformationShowsBasedata() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        final PersonBasedata personBasedata = new PersonBasedata(PERSON_ID, "42", "additional information");
+        when(personBasedataService.getBasedataByPersonId(PERSON_ID)).thenReturn(Optional.of(personBasedata));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+        when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
+
+        perform(get("/web/person/" + PERSON_ID))
+            .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is("42"))))
+            .andExpect(model().attribute("personBasedata", hasProperty("additionalInformation", is("additional information"))));
     }
 
     @Test
@@ -633,6 +652,57 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute("departments", hasSize(1)));
+    }
+
+    @Test
+    void showPersonWithPersonnelNumberIfPresent() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        wayne.setId(2);
+        wayne.setPermissions(List.of(USER));
+
+        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
+        wolf.setId(3);
+        wolf.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons()).thenReturn(List.of(wayne, wolf));
+        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(2, "42", null)));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("persons", hasSize(2)))
+            .andExpect(
+                model()
+                    .attribute("persons", contains(
+                        hasProperty("personnelNumber", is("42")),
+                        hasProperty("lastName", is("Xavier"))
+                    ))
+            ).andExpect(model().attribute("showPersonnelNumberColumn", true));
+    }
+
+
+    @Test
+    void showNoPersonnelNumberColumnIfPersonnelNumberIsPresent() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        wayne.setId(2);
+        wayne.setPermissions(List.of(USER));
+
+        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
+        wolf.setId(3);
+        wolf.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons()).thenReturn(List.of(wayne, wolf));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("showPersonnelNumberColumn", false));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

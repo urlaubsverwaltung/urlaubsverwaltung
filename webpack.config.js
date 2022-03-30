@@ -23,6 +23,7 @@ module.exports = {
     app_statistics: `${paths.src}/bundles/app-statistics.js`,
     common: `${paths.src}/bundles/common.js`,
     person_overview: `${paths.src}/bundles/person-overview.js`,
+    person_basedata: `${paths.src}/bundles/person-basedata.js`,
     person_form: `${paths.src}/bundles/person-form.js`,
     sick_note_form: `${paths.src}/bundles/sick-note-form.js`,
     sick_note: `${paths.src}/bundles/sick-note.js`,

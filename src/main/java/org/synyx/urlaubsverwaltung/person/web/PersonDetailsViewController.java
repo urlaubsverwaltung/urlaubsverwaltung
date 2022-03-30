@@ -19,6 +19,8 @@ import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -37,11 +39,13 @@ import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 
@@ -61,18 +65,21 @@ public class PersonDetailsViewController {
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final SettingsService settingsService;
+    private final PersonBasedataService personBasedataService;
     private final Clock clock;
 
     @Autowired
     public PersonDetailsViewController(PersonService personService, AccountService accountService,
                                        VacationDaysService vacationDaysService, DepartmentService departmentService,
-                                       WorkingTimeService workingTimeService, SettingsService settingsService, Clock clock) {
+                                       WorkingTimeService workingTimeService, SettingsService settingsService,
+                                       PersonBasedataService personBasedataService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.settingsService = settingsService;
+        this.personBasedataService = personBasedataService;
         this.clock = clock;
     }
 
@@ -93,6 +100,13 @@ public class PersonDetailsViewController {
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
+        final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
+        if(basedataByPersonId.isPresent()) {
+
+            final PersonDetailsBasedataDto personDetailsBasedataDto = mapToPersonDetailsBasedataDto(basedataByPersonId.get());
+            model.addAttribute("personBasedata", personDetailsBasedataDto);
+        }
+
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
         model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageAuthorityOfDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
@@ -102,6 +116,7 @@ public class PersonDetailsViewController {
         model.addAttribute("federalState", maybeWorkingTime.map(WorkingTime::getFederalState)
             .orElseGet(() -> settingsService.getSettings().getWorkingTimeSettings().getFederalState()));
 
+        model.addAttribute("canEditBasedata", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
@@ -130,6 +145,7 @@ public class PersonDetailsViewController {
 
         final Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser) : getRelevantInactivePersons(signedInUser);
+
 
         if (requestedDepartmentId.isPresent()) {
             final Integer departmentId = requestedDepartmentId.get();
@@ -227,7 +243,7 @@ public class PersonDetailsViewController {
         final List<PersonDto> personDtos = new ArrayList<>(persons.size());
 
         for (Person person : persons) {
-            PersonDto.Builder personDtoBuilder = PersonDto.builder();
+            final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
             final Optional<Account> account = accountService.getHolidaysAccount(year, person);
             if (account.isPresent()) {
@@ -239,7 +255,7 @@ public class PersonDetailsViewController {
                     ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
                     : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
 
-                personDtoBuilder = personDtoBuilder
+                personDtoBuilder
                     .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
                     .entitlementActual(holidaysAccount.getVacationDays().doubleValue())
                     .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
@@ -251,18 +267,26 @@ public class PersonDetailsViewController {
                 ? person.getUsername()
                 : person.getLastName();
 
-            final PersonDto personDto = personDtoBuilder
+            personDtoBuilder
                 .id(person.getId())
                 .gravatarUrl(person.getGravatarURL())
                 .firstName(person.getFirstName())
                 .niceName(person.getNiceName())
-                .lastName(lastName)
-                .build();
+                .lastName(lastName);
+
+            personBasedataService.getBasedataByPersonId(person.getId())
+                .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.getPersonnelNumber()));
+
+            final PersonDto personDto = personDtoBuilder.build();
 
             personDtos.add(personDto);
         }
 
+        final boolean showPersonnelNumberColumn = personDtos.stream()
+            .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
+
         model.addAttribute("persons", personDtos);
+        model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute(BEFORE_APRIL_ATTRIBUTE, isBeforeApril(now, year));
         model.addAttribute("year", year);
         model.addAttribute("now", now);

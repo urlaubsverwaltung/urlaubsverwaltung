@@ -39,18 +39,37 @@
         <div class="tw-space-y-12 md:tw-space-y-0 md:tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
             <div class="md:tw-col-start-1 md:grid-row-start-1">
                 <uv:section-heading>
-                    <h1>
-                        <spring:message code="person.account.masterData.title"/>
-                    </h1>
+                    <jsp:attribute name="actions">
+                        <c:if test="${canEditBasedata}">
+                            <a href="${URL_PREFIX}/person/${person.id}/basedata" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
+                                <icon:pencil className="tw-w-5 tw-h-5" />
+                            </a>
+                        </c:if>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <h2>
+                            <spring:message code="person.account.basedata.title"/>
+                        </h2>
+                    </jsp:body>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
-                <dl class="tw-m-0 tw-ml-25 tw-list-none tw-flex tw-gap-2">
-                    <dt class="tw-font-normal">
-                        <spring:message code="person.account.masterData.username"/>:
-                    </dt>
-                    <dd>
-                        ${person.username}
-                    </dd>
+                <dl class="tw-ml-[6.25rem] tw-m-0 tw-mt-4 tw-list-none">
+                    <c:if test="${not empty personBasedata.personnelNumber}">
+                        <dt class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400">
+                            <spring:message code="person.account.basedata.personnelNumber"/>
+                        </dt>
+                        <dd class="tw-text-sm tw-mb-8 tw-text-ellipsis tw-overflow-hidden">
+                            <c:out value="${personBasedata.personnelNumber}"/>
+                        </dd>
+                    </c:if>
+                    <c:if test="${not empty personBasedata.additionalInformation}">
+                        <dt class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400">
+                            <spring:message code="person.account.basedata.additionalInformation"/>
+                        </dt>
+                        <dd class="tw-text-sm tw-text-ellipsis tw-overflow-hidden">
+                           <span class="tw-whitespace-pre-line"><c:out value="${personBasedata.additionalInformation}"/></span>
+                        </dd>
+                    </c:if>
                 </dl>
             </div>
             <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">

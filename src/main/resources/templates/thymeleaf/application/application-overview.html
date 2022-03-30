@@ -23,7 +23,7 @@
       </div>
 
       <div
-        th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions}, ~{::user-applications-heading-below})"
+        th:replace="fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
       >
         <th:block th:ref="user-applications-heading-actions">
           <a
@@ -317,7 +317,7 @@
       </div>
 
       <div
-        th:replace="fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions}, ~{::other-applications-heading-below})"
+        th:replace="fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions})"
       >
         <th:block th:ref="other-applications-heading-body">
           <h2 class="tw-text-xl tw-font-medium" th:text="#{applications.other.waiting}"></h2>
@@ -438,7 +438,7 @@
 
       <th:block th:if="${applications_cancellation_request != null}">
         <div
-          th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions}, ~{::cancellation-requests-heading-below})"
+          th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions})"
         >
           <th:block th:ref="cancellation-requests-heading-body">
             <h2 id="cancellation-requests" class="tw-text-xl tw-font-medium" th:text="#{applications.cancellation_request}"></h2>

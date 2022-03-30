@@ -11,7 +11,7 @@
 
 <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
   <div
-    th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions}, ~{::user-applications-heading-below})"
+    th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
   >
     <th:block th:ref="user-applications-heading-body">
       <h1 th:text="#{user-settings.title}">Account settings</h1>

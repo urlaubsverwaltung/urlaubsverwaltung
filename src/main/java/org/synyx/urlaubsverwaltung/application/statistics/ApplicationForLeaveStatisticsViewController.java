@@ -25,9 +25,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
 import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -83,10 +85,17 @@ class ApplicationForLeaveStatisticsViewController {
             return "application/app_statistics";
         }
 
+        final List<ApplicationForLeaveStatisticsDto> statisticsDtos = applicationForLeaveStatisticsService.getStatistics(period).stream()
+            .map(ApplicationForLeaveStatisticsMapper::mapToApplicationForLeaveStatisticsDto).collect(toList());
+
+        final boolean showPersonnelNumberColumn = statisticsDtos.stream()
+            .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
+
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
-        model.addAttribute("statistics", applicationForLeaveStatisticsService.getStatistics(period));
+        model.addAttribute("statistics", statisticsDtos);
+        model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
         return "application/app_statistics";

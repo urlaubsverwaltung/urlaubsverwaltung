@@ -6,21 +6,39 @@ import { dataValueNumberParser } from "../../components/table-sortable/parser-da
 $(document).ready(function () {
   $.tablesorter.addParser(dataValueNumberParser);
 
-  $("#person-table").tablesorter({
-    sortList: [[1, 0]],
-    headers: {
-      0: { sorter: false },
-      3: { sorter: dataValueNumberParser.id },
-      4: { sorter: dataValueNumberParser.id },
-      5: { sorter: dataValueNumberParser.id },
-      6: { sorter: dataValueNumberParser.id },
-      7: { sorter: dataValueNumberParser.id },
-      8: { sorter: false },
-    },
-  });
+  const { length: columnCount } = document.querySelectorAll("#person-table thead th");
+  const isPersonnelNumberColumnRendered = columnCount === 10;
+
+  if (isPersonnelNumberColumnRendered) {
+    $("#person-table").tablesorter({
+      sortList: [[2, 0]],
+      headers: {
+        0: { sorter: false },
+        4: { sorter: dataValueNumberParser.id },
+        5: { sorter: dataValueNumberParser.id },
+        6: { sorter: dataValueNumberParser.id },
+        7: { sorter: dataValueNumberParser.id },
+        8: { sorter: dataValueNumberParser.id },
+        9: { sorter: false },
+      },
+    });
+  } else {
+    $("#person-table").tablesorter({
+      sortList: [[1, 0]],
+      headers: {
+        0: { sorter: false },
+        3: { sorter: dataValueNumberParser.id },
+        4: { sorter: dataValueNumberParser.id },
+        5: { sorter: dataValueNumberParser.id },
+        6: { sorter: dataValueNumberParser.id },
+        7: { sorter: dataValueNumberParser.id },
+        8: { sorter: false },
+      },
+    });
+  }
 
   const options = {
-    valueNames: ["firstname", "lastname"],
+    valueNames: ["personnelNumber", "firstname", "lastname"],
     page: 500,
   };
 
