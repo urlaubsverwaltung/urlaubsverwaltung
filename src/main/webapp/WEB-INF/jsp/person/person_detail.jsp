@@ -62,12 +62,12 @@
                             <c:out value="${personBasedata.personnelNumber}"/>
                         </dd>
                     </c:if>
-                    <c:if test="${not empty personBasedata.additionalInfo}">
+                    <c:if test="${not empty personBasedata.additionalInformation}">
                         <dt class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400">
                             <spring:message code="person.account.basedata.additionalInformation"/>
                         </dt>
                         <dd class="tw-text-sm tw-text-ellipsis tw-overflow-hidden">
-                           <span class="tw-whitespace-pre-line"><c:out value="${personBasedata.additionalInfo}"/></span>
+                           <span class="tw-whitespace-pre-line"><c:out value="${personBasedata.additionalInformation}"/></span>
                         </dd>
                     </c:if>
                 </dl>

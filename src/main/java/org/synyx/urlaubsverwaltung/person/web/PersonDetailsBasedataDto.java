@@ -3,18 +3,18 @@ package org.synyx.urlaubsverwaltung.person.web;
 public class PersonDetailsBasedataDto {
 
     private final String personnelNumber;
-    private final String additionalInfo;
+    private final String additionalInformation;
 
-    PersonDetailsBasedataDto(String personnelNumber, String additionalInfo) {
+    PersonDetailsBasedataDto(String personnelNumber, String additionalInformation) {
         this.personnelNumber = personnelNumber;
-        this.additionalInfo = additionalInfo;
+        this.additionalInformation = additionalInformation;
     }
 
     public String getPersonnelNumber() {
         return personnelNumber;
     }
 
-    public String getAdditionalInfo() {
-        return additionalInfo;
+    public String getAdditionalInformation() {
+        return additionalInformation;
     }
 }
