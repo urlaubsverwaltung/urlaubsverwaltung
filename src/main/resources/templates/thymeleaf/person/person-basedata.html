@@ -65,6 +65,11 @@
       method="post"
       th:object="${personBasedata}"
     >
+      <input type="hidden" th:field="*{personId}"></input>
+      <input type="hidden" th:field="*{niceName}"></input>
+      <input type="hidden" th:field="*{gravatarURL}"></input>
+      <input type="hidden" th:field="*{email}"></input>
+
       <div>
         <div class="md:tw-flex tw-max-w-3xl">
           <label
