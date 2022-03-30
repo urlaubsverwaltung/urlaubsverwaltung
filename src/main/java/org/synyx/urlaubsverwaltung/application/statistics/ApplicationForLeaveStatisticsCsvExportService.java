@@ -42,12 +42,12 @@ class ApplicationForLeaveStatisticsCsvExportService {
             getTranslation("person.account.basedata.personnelNumber"),
             getTranslation("person.data.firstName"),
             getTranslation("person.data.lastName"),
-            getTranslation("person.account.basedata.additionalInformation"),
             "",
             getTranslation("applications.statistics.allowed"),
             getTranslation("applications.statistics.waiting"),
             getTranslation("applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
-            ""
+            "",
+            getTranslation("person.account.basedata.additionalInformation")
         };
         final String[] csvSubHeader = {
             "",
