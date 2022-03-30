@@ -53,26 +53,20 @@
                     </jsp:body>
                 </uv:section-heading>
                 <uv:person person="${person}" cssClass="tw-mb-0 tw-border-none" noPadding="true" />
-                <dl class="tw-m-0 tw-mt-10 tw-list-none tw-grid tw-gap-x-8 tw-gap-y-4" style="grid-template-columns: fit-content(30%) 1fr;">
-                    <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
-                        <spring:message code="person.account.basedata.username"/>
-                    </dt>
-                    <dd>
-                        ${person.username}
-                    </dd>
+                <dl class="tw-ml-[6.25rem] tw-m-0 tw-mt-4 tw-list-none">
                     <c:if test="${not empty personBasedata.personnelNumber}">
-                        <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
+                        <dt class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400">
                             <spring:message code="person.account.basedata.personnelNumber"/>
                         </dt>
-                        <dd class="tw-text-ellipsis tw-overflow-hidden">
+                        <dd class="tw-text-sm tw-mb-8 tw-text-ellipsis tw-overflow-hidden">
                             <c:out value="${personBasedata.personnelNumber}"/>
                         </dd>
                     </c:if>
                     <c:if test="${not empty personBasedata.additionalInfo}">
-                        <dt class="dark:tw-text-zinc-400 tw-font-normal tw-text-right">
+                        <dt class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400">
                             <spring:message code="person.account.basedata.additionalInformation"/>
                         </dt>
-                        <dd class="tw-text-ellipsis tw-overflow-hidden">
+                        <dd class="tw-text-sm tw-text-ellipsis tw-overflow-hidden">
                            <span class="tw-whitespace-pre-line"><c:out value="${personBasedata.additionalInfo}"/></span>
                         </dd>
                     </c:if>
