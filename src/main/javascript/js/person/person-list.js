@@ -38,7 +38,7 @@ $(document).ready(function () {
   }
 
   const options = {
-    valueNames: ["firstname", "lastname"],
+    valueNames: ["personnelNumber", "firstname", "lastname"],
     page: 500,
   };
 
