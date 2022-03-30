@@ -1,7 +1,3 @@
-.tw-form-group {
-  @apply tw-items-baseline;
-}
-
 .tw-form-control {
   @apply tw-outline-0;
   @apply tw-block;
