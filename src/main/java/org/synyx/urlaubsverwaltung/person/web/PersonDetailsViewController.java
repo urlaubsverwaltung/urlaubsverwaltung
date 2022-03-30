@@ -39,6 +39,7 @@ import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -145,6 +146,7 @@ public class PersonDetailsViewController {
         final Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser) : getRelevantInactivePersons(signedInUser);
 
+
         if (requestedDepartmentId.isPresent()) {
             final Integer departmentId = requestedDepartmentId.get();
             final Department department = departmentService.getDepartmentById(departmentId)
@@ -241,7 +243,7 @@ public class PersonDetailsViewController {
         final List<PersonDto> personDtos = new ArrayList<>(persons.size());
 
         for (Person person : persons) {
-            PersonDto.Builder personDtoBuilder = PersonDto.builder();
+            final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
             final Optional<Account> account = accountService.getHolidaysAccount(year, person);
             if (account.isPresent()) {
@@ -253,7 +255,7 @@ public class PersonDetailsViewController {
                     ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
                     : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
 
-                personDtoBuilder = personDtoBuilder
+                personDtoBuilder
                     .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
                     .entitlementActual(holidaysAccount.getVacationDays().doubleValue())
                     .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
@@ -265,18 +267,26 @@ public class PersonDetailsViewController {
                 ? person.getUsername()
                 : person.getLastName();
 
-            final PersonDto personDto = personDtoBuilder
+            personDtoBuilder
                 .id(person.getId())
                 .gravatarUrl(person.getGravatarURL())
                 .firstName(person.getFirstName())
                 .niceName(person.getNiceName())
-                .lastName(lastName)
-                .build();
+                .lastName(lastName);
+
+            personBasedataService.getBasedataByPersonId(person.getId())
+                .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.getPersonnelNumber()));
+
+            final PersonDto personDto = personDtoBuilder.build();
 
             personDtos.add(personDto);
         }
 
+        final boolean showPersonnelNumberColumn = personDtos.stream()
+            .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
+
         model.addAttribute("persons", personDtos);
+        model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute(BEFORE_APRIL_ATTRIBUTE, isBeforeApril(now, year));
         model.addAttribute("year", year);
         model.addAttribute("now", now);

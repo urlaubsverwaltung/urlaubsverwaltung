@@ -27,6 +27,11 @@
         <thead class="hidden-xs hidden-sm print:tw-table-header-group">
         <tr>
             <th scope="col"><%-- placeholder to ensure correct number of th --%></th>
+            <c:if test="${showPersonnelNumberColumn}">
+                <th scope="col" class="sortable-field">
+                    <spring:message code="person.account.basedata.personnelNumber.abbreviation"/>
+                </th>
+            </c:if>
             <th scope="col" class="sortable-field">
                 <spring:message code="person.data.firstName"/>
             </th>
@@ -64,6 +69,9 @@
                         border="true"
                     />
                 </td>
+                <c:if test="${showPersonnelNumberColumn}">
+                    <td class="personnelNumber hidden-xs hidden-sm print:tw-table-cell"><c:out value="${person.personnelNumber}"/></td>
+                </c:if>
                 <td class="firstname">
                     <c:out value="${person.firstName}"/>
                 </td>

@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -636,6 +637,57 @@ class PersonDetailsViewControllerTest {
 
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute("departments", hasSize(1)));
+    }
+
+    @Test
+    void showPersonWithPersonnelNumberIfPresent() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        wayne.setId(2);
+        wayne.setPermissions(List.of(USER));
+
+        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
+        wolf.setId(3);
+        wolf.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons()).thenReturn(List.of(wayne, wolf));
+        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(2, "42", null)));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("persons", hasSize(2)))
+            .andExpect(
+                model()
+                    .attribute("persons", contains(
+                        hasProperty("personnelNumber", is("42")),
+                        hasProperty("lastName", is("Xavier"))
+                    ))
+            ).andExpect(model().attribute("showPersonnelNumberColumn", true));
+    }
+
+
+    @Test
+    void showNoPersonnelNumberColumnIfPersonnelNumberIsPresent() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        wayne.setId(2);
+        wayne.setPermissions(List.of(USER));
+
+        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
+        wolf.setId(3);
+        wolf.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons()).thenReturn(List.of(wayne, wolf));
+
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("showPersonnelNumberColumn", false));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
