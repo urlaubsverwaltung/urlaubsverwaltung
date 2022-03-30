@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -25,6 +27,10 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -126,7 +132,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    void applicationForLeaveStatisticsSetsModelAndView() throws Exception {
+    void applicationForLeaveStatisticsSetsModelAndViewWithoutStatistics() throws Exception {
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
@@ -146,6 +152,41 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statistics", statistics))
+            .andExpect(model().attribute("showPersonnelNumberColumn", false))
+            .andExpect(model().attribute("period", filterPeriod))
+            .andExpect(model().attribute("vacationTypes", vacationType))
+            .andExpect(view().name("application/app_statistics"));
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
+        applicationForLeaveStatistics.setPersonBasedata(new PersonBasedata(1, "42", null));
+
+        final List<ApplicationForLeaveStatistics> statistics = List.of(applicationForLeaveStatistics);
+        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
+
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019"));
+
+        resultActions
+            .andExpect(model().attribute("from", startDate))
+            .andExpect(model().attribute("to", endDate))
+            .andExpect(model().attribute("statistics", hasSize(1)))
+            .andExpect(model().attribute("statistics", contains(hasProperty("personnelNumber", is("42")))))
+            .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
             .andExpect(view().name("application/app_statistics"));
