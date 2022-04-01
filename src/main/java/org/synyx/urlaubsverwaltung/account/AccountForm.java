@@ -38,7 +38,7 @@ public class AccountForm {
         this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
         this.holidaysAccountValidTo = holidaysAccount.getValidTo();
         this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
-        this.actualVacationDays = holidaysAccount.getVacationDays();
+        this.actualVacationDays = holidaysAccount.getActualVacationDays();
         this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
         this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
         this.comment = holidaysAccount.getComment();

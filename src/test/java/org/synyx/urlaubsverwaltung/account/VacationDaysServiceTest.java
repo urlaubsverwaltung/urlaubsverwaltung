@@ -252,7 +252,7 @@ class VacationDaysServiceTest {
 
         final Account account = new Account();
         account.setAnnualVacationDays(new BigDecimal("30"));
-        account.setVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
@@ -271,14 +271,14 @@ class VacationDaysServiceTest {
         // 36 Total, using 24, so 12 left
         final Account account = new Account();
         account.setAnnualVacationDays(new BigDecimal("30"));
-        account.setVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
         // next year has only 12 new days, but using 24, i.e. all 12 from this year
         final Account nextYear = new Account();
         nextYear.setAnnualVacationDays(new BigDecimal("12"));
-        nextYear.setVacationDays(new BigDecimal("12"));
+        nextYear.setActualVacationDays(new BigDecimal("12"));
         nextYear.setRemainingVacationDays(new BigDecimal("20"));
         nextYear.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
@@ -312,7 +312,7 @@ class VacationDaysServiceTest {
 
         final Optional<Account> account = Optional.of(new Account());
         account.get().setAnnualVacationDays(new BigDecimal("30"));
-        account.get().setVacationDays(new BigDecimal("30"));
+        account.get().setActualVacationDays(new BigDecimal("30"));
         account.get().setRemainingVacationDays(new BigDecimal("10"));
         account.get().setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
 
@@ -331,7 +331,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setValidFrom(LocalDate.of(2014, 1, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
-        account.setVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
 
@@ -352,7 +352,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setValidFrom(LocalDate.of(2015, 1, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
-        account.setVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
 
@@ -373,7 +373,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setValidFrom(LocalDate.of(2015, 1, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
-        account.setVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
 

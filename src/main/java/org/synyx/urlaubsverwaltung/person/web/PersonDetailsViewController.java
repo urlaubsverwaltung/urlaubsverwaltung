@@ -257,7 +257,7 @@ public class PersonDetailsViewController {
 
                 personDtoBuilder
                     .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
-                    .entitlementActual(holidaysAccount.getVacationDays().doubleValue())
+                    .entitlementActual(holidaysAccount.getActualVacationDays().doubleValue())
                     .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
                     .vacationDaysLeft(vacationDaysLeft.getVacationDays().doubleValue())
                     .vacationDaysLeftRemaining(remainingVacationDays);

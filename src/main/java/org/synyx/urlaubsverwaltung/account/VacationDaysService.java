@@ -80,7 +80,7 @@ public class VacationDaysService {
      */
     public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
 
-        final BigDecimal vacationDays = account.getVacationDays();
+        final BigDecimal vacationDays = account.getActualVacationDays();
         final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
         final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
@@ -109,12 +109,12 @@ public class VacationDaysService {
 
             final VacationDaysLeft left = getVacationDaysLeft(account.get(), Optional.empty());
 
-            final BigDecimal totalUsed = account.get().getVacationDays()
+            final BigDecimal totalUsed = account.get().getActualVacationDays()
                 .add(account.get().getRemainingVacationDays())
                 .subtract(left.getVacationDays())
                 .subtract(left.getRemainingVacationDays());
 
-            final BigDecimal remainingUsed = totalUsed.subtract(account.get().getVacationDays());
+            final BigDecimal remainingUsed = totalUsed.subtract(account.get().getActualVacationDays());
 
             if (remainingUsed.signum() > 0) {
                 return remainingUsed;

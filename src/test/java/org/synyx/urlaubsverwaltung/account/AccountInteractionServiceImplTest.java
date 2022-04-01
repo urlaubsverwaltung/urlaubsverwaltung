@@ -79,7 +79,7 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
         assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
         assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(24));
-        assertThat(account.getVacationDays()).isEqualTo(BigDecimal.valueOf(8));
+        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(8));
         assertThat(account.getComment()).isEmpty();
         assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
@@ -112,7 +112,7 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
         assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
         assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
-        assertThat(account.getVacationDays()).isEqualTo(BigDecimal.valueOf(10));
+        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(10));
         assertThat(account.getComment()).isEmpty();
         assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
@@ -137,7 +137,7 @@ class AccountInteractionServiceImplTest {
         assertThat(editedAccount.getValidFrom()).isEqualTo(validFrom);
         assertThat(editedAccount.getValidTo()).isEqualTo(validTo);
         assertThat(editedAccount.getAnnualVacationDays()).isEqualTo(TEN);
-        assertThat(editedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(editedAccount.getActualVacationDays()).isEqualTo(ONE);
         assertThat(editedAccount.getRemainingVacationDays()).isSameAs(ZERO);
         assertThat(editedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
         assertThat(editedAccount.getComment()).isEqualTo("comment");
@@ -297,7 +297,7 @@ class AccountInteractionServiceImplTest {
         final Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
         assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(TEN);
-        assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getActualVacationDays()).isEqualTo(ONE);
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ZERO);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
 
@@ -317,7 +317,7 @@ class AccountInteractionServiceImplTest {
         final Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, ONE, ONE, ONE, ONE, "new comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
         assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(ONE);
-        assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getActualVacationDays()).isEqualTo(ONE);
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ONE);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ONE);
     }

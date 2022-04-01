@@ -718,7 +718,7 @@ class CalculationServiceTest {
         // here we set up 2013 to have 10 days remaining vacation available from 2012,
         // if those have already been used up, we cannot spend them in 2012 as well
         final Optional<Account> account2013 = Optional.of(new Account(person, getFirstDayOfYear(2013), getLastDayOfYear(2013), TEN, TEN, TEN, ""));
-        account2013.get().setVacationDays(account2013.get().getAnnualVacationDays());
+        account2013.get().setActualVacationDays(account2013.get().getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
         // this year still has all ten days (but 3 of them used up next year, see above)
@@ -756,11 +756,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(date);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, TEN, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
@@ -798,11 +798,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(end);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, TEN, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
@@ -839,11 +839,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(date);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, TEN, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
@@ -880,11 +880,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(date);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, ONE, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
@@ -922,11 +922,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(end);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, TEN, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
@@ -964,11 +964,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(end);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), TEN, TEN, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))
@@ -1006,11 +1006,11 @@ class CalculationServiceTest {
         applicationForLeaveToCheck.setEndDate(end);
 
         final Account account2022 = new Account(person, getFirstDayOfYear(2022), getLastDayOfYear(2022), ZERO, TEN, ZERO, "");
-        account2022.setVacationDays(account2022.getAnnualVacationDays());
+        account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account(person, getFirstDayOfYear(2023), getLastDayOfYear(2023), TEN, TEN, ZERO, "");
-        account2023.setVacationDays(account2023.getAnnualVacationDays());
+        account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         when(vacationDaysService.getVacationDaysLeft(account2022, Optional.of(account2023)))

@@ -92,7 +92,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                 remainingVacationDaysNotExpiring, comment);
         }
 
-        account.setVacationDays(actualVacationDays);
+        account.setActualVacationDays(actualVacationDays);
 
         final Account savedAccount = accountService.save(account);
 
@@ -109,7 +109,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
         account.setAnnualVacationDays(annualVacationDays);
-        account.setVacationDays(actualVacationDays);
+        account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
         account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);

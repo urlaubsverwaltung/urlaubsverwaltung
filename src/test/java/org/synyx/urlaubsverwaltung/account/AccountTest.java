@@ -24,7 +24,7 @@ class AccountTest {
 
         final String accountToString = account.toString();
         assertThat(accountToString).isEqualTo("Account{person=Person{id='10'}, validFrom=-999999999-01-01," +
-            " validTo=+999999999-12-31, annualVacationDays=10, vacationDays=null, remainingVacationDays=10," +
+            " validTo=+999999999-12-31, annualVacationDays=10, actualVacationDays=null, remainingVacationDays=10," +
             " remainingVacationDaysNotExpiring=10}");
     }
 
