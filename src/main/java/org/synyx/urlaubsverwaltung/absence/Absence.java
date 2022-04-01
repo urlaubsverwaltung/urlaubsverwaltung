@@ -76,8 +76,12 @@ public class Absence {
         return isAllDay;
     }
 
+    public boolean isHolidayReplacement() {
+        return absenceType == HOLIDAY_REPLACEMENT;
+    }
+
     public String getEventSubject() {
-        if (absenceType == HOLIDAY_REPLACEMENT) {
+        if (isHolidayReplacement()) {
             return format("Vertretung für %s", person.getNiceName());
         }
 
