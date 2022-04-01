@@ -16,7 +16,9 @@ final class ApplicationForLeaveStatisticsMapper {
             applicationForLeaveStatistics.getPerson().getGravatarURL(),
             applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getPersonnelNumber).orElse(""),
             applicationForLeaveStatistics.getTotalAllowedVacationDays(),
+            applicationForLeaveStatistics.getAllowedVacationDays(),
             applicationForLeaveStatistics.getTotalWaitingVacationDays(),
+            applicationForLeaveStatistics.getWaitingVacationDays(),
             applicationForLeaveStatistics.getLeftVacationDays(),
             applicationForLeaveStatistics.getLeftOvertime()
         );

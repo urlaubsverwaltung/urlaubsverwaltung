@@ -4,7 +4,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
@@ -19,26 +18,28 @@ public final class ApplicationForLeaveStatisticsDto {
     private final String personnelNumber;
 
     private final BigDecimal totalAllowedVacationDays;
-    private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
+    private final Map<VacationType, BigDecimal> allowedVacationDays;
 
     private final BigDecimal totalWaitingVacationDays;
-    private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
+    private final Map<VacationType, BigDecimal> waitingVacationDays;
 
     private final BigDecimal leftVacationDays;
 
     private final Duration leftOvertime;
 
-    ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL,
-                                            String personnelNumber, BigDecimal totalAllowedVacationDays,
-                                            BigDecimal totalWaitingVacationDays, BigDecimal leftVacationDays,
-                                            Duration leftOvertime) {
+    ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
+                                     BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
+                                     BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
+                                     BigDecimal leftVacationDays, Duration leftOvertime) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
         this.gravatarURL = gravatarURL;
         this.personnelNumber = personnelNumber;
         this.totalAllowedVacationDays = totalAllowedVacationDays;
+        this.allowedVacationDays = allowedVacationDays;
         this.totalWaitingVacationDays = totalWaitingVacationDays;
+        this.waitingVacationDays = waitingVacationDays;
         this.leftVacationDays = leftVacationDays;
         this.leftOvertime = leftOvertime;
     }
