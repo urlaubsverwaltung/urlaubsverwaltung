@@ -14,6 +14,8 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
@@ -59,24 +61,22 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             defaultVacationDays = propertiesDefaultVacationDays;
         }
 
-        final BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today, defaultVacationDays);
-        final BigDecimal noRemainingVacationDaysForLastYear = ZERO;
-
+        final BigDecimal remainingVacationDaysForThisYear = getRemainingVacationDaysForThisYear(today.with(firstDayOfMonth()), defaultVacationDays);
         this.updateOrCreateHolidaysAccount(
             person,
-            today, // from today...
+            today.with(firstDayOfYear()), //from the first day of year...
             today.with(lastDayOfYear()), //...until end of year
             BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,
-            noRemainingVacationDaysForLastYear, // for initial user creation there is no remaining vacation from last year
-            noRemainingVacationDaysForLastYear,
+            ZERO, // For initial user creation there are no remaining vacation days from last year
+            ZERO,
             "");
     }
 
     @Override
     public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
                                                  BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                                 BigDecimal remainingDays, BigDecimal remainingDaysNotExpiring,
+                                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                                  String comment) {
 
         final Account account;
@@ -84,12 +84,12 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         if (optionalAccount.isPresent()) {
             account = optionalAccount.get();
             account.setAnnualVacationDays(annualVacationDays);
-            account.setRemainingVacationDays(remainingDays);
-            account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
+            account.setRemainingVacationDays(remainingVacationDays);
+            account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
             account.setComment(comment);
         } else {
-            account = new Account(person, validFrom, validTo, annualVacationDays, remainingDays,
-                remainingDaysNotExpiring, comment);
+            account = new Account(person, validFrom, validTo, annualVacationDays, remainingVacationDays,
+                remainingVacationDaysNotExpiring, comment);
         }
 
         account.setVacationDays(actualVacationDays);
@@ -103,15 +103,15 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     @Override
     public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
-                                       BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-                                       BigDecimal remainingDaysNotExpiring, String comment) {
+                                       BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingVacationDays,
+                                       BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
         account.setAnnualVacationDays(annualVacationDays);
         account.setVacationDays(actualVacationDays);
-        account.setRemainingVacationDays(remainingDays);
-        account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
+        account.setRemainingVacationDays(remainingVacationDays);
+        account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);
 
         final Account savedAccount = accountService.save(account);
