@@ -120,6 +120,30 @@ class AccountInteractionServiceImplTest {
     }
 
     @Test
+    void ensureToEditHolidayAccount() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
+
+        final Account account = new Account();
+        account.setPerson(person);
+
+        when(accountService.save(any(Account.class))).then(returnsFirstArg());
+
+        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
+        assertThat(editedAccount.getPerson()).isEqualTo(person);
+        assertThat(editedAccount.getValidFrom()).isEqualTo(validFrom);
+        assertThat(editedAccount.getValidTo()).isEqualTo(validTo);
+        assertThat(editedAccount.getAnnualVacationDays()).isEqualTo(TEN);
+        assertThat(editedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(editedAccount.getRemainingVacationDays()).isSameAs(ZERO);
+        assertThat(editedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
+        assertThat(editedAccount.getComment()).isEqualTo("comment");
+    }
+
+    @Test
     void testUpdateRemainingVacationDays() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
