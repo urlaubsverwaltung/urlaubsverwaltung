@@ -79,8 +79,13 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
             }
 
         } else {
+        	
+        	if(!optionalMailAddress.isPresent()) {
+        		throw new OidcPersonMappingException("oidc: The granted authority does not have an email adress and cannot be mapped to a user.");
+        	}
+        	
             final Person createdPerson = personService.create(userUniqueID, optionalLastName.orElse(null),
-                optionalFirstName.orElse(null), optionalMailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+                optionalFirstName.orElse(null), optionalMailAddress.get(), singletonList(NOTIFICATION_USER), singletonList(USER));
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 

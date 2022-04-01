@@ -76,8 +76,12 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         } else {
             LOG.info("No user found for username '{}'", username);
 
+        	if(!email.isPresent()) {
+        		throw new LdapPersonMappingException("ldap: The entity does not have an email adress and cannot be mapped to a user.");
+        	}
+            
             final Person createdPerson = personService.create(ldapUsername, lastName.orElse(null), firstName.orElse(null),
-                email.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+                email.get(), singletonList(NOTIFICATION_USER), singletonList(USER));
 
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
