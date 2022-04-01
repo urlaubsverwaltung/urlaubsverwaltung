@@ -19,7 +19,9 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -27,9 +29,13 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -46,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsViewController.UTF8_BOM;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsViewControllerTest {
@@ -138,8 +145,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final List<ApplicationForLeaveStatistics> statistics = emptyList();
-        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
+        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(List.of());
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
@@ -151,7 +157,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         resultActions
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
-            .andExpect(model().attribute("statistics", statistics))
+            .andExpect(model().attribute("statistics", is(empty())))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
@@ -166,12 +172,19 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final Person person = new Person();
+        person.setFirstName("Firstname");
+        person.setLastName("Lastname");
+        person.setEmail("firstname.lastname@example.org");
         person.setId(1);
 
-        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
-        applicationForLeaveStatistics.setPersonBasedata(new PersonBasedata(1, "42", null));
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+        statistic.setPersonBasedata(new PersonBasedata(1, "42", "some additional information"));
+        statistic.setLeftOvertime(Duration.ofHours(10));
+        statistic.setLeftVacationDays(BigDecimal.valueOf(2));
+        statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false), BigDecimal.valueOf(3));
+        statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false), BigDecimal.valueOf(4));
 
-        final List<ApplicationForLeaveStatistics> statistics = List.of(applicationForLeaveStatistics);
+        final List<ApplicationForLeaveStatistics> statistics = List.of(statistic);
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true));
@@ -185,7 +198,22 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("statistics", hasSize(1)))
-            .andExpect(model().attribute("statistics", contains(hasProperty("personnelNumber", is("42")))))
+            .andExpect(model().attribute("statistics", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveStatisticsDto.class),
+                    hasProperty("firstName", is("Firstname")),
+                    hasProperty("lastName", is("Lastname")),
+                    hasProperty("niceName", is("Firstname Lastname")),
+                    hasProperty("gravatarURL", is("https://gravatar.com/avatar/fb48a07b1c7315ffd490dc41292e56a4")),
+                    hasProperty("personnelNumber", is("42")),
+                    hasProperty("totalAllowedVacationDays", is(BigDecimal.valueOf(4))),
+                    hasProperty("allowedVacationDays", aMapWithSize(1)),
+                    hasProperty("totalWaitingVacationDays", is(BigDecimal.valueOf(3))),
+                    hasProperty("waitingVacationDays", aMapWithSize(1)),
+                    hasProperty("leftVacationDays", is(BigDecimal.valueOf(2))),
+                    hasProperty("leftOvertime", is(Duration.ofHours(10)))
+                )
+            )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
