@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -158,7 +159,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         }
 
         final LocalDate today = LocalDate.now(clock);
-        this.touch(defaultWorkingDays, today, person);
+        this.touch(defaultWorkingDays, today.with(firstDayOfYear()), person);
     }
 
     private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> workingTimeEntities) {

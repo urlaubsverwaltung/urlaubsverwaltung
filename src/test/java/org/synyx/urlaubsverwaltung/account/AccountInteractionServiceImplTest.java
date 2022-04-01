@@ -23,6 +23,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccountInteractionServiceImplTest {
-
 
     private AccountInteractionServiceImpl sut;
 
@@ -72,13 +72,16 @@ class AccountInteractionServiceImplTest {
         final ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
         verify(accountService).save(argument.capture());
 
+        final LocalDate now = LocalDate.now(clock);
+
         final Account account = argument.getValue();
         assertThat(account.getPerson()).isEqualTo(person);
-        assertThat(account.getValidFrom()).isEqualTo(LocalDate.now(clock));
-        assertThat(account.getValidTo()).isEqualTo(LocalDate.now(clock).with(lastDayOfYear()));
+        assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
+        assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
         assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(24));
+        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(8));
         assertThat(account.getComment()).isEmpty();
-        assertThat(account.getYear()).isEqualTo(LocalDate.now(clock).getYear());
+        assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
         assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
     }
@@ -94,7 +97,7 @@ class AccountInteractionServiceImplTest {
 
         when(accountProperties.getDefaultVacationDays()).thenReturn(-1);
         final Settings settings = new Settings();
-        settings.getAccountSettings().setDefaultVacationDays(1);
+        settings.getAccountSettings().setDefaultVacationDays(30);
         when(settingsService.getSettings()).thenReturn(settings);
 
         sut.createDefaultAccount(person);
@@ -102,15 +105,42 @@ class AccountInteractionServiceImplTest {
         final ArgumentCaptor<Account> argument = ArgumentCaptor.forClass(Account.class);
         verify(accountService).save(argument.capture());
 
+        final LocalDate now = LocalDate.now(clock);
+
         final Account account = argument.getValue();
         assertThat(account.getPerson()).isEqualTo(person);
-        assertThat(account.getValidFrom()).isEqualTo(LocalDate.now(clock));
-        assertThat(account.getValidTo()).isEqualTo(LocalDate.now(clock).with(lastDayOfYear()));
-        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(1));
+        assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
+        assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
+        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
+        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(10));
         assertThat(account.getComment()).isEmpty();
-        assertThat(account.getYear()).isEqualTo(LocalDate.now(clock).getYear());
+        assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
         assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+    }
+
+    @Test
+    void ensureToEditHolidayAccount() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
+
+        final Account account = new Account();
+        account.setPerson(person);
+
+        when(accountService.save(any(Account.class))).then(returnsFirstArg());
+
+        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
+        assertThat(editedAccount.getPerson()).isEqualTo(person);
+        assertThat(editedAccount.getValidFrom()).isEqualTo(validFrom);
+        assertThat(editedAccount.getValidTo()).isEqualTo(validTo);
+        assertThat(editedAccount.getAnnualVacationDays()).isEqualTo(TEN);
+        assertThat(editedAccount.getActualVacationDays()).isEqualTo(ONE);
+        assertThat(editedAccount.getRemainingVacationDays()).isSameAs(ZERO);
+        assertThat(editedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
+        assertThat(editedAccount.getComment()).isEqualTo("comment");
     }
 
     @Test
@@ -267,7 +297,7 @@ class AccountInteractionServiceImplTest {
         final Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, TEN, ONE, ZERO, TEN, "comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
         assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(TEN);
-        assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getActualVacationDays()).isEqualTo(ONE);
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ZERO);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(TEN);
 
@@ -287,7 +317,7 @@ class AccountInteractionServiceImplTest {
         final Account expectedAccount = sut.updateOrCreateHolidaysAccount(person, validFrom, validTo, ONE, ONE, ONE, ONE, "new comment");
         assertThat(expectedAccount.getPerson()).isEqualTo(person);
         assertThat(expectedAccount.getAnnualVacationDays()).isEqualTo(ONE);
-        assertThat(expectedAccount.getVacationDays()).isEqualTo(ONE);
+        assertThat(expectedAccount.getActualVacationDays()).isEqualTo(ONE);
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ONE);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ONE);
     }

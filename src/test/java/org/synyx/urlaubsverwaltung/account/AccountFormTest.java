@@ -29,7 +29,7 @@ class AccountFormTest {
         account.setValidTo(localDateTo);
 
         account.setAnnualVacationDays(BigDecimal.ZERO);
-        account.setVacationDays(BigDecimal.TEN);
+        account.setActualVacationDays(BigDecimal.TEN);
         account.setRemainingVacationDays(BigDecimal.ONE);
         account.setRemainingVacationDaysNotExpiring(BigDecimal.ZERO);
 

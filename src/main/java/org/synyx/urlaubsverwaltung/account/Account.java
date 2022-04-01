@@ -31,7 +31,7 @@ public class Account {
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
     // days for a year describes the field vacationDays
     private BigDecimal annualVacationDays;
-    private BigDecimal vacationDays;
+    private BigDecimal actualVacationDays;
 
     // remaining vacation days from the last year, if it's after 1st April, only the not expiring remaining vacation
     // days may be used
@@ -97,12 +97,12 @@ public class Account {
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
-    public BigDecimal getVacationDays() {
-        return vacationDays;
+    public BigDecimal getActualVacationDays() {
+        return actualVacationDays;
     }
 
-    public void setVacationDays(BigDecimal vacationDays) {
-        this.vacationDays = vacationDays;
+    public void setActualVacationDays(BigDecimal vacationDays) {
+        this.actualVacationDays = vacationDays;
     }
 
     public LocalDate getValidFrom() {
@@ -140,7 +140,7 @@ public class Account {
             ", validFrom=" + validFrom +
             ", validTo=" + validTo +
             ", annualVacationDays=" + annualVacationDays +
-            ", vacationDays=" + vacationDays +
+            ", actualVacationDays=" + actualVacationDays +
             ", remainingVacationDays=" + remainingVacationDays +
             ", remainingVacationDaysNotExpiring=" + remainingVacationDaysNotExpiring +
             '}';
