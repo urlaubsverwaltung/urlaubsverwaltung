@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static java.time.Month.JUNE;
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -70,7 +71,7 @@ class WorkingTimeServiceImplTest {
 
         final WorkingTimeEntity persistedWorkingTimeEntity = argument.getValue();
         assertThat(persistedWorkingTimeEntity.getPerson()).isEqualTo(person);
-        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
+        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock).with(firstDayOfYear()));
         assertThat(persistedWorkingTimeEntity.getMonday()).isEqualTo(DayLength.FULL);
         assertThat(persistedWorkingTimeEntity.getTuesday()).isEqualTo(DayLength.FULL);
         assertThat(persistedWorkingTimeEntity.getWednesday()).isEqualTo(DayLength.FULL);
@@ -103,7 +104,7 @@ class WorkingTimeServiceImplTest {
 
         final WorkingTimeEntity persistedWorkingTimeEntity = argument.getValue();
         assertThat(persistedWorkingTimeEntity.getPerson()).isEqualTo(person);
-        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock));
+        assertThat(persistedWorkingTimeEntity.getValidFrom()).isEqualTo(LocalDate.now(fixedClock).with(firstDayOfYear()));
         assertThat(persistedWorkingTimeEntity.getMonday()).isEqualTo(DayLength.ZERO);
         assertThat(persistedWorkingTimeEntity.getTuesday()).isEqualTo(DayLength.ZERO);
         assertThat(persistedWorkingTimeEntity.getWednesday()).isEqualTo(DayLength.ZERO);
