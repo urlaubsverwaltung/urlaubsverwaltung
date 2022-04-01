@@ -23,36 +23,38 @@ public interface AccountInteractionService {
     /**
      * Creates a {@link Account} with the given parameters.
      *
-     * @param person                   defines the owner of the holidays account
-     * @param validFrom                defines the start of the validity period, e.g. 1.1.2012
-     * @param validTo                  defines the end of the validity period, e.g. 31.12.2012
-     * @param annualVacationDays       defines number of annual vacation days
-     * @param actualVacationDays       the actual vacation days for the period
-     * @param remainingDays            defines the number of remaining vacation days from the last year
-     * @param remainingDaysNotExpiring defines the number of remaining vacation days that do not expire on 1st April
-     * @param comment                  comment to changes to the annual vacation days
+     * @param person                           defines the owner of the holidays account
+     * @param validFrom                        defines the start of the validity period, e.g. 1.1.2012
+     * @param validTo                          defines the end of the validity period, e.g. 31.12.2012
+     * @param annualVacationDays               defines number of annual vacation days
+     * @param actualVacationDays               the actual vacation days for the period
+     * @param remainingVacationDays            defines the number of remaining vacation days from the last year
+     * @param remainingVacationDaysNotExpiring defines the number of remaining vacation days that do not expire on 1st April
+     * @param comment                          comment to changes to the annual vacation days
      * @return the created holidays account
      */
     Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
-                                          BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-                                          BigDecimal remainingDaysNotExpiring, String comment);
+                                          BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                          BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
+                                          String comment);
 
     /**
      * Edits the given {@link Account} with the given params.
      *
-     * @param account                  to be edited
-     * @param validFrom                defines the start of the validity period, e.g. 1.1.2012
-     * @param validTo                  defines the end of the validity period, e.g. 31.12.2012
-     * @param annualVacationDays       defines number of annual vacation days
-     * @param actualVacationDays       the actual vacation days for the period
-     * @param remainingDays            defines the number of remaining vacation days from the last year
-     * @param remainingDaysNotExpiring defines the number of remaining vacation days that do not expire on 1st April
-     * @param comment                  comment to changes to the annual vacation days
+     * @param account                          to be edited
+     * @param validFrom                        defines the start of the validity period, e.g. 1.1.2012
+     * @param validTo                          defines the end of the validity period, e.g. 31.12.2012
+     * @param annualVacationDays               defines number of annual vacation days
+     * @param actualVacationDays               the actual vacation days for the period
+     * @param remainingVacationDays            defines the number of remaining vacation days from the last year
+     * @param remainingVacationDaysNotExpiring defines the number of remaining vacation days that do not expire on 1st April
+     * @param comment                          comment to changes to the annual vacation days
      * @return the updated holidays account
      */
     Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
-                                BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
-                                BigDecimal remainingDaysNotExpiring, String comment);
+                                BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
+                                String comment);
 
     /**
      * Auto-creates a new {@link Account} or updates the existing {@link Account} for the next year, based on the information of the given reference account.
