@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <title th:text="#{absences.overview.header.title}">Absence Overview</title>
+  <th:block th:fragment="styles">
+    <link rel="stylesheet" type="text/css" asset:href="absences_overview.css"/>
+  </th:block>
+  <th:block th:fragment="scripts">
+    <script defer asset:src="npm.tablesorter.js"></script>
+    <script defer asset:src="absences_overview.js"></script>
+  </th:block>
+</head>
+<body th:replace="_layout::body(~{::main}, ~{})">
+
+<main th:fragment="main">
+
+  <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+    <div
+      th:replace="fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})"
+    >
+      <th:block th:ref="person-basedata-heading-body">
+        <h1 th:text="#{absences.overview.title}">Absence Overview</h1>
+      </th:block>
+      <th:block th:ref="person-basedata-heading-actions">
+        <a href="#" th:replace="fragments/print::button"></a>
+      </th:block>
+    </div>
+    <div class="tw-mt-4 md:tw-mt-6">
+      <form
+        action="#"
+        th:action="@{/web/absences}"
+        id="absenceOverviewForm"
+        class="print:tw-hidden tw-px-4"
+      >
+        <div
+          class="tw-items-baseline md:tw-grid tw-gap-x-8 tw-gap-y-4"
+          style="grid-template-columns: min-content minmax(0, 22rem) 1fr"
+        >
+          <label
+            class="tw-mb-1 md:tw-mb-0 tw-m-0 tw-col-start-1 tw-row-start-1"
+            for="yearSelect"
+            th:text="#{absences.overview.year}"
+          >
+            Year
+          </label>
+          <span class="tw-col-start-2 tw-col-end-2 tw-row-start-1">
+            <select
+              th:replace="fragments/select::one(id='yearSelect', name='year', options=~{::year-select-options})"
+              id="yearSelect"
+            >
+              <th:block th:fragment="year-select-options">
+                <option
+                  th:each="i : ${#numbers.sequence(1,10)}"
+                  th:with="year=${currentYear - 10 + i}"
+                  th:selected="${#strings.equals(year, selectedYear)}"
+                  th:text="${year}"
+                ></option>
+                <option
+                  th:value="${currentYear}"
+                  th:selected="${#strings.equals(currentYear, selectedYear)}"
+                  th:text="${currentYear}"
+                ></option>
+                <option
+                  th:value="${currentYear + 1}"
+                  th:selected="${#strings.equals(currentYear + 1, selectedYear)}"
+                  th:text="${currentYear + 1}"
+                ></option>
+              </th:block>
+            </select>
+          </span>
+
+          <label
+            class="tw-mt-4 md:tw-mt-0 tw-mb-1 md:tw-mb-0 tw-m-0 tw-col-start-1 tw-row-start-2"
+            for="monthSelect"
+            th:text="#{absences.overview.month}"
+          >
+            Month
+          </label>
+          <span class="md:tw-mt-0 tw-col-start-2 tw-col-end-2 tw-row-start-2">
+            <select
+              th:replace="fragments/select::one(id='monthSelect', name='month', options=~{::month-select-options})"
+              id="monthSelect"
+            >
+              <th:block th:fragment="month-select-options">
+                <option
+                  value=""
+                  th:selected="${#strings.equals(selectedMonth, '')}"
+                  th:text="#{month.all}"
+                ></option>
+                <option
+                  th:each="i : ${#numbers.sequence(1, 12)}"
+                  th:selected="${#strings.equals(selectedMonth, i)}"
+                  th:value="${i}"
+                >
+                  <th:block th:switch="${i}">
+                    <th:block th:case="1" th:text="#{month.january}" />
+                    <th:block th:case="2" th:text="#{month.february}" />
+                    <th:block th:case="3" th:text="#{month.march}" />
+                    <th:block th:case="4" th:text="#{month.april}" />
+                    <th:block th:case="5" th:text="#{month.may}" />
+                    <th:block th:case="6" th:text="#{month.june}" />
+                    <th:block th:case="7" th:text="#{month.july}" />
+                    <th:block th:case="8" th:text="#{month.august}" />
+                    <th:block th:case="9" th:text="#{month.september}" />
+                    <th:block th:case="10" th:text="#{month.october}" />
+                    <th:block th:case="11" th:text="#{month.november}" />
+                    <th:block th:case="12" th:text="#{month.december}" />
+                  </th:block>
+                </option>
+              </th:block>
+            </select>
+          </span>
+
+          <th:block th:if="${not #lists.isEmpty(visibleDepartments)}">
+            <label
+              class="tw-mt-4 md:tw-mt-0 tw-mb-1 md:tw-mb-2 tw-m-0 tw-col-start-1 tw-col-end-1 tw-row-start-3"
+              for="departmentSelect"
+              th:text="#{absences.overview.department}"
+            >
+              Department
+            </label>
+            <select
+              th:replace="fragments/select::multi(id='departmentSelect', name='department', options=~{::department-select-options}, class='tw-row-start-3')"
+              id="departmentSelect"
+              multiple
+            >
+              <th:block th:fragment="department-select-options">
+                <option
+                  th:each="department : ${visibleDepartments}"
+                  value=""
+                  th:value="${department.name}"
+                  th:selected="${#lists.contains(selectedDepartments, department.name)}"
+                  th:text="${department.name}"
+                ></option>
+              </th:block>
+            </select>
+            <span class="help-block tw-hidden md:tw-inline tw-text-sm tw-col-start-3 tw-row-start-3">
+              <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+              <th:block th:text="#{absences.overview.department.help}"></th:block>
+            </span>
+          </th:block>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="tw-mt-8 tw-min-w-max xl:tw-max-w-max tw-mx-auto tw-px-4">
+    <hr class="print:tw-hidden"/>
+    <div th:each="month : ${absenceOverview.months}" class="tw-mb-14 print:tw-break-inside-avoid">
+      <h2
+        th:id="${'absence-table-' + month.nameOfMonth}"
+        class="tw-text-2xl tw-m-0"
+        th:classappend="${#lists.size(absenceOverview.months) == 1 ? 'tw-hidden print:tw-block' : ''}"
+      >
+        <th:block th:text="${month.nameOfMonth}" />
+        <span class="hidden print:tw-inline" th:text="${selectedYear}" />
+      </h2>
+      <table
+        id="absence-table"
+        class="vacationOverview-table tw-text-sm"
+        role="grid"
+        th:aria-describedby="${'absence-table-' + month.nameOfMonth}"
+      >
+        <thead>
+          <tr>
+            <th scope="col" class="print:tw-hidden tw-cursor-default tw-p-2 tw-sticky tw--left-0.5 tw-bg-gradient-to-r tw-from-white dark:tw-from-zinc-900 dark:tw-via-zinc-900 tw-z-40">&nbsp;</th>
+            <th scope="col" class="sortable-field tw-cursor-default tw-p-2">&nbsp;</th>
+            <th
+              th:each="day : ${month.days}"
+              scope="col"
+              class="non-sortable tw-cursor-default vacationOverview-cal-head"
+              th:classappend="|${day.today ? 'today' : ''}${day.weekend ? ' weekend' : ''}|"
+              th:style="${day.today ? '--vacation-overview-rows: ' + #lists.size(month.persons) : ''}"
+            >
+              <div
+                class="tw-p-2 tw-leading-none tw-text-center"
+                th:classappend="|${day.type != null && day.type.publicHolidayFull ? 'public-holiday-full' : ''}${day.type != null && day.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${day.type != null && day.type.publicHolidayNoon ? ' public-holiday-noon' : ''}|"
+              >
+                <span class="tw-font-bold tw-block" th:text="${day.dayOfMonth}"></span>
+                <span class="tw-text-sm tw-block tw-text-zinc-500" th:text="${day.dayOfWeek}"></span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="vacationOverview-tbody">
+          <tr role="row" th:each="person : ${month.persons}">
+            <th
+              scope="row"
+              class="tw-p-0.5 print:tw-hidden tw-sticky tw--left-px tw-bg-gradient-to-r tw-from-white dark:tw-from-zinc-900 dark:tw-via-zinc-900 tw-z-40 tw-border-l-0 tw-z-10"
+            >
+              <img
+                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=32'},username=${person.firstName + ' ' + person.lastName},width='32',height='32')"
+                alt=""
+              />
+            </th>
+            <th
+              scope="row"
+              class="tw-py-0.5 tw-pl-2 tw-pr-4 print:tw-py-1.5"
+            >
+              <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
+                <th:block th:text="${person.firstName}" />&nbsp;
+                <span th:text="${person.lastName}"></span>
+              </div>
+            </th>
+            <td th:each="absence : ${person.days}">
+              <div
+                class="cal-day"
+                th:classappend="|${absence.type != null && absence.type.absenceFull ? 'absence-full' : ''}${absence.type != null && absence.type.absenceMorning ? ' absence-morning' : ''}${absence.type != null && absence.type.absenceNoon ? ' absence-noon' : ''}${absence.type != null && absence.type.waitingVacationFull ? ' vacation-full-waiting' : ''}${absence.type != null && absence.type.waitingVacationMorning ? ' vacation-morning-waiting' : ''}${absence.type != null && absence.type.waitingVacationNoon ? ' vacation-noon-waiting' : ''}${absence.type != null && absence.type.allowedVacationFull ? ' vacation-full-approved' : ''}${absence.type != null && absence.type.allowedVacationMorning ? ' vacation-morning-approved' : ''}${absence.type != null && absence.type.allowedVacationNoon ? ' vacation-noon-approved' : ''}${absence.type != null && absence.type.sickNoteFull ? ' sick-note-full' : ''}${absence.type != null && absence.type.sickNoteMorning ? ' sick-note-morning' : ''}${absence.type != null && absence.type.sickNoteNoon ? ' sick-note-noon' : ''}${absence.type != null && absence.type.publicHolidayFull ? ' public-holiday-full' : ''}${absence.type != null && absence.type.publicHolidayMorning ? ' public-holiday-morning' : ''}${absence.type != null && absence.type.publicHolidayNoon ? ' public-holiday-noon' : ''}${absence.workday ? '' : ' no-workday'}|"
+              >
+                <div
+                  th:if="${not absence.workday}"
+                  class=""
+                  style="height: 100%; display: flex; align-items: center; justify-content: center"
+                >
+                  <svg th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px tw-stroke-2')"></svg>
+                </div>
+                <span class="tw-hidden print:tw-inline print:tw-font-mono">
+                  <th:block
+                    th:if="${absence.type.absenceMorning}"
+                    th:text="#{absences.overview.absence.morning.abbr}">
+                  </th:block>
+                  <th:block
+                    th:if="${absence.type.absenceNoon}"
+                    th:text="#{absences.overview.absence.noon.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.absenceFull}"
+                    th:text="#{absences.overview.absence.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.waitingVacationMorning}"
+                    th:text="#{absences.overview.vacation.morning.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.allowedVacationMorning}"
+                    th:text="#{absences.overview.allowed.morning.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.sickNoteMorning}"
+                    th:text="#{absences.overview.sick.morning.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.waitingVacationNoon}"
+                    th:text="#{absences.overview.vacation.noon.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.allowedVacationNoon}"
+                    th:text="#{absences.overview.allowed.noon.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.sickNoteNoon}"
+                    th:text="#{absences.overview.sick.noon.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.allowedVacationFull}"
+                    th:text="#{absences.overview.allowed.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.waitingVacationFull}"
+                    th:text="#{absences.overview.vacation.abbr}"
+                  ></th:block>
+                  <th:block
+                    th:if="${absence.type.sickNoteFull}"
+                    th:text="#{absences.overview.sick.abbr}"
+                  ></th:block>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="vacationOverviewLegend" class="tw-mb-8 print:tw-break-inside-avoid">
+      <table aria-hidden="true" class="vacationOverview-legend-table tw-sticky tw-left-4 tw-text-sm print:tw-font-mono">
+        <caption th:text="#{absences.overview.legendTitle}"></caption>
+        <tbody>
+          <tr>
+            <td class="vacationOverview-legend-colorbox vacationOverview-day-today-legend"></td>
+            <td class="vacationOverview-legend-text" th:text="#{absences.overview.today}"></td>
+          </tr>
+          <tr>
+            <td class="vacationOverview-legend-colorbox">
+              <div class="cal-day public-holiday-full"></div>
+            </td>
+            <td class="vacationOverview-legend-text" th:text="#{absences.overview.public-holiday}"></td>
+          </tr>
+          <tr>
+            <td class="vacationOverview-legend-colorbox">
+              <div class="cal-day tw-flex tw-items-center tw-justify-center">
+                <svg th:replace="icon/ban::svg(className='no-workday-icon')" />
+              </div>
+            </td>
+            <td class="vacationOverview-legend-text" th:text="#{absences.overview.no-workday}"></td>
+          </tr>
+          <th:block th:if="${showRichLegend}">
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day vacation-full-approved"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.allowed.abbr}">
+                </span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.allowed}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day vacation-morning-approved"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.allowed.morning.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.allowed.morning}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day vacation-noon-approved"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.allowed.noon.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.allowed.noon}">
+              </td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day vacation-full-waiting"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.vacation.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.vacation}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day vacation-morning-waiting"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.vacation.morning.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.vacation.morning}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day vacation-noon-waiting"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.vacation.noon.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.vacation.noon}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day sick-note-full"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day sick-note-morning"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.morning.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick.morning}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day sick-note-noon"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.noon.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick.noon}"></td>
+            </tr>
+          </th:block>
+          <th:block th:if="${not showRichLegend}">
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day absence-full"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day absence-morning"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.morning.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence.morning}"></td>
+            </tr>
+            <tr>
+              <td class="vacationOverview-legend-colorbox">
+                <div class="cal-day absence-noon"></div>
+                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.noon.abbr}"></span>
+              </td>
+              <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence.noon}"></td>
+            </tr>
+          </th:block>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>
