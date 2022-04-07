@@ -12,6 +12,7 @@ import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.RefreshInterval;
 import net.fortuna.ical4j.model.property.Sequence;
+import net.fortuna.ical4j.model.property.Transp;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.XProperty;
 import net.fortuna.ical4j.validate.ValidationException;
@@ -36,6 +37,7 @@ import static java.util.Date.from;
 import static net.fortuna.ical4j.model.parameter.Role.REQ_PARTICIPANT;
 import static net.fortuna.ical4j.model.property.CalScale.GREGORIAN;
 import static net.fortuna.ical4j.model.property.Method.CANCEL;
+import static net.fortuna.ical4j.model.property.Transp.VALUE_TRANSPARENT;
 import static net.fortuna.ical4j.model.property.Version.VERSION_2_0;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
@@ -129,6 +131,10 @@ public class ICalService {
 
         event.getProperties().add(new Uid(generateUid(absence)));
         event.getProperties().add(generateAttendee(absence));
+
+        if (absence.isHolidayReplacement()) {
+            event.getProperties().add(new Transp(VALUE_TRANSPARENT));
+        }
 
         if (method == CANCELLED) {
             event.getProperties().add(new Sequence(1));

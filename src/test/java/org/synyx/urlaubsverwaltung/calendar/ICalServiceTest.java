@@ -216,8 +216,40 @@ class ICalServiceTest {
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
     }
 
+    @Test
+    void holidayReplacement() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final Absence holidayReplacement = holidayReplacement(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sut = new ICalService(calendarProperties);
+
+        final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED);
+        assertThat(convertCalendar(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+
+            .contains("SUMMARY:Vertretung für Marlene Muster")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("TRANSP:TRANSPARENT")
+            .contains("UID:D2A4772AEB3FD20D5F6997FCD8F28719")
+
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+    }
+
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         return absence(person, start, end, length, AbsenceType.DEFAULT);
+    }
+
+    private Absence holidayReplacement(Person person, LocalDate start, LocalDate end, DayLength length) {
+        return absence(person, start, end, length, AbsenceType.HOLIDAY_REPLACEMENT);
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length, AbsenceType absenceType) {
