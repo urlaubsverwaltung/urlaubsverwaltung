@@ -118,7 +118,6 @@ public class VacationDaysReminderService {
 
     private void sendReminderForCurrentlyLeftVacationDays(Person person, BigDecimal vacationDaysLeft, int nextYear) {
         Map<String, Object> model = new HashMap<>();
-        model.put("recipientNiceName", person.getNiceName());
         model.put("vacationDaysLeft", vacationDaysLeft);
         model.put("nextYear", nextYear);
 
@@ -127,7 +126,6 @@ public class VacationDaysReminderService {
 
     private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, int year) {
         Map<String, Object> model = new HashMap<>();
-        model.put("recipientNiceName", person.getNiceName());
         model.put("remainingVacationDays", remainingVacationDays);
         model.put("year", year);
 
@@ -136,7 +134,6 @@ public class VacationDaysReminderService {
 
     private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, int year) {
         Map<String, Object> model = new HashMap<>();
-        model.put("recipientNiceName", person.getNiceName());
         model.put("expiredRemainingVacationDays", expiredRemainingVacationDays);
         model.put("year", year);
 
@@ -144,6 +141,9 @@ public class VacationDaysReminderService {
     }
 
     private void sendMail(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
+
+        model.put("recipientNiceName", person.getNiceName());
+
         final Mail mailToPerson = Mail.builder()
             .withRecipient(person)
             .withSubject(subjectMessageKey)
