@@ -76,7 +76,8 @@ public class VacationDaysReminderService {
                 final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
 
-                final BigDecimal remainingVacationDaysLeft = vacationDaysLeft.getRemainingVacationDays().subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+                final BigDecimal remainingVacationDaysLeft = vacationDaysLeft.getRemainingVacationDays()
+                    .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
                 if (remainingVacationDaysLeft.compareTo(ZERO) > 0) {
                     LOG.info("Remind person with id {} for {} remaining vacation days in year {}.",
@@ -101,10 +102,10 @@ public class VacationDaysReminderService {
                 final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
 
-                final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays().subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+                final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
+                    .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
                 if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
-
                     LOG.info("Notify person with id {} for {} expired remaining vacation days in year {}.",
                         person.getId(), expiredRemainingVacationDays, year);
                     sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, year);
@@ -114,7 +115,7 @@ public class VacationDaysReminderService {
     }
 
     private void sendReminderForCurrentlyLeftVacationDays(Person person, BigDecimal vacationDaysLeft, int nextYear) {
-        Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("vacationDaysLeft", vacationDaysLeft);
         model.put("nextYear", nextYear);
 
@@ -122,7 +123,7 @@ public class VacationDaysReminderService {
     }
 
     private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, int year) {
-        Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("remainingVacationDays", remainingVacationDays);
         model.put("year", year);
 
@@ -130,7 +131,7 @@ public class VacationDaysReminderService {
     }
 
     private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, int year) {
-        Map<String, Object> model = new HashMap<>();
+        final Map<String, Object> model = new HashMap<>();
         model.put("expiredRemainingVacationDays", expiredRemainingVacationDays);
         model.put("year", year);
 
