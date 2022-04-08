@@ -45,10 +45,12 @@ class TurnOfTheYearAccountUpdaterServiceTest {
     private AccountInteractionService accountInteractionService;
     @Mock
     private MailService mailService;
+    @Mock
+    private VacationDaysReminderService vacationDaysReminderService;
 
     @BeforeEach
     void setUp() {
-        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, mailService, clock);
+        sut = new TurnOfTheYearAccountUpdaterService(personService, accountService, accountInteractionService, vacationDaysReminderService, mailService, clock);
     }
 
     @Test
@@ -87,6 +89,8 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account1);
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account2);
         verify(accountInteractionService).autoCreateOrUpdateNextYearsHolidaysAccount(account3);
+
+        verify(vacationDaysReminderService).remindForRemainingVacationDays();
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
