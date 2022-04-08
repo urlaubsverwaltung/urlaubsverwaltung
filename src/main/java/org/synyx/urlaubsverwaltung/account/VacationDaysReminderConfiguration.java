@@ -12,7 +12,7 @@ public class VacationDaysReminderConfiguration implements SchedulingConfigurer {
     private final VacationDaysReminderService vacationDaysReminderService;
 
     @Autowired
-    public VacationDaysReminderConfiguration(AccountProperties accountProperties, VacationDaysReminderService vacationDaysReminderService) {
+    VacationDaysReminderConfiguration(AccountProperties accountProperties, VacationDaysReminderService vacationDaysReminderService) {
         this.accountProperties = accountProperties;
         this.vacationDaysReminderService = vacationDaysReminderService;
     }

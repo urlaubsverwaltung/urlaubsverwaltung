@@ -20,7 +20,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
 import static org.slf4j.LoggerFactory.getLogger;
 
-
 @Service
 public class VacationDaysReminderService {
 
@@ -33,8 +32,8 @@ public class VacationDaysReminderService {
     private final Clock clock;
 
     @Autowired
-    public VacationDaysReminderService(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService, MailService mailService, Clock clock) {
-
+    VacationDaysReminderService(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
+                                       MailService mailService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -54,10 +53,8 @@ public class VacationDaysReminderService {
             accountService.getHolidaysAccount(year, person).ifPresent(account -> {
 
                 final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
-
                 if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    LOG.info("Remind person with id {} for {} currently left vacation days",
-                        person.getId(), vacationDaysLeft);
+                    LOG.info("Remind person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
                     sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
                 }
             });
