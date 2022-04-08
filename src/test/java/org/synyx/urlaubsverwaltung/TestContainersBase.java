@@ -9,7 +9,7 @@ import static org.testcontainers.containers.MariaDBContainer.NAME;
 public abstract class TestContainersBase {
 
     static final MariaDBContainer<?> mariaDB = new MariaDBContainer<>(NAME + ":10.5")
-        .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
+        .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--max-connections=300");
 
     @DynamicPropertySource
     static void mariaDBProperties(DynamicPropertyRegistry registry) {

@@ -33,16 +33,18 @@ public class TurnOfTheYearAccountUpdaterService {
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
+    private final VacationDaysReminderService vacationDaysReminderService;
     private final MailService mailService;
     private final Clock clock;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, MailService mailService, Clock clock) {
+                                              AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
+        this.vacationDaysReminderService = vacationDaysReminderService;
         this.mailService = mailService;
         this.clock = clock;
     }
@@ -77,6 +79,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         LOG.info("Updated holidays accounts: {} / {}", updatedAccounts.size(), persons.size());
         sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
+        vacationDaysReminderService.remindForRemainingVacationDays();
     }
 
     /**
