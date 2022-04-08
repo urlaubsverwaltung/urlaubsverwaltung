@@ -10,12 +10,14 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -194,13 +196,14 @@ class VacationDaysReminderServiceTest {
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(account2023);
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
-            .withAnnualVacation(ZERO)
+            .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
-            .notExpiring(ZERO)
+            .notExpiring(ONE)
             .forUsedDaysBeforeApril(ZERO)
             .forUsedDaysAfterApril(ZERO)
             .build();
         when(vacationDaysService.getVacationDaysLeft(account2022, account2023)).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.calculateTotalLeftVacationDays(account2022)).thenReturn(BigDecimal.valueOf(11L));
 
         sut.notifyForExpiredRemainingVacationDays();
 
@@ -213,7 +216,9 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("personId", 42),
-            entry("expiredRemainingVacationDays", TEN),
+            entry("expiredRemainingVacationDays", BigDecimal.valueOf(9L)),
+            entry("totalLeftVacationDays", BigDecimal.valueOf(11L)),
+            entry("remainingVacationDaysNotExpiring", ONE),
             entry("year", 2022)
         );
     }

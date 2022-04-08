@@ -105,10 +105,12 @@ public class VacationDaysReminderService {
                 final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
                     .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
+                final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+
                 if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
                     LOG.info("Notify person with id {} for {} expired remaining vacation days in year {}.",
                         person.getId(), expiredRemainingVacationDays, year);
-                    sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, year);
+                    sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), year);
                 }
             });
         }
@@ -130,9 +132,11 @@ public class VacationDaysReminderService {
         sendMail(person, "subject.account.remindForRemainingVacationDays", "remind_remaining_vacation_days", model);
     }
 
-    private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, int year) {
+    private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, BigDecimal totalLeftVacationDays, BigDecimal remainingVacationDaysNotExpiring, int year) {
         final Map<String, Object> model = new HashMap<>();
         model.put("expiredRemainingVacationDays", expiredRemainingVacationDays);
+        model.put("totalLeftVacationDays", totalLeftVacationDays);
+        model.put("remainingVacationDaysNotExpiring", remainingVacationDaysNotExpiring);
         model.put("year", year);
 
         sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "notify_expired_remaining_vacation_days", model);
