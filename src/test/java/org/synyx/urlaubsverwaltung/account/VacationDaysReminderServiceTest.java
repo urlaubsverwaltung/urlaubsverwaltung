@@ -1,10 +1,8 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.mail.Mail;
@@ -37,22 +35,14 @@ class VacationDaysReminderServiceTest {
     private VacationDaysService vacationDaysService;
     @Mock
     private MailService mailService;
-    @Mock
-    private Clock clock;
-    @InjectMocks
-    private VacationDaysReminderService sut;
 
     final ArgumentCaptor<Mail> mailArgumentCaptor = ArgumentCaptor.forClass(Mail.class);
-
-    @BeforeEach
-    void setUp() {
-        when(clock.getZone()).thenReturn(ZoneId.of("Europe/Berlin"));
-    }
 
     @Test
     void ensureNoReminderForZeroLeftVacationDays() {
 
-        when(clock.instant()).thenReturn(Instant.parse("2022-10-31T06:00:00Z"));
+        final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -69,7 +59,8 @@ class VacationDaysReminderServiceTest {
     @Test
     void ensureReminderForLeftVacationDays() {
 
-        when(clock.instant()).thenReturn(Instant.parse("2022-10-31T06:00:00Z"));
+        final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -96,7 +87,8 @@ class VacationDaysReminderServiceTest {
     @Test
     void ensureNoReminderWithoutRemainingVacationDays() {
 
-        when(clock.instant()).thenReturn(Instant.parse("2022-01-01T06:00:00Z"));
+        final Clock clock = Clock.fixed(Instant.parse("2022-01-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -122,7 +114,8 @@ class VacationDaysReminderServiceTest {
     @Test
     void ensureReminderForRemainingVacationDays() {
 
-        when(clock.instant()).thenReturn(Instant.parse("2022-01-01T06:00:00Z"));
+        final Clock clock = Clock.fixed(Instant.parse("2022-01-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -159,7 +152,8 @@ class VacationDaysReminderServiceTest {
     @Test
     void ensureNoNotificationWithoutExpiredRemainingVacationDays() {
 
-        when(clock.instant()).thenReturn(Instant.parse("2022-01-01T06:00:00Z"));
+        final Clock clock = Clock.fixed(Instant.parse("2022-01-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
@@ -186,7 +180,8 @@ class VacationDaysReminderServiceTest {
     @Test
     void ensureNotificationForExpiredRemainingVacationDays() {
 
-        when(clock.instant()).thenReturn(Instant.parse("2022-04-01T06:00:00Z"));
+        final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = person();
         when(personService.getActivePersons()).thenReturn(List.of(person));
