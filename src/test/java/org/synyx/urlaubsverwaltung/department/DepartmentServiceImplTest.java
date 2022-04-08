@@ -928,7 +928,7 @@ class DepartmentServiceImplTest {
         departmentEntityWithDepartmentHeadRole.setName("Department C");
         departmentEntityWithDepartmentHeadRole.setId(3);
         final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
-        departmentEntityWithMemberRole.setName("Department B");
+        departmentEntityWithMemberRole.setName("department B");
         departmentEntityWithMemberRole.setId(2);
 
         when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(departmentEntityWithSecondStageRole));
