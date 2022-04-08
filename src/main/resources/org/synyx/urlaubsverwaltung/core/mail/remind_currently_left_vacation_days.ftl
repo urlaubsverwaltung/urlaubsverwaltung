@@ -1,3 +1,3 @@
 Hallo ${recipientNiceName},
 
-Du hast noch ${vacationDaysLeft} Tage Urlaub für dieses Jahr offen.
+Du hast noch ${vacationDaysLeft} Tag(e) Urlaub für dieses Jahr offen.
