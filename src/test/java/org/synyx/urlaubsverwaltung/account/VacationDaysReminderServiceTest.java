@@ -85,7 +85,7 @@ class VacationDaysReminderServiceTest {
         final Mail capturedMail = mailArgumentCaptor.getValue();
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.remindForCurrentlyLeftVacationDays");
-        assertThat(capturedMail.getTemplateName()).isEqualTo("remind_currently_left_vacation_days.ftl");
+        assertThat(capturedMail.getTemplateName()).isEqualTo("remind_currently_left_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("vacationDaysLeft", TEN),
@@ -148,7 +148,7 @@ class VacationDaysReminderServiceTest {
         final Mail capturedMail = mailArgumentCaptor.getValue();
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.remindForRemainingVacationDays");
-        assertThat(capturedMail.getTemplateName()).isEqualTo("remind_remaining_vacation_days.ftl");
+        assertThat(capturedMail.getTemplateName()).isEqualTo("remind_remaining_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("remainingVacationDays", TEN),
@@ -212,7 +212,7 @@ class VacationDaysReminderServiceTest {
         final Mail capturedMail = mailArgumentCaptor.getValue();
         assertThat(capturedMail.getMailAddressRecipients()).contains(List.of(person));
         assertThat(capturedMail.getSubjectMessageKey()).isEqualTo("subject.account.notifyForExpiredRemainingVacationDays");
-        assertThat(capturedMail.getTemplateName()).isEqualTo("notify_expired_remaining_vacation_days.ftl");
+        assertThat(capturedMail.getTemplateName()).isEqualTo("notify_expired_remaining_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
             entry("expiredRemainingVacationDays", TEN),

@@ -122,15 +122,7 @@ public class VacationDaysReminderService {
         model.put("vacationDaysLeft", vacationDaysLeft);
         model.put("nextYear", nextYear);
 
-        final String subjectMessageKey = "subject.account.remindForCurrentlyLeftVacationDays";
-        final String templateName = "remind_currently_left_vacation_days.ftl";
-
-        final Mail mailToPerson = Mail.builder()
-            .withRecipient(person)
-            .withSubject(subjectMessageKey)
-            .withTemplate(templateName, model)
-            .build();
-        mailService.send(mailToPerson);
+        sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "remind_currently_left_vacation_days", model);
     }
 
     private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, int year) {
@@ -139,15 +131,7 @@ public class VacationDaysReminderService {
         model.put("remainingVacationDays", remainingVacationDays);
         model.put("year", year);
 
-        final String subjectMessageKey = "subject.account.remindForRemainingVacationDays";
-        final String templateName = "remind_remaining_vacation_days.ftl";
-
-        final Mail mailToPerson = Mail.builder()
-            .withRecipient(person)
-            .withSubject(subjectMessageKey)
-            .withTemplate(templateName, model)
-            .build();
-        mailService.send(mailToPerson);
+        sendMail(person, "subject.account.remindForRemainingVacationDays", "remind_remaining_vacation_days", model);
     }
 
     private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, int year) {
@@ -156,9 +140,10 @@ public class VacationDaysReminderService {
         model.put("expiredRemainingVacationDays", expiredRemainingVacationDays);
         model.put("year", year);
 
-        final String subjectMessageKey = "subject.account.notifyForExpiredRemainingVacationDays";
-        final String templateName = "notify_expired_remaining_vacation_days.ftl";
+        sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "notify_expired_remaining_vacation_days", model);
+    }
 
+    private void sendMail(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
         final Mail mailToPerson = Mail.builder()
             .withRecipient(person)
             .withSubject(subjectMessageKey)
