@@ -19,8 +19,8 @@ public class VacationDaysReminderConfiguration implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-        scheduledTaskRegistrar.addCronTask(vacationDaysReminderService::remindForVacationDaysLeft, accountProperties.getVacationDaysReminder().getVacationDaysLeftCron());
+        scheduledTaskRegistrar.addCronTask(vacationDaysReminderService::remindForCurrentlyLeftVacationDays, accountProperties.getVacationDaysReminder().getVacationDaysLeftCron());
         scheduledTaskRegistrar.addCronTask(vacationDaysReminderService::remindForRemainingVacationDays, accountProperties.getVacationDaysReminder().getTurnOfTheYearCron());
-        scheduledTaskRegistrar.addCronTask(vacationDaysReminderService::remindForExpiredRemainingVacationDays, accountProperties.getVacationDaysReminder().getExpiredRemainingVacationDaysCron());
+        scheduledTaskRegistrar.addCronTask(vacationDaysReminderService::notifyForExpiredRemainingVacationDays, accountProperties.getVacationDaysReminder().getExpiredRemainingVacationDaysCron());
     }
 }

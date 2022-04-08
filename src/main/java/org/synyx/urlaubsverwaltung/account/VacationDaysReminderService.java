@@ -42,7 +42,10 @@ public class VacationDaysReminderService {
         this.clock = clock;
     }
 
-    void remindForVacationDaysLeft() {
+    /**
+     * Reminds for vacation days left for <b>current year</b>.
+     */
+    void remindForCurrentlyLeftVacationDays() {
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
 
@@ -53,17 +56,19 @@ public class VacationDaysReminderService {
                 final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
 
                 if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    LOG.info("Remind person with id {} for {} vacation days left in year {}.",
-                        person.getId(), vacationDaysLeft, year);
-                    sendReminderForVacationDaysLeftNotification(person, vacationDaysLeft, year + 1);
+                    LOG.info("Remind person with id {} for {} currently left vacation days",
+                        person.getId(), vacationDaysLeft);
+                    sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
                 }
             });
         }
     }
 
+    /**
+     * Remind for remaining vacation days of last year
+     * Should be called after turn of the year logic which calculates the new account for the new year
+     */
     void remindForRemainingVacationDays() {
-        //TODO: how to ensure that this is called after turn of the year update?
-
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
 
@@ -85,7 +90,10 @@ public class VacationDaysReminderService {
         }
     }
 
-    void remindForExpiredRemainingVacationDays() {
+    /**
+     * Notify about expired remaining vacation days
+     */
+    void notifyForExpiredRemainingVacationDays() {
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
 
@@ -96,26 +104,26 @@ public class VacationDaysReminderService {
                 final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
 
-                final BigDecimal lostRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays().subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+                final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays().subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
-                if (lostRemainingVacationDays.compareTo(ZERO) > 0) {
+                if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
 
-                    LOG.info("Remind person with id {} for {} lost remaining vacation days in year {}.",
-                        person.getId(), lostRemainingVacationDays, year);
-                    sendReminderForExpiredRemainingVacationDaysNotification(person, lostRemainingVacationDays, year);
+                    LOG.info("Notify person with id {} for {} expired remaining vacation days in year {}.",
+                        person.getId(), expiredRemainingVacationDays, year);
+                    sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, year);
                 }
             });
         }
     }
 
-    private void sendReminderForVacationDaysLeftNotification(Person person, BigDecimal vacationDaysLeft, int nextYear) {
+    private void sendReminderForCurrentlyLeftVacationDays(Person person, BigDecimal vacationDaysLeft, int nextYear) {
         Map<String, Object> model = new HashMap<>();
         model.put("recipientNiceName", person.getNiceName());
         model.put("vacationDaysLeft", vacationDaysLeft);
         model.put("nextYear", nextYear);
 
-        final String subjectMessageKey = "subject.account.remindForVacationDaysLeft";
-        final String templateName = "remind_vacation_days_left.ftl";
+        final String subjectMessageKey = "subject.account.remindForCurrentlyLeftVacationDays";
+        final String templateName = "remind_currently_left_vacation_days.ftl";
 
         final Mail mailToPerson = Mail.builder()
             .withRecipient(person)
@@ -142,14 +150,14 @@ public class VacationDaysReminderService {
         mailService.send(mailToPerson);
     }
 
-    private void sendReminderForExpiredRemainingVacationDaysNotification(Person person, BigDecimal expiredRemainingVacationDays, int year) {
+    private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, int year) {
         Map<String, Object> model = new HashMap<>();
         model.put("recipientNiceName", person.getNiceName());
         model.put("expiredRemainingVacationDays", expiredRemainingVacationDays);
         model.put("year", year);
 
-        final String subjectMessageKey = "subject.account.remindForExpiredRemainingVacationDays";
-        final String templateName = "reminder_expired_remaining_vacation_days.ftl";
+        final String subjectMessageKey = "subject.account.notifyForExpiredRemainingVacationDays";
+        final String templateName = "notify_expired_remaining_vacation_days.ftl";
 
         final Mail mailToPerson = Mail.builder()
             .withRecipient(person)

@@ -80,6 +80,8 @@ public class AccountProperties {
 
         /**
          * Remind for remaining vacation days by default on 1st January at 06:00 am
+         * Should be scheduled after org.synyx.urlaubsverwaltung.account.AccountProperties.Update#cron
+         * Otherwise the remaining vacation days for the new year are not calculated
          */
         @CronExpression
         private String turnOfTheYearCron = "0 0 6 1 1 *";
