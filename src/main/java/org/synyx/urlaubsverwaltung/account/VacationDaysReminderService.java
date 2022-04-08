@@ -54,8 +54,8 @@ public class VacationDaysReminderService {
 
                 final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
                 if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    LOG.info("Remind person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
                     sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
+                    LOG.info("Reminded person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
                 }
             });
         }
@@ -80,9 +80,8 @@ public class VacationDaysReminderService {
                     .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
                 if (remainingVacationDaysLeft.compareTo(ZERO) > 0) {
-                    LOG.info("Remind person with id {} for {} remaining vacation days in year {}.",
-                        person.getId(), remainingVacationDaysLeft, year);
                     sendReminderForRemainingVacationDaysNotification(person, remainingVacationDaysLeft, year);
+                    LOG.info("Reminded person with id {} for {} remaining vacation days in year {}.", person.getId(), remainingVacationDaysLeft, year);
                 }
             });
         }
@@ -104,13 +103,10 @@ public class VacationDaysReminderService {
 
                 final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
                     .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-                final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
-
                 if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
-                    LOG.info("Notify person with id {} for {} expired remaining vacation days in year {}.",
-                        person.getId(), expiredRemainingVacationDays, year);
+                    final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
                     sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), year);
+                    LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", person.getId(), expiredRemainingVacationDays, year);
                 }
             });
         }
