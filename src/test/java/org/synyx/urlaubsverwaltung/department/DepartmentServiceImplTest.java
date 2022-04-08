@@ -244,9 +244,47 @@ class DepartmentServiceImplTest {
     @Test
     void ensureGetAllCallDepartmentDAOFindAll() {
 
-        sut.getAllDepartments();
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1);
+        departmentEntityA.setName("Department A");
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2);
+        departmentEntityB.setName("Department B");
 
-        verify(departmentRepository).findAll();
+        final Department departmentA = new Department();
+        departmentA.setId(1);
+        final Department departmentB = new Department();
+        departmentB.setId(2);
+
+        when(departmentRepository.findAll()).thenReturn(List.of(departmentEntityA, departmentEntityB));
+
+        final List<Department> allDepartments = sut.getAllDepartments();
+        assertThat(allDepartments)
+            .hasSize(2)
+            .containsExactly(departmentA, departmentB);
+    }
+
+    @Test
+    void ensureGetAllDepartmentSorted() {
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1);
+        departmentEntityA.setName("Department A");
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2);
+        departmentEntityB.setName("Department B");
+
+        final Department departmentA = new Department();
+        departmentA.setId(1);
+        final Department departmentB = new Department();
+        departmentB.setId(2);
+
+        when(departmentRepository.findAll()).thenReturn(List.of(departmentEntityB, departmentEntityA));
+
+        final List<Department> allDepartments = sut.getAllDepartments();
+        assertThat(allDepartments)
+            .hasSize(2)
+            .containsExactly(departmentA, departmentB);
     }
 
     @Test

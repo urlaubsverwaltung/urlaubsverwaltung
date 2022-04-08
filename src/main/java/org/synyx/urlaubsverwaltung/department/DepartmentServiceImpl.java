@@ -123,6 +123,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll().stream()
             .map(this::mapToDepartment)
+            .sorted(comparing(Department::getName))
             .collect(toList());
     }
 
