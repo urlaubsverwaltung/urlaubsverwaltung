@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -147,6 +148,30 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<Department> getDepartmentsPersonHasAccessTo(Person person) {
+
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            return getAllDepartments();
+        }
+
+        final List<Department> departments = new ArrayList<>();
+        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments.addAll(getManagedDepartmentsOfSecondStageAuthority(person));
+        }
+
+        if (person.hasRole(DEPARTMENT_HEAD)) {
+            departments.addAll(getManagedDepartmentsOfDepartmentHead(person));
+        }
+
+        departments.addAll(getAssignedDepartmentsOfMember(person));
+
+        return departments.stream()
+            .distinct()
+            .sorted(comparing(Department::getName))
+            .collect(toList());
+    }
+
+    @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
 
         final List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
@@ -212,29 +237,6 @@ class DepartmentServiceImpl implements DepartmentService {
         final boolean isDepartmentHeadAllowedToAccessPersonalData = isDepartmentHeadAllowedToAccessPersonData(signedInUser, person);
 
         return isOwnData || isBossOrOffice || isDepartmentHeadAllowedToAccessPersonalData || isSecondStageAuthorityAllowedToAccessPersonalData;
-    }
-
-    @Override
-    public List<Department> getAllowedDepartmentsOfPerson(Person person) {
-
-        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
-            return getAllDepartments();
-        }
-
-        final List<Department> departments = new ArrayList<>();
-        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments.addAll(getManagedDepartmentsOfSecondStageAuthority(person));
-        }
-
-        if (person.hasRole(DEPARTMENT_HEAD)) {
-            departments.addAll(getManagedDepartmentsOfDepartmentHead(person));
-        }
-
-        departments.addAll(getAssignedDepartmentsOfMember(person));
-
-        return departments.stream()
-            .distinct()
-            .collect(toList());
     }
 
     @Override

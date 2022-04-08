@@ -764,8 +764,8 @@ class DepartmentServiceImplTest {
         final Department department = new Department();
         department.setName("dep");
 
-        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(boss);
-        assertThat(allowedDepartments).containsExactly(department);
+        var departmentsWithAccess = sut.getDepartmentsPersonHasAccessTo(boss);
+        assertThat(departmentsWithAccess).containsExactly(department);
     }
 
     @Test
@@ -780,8 +780,8 @@ class DepartmentServiceImplTest {
         final Department department = new Department();
         department.setName("dep");
 
-        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(office);
-        assertThat(allowedDepartments).containsExactly(department);
+        var departmentsWithAccess = sut.getDepartmentsPersonHasAccessTo(office);
+        assertThat(departmentsWithAccess).containsExactly(department);
     }
 
     @Test
@@ -790,8 +790,10 @@ class DepartmentServiceImplTest {
         secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
 
         final DepartmentEntity departmentEntityWithSecondStageRole = new DepartmentEntity();
+        departmentEntityWithSecondStageRole.setName("Department A");
         departmentEntityWithSecondStageRole.setId(1);
         final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setName("Department B");
         departmentEntityWithMemberRole.setId(2);
 
         when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(departmentEntityWithSecondStageRole));
@@ -802,8 +804,8 @@ class DepartmentServiceImplTest {
         final Department expectedDepartment = new Department();
         expectedDepartment.setId(2);
 
-        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(secondStageAuthority);
-        assertThat(allowedDepartments).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartment);
+        var departmentsWithAccess = sut.getDepartmentsPersonHasAccessTo(secondStageAuthority);
+        assertThat(departmentsWithAccess).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartment);
     }
 
     @Test
@@ -812,8 +814,10 @@ class DepartmentServiceImplTest {
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
 
         final DepartmentEntity departmentEntityWithDepartmentHeadRole = new DepartmentEntity();
+        departmentEntityWithDepartmentHeadRole.setName("Department A");
         departmentEntityWithDepartmentHeadRole.setId(1);
         final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setName("Department B");
         departmentEntityWithMemberRole.setId(2);
 
         when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(departmentEntityWithDepartmentHeadRole));
@@ -824,8 +828,8 @@ class DepartmentServiceImplTest {
         final Department expectedDepartment = new Department();
         expectedDepartment.setId(2);
 
-        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(departmentHead);
-        assertThat(allowedDepartments).containsExactly(expectedDepartmentWithDepartmentHeadRole, expectedDepartment);
+        var departmentsWithAccess = sut.getDepartmentsPersonHasAccessTo(departmentHead);
+        assertThat(departmentsWithAccess).containsExactly(expectedDepartmentWithDepartmentHeadRole, expectedDepartment);
     }
 
     @Test
@@ -834,10 +838,13 @@ class DepartmentServiceImplTest {
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         final DepartmentEntity departmentEntityWithSecondStageRole = new DepartmentEntity();
+        departmentEntityWithSecondStageRole.setName("Department A");
         departmentEntityWithSecondStageRole.setId(3);
         final DepartmentEntity departmentEntityWithDepartmentHeadRole = new DepartmentEntity();
+        departmentEntityWithDepartmentHeadRole.setName("Department B");
         departmentEntityWithDepartmentHeadRole.setId(1);
         final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setName("Department C");
         departmentEntityWithMemberRole.setId(2);
 
         when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(departmentEntityWithSecondStageRole));
@@ -851,8 +858,8 @@ class DepartmentServiceImplTest {
         final Department expectedDepartment = new Department();
         expectedDepartment.setId(2);
 
-        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(person);
-        assertThat(allowedDepartments).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartmentWithDepartmentHeadRole, expectedDepartment);
+        var departmentsWithAccess = sut.getDepartmentsPersonHasAccessTo(person);
+        assertThat(departmentsWithAccess).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartmentWithDepartmentHeadRole, expectedDepartment);
     }
 
     @Test
@@ -867,8 +874,38 @@ class DepartmentServiceImplTest {
         final Department expectedDepartment = new Department();
         expectedDepartment.setName("dep");
 
-        var allowedDepartments = sut.getAllowedDepartmentsOfPerson(user);
+        var allowedDepartments = sut.getDepartmentsPersonHasAccessTo(user);
         assertThat(allowedDepartments).containsExactly(expectedDepartment);
+    }
+
+    @Test
+    void ensureDepartmentsHasAccessToAreSortedByName() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final DepartmentEntity departmentEntityWithSecondStageRole = new DepartmentEntity();
+        departmentEntityWithSecondStageRole.setName("Department A");
+        departmentEntityWithSecondStageRole.setId(1);
+        final DepartmentEntity departmentEntityWithDepartmentHeadRole = new DepartmentEntity();
+        departmentEntityWithDepartmentHeadRole.setName("Department C");
+        departmentEntityWithDepartmentHeadRole.setId(3);
+        final DepartmentEntity departmentEntityWithMemberRole = new DepartmentEntity();
+        departmentEntityWithMemberRole.setName("Department B");
+        departmentEntityWithMemberRole.setId(2);
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(departmentEntityWithSecondStageRole));
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntityWithDepartmentHeadRole));
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(departmentEntityWithMemberRole));
+
+        final Department expectedDepartmentWithSecondStageRole = new Department();
+        expectedDepartmentWithSecondStageRole.setId(1);
+        final Department expectedDepartmentWithDepartmentHeadRole = new Department();
+        expectedDepartmentWithDepartmentHeadRole.setId(3);
+        final Department expectedDepartment = new Department();
+        expectedDepartment.setId(2);
+
+        var departmentsWithAccess = sut.getDepartmentsPersonHasAccessTo(person);
+        assertThat(departmentsWithAccess).containsExactly(expectedDepartmentWithSecondStageRole, expectedDepartment, expectedDepartmentWithDepartmentHeadRole);
     }
 
     @Test

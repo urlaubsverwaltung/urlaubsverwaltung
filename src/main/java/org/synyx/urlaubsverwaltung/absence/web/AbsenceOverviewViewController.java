@@ -106,7 +106,7 @@ public class AbsenceOverviewViewController {
             if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
                 visibleDepartments = departmentService.getAllDepartments();
             } else {
-                visibleDepartments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
+                visibleDepartments = departmentService.getDepartmentsPersonHasAccessTo(signedInUser);
             }
             model.addAttribute("visibleDepartments", visibleDepartments);
 
