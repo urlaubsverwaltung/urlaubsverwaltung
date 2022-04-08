@@ -79,6 +79,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateName()).isEqualTo("remind_currently_left_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
+            entry("personId", 42),
             entry("vacationDaysLeft", TEN),
             entry("nextYear", 2023)
         );
@@ -144,6 +145,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateName()).isEqualTo("remind_remaining_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
+            entry("personId", 42),
             entry("remainingVacationDays", TEN),
             entry("year", 2022)
         );
@@ -210,6 +212,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateName()).isEqualTo("notify_expired_remaining_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
+            entry("personId", 42),
             entry("expiredRemainingVacationDays", TEN),
             entry("year", 2022)
         );
@@ -219,6 +222,7 @@ class VacationDaysReminderServiceTest {
         final Person person = new Person();
         person.setFirstName("Marlene");
         person.setLastName("Muster");
+        person.setId(42);
         return person;
     }
 }

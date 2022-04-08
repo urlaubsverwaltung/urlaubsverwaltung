@@ -141,6 +141,7 @@ public class VacationDaysReminderService {
     private void sendMail(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {
 
         model.put("recipientNiceName", person.getNiceName());
+        model.put("personId", person.getId());
 
         final Mail mailToPerson = Mail.builder()
             .withRecipient(person)
