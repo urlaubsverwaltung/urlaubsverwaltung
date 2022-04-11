@@ -146,7 +146,7 @@ public class AbsenceOverviewViewController {
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
-        return "absences/absences_overview";
+        return "thymeleaf/absences/absences-overview";
     }
 
     private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {

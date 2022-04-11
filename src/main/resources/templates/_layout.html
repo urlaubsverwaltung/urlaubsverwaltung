@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:asset="http://www.w3.org/1999/xhtml">
-<head th:fragment="head(title, scripts)">
+<head th:fragment="head(title, styles, scripts)">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title th:replace="${title}">Page Title</title>
@@ -32,6 +32,7 @@
 
   <link rel="stylesheet" type="text/css" asset:href="common.css"/>
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+  <th:block th:replace="${styles}"></th:block>
 
   <script th:if="${theme eq 'system'}">
     (function() {
