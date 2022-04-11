@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload video of failed tests
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: hashFiles('target/FAILED-*.flv') != ''
         with:
           name: failed-selenium-tests
