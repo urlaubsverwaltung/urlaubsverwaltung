@@ -5,16 +5,17 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -45,42 +46,45 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
 
-        final Optional<String> optionalFirstName = extractGivenName(oidcUserAuthority);
-        final Optional<String> optionalLastName = extractFamilyName(oidcUserAuthority);
-        final Optional<String> optionalMailAddress = extractMailAddress(oidcUserAuthority);
-
-        final String userUniqueID = oidcUserAuthority.getIdToken().getSubject();
+        final String userUniqueID = extractIdentifier(oidcUserAuthority);
+        final String firstName = extractGivenName(oidcUserAuthority);
+        final String lastName = extractFamilyName(oidcUserAuthority);
+        final String emailAddress = extractMailAddress(oidcUserAuthority);
 
         Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
-        if (optionalPerson.isEmpty() && optionalMailAddress.isPresent()) {
-            optionalPerson = personService.getPersonByMailAddress(optionalMailAddress.get());
+        if (optionalPerson.isEmpty()) {
+            optionalPerson = personService.getPersonByMailAddress(emailAddress);
         }
 
         final Person person;
-
         if (optionalPerson.isPresent()) {
 
-            final Person tmpPerson = optionalPerson.get();
+            final Person existentPerson = optionalPerson.get();
 
-            if (!userUniqueID.equals(tmpPerson.getUsername())) {
+            if (!userUniqueID.equals(existentPerson.getUsername())) {
                 LOG.info("No person with given userUniqueID was found. Falling back to matching mail address for " +
-                    "person lookup. Existing username '{}' is replaced with '{}'.", tmpPerson.getUsername(), userUniqueID);
-                tmpPerson.setUsername(userUniqueID);
+                    "person lookup. Existing username '{}' is replaced with '{}'.", existentPerson.getUsername(), userUniqueID);
+                existentPerson.setUsername(userUniqueID);
             }
-            optionalFirstName.ifPresent(tmpPerson::setFirstName);
-            optionalLastName.ifPresent(tmpPerson::setLastName);
-            optionalMailAddress.ifPresent(tmpPerson::setEmail);
 
-            person = personService.save(tmpPerson);
+            existentPerson.setFirstName(firstName);
+            existentPerson.setLastName(lastName);
+            existentPerson.setEmail(emailAddress);
+            person = personService.save(existentPerson);
 
             if (person.hasRole(INACTIVE)) {
                 throw new DisabledException("User '" + person.getId() + "' has been deactivated");
             }
-
         } else {
-            final Person createdPerson = personService.create(userUniqueID, optionalLastName.orElse(null),
-                optionalFirstName.orElse(null), optionalMailAddress.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+            final Person createdPerson = personService.create(
+                userUniqueID,
+                lastName,
+                firstName,
+                emailAddress,
+                List.of(NOTIFICATION_USER),
+                List.of(USER)
+            );
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 
@@ -91,30 +95,32 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
             .collect(toList());
     }
 
-    private Optional<String> extractFamilyName(OidcUserAuthority authority) {
-        final Optional<String> familyName = ofNullable(authority.getIdToken().getFamilyName());
-        if (familyName.isPresent()) {
-            return familyName;
-        } else {
-            return ofNullable(authority.getUserInfo().getFamilyName());
+    private String extractIdentifier(OidcUserAuthority authority) {
+        final String userUniqueID = authority.getIdToken().getSubject();
+        if (userUniqueID == null || userUniqueID.isBlank()) {
+            throw new OidcPersonMappingException("Can not retrieve the subject of the id token for oidc person mapping");
         }
+        return userUniqueID;
     }
 
-    private Optional<String> extractGivenName(OidcUserAuthority authority) {
-        final Optional<String> givenName = ofNullable(authority.getIdToken().getGivenName());
-        if (givenName.isPresent()) {
-            return givenName;
-        } else {
-            return ofNullable(authority.getUserInfo().getGivenName());
-        }
+    private String extractFamilyName(OidcUserAuthority authority) {
+        return ofNullable(authority.getIdToken())
+            .map(StandardClaimAccessor::getFamilyName)
+            .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getFamilyName))
+            .orElseThrow(() -> new OidcPersonMappingException("Can not retrieve the lastname for oidc person mapping"));
     }
 
-    private Optional<String> extractMailAddress(OidcUserAuthority authority) {
-        final Optional<String> mailAddress = ofNullable(authority.getIdToken().getEmail());
-        if (mailAddress.isPresent()) {
-            return mailAddress;
-        } else {
-            return ofNullable(authority.getUserInfo().getEmail());
-        }
+    private String extractGivenName(OidcUserAuthority authority) {
+        return ofNullable(authority.getIdToken())
+            .map(StandardClaimAccessor::getGivenName)
+            .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getGivenName))
+            .orElseThrow(() -> new OidcPersonMappingException("Can not retrieve the given name for oidc person mapping"));
+    }
+
+    private String extractMailAddress(OidcUserAuthority authority) {
+        return ofNullable(authority.getIdToken())
+            .map(StandardClaimAccessor::getEmail)
+            .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getEmail))
+            .orElseThrow(() -> new OidcPersonMappingException("Can not retrieve the email for oidc person mapping"));
     }
 }

@@ -1,9 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
-import org.springframework.util.StringUtils;
-
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -18,11 +15,6 @@ final class LdapUser {
     private final List<String> memberOf;
 
     LdapUser(String username, String firstName, String lastName, String email, List<String> memberOf) {
-
-        if (!StringUtils.hasText(username)) {
-            throw new IllegalArgumentException("Username must be given.");
-        }
-
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,17 +26,16 @@ final class LdapUser {
         return username;
     }
 
-    Optional<String> getFirstName() {
-        return Optional.ofNullable(firstName);
+    String getFirstName() {
+        return firstName;
     }
 
-    Optional<String> getLastName() {
-        return Optional.ofNullable(lastName);
+    String getLastName() {
+        return lastName;
     }
 
-    Optional<String> getEmail() {
-
-        return Optional.ofNullable(email);
+    String getEmail() {
+        return email;
     }
 
     @Override
