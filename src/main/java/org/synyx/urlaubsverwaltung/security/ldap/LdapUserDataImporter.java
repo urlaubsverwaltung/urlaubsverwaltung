@@ -26,18 +26,15 @@ public class LdapUserDataImporter {
     private final PersonService personService;
 
     LdapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
-
         this.ldapUserService = ldapUserService;
         this.personService = personService;
     }
 
     @PostConstruct
     void sync() {
-
         LOG.info("STARTING DIRECTORY SERVICE SYNC --------------------------------------------------------------------------------");
 
         final List<LdapUser> users = ldapUserService.getLdapUsers();
-
         LOG.info("Found {} user(s)", users.size());
 
         for (LdapUser user : users) {
