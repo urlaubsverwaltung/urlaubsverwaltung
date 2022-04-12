@@ -42,7 +42,8 @@ public class LdapUserServiceImpl implements LdapUserService {
         try {
             search = ldapTemplate.search(criteria, ldapUserMapper);
         } catch (InvalidSecurityConfigurationException e) {
-            LOG.error("Could not perform a search with parameters from the specified LdapQuery with objectClass '{}' and memberOf '{}'", objectClass, memberOf, e);
+            LOG.error("Could not perform a search with parameters from the specified LdapQuery with objectClass '{}' " +
+                "and memberOf '{}' with message '{}'", objectClass, memberOf, e.getMessage());
         }
 
         return search;
