@@ -35,10 +35,10 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     Long findNumberOfPersonsWithMinimumOneSickNote(int year);
 
     // NOTE: Only needed to send email after certain duration of a sick note
-    @Query(value = "SELECT x " +
+    @Query("SELECT x " +
         "FROM SickNote x " +
         "WHERE DATEDIFF(x.endDate, x.startDate) > ?1 " +
-        "AND x.endDate <= ?2 " +
+        "AND ADDDATE(x.startDate, ?1) <= ?2 " +
         "AND x.status = 'ACTIVE' " +
         "AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)"
     )
@@ -46,8 +46,7 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
 
     List<SickNote> findByStatusIn(List<SickNoteStatus> openSickNoteStatuses);
 
-    List<SickNote> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses,
-                                                                         List<Person> persons, LocalDate sinceStartDate);
+    List<SickNote> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, List<Person> persons, LocalDate sinceStartDate);
 
     List<SickNote> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate startDate, LocalDate endDate);
 }
