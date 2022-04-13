@@ -51,7 +51,7 @@ public interface DepartmentService {
     void delete(Integer departmentId);
 
     /**
-     * @return all departments of the application.
+     * @return all departments ordered by the department name
      */
     List<Department> getAllDepartments();
 
@@ -78,6 +78,22 @@ public interface DepartmentService {
      * @return list of departments the second stage authority manages
      */
     List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority);
+
+    /**
+     * Finds all departments the given person has access to see the data
+     * <p>
+     * If the person has the permission:
+     * <ul>
+     * <li>BOSS or OFFICE - return all departments</li>
+     * <li>DEPARTMENT_HEAD - return all managed department of the person as department head</li>
+     * <li>SECOND_STAGE_AUTHORITY - return all managed department of the person as second stage authority</li>
+     * </ul>
+     * </p>
+     *
+     * @param person to check the permissions
+     * @return List of departments which are accessible by the given person
+     */
+    List<Department> getDepartmentsPersonHasAccessTo(Person person);
 
     /**
      * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
@@ -138,14 +154,6 @@ public interface DepartmentService {
      * @return {@code true} if the given user may access the data of the given person, else {@code false}
      */
     boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person);
-
-    /**
-     * Get all departments which the given user is allowed to access the data
-     *
-     * @param person to check the permissions
-     * @return List of departments which are accessible by the given person
-     */
-    List<Department> getAllowedDepartmentsOfPerson(Person person);
 
     /**
      * Returns the number of departments

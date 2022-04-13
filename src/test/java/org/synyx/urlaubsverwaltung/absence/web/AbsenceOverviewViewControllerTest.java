@@ -112,7 +112,7 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of());
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
@@ -141,7 +141,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         perform(get("/web/absences"))
@@ -221,7 +221,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(activePerson, inactivePerson));
 
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
@@ -265,7 +265,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(activePerson, inactivePerson));
 
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
@@ -292,7 +292,7 @@ class AbsenceOverviewViewControllerTest {
 
         final var department = department();
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences"))
             .andExpect(status().isOk())
@@ -318,7 +318,7 @@ class AbsenceOverviewViewControllerTest {
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(superheroes, villains));
         when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
         perform(get("/web/absences")
@@ -336,15 +336,15 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
-        person.setEmail("boss@example.org");
-        person.setPermissions(List.of(OFFICE));
+        person.setFirstName("office");
+        person.setLastName("user");
+        person.setEmail("office@example.org");
+        person.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(superheroes, villains));
         when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
         perform(get("/web/absences")
@@ -362,15 +362,15 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
-        person.setEmail("boss@example.org");
-        person.setPermissions(List.of(OFFICE));
+        person.setFirstName("office");
+        person.setLastName("user");
+        person.setEmail("office@example.org");
+        person.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var superheroes = department("superheroes");
         final var villains = department("villains");
-        when(departmentService.getAllDepartments()).thenReturn(List.of(superheroes, villains));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(superheroes, villains));
         when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
         perform(get("/web/absences")
@@ -417,14 +417,14 @@ class AbsenceOverviewViewControllerTest {
         final var expectedSelectedYear = expectedCurrentYear - 1;
 
         final var person = new Person();
-        person.setFirstName("boss");
-        person.setLastName("the hoss");
+        person.setFirstName("office");
+        person.setLastName("user");
         person.setEmail("boss@example.org");
-        person.setPermissions(List.of(OFFICE));
+        person.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var department = department();
-        when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         perform(get("/web/absences")
@@ -584,7 +584,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences")
             .param("month", "11")
@@ -622,7 +622,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences")
             .param("month", "12")
@@ -664,7 +664,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences")
             .param("year", "2018")
@@ -708,7 +708,7 @@ class AbsenceOverviewViewControllerTest {
         villainsDepartment.setMembers(List.of(joker, lex, harley));
 
         when(departmentService.getNumberOfDepartments()).thenReturn(2L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
 
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "villains"))
@@ -743,7 +743,7 @@ class AbsenceOverviewViewControllerTest {
         villainsDepartment.setMembers(List.of(joker, lex, harley, person));
 
         when(departmentService.getNumberOfDepartments()).thenReturn(2L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(heroDepartment, villainsDepartment));
 
         perform(get("/web/absences").locale(Locale.GERMANY)
             .param("department", "villains")
@@ -779,7 +779,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())
@@ -823,7 +823,7 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person, personTwo, personThree));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(departmentService.getAllowedDepartmentsOfPerson(person)).thenReturn(List.of(department));
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(department));
 
         perform(get("/web/absences").locale(Locale.GERMANY))
             .andExpect(status().isOk())

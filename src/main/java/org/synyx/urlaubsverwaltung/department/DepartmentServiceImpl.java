@@ -12,6 +12,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -122,6 +123,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll().stream()
             .map(this::mapToDepartment)
+            .sorted(departmentComparator())
             .collect(toList());
     }
 
@@ -143,6 +145,30 @@ class DepartmentServiceImpl implements DepartmentService {
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
         return departmentRepository.findBySecondStageAuthorities(secondStageAuthority).stream()
             .map(this::mapToDepartment)
+            .collect(toList());
+    }
+
+    @Override
+    public List<Department> getDepartmentsPersonHasAccessTo(Person person) {
+
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            return getAllDepartments();
+        }
+
+        final List<Department> departments = new ArrayList<>();
+        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments.addAll(getManagedDepartmentsOfSecondStageAuthority(person));
+        }
+
+        if (person.hasRole(DEPARTMENT_HEAD)) {
+            departments.addAll(getManagedDepartmentsOfDepartmentHead(person));
+        }
+
+        departments.addAll(getAssignedDepartmentsOfMember(person));
+
+        return departments.stream()
+            .distinct()
+            .sorted(departmentComparator())
             .collect(toList());
     }
 
@@ -212,29 +238,6 @@ class DepartmentServiceImpl implements DepartmentService {
         final boolean isDepartmentHeadAllowedToAccessPersonalData = isDepartmentHeadAllowedToAccessPersonData(signedInUser, person);
 
         return isOwnData || isBossOrOffice || isDepartmentHeadAllowedToAccessPersonalData || isSecondStageAuthorityAllowedToAccessPersonalData;
-    }
-
-    @Override
-    public List<Department> getAllowedDepartmentsOfPerson(Person person) {
-
-        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
-            return getAllDepartments();
-        }
-
-        final List<Department> departments = new ArrayList<>();
-        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments.addAll(getManagedDepartmentsOfSecondStageAuthority(person));
-        }
-
-        if (person.hasRole(DEPARTMENT_HEAD)) {
-            departments.addAll(getManagedDepartmentsOfDepartmentHead(person));
-        }
-
-        departments.addAll(getAssignedDepartmentsOfMember(person));
-
-        return departments.stream()
-            .distinct()
-            .collect(toList());
     }
 
     @Override
@@ -350,5 +353,9 @@ class DepartmentServiceImpl implements DepartmentService {
         }
 
         return false;
+    }
+
+    private Comparator<Department> departmentComparator() {
+        return Comparator.comparing(department -> department.getName().toLowerCase());
     }
 }

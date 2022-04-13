@@ -102,12 +102,7 @@ public class AbsenceOverviewViewController {
         final List<Person> overviewPersons;
         if (departmentService.getNumberOfDepartments() > 0) {
 
-            final List<Department> visibleDepartments;
-            if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-                visibleDepartments = departmentService.getAllDepartments();
-            } else {
-                visibleDepartments = departmentService.getAllowedDepartmentsOfPerson(signedInUser);
-            }
+            final List<Department> visibleDepartments = departmentService.getDepartmentsPersonHasAccessTo(signedInUser);
             model.addAttribute("visibleDepartments", visibleDepartments);
 
             if (visibleDepartments.isEmpty()) {
