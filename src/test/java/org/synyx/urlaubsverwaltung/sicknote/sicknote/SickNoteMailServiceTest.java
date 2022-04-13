@@ -78,7 +78,7 @@ class SickNoteMailServiceTest {
         final Map<String, Object> modelB = new HashMap<>();
         modelB.put("maximumSickPayDays", 5);
         modelB.put("endOfSickPayDays", LocalDate.of(2022,4,14));
-        modelB.put("isLastDayOfSickPayDaysInPast", false);
+        modelB.put("isLastDayOfSickPayDaysInPast", true);
         modelB.put("sickNotePayFrom", sickNoteB.getStartDate());
         modelB.put("sickNotePayTo", LocalDate.of(2022,4,14));
         modelB.put("sickNote", sickNoteB);
@@ -118,7 +118,6 @@ class SickNoteMailServiceTest {
         sut.sendEndOfSickPayNotification();
         verifyNoInteractions(mailService);
     }
-
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {
         Settings settings = new Settings();
