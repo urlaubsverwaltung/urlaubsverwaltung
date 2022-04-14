@@ -18,10 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -64,7 +61,7 @@ class SickNoteServiceImplTest {
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2016, 1, 1);
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findByPeriod(from, to)).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findByPeriod(from, to)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getByPeriod(from, to);
         assertThat(sickNotes).contains(sickNote);
@@ -73,7 +70,7 @@ class SickNoteServiceImplTest {
     @Test
     void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findAllActiveByYear(2017)).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findAllActiveByYear(2017)).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getAllActiveByYear(2017);
         assertThat(sickNotes).contains(sickNote);
@@ -92,13 +89,14 @@ class SickNoteServiceImplTest {
 
         final SickNoteSettings sickNoteSettings = new SickNoteSettings();
         sickNoteSettings.setMaximumSickPayDays(5);
+        sickNoteSettings.setDaysBeforeEndOfSickPayNotification(2);
 
         final Settings settings = new Settings();
         settings.setSickNoteSettings(sickNoteSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findSickNotesToNotifyForSickPayEnd(eq(5), any(LocalDate.class))).thenReturn(singletonList(sickNote));
+        when(sickNoteRepository.findSickNotesToNotifyForSickPayEnd(5, 2, LocalDate.of(2021, 6, 28))).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotesReachingEndOfSickPay = sut.getSickNotesReachingEndOfSickPay();
         assertThat(sickNotesReachingEndOfSickPay).contains(sickNote);
