@@ -19,20 +19,17 @@ class LoginControllerTest {
 
     @BeforeEach
     void setUp() {
-
         sut = new LoginController(APPLICATION_VERSION);
     }
 
     @Test
     void ensureLoginHasCorrectVersionAndView() throws Exception {
-
         perform(get("/login"))
             .andExpect(model().attribute("version", equalTo(APPLICATION_VERSION)))
-            .andExpect(view().name("login/login"));
+            .andExpect(view().name("thymeleaf/login/login"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-
         return standaloneSetup(sut).build().perform(builder);
     }
 }

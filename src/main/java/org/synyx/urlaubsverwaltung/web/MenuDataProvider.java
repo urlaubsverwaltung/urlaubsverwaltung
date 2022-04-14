@@ -67,7 +67,7 @@ public class MenuDataProvider implements HandlerInterceptor {
             return false;
         }
 
-        return !viewName.startsWith("redirect:") && !viewName.startsWith("login");
+        return !viewName.startsWith("redirect:") && !viewName.startsWith("thymeleaf/login");
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {
