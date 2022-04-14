@@ -31,31 +31,63 @@ class SickNoteRepositoryIT extends TestContainersBase {
     @Test
     void ensureToFindSickNotesForNotificationOfSickPayEnd() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // --> SickNote will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 30);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, startDate.plusDays(2), ACTIVE);
+        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
-        final int maximumSickPayDays = 1;
-        final LocalDate endOfSickPayDate = startDate.plusDays(maximumSickPayDays);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .containsExactly(activeSickNote);
     }
 
     @Test
-    void ensureToFindSickNotesForNotificationOfSickPayEndAndEndOfSickPayDayIsFarInThePast() {
+    void ensureNotToFindSickNotesForNotificationOfSickPayEndBeforeNotificationDate() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // but asks on 06.03.2022
+        // --> No SickNote will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 30);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, startDate.plusDays(2), ACTIVE);
+        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
-        final int maximumSickPayDays = 1;
-        final LocalDate endOfSickPayDate = startDate.plusDays(maximumSickPayDays).plusDays(10);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 6);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        assertThat(sickNotes).isEmpty();
+    }
+
+    @Test
+    void ensureToFindSickNotesForNotificationOfSickPayEndIsFurtherInThePast() {
+
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // and asks on 08.03.2022
+        // --> SickNote will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 30);
+
+        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        sickNoteRepository.save(activeSickNote);
+
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 8);
+
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .containsExactly(activeSickNote);
     }
@@ -63,86 +95,94 @@ class SickNoteRepositoryIT extends TestContainersBase {
     @Test
     void ensureNotToFindSickNotesForNotificationOfSickPayEndBecauseMaximumSickPayDaysNotReached() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // but sick note period only until 14.03.2022
+        // --> No sick note will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 14);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, startDate.plusDays(10), ACTIVE);
+        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
-        final int maximumSickPayDays = 11;
-        final LocalDate endOfSickPayDate = startDate.plusDays(1);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes).isEmpty();
     }
 
     @Test
     void ensureToNotFindSickNotesWithWrongStatus() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // but sick notes not of type active
+        // --> No sick note will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, startDate.plusDays(2), ACTIVE);
+        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
-        final SickNote cancelledSickNote = createSickNote(null, startDate, startDate.plusDays(2), CANCELLED);
+        final SickNote cancelledSickNote = createSickNote(null, startDate, endDate, CANCELLED);
         sickNoteRepository.save(cancelledSickNote);
 
-        final int maximumSickPayDays = 1;
-        final LocalDate endOfSickPayDate = startDate.plusDays(maximumSickPayDays);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(activeSickNote)
             .doesNotContain(cancelledSickNote);
     }
 
-    @Test
-    void ensureNotToFindSickNotesForNotificationOfSickPayEndBecauseEndOfSickPayIsNotReached() {
-
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
-
-        final SickNote activeSickNote = createSickNote(null, startDate, startDate.plusDays(10), ACTIVE);
-        sickNoteRepository.save(activeSickNote);
-
-        final int maximumSickPayDays = 5;
-        final LocalDate endOfSickPayDate = startDate.plusDays(4);
-
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
-        assertThat(sickNotes).isEmpty();
-    }
 
     @Test
     void findNoSickNoteIfAlreadyNotifiedAfterLastEdit() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
-        final LocalDate endDate = startDate.plusDays(2);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // but already notified is after last edit
+        // --> No sick note will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
         final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNote.setLastEdited(startDate);
         sickNote.setEndOfSickPayNotificationSend(endDate);
         sickNoteRepository.save(sickNote);
 
-        final int maximumSickPayDays = 1;
-        final LocalDate endOfSickPayDate = startDate.plusDays(4);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes).isEmpty();
     }
 
     @Test
     void findSickNoteIfNotYetNotified() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
-        final LocalDate endDate = startDate.plusDays(2);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // and was not already sent
+        // --> sick note will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
         final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNote.setLastEdited(startDate);
         sickNoteRepository.save(sickNote);
 
-        final int maximumSickPayDays = 1;
-        final LocalDate endOfSickPayDate = startDate.plusDays(4);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);
@@ -151,18 +191,23 @@ class SickNoteRepositoryIT extends TestContainersBase {
     @Test
     void findSickNoteIfCurrentEditStateNotNotifiedBefore() {
 
-        final LocalDate startDate = LocalDate.of(2019, 5, 19);
-        final LocalDate endDate = startDate.plusDays(2);
+        // lohnfortzahlung from 01.02.2022 until 14.03.2022
+        // 7 days before notification on 07.03.2022
+        // and was not already sent
+        // --> sick note will be found
+        final LocalDate startDate = LocalDate.of(2022, 2, 1);
+        final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
         final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNote.setLastEdited(endDate);
         sickNote.setEndOfSickPayNotificationSend(startDate);
         sickNoteRepository.save(sickNote);
 
-        final int maximumSickPayDays = 1;
-        final LocalDate endOfSickPayDate = startDate.plusDays(4);
+        final int maximumSickPayDays = 42;
+        final int daysBeforeEndOfSickPayNotification = 7;
+        final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, endOfSickPayDate);
+        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);

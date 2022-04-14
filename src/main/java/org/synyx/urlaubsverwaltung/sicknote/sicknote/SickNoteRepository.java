@@ -37,12 +37,12 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     // NOTE: Only needed to send email after certain duration of a sick note
     @Query("SELECT x " +
         "FROM SickNote x " +
-        "WHERE DATEDIFF(x.endDate, x.startDate) > ?1 " +
-        "AND ADDDATE(x.startDate, ?1) <= ?2 " +
+        "WHERE DATEDIFF(x.endDate, x.startDate) + 1 > ?1 " +
+        "AND ?3 >= ADDDATE(x.startDate, (?1 - ?2 - 1)) " +
         "AND x.status = 'ACTIVE' " +
         "AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)"
     )
-    List<SickNote> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, LocalDate endOfSickPayDate);
+    List<SickNote> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, int daysBeforeEndOfSickPayNotification, LocalDate today);
 
     List<SickNote> findByStatusIn(List<SickNoteStatus> openSickNoteStatuses);
 
