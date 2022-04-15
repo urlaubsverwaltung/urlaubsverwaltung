@@ -18,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -619,6 +620,37 @@ class ApplicationForLeaveViewControllerTest {
             ))
             .andExpect(model().attribute("otherApplications", hasSize(0)))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
+            .andExpect(view().name("thymeleaf/application/application-overview"));
+    }
+
+    @Test
+    void ensureOvertimeMoreThan24hAreDisplayedCorrectly() throws Exception {
+
+        final Person userPerson = new Person();
+        userPerson.setFirstName("person");
+        userPerson.setPermissions(List.of(USER));
+        final Application applicationOfUser = new Application();
+        applicationOfUser.setId(3);
+        applicationOfUser.setVacationType(anyVacationType());
+        applicationOfUser.setPerson(userPerson);
+        applicationOfUser.setStatus(WAITING);
+        applicationOfUser.setHours(Duration.ofHours(35));
+        applicationOfUser.setStartDate(LocalDate.MAX);
+        applicationOfUser.setEndDate(LocalDate.MAX);
+
+        when(personService.getSignedInUser()).thenReturn(userPerson);
+        when(applicationService.getForStatesAndPerson(List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), List.of(userPerson))).thenReturn(List.of(applicationOfUser));
+
+        perform(get("/web/application")).andExpect(status().isOk())
+            .andExpect(model().attribute("signedInUser", is(userPerson)))
+            .andExpect(model().attribute("userApplications", hasSize(1)))
+            .andExpect(model().attribute("userApplications", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveDto.class),
+                    hasProperty("id", is(3)),
+                    hasProperty("duration", is("35 "))
+                ))
+            ))
             .andExpect(view().name("thymeleaf/application/application-overview"));
     }
 
