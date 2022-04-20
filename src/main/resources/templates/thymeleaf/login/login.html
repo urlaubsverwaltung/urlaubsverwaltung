@@ -64,15 +64,25 @@
 
 <main>
   <form method="post" class="login--form" th:action="@{/login}">
-    <div id="login--error" th:if="${param.login_error != null}" class="alert alert-danger"
-         th:text="#{login.form.error}">
+    <div
+      id="login--error"
+      th:if="${param.login_error != null}"
+      class="alert alert-danger"
+      th:text="#{login.form.error}"
+    >
       some error
     </div>
 
     <div class="form-group">
       <label for="username" th:text="#{login.form.username}">username</label>
-      <input class="form-control" type="text" name="username" id="username" autofocus="autofocus"
-             th:value="${param.username}">
+      <input
+        class="form-control"
+        type="text"
+        name="username"
+        id="username"
+        autofocus="autofocus"
+        th:value="${param.username}"
+      >
     </div>
 
     <div class="form-group">
@@ -82,10 +92,10 @@
 
     <div class="form-group">
       <button class="button-main tw-w-full" type="submit">
-          <span class="tw-flex tw-items-center tw-justify-center">
-            <svg th:replace="icon/login::svg(className='tw-w-5 tw-h-5')"></svg>
-            &nbsp;<th:block th:text="#{login.form.submit}">Login</th:block>
-          </span>
+        <span class="tw-flex tw-items-center tw-justify-center">
+          <svg th:replace="icon/login::svg(className='tw-w-5 tw-h-5')"></svg>
+          &nbsp;<th:block th:text="#{login.form.submit}">Login</th:block>
+        </span>
       </button>
     </div>
   </form>
