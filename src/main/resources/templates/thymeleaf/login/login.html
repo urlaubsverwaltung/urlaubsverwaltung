@@ -68,7 +68,6 @@
     th:action="@{/login}"
   >
     <div
-      id="login--error"
       th:if="${param.login_error != null}"
       class="alert alert-danger"
       th:text="#{login.form.error}"
