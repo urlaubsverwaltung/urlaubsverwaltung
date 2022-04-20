@@ -24,11 +24,14 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-.vacationOverview-table th,
+.vacationOverview-table th {
+  @apply tw-text-zinc-600 !important;
+  @apply dark:tw-text-zinc-200 !important;
+  font-weight: normal;
+}
 .vacationOverview-table td {
   @apply tw-text-zinc-600 !important;
   @apply dark:tw-text-zinc-200 !important;
-  border: 1px solid theme("borderColor.calendar.DEFAULT");
   font-weight: normal;
 }
 
@@ -68,12 +71,7 @@ th.vacationOverview-cal-head.today::after {
   --background-color-left: theme("backgroundColor.calendar.DEFAULT");
   --background-color-right: theme("backgroundColor.calendar.DEFAULT");
   --font-color: theme("textColor.calendar.DEFAULT");
-  /* h-full only works when parent td has an explicit height */
-  height: 100%;
-  overflow: hidden;
-  position: relative;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
-  color: var(--font-color);
 }
 
 .vacationOverview-table td,
@@ -97,46 +95,6 @@ th.vacationOverview-cal-head.today::after {
 .vacationOverview-table th.tablesorter-header > div.tablesorter-header-inner {
   /* h-full only works when parent td has an explicit height */
   height: 100%;
-}
-
-.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
-  content: "";
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  right: 4px;
-  height: 4px;
-  border-radius: 99999px;
-  background-color: var(--absence-bar-color);
-}
-
-.cal-day:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before {
-  content: "";
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  right: 50%;
-  height: 4px;
-  border-radius: 99999px;
-  background-color: var(--absence-bar-color-morning);
-}
-
-.cal-day:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after {
-  content: "";
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  right: 4px;
-  height: 4px;
-  border-radius: 99999px;
-  background-color: var(--absence-bar-color-noon);
-}
-
-@media print {
-  .cal-day {
-    --bg-left-lightness: 100%;
-    --bg-right-lightness: 100%;
-  }
 }
 
 svg.no-workday-icon {
@@ -207,10 +165,7 @@ svg.no-workday-icon {
 .vacationOverview-tbody tr:hover th:first-child {
   border-right-color: theme("colors.zinc.100");
 }
-.vacationOverview-tbody
-  tr:hover
-  td
-  .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
+.vacationOverview-tbody tr:hover td .cal-day:is(:not(.public-holiday-morning, .public-holiday-noon, .public-holiday-full)) {
   --background-color-left: theme("colors.zinc.100");
   --background-color-right: theme("colors.zinc.100");
 }
