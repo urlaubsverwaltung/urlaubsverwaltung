@@ -172,7 +172,7 @@ class MenuDataProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"redirect:", "login"})
+    @ValueSource(strings = {"redirect:", "thymeleaf/login"})
     @NullSource
     void postHandleDoNotAddGravatar(String viewName) {
 

@@ -21,6 +21,6 @@ public class LoginController {
     @GetMapping("")
     public String login(Model model) {
         model.addAttribute("version", applicationVersion);
-        return "login/login";
+        return "thymeleaf/login/login";
     }
 }
