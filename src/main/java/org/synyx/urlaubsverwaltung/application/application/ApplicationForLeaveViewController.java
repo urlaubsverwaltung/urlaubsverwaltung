@@ -204,7 +204,7 @@ class ApplicationForLeaveViewController {
         }
 
         final boolean negative = javaTimeDuration.isNegative();
-        final int hours = javaTimeDuration.abs().toHoursPart();
+        final long hours = javaTimeDuration.abs().toHours();
         final int minutes = javaTimeDuration.abs().toMinutesPart();
 
         String value = "";
