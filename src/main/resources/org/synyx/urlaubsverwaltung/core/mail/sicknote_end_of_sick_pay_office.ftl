@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-dein Anspruch auf Lohnfortzahlung von ${maximumSickPayDays} Tag(en) <#if isLastDayOfSickPayDaysInPast>endete<#else>endet</#if> am ${endOfSickPayDays.format("dd.MM.yyyy")}.
+der Anspruch auf Lohnfortzahlung von ${sickNote.person.niceName} von ${maximumSickPayDays} Tag(en) <#if isLastDayOfSickPayDaysInPast>endete<#else>endet</#if> am ${endOfSickPayDays.format("dd.MM.yyyy")}.
 
     ${baseLinkURL}web/sicknote/${sickNote.id?c}
 
