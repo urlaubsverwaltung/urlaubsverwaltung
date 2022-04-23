@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapToPersonPermissionsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.merge;
@@ -27,12 +28,14 @@ public class PersonPermissionsViewController {
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final PersonPermissionsDtoValidator validator;
+    private final SessionService sessionService;
 
     @Autowired
-    public PersonPermissionsViewController(PersonService personService, DepartmentService departmentService, PersonPermissionsDtoValidator validator) {
+    public PersonPermissionsViewController(PersonService personService, DepartmentService departmentService, PersonPermissionsDtoValidator validator, SessionService sessionService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.validator = validator;
+        this.sessionService = sessionService;
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -70,8 +73,9 @@ public class PersonPermissionsViewController {
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         personService.update(merge(person, personPermissionsDto));
 
-        redirectAttributes.addFlashAttribute("updateSuccess", true);
+        sessionService.markSessionToReloadAuthorities(person.getUsername());
 
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + personId;
     }
 }
