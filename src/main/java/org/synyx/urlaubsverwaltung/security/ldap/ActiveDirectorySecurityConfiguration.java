@@ -9,6 +9,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import static org.springframework.util.StringUtils.hasText;
@@ -69,8 +70,8 @@ public class ActiveDirectorySecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter) {
-            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter);
+        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter, ScheduleLocking scheduleLocking) {
+            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter, scheduleLocking);
         }
 
         @Bean

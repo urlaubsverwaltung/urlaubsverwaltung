@@ -14,6 +14,7 @@ import org.springframework.security.ldap.authentication.LdapAuthenticator;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
+import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 @Configuration
@@ -97,8 +98,8 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter) {
-            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter);
+        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter, ScheduleLocking scheduleLocking) {
+            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter, scheduleLocking);
         }
 
         @Bean

@@ -1,24 +1,38 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsSecondArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class LdapUserDataImportConfigurationTest {
+
+    @Mock
+    private ScheduleLocking scheduleLocking;
 
     @Test
     void importsLdapUserDataWithGivenCronJobInterval() {
 
+        when(scheduleLocking.withLock(eq("LdapUserDataImporterSync"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+
         final DirectoryServiceSecurityProperties properties = new DirectoryServiceSecurityProperties();
         final LdapUserDataImporter importer = mock(LdapUserDataImporter.class);
-        final LdapUserDataImportConfiguration sut = new LdapUserDataImportConfiguration(properties, importer);
+        final LdapUserDataImportConfiguration sut = new LdapUserDataImportConfiguration(properties, importer, scheduleLocking);
 
         final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
         sut.configureTasks(taskRegistrar);
