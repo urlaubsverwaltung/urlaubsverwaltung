@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
-
 @Service
 public class SessionServiceImpl<S extends Session> implements SessionService<S> {
 
@@ -23,7 +21,7 @@ public class SessionServiceImpl<S extends Session> implements SessionService<S> 
 
     @Override
     public void markSessionToReloadAuthorities(String username) {
-        final Map<String, S> map = sessionRepository.findByIndexNameAndIndexValue(PRINCIPAL_NAME_INDEX_NAME, username);
+        final Map<String, S> map = sessionRepository.findByPrincipalName(username);
         for (final S session : map.values()) {
             session.setAttribute(RELOAD_AUTHORITIES, true);
             sessionRepository.save(session);

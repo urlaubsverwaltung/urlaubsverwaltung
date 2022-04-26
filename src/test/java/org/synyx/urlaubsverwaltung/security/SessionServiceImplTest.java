@@ -35,7 +35,7 @@ class SessionServiceImplTest {
     void markSessionToReloadAuthorities() {
 
         final String username = "username";
-        when(sessionRepository.findByIndexNameAndIndexValue(PRINCIPAL_NAME_INDEX_NAME, username))
+        when(sessionRepository.findByPrincipalName(username))
             .thenReturn(Map.of("65266d07-2ab0-400b-86b5-4b609e552399", new MapSession()));
 
         sut.markSessionToReloadAuthorities(username);
