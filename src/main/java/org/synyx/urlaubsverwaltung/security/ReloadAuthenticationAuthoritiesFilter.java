@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.session.Session;
 import org.springframework.web.filter.GenericFilterBean;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -25,9 +26,11 @@ import static org.synyx.urlaubsverwaltung.security.SessionServiceImpl.RELOAD_AUT
 class ReloadAuthenticationAuthoritiesFilter extends GenericFilterBean {
 
     private final PersonService personService;
+    private final SessionService<HttpSession> sessionService;
 
-    ReloadAuthenticationAuthoritiesFilter(PersonService personService) {
+    ReloadAuthenticationAuthoritiesFilter(PersonService personService, org.synyx.urlaubsverwaltung.security.SessionService<HttpSession> sessionService) {
         this.personService = personService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -37,6 +40,7 @@ class ReloadAuthenticationAuthoritiesFilter extends GenericFilterBean {
             final Boolean reload = (Boolean) session.getAttribute(RELOAD_AUTHORITIES);
             if (TRUE.equals(reload)) {
                 session.removeAttribute(RELOAD_AUTHORITIES);
+                sessionService.save(session);
 
                 final Person signedInUser = personService.getSignedInUser();
                 final List<GrantedAuthority> updatedAuthorities = signedInUser.getPermissions().stream()

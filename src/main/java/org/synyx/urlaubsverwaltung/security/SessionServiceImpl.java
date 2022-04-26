@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
 
 @Service
-public class SessionServiceImpl<S extends Session> implements SessionService {
+public class SessionServiceImpl<S extends Session> implements SessionService<S> {
 
     static final String RELOAD_AUTHORITIES = "reloadAuthorities";
 
@@ -28,5 +28,10 @@ public class SessionServiceImpl<S extends Session> implements SessionService {
             session.setAttribute(RELOAD_AUTHORITIES, true);
             sessionRepository.save(session);
         }
+    }
+
+    @Override
+    public void save(S session) {
+        sessionRepository.save(session);
     }
 }

@@ -16,11 +16,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -35,10 +37,12 @@ class ReloadAuthenticationAuthoritiesFilterTest {
 
     @Mock
     private PersonService personService;
+    @Mock
+    private SessionService<HttpSession> sessionService;
 
     @BeforeEach
     void setUp() {
-        sut = new ReloadAuthenticationAuthoritiesFilter(personService);
+        sut = new ReloadAuthenticationAuthoritiesFilter(personService, sessionService);
     }
 
     @Test
@@ -63,6 +67,8 @@ class ReloadAuthenticationAuthoritiesFilterTest {
             .collect(toList());
         assertThat(updatedAuthorities).containsExactly("USER", "OFFICE");
         assertThat(request.getSession().getAttribute("reloadAuthorities")).isNull();
+
+        verify(sessionService).save(any(HttpSession.class));
     }
 
     @Test
@@ -77,6 +83,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         sut.doFilter(request, response, filterChain);
 
         verifyNoInteractions(personService);
+        verifyNoInteractions(sessionService);
     }
 
     @Test
@@ -89,6 +96,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         sut.doFilter(request, response, filterChain);
 
         verifyNoInteractions(personService);
+        verifyNoInteractions(sessionService);
     }
 
     @Test
@@ -103,6 +111,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         sut.doFilter(request, response, filterChain);
 
         verifyNoInteractions(personService);
+        verifyNoInteractions(sessionService);
     }
 
     private Authentication prepareAuthentication() {

@@ -44,4 +44,13 @@ class SessionServiceImplTest {
         final Session session = captor.getValue();
         assertThat((Boolean) session.getAttribute("reloadAuthorities")).isTrue();
     }
+
+    @Test
+    void save() {
+
+        final Session session = new MapSession();
+        sut.save(session);
+
+        verify(sessionRepository).save(session);
+    }
 }

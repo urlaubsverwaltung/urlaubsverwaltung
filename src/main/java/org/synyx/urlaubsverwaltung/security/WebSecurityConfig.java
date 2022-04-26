@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import javax.servlet.http.HttpSession;
+
 import static org.springframework.http.HttpMethod.GET;
 
 @Configuration
@@ -26,13 +28,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN = "ADMIN";
 
     private final PersonService personService;
+    private final SessionService<HttpSession> sessionService;
     private final boolean isOauth2Enabled;
 
     private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
 
-    public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService) {
+    public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService<HttpSession> sessionService) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
         this.personService = personService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -84,7 +88,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         http
-            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService), BasicAuthenticationFilter.class);
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
     }
 
     @Autowired(required = false)
