@@ -60,7 +60,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
 
         SecurityContextHolder.getContext().setAuthentication(prepareAuthentication());
 
-        sut.doFilter(request, response, filterChain);
+        sut.doFilterInternal(request, response, filterChain);
 
         final List<String> updatedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
@@ -72,46 +72,33 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     }
 
     @Test
-    void ensuresFilterSetsAuthenticationWithNewAuthoritiesButSessionIsNullDoNothing() throws ServletException, IOException {
+    void ensuresFilterSetsAuthenticationWithNewAuthoritiesButSessionIsNullDoNothing() {
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockFilterChain filterChain = new MockFilterChain();
+        final MockHttpServletRequest request = mock(MockHttpServletRequest.class);
+        when(request.getSession()).thenReturn(null);
 
-        request.setSession(null);
-
-        sut.doFilter(request, response, filterChain);
-
-        verifyNoInteractions(personService);
-        verifyNoInteractions(sessionService);
+        final boolean shouldNotFilter = sut.shouldNotFilter(request);
+        assertThat(shouldNotFilter).isTrue();
     }
 
     @Test
-    void ensuresFilterSetsNoNewAuthenticationIfReloadIsNotDefined() throws ServletException, IOException {
+    void ensuresFilterSetsNoNewAuthenticationIfReloadIsNotDefined() {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockFilterChain filterChain = new MockFilterChain();
 
-        sut.doFilter(request, response, filterChain);
-
-        verifyNoInteractions(personService);
-        verifyNoInteractions(sessionService);
+        final boolean shouldNotFilter = sut.shouldNotFilter(request);
+        assertThat(shouldNotFilter).isTrue();
     }
 
     @Test
-    void ensuresFilterSetsNoNewAuthenticationIfReloadIsFalse() throws ServletException, IOException {
+    void ensuresFilterSetsNoNewAuthenticationIfReloadIsFalse() {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockFilterChain filterChain = new MockFilterChain();
 
         request.getSession().setAttribute("reloadAuthorities", false);
 
-        sut.doFilter(request, response, filterChain);
-
-        verifyNoInteractions(personService);
-        verifyNoInteractions(sessionService);
+        final boolean shouldNotFilter = sut.shouldNotFilter(request);
+        assertThat(shouldNotFilter).isTrue();
     }
 
     private Authentication prepareAuthentication() {
