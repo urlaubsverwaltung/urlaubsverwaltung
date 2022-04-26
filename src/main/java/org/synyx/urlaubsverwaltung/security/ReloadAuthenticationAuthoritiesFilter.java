@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.session.Session;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -22,12 +23,12 @@ import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SessionServiceImpl.RELOAD_AUTHORITIES;
 
-class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
+class ReloadAuthenticationAuthoritiesFilter<S extends Session> extends OncePerRequestFilter {
 
     private final PersonService personService;
-    private final SessionService<HttpSession> sessionService;
+    private final SessionService<S> sessionService;
 
-    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService<HttpSession> sessionService) {
+    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService<S> sessionService) {
         this.personService = personService;
         this.sessionService = sessionService;
     }
@@ -46,8 +47,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain) throws ServletException, IOException {
         final HttpSession session = request.getSession();
-        session.removeAttribute(RELOAD_AUTHORITIES);
-        sessionService.save(session);
+        sessionService.unmarkSessionToReloadAuthorities(session.getId());
 
         final Person signedInUser = personService.getSignedInUser();
         final List<GrantedAuthority> updatedAuthorities = signedInUser.getPermissions().stream()

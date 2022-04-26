@@ -31,7 +31,9 @@ public class SessionServiceImpl<S extends Session> implements SessionService<S> 
     }
 
     @Override
-    public void save(S session) {
+    public void unmarkSessionToReloadAuthorities(String sessionId) {
+        final S session = sessionRepository.findById(sessionId);
+        session.removeAttribute(RELOAD_AUTHORITIES);
         sessionRepository.save(session);
     }
 }

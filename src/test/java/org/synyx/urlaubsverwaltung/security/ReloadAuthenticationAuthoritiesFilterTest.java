@@ -12,11 +12,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.session.Session;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -38,7 +37,7 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     @Mock
     private PersonService personService;
     @Mock
-    private SessionService<HttpSession> sessionService;
+    private SessionService<Session> sessionService;
 
     @BeforeEach
     void setUp() {
@@ -66,9 +65,8 @@ class ReloadAuthenticationAuthoritiesFilterTest {
             .map(GrantedAuthority::getAuthority)
             .collect(toList());
         assertThat(updatedAuthorities).containsExactly("USER", "OFFICE");
-        assertThat(request.getSession().getAttribute("reloadAuthorities")).isNull();
 
-        verify(sessionService).save(any(HttpSession.class));
+        verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
     }
 
     @Test

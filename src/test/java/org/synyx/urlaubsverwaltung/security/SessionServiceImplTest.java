@@ -13,6 +13,7 @@ import org.springframework.session.Session;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
@@ -46,11 +47,19 @@ class SessionServiceImplTest {
     }
 
     @Test
-    void save() {
+    void unmarkSessionToReloadAuthorities() {
 
-        final Session session = new MapSession();
-        sut.save(session);
+        final String someSessionId = "SomeSessionId";
 
-        verify(sessionRepository).save(session);
+        final MapSession mapSession = new MapSession();
+        mapSession.setId(someSessionId);
+        when(sessionRepository.findById(someSessionId)).thenReturn(mapSession);
+
+        sut.unmarkSessionToReloadAuthorities(someSessionId);
+
+        final ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
+        verify(sessionRepository).save(captor.capture());
+        final Session session = captor.getValue();
+        assertThat((Boolean) session.getAttribute("reloadAuthorities")).isNull();
     }
 }

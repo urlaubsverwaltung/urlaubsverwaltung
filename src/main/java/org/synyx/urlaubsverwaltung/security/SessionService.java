@@ -11,9 +11,9 @@ public interface SessionService<S> {
     void markSessionToReloadAuthorities(String username);
 
     /**
-     * Saves the given session
+     * Unmark the session to not reload the authorities.
      *
-     * @param session to save
+     * @param sessionId to unmark the session
      */
-    void save(S session);
+    void unmarkSessionToReloadAuthorities(String sessionId);
 }
