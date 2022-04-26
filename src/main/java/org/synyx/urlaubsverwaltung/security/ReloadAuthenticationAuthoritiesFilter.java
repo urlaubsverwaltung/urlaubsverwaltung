@@ -27,7 +27,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
     private final PersonService personService;
     private final SessionService<HttpSession> sessionService;
 
-    ReloadAuthenticationAuthoritiesFilter(PersonService personService, org.synyx.urlaubsverwaltung.security.SessionService<HttpSession> sessionService) {
+    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService<HttpSession> sessionService) {
         this.personService = personService;
         this.sessionService = sessionService;
     }
