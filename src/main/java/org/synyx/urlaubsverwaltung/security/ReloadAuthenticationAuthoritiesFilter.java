@@ -5,7 +5,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.session.Session;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -23,7 +22,7 @@ import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SessionServiceImpl.RELOAD_AUTHORITIES;
 
-class ReloadAuthenticationAuthoritiesFilter<S extends Session> extends OncePerRequestFilter {
+class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
     private final PersonService personService;
     private final SessionService sessionService;
