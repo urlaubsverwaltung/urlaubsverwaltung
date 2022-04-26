@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class SessionServiceImpl<S extends Session> implements SessionService<S> {
+public class SessionServiceImpl<S extends Session> implements SessionService {
 
     static final String RELOAD_AUTHORITIES = "reloadAuthorities";
 

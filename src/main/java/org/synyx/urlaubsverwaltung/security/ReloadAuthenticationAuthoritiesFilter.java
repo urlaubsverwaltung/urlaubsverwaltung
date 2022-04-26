@@ -26,9 +26,9 @@ import static org.synyx.urlaubsverwaltung.security.SessionServiceImpl.RELOAD_AUT
 class ReloadAuthenticationAuthoritiesFilter<S extends Session> extends OncePerRequestFilter {
 
     private final PersonService personService;
-    private final SessionService<S> sessionService;
+    private final SessionService sessionService;
 
-    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService<S> sessionService) {
+    ReloadAuthenticationAuthoritiesFilter(PersonService personService, SessionService sessionService) {
         this.personService = personService;
         this.sessionService = sessionService;
     }
