@@ -11,9 +11,11 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
@@ -262,6 +264,6 @@ class ICalServiceTest {
     }
 
     private String convertCalendar(ByteArrayResource calendar) {
-        return new String(calendar.getByteArray());
+        return new String(calendar.getByteArray(), UTF_8);
     }
 }
