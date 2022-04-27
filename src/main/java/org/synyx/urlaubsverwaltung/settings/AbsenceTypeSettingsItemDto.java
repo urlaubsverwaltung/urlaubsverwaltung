@@ -11,6 +11,7 @@ public class AbsenceTypeSettingsItemDto {
     private String messageKey;
     private VacationCategory category;
     private boolean requiresApproval;
+    private String color;
 
     public Integer getId() {
         return id;
@@ -52,6 +53,14 @@ public class AbsenceTypeSettingsItemDto {
         this.requiresApproval = requiresApproval;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     public static AbsenceTypeSettingsItemDto.Builder builder() {
         return new Builder();
     }
@@ -64,6 +73,7 @@ public class AbsenceTypeSettingsItemDto {
             ", messageKey='" + messageKey + '\'' +
             ", category='" + category + '\'' +
             ", requiresApproval=" + requiresApproval +
+            ", color=" + color +
             '}';
     }
 
@@ -81,7 +91,7 @@ public class AbsenceTypeSettingsItemDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, messageKey, category, requiresApproval);
+        return Objects.hash(id, active, messageKey, category, requiresApproval, color);
     }
 
     static class Builder {
@@ -90,6 +100,7 @@ public class AbsenceTypeSettingsItemDto {
         private String messageKey;
         private VacationCategory category;
         private boolean requiresApproval;
+        private String color;
 
         Builder setId(Integer id) {
             this.id = id;
@@ -116,6 +127,11 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
+        Builder setColor(String color) {
+            this.color = color;
+            return this;
+        }
+
         AbsenceTypeSettingsItemDto build() {
             final AbsenceTypeSettingsItemDto dto = new AbsenceTypeSettingsItemDto();
             dto.setId(id);
@@ -123,6 +139,7 @@ public class AbsenceTypeSettingsItemDto {
             dto.setMessageKey(messageKey);
             dto.setCategory(category);
             dto.setRequiresApproval(requiresApproval);
+            dto.setColor(color);
             return dto;
         }
     }

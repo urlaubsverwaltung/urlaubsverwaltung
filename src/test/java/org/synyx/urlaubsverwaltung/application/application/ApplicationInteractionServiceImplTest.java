@@ -216,7 +216,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false, "#FACC15");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(convert(holidayType));
@@ -244,7 +244,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false, "#FACC15");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(convert(holidayType));
@@ -275,7 +275,7 @@ class ApplicationInteractionServiceImplTest {
         office.setPermissions(List.of(OFFICE));
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false, "#FACC15");
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(convert(holidayType));

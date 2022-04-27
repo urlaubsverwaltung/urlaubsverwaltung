@@ -481,6 +481,9 @@
                                                 <spring:message code='settings.absenceTypes.table.head.approval' />
                                             </span>
                                         </th>
+                                        <th scope="col">
+                                            <spring:message code='settings.absenceTypes.table.head.color' />
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -513,6 +516,12 @@
                                             <label for="absenceType-approval-${loop.index}" class="tw-sr-only">
                                                 <spring:message code="settings.absenceTypes.action.approve.label" />
                                             </label>
+                                        </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.color' />">
+                                            <label for="color-${loop.index}" class="tw-sr-only">
+                                                <spring:message code="settings.absenceTypes.action.color.label" />
+                                            </label>
+                                            <input type="color" id="color-${loop.index}" name="absenceTypeSettings.items[${loop.index}].color" value="${absenceType.color}">
                                         </td>
                                     </tr>
                                 </c:forEach>

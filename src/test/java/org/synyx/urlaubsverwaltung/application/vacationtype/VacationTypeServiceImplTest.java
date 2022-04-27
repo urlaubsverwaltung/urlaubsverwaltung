@@ -116,8 +116,8 @@ class VacationTypeServiceImplTest {
         when(vacationTypeRepository.findAllById(Set.of(1, 2))).thenReturn(List.of(holidayEntity, overtimeEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1, true, false),
-            new VacationTypeUpdate(2, false, true)
+            new VacationTypeUpdate(1, true, false, "#FACC15"),
+            new VacationTypeUpdate(2, false, true, "#FACC15")
         ));
 
         @SuppressWarnings("unchecked")

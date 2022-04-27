@@ -57,7 +57,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         person.setLastName("personOneLastName");
         final PersonBasedata basedata = new PersonBasedata(-1, "42", "OneInformation");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
         applicationForLeaveStatistics.setPersonBasedata(basedata);
@@ -103,7 +103,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwo.setLastName("personTwoLastName");
         final PersonBasedata basedataTwo = new PersonBasedata(-1, "42", "SecondInformation");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
 
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
         personOneStatistics.setPersonBasedata(basedataOne);

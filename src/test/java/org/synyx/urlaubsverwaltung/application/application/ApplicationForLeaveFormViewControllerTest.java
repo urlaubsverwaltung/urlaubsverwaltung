@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -184,7 +183,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -213,7 +212,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -242,7 +241,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -1280,7 +1279,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     private Application someApplication() {
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, "#FACC15");
 
         final Application application = new Application();
         application.setVacationType(convert(holidayType));

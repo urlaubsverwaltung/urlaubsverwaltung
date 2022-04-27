@@ -27,6 +27,8 @@ public class VacationTypeEntity {
 
     private boolean requiresApproval;
 
+    private String color;
+
     public boolean isActive() {
         return active;
     }
@@ -71,6 +73,14 @@ public class VacationTypeEntity {
         this.requiresApproval = requiresApproval;
     }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getColor() {
+        return this.color;
+    }
+
     @Override
     public String toString() {
         return "VacationType{" +
@@ -79,6 +89,7 @@ public class VacationTypeEntity {
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
             ", requiresApproval='" + requiresApproval + '\'' +
+            ", color='" + color + '\'' +
             '}';
     }
 

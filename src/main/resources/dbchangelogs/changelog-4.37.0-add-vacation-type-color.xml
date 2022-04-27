@@ -1,0 +1,33 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-new-vacation-types">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+    </preConditions>
+
+    <addColumn tableName="vacation_type">
+      <column name="color" type="VARCHAR(7)"/>
+    </addColumn>
+
+    <update tableName="vacation_type">
+      <column name="color" value="#FACC15" />
+      <where>id = '1000'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="#FACC15" />
+      <where>id = '2000'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="#FACC15" />
+      <where>id = '3000'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="#FACC15" />
+      <where>id = '4000'</where>
+    </update>
+
+  </changeSet>
+</databaseChangeLog>

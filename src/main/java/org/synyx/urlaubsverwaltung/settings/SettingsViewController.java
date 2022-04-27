@@ -34,6 +34,7 @@ import java.util.TimeZone;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
 import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper.mapToSpecialLeaveSettingsItems;
 
 @Controller
@@ -195,32 +196,16 @@ public class SettingsViewController {
     }
 
     private AbsenceTypeSettingsDto absenceTypeItemSettingDto() {
-        final List<AbsenceTypeSettingsItemDto> absenceTypeDtos = vacationTypeService.getAllVacationTypes()
-            .stream()
-            .map(this::vacationTypeToDto)
-            .collect(toList());
-
-        final AbsenceTypeSettingsDto absenceTypeSettingsDto = new AbsenceTypeSettingsDto();
-        absenceTypeSettingsDto.setItems(absenceTypeDtos);
-
-        return absenceTypeSettingsDto;
-    }
-
-    private AbsenceTypeSettingsItemDto vacationTypeToDto(VacationType vacationType) {
-        return AbsenceTypeSettingsItemDto.builder()
-            .setId(vacationType.getId())
-            .setMessageKey(vacationType.getMessageKey())
-            .setCategory(vacationType.getCategory())
-            .setActive(vacationType.isActive())
-            .setRequiresApproval(vacationType.isRequiresApproval())
-            .build();
+        final List<VacationType> allVacationTypes = vacationTypeService.getAllVacationTypes();
+        return mapToAbsenceTypeItemSettingDto(allVacationTypes);
     }
 
     private static VacationTypeUpdate absenceTypeDtoToVacationTypeUpdate(AbsenceTypeSettingsItemDto absenceTypeSettingsItemDto) {
         return new VacationTypeUpdate(
             absenceTypeSettingsItemDto.getId(),
             absenceTypeSettingsItemDto.isActive(),
-            absenceTypeSettingsItemDto.isRequiresApproval()
+            absenceTypeSettingsItemDto.isRequiresApproval(),
+            absenceTypeSettingsItemDto.getColor()
         );
     }
 
