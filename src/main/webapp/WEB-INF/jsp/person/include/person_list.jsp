@@ -70,7 +70,7 @@
                     />
                 </td>
                 <c:if test="${showPersonnelNumberColumn}">
-                    <td class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell">
+                    <td class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center">
                         <c:out value="${person.personnelNumber}"/>
                     </td>
                 </c:if>
