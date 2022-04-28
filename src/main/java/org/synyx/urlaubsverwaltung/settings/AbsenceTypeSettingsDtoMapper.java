@@ -8,6 +8,9 @@ import static java.util.stream.Collectors.toList;
 
 public class AbsenceTypeSettingsDtoMapper {
 
+    private AbsenceTypeSettingsDtoMapper() {
+    }
+
     public static AbsenceTypeSettingsDto mapToAbsenceTypeItemSettingDto(List<VacationType> allVacationTypes) {
 
         final List<AbsenceTypeSettingsItemDto> absenceTypeDtos = allVacationTypes
