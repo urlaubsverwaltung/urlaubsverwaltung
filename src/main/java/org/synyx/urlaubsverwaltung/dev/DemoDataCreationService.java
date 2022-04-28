@@ -70,26 +70,27 @@ public class DemoDataCreationService {
 
         LOG.info("-> Starting demo data creation...");
         // Users to be able to SIGN-IN with
-        final Person user = personDataProvider.createTestPerson(DemoUser.USER, "Klaus", "Müller", "user@urlaubsverwaltung.cloud");
-        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud");
-        final Person boss = personDataProvider.createTestPerson(BOSS, "Theresa", "Scherer", "boss@urlaubsverwaltung.cloud");
-        final Person office = personDataProvider.createTestPerson(OFFICE, "Marlene", "Muster", "office@urlaubsverwaltung.cloud");
-        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, "Juliane", "Huber", "secondStageAuthority@urlaubsverwaltung.cloud");
-        personDataProvider.createTestPerson(DemoUser.ADMIN, "Anne", "Roth", "admin@urlaubsverwaltung.cloud");
+        Integer personnelNumber = 1;
+        final Person user = personDataProvider.createTestPerson(DemoUser.USER, personnelNumber,"Klaus", "Müller", "user@urlaubsverwaltung.cloud");
+        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, personnelNumber++, "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud");
+        final Person boss = personDataProvider.createTestPerson(BOSS, personnelNumber++, "Theresa", "Scherer", "boss@urlaubsverwaltung.cloud");
+        final Person office = personDataProvider.createTestPerson(OFFICE, personnelNumber++, "Marlene", "Muster", "office@urlaubsverwaltung.cloud");
+        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, personnelNumber++,"Juliane", "Huber", "secondStageAuthority@urlaubsverwaltung.cloud");
+        personDataProvider.createTestPerson(DemoUser.ADMIN, personnelNumber++, "Anne", "Roth", "admin@urlaubsverwaltung.cloud");
 
         // Users
-        final Person hans = personDataProvider.createTestPerson("hdampf", NO_PASSWORD_HASH, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", USER);
-        final Person franziska = personDataProvider.createTestPerson("fbaier", NO_PASSWORD_HASH, "Franziska", "Baier", "baier@urlaubsverwaltung.cloud", USER);
-        final Person elena = personDataProvider.createTestPerson("eschneider", NO_PASSWORD_HASH, "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", USER);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", NO_PASSWORD_HASH, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", USER);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", NO_PASSWORD_HASH, "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", USER);
-        personDataProvider.createTestPerson("heinz", NO_PASSWORD_HASH, "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud", INACTIVE);
+        final Person hans = personDataProvider.createTestPerson("hdampf", personnelNumber++, NO_PASSWORD_HASH, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", USER);
+        final Person franziska = personDataProvider.createTestPerson("fbaier", personnelNumber++, NO_PASSWORD_HASH,"Franziska", "Baier", "baier@urlaubsverwaltung.cloud", USER);
+        final Person elena = personDataProvider.createTestPerson("eschneider",  personnelNumber++,NO_PASSWORD_HASH, "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", USER);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", personnelNumber++, NO_PASSWORD_HASH, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", USER);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, NO_PASSWORD_HASH,  "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", USER);
+        personDataProvider.createTestPerson("heinz", personnelNumber++, NO_PASSWORD_HASH,  "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud", INACTIVE);
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, NO_PASSWORD_HASH, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", USER));
+            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, NO_PASSWORD_HASH, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", USER));
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, NO_PASSWORD_HASH, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud", INACTIVE));
+            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, i + 21, NO_PASSWORD_HASH, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud", INACTIVE));
 
         // Departments
         final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);
