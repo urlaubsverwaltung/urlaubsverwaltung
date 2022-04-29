@@ -102,6 +102,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("valid", equalTo(true)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("GERMANY_BERLIN")))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020, 10, 2))))))
+            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validTo", equalTo(null)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(GERMANY_BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
@@ -129,7 +130,7 @@ class WorkingTimeViewControllerTest {
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
-            .andExpect(view().name("workingtime/workingtime_form"));
+            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
     }
 
     @Test
@@ -154,7 +155,7 @@ class WorkingTimeViewControllerTest {
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("workingtime/workingtime_form"));
+            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
 
         verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());
     }
