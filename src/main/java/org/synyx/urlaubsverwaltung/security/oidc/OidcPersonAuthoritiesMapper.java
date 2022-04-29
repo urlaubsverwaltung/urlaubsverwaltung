@@ -98,6 +98,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     private String extractIdentifier(OidcUserAuthority authority) {
         final String userUniqueID = authority.getIdToken().getSubject();
         if (userUniqueID == null || userUniqueID.isBlank()) {
+            LOG.error("Can not retrieve the subject of the id token for oidc person mapping");
             throw new OidcPersonMappingException("Can not retrieve the subject of the id token for oidc person mapping");
         }
         return userUniqueID;
@@ -107,20 +108,29 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
         return ofNullable(authority.getIdToken())
             .map(StandardClaimAccessor::getFamilyName)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getFamilyName))
-            .orElseThrow(() -> new OidcPersonMappingException("Can not retrieve the lastname for oidc person mapping"));
+            .orElseThrow(() -> {
+                LOG.error("Can not retrieve the lastname for oidc person mapping");
+                return new OidcPersonMappingException("Can not retrieve the lastname for oidc person mapping");
+            });
     }
 
     private String extractGivenName(OidcUserAuthority authority) {
         return ofNullable(authority.getIdToken())
             .map(StandardClaimAccessor::getGivenName)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getGivenName))
-            .orElseThrow(() -> new OidcPersonMappingException("Can not retrieve the given name for oidc person mapping"));
+            .orElseThrow(() -> {
+                LOG.error("Can not retrieve the given name for oidc person mapping");
+                return new OidcPersonMappingException("Can not retrieve the given name for oidc person mapping");
+            });
     }
 
     private String extractMailAddress(OidcUserAuthority authority) {
         return ofNullable(authority.getIdToken())
             .map(StandardClaimAccessor::getEmail)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getEmail))
-            .orElseThrow(() -> new OidcPersonMappingException("Can not retrieve the email for oidc person mapping"));
+            .orElseThrow(() -> {
+                LOG.error("Can not retrieve the email for oidc person mapping");
+                return new OidcPersonMappingException("Can not retrieve the email for oidc person mapping");
+            });
     }
 }
