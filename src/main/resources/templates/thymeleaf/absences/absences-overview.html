@@ -233,14 +233,14 @@
                 th:style="${'width: clamp(' + (absence.colspan * 1.2) + 'rem, ' + (absence.colspan * 1.5) + 'vw, ' + (absence.colspan * 1.55) + 'rem)'}"
               >
                 <div
-                  th:if="${not absence.workday}"
+                  th:if="${#strings.equals(absence.type, 'NO_WORKDAY')}"
                   class="tw-flex-1 tw-flex tw-items-center tw-justify-center"
                 >
                   <svg th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px tw-stroke-2')"></svg>
                 </div>
                 <div
-                  th:if="${#strings.equals(absence.type, 'Erholungsurlaub')}"
-                  class="tw-overflow-hidden tw-px-2 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
+                  th:if="${#strings.equals(absence.type, 'VACATION')}"
+                  class="tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
                   th:classappend="|${absence.roundedLeft ? 'tw-rounded-l-md' : ''}${absence.roundedRight ? ' tw-rounded-r-md' : ''}|"
                   style="height: 55%; color: black; background-color: #ffcc00;"
                 >
@@ -249,8 +249,8 @@
                   </span>
                 </div>
                 <div
-                  th:if="${#strings.equals(absence.type, 'Krank')}"
-                  class="tw-overflow-hidden tw-px-2 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
+                  th:if="${#strings.equals(absence.type, 'SICK')}"
+                  class="tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
                   th:classappend="|${absence.roundedLeft ? 'tw-rounded-l-md' : ''}${absence.roundedRight ? ' tw-rounded-r-md' : ''}|"
                   style="height: 55%; color: black; background-color: #a03333;"
                 >

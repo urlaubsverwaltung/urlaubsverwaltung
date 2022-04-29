@@ -842,16 +842,16 @@ class AbsenceOverviewViewControllerTest {
 
     private static Stream<Arguments> privilegedRoleAndAbsenceStatusWaitingArguments() {
         return Stream.of(
-            Arguments.of(Role.BOSS, AbsencePeriod.AbsenceStatus.WAITING),
-            Arguments.of(Role.OFFICE, AbsencePeriod.AbsenceStatus.WAITING),
-            Arguments.of(Role.BOSS, AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED),
-            Arguments.of(Role.OFFICE, AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED)
+            Arguments.of(Role.BOSS, AbsencePeriod.Record.AbsenceStatus.WAITING),
+            Arguments.of(Role.OFFICE, AbsencePeriod.Record.AbsenceStatus.WAITING),
+            Arguments.of(Role.BOSS, AbsencePeriod.Record.AbsenceStatus.TEMPORARY_ALLOWED),
+            Arguments.of(Role.OFFICE, AbsencePeriod.Record.AbsenceStatus.TEMPORARY_ALLOWED)
         );
     }
 
     @ParameterizedTest
     @MethodSource("privilegedRoleAndAbsenceStatusWaitingArguments")
-    void ensureVacationMorningWaitingForPrivilegedPerson(Role role, AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+    void ensureVacationMorningWaitingForPrivilegedPerson(Role role, AbsencePeriod.Record.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
@@ -909,7 +909,7 @@ class AbsenceOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("privilegedRoleAndAbsenceStatusWaitingArguments")
-    void ensureVacationNoonWaitingForPrivilegedPerson(Role role, AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+    void ensureVacationNoonWaitingForPrivilegedPerson(Role role, AbsencePeriod.Record.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
@@ -967,7 +967,7 @@ class AbsenceOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("privilegedRoleAndAbsenceStatusWaitingArguments")
-    void ensureVacationFullWaitingForPrivilegedPerson(Role role, AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+    void ensureVacationFullWaitingForPrivilegedPerson(Role role, AbsencePeriod.Record.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
@@ -1027,8 +1027,8 @@ class AbsenceOverviewViewControllerTest {
     // waiting / temporary allowed vacation, not privileged user
 
     @ParameterizedTest
-    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
-    void ensureVacationMorningWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+    @EnumSource(value = AbsencePeriod.Record.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
+    void ensureVacationMorningWaitingForNotPrivilegedPerson(AbsencePeriod.Record.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
@@ -1083,8 +1083,8 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
-    void ensureVacationNoonWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+    @EnumSource(value = AbsencePeriod.Record.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
+    void ensureVacationNoonWaitingForNotPrivilegedPerson(AbsencePeriod.Record.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
@@ -1139,8 +1139,8 @@ class AbsenceOverviewViewControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = AbsencePeriod.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
-    void ensureVacationFullWaitingForNotPrivilegedPerson(AbsencePeriod.AbsenceStatus absenceStatus) throws Exception {
+    @EnumSource(value = AbsencePeriod.Record.AbsenceStatus.class, names = {"WAITING", "TEMPORARY_ALLOWED"})
+    void ensureVacationFullWaitingForNotPrivilegedPerson(AbsencePeriod.Record.AbsenceStatus absenceStatus) throws Exception {
 
         final Settings settings = new Settings();
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
@@ -1218,7 +1218,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1276,7 +1276,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1334,8 +1334,8 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1394,7 +1394,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1449,7 +1449,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1504,8 +1504,8 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1910,7 +1910,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
         final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(1);
@@ -1972,7 +1972,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
         final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(1);
@@ -2035,7 +2035,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
         final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(1);
@@ -2096,7 +2096,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.ALLOWED);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
         final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(1);

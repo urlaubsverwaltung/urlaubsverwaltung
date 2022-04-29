@@ -7,23 +7,23 @@ import java.time.LocalDate;
 
 import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ACTIVE;
-import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.AbsenceStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.Record.AbsenceStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.Record.AbsenceStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.Record.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.Record.AbsenceStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.absence.AbsencePeriod.Record.AbsenceStatus.WAITING;
 
 class AbsencePeriodTest {
 
     @Test
     void ensureRecordMorningVacationToStringDoesNotPrintAnyInfo() {
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.WAITING);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.Record.AbsenceStatus.WAITING);
         assertThat(morning).hasToString("AbstractRecordInfo{id=1}");
     }
 
     @Test
     void ensureRecordNoonVacationToStringDoesNotPrintAnyInfo() {
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.WAITING);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.Record.AbsenceStatus.WAITING);
         assertThat(noon).hasToString("AbstractRecordInfo{id=1}");
     }
 

@@ -21,21 +21,6 @@ import java.util.Optional;
  */
 public class AbsencePeriod {
 
-    public enum AbsenceType {
-        VACATION,
-        SICK,
-    }
-
-    public enum AbsenceStatus {
-        // vacation
-        WAITING,
-        TEMPORARY_ALLOWED,
-        ALLOWED,
-        ALLOWED_CANCELLATION_REQUESTED,
-        // sick note
-        ACTIVE,
-    }
-
     private final List<AbsencePeriod.Record> absenceRecords;
 
     public AbsencePeriod(List<Record> absenceRecords) {
@@ -73,6 +58,22 @@ public class AbsencePeriod {
      */
     public static class Record {
 
+        public enum AbsenceType {
+            VACATION,
+            SICK,
+            NO_WORKDAY,
+        }
+
+        public enum AbsenceStatus {
+            // vacation
+            WAITING,
+            TEMPORARY_ALLOWED,
+            ALLOWED,
+            ALLOWED_CANCELLATION_REQUESTED,
+            // sick note
+            ACTIVE,
+        }
+
         private final LocalDate date;
         private final Person person;
         private final RecordMorning morning;
@@ -104,6 +105,8 @@ public class AbsencePeriod {
         public boolean isHalfDayAbsence() {
             return (this.morning == null && this.noon != null) || (this.morning != null && this.noon == null);
         }
+
+
 
         /**
          * Morning RecordInfo is empty when this Record specifies a noon absence only.
@@ -151,8 +154,8 @@ public class AbsencePeriod {
      * Describes an absence record. (e.g. {@link RecordMorning} absence or {@link RecordNoon} absence)
      */
     public interface RecordInfo {
-        AbsenceType getType();
-        AbsenceStatus getStatus();
+        Record.AbsenceType getType();
+        Record.AbsenceStatus getStatus();
         Integer getId();
         boolean hasStatusWaiting();
         boolean hasStatusAllowed();
@@ -173,18 +176,18 @@ public class AbsencePeriod {
      */
     public abstract static class AbstractRecordInfo implements RecordInfo {
 
-        private final AbsenceType type;
+        private final Record.AbsenceType type;
         private final Integer id;
-        private final AbsenceStatus status;
+        private final Record.AbsenceStatus status;
 
-        private AbstractRecordInfo(AbsenceType type, Integer id, AbsenceStatus status) {
+        private AbstractRecordInfo(Record.AbsenceType type, Integer id, Record.AbsenceStatus status) {
             this.type = type;
             this.id = id;
             this.status = status;
         }
 
         @Override
-        public AbsenceType getType() {
+        public Record.AbsenceType getType() {
             return type;
         }
 
@@ -194,16 +197,16 @@ public class AbsencePeriod {
         }
 
         @Override
-        public AbsenceStatus getStatus() {
+        public Record.AbsenceStatus getStatus() {
             return status;
         }
 
-        public boolean hasStatusOneOf(AbsenceStatus... status) {
+        public boolean hasStatusOneOf(Record.AbsenceStatus... status) {
             return List.of(status).contains(this.status);
         }
 
         public boolean hasStatusWaiting() {
-            return hasStatusOneOf(AbsenceStatus.WAITING, AbsenceStatus.TEMPORARY_ALLOWED);
+            return hasStatusOneOf(Record.AbsenceStatus.WAITING, Record.AbsenceStatus.TEMPORARY_ALLOWED);
         }
 
         public boolean hasStatusAllowed() {
@@ -232,26 +235,38 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningVacation(Integer applicationId, AbsenceStatus status) {
-            super(AbsenceType.VACATION, applicationId, status);
+        public RecordMorningVacation(Integer applicationId, Record.AbsenceStatus status) {
+            super(Record.AbsenceType.VACATION, applicationId, status);
         }
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
         public RecordMorningSick(Integer sickNoteId) {
-            super(AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
+            super(Record.AbsenceType.SICK, sickNoteId, Record.AbsenceStatus.ACTIVE);
+        }
+    }
+
+    public static class RecordMorningNoWorkday extends AbstractRecordInfo implements RecordMorning {
+        public RecordMorningNoWorkday() {
+            super(Record.AbsenceType.NO_WORKDAY, 0, Record.AbsenceStatus.ACTIVE);
         }
     }
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonVacation(Integer applicationId, AbsenceStatus status) {
-            super(AbsenceType.VACATION, applicationId, status);
+        public RecordNoonVacation(Integer applicationId, Record.AbsenceStatus status) {
+            super(Record.AbsenceType.VACATION, applicationId, status);
         }
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
         public RecordNoonSick(Integer sickNoteId) {
-            super(AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
+            super(Record.AbsenceType.SICK, sickNoteId, Record.AbsenceStatus.ACTIVE);
+        }
+    }
+
+    public static class RecordNoonNoWorkday extends AbstractRecordInfo implements RecordNoon {
+        public RecordNoonNoWorkday() {
+            super(Record.AbsenceType.NO_WORKDAY, 0, Record.AbsenceStatus.ACTIVE);
         }
     }
 }
