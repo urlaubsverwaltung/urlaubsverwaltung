@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
+import org.synyx.urlaubsverwaltung.security.SessionService;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,10 +48,12 @@ class PersonPermissionsViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private PersonPermissionsDtoValidator validator;
+    @Mock
+    private SessionService sessionService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonPermissionsViewController(personService, departmentService, validator);
+        sut = new PersonPermissionsViewController(personService, departmentService, validator, sessionService);
     }
 
     @Test
@@ -113,6 +116,22 @@ class PersonPermissionsViewControllerTest {
         );
 
         verify(personService).update(person);
+    }
+
+    @Test
+    void editPersonPermissionsAndMarkSessionToReloadAuthorities() throws Exception {
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@inter.net");
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/" + PERSON_ID + "/permissions")
+            .param("id", "1")
+            .param("permissions[0]", "USER")
+            .param("permissions[1]", "OFFICE")
+        );
+
+        verify(personService).update(person);
+        verify(sessionService).markSessionToReloadAuthorities("username");
     }
 
     @Test

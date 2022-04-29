@@ -56,6 +56,12 @@
       <version>1.6.8</version>
     </dependency>
 
+    <!-- SESSION -->
+    <dependency>
+      <groupId>org.springframework.session</groupId>
+      <artifactId>spring-session-jdbc</artifactId>
+    </dependency>
+
     <!-- WEB -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

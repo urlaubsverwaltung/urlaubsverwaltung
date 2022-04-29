@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -23,11 +25,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String USER = "USER";
     private static final String ADMIN = "ADMIN";
 
+    private final PersonService personService;
+    private final SessionService sessionService;
     private final boolean isOauth2Enabled;
+
     private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
 
-    public WebSecurityConfig(SecurityConfigurationProperties properties) {
+    public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService sessionService) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+        this.personService = personService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -77,11 +84,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login");
         }
+
+        http
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
     }
 
     @Autowired(required = false)
     public void setOidcClientInitiatedLogoutSuccessHandler(OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) {
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
     }
-
 }

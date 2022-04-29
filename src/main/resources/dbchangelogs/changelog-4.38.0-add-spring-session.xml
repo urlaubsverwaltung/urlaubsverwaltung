@@ -1,0 +1,71 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-spring-session">
+
+    <preConditions>
+      <not>
+        <tableExists tableName="SPRING_SESSION"/>
+        <tableExists tableName="SPRING_SESSION_ATTRIBUTES"/>
+      </not>
+    </preConditions>
+
+    <!--Spring Sessions -->
+    <createTable tableName="SPRING_SESSION">
+      <column name="primary_id" type="CHAR(36)">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="spring_session_pk"/>
+      </column>
+      <column name="session_id" type="CHAR(36)">
+        <constraints nullable="false" unique="true" uniqueConstraintName="spring_session_ix1"/>
+      </column>
+      <column name="creation_time" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_access_time" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="max_inactive_interval" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="expiry_time" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="principal_name" type="VARCHAR(100)"/>
+    </createTable>
+
+    <createIndex tableName="SPRING_SESSION" indexName="spring_session_ix2">
+      <column name="expiry_time"/>
+    </createIndex>
+    <createIndex tableName="SPRING_SESSION" indexName="spring_session_ix3">
+      <column name="principal_name"/>
+    </createIndex>
+
+    <!--Spring Sessions Attributes-->
+    <createTable tableName="SPRING_SESSION_ATTRIBUTES">
+      <column name="session_primary_id" type="CHAR(36)">
+        <constraints
+          foreignKeyName="spring_session_attributes_fk"
+          referencedTableName="SPRING_SESSION"
+          referencedColumnNames="primary_id"
+          deleteCascade="true"
+          nullable="false"
+        />
+      </column>
+      <column name="attribute_name" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="attribute_bytes" type="BLOB">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addPrimaryKey
+      constraintName="spring_session_attributes_pk"
+      tableName="SPRING_SESSION_ATTRIBUTES"
+      columnNames="session_primary_id, attribute_name"
+    />
+
+  </changeSet>
+</databaseChangeLog>
