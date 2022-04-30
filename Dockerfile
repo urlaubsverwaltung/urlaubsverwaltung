@@ -1,4 +1,4 @@
-FROM adoptopenjdk:11-jre-hotspot
+FROM eclipse-temurin:11-jre
 EXPOSE 8080
 
 ENV JAVA_TOOL_OPTIONS=""
