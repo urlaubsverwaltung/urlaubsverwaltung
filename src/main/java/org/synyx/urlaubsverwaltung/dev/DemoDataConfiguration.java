@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
@@ -36,8 +37,8 @@ class DemoDataConfiguration {
     }
 
     @Bean
-    PersonDataProvider personDataProvider(PersonService personService, WorkingTimeWriteService workingTimeWriteService, AccountInteractionService accountInteractionService, Clock clock) {
-        return new PersonDataProvider(personService, workingTimeWriteService, accountInteractionService, clock);
+    PersonDataProvider personDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService, AccountInteractionService accountInteractionService, Clock clock) {
+        return new PersonDataProvider(personService, personBasedataService, workingTimeWriteService, accountInteractionService, clock);
     }
 
     @Bean

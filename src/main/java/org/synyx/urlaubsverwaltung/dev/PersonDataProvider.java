@@ -5,6 +5,8 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.math.BigDecimal;
@@ -43,13 +45,15 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 class PersonDataProvider {
 
     private final PersonService personService;
+    private final PersonBasedataService personBasedataService;
     private final WorkingTimeWriteService workingTimeWriteService;
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
 
-    PersonDataProvider(PersonService personService, WorkingTimeWriteService workingTimeWriteService,
+    PersonDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService,
                        AccountInteractionService accountInteractionService, Clock clock) {
         this.personService = personService;
+        this.personBasedataService = personBasedataService;
         this.workingTimeWriteService = workingTimeWriteService;
         this.accountInteractionService = accountInteractionService;
         this.clock = clock;
@@ -61,16 +65,16 @@ class PersonDataProvider {
         return personByUsername.isPresent();
     }
 
-    Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
+    Person createTestPerson(DemoUser demoUser, int personnelNumber, String firstName, String lastName, String email) {
 
         final String username = demoUser.getUsername();
         final String passwordHash = demoUser.getPasswordHash();
         final Role[] roles = demoUser.getRoles();
 
-        return createTestPerson(username, passwordHash, firstName, lastName, email, roles);
+        return createTestPerson(username, personnelNumber, passwordHash, firstName, lastName, email, roles);
     }
 
-    Person createTestPerson(String username, String passwordHash, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, int personnelNumber, String passwordHash, String firstName, String lastName, String email, Role... roles) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
@@ -85,6 +89,7 @@ class PersonDataProvider {
         person.setNotifications(notifications);
         person.setPassword(passwordHash);
         final Person savedPerson = personService.create(person);
+        personBasedataService.update(new PersonBasedata(person.getId(), String.valueOf(personnelNumber), ""));
 
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
