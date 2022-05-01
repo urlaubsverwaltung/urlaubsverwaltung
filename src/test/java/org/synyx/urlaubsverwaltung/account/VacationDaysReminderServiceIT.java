@@ -79,7 +79,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         final String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Du hast noch 10 Tag(e) Urlaub für dieses Jahr offen, bitte denke daran deinen Urlaub zu planen." + EMAIL_LINE_BREAK +
+            "Du hast noch 10 Tag(e) Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
     }

@@ -12,6 +12,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +35,7 @@ class MailServiceImplTest {
     @Mock
     private MessageSource messageSource;
     @Mock
-    private MailContentBuilder mailContentBuilder;
+    private ITemplateEngine emailTemplateEngine;
     @Mock
     private MailSenderService mailSenderService;
     @Mock
@@ -43,14 +45,12 @@ class MailServiceImplTest {
 
     @BeforeEach
     void setUp() {
-
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
-        when(mailContentBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
+        when(emailTemplateEngine.process(any(String.class), any(Context.class))).thenReturn("emailBody");
         when(mailProperties.getSender()).thenReturn("no-reply@example.org");
         when(mailProperties.getSenderDisplayName()).thenReturn("Urlaubsverwaltung");
         when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
-
-        sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties, personService);
+        sut = new MailServiceImpl(messageSource, emailTemplateEngine, mailSenderService, mailProperties, personService);
     }
 
     @Test
@@ -60,8 +60,7 @@ class MailServiceImplTest {
 
         final Person person = new Person();
         person.setEmail("mail@example.org");
-        final List<Person> persons = List.of(person);
-        when(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
+        when(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(List.of(person));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("someModel", "something");

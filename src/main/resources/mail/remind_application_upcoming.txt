@@ -1,0 +1,11 @@
+Hallo [[${recipient.niceName}]],
+
+[# th:if="${not #lists.isEmpty(application.holidayReplacements)}"][# th:if="${daysBeforeUpcomingApplication == 0}"]heute[/][# th:if="${daysBeforeUpcomingApplication == 1}"]morgen[/][# th:if="${daysBeforeUpcomingApplication > 1}"]in [[${daysBeforeUpcomingApplication}]] Tagen[/] beginnt deine Abwesenheit und du wirst vertreten durch:[/][# th:if="${#lists.isEmpty(application.holidayReplacements)}"][# th:if="${daysBeforeUpcomingApplication == 0}"]heute[/][# th:if="${daysBeforeUpcomingApplication == 1}"]morgen[/][# th:if="${daysBeforeUpcomingApplication > 1}"]in [[${daysBeforeUpcomingApplication}]] Tagen[/] beginnt deine Abwesenheit.[/]
+[# th:each="replacement, iterStat : ${application.holidayReplacements}"]
+- [[${replacement.person.niceName}]]
+[# th:if="${not #strings.isEmpty(replacement.note)}"][(${not #strings.isEmpty(replacement.note) ? '  "' + #strings.trim(replacement.note) + '"' : ''})][/][/]
+
+Da du vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis zum [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] nicht anwesend bist, denke bitte an die Übergabe.
+Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc.
+
+Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

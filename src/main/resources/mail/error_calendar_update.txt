@@ -1,0 +1,8 @@
+Der Termin ([[${eventId}]]) für folgende Abwesenheit konnte nicht aktualisiert werden:
+
+[[${absence.person.niceName}]]
+[[${#temporals.format(absence.startDate, "dd.MM.yyyy")}]] - [[${#temporals.format(absence.endDate, "dd.MM.yyyy")}]]
+
+Beim Synchronisieren mit dem Kalender '[[${calendar}]]' ist ein Fehler aufgetreten:
+
+[[${exception}]]

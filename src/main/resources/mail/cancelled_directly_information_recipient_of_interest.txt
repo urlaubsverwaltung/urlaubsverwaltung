@@ -1,0 +1,17 @@
+Hallo [[${recipient.niceName}]],
+
+die Abwesenheit von [[${application.person.niceName}]] vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis zum [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] wurde von [[${application.canceller.niceName}]] storniert.
+
+    [[${baseLinkURL}]]web/application/[[${application.id}]]
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Kommentar von [[|${comment.person.niceName}:|]]
+[[${comment.text}]]
+[/]
+Informationen zur Abwesenheit:
+
+    Zeitraum:            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]]
+    Art der Abwesenheit: [[${vacationType}]]
+    Grund:               [[${application.reason}]]
+    Vertretung:          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    Anschrift/Telefon:   [[${#strings.trim(application.address)}]]
+    Erstellungsdatum:    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]

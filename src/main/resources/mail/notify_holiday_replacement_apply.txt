@@ -1,0 +1,9 @@
+Hallo [[${holidayReplacement.niceName}]],
+
+[[${application.person.niceName}]] hat dich bei einer Abwesenheit als Vertretung vorgesehen.
+Es handelt sich um den Zeitraum von [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]].
+
+[# th:if="${not #strings.isEmpty(holidayReplacementNote)}"]Notiz von [[${application.person.niceName}]] an dich:
+[[${holidayReplacementNote}]][/]
+
+Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter [[${baseLinkURL}]]web/application/replacement

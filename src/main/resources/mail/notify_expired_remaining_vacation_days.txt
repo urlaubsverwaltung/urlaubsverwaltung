@@ -1,0 +1,11 @@
+Hallo [[${recipientNiceName}]],
+
+leider ist dein Resturlaub zum [[${#temporals.format(expiryDate, "dd.MM.yyyy")}]] in Höhe von [[${expiredRemainingVacationDays}]] Tag(en) verfallen.
+
+Dein aktueller Urlaubsanspruch:
+    [[${totalLeftVacationDays}]] Tag(e)
+[# th:if="${remainingVacationDaysNotExpiring > 0}"]
+Resturlaub, der nicht am [[${#temporals.format(expiryDate, "dd.MM.yyyy")}]] verfallen ist:
+    [[${remainingVacationDaysNotExpiring}]] Tag(e)
+[/]
+Mehr Informationen zu deinem Urlaubsanspruch findest du hier: [[${baseLinkURL}]]web/person/[[${personId}]]/overview

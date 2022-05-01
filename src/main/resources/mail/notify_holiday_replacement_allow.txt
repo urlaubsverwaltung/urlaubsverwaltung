@@ -1,0 +1,9 @@
+Hallo [[${holidayReplacement.niceName}]],
+
+die Abwesenheit von [[${application.person.niceName}]] wurde genehmigt.
+Du wurdest damit für den Zeitraum vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]] als Vertretung eingetragen.
+
+[# th:if="${not #strings.isEmpty(holidayReplacementNote)}"]Notiz von [[${application.person.niceName}]] an dich:
+[[${holidayReplacementNote}]][/]
+
+Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter [[${baseLinkURL}]]web/application/replacement

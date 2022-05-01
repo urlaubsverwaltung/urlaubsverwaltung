@@ -1,0 +1,7 @@
+Hallo [[${holidayReplacement.niceName}]],
+
+du bist für die Abwesenheit von [[${application.person.niceName}]]
+im Zeitraum von [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]],
+nicht mehr als Vertretung vorgesehen.
+
+Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter [[${baseLinkURL}]]web/application/replacement

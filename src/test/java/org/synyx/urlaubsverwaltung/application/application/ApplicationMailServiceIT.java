@@ -139,6 +139,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsUser = getAttachments(msgUser);
@@ -162,6 +165,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
@@ -185,6 +191,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsBoss = getAttachments(msgBoss);
@@ -245,7 +254,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsUser = getAttachments(msgUser);
@@ -269,7 +280,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
@@ -334,7 +347,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsUser = getAttachments(msgUser);
@@ -358,7 +373,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
@@ -466,6 +483,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Mitarbeiter:         Max Muster" + EMAIL_LINE_BREAK +
             "    Zeitraum:            20.05.2022 bis 29.05.2022, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    19.05.2022" + EMAIL_LINE_BREAK +
             "    Weitergeleitet von:  Rick Grimes");
     }
@@ -668,6 +688,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
@@ -712,6 +735,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
@@ -750,11 +776,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Mitarbeiter:               Lieschen Mueller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Kommentar:                 OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021");
+            "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -1028,7 +1057,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
@@ -1075,7 +1106,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
@@ -1156,7 +1189,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
@@ -1207,7 +1242,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
@@ -1349,6 +1386,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    16.04.2021");
     }
 
@@ -1387,6 +1427,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsRelevantPerson = getAttachments(msg);
@@ -1432,6 +1475,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    16.04.2021");
     }
 
@@ -1617,7 +1663,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person person = new Person("lieschen", "M¨¨üller", "Lieschen", "mueller@example.org");
+        final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
         person.setPermissions(singletonList(USER));
 
         final Application application = createApplication(person);
@@ -1647,15 +1693,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Mitarbeiter:               Lieschen M¨¨üller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Vertretung:                Alfred Pennyworth" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Kommentar:           " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen M¨¨üller: 16.04.2021 bis 16.04.2021");
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -1667,7 +1716,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
 
-        final Person person = new Person("lieschen", "M¨¨üller", "Lieschen", "mueller@example.org");
+        final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
         person.setPermissions(singletonList(USER));
 
         final Application application = createApplication(person);
@@ -1700,15 +1749,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Mitarbeiter:               Lieschen M¨¨üller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Vertretung:                Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Kommentar:           " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen M¨¨üller: 16.04.2021 bis 16.04.2021");
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -1773,10 +1825,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Mitarbeiter:               Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1844,11 +1899,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Mitarbeiter:               Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Vertretung:                Alfred Pennyworth" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1920,11 +1977,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Mitarbeiter:               Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Vertretung:                Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -2056,7 +2115,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("heute beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("replacement holiday, \"Some notes\"");
+        assertThat(content).contains("- replacement holiday");
+        assertThat(content).contains("\"Some notes\"");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
     }
@@ -2090,7 +2150,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("morgen beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("replacement holiday, \"Some notes\"");
+        assertThat(content).contains("- replacement holiday");
+        assertThat(content).contains("\"Some notes\"");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
     }
@@ -2123,7 +2184,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         String content = (String) msg.getContent();
         assertThat(content).contains("Hallo Lieschen Müller");
         assertThat(content).contains("in 2 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("replacement holiday, \"Some notes\"");
+        assertThat(content).contains("- replacement holiday");
+        assertThat(content).contains("\"Some notes\"");
         assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
         assertThat(content).contains("/web/application/1234");
     }
@@ -2256,7 +2318,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "" + EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
-                "Alfred Pennyworth" + EMAIL_LINE_BREAK +
+                "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
@@ -2297,7 +2360,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Alfred Pennyworth, \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
+                "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
+                "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
@@ -2391,7 +2455,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +

@@ -1,0 +1,19 @@
+Hallo [[${recipient.niceName}]],
+
+[[${sender.niceName}]] bittet dich um Hilfe bei der Bearbeitung eines Antrags von [[${application.person.niceName}]].
+Bitte kümmere dich um die Bearbeitung dieses Antrags oder halte ggf. nochmals Rücksprache mit [[${sender.niceName}]].
+
+    [[${baseLinkURL}]]web/application/[[${application.id}]]
+[# th:if="${comment != null && not #strings.isEmpty(comment.text)}"]Kommentar von [[${comment.person.niceName}]]:
+[[${comment.text}]]
+[/]
+Informationen zur Abwesenheit:
+
+    Mitarbeiter:         [[${application.person.niceName}]]
+    Zeitraum:            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]]
+    Art der Abwesenheit: [[${vacationType}]]
+    Grund:               [[${application.reason}]]
+    Vertretung:          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    Anschrift/Telefon:   [[${#strings.trim(application.address)}]]
+    Erstellungsdatum:    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]
+    Weitergeleitet von:  [[${sender.niceName}]]

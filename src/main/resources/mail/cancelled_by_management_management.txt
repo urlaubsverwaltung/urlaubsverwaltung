@@ -1,0 +1,8 @@
+Hallo [[${recipient.niceName}]],
+
+[[${application.canceller.niceName}]] hat die Abwesenheit von [[${application.person.niceName}]] vom [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] storniert.
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Kommentar von [[|${comment.person.niceName}:|]]
+[[${comment.text}]]
+[/]
+Es handelt sich um folgende Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

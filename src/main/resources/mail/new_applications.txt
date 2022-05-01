@@ -1,0 +1,20 @@
+Hallo [[${recipient.niceName}]],
+
+es liegt ein neuer zu genehmigender Antrag vor.
+
+    [[${baseLinkURL}]]web/application/[[${application.id}]]
+
+Informationen zur Abwesenheit:
+
+    Mitarbeiter:         [[${application.person.niceName}]]
+    Zeitraum:            [[${#temporals.format(application.startDate, 'dd.MM.yyyy')}]] bis [[${#temporals.format(application.endDate, 'dd.MM.yyyy')}]], [[${dayLength}]]
+    Art der Abwesenheit: [[${vacationType}]]
+    Grund:               [[${application.reason}]]
+    Vertretung:          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    Anschrift/Telefon:   [[${#strings.trim(application.address)}]]
+    Kommentar:           [[${#strings.trim(comment.text)}]]
+    Erstellungsdatum:    [[${#temporals.format(application.applicationDate, 'dd.MM.yyyy')}]]
+
+Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:
+
+    [# th:each="vacation : ${departmentVacations}"][[${vacation.person.niceName}]]: [[${#temporals.format(vacation.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(vacation.endDate, "dd.MM.yyyy")}]][/][# th:if="${#lists.isEmpty(departmentVacations)}"]Keine[/]

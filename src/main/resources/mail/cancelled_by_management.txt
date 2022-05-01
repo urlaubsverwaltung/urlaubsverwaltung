@@ -1,0 +1,8 @@
+Hallo [[${application.person.niceName}]],
+
+[[${application.canceller.niceName}]] hat einen deine Abwesenheit storniert.
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Kommentar von [[|${comment.person.niceName}:|]]
+[[${comment.text}]]
+[/]
+Es handelt sich um folgende Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

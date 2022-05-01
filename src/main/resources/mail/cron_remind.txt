@@ -1,0 +1,7 @@
+Hallo [[${recipient.niceName}]],
+
+Die folgenden Abwesenheiten warten auf Bearbeitung:
+
+[# th:each="application : ${applicationList}"]
+Antrag von [[${application.person.niceName}]] vom [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]: [[${baseLinkURL}]]web/application/[[${application.id}]]
+[/]

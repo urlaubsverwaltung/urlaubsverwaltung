@@ -7,11 +7,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -28,17 +29,16 @@ class MailServiceImpl implements MailService {
     private static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
-    private final MailContentBuilder mailContentBuilder;
+    private final ITemplateEngine emailTemplateEngine;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
     private final PersonService personService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource, MailContentBuilder mailContentBuilder, MailSenderService mailSenderService,
+    MailServiceImpl(MessageSource messageSource, ITemplateEngine emailTemplateEngine, MailSenderService mailSenderService,
                     MailProperties mailProperties, PersonService personService) {
-
         this.messageSource = messageSource;
-        this.mailContentBuilder = mailContentBuilder;
+        this.emailTemplateEngine = emailTemplateEngine;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
         this.personService = personService;
@@ -47,15 +47,16 @@ class MailServiceImpl implements MailService {
     @Override
     public void send(Mail mail) {
 
-        final Map<String, Object> model = mail.getTemplateModel();
-        model.put("baseLinkURL", getApplicationUrl());
+        final Context context = new Context(LOCALE);
+        context.setVariables(mail.getTemplateModel());
+        context.setVariable("baseLinkURL", getApplicationUrl());
 
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
         final String sender = generateMailAddressAndDisplayName(mailProperties.getSender(), mailProperties.getSenderDisplayName());
 
         getRecipients(mail).forEach(recipient -> {
-            model.put("recipient", recipient);
-            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            context.setVariable("recipient", recipient);
+            final String body = emailTemplateEngine.process(mail.getTemplateName(), context);
             final String email = recipient.getEmail();
 
             if (email != null) {

@@ -75,7 +75,6 @@ class OvertimeMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
             "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +

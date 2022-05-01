@@ -1,0 +1,11 @@
+Hallo [[${application.person.niceName}]],
+
+deine am [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] gestellte Abwesenheit wurde vorläufig genehmigt.
+Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Kommentar von [[|${comment.person.niceName}:|]]
+[[${comment.text}]]
+[/]
+Es handelt sich um den Zeitraum von [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]].
+
+Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

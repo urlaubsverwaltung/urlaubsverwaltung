@@ -1,0 +1,8 @@
+Hallo [[${recipient.niceName}]],
+
+deine Vertretung für [[${application.person.niceName}]] vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis zum [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] beginnt [# th:if="${daysBeforeUpcomingHolidayReplacement == 0}"]heute[/][# th:if="${daysBeforeUpcomingHolidayReplacement == 1}"]morgen[/][# th:if="${daysBeforeUpcomingHolidayReplacement > 1}"]in [[${daysBeforeUpcomingHolidayReplacement}]] Tagen[/].
+
+[# th:if="${not #strings.isEmpty(replacementNote)}"]Notiz:
+[[${replacementNote}]]
+[/]
+Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter [[${baseLinkURL}]]web/application/replacement
