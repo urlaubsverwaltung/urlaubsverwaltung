@@ -150,11 +150,13 @@ class DepartmentViewControllerTest {
     @Test
     void postNewDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
-        when(departmentService.create(any())).thenReturn(new Department());
+        final Department department = new Department();
+        department.setName("department");
+        when(departmentService.create(any())).thenReturn(department);
 
         perform(post("/web/department"))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("createdDepartment", instanceOf(DepartmentForm.class)))
+            .andExpect(flash().attribute("createdDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
     }
 
@@ -242,12 +244,14 @@ class DepartmentViewControllerTest {
     @Test
     void updateDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
-        when(departmentService.update(any())).thenReturn(new Department());
+        final Department department = new Department();
+        department.setName("department");
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
+        when(departmentService.update(any())).thenReturn(department);
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("updatedDepartment", instanceOf(DepartmentForm.class)))
+            .andExpect(flash().attribute("updatedDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
     }
 
@@ -256,11 +260,12 @@ class DepartmentViewControllerTest {
 
         final Department department = new Department();
         department.setId(SOME_DEPARTMENT_ID);
+        department.setName("department");
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("deletedDepartment", mapToDepartmentForm(department)))
+            .andExpect(flash().attribute("deletedDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
 
         verify(departmentService).delete(SOME_DEPARTMENT_ID);
