@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentForm;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -349,7 +348,7 @@ class SickNoteViewControllerTest {
             final Errors errors = invocation.getArgument(1);
             errors.rejectValue("text", "errors");
             return null;
-        }).when(sickNoteValidator).validateComment(any(SickNoteCommentForm.class), any(Errors.class));
+        }).when(sickNoteValidator).validate(any(SickNoteCommentForm.class), any(Errors.class));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(flash().attribute("errors", instanceOf(Errors.class)))

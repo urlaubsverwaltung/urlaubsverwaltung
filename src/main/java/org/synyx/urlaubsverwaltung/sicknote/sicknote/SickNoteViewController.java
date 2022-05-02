@@ -195,7 +195,7 @@ class SickNoteViewController {
         throws UnknownSickNoteException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
-        sickNoteValidator.validateComment(comment, errors);
+        sickNoteValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
