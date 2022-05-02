@@ -101,5 +101,5 @@
   <include file="dbchangelogs/changelog-4.35.0-create-person-basedata-table.xml"/>
   <include file="dbchangelogs/changelog-4.36.0-renaming-accounts.xml"/>
   <include file="dbchangelogs/changelog-4.38.0-add-spring-session.xml"/>
-  <include file="dbchangelogs/changelog-4.37.0-add-vacation-type-color.xml"/>
+  <include file="dbchangelogs/changelog-4.39.0-add-vacation-type-color.xml"/>
 </databaseChangeLog>
