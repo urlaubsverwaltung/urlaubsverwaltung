@@ -47,7 +47,7 @@
     "underscore": "1.13.3"
   },
   "devDependencies": {
-    "@babel/core": "7.17.9",
+    "@babel/core": "7.17.10",
     "@babel/eslint-parser": "7.17.0",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.16.11",
@@ -61,7 +61,7 @@
     "css-loader": "5.2.7",
     "cssnano": "5.1.7",
     "date-fns": "2.28.0",
-    "eslint": "8.13.0",
+    "eslint": "8.14.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-unicorn": "42.0.0",
@@ -76,7 +76,7 @@
     "node-fetch": "2.6.7",
     "onchange": "7.1.0",
     "optimize-css-assets-webpack-plugin": "6.0.1",
-    "postcss": "8.4.12",
+    "postcss": "8.4.13",
     "postcss-cli": "9.1.0",
     "postcss-import": "14.1.0",
     "postcss-url": "10.1.3",
