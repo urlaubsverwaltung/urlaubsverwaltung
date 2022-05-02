@@ -48,19 +48,19 @@
             <div class="col-xs-12">
                 <div class="feedback">
                     <c:choose>
-                        <c:when test="${not empty createdDepartment}">
+                        <c:when test="${not empty createdDepartmentName}">
                             <div class="alert alert-success">
-                                <spring:message code="department.action.create.success" arguments="${createdDepartment.name}"/>
+                                <spring:message code="department.action.create.success" arguments="${createdDepartmentName}"/>
                             </div>
                         </c:when>
-                        <c:when test="${not empty updatedDepartment}">
+                        <c:when test="${not empty updatedDepartmentName}">
                             <div class="alert alert-success">
-                                <spring:message code="department.action.edit.success" arguments="${updatedDepartment.name}"/>
+                                <spring:message code="department.action.edit.success" arguments="${updatedDepartmentName}"/>
                             </div>
                         </c:when>
-                        <c:when test="${not empty deletedDepartment}">
+                        <c:when test="${not empty deletedDepartmentName}">
                             <div class="alert alert-success">
-                                <spring:message code="department.action.delete.success" arguments="${deletedDepartment.name}"/>
+                                <spring:message code="department.action.delete.success" arguments="${deletedDepartmentName}"/>
                             </div>
                         </c:when>
                     </c:choose>

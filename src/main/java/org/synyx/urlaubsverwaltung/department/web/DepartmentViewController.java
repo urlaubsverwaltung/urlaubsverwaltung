@@ -93,9 +93,7 @@ public class DepartmentViewController {
         }
 
         final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
-        final DepartmentForm createdDepartmentForm = mapToDepartmentForm(createdDepartment);
-
-        redirectAttributes.addFlashAttribute("createdDepartment", createdDepartmentForm);
+        redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
 
         return REDIRECT_WEB_DEPARTMENT;
     }
@@ -136,9 +134,7 @@ public class DepartmentViewController {
         }
 
         final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
-        final DepartmentForm updatedDepartmentForm = mapToDepartmentForm(updatedDepartment);
-
-        redirectAttributes.addFlashAttribute("updatedDepartment", updatedDepartmentForm);
+        redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
 
         return REDIRECT_WEB_DEPARTMENT;
     }
@@ -151,7 +147,7 @@ public class DepartmentViewController {
         final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);
         maybeDepartment.ifPresent(department -> {
             departmentService.delete(department.getId());
-            redirectAttributes.addFlashAttribute("deletedDepartment", mapToDepartmentForm(department));
+            redirectAttributes.addFlashAttribute("deletedDepartmentName", department.getName());
         });
 
         return REDIRECT_WEB_DEPARTMENT;
