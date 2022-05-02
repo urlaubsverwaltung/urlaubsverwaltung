@@ -3,13 +3,11 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -30,7 +28,6 @@ public class SickNoteValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
-    private static final String ERROR_LENGTH = "error.entry.tooManyChars";
     private static final String ERROR_PERIOD_SICK_NOTE = "sicknote.error.aubInvalidPeriod";
     private static final String ERROR_HALF_DAY_PERIOD_SICK_NOTE = "sicknote.error.halfDayPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
@@ -41,9 +38,6 @@ public class SickNoteValidator implements Validator {
     private static final String ATTRIBUTE_END_DATE = "endDate";
     private static final String ATTRIBUTE_AUB_START_DATE = "aubStartDate";
     private static final String ATTRIBUTE_AUB_END_DATE = "aubEndDate";
-    private static final String ATTRIBUTE_COMMENT = "text";
-
-    private static final int MAX_CHARS = 200;
 
     private final OverlapService overlapService;
     private final WorkingTimeService workingTimeService;
@@ -166,19 +160,6 @@ public class SickNoteValidator implements Validator {
 
         if (isOverlapping) {
             errors.reject(ERROR_OVERLAP);
-        }
-    }
-
-    public void validateComment(SickNoteCommentEntity comment, Errors errors) {
-
-        final String text = comment.getText();
-
-        if (StringUtils.hasText(text)) {
-            if (text.length() > MAX_CHARS) {
-                errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_LENGTH);
-            }
-        } else {
-            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_MANDATORY_FIELD);
         }
     }
 }

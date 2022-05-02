@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentForm;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
@@ -188,7 +188,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
-            .andExpect(model().attribute("comment", instanceOf(SickNoteCommentEntity.class)))
+            .andExpect(model().attribute("comment", instanceOf(SickNoteCommentForm.class)))
             .andExpect(model().attribute("comments", instanceOf(List.class)))
             .andExpect(view().name("sicknote/sick_note"));
     }
@@ -345,14 +345,13 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
         doAnswer(invocation -> {
-            Errors errors = invocation.getArgument(1);
-            errors.rejectValue("sickNote", "errors");
+            final Errors errors = invocation.getArgument(1);
+            errors.rejectValue("text", "errors");
             return null;
-        }).when(sickNoteValidator).validateComment(any(SickNoteCommentEntity.class), any(Errors.class));
+        }).when(sickNoteValidator).validate(any(SickNoteCommentForm.class), any(Errors.class));
 
-        String ERRORS_ATTRIBUTE = "errors";
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
-            .andExpect(flash().attribute(ERRORS_ATTRIBUTE, instanceOf(Errors.class)))
+            .andExpect(flash().attribute("errors", instanceOf(Errors.class)))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }

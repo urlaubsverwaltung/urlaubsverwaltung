@@ -262,8 +262,7 @@
                     </c:choose>
 
                     <div id="comment-form" style="${STYLE}">
-                        <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment"
-                                   modelAttribute="comment">
+                        <form:form method="POST" action="${URL_PREFIX}/sicknote/${sickNote.id}/comment" modelAttribute="comment">
                             <small>
                                 <span id="text-comment"></span> <spring:message code="action.comment.maxChars"/>
                             </small>
