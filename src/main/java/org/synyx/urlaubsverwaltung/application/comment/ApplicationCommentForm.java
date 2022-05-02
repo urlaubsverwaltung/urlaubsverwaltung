@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.application.comment;
 
+import java.io.Serializable;
+
 /**
  * Represents a comment.
  */
-public class ApplicationCommentForm {
+public class ApplicationCommentForm implements Serializable {
 
     private String text;
     private boolean isMandatory;
