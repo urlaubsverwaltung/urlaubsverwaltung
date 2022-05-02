@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentForm;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -169,33 +170,33 @@ class SickNoteValidatorTest {
 
     @Test
     void ensureCommentMayNotBeNull() {
-        final SickNoteCommentEntity sickNoteCommentEntity = new SickNoteCommentEntity(clock);
+        final SickNoteCommentForm sickNoteCommentForm = new SickNoteCommentForm();
 
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentEntity, "sickNote");
-        sut.validateComment(sickNoteCommentEntity, errors);
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentForm, "sickNote");
+        sut.validateComment(sickNoteCommentForm, errors);
         assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("error.entry.mandatory");
     }
 
     @Test
     void ensureTooLongCommentIsNotValid() {
 
-        final SickNoteCommentEntity sickNoteCommentEntity = new SickNoteCommentEntity(clock);
-        sickNoteCommentEntity.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
+        final SickNoteCommentForm sickNoteCommentForm = new SickNoteCommentForm();
+        sickNoteCommentForm.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
             + "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
             + "sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
 
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentEntity, "sickNote");
-        sut.validateComment(sickNoteCommentEntity, errors);
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentForm, "sickNote");
+        sut.validateComment(sickNoteCommentForm, errors);
         assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("error.entry.tooManyChars");
     }
 
     @Test
     void ensureValidCommentHasNoErrors() {
-        final SickNoteCommentEntity sickNoteCommentEntity = new SickNoteCommentEntity(clock);
-        sickNoteCommentEntity.setText("I am a fluffy little comment");
+        final SickNoteCommentForm sickNoteCommentForm = new SickNoteCommentForm();
+        sickNoteCommentForm.setText("I am a fluffy little comment");
 
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentEntity, "sickNote");
-        sut.validateComment(sickNoteCommentEntity, errors);
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentForm, "sickNote");
+        sut.validateComment(sickNoteCommentForm, errors);
         assertThat(errors.getErrorCount()).isZero();
     }
 
