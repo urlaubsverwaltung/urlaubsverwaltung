@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentForm;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
@@ -75,17 +76,18 @@ class SickNoteViewControllerTest {
     @Mock
     private SickNoteValidator sickNoteValidator;
     @Mock
+    private SickNoteCommentFormValidator sickNoteCommentFormValidator;
+    @Mock
     private SickNoteConvertFormValidator sickNoteConvertFormValidator;
     @Mock
     private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-
         sut = new SickNoteViewController(sickNoteService,
             sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService,
             vacationTypeService, personService, workDaysCountService, sickNoteValidator,
-            sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
+            sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
     }
 
     @Test
@@ -348,7 +350,7 @@ class SickNoteViewControllerTest {
             final Errors errors = invocation.getArgument(1);
             errors.rejectValue("text", "errors");
             return null;
-        }).when(sickNoteValidator).validate(any(SickNoteCommentForm.class), any(Errors.class));
+        }).when(sickNoteCommentFormValidator).validate(any(SickNoteCommentForm.class), any(Errors.class));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(flash().attribute("errors", instanceOf(Errors.class)))

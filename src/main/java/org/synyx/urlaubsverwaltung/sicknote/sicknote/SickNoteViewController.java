@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentForm;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
@@ -59,6 +60,7 @@ class SickNoteViewController {
     private final PersonService personService;
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
+    private final SickNoteCommentFormValidator sickNoteCommentFormValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
     private final SettingsService settingsService;
     private final Clock clock;
@@ -68,7 +70,8 @@ class SickNoteViewController {
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                            VacationTypeService vacationTypeService, PersonService personService,
                            WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
-                           SickNoteConvertFormValidator sickNoteConvertFormValidator, SettingsService settingsService, Clock clock) {
+                           SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
+                           SettingsService settingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.sickNoteInteractionService = sickNoteInteractionService;
@@ -78,6 +81,7 @@ class SickNoteViewController {
         this.personService = personService;
         this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
+        this.sickNoteCommentFormValidator = sickNoteCommentFormValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;
         this.settingsService = settingsService;
         this.clock = clock;
@@ -195,7 +199,7 @@ class SickNoteViewController {
         throws UnknownSickNoteException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
-        sickNoteValidator.validate(comment, errors);
+        sickNoteCommentFormValidator.validate(comment, errors);
 
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
