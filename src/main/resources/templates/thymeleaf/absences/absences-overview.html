@@ -172,7 +172,7 @@
         <svg id="grid">
           <g
             th:each="day,it : ${month.days}"
-            th:with="x=${personColW + personGap + ((1+it.index) * colw) + (it.index)}"
+            th:with="x=${personColW + personGap + (it.index * colw)}"
             th:classappend="|${day.today ? 'today' : ''}${day.weekend ? ' weekend' : ''}|"
           >
             <rect th:x="${x}" y="0" th:width="1" th:height="${h}" stroke="black" />
@@ -183,11 +183,11 @@
 <!--            th:with="x=${personColW + personGap + (it.index * colw) + (it.index) + (colw/2)}"-->
           <g
             th:each="day,it : ${month.days}"
-            th:with="x=${personColW + personGap + (it.index * colw) + (it.index) + (colw/2)}"
+            th:with="x=${personColW + personGap + (it.index * colw)}"
             th:classappend="|${day.today ? 'today' : ''}${day.weekend ? ' weekend' : ''}|"
           >
-            <text th:x="${x + 1}" y="15" dominant-baseline="text-after-edge" text-anchor="middle" style="font-size: 1em;" class="tw-font-bold tw-fill-white" th:text="${day.dayOfMonth}">01</text>
-            <text th:x="${x + 1}" y="15" dominant-baseline="text-before-edge" text-anchor="middle" style="font-size: 1em;" class="tw-fill-zinc-500" th:text="${day.dayOfWeek}">Mo</text>
+            <text th:x="${x}" y="15" dominant-baseline="text-after-edge" text-anchor="middle" style="font-size: 1em;" class="tw-font-bold tw-fill-white" th:text="${day.dayOfMonth}">01</text>
+            <text th:x="${x}" y="15" dominant-baseline="text-before-edge" text-anchor="middle" style="font-size: 1em;" class="tw-fill-zinc-500" th:text="${day.dayOfWeek}">Mo</text>
           </g>
         </svg>
 
