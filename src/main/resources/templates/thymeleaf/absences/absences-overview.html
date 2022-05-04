@@ -155,7 +155,88 @@
         <th:block th:text="${month.nameOfMonth}" />
         <span class="hidden print:tw-inline" th:text="${selectedYear}" />
       </h2>
+
+      <svg
+        th:with="personColW=100, personGap=10, w=1280, colw=40, h=200"
+        th:viewbox="|0 0 ${personColW + personGap + w} ${h}|"
+        preserveAspectRatio="xMidYMin meet"
+        class="tw-max-w-7xl tw-h-auto"
+        style="width: 1390px"
+      >
+        <defs>
+          <clipPath id="rounded-avatar-clip" clipPathUnits="objectBoundingBox">
+            <circle id="rounded-avatar" cx=".5" cy=".5" r=".5" />
+          </clipPath>
+        </defs>
+
+        <svg id="grid">
+          <g
+            th:each="day,it : ${month.days}"
+            th:with="x=${personColW + personGap + ((1+it.index) * colw) + (it.index)}"
+            th:classappend="|${day.today ? 'today' : ''}${day.weekend ? ' weekend' : ''}|"
+          >
+            <rect th:x="${x}" y="0" th:width="1" th:height="${h}" stroke="black" />
+          </g>
+        </svg>
+
+        <svg id="head-row-days">
+<!--            th:with="x=${personColW + personGap + (it.index * colw) + (it.index) + (colw/2)}"-->
+          <g
+            th:each="day,it : ${month.days}"
+            th:with="x=${personColW + personGap + (it.index * colw) + (it.index) + (colw/2)}"
+            th:classappend="|${day.today ? 'today' : ''}${day.weekend ? ' weekend' : ''}|"
+          >
+            <text th:x="${x + 1}" y="15" dominant-baseline="text-after-edge" text-anchor="middle" style="font-size: 1em;" class="tw-font-bold tw-fill-white" th:text="${day.dayOfMonth}">01</text>
+            <text th:x="${x + 1}" y="15" dominant-baseline="text-before-edge" text-anchor="middle" style="font-size: 1em;" class="tw-fill-zinc-500" th:text="${day.dayOfWeek}">Mo</text>
+          </g>
+        </svg>
+
+<!--        <svg id="person-avatar-and-name">-->
+<!--          <g-->
+<!--            th:each="person,it : ${month.persons}"-->
+<!--            th:with="h=28, y=${30 + (it.index * h) + ((it.index + 1) * 1)}"-->
+<!--          >-->
+<!--            <circle r="12" cx="12" th:cy="${y + (h/2)}" fill="navy" />-->
+<!--            <image th:x="2" th:y="${y + (h/2) - 10}" th:href="${person.gravatarUrl + '?d=mm&s=128'}" height="20" width="20" clip-path="url('#rounded-avatar-clip')" />-->
+<!--            <foreignObject x="34" th:y="${y}" width="0" th:width="${personColW - 34}" th:height="${h}">-->
+<!--              <div class="tw-pt-0.5 tw-flex tw-flex-col tw-justify-center tw-leading-tight" style="font-size: 0.725rem;">-->
+<!--                <span th:text="${person.firstName}" class="tw-w-full tw-inline-block tw-text-ellipsis tw-overflow-hidden tw-whitespace-nowrap"></span>-->
+<!--                <span th:text="${person.lastName}" class="tw-w-full tw-inline-block tw-text-ellipsis tw-overflow-hidden tw-whitespace-nowrap"></span>-->
+<!--              </div>-->
+<!--            </foreignObject>-->
+<!--          </g>-->
+<!--        </svg>-->
+
+        <svg id="person-absences">
+          <g
+            th:each="person,it : ${month.persons}"
+            th:with="h=28, y=${30 + (it.index * h) + ((it.index + 1) * 1)}"
+          >
+            <rect
+              th:y="${y}"
+              th:x="${personColW + personGap}"
+              th:width="${#arrays.length(month.days) * (colw)}"
+              th:height="${h}"
+              fill="fuchsia"
+            />
+<!--            <g th:id="${'public-holidays-' + it.index}">-->
+<!--              <rect-->
+<!--                th:each="publicHoliday,publicHolidayIt : ${person.publicHolidays}"-->
+<!--                th:with="w=${publicHoliday.colspan * (colw/2) + (publicHoliday.colspan == 1 ? (0) : (0.5))}"-->
+<!--                th:data-title="${publicHoliday.publicHolidayText}"-->
+<!--                th:height="${h}"-->
+<!--                th:width="${w}"-->
+<!--                th:x="${personColW + 1 + publicHoliday.colStart * (w/2) + (publicHolidayIt.index * 1)}"-->
+<!--                th:y="${y}"-->
+<!--                style="fill:orange;"-->
+<!--              />-->
+<!--            </g>-->
+          </g>
+        </svg>
+      </svg>
+
       <table
+        th:if="${false}"
         id="absence-table"
         class="vacationOverview-table tw-text-sm tw-table-fixed"
         role="grid"
@@ -237,6 +318,16 @@
                   class="tw-flex-1 tw-flex tw-items-center tw-justify-center"
                 >
                   <svg th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px tw-stroke-2')"></svg>
+                </div>
+                <div
+                  th:if="${#strings.equals(absence.type, 'PUBLIC_HOLIDAY')}"
+                  class="tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
+                  style="background-color: #00ff89;"
+                  th:data-title="TODO_Feiertag"
+                >
+                  <span th:classappend="|${absence.showText ? '' : 'tw-sr-only'}|">
+                    TODO_Feiertag
+                  </span>
                 </div>
                 <div
                   th:if="${#strings.equals(absence.type, 'VACATION')}"

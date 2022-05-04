@@ -9,13 +9,15 @@ public class AbsenceOverviewMonthPersonDto {
     private final String email;
     private final String gravatarUrl;
     private final List<AbsenceOverviewPersonRowCellDto> days;
+    private final List<AbsenceOverviewPersonPublicHolidayCellDto> publicHolidays;
 
-    AbsenceOverviewMonthPersonDto(String firstName, String lastName, String email, String gravatarUrl, List<AbsenceOverviewPersonRowCellDto> days) {
+    AbsenceOverviewMonthPersonDto(String firstName, String lastName, String email, String gravatarUrl, List<AbsenceOverviewPersonRowCellDto> days, List<AbsenceOverviewPersonPublicHolidayCellDto> publicHolidays) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.gravatarUrl = gravatarUrl;
         this.days = days;
+        this.publicHolidays = publicHolidays;
     }
 
     public String getFirstName() {
@@ -36,5 +38,9 @@ public class AbsenceOverviewMonthPersonDto {
 
     public List<AbsenceOverviewPersonRowCellDto> getDays() {
         return days;
+    }
+
+    public List<AbsenceOverviewPersonPublicHolidayCellDto> getPublicHolidays() {
+        return publicHolidays;
     }
 }
