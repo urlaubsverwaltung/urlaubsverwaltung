@@ -14,11 +14,11 @@
     <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
     <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
     <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>
-    <tns:ChristianHoliday type="EASTER"/>
-    <tns:ChristianHoliday type="EASTER_MONDAY"/>
-    <tns:ChristianHoliday type="ASCENSION_DAY"/>
-    <tns:ChristianHoliday type="WHIT_MONDAY"/>
-    <tns:ChristianHoliday type="CORPUS_CHRISTI"/>
+    <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
+    <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+    <tns:ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
+    <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
   </tns:Holidays>
   <tns:SubConfigurations hierarchy="b" description="Burgenland">
     <tns:Holidays>

@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.jollyday.HolidayManager;
-import de.jollyday.ManagerParameters;
+import de.focus_shift.HolidayManager;
+import de.focus_shift.ManagerParameters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
