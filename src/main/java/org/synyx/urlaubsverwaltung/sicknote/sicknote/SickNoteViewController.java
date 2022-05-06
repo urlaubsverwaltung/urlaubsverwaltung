@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.person.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;

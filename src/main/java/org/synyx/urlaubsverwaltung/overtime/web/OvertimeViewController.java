@@ -28,7 +28,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.person.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;

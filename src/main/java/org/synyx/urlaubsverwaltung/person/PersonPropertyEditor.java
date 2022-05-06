@@ -1,7 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
-
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
+package org.synyx.urlaubsverwaltung.person;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Optional;

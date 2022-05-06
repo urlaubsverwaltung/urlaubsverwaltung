@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.person.PersonPropertyEditor;
 
 import java.util.List;
 import java.util.Optional;

@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.Optional;
