@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.overview;
 
-public class PersonDto {
+public class PersonOverviewDto {
 
     private final long id;
 
@@ -18,9 +18,9 @@ public class PersonDto {
     private final Double vacationDaysLeft;
     private final Double vacationDaysLeftRemaining;
 
-    private PersonDto(long id, String gravatarUrl, String firstName, String lastName, String niceName,
-                      String personnelNumber, String additionalInformation, Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
-                      Double vacationDaysLeft, Double vacationDaysLeftRemaining) {
+    private PersonOverviewDto(long id, String gravatarUrl, String firstName, String lastName, String niceName,
+                              String personnelNumber, String additionalInformation, Double entitlementYear, Double entitlementActual, Double entitlementRemaining,
+                              Double vacationDaysLeft, Double vacationDaysLeftRemaining) {
 
         this.id = id;
         this.gravatarUrl = gravatarUrl;
@@ -84,7 +84,7 @@ public class PersonDto {
         return vacationDaysLeftRemaining;
     }
 
-    static PersonDto.Builder builder() {
+    static PersonOverviewDto.Builder builder() {
         return new Builder();
     }
 
@@ -162,8 +162,8 @@ public class PersonDto {
             return this;
         }
 
-        public PersonDto build() {
-            return new PersonDto(
+        public PersonOverviewDto build() {
+            return new PersonOverviewDto(
                 id,
                 gravatarUrl,
                 firstName,

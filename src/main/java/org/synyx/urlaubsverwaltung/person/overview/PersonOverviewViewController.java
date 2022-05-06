@@ -179,10 +179,10 @@ public class PersonOverviewViewController {
         final LocalDate now = LocalDate.now(clock);
         final boolean beforeApril = isBeforeApril(now, year);
 
-        final List<PersonDto> personDtos = new ArrayList<>(persons.size());
+        final List<PersonOverviewDto> personOverviewDtos = new ArrayList<>(persons.size());
 
         for (Person person : persons) {
-            final PersonDto.Builder personDtoBuilder = PersonDto.builder();
+            final PersonOverviewDto.Builder personDtoBuilder = PersonOverviewDto.builder();
 
             final Optional<Account> account = accountService.getHolidaysAccount(year, person);
             if (account.isPresent()) {
@@ -216,14 +216,14 @@ public class PersonOverviewViewController {
             personBasedataService.getBasedataByPersonId(person.getId())
                 .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.getPersonnelNumber()));
 
-            final PersonDto personDto = personDtoBuilder.build();
-            personDtos.add(personDto);
+            final PersonOverviewDto personOverviewDto = personDtoBuilder.build();
+            personOverviewDtos.add(personOverviewDto);
         }
 
-        final boolean showPersonnelNumberColumn = personDtos.stream()
-            .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
+        final boolean showPersonnelNumberColumn = personOverviewDtos.stream()
+            .anyMatch(personOverviewDto -> hasText(personOverviewDto.getPersonnelNumber()));
 
-        model.addAttribute("persons", personDtos);
+        model.addAttribute("persons", personOverviewDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute(BEFORE_APRIL_ATTRIBUTE, isBeforeApril(now, year));
         model.addAttribute("year", year);
