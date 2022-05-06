@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person.permissions;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 

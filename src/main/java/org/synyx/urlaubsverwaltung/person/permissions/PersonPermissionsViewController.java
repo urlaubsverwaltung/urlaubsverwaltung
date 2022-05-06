@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person.permissions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +17,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
-import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapToPersonPermissionsDto;
-import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.merge;
+import static org.synyx.urlaubsverwaltung.person.permissions.PersonPermissionsMapper.mapToPersonPermissionsDto;
+import static org.synyx.urlaubsverwaltung.person.permissions.PersonPermissionsMapper.merge;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person.permissions;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
