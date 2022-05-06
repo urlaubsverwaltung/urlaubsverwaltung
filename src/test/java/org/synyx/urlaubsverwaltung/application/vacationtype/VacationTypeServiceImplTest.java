@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 
 @ExtendWith(MockitoExtension.class)
 class VacationTypeServiceImplTest {
@@ -106,6 +107,7 @@ class VacationTypeServiceImplTest {
         holidayEntity.setMessageKey("holiday.message.key");
         holidayEntity.setActive(false);
         holidayEntity.setRequiresApproval(false);
+        holidayEntity.setVisibleToEveryone(false);
 
         final VacationTypeEntity overtimeEntity = new VacationTypeEntity();
         overtimeEntity.setId(2);
@@ -113,12 +115,22 @@ class VacationTypeServiceImplTest {
         overtimeEntity.setMessageKey("overtime.message.key");
         overtimeEntity.setActive(false);
         overtimeEntity.setRequiresApproval(false);
+        overtimeEntity.setVisibleToEveryone(false);
 
-        when(vacationTypeRepository.findAllById(Set.of(1, 2))).thenReturn(List.of(holidayEntity, overtimeEntity));
+        final VacationTypeEntity specialLeaveEntity = new VacationTypeEntity();
+        specialLeaveEntity.setId(3);
+        specialLeaveEntity.setCategory(SPECIALLEAVE);
+        specialLeaveEntity.setMessageKey("specialleave.message.key");
+        specialLeaveEntity.setActive(true);
+        specialLeaveEntity.setRequiresApproval(false);
+        specialLeaveEntity.setVisibleToEveryone(true);
+
+        when(vacationTypeRepository.findAllById(Set.of(1, 2, 3))).thenReturn(List.of(holidayEntity, overtimeEntity, specialLeaveEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1, true, false, YELLOW),
-            new VacationTypeUpdate(2, false, true, YELLOW)
+            new VacationTypeUpdate(1, true, false, YELLOW, false),
+            new VacationTypeUpdate(2, false, true, YELLOW, false),
+            new VacationTypeUpdate(3, true, true, YELLOW, true)
         ));
 
         @SuppressWarnings("unchecked")
@@ -131,11 +143,20 @@ class VacationTypeServiceImplTest {
         assertThat(persistedList.get(0).getMessageKey()).isEqualTo("holiday.message.key");
         assertThat(persistedList.get(0).isActive()).isTrue();
         assertThat(persistedList.get(0).isRequiresApproval()).isFalse();
+        assertThat(persistedList.get(0).isVisibleToEveryone()).isFalse();
         assertThat(persistedList.get(1).getId()).isEqualTo(2);
         assertThat(persistedList.get(1).getCategory()).isEqualTo(OVERTIME);
         assertThat(persistedList.get(1).getMessageKey()).isEqualTo("overtime.message.key");
         assertThat(persistedList.get(1).isActive()).isFalse();
         assertThat(persistedList.get(1).isRequiresApproval()).isTrue();
+        assertThat(persistedList.get(1).isVisibleToEveryone()).isFalse();
+        assertThat(persistedList.get(2).getId()).isEqualTo(3);
+        assertThat(persistedList.get(2).getCategory()).isEqualTo(SPECIALLEAVE);
+        assertThat(persistedList.get(2).getMessageKey()).isEqualTo("specialleave.message.key");
+        assertThat(persistedList.get(2).isActive()).isTrue();
+        assertThat(persistedList.get(2).isRequiresApproval()).isTrue();
+        assertThat(persistedList.get(2).isVisibleToEveryone()).isTrue();
+
     }
 
     @Test

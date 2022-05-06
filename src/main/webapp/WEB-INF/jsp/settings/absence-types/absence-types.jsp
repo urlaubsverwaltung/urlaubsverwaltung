@@ -46,6 +46,9 @@
             <span class="tw-break-all tw-text-right">
                 <spring:message code='settings.absenceTypes.table.head.approval' />
             </span>
+            <span class="tw-text-right">
+                <spring:message code='settings.absenceTypes.table.head.visibleToEveryone' />
+            </span>
             <span class="tw-pr-5">
                 <spring:message code='settings.absenceTypes.table.head.color' />
             </span>
@@ -84,7 +87,17 @@
                     <form:checkbox
                         path="absenceTypeSettings.items[${loop.index}].requiresApproval"
                         id="absenceType-approval-${loop.index}"
-                        cssClass="absence-type-approval-checkbox"
+                        cssClass="absence-type-option-checkbox"
+                    />
+                </div>
+                <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                    <label for="absenceType-visible-to-everyone-${loop.index}" class="absence-type-cell-title tw-m-0">
+                        <spring:message code="settings.absenceTypes.action.visibleToEveryone.label" />
+                    </label>
+                    <form:checkbox
+                        path="absenceTypeSettings.items[${loop.index}].visibleToEveryone"
+                        id="absenceType-visible-to-everyone-${loop.index}"
+                        cssClass="absence-type-option-checkbox"
                     />
                 </div>
                 <div class="tw-flex sm:tw-items-center">

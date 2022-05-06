@@ -27,7 +27,7 @@
   width: 40%;
 }
 
-.absence-type-approval-checkbox {
+.absence-type-option-checkbox {
   width: 1.125rem;
   height: 1.125rem;
   appearance: none;
@@ -37,7 +37,7 @@
   @apply tw-transition-colors;
 }
 
-.absence-type-approval-checkbox:checked {
+.absence-type-option-checkbox:checked {
   @apply tw-bg-blue-500 !important;
   @apply tw-border-blue-500 !important;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
@@ -77,11 +77,11 @@
     @apply tw-text-opacity-75;
   }
 
-  .absence-type-list-item[data-enabled="false"] .absence-type-approval-checkbox {
+  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox {
     @apply tw-border-zinc-300;
   }
 
-  .absence-type-list-item[data-enabled="false"] .absence-type-approval-checkbox:checked {
+  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox:checked {
     @apply tw-bg-blue-300;
     @apply tw-border-blue-300;
   }
@@ -92,7 +92,7 @@
   .absence-type-list-item {
     display: grid;
     grid-column-gap: 2rem;
-    grid-template-columns: 2.5rem 1fr 1fr 6rem 4rem;
+    grid-template-columns: 2.5rem 1fr 1fr 6rem 6rem 4rem;
     @apply tw-py-1;
     @apply tw-px-2;
   }
@@ -126,11 +126,11 @@
     @apply tw-bg-opacity-70;
   }
 
-  .absence-type-list-item[data-enabled="false"] .absence-type-approval-checkbox {
+  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox {
     @apply tw-border-zinc-300;
   }
 
-  .absence-type-list-item[data-enabled="false"] .absence-type-approval-checkbox:checked {
+  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox:checked {
     @apply tw-bg-blue-300;
     @apply tw-border-blue-300;
   }

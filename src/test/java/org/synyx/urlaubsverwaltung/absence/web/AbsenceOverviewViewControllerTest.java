@@ -2288,8 +2288,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                new VacationType(1, true, null, "", false, ORANGE),
-                new VacationType(2, true, null, "", false, CYAN)
+                new VacationType(1, true, null, "", false, ORANGE, false),
+                new VacationType(2, true, null, "", false, CYAN, false)
             ));
 
         final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
@@ -2359,8 +2359,8 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                new VacationType(1, true, null, "", false, ORANGE),
-                new VacationType(2, true, null, "", false, CYAN)
+                new VacationType(1, true, null, "", false, ORANGE, false),
+                new VacationType(2, true, null, "", false, CYAN, false)
             ));
 
         final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
