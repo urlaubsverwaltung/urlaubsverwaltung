@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.web;
+package org.synyx.urlaubsverwaltung.person.overview;
 
 public class PersonDto {
 
