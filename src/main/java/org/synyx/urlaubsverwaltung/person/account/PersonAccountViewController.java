@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.details;
+package org.synyx.urlaubsverwaltung.person.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,14 +27,14 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.details.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
+import static org.synyx.urlaubsverwaltung.person.account.PersonAccountBasedataDtoMapper.mapToPersonDetailsBasedataDto;
 
 /**
  * Controller for management of {@link Person} entities.
  */
 @Controller
 @RequestMapping("/web")
-public class PersonDetailsViewController {
+public class PersonAccountViewController {
 
     private static final String PERSON_ATTRIBUTE = "person";
 
@@ -47,7 +47,7 @@ public class PersonDetailsViewController {
     private final Clock clock;
 
     @Autowired
-    PersonDetailsViewController(PersonService personService, AccountService accountService,
+    PersonAccountViewController(PersonService personService, AccountService accountService,
                                 DepartmentService departmentService, WorkingTimeService workingTimeService,
                                 SettingsService settingsService, PersonBasedataService personBasedataService, Clock clock) {
         this.personService = personService;
@@ -78,8 +78,8 @@ public class PersonDetailsViewController {
 
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
         if (basedataByPersonId.isPresent()) {
-            final PersonDetailsBasedataDto personDetailsBasedataDto = mapToPersonDetailsBasedataDto(basedataByPersonId.get());
-            model.addAttribute("personBasedata", personDetailsBasedataDto);
+            final PersonAccountBasedataDto personAccountBasedataDto = mapToPersonDetailsBasedataDto(basedataByPersonId.get());
+            model.addAttribute("personBasedata", personAccountBasedataDto);
         }
 
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));

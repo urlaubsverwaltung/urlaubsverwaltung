@@ -1,11 +1,11 @@
-package org.synyx.urlaubsverwaltung.person.details;
+package org.synyx.urlaubsverwaltung.person.account;
 
-public class PersonDetailsBasedataDto {
+public class PersonAccountBasedataDto {
 
     private final String personnelNumber;
     private final String additionalInformation;
 
-    PersonDetailsBasedataDto(String personnelNumber, String additionalInformation) {
+    PersonAccountBasedataDto(String personnelNumber, String additionalInformation) {
         this.personnelNumber = personnelNumber;
         this.additionalInformation = additionalInformation;
     }

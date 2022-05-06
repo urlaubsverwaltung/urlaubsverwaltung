@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.person.details;
+package org.synyx.urlaubsverwaltung.person.account;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN
 
 
 @ExtendWith(MockitoExtension.class)
-class PersonDetailsViewControllerTest {
+class PersonAccountViewControllerTest {
 
     private static final int UNKNOWN_PERSON_ID = 365;
     private static final int PERSON_ID = 1;
@@ -60,7 +60,7 @@ class PersonDetailsViewControllerTest {
 
     private static Clock clock;
 
-    private PersonDetailsViewController sut;
+    private PersonAccountViewController sut;
 
     @Mock
     private PersonService personService;
@@ -81,7 +81,7 @@ class PersonDetailsViewControllerTest {
     void setUp() {
 
         clock = Clock.systemUTC();
-        sut = new PersonDetailsViewController(personService, accountService, departmentService,
+        sut = new PersonAccountViewController(personService, accountService, departmentService,
             workingTimeService, settingsService, personBasedataService, clock);
 
         person = new Person();
