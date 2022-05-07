@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -34,6 +33,8 @@ import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,7 @@ import java.util.function.Supplier;
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -147,194 +149,250 @@ public class AbsenceOverviewViewController {
     }
 
     private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange, List<Person> personList, Locale locale, List<Person> members) {
+        final LocalDate today = LocalDate.now(clock);
+        final Map<Person, LocalDate> personNextDateCursor = personList.stream().collect(toMap(Function.identity(), (unused) -> dateRange.getStartDate()));
 
-        final List<AbsenceOverviewMonthDayDto> days = List.of(
-            new AbsenceOverviewMonthDayDto(null, "01", "Fr", false, false),
-            new AbsenceOverviewMonthDayDto(null, "02", "Sa", true, false),
-            new AbsenceOverviewMonthDayDto(null, "03", "So", true, false),
-            new AbsenceOverviewMonthDayDto(null, "04", "Mo", false, false),
-            new AbsenceOverviewMonthDayDto(null, "05", "Di", false, false),
-            new AbsenceOverviewMonthDayDto(null, "06", "Mi", false, false),
-            new AbsenceOverviewMonthDayDto(null, "07", "Do", false, false),
-            new AbsenceOverviewMonthDayDto(null, "08", "Fr", false, true),
-            new AbsenceOverviewMonthDayDto(null, "09", "Sa", true, false),
-            new AbsenceOverviewMonthDayDto(null, "10", "So", true, false),
-            new AbsenceOverviewMonthDayDto(null, "11", "Mo", false, false),
-            new AbsenceOverviewMonthDayDto(null, "12", "Di", false, false),
-            new AbsenceOverviewMonthDayDto(null, "13", "Mi", false, false),
-            new AbsenceOverviewMonthDayDto(null, "14", "Do", false, false),
-            new AbsenceOverviewMonthDayDto(null, "15", "Fr", false, false),
-            new AbsenceOverviewMonthDayDto(null, "16", "Sa", false, false),
-            new AbsenceOverviewMonthDayDto(null, "17", "So", false, false),
-            new AbsenceOverviewMonthDayDto(null, "18", "Mo", false, false),
-            new AbsenceOverviewMonthDayDto(null, "19", "Di", false, false),
-            new AbsenceOverviewMonthDayDto(null, "20", "Mi", false, false),
-            new AbsenceOverviewMonthDayDto(null, "21", "Do", false, false),
-            new AbsenceOverviewMonthDayDto(null, "22", "Fr", false, false),
-            new AbsenceOverviewMonthDayDto(null, "23", "Sa", false, false),
-            new AbsenceOverviewMonthDayDto(null, "24", "So", false, false),
-            new AbsenceOverviewMonthDayDto(null, "25", "Mo", false, false),
-            new AbsenceOverviewMonthDayDto(null, "26", "Di", false, false),
-            new AbsenceOverviewMonthDayDto(null, "27", "Mi", false, false),
-            new AbsenceOverviewMonthDayDto(null, "28", "Do", false, false),
-            new AbsenceOverviewMonthDayDto(null, "29", "Fr", false, false),
-            new AbsenceOverviewMonthDayDto(null, "30", "Sa", false, false)
-        );
+        final Map<Person, Map<LocalDate, List<AbsencePeriod>>> openAbsences = absenceService.getOpenAbsencesForPersons(personList, dateRange.getStartDate(), dateRange.getEndDate());
 
-        final var day_01_morning = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_01_noon = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_02_morning = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_02_noon = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_03 = new AbsenceOverviewPersonRowCellDto(2, "Erholungsurlaub", true, true, false, true);
-        final var day_04 = new AbsenceOverviewPersonRowCellDto(2, "", false, false, false, true);
-        final var day_05 = new AbsenceOverviewPersonRowCellDto(6, "Erholungsurlaub", true, false, true, false);
-        final var day_08_morning = new AbsenceOverviewPersonRowCellDto(1, "Krank", true, true, true, true);
-        final var day_08_noon = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_09_morning = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_09_noon = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_10_morning = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_10_noon = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_11 = new AbsenceOverviewPersonRowCellDto(2, "Krank", true, true, true, true);
-        final var day_12_morning = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
-        final var day_12_noon = new AbsenceOverviewPersonRowCellDto(1, "", true, false, false, true);
+        final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
+        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
 
-        final List<AbsenceOverviewPersonRowCellDto> personDays = List.of(
-            day_01_morning,
-            day_01_noon,
-            day_02_morning,
-            day_02_noon,
-            day_03,
-            day_04,
-            day_05,
-            day_08_morning,
-            day_08_noon,
-            day_09_morning,
-            day_09_noon,
-            day_10_morning,
-            day_10_noon,
-            day_11,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon,
-            day_12_morning,
-            day_12_noon
-        );
+        final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
+        for (Person person : personList) {
+            final Map<LocalDate, PublicHoliday> publicHolidaysOfPerson = getPublicHolidaysOfPerson(dateRange, person);
+            publicHolidaysOfAllPersons.put(person, publicHolidaysOfPerson);
+        }
 
-        final var personRow = new AbsenceOverviewMonthPersonDto("Max", "Muster", "max.muster@example.org", "#", personDays);
+        for (LocalDate date : dateRange) {
 
-        final List<AbsenceOverviewMonthPersonDto> personRows = List.of(personRow);
+            final AbsenceOverviewMonthDto allPersonsMonthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
+                monthValue -> this.initializeAbsenceOverviewMonthDto(date, personList, locale));
 
-        final var month = new AbsenceOverviewMonthDto("april", days, personRows);
+            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState, today, locale);
+            allPersonsMonthView.getDays().add(tableHeadDay);
 
-        return List.of(month);
-//        final LocalDate today = LocalDate.now(clock);
-//
-//        final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
-//
-//        final List<AbsencePeriod> openAbsences = absenceService.getOpenAbsences(personList, dateRange.getStartDate(), dateRange.getEndDate());
-//
-//        final HashMap<Integer, AbsenceOverviewMonthDto> monthsByNr = new HashMap<>();
-//        final FederalState defaultFederalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-//
-//        final Map<Person, List<AbsencePeriod.Record>> absencePeriodRecordsByPerson = openAbsences.stream()
-//            .map(AbsencePeriod::getAbsenceRecords)
-//            .flatMap(List::stream)
-//            .collect(groupingBy(AbsencePeriod.Record::getPerson));
-//
-//        final Map<Person, Map<LocalDate, PublicHoliday>> publicHolidaysOfAllPersons = new HashMap<>();
-//        for (Person person : personList) {
-//            publicHolidaysOfAllPersons.put(person, getPublicHolidaysOfPerson(dateRange, person));
-//        }
-//
-//        for (LocalDate date : dateRange) {
-//            final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
-//                monthValue -> this.initializeAbsenceOverviewMonthDto(date, personList, locale));
-//
-//            final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState, today, locale);
-//            monthView.getDays().add(tableHeadDay);
-//
-//            final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream()
-//                .collect(
-//                    toMap(person -> monthView.getPersons().stream()
-//                        .filter(view -> view.getEmail().equals(person.getEmail()) &&
-//                            view.getFirstName().equals(person.getFirstName()) &&
-//                            view.getLastName().equals(person.getLastName())
-//                        )
-//                        .findFirst()
-//                        .orElse(null), Function.identity()
-//                    )
-//                );
-//
-//            // create an absence day dto for every person of the department
-//            for (AbsenceOverviewMonthPersonDto personView : monthView.getPersons()) {
-//
-//                final Person person = personByView.get(personView);
-//
-//                final List<WorkingTime> personWorkingTimeList = workingTimeList
-//                    .stream()
-//                    .filter(workingTime -> workingTime.getPerson().equals(person))
-//                    .sorted(comparing(WorkingTime::getValidFrom).reversed())
-//                    .collect(toList());
-//
-//                final List<AbsencePeriod.Record> personAbsenceRecordsForDate = Optional.ofNullable(absencePeriodRecordsByPerson.get(person))
-//                    .stream()
-//                    .flatMap(List::stream)
-//                    .filter(absenceRecord -> absenceRecord.getDate().isEqual(date))
-//                    .collect(toUnmodifiableList());
-//
-//                final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
-//                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members, publicHoliday))
-//                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members))
-//                    .build();
-//
-//                personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimeList)));
-//            }
-//        }
-//
-//        return new ArrayList<>(monthsByNr.values());
+            final Map<AbsenceOverviewMonthPersonDto, Person> monthPersonDtoPersonMap = personList.stream()
+                .collect(
+                    toMap(person -> allPersonsMonthView.getPersons().stream()
+                        .filter(view -> view.getEmail().equals(person.getEmail()) &&
+                            view.getFirstName().equals(person.getFirstName()) &&
+                            view.getLastName().equals(person.getLastName())
+                        )
+                        .findFirst()
+                        .orElse(null), Function.identity()
+                    )
+                );
+
+            // create an absence day dto for every person of the department
+            for (AbsenceOverviewMonthPersonDto overviewMonthPersonDto : allPersonsMonthView.getPersons()) {
+                final Person person = monthPersonDtoPersonMap.get(overviewMonthPersonDto);
+
+                final Map<LocalDate, PublicHoliday> publicHolidayByDate = publicHolidaysOfAllPersons.get(person);
+
+                if (personNextDateCursor.get(person).isEqual(date)) {
+
+                    final List<AbsencePeriod> absencePeriodsStartingAtDate = openAbsences.get(person).get(date);
+
+                    if (absencePeriodsStartingAtDate.isEmpty()) {
+                        // normal working day without absence.
+                        // add morning and noon cell
+
+                        final AbsenceOverviewPersonRowCellDto morning = new AbsenceOverviewPersonRowCellDto();
+                        final AbsenceOverviewPersonRowCellDto noon = new AbsenceOverviewPersonRowCellDto();
+
+                        final PublicHoliday publicHoliday = publicHolidayByDate.get(date);
+                        if (publicHoliday != null) {
+                            if (publicHoliday.isFull() || publicHoliday.isMorning()) {
+                                 morning.setPublicHolidayCols(List.of(1));
+                            }
+                            if (publicHoliday.isFull() || publicHoliday.isNoon()) {
+                                 noon.setPublicHolidayCols(List.of(1));
+                            }
+                        }
+
+                        overviewMonthPersonDto.getDays().add(morning);
+                        overviewMonthPersonDto.getDays().add(noon);
+
+                        personNextDateCursor.put(person, date.plusDays(1));
+                    } else if (absencePeriodsStartingAtDate.size() == 1) {
+                        // sickNote OR applicationForLeave OR no-workday
+                        final AbsencePeriod absencePeriod = absencePeriodsStartingAtDate.get(0);
+                        final List<AbsencePeriod.Record> absenceRecords = absencePeriod.getAbsenceRecords();
+                        if (absenceRecords.size() == 1) {
+                            // morning OR noon OR fullDay
+                            final AbsencePeriod.Record record = absenceRecords.get(0);
+                            if (record.isHalfDayAbsence()) {
+                                final AbsenceOverviewPersonRowCellDto morning;
+                                final AbsenceOverviewPersonRowCellDto noon;
+                                if (record.getMorning().isPresent()) {
+                                    final String type = recordInfoToCss(record.getMorning().orElseThrow());;
+                                    morning = new AbsenceOverviewPersonRowCellDto(1, type, true, true, true);
+                                    noon = new AbsenceOverviewPersonRowCellDto(1, "");
+                                } else {
+                                    final String type = recordInfoToCss(record.getNoon().orElseThrow());;
+                                    morning = new AbsenceOverviewPersonRowCellDto(1, "");
+                                    noon = new AbsenceOverviewPersonRowCellDto(1, type, true, true, true);
+                                }
+                                final PublicHoliday publicHoliday = publicHolidayByDate.get(date);
+                                if (publicHoliday != null) {
+                                    if (publicHoliday.isFull() || publicHoliday.isMorning()) {
+                                         morning.setPublicHolidayCols(List.of(1));
+                                    }
+                                    if (publicHoliday.isFull() || publicHoliday.isNoon()) {
+                                         noon.setPublicHolidayCols(List.of(1));
+                                    }
+                                }
+                                overviewMonthPersonDto.getDays().add(morning);
+                                overviewMonthPersonDto.getDays().add(noon);
+                            } else {
+                                final String type = recordInfoToCss(record.getMorning().orElseThrow());
+                                final AbsenceOverviewPersonRowCellDto morningAndNoon = new AbsenceOverviewPersonRowCellDto(2, type);
+                                final PublicHoliday publicHoliday = publicHolidayByDate.get(date);
+                                if (publicHoliday != null) {
+                                    if (publicHoliday.isMorning()) {
+                                         morningAndNoon.setPublicHolidayCols(List.of(1));
+                                    }
+                                    else if (publicHoliday.isNoon()) {
+                                         morningAndNoon.setPublicHolidayCols(List.of(2));
+                                    }
+                                    else if (publicHoliday.isFull()) {
+                                         morningAndNoon.setPublicHolidayCols(List.of(1, 2));
+                                    }
+                                }
+                                overviewMonthPersonDto.getDays().add(morningAndNoon);
+                            }
+                            personNextDateCursor.put(person, date.plusDays(1));
+                        } else {
+                            // full day absence stretched over multiple days, maybe interrupted by no-workday or public-holiday
+                            final List<AbsenceOverviewPersonRowCellDto> cellDtos = new ArrayList<>();
+                            boolean isFirst = true;
+                            boolean isLast = true;
+                            int colspan = 0;
+                            List<Integer> publicHolidayCols = new ArrayList<>();
+                            String type = null;
+
+                            final Map<LocalDate, Optional<AbsencePeriod.Record>> absencePeriodRecordsByDate = absencePeriod.recordsByDate();
+                            final DateRange absencePeriodDateRange = absencePeriod.getDateRange();
+
+                            LocalDate ddddate = absencePeriodDateRange.getEndDate();
+                            // maximum cols could be from 0 to endDate.
+                            // multiply with 2 since a day is constructed with morning and noon.
+                            // add 1 since x.until(x) is 0, however, 1 is required due to inclusiveness.
+                            int publicHolidayCol = 2 * (1 + Math.toIntExact(absencePeriodDateRange.getStartDate().until(ddddate, DAYS)));
+                            while (ddddate.isEqual(absencePeriodDateRange.getStartDate()) || ddddate.isAfter(absencePeriodDateRange.getStartDate())) {
+
+                                final PublicHoliday publicHoliday = publicHolidayByDate.get(ddddate);
+                                if (publicHoliday != null) {
+                                    ddddate.until(absencePeriodDateRange.getEndDate());
+                                    if (publicHoliday.isNoon()) {
+                                        publicHolidayCols.add(publicHolidayCol);
+                                    } else if (publicHoliday.isMorning()) {
+                                        publicHolidayCols.add(publicHolidayCol - 1);
+                                    } else if (publicHoliday.isFull()) {
+                                        publicHolidayCols.add(publicHolidayCol);
+                                        publicHolidayCols.add(publicHolidayCol - 1);
+                                    }
+                                }
+                                publicHolidayCol -= 2;
+
+                                final Optional<AbsencePeriod.Record> maybeRecord = absencePeriodRecordsByDate.get(ddddate);
+                                if (maybeRecord.isPresent()) {
+                                    final AbsencePeriod.Record record = maybeRecord.get();
+
+                                    isFirst = record.getDate().isEqual(absencePeriodDateRange.getStartDate());
+
+                                    if (isNoWorkdayRecord(record)) {
+                                        if (type != null) {
+                                            final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(colspan, type, isFirst, isLast, isFirst);
+                                            // reverse list since we're building it backwards from end to start.
+                                            Collections.reverse(publicHolidayCols);
+                                            cell.setPublicHolidayCols(publicHolidayCols);
+                                            publicHolidayCols = new ArrayList<>();
+
+                                            cellDtos.add(cell);
+                                            type = null;
+                                        }
+
+                                        final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(2, "no-workday");
+                                        cell.setPublicHolidayCols(publicHolidayCols);
+                                        publicHolidayCols = new ArrayList<>();
+
+                                        cellDtos.add(cell);
+                                        colspan = 0;
+                                        isLast = false;
+                                    } else {
+                                        // absence day (sickNote or applicationForLeave)
+                                        //
+                                        type = record.getMorning().map(AbsenceOverviewViewController::recordInfoToCss).orElseThrow();
+                                        colspan += 2;
+                                        if (isFirst) {
+                                            final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(colspan, type, true, isLast, true);
+                                            cell.setPublicHolidayCols(publicHolidayCols);
+                                            publicHolidayCols = new ArrayList<>();
+
+                                            cellDtos.add(cell);
+                                        }
+                                    }
+                                } else {
+                                    // gap in an absencePeriod -> public holiday.
+                                    colspan += 2;
+                                }
+
+                                ddddate = ddddate.minusDays(1);
+                            }
+
+                            Collections.reverse(cellDtos);
+                            for (AbsenceOverviewPersonRowCellDto cellDto : cellDtos) {
+                                overviewMonthPersonDto.getDays().add(cellDto);
+                            }
+
+                            personNextDateCursor.put(person, absenceRecords.get(absenceRecords.size() - 1).getDate().plusDays(1));
+                        }
+
+                    } else {
+                        // morning: sickNote OR applicationForLeave
+                        // noon: applicationForLeave OR sickNote
+
+                        final AbsencePeriod firstAbsencePeriod = absencePeriodsStartingAtDate.get(0);
+                        final AbsencePeriod secondAbsencePeriod = absencePeriodsStartingAtDate.get(1);
+
+                        final AbsencePeriod.RecordInfo morning;
+                        final AbsencePeriod.RecordInfo noon;
+
+                        if (firstAbsencePeriod.getAbsenceRecords().get(0).getMorning().isPresent()) {
+                            morning = firstAbsencePeriod.getAbsenceRecords().get(0).getMorning().orElseThrow();
+                            noon = secondAbsencePeriod.getAbsenceRecords().get(0).getNoon().orElseThrow();
+                        } else {
+                            morning = secondAbsencePeriod.getAbsenceRecords().get(0).getMorning().orElseThrow();
+                            noon = firstAbsencePeriod.getAbsenceRecords().get(0).getNoon().orElseThrow();
+                        }
+
+                        overviewMonthPersonDto.getDays().add(new AbsenceOverviewPersonRowCellDto(1, recordInfoToCss(morning), true, false, true));
+                        overviewMonthPersonDto.getDays().add(new AbsenceOverviewPersonRowCellDto(1, recordInfoToCss(noon), false, true, true));
+
+                        personNextDateCursor.put(person, date.plusDays(1));
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>(monthsByNr.values());
     }
 
-    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
-        return workingTimeList
-            .stream()
-            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
-            .findFirst()
-            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
-            .orElse(false);
+    private static String recordInfoToCss(AbsencePeriod.RecordInfo recordInfo) {
+        final AbsencePeriod.Record.AbsenceType type = recordInfo.getType();
+        switch (type) {
+            case VACATION:
+                final AbsencePeriod.Record.AbsenceStatus status = recordInfo.getStatus();
+                return status.equals(AbsencePeriod.Record.AbsenceStatus.ALLOWED) ? "vacation-approved" : "vacation-waiting";
+            case SICK_NOTE:
+                return "sick-note";
+            case NO_WORKDAY:
+                return "no-workday";
+        }
+        return "";
     }
+
 
     private Map<LocalDate, PublicHoliday> getPublicHolidaysOfPerson(DateRange dateRange, Person person) {
         return workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
@@ -360,7 +418,7 @@ public class AbsenceOverviewViewController {
         final String email = person.getEmail();
         final String gravatarUrl = person.getGravatarURL();
 
-        return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>());
+        return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>(), new ArrayList<>());
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, List<Person> members, PublicHoliday publicHoliday) {
@@ -390,19 +448,29 @@ public class AbsenceOverviewViewController {
             } else {
                 builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, showAllInformation);
             }
+            if (isNoWorkdayRecord(absenceRecord)) {
+                builder = builder.noWorkday();
+            }
         }
 
         return builder;
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation) {
-        final AbsencePeriod.AbsenceType morningAbsenceType = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::getType).orElse(null);
-        final AbsencePeriod.AbsenceType noonAbsenceType = absenceRecord.getNoon().map(AbsencePeriod.RecordInfo::getType).orElse(null);
+    private static boolean isNoWorkdayRecord(AbsencePeriod.Record record) {
+        // no-workday is only possible for a full day currently.
+        boolean morning = record.getMorning().map(recordInfo -> recordInfo instanceof AbsencePeriod.RecordMorningNoWorkday).orElse(false);
+        boolean noon = record.getNoon().map(recordInfo -> recordInfo instanceof AbsencePeriod.RecordNoonNoWorkday).orElse(false);
+        return morning && noon;
+    }
 
-        if (AbsencePeriod.AbsenceType.SICK.equals(morningAbsenceType)) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation) {
+        final AbsencePeriod.Record.AbsenceType morningAbsenceType = absenceRecord.getMorning().map(AbsencePeriod.RecordInfo::getType).orElse(null);
+        final AbsencePeriod.Record.AbsenceType noonAbsenceType = absenceRecord.getNoon().map(AbsencePeriod.RecordInfo::getType).orElse(null);
+
+        if (AbsencePeriod.Record.AbsenceType.SICK_NOTE.equals(morningAbsenceType)) {
             return showAllInformation ? builder.sickNoteMorning() : builder.absenceMorning();
         }
-        if (AbsencePeriod.AbsenceType.SICK.equals(noonAbsenceType)) {
+        if (AbsencePeriod.Record.AbsenceType.SICK_NOTE.equals(noonAbsenceType)) {
             return showAllInformation ? builder.sickNoteNoon() : builder.absenceNoon();
         }
 
@@ -426,11 +494,11 @@ public class AbsenceOverviewViewController {
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation) {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.Record.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.Record.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
 
-        final boolean sickMorning = morningType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
-        final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
+        final boolean sickMorning = morningType.map(AbsencePeriod.Record.AbsenceType.SICK_NOTE::equals).orElse(false);
+        final boolean sickNoon = noonType.map(AbsencePeriod.Record.AbsenceType.SICK_NOTE::equals).orElse(false);
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull) {

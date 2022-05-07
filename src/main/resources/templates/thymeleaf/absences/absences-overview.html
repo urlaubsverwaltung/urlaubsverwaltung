@@ -155,6 +155,7 @@
         <th:block th:text="${month.nameOfMonth}" />
         <span class="hidden print:tw-inline" th:text="${selectedYear}" />
       </h2>
+
       <table
         id="absence-table"
         class="vacationOverview-table tw-text-sm tw-table-fixed"
@@ -229,33 +230,38 @@
               th:colspan="${absence.colspan}"
             >
               <div
-                class="tw-bg-calendar tw-h-full tw-flex tw-items-center tw-justify-center"
-                th:style="${'width: clamp(' + (absence.colspan * 1.2) + 'rem, ' + (absence.colspan * 1.5) + 'vw, ' + (absence.colspan * 1.55) + 'rem)'}"
+                class="tw-relative tw-bg-calendar tw-h-full tw-flex tw-items-center tw-justify-center"
+                th:style="${'isolation: isolate; width: clamp(' + (absence.colspan * 1.2) + 'rem, ' + (absence.colspan * 1.5) + 'vw, ' + (absence.colspan * 1.55) + 'rem)'}"
               >
                 <div
-                  th:if="${not absence.workday}"
-                  class="tw-flex-1 tw-flex tw-items-center tw-justify-center"
+                  th:each="publicHolidayCol : ${absence.publicHolidayCols}"
+                  th:with="w=${100/absence.colspan}"
+                  class="public-holiday tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap"
+                  style="z-index:0; position:absolute; top:0; bottom:0;"
+                  th:styleappend="|left:${(publicHolidayCol*w)-w}%; width: ${w}%|"
                 >
-                  <svg th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px tw-stroke-2')"></svg>
-                </div>
-                <div
-                  th:if="${#strings.equals(absence.type, 'Erholungsurlaub')}"
-                  class="tw-overflow-hidden tw-px-2 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
-                  th:classappend="|${absence.roundedLeft ? 'tw-rounded-l-md' : ''}${absence.roundedRight ? ' tw-rounded-r-md' : ''}|"
-                  style="height: 55%; color: black; background-color: #ffcc00;"
-                >
-                  <span th:classappend="|${absence.showText ? '' : 'tw-sr-only'}|">
-                    Erholungsurlaub
+                  <span class="tw-sr-only">
+                    TODO_Feiertag
                   </span>
                 </div>
                 <div
-                  th:if="${#strings.equals(absence.type, 'Krank')}"
-                  class="tw-overflow-hidden tw-px-2 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
-                  th:classappend="|${absence.roundedLeft ? 'tw-rounded-l-md' : ''}${absence.roundedRight ? ' tw-rounded-r-md' : ''}|"
-                  style="height: 55%; color: black; background-color: #a03333;"
+                  th:if="${#strings.equals(absence.type, 'no-workday')}"
+                  class="tw-flex-1 tw-flex tw-items-center tw-justify-center"
+                  style="z-index: 1;"
                 >
-                  <span th:classappend="|${absence.showText ? '' : 'tw-sr-only'}|">
-                    Krank
+                  <svg th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px tw-stroke-2')"></svg>
+                  <span class="tw-sr-only" th:text="${#messages.msg('absences.overview.no-workday')}">
+                    Kein Arbeitstag
+                  </span>
+                </div>
+                <div
+                  th:if="${not #strings.equals(absence.type, 'no-workday') and not #strings.isEmpty(absence.type)}"
+                  class="tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
+                  th:classappend="|${absence.type} ${absence.roundedLeft ? 'tw-rounded-l-md' : ''}${absence.roundedRight ? ' tw-rounded-r-md' : ''}|"
+                  style="z-index: 1; height: 55%;"
+                >
+                  <span th:classappend="|${absence.showText ? '' : 'tw-sr-only'}|" th:text="${#messages.msg('absences.overview.absence.' + absence.type)}">
+                    Abwesenheit
                   </span>
                 </div>
               </div>

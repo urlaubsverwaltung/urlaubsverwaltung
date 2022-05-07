@@ -186,13 +186,13 @@ public class AbsenceApiController {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.Record.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.Record.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
 
         final boolean publicHolidayMorning = publicHoliday != null && publicHoliday.isMorning();
         final boolean publicHolidayNoon = publicHoliday != null && publicHoliday.isNoon();
-        final boolean sickMorning = morningType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
-        final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
+        final boolean sickMorning = morningType.map(AbsencePeriod.Record.AbsenceType.SICK_NOTE::equals).orElse(false);
+        final boolean sickNoon = noonType.map(AbsencePeriod.Record.AbsenceType.SICK_NOTE::equals).orElse(false);
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull || (sickMorning && publicHolidayNoon) || (sickNoon && publicHolidayMorning)) {
@@ -213,13 +213,13 @@ public class AbsenceApiController {
 
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
-        final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
-        final Optional<AbsencePeriod.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.Record.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
+        final Optional<AbsencePeriod.Record.AbsenceType> noonType = noon.map(AbsencePeriod.RecordInfo::getType);
 
         final boolean publicHolidayMorning = publicHoliday != null && publicHoliday.isMorning();
         final boolean publicHolidayNoon = publicHoliday != null && publicHoliday.isNoon();
-        final boolean vacationMorning = morningType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
-        final boolean vacationNoon = noonType.map(AbsencePeriod.AbsenceType.VACATION::equals).orElse(false);
+        final boolean vacationMorning = morningType.map(AbsencePeriod.Record.AbsenceType.VACATION::equals).orElse(false);
+        final boolean vacationNoon = noonType.map(AbsencePeriod.Record.AbsenceType.VACATION::equals).orElse(false);
         final boolean vacationFull = vacationMorning && vacationNoon;
 
         if (vacationFull || (vacationMorning && publicHolidayNoon) || (vacationNoon && publicHolidayMorning)) {
@@ -252,11 +252,11 @@ public class AbsenceApiController {
         }
     }
 
-    private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
+    private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.Record.AbsenceType absenceType) {
         switch (absenceType) {
             case VACATION:
                 return Optional.of(VACATION);
-            case SICK:
+            case SICK_NOTE:
                 return Optional.of(SICK_NOTE);
             default:
                 return Optional.empty();

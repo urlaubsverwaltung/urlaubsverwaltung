@@ -2,22 +2,20 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 import java.util.List;
 
-public class AbsenceOverviewMonthPersonDto {
+public class AbsenceTableRowDto {
 
     private final String firstName;
     private final String lastName;
     private final String email;
     private final String gravatarUrl;
-    private final List<AbsenceOverviewPersonRowCellDto> days;
-    private final List<AbsenceOverviewPersonPublicHolidayCellDto> publicHolidays;
+    private final List<AbsenceTableCellDto> days;
 
-    AbsenceOverviewMonthPersonDto(String firstName, String lastName, String email, String gravatarUrl, List<AbsenceOverviewPersonRowCellDto> days, List<AbsenceOverviewPersonPublicHolidayCellDto> publicHolidays) {
+    AbsenceTableRowDto(String firstName, String lastName, String email, String gravatarUrl, List<AbsenceTableCellDto> days) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.gravatarUrl = gravatarUrl;
         this.days = days;
-        this.publicHolidays = publicHolidays;
     }
 
     public String getFirstName() {
@@ -36,11 +34,7 @@ public class AbsenceOverviewMonthPersonDto {
         return gravatarUrl;
     }
 
-    public List<AbsenceOverviewPersonRowCellDto> getDays() {
+    public List<AbsenceTableCellDto> getDays() {
         return days;
-    }
-
-    public List<AbsenceOverviewPersonPublicHolidayCellDto> getPublicHolidays() {
-        return publicHolidays;
     }
 }

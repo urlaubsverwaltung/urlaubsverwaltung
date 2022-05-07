@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface AbsenceService {
 
@@ -12,10 +13,12 @@ public interface AbsenceService {
      * "Open" means it has one of the status ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED
      *
      * @param person {@link Person} to get the absences for
-     * @param start start of the date range (inclusive)
-     * @param end end of the date range (inclusive)
+     * @param start  start of the date range (inclusive)
+     * @param end    end of the date range (inclusive)
      * @return list of all matching absences
+     * @deprecated please use the {@link #getOpenAbsencesForPersons}
      */
+    @Deprecated(forRemoval = true, since = "4.38.0")
     List<AbsencePeriod> getOpenAbsences(Person person, LocalDate start, LocalDate end);
 
     /**
@@ -23,11 +26,23 @@ public interface AbsenceService {
      * "Open" means it has one of the status ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED
      *
      * @param persons list of {@link Person}s to get the absences for
-     * @param start start of the date range (inclusive)
-     * @param end end of the date range (inclusive)
+     * @param start   start of the date range (inclusive)
+     * @param end     end of the date range (inclusive)
      * @return list of all matching absences
+     * @deprecated please use the {@link #getOpenAbsencesForPersons}
      */
+    @Deprecated(forRemoval = true)
     List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end);
+
+    /**
+     * TODO
+     *
+     * @param persons
+     * @param start
+     * @param end
+     * @return
+     */
+    Map<Person, Map<LocalDate, List<AbsencePeriod>>> getOpenAbsencesForPersons(List<Person> persons, LocalDate start, LocalDate end);
 
     /**
      * Get absences from a list of persons

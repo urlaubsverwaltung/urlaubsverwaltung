@@ -1,21 +1,32 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AbsenceOverviewPersonRowCellDto {
 
     private final int colspan;
     private final String type;
-    private final boolean workday;
     private final boolean roundedLeft;
     private final boolean roundedRight;
     private final boolean showText;
+    private List<Integer> publicHolidayCols;
 
-    public AbsenceOverviewPersonRowCellDto(int colspan, String type, boolean workday, boolean roundedLeft, boolean roundedRight, boolean showText) {
+    public AbsenceOverviewPersonRowCellDto() {
+        this(1, "");
+    }
+
+    public AbsenceOverviewPersonRowCellDto(int colspan, String type) {
+        this(colspan, type, false, false, false);
+    }
+
+    public AbsenceOverviewPersonRowCellDto(int colspan, String type, boolean roundedLeft, boolean roundedRight, boolean showText) {
         this.colspan = colspan;
         this.type = type;
-        this.workday = workday;
         this.roundedLeft = roundedLeft;
         this.roundedRight = roundedRight;
         this.showText = showText;
+        this.publicHolidayCols = new ArrayList<>();
     }
 
     public int getColspan() {
@@ -24,10 +35,6 @@ public class AbsenceOverviewPersonRowCellDto {
 
     public String getType() {
         return type;
-    }
-
-    public boolean isWorkday() {
-        return workday;
     }
 
     public boolean isRoundedLeft() {
@@ -40,5 +47,13 @@ public class AbsenceOverviewPersonRowCellDto {
 
     public boolean isShowText() {
         return showText;
+    }
+
+    public List<Integer> getPublicHolidayCols() {
+        return publicHolidayCols;
+    }
+
+    public void setPublicHolidayCols(List<Integer> publicHolidayCols) {
+        this.publicHolidayCols = publicHolidayCols;
     }
 }
