@@ -239,6 +239,9 @@
                   class="public-holiday tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap"
                   style="z-index:0; position:absolute; top:0; bottom:0;"
                   th:styleappend="|left:${(publicHolidayCol*w)-w}%; width: ${w}%|"
+                  th:data-toggle="tooltip"
+                  th:data-title="TODO_Feiertag"
+                  th:data-placement="top"
                 >
                   <span class="tw-sr-only">
                     TODO_Feiertag
@@ -248,6 +251,9 @@
                   th:if="${#strings.equals(absence.type, 'no-workday')}"
                   class="tw-flex-1 tw-flex tw-items-center tw-justify-center"
                   style="z-index: 1;"
+                  th:data-toggle="tooltip"
+                  th:data-title="${#messages.msg('absences.overview.no-workday')}"
+                  th:data-placement="top"
                 >
                   <svg th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px tw-stroke-2')"></svg>
                   <span class="tw-sr-only" th:text="${#messages.msg('absences.overview.no-workday')}">
@@ -259,6 +265,9 @@
                   class="tw-overflow-hidden tw-px-1 tw-py-0.5 tw-text-ellipsis tw-text-left tw-whitespace-nowrap tw-w-full"
                   th:classappend="|${absence.type} ${absence.roundedLeft ? 'tw-rounded-l-md' : ''}${absence.roundedRight ? ' tw-rounded-r-md' : ''}|"
                   style="z-index: 1; height: 55%;"
+                  th:data-toggle="tooltip"
+                  th:data-title="${#messages.msg('absences.overview.absence.' + absence.type)}"
+                  th:data-placement="top"
                 >
                   <span th:classappend="|${absence.showText ? '' : 'tw-sr-only'}|" th:text="${#messages.msg('absences.overview.absence.' + absence.type)}">
                     Abwesenheit
