@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,6 +19,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -55,16 +59,45 @@ class AccountInteractionServiceImplTest {
         sut = new AccountInteractionServiceImpl(accountProperties, accountService, vacationDaysService, settingsService, clock);
     }
 
-    @Test
-    void testDefaultAccountCreation() {
+    static Stream<Arguments> accountCreationDateAndDays() {
+        return Stream.of(
+            Arguments.of("2022-01-12T00:00:00.00Z", "30", "30"),
+            Arguments.of("2022-02-16T00:00:00.00Z", "30", "28"),
+            Arguments.of("2022-03-13T00:00:00.00Z", "30", "25"),
+            Arguments.of("2022-04-20T00:00:00.00Z", "30", "23"),
+            Arguments.of("2022-05-01T00:00:00.00Z", "30", "20"),
+            Arguments.of("2022-06-03T00:00:00.00Z", "30", "18"),
+            Arguments.of("2022-07-14T00:00:00.00Z", "30", "15"),
+            Arguments.of("2022-08-17T00:00:00.00Z", "30", "13"),
+            Arguments.of("2022-09-12T00:00:00.00Z", "30", "10"),
+            Arguments.of("2022-10-11T00:00:00.00Z", "30", "8"),
+            Arguments.of("2022-11-01T00:00:00.00Z", "30", "5"),
+            Arguments.of("2022-12-31T00:00:00.00Z", "30", "3"),
+            Arguments.of("2022-01-12T00:00:00.00Z", "24", "24"),
+            Arguments.of("2022-02-16T00:00:00.00Z", "24", "22"),
+            Arguments.of("2022-03-13T00:00:00.00Z", "24", "20"),
+            Arguments.of("2022-04-20T00:00:00.00Z", "24", "18"),
+            Arguments.of("2022-05-01T00:00:00.00Z", "24", "16"),
+            Arguments.of("2022-06-03T00:00:00.00Z", "24", "14"),
+            Arguments.of("2022-07-14T00:00:00.00Z", "24", "12"),
+            Arguments.of("2022-08-17T00:00:00.00Z", "24", "10"),
+            Arguments.of("2022-09-12T00:00:00.00Z", "24", "8"),
+            Arguments.of("2022-10-11T00:00:00.00Z", "24", "6"),
+            Arguments.of("2022-11-01T00:00:00.00Z", "24", "4"),
+            Arguments.of("2022-12-31T00:00:00.00Z", "24", "2")
+        );
+    }
+    @ParameterizedTest
+    @MethodSource("accountCreationDateAndDays")
+    void testDefaultAccountCreation(String creationDate, int annualVacationDays, int actualVacationDays) {
 
-        final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), ZoneId.of("UTC"));
+        final Clock fixedClock = Clock.fixed(Instant.parse(creationDate), ZoneId.of("UTC"));
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(accountProperties.getDefaultVacationDays()).thenReturn(24);
+        when(accountProperties.getDefaultVacationDays()).thenReturn(annualVacationDays);
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         sut.createDefaultAccount(person);
@@ -78,8 +111,8 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getPerson()).isEqualTo(person);
         assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
         assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
-        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(24));
-        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(8));
+        assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(annualVacationDays));
+        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(actualVacationDays));
         assertThat(account.getComment()).isEmpty();
         assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
@@ -112,7 +145,7 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidFrom()).isEqualTo(now.with(firstDayOfYear()));
         assertThat(account.getValidTo()).isEqualTo(now.with(lastDayOfYear()));
         assertThat(account.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
-        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(10));
+        assertThat(account.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(13));
         assertThat(account.getComment()).isEmpty();
         assertThat(account.getYear()).isEqualTo(now.getYear());
         assertThat(account.getRemainingVacationDays()).isEqualTo(ZERO);
