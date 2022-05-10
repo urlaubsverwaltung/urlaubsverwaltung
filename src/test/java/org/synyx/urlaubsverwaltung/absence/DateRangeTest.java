@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -169,6 +170,42 @@ class DateRangeTest {
     void dateRangeIsNotEmpty() {
         final boolean isEmpty = new DateRange(LocalDate.MIN, LocalDate.MAX).isEmpty();
         assertThat(isEmpty).isFalse();
+    }
+
+    static Stream<Arguments> dateRangesToSplitByMonth() {
+        return Stream.of(
+            Arguments.of("2020-10-10", "2020-10-15"),
+            Arguments.of("2020-10-10", "2020-11-10"),
+            Arguments.of("2020-10-10", "2021-01-10")
+        );
+    }
+
+    @Test
+    void splitByMonthWithLessThanMonthReturnSameDateRange() {
+        final DateRange dateRange = new DateRange(LocalDate.parse("2020-10-10"), LocalDate.parse("2020-10-15"));
+        final List<DateRange> dateRanges = dateRange.splitByMonth();
+        assertThat(dateRanges).containsExactly(dateRange);
+    }
+
+    @Test
+    void splitByMonthWithMoreThanOneMonthReturnSplittedDateRages() {
+        final DateRange dateRange = new DateRange(LocalDate.parse("2020-10-10"), LocalDate.parse("2020-11-10"));
+        final List<DateRange> dateRanges = dateRange.splitByMonth();
+        assertThat(dateRanges).containsExactlyInAnyOrder(
+                new DateRange(LocalDate.parse("2020-10-10"), LocalDate.parse("2020-10-31")),
+                new DateRange(LocalDate.parse("2020-11-01"), LocalDate.parse("2020-11-10")));
+    }
+
+    @Test
+    void splitByMonthWithMoreThanOneYearMonthReturnSplittedDateRages() {
+        final DateRange dateRange = new DateRange(LocalDate.parse("2020-10-10"), LocalDate.parse("2021-01-10"));
+        final List<DateRange> dateRanges = dateRange.splitByMonth();
+        assertThat(dateRanges).containsExactlyInAnyOrder(
+                new DateRange(LocalDate.parse("2020-10-10"), LocalDate.parse("2020-10-31")),
+                new DateRange(LocalDate.parse("2020-11-01"), LocalDate.parse("2020-11-30")),
+                new DateRange(LocalDate.parse("2020-12-01"), LocalDate.parse("2020-12-31")),
+                new DateRange(LocalDate.parse("2021-01-01"), LocalDate.parse("2021-01-10"))
+            );
     }
 
     @Test

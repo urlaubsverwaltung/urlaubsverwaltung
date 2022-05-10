@@ -3,7 +3,10 @@ package org.synyx.urlaubsverwaltung.absence;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -136,6 +139,26 @@ public final class DateRange implements Iterable<LocalDate> {
 
     public Stream<LocalDate> stream() {
         return StreamSupport.stream(spliterator(), false);
+    }
+
+    public List<DateRange> splitByMonth() {
+        final List<DateRange> splitByMonth = new ArrayList<>();
+
+        LocalDate startOfSplittedDateRage = this.getStartDate();
+        final LocalDate endOfDateRage = this.getEndDate();
+
+        while (startOfSplittedDateRage.isBefore(endOfDateRage)) {
+            final LocalDate endOfMonth = startOfSplittedDateRage.with(TemporalAdjusters.lastDayOfMonth());
+            final LocalDate startOfNewMonth = endOfMonth.plusDays(1);
+            if (startOfNewMonth.isBefore(endOfDateRage)) {
+                splitByMonth.add(new DateRange(startOfSplittedDateRage, endOfMonth));
+            } else {
+                splitByMonth.add(new DateRange(startOfSplittedDateRage, endOfDateRage));
+            }
+            startOfSplittedDateRage = endOfMonth.plusDays(1);
+        }
+
+        return splitByMonth;
     }
 
     private static final class DateRangeIterator implements Iterator<LocalDate> {
