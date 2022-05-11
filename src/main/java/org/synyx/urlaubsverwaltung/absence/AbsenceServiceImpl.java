@@ -4,6 +4,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
@@ -37,6 +38,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVE
 
 
 @Service
+@Transactional
 public class AbsenceServiceImpl implements AbsenceService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -61,11 +63,13 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AbsencePeriod> getOpenAbsences(Person person, LocalDate start, LocalDate end) {
         return getOpenAbsences(List.of(person), start, end);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end) {
 
         final DateRange askedDateRange = new DateRange(start, end);
