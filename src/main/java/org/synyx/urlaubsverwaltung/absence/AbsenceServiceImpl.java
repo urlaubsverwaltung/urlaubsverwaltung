@@ -185,7 +185,6 @@ public class AbsenceServiceImpl implements AbsenceService {
         absenceTuples.addAll(applicationsByPerson.getOrDefault(person, List.of()).stream().map(AbsenceTuple::new).collect(toList()));
         absenceTuples.addAll(sickNotesByPerson.getOrDefault(person, List.of()).stream().map(AbsenceTuple::new).collect(toList()));
         absenceTuples.sort(comparing(AbsenceTuple::getStartDate).thenComparing(AbsenceTuple::getDayLength));
-//        absenceTuples.sort(comparing(AbsenceTuple::getStartDate));
         return absenceTuples.stream().collect(groupingBy(AbsenceTuple::getStartDate));
     }
 
