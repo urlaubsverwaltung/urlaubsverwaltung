@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -86,8 +87,12 @@ public class DemoDataCreationService {
         final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, NO_PASSWORD_HASH,  "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", USER);
         personDataProvider.createTestPerson("heinz", personnelNumber++, NO_PASSWORD_HASH,  "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud", INACTIVE);
 
+        final List<Person> additionalActivePersons = new ArrayList<>();
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, NO_PASSWORD_HASH, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", USER));
+            .forEach(i -> {
+                final Person additionalActivePerson = personDataProvider.createTestPerson("horst-active-" + i, i + 42, NO_PASSWORD_HASH, "Horst", "Aktiv", String.format("hdieter-active-%d@urlaubsverwaltung.cloud", i), USER);
+                additionalActivePersons.add(additionalActivePerson);
+            });
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
             .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, i + 21, NO_PASSWORD_HASH, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud", INACTIVE));
@@ -106,6 +111,8 @@ public class DemoDataCreationService {
 
         final List<Person> bossMembers = asList(boss, office);
         departmentDataProvider.createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen", bossMembers, emptyList(), emptyList());
+
+        departmentDataProvider.createTestDepartment("Big Gang", "Haifischbecken", additionalActivePersons, emptyList(), emptyList());
 
         // Applications for leave and sick notes
         createDemoData(user, boss, office);

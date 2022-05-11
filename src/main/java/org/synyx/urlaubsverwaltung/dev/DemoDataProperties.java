@@ -18,7 +18,7 @@ public class DemoDataProperties {
     /**
      * Number of additional active users to create
      */
-    private int additionalActiveUser = 0;
+    private int additionalActiveUser = 100;
 
     public boolean isCreate() {
         return create;
