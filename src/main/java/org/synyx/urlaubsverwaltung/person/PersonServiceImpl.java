@@ -39,7 +39,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 /**
  * Implementation for {@link PersonService}.
  */
-@Service("personService")
+@Service
+@Transactional
 class PersonServiceImpl implements PersonService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -139,21 +140,25 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Person> getPersonByID(Long id) {
         return personRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Person> getPersonByUsername(String username) {
         return personRepository.findByUsername(username);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Person> getPersonByMailAddress(String mailAddress) {
         return personRepository.findByEmail(mailAddress);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Person> getActivePersons() {
         return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
@@ -168,6 +173,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Person> getActivePersonsByRole(final Role role) {
         return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
     }
@@ -178,6 +184,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery) {
         final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
@@ -186,6 +193,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Person getSignedInUser() {
 
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -230,6 +238,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int numberOfActivePersons() {
         return personRepository.countByPermissionsNotContaining(INACTIVE);
     }

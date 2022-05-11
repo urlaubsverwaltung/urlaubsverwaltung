@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static jakarta.persistence.EnumType.STRING;
-import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
@@ -41,11 +40,11 @@ public class Person {
     private String firstName;
     private String email;
 
-    @ElementCollection(fetch = EAGER)
+    @ElementCollection
     @Enumerated(STRING)
     private Collection<Role> permissions;
 
-    @ElementCollection(fetch = EAGER)
+    @ElementCollection
     @Enumerated(STRING)
     private Collection<MailNotification> notifications;
 
