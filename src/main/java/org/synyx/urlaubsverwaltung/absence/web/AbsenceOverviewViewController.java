@@ -165,7 +165,6 @@ public class AbsenceOverviewViewController {
                 publicHolidaysOfAllPersons.put(person, publicHolidaysOfPerson);
             }
 
-
             for (LocalDate date : dateRangeSplitByMonth) {
 
                 final AbsenceOverviewMonthDto allPersonsMonthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
@@ -249,7 +248,7 @@ public class AbsenceOverviewViewController {
                                     overviewMonthPersonDto.getDays().add(noon);
                                 } else {
                                     final String type = recordInfoToCss(record.getMorning().orElseThrow());
-                                    final AbsenceOverviewPersonRowCellDto morningAndNoon = new AbsenceOverviewPersonRowCellDto(2, type);
+                                    final AbsenceOverviewPersonRowCellDto morningAndNoon = new AbsenceOverviewPersonRowCellDto(2, type, absencePeriod.isIncludesBeginning(), absencePeriod.isIncludesEnd(), true);
                                     final PublicHoliday publicHoliday = publicHolidayByDate.get(date);
                                     if (publicHoliday != null) {
                                         if (publicHoliday.isMorning()) {
@@ -302,10 +301,12 @@ public class AbsenceOverviewViewController {
                                         final AbsencePeriod.Record record = maybeRecord.get();
 
                                         isFirst = record.getDate().isEqual(absencePeriodDateRange.getStartDate());
+                                        final boolean isRoundedLeft = isFirst && absencePeriod.isIncludesBeginning();
+                                        final boolean isRoundedRight = isLast && absencePeriod.isIncludesEnd();
 
                                         if (isNoWorkdayRecord(record)) {
                                             if (type != null) {
-                                                final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(colspan, type, isFirst, isLast, isFirst);
+                                                final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(colspan, type, isRoundedLeft, isRoundedRight, isFirst);
                                                 // reverse list since we're building it backwards from end to start.
                                                 Collections.reverse(publicHolidayCols);
                                                 cell.setPublicHolidayCols(publicHolidayCols);
@@ -328,7 +329,7 @@ public class AbsenceOverviewViewController {
                                             type = record.getMorning().map(AbsenceOverviewViewController::recordInfoToCss).orElseThrow();
                                             colspan += 2;
                                             if (isFirst) {
-                                                final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(colspan, type, true, isLast, true);
+                                                final AbsenceOverviewPersonRowCellDto cell = new AbsenceOverviewPersonRowCellDto(colspan, type, isRoundedLeft, isRoundedRight, true);
                                                 cell.setPublicHolidayCols(publicHolidayCols);
                                                 publicHolidayCols = new ArrayList<>();
 

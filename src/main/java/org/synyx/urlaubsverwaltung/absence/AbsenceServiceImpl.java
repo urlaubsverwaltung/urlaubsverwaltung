@@ -127,17 +127,12 @@ public class AbsenceServiceImpl implements AbsenceService {
                         }
                         // next date to check absences for
                         personNextDateCursor.put(person, askedDateCursor.plusDays(1));
-                    }
-                    else {
+                    } else {
                         // current date has at least on absence
                         //
                         for (AbsenceTuple absenceTuple : absenceTuples) {
-                            // absence date range could overlap the requested date range
-                            final LocalDate startDate = absenceTuple.getStartDate().isBefore(askedDateRange.getStartDate()) ? askedDateRange.getStartDate() : absenceTuple.startDate;
-                            final LocalDate endDate = absenceTuple.getEndDate().isAfter(askedDateRange.getEndDate()) ? askedDateRange.getEndDate() : absenceTuple.endDate;
-
                             final List<AbsencePeriod.Record> records = new ArrayList<>();
-                            for (LocalDate absenceDateCursor : new DateRange(startDate, endDate)) {
+                            for (LocalDate absenceDateCursor : new DateRange(absenceTuple.getStartDate(), absenceTuple.getEndDate())) {
 
                                 final WorkingTime workingTime = workingTimeByDate.get(absenceDateCursor);
                                 final List<WorkingTime> personsWorkingTimeDateList = List.of(workingTime);
@@ -163,11 +158,11 @@ public class AbsenceServiceImpl implements AbsenceService {
                             }
 
                             // there could be applicationForLeave on morning and sickNote on noon.
-                            final List<AbsencePeriod> absencePeriodsForStartDate = absencePeriodsByDate.computeIfAbsent(startDate, localDate -> new ArrayList<>());
-                            absencePeriodsForStartDate.add(new AbsencePeriod(records));
+                            final List<AbsencePeriod> absencePeriodsForStartDate = absencePeriodsByDate.computeIfAbsent(absenceTuple.getStartDate(), localDate -> new ArrayList<>());
+                            absencePeriodsForStartDate.add(new AbsencePeriod(absenceTuple.includesBeginning(), absenceTuple.includesEnd(), records));
 
                             // next date to check absences for
-                            personNextDateCursor.put(person, endDate.plusDays(1));
+                            personNextDateCursor.put(person, absenceTuple.getEndDate().plusDays(1));
                         }
                     }
                 } else {
@@ -234,6 +229,28 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         public DayLength getDayLength() {
             return dayLength;
+        }
+
+        public boolean includesBeginning() {
+            boolean includesBeginning = true;
+            if (sickNote != null) {
+                includesBeginning = sickNote.getStartDate().equals(this.startDate);
+            }
+            if (application != null) {
+                includesBeginning &= application.getStartDate().equals(this.startDate);
+            }
+            return includesBeginning;
+        }
+
+        public boolean includesEnd() {
+            boolean includesEnd = true;
+            if (sickNote != null) {
+                includesEnd = sickNote.getEndDate().equals(this.endDate);
+            }
+            if (application != null) {
+                includesEnd &= application.getEndDate().equals(this.endDate);
+            }
+            return includesEnd;
         }
     }
 

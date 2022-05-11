@@ -23,9 +23,18 @@ import java.util.Optional;
  */
 public class AbsencePeriod {
 
+    private final boolean includesBeginning;
+    private final boolean includesEnd;
+
     private final List<AbsencePeriod.Record> absenceRecords;
 
     public AbsencePeriod(List<Record> absenceRecords) {
+        this(true, true, absenceRecords);
+    }
+
+    public AbsencePeriod(boolean includesBeginning, boolean includesEnd, List<Record> absenceRecords) {
+        this.includesBeginning = includesBeginning;
+        this.includesEnd = includesEnd;
         this.absenceRecords = absenceRecords;
     }
 
@@ -67,6 +76,14 @@ public class AbsencePeriod {
         }
 
         return recordsByDate;
+    }
+
+    public boolean isIncludesBeginning() {
+        return includesBeginning;
+    }
+
+    public boolean isIncludesEnd() {
+        return includesEnd;
     }
 
     public List<AbsencePeriod.Record> getAbsenceRecords() {
