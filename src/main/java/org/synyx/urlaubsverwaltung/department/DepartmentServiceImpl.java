@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -52,6 +53,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  * Implementation for {@link DepartmentService}.
  */
 @Service
+@Transactional
 class DepartmentServiceImpl implements DepartmentService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
@@ -153,6 +155,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Department> getDepartmentById(Long departmentId) {
         return departmentRepository.findById(departmentId).map(this::mapToDepartment);
     }
@@ -271,6 +274,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll().stream()
             .map(this::mapToDepartment)
@@ -279,6 +283,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Department> getAssignedDepartmentsOfMember(Person member) {
         return departmentRepository.findByMembersPerson(member).stream()
             .map(this::mapToDepartment)
@@ -286,6 +291,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Department> getManagedDepartmentsOfDepartmentHead(Person departmentHead) {
         return departmentRepository.findByDepartmentHeads(departmentHead).stream()
             .map(this::mapToDepartment)
@@ -293,6 +299,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Department> getManagedDepartmentsOfSecondStageAuthority(Person secondStageAuthority) {
         return departmentRepository.findBySecondStageAuthorities(secondStageAuthority).stream()
             .map(this::mapToDepartment)
@@ -300,6 +307,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Department> getDepartmentsPersonHasAccessTo(Person person) {
 
         if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
@@ -324,6 +332,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
         final Predicate<Application> allowed = application -> application.hasStatus(ALLOWED);
         final Predicate<Application> temporaryAllowed = application -> application.hasStatus(TEMPORARY_ALLOWED);
@@ -340,6 +349,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Person> getMembersForDepartmentHead(Person departmentHead) {
         return getManagedDepartmentsOfDepartmentHead(departmentHead).stream()
             .map(Department::getMembers)
@@ -349,6 +359,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Person> getMembersForSecondStageAuthority(Person secondStageAuthority) {
         return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority).stream()
             .map(Department::getMembers)
@@ -358,6 +369,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person) {
         if (departmentHead.hasRole(DEPARTMENT_HEAD)) {
             return getManagedMembersOfDepartmentHead(departmentHead).contains(person);
@@ -375,6 +387,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person) {
         if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
             return getManagedMembersForSecondStageAuthority(secondStageAuthority).contains(person);
@@ -392,6 +405,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person) {
 
         final boolean isOwnData = person.getId().equals(signedInUser.getId());
@@ -411,6 +425,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long getNumberOfDepartments() {
         return departmentRepository.count();
     }

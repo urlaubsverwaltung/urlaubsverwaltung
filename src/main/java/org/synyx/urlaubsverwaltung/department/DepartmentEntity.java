@@ -47,11 +47,11 @@ class DepartmentEntity {
     @ElementCollection(fetch = EAGER)
     private List<DepartmentMemberEmbeddable> members = new ArrayList<>();
 
-    @OneToMany(fetch = EAGER)
+    @OneToMany
     @CollectionTable(name = "department_department_head")
     private List<Person> departmentHeads = new ArrayList<>();
 
-    @OneToMany(fetch = EAGER)
+    @OneToMany
     @CollectionTable(name = "department_second_stage_authority")
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
