@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -27,6 +28,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
  * Implementation for {@link SickNoteService}.
  */
 @Service
+@Transactional
 class SickNoteServiceImpl implements SickNoteService {
 
     private final SickNoteRepository sickNoteRepository;
@@ -55,6 +57,7 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<SickNote> getById(Long id) {
         return sickNoteRepository.findById(id)
             .map(SickNoteServiceImpl::toSickNote)
@@ -67,12 +70,14 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByPersonAndPeriod(person, from, to);
         return toSickNoteWithWorkDays(entities, new DateRange(from, to));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
         final Settings settings = settingsService.getSettings();
@@ -89,30 +94,35 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getAllActiveByPeriod(LocalDate from, LocalDate to) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to);
         return toSickNoteWithWorkDays(entities, new DateRange(from, to));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getForStatesSince(List<SickNoteStatus> sickNoteStatuses, LocalDate since) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(sickNoteStatuses, since);
         return toSickNoteWithWorkDays(entities, new DateRange(since, LocalDate.now(clock)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getForStatesAndPersonSince(List<SickNoteStatus> sickNoteStatuses, List<Person> persons, LocalDate since) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(sickNoteStatuses, persons, since);
         return toSickNoteWithWorkDays(entities, new DateRange(since, LocalDate.now(clock)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(sickNoteStatus, persons, start, end);
         return toSickNoteWithWorkDays(entities, new DateRange(start, end));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SickNote> getForStatesAndPersonAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end) {
         final List<SickNoteEntity> entities = sickNoteRepository.findByStatusInAndPersonInAndPersonPermissionsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(sickNoteStatus, persons, roles, start, end);
         return toSickNoteWithWorkDays(entities, new DateRange(start, end));
@@ -120,7 +130,6 @@ class SickNoteServiceImpl implements SickNoteService {
 
     @Override
     public void setEndOfSickPayNotificationSend(SickNote sickNote) {
-
         final SickNote sickNoteWithNewNotificationSendDate = SickNote.builder(sickNote)
             .endOfSickPayNotificationSend(LocalDate.now(clock))
             .build();
