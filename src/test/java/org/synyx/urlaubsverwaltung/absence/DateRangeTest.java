@@ -172,14 +172,6 @@ class DateRangeTest {
         assertThat(isEmpty).isFalse();
     }
 
-    static Stream<Arguments> dateRangesToSplitByMonth() {
-        return Stream.of(
-            Arguments.of("2020-10-10", "2020-10-15"),
-            Arguments.of("2020-10-10", "2020-11-10"),
-            Arguments.of("2020-10-10", "2021-01-10")
-        );
-    }
-
     @Test
     void splitByMonthWithLessThanMonthReturnSameDateRange() {
         final DateRange dateRange = new DateRange(LocalDate.parse("2020-10-10"), LocalDate.parse("2020-10-15"));
