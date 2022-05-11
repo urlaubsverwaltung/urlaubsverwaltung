@@ -108,7 +108,7 @@ public class AbsenceServiceImpl implements AbsenceService {
                 // note the side effects of collections!
                 // stuff will be computed if absent here, as well as further below.
                 final Map<LocalDate, List<AbsencePeriod>> absencePeriodsByDate = openAbsencesByPerson.computeIfAbsent(person, p -> new HashMap<>());
-                final Map<LocalDate, List<AbsenceTuple>> personAbsenceTuples = absenceTuplesByPersonAndStartDate.computeIfAbsent(person, p -> absenceTuplesForPerson(p, applicationsByPerson, sickNotesByPerson));
+                final Map<LocalDate, List<AbsenceTuple>> personAbsenceTuples = absenceTuplesByPersonAndStartDate.computeIfAbsent(person, p -> absenceTuplesForPerson(askedDateRange, p, applicationsByPerson, sickNotesByPerson));
                 final List<AbsenceTuple> absenceTuples = personAbsenceTuples.getOrDefault(askedDateCursor, List.of());
                 final Map<LocalDate, WorkingTime> workingTimeByDate = workingTimesByPerson.computeIfAbsent(person, p -> workingTimeForPerson(p, askedDateRange));
 
@@ -180,10 +180,10 @@ public class AbsenceServiceImpl implements AbsenceService {
         return openAbsencesByPerson;
     }
 
-    private Map<LocalDate, List<AbsenceTuple>> absenceTuplesForPerson(Person person, Map<Person, List<Application>> applicationsByPerson, Map<Person, List<SickNote>> sickNotesByPerson) {
+    private Map<LocalDate, List<AbsenceTuple>> absenceTuplesForPerson(DateRange dateRange, Person person, Map<Person, List<Application>> applicationsByPerson, Map<Person, List<SickNote>> sickNotesByPerson) {
         final List<AbsenceTuple> absenceTuples = new ArrayList<>();
-        absenceTuples.addAll(applicationsByPerson.getOrDefault(person, List.of()).stream().map(AbsenceTuple::new).collect(toList()));
-        absenceTuples.addAll(sickNotesByPerson.getOrDefault(person, List.of()).stream().map(AbsenceTuple::new).collect(toList()));
+        absenceTuples.addAll(applicationsByPerson.getOrDefault(person, List.of()).stream().map(application -> new AbsenceTuple(application, dateRange)).collect(toList()));
+        absenceTuples.addAll(sickNotesByPerson.getOrDefault(person, List.of()).stream().map(sickNote -> new AbsenceTuple(sickNote, dateRange)).collect(toList()));
         absenceTuples.sort(comparing(AbsenceTuple::getStartDate).thenComparing(AbsenceTuple::getDayLength));
         return absenceTuples.stream().collect(groupingBy(AbsenceTuple::getStartDate));
     }
@@ -200,19 +200,19 @@ public class AbsenceServiceImpl implements AbsenceService {
         private final LocalDate endDate;
         private final DayLength dayLength;
 
-        AbsenceTuple(Application application) {
+        AbsenceTuple(Application application, DateRange dateRange) {
             this.application = application;
-            this.startDate = application.getStartDate();
-            this.endDate = application.getEndDate();
+            this.startDate = application.getStartDate().isAfter(dateRange.getStartDate()) ? application.getStartDate() : dateRange.getStartDate();
+            this.endDate = application.getEndDate().isBefore(dateRange.getEndDate()) ? application.getEndDate() : dateRange.getEndDate();
             this.dayLength = application.getDayLength();
             this.sickNote = null;
         }
 
-        AbsenceTuple(SickNote sickNote) {
+        AbsenceTuple(SickNote sickNote, DateRange dateRange) {
             this.application = null;
             this.sickNote = sickNote;
-            this.startDate = sickNote.getStartDate();
-            this.endDate = sickNote.getEndDate();
+            this.startDate = sickNote.getStartDate().isAfter(dateRange.getStartDate()) ? sickNote.getStartDate() : dateRange.getStartDate();
+            this.endDate = sickNote.getEndDate().isBefore(dateRange.getEndDate()) ? sickNote.getEndDate() : dateRange.getEndDate();
             this.dayLength = sickNote.getDayLength();
         }
 
