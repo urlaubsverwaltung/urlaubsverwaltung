@@ -228,11 +228,11 @@ public class AbsenceOverviewViewController {
                                     final AbsenceOverviewPersonRowCellDto morning;
                                     final AbsenceOverviewPersonRowCellDto noon;
                                     if (record.getMorning().isPresent()) {
-                                        final String type = recordInfoToCss(record.getMorning().orElseThrow());;
+                                        final String type = recordInfoToCss(record.getMorning().orElseThrow());
                                         morning = new AbsenceOverviewPersonRowCellDto(1, type, true, true, true);
                                         noon = new AbsenceOverviewPersonRowCellDto(1, "");
                                     } else {
-                                        final String type = recordInfoToCss(record.getNoon().orElseThrow());;
+                                        final String type = recordInfoToCss(record.getNoon().orElseThrow());
                                         morning = new AbsenceOverviewPersonRowCellDto(1, "");
                                         noon = new AbsenceOverviewPersonRowCellDto(1, type, true, true, true);
                                     }
@@ -286,7 +286,6 @@ public class AbsenceOverviewViewController {
 
                                     final PublicHoliday publicHoliday = publicHolidayByDate.get(ddddate);
                                     if (publicHoliday != null) {
-                                        ddddate.until(absencePeriodDateRange.getEndDate());
                                         if (publicHoliday.isNoon()) {
                                             publicHolidayCols.add(publicHolidayCol);
                                         } else if (publicHoliday.isMorning()) {
