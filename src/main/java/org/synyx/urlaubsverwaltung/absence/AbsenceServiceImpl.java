@@ -98,7 +98,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         final Map<Person, Map<LocalDate, List<AbsencePeriod>>> openAbsencesByPerson = new HashMap<>();
 
-        final Map<Person, LocalDate> personNextDateCursor = persons.stream().collect(toMap(Function.identity(), (unused) -> askedDateRange.getStartDate()));
+        final Map<Person, LocalDate> personNextDateCursor = persons.stream().collect(toMap(Function.identity(), unused -> askedDateRange.getStartDate()));
 
         final Map<Person, Map<LocalDate, List<AbsenceTuple>>> absenceTuplesByPersonAndStartDate = new HashMap<>();
         final Map<Person, Map<LocalDate, WorkingTime>> workingTimesByPerson = new HashMap<>();
@@ -107,10 +107,10 @@ public class AbsenceServiceImpl implements AbsenceService {
             for (Person person : persons) {
                 // note the side effects of collections!
                 // stuff will be computed if absent here, as well as further below.
-                final Map<LocalDate, List<AbsencePeriod>> absencePeriodsByDate = openAbsencesByPerson.computeIfAbsent(person, (p) -> new HashMap<>());
-                final Map<LocalDate, List<AbsenceTuple>> personAbsenceTuples = absenceTuplesByPersonAndStartDate.computeIfAbsent(person, (p) -> absenceTuplesForPerson(p, applicationsByPerson, sickNotesByPerson));
+                final Map<LocalDate, List<AbsencePeriod>> absencePeriodsByDate = openAbsencesByPerson.computeIfAbsent(person, p -> new HashMap<>());
+                final Map<LocalDate, List<AbsenceTuple>> personAbsenceTuples = absenceTuplesByPersonAndStartDate.computeIfAbsent(person, p -> absenceTuplesForPerson(p, applicationsByPerson, sickNotesByPerson));
                 final List<AbsenceTuple> absenceTuples = personAbsenceTuples.getOrDefault(askedDateCursor, List.of());
-                final Map<LocalDate, WorkingTime> workingTimeByDate = workingTimesByPerson.computeIfAbsent(person, (p) -> workingTimeForPerson(p, askedDateRange));
+                final Map<LocalDate, WorkingTime> workingTimeByDate = workingTimesByPerson.computeIfAbsent(person, p -> workingTimeForPerson(p, askedDateRange));
 
                 if (personNextDateCursor.get(person).equals(askedDateCursor)) {
                     if (absenceTuples.isEmpty()) {
