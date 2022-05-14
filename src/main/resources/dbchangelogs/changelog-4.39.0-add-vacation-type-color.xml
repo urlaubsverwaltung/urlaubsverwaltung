@@ -13,19 +13,19 @@
     </addColumn>
 
     <update tableName="vacation_type">
-      <column name="color" value="#FACC15" />
+      <column name="color" value="#FDE047" />
       <where>id = '1000'</where>
     </update>
     <update tableName="vacation_type">
-      <column name="color" value="#FACC15" />
+      <column name="color" value="#FDE047" />
       <where>id = '2000'</where>
     </update>
     <update tableName="vacation_type">
-      <column name="color" value="#FACC15" />
+      <column name="color" value="#FDE047" />
       <where>id = '3000'</where>
     </update>
     <update tableName="vacation_type">
-      <column name="color" value="#FACC15" />
+      <column name="color" value="#FDE047" />
       <where>id = '4000'</where>
     </update>
 
