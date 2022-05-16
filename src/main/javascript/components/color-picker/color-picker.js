@@ -4,6 +4,8 @@ class ColorPicker extends HTMLDivElement {
   }
 
   #open = false;
+  #dialogToggleButton;
+  #dialogToggleCheckbox;
 
   attributeChangedCallback(name, oldValue, newValue) {
     this.#open = typeof newValue === "string";
@@ -11,13 +13,21 @@ class ColorPicker extends HTMLDivElement {
   }
 
   connectedCallback() {
+    this.#dialogToggleButton = this.querySelector("[class~='color-picker-button']");
+    this.#dialogToggleCheckbox = this.querySelector(`#${this.#dialogToggleButton.getAttribute("for")}`);
+
+    // prevent native checkbox selection.
+    // otherwise the browser jumps to the checkbox element (which is positioned absolutely on top of the screen)
+    // checkbox state is updated in #render
+    // eslint-disable-next-line unicorn/consistent-function-scoping
+    const handleDialogToggleButtonClick = (event) => event.preventDefault();
+
     const handleClick = (event) => {
       // update selected color visualisation
       const color = this.querySelector("input[type='radio']:checked")?.value;
       // TODO no color should not happen -> see todo in jsp, there must be a selected radio button input
       if (color) {
-        const button = this.querySelector("label[class~='color-picker-button']");
-        button.style.setProperty("background-color", color);
+        this.#dialogToggleButton.style.setProperty("background-color", color);
       }
 
       // toggle dialog state
@@ -30,9 +40,11 @@ class ColorPicker extends HTMLDivElement {
       }
     };
 
+    this.#dialogToggleButton.addEventListener("click", handleDialogToggleButtonClick);
     this.addEventListener("click", handleClick);
 
     this.cleanup = function () {
+      this.#dialogToggleButton.removeEventListener("click", handleDialogToggleButtonClick);
       this.removeEventListener("click", handleClick);
     };
   }
@@ -42,8 +54,7 @@ class ColorPicker extends HTMLDivElement {
   }
 
   #render() {
-    const button = this.querySelector("input[type='checkbox']");
-    button.checked = this.#open;
+    this.#dialogToggleCheckbox.checked = this.#open;
   }
 }
 

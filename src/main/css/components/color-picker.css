@@ -7,7 +7,6 @@
 }
 
 [is="uv-color-picker"] > label.color-picker-button {
-  /*z-index: 0;*/
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] {
