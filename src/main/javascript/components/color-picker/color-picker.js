@@ -16,13 +16,23 @@ class ColorPicker extends HTMLDivElement {
       return;
     }
 
-    console.log(">>>>>", name, oldValue, newValue, typeof newValue);
-
     this.#open = typeof newValue === "string";
 
     // makes the dialog visible via css
     this.#dialogToggleCheckbox.checked = this.#open;
-    console.log(">>>>> ---", this.#open);
+
+    if (typeof oldValue === "string" && typeof newValue !== "string") {
+      // reset focusedElementIndex when dialog is closed
+      for (let index = 0; index < this.#colorOptions.length; index++) {
+        const option = this.#colorOptions[index];
+        const optionInput = option.querySelector("input");
+        if (optionInput.value === this.#value) {
+          this.#focusedElementIndex = index;
+          this.#renderFocusedElement();
+          break;
+        }
+      }
+    }
   }
 
   connectedCallback() {
@@ -97,21 +107,19 @@ class ColorPicker extends HTMLDivElement {
         // closing it with 'Escape' is handled globally
         if (event.key === "Enter") {
           if (this.#open) {
-            // close dialog
-            delete this.dataset.open;
-            // and update selected color
-            if (this.#focusedElementIndex !== undefined) {
-              for (let index = 0; index < this.#colorOptions.length; index++) {
-                const colorOption = this.#colorOptions[index];
-                const colorInput = colorOption.querySelector("input");
-                const selected = index === this.#focusedElementIndex;
-                colorInput.checked = selected;
-                if (selected) {
-                  this.#value = colorInput.value;
-                  this.#renderSelectedColor();
-                }
+            // update selected color
+            for (let index = 0; index < this.#colorOptions.length; index++) {
+              const colorOption = this.#colorOptions[index];
+              const colorInput = colorOption.querySelector("input");
+              const selected = index === this.#focusedElementIndex;
+              colorInput.checked = selected;
+              if (selected) {
+                this.#value = colorInput.value;
+                this.#renderSelectedColor();
               }
             }
+            // close dialog
+            delete this.dataset.open;
           } else {
             this.dataset.open = "";
           }
@@ -140,21 +148,14 @@ class ColorPicker extends HTMLDivElement {
       }
     };
 
-    const handleFocusOut = () => {
-      delete this.dataset.open;
-      // TODO reset focusedElementIndex to actual selected color
-    };
-
     this.#dialogToggleButton.addEventListener("click", handleDialogToggleButtonClick);
     this.addEventListener("click", handleClick);
     this.addEventListener("keydown", handleKeyDown);
-    this.addEventListener("focusout", handleFocusOut);
 
     this.cleanup = function () {
       this.#dialogToggleButton.removeEventListener("click", handleDialogToggleButtonClick);
       this.removeEventListener("click", handleClick);
       this.removeEventListener("keydown", handleKeyDown);
-      this.removeEventListener("focusout", handleFocusOut);
     };
   }
 
