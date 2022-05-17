@@ -523,7 +523,7 @@
                                             </label>
 
                                             <div is="uv-color-picker">
-                                                <label for="color-picker-${loop.index}" class="color-picker-button tw-px-3 tw-py-2 tw-w-12 tw-h-3 tw-rounded" style="background-color:${absenceType.color}">
+                                                <label for="color-picker-${loop.index}" class="color-picker-button tw-px-3 tw-py-2 tw-w-12 tw-h-4 tw-rounded" style="background-color:${absenceType.color}">
                                                     <span class="tw-sr-only">
                                                         <spring:message code="settings.absenceTypes.action.color.label" />
                                                     </span>
