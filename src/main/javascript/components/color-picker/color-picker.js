@@ -179,10 +179,10 @@ class ColorPicker extends HTMLDivElement {
     for (let index = 0; index < this.#colorOptions.length; index++) {
       const colorOption = this.#colorOptions[index];
       if (index === this.#focusedElementIndex) {
-        colorOption.classList.add("tw-opacity-80");
+        colorOption.classList.add("active");
         this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
       } else {
-        colorOption.classList.remove("tw-opacity-80");
+        colorOption.classList.remove("active");
       }
     }
   }

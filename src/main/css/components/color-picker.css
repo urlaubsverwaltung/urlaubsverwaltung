@@ -61,11 +61,12 @@
   height: 1.75rem;
 }
 
-[is="uv-color-picker"] .color-picker-dialog label span:hover {
+[is="uv-color-picker"] .color-picker-option {
   transition: opacity 150ms ease-in-out;
   opacity: 1;
 }
 
-[is="uv-color-picker"] .color-picker-dialog label span:hover {
+[is="uv-color-picker"] .color-picker-option.active,
+[is="uv-color-picker"] .color-picker-option:hover {
   opacity: 0.8;
 }
