@@ -7,6 +7,10 @@
 }
 
 [is="uv-color-picker"] > label.color-picker-button {
+  @apply tw-ring-1;
+  @apply tw-ring-inset;
+  @apply tw-ring-zinc-300;
+  @apply dark:tw-ring-zinc-600;
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] {
@@ -23,8 +27,9 @@
   width: 8rem;
   padding: 0.25rem;
   border-radius: 0.25rem;
-  background: black;
   display: flex;
+  @apply tw-bg-gray-800;
+  @apply dark:tw-bg-black;
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] ~ .color-picker-dialog {
