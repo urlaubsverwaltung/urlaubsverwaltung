@@ -4,6 +4,7 @@ class ColorPicker extends HTMLDivElement {
   }
 
   #open = false;
+  #value = "";
   #dialogToggleButton;
   #dialogToggleCheckbox;
   #dialog;
@@ -11,22 +12,51 @@ class ColorPicker extends HTMLDivElement {
   #focusedElementIndex;
 
   attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+
     this.#open = typeof newValue === "string";
-    this.#render();
+
+    // makes the dialog visible via css
+    this.#dialogToggleCheckbox.checked = this.#open;
   }
 
   connectedCallback() {
     this.#dialogToggleButton = this.querySelector("[class~='color-picker-button']");
     this.#dialogToggleCheckbox = this.querySelector(`#${this.#dialogToggleButton.getAttribute("for")}`);
     this.#dialog = this.querySelector(".color-picker-dialog");
-    this.#colorOptions = this.#dialog.querySelectorAll("label");
+    this.#colorOptions = this.#dialog.querySelectorAll("li");
 
-    this.#focusedElementIndex = 0; // TODO set to actual color
+    this.#focusedElementIndex = -1;
 
     this.setAttribute("tabindex", "0");
     this.classList.add("focus:tw-outline-2", "focus:tw-outline-blue-500");
+
     for (let input of this.querySelectorAll("input")) {
       input.setAttribute("tabindex", "-1");
+    }
+
+    let selectedId = "";
+    for (let index = 0; index < this.#colorOptions.length; index++) {
+      const option = this.#colorOptions[index];
+      const optionInput = option.querySelector("input");
+      const optionValue = optionInput.value;
+      if (optionInput.checked) {
+        this.#value = optionValue;
+      }
+      const id = `${this.#dialog.getAttribute("id")}-option-${index}`;
+      option.setAttribute("id", id);
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", optionInput.checked ? "true" : "false");
+      if (optionInput.checked) {
+        selectedId = id;
+        this.#focusedElementIndex = index;
+      }
+    }
+    this.#dialog.setAttribute("role", "listbox");
+    if (selectedId) {
+      this.#dialog.setAttribute("aria-activedescendant", selectedId);
     }
 
     // prevent native checkbox selection.
@@ -37,10 +67,15 @@ class ColorPicker extends HTMLDivElement {
 
     const handleClick = (event) => {
       // update selected color visualisation
-      const color = this.querySelector("input[type='radio']:checked")?.value;
-      // TODO no color should not happen -> see todo in jsp, there must be a selected radio button input
-      if (color) {
-        this.#dialogToggleButton.style.setProperty("background-color", color);
+      for (let index = 0; index < this.#colorOptions.length; index++) {
+        const option = this.#colorOptions[index];
+        const optionInput = option.querySelector("input");
+        if (optionInput.checked) {
+          this.#value = optionInput.value;
+          this.#focusedElementIndex = index;
+          this.#renderSelectedColor();
+          break;
+        }
       }
 
       // toggle dialog state
@@ -64,10 +99,13 @@ class ColorPicker extends HTMLDivElement {
             // and update selected color
             if (this.#focusedElementIndex !== undefined) {
               for (let index = 0; index < this.#colorOptions.length; index++) {
-                let colorInput = this.#colorOptions[index].querySelector("input");
-                colorInput.checked = index === this.#focusedElementIndex;
-                if (index === this.#focusedElementIndex) {
-                  this.#dialogToggleButton.style.setProperty("background-color", colorInput.value);
+                const colorOption = this.#colorOptions[index];
+                const colorInput = colorOption.querySelector("input");
+                const selected = index === this.#focusedElementIndex;
+                colorInput.checked = selected;
+                if (selected) {
+                  this.#value = colorInput.value;
+                  this.#renderSelectedColor();
                 }
               }
             }
@@ -78,18 +116,20 @@ class ColorPicker extends HTMLDivElement {
 
         if (event.key === "ArrowDown" || event.key === "ArrowUp") {
           event.preventDefault();
-          this.dataset.open = "";
+          if (!this.#open) {
+            this.dataset.open = "";
+          }
         }
 
         // enable keyboard navigation through color options
         if (event.key === "ArrowDown") {
           if (this.#focusedElementIndex < this.#colorOptions.length - 1) {
             this.#focusedElementIndex++;
-            this.#render();
+            this.#renderFocusedElement();
           }
         } else if (event.key === "ArrowUp" && this.#focusedElementIndex > 0) {
           this.#focusedElementIndex--;
-          this.#render();
+          this.#renderFocusedElement();
         }
       }
     };
@@ -116,14 +156,25 @@ class ColorPicker extends HTMLDivElement {
     this.cleanup();
   }
 
-  #render() {
-    this.#dialogToggleCheckbox.checked = this.#open;
+  #renderSelectedColor() {
+    for (let index = 0; index < this.#colorOptions.length; index++) {
+      const colorOption = this.#colorOptions[index];
+      const selected = colorOption.querySelector("input").value === this.#value;
+      if (selected) {
+        this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
+        break;
+      }
+    }
 
-    // update currently focused color option
-    const focusedColorOption = this.#colorOptions[this.#focusedElementIndex];
-    for (let colorOption of this.#colorOptions) {
-      if (colorOption === focusedColorOption) {
+    this.#dialogToggleButton.style.setProperty("background-color", this.#value);
+  }
+
+  #renderFocusedElement() {
+    for (let index = 0; index < this.#colorOptions.length; index++) {
+      const colorOption = this.#colorOptions[index];
+      if (index === this.#focusedElementIndex) {
         colorOption.classList.add("tw-opacity-80");
+        this.#dialog.setAttribute("aria-activedescendant", colorOption.getAttribute("id"));
       } else {
         colorOption.classList.remove("tw-opacity-80");
       }

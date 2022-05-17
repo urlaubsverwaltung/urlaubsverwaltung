@@ -531,44 +531,62 @@
                                                 <input type="checkbox" id="color-picker-${loop.index}">
 
                                                 <%-- //::todo set checked radio--%>
-                                                <div id="color-popup-${loop.index}" class="color-picker-dialog">
-                                                    <label for="color-${loop.index}-radio-1">
-                                                        <input <c:if test="${absenceType.color == '#D4D4D4'}">checked</c:if> value="#D4D4D4" id="color-${loop.index}-radio-1" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#D4D4D4;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-2">
-                                                        <input <c:if test="${absenceType.color == '#FCA5A5'}">checked</c:if> value="#FCA5A5" id="color-${loop.index}-radio-2" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#FCA5A5;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-3">
-                                                        <input <c:if test="${absenceType.color == '#FDBA74'}">checked</c:if> value="#FDBA74" id="color-${loop.index}-radio-3" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#FDBA74;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-4">
-                                                        <input <c:if test="${absenceType.color == '#FDE047'}">checked</c:if> value="#FDE047" id="color-${loop.index}-radio-4" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#FDE047;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-5">
-                                                        <input <c:if test="${absenceType.color == '#BEF264'}">checked</c:if> value="#BEF264" id="color-${loop.index}-radio-5" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#BEF264;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-6">
-                                                        <input <c:if test="${absenceType.color == '#67E8F9'}">checked</c:if> value="#67E8F9" id="color-${loop.index}-radio-6" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#67E8F9;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-7">
-                                                        <input <c:if test="${absenceType.color == '#93C5FD'}">checked</c:if> value="#93C5FD" id="color-${loop.index}-radio-7" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#93C5FD;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-8">
-                                                        <input <c:if test="${absenceType.color == '#C4B5FD'}">checked</c:if> value="#C4B5FD" id="color-${loop.index}-radio-8" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#C4B5FD;"></span>
-                                                    </label>
-                                                    <label for="color-${loop.index}-radio-9">
-                                                        <input <c:if test="${absenceType.color == '#F0ABFC'}">checked</c:if> value="#F0ABFC" id="color-${loop.index}-radio-9" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
-                                                        <span style="background-color:#F0ABFC;"></span>
-                                                    </label>
-                                                </div>
+                                                <ul id="color-popup-${loop.index}" class="color-picker-dialog tw-list-none">
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-1">
+                                                            <input <c:if test="${absenceType.color == '#D4D4D4'}">checked</c:if> value="#D4D4D4" id="color-${loop.index}-radio-1" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#D4D4D4;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-2">
+                                                            <input <c:if test="${absenceType.color == '#FCA5A5'}">checked</c:if> value="#FCA5A5" id="color-${loop.index}-radio-2" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#FCA5A5;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-3">
+                                                            <input <c:if test="${absenceType.color == '#FDBA74'}">checked</c:if> value="#FDBA74" id="color-${loop.index}-radio-3" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#FDBA74;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-4">
+                                                            <input <c:if test="${absenceType.color == '#FDE047'}">checked</c:if> value="#FDE047" id="color-${loop.index}-radio-4" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#FDE047;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-5">
+                                                            <input <c:if test="${absenceType.color == '#BEF264'}">checked</c:if> value="#BEF264" id="color-${loop.index}-radio-5" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#BEF264;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-6">
+                                                            <input <c:if test="${absenceType.color == '#67E8F9'}">checked</c:if> value="#67E8F9" id="color-${loop.index}-radio-6" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#67E8F9;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-7">
+                                                            <input <c:if test="${absenceType.color == '#93C5FD'}">checked</c:if> value="#93C5FD" id="color-${loop.index}-radio-7" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#93C5FD;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-8">
+                                                            <input <c:if test="${absenceType.color == '#C4B5FD'}">checked</c:if> value="#C4B5FD" id="color-${loop.index}-radio-8" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#C4B5FD;"></span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="color-${loop.index}-radio-9">
+                                                            <input <c:if test="${absenceType.color == '#F0ABFC'}">checked</c:if> value="#F0ABFC" id="color-${loop.index}-radio-9" name="absenceTypeSettings.items[${loop.index}].color" type="radio" >
+                                                            <span style="background-color:#F0ABFC;"></span>
+                                                        </label>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
