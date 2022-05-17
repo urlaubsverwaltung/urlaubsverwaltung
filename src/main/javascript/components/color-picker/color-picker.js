@@ -36,6 +36,8 @@ class ColorPicker extends HTMLDivElement {
   }
 
   connectedCallback() {
+    this.#addListboxHint();
+
     this.#dialogToggleButton = this.querySelector("[class~='color-picker-button']");
     this.#dialogToggleCheckbox = this.querySelector(`#${this.#dialogToggleButton.getAttribute("for")}`);
     this.#dialog = this.querySelector(".color-picker-dialog");
@@ -161,6 +163,14 @@ class ColorPicker extends HTMLDivElement {
 
   disconnectedCallback() {
     this.cleanup();
+  }
+
+  #addListboxHint() {
+    this.classList.add("tw-flex", "tw-items-center");
+
+    const span = document.createElement("span");
+    span.classList.add("dropdown-caret", "tw-mt-0.5", "tw-ml-1.5");
+    this.append(span);
   }
 
   #renderSelectedColor() {
