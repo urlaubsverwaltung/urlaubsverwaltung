@@ -16,10 +16,13 @@ class ColorPicker extends HTMLDivElement {
       return;
     }
 
+    console.log(">>>>>", name, oldValue, newValue, typeof newValue);
+
     this.#open = typeof newValue === "string";
 
     // makes the dialog visible via css
     this.#dialogToggleCheckbox.checked = this.#open;
+    console.log(">>>>> ---", this.#open);
   }
 
   connectedCallback() {
@@ -28,7 +31,7 @@ class ColorPicker extends HTMLDivElement {
     this.#dialog = this.querySelector(".color-picker-dialog");
     this.#colorOptions = this.#dialog.querySelectorAll("li");
 
-    this.#focusedElementIndex = -1;
+    this.#focusedElementIndex = 0;
 
     this.setAttribute("tabindex", "0");
     this.classList.add("focus:tw-outline-2", "focus:tw-outline-blue-500");
@@ -116,20 +119,23 @@ class ColorPicker extends HTMLDivElement {
 
         if (event.key === "ArrowDown" || event.key === "ArrowUp") {
           event.preventDefault();
-          if (!this.#open) {
+          if (this.#open) {
+            // enable keyboard navigation through color options
+            // only when dialog has been opened before
+            if (event.key === "ArrowDown") {
+              if (this.#focusedElementIndex < this.#colorOptions.length - 1) {
+                this.#focusedElementIndex++;
+                this.#renderFocusedElement();
+              }
+            } else if (event.key === "ArrowUp" && this.#focusedElementIndex > 0) {
+              this.#focusedElementIndex--;
+              this.#renderFocusedElement();
+            }
+          } else {
+            // open dialog with arrow keys
             this.dataset.open = "";
-          }
-        }
-
-        // enable keyboard navigation through color options
-        if (event.key === "ArrowDown") {
-          if (this.#focusedElementIndex < this.#colorOptions.length - 1) {
-            this.#focusedElementIndex++;
             this.#renderFocusedElement();
           }
-        } else if (event.key === "ArrowUp" && this.#focusedElementIndex > 0) {
-          this.#focusedElementIndex--;
-          this.#renderFocusedElement();
         }
       }
     };
