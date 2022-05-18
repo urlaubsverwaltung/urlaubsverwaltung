@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -86,12 +87,14 @@ class OverviewViewControllerTest {
     @Mock
     private SettingsService settingsService;
 
+    @Mock
+    private VacationTypeService vacationTypeService;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, clock);
+            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, vacationTypeService, clock);
     }
 
     @Test

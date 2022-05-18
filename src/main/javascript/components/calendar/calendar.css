@@ -192,27 +192,6 @@ td.datepicker-day {
 
 /* NOTE: Order of the day classes is very important because of css classes overloading! */
 
-.datepicker-day-personal-holiday-morning {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday");
-}
-.datepicker-day-personal-holiday-noon {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday");
-}
-.datepicker-day-personal-holiday-full {
-  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday");
-}
-
-.datepicker-day-personal-holiday-morning-approved,
-.datepicker-day-personal-holiday-morning-approved.datepicker-day-past {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-.datepicker-day-personal-holiday-noon-approved {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-.datepicker-day-personal-holiday-full-approved {
-  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-
 .datepicker-day:not([data-datepicker-selectable="false"]) {
   cursor: pointer;
 }

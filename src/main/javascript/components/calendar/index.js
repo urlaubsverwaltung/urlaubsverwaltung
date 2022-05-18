@@ -187,6 +187,9 @@ $(function () {
       status: function (date) {
         return holidayService.getStatus(date);
       },
+      vacationTypeId: function (date) {
+        return holidayService.getVacationTypeId(date);
+      },
     };
 
     return {
@@ -452,6 +455,29 @@ $(function () {
         return "";
       },
 
+      getVacationTypeId: function (date) {
+        const year = getYear(date);
+        const formattedDate = format(date, "yyyy-MM-dd");
+
+        let morningOrFull;
+        let noon;
+
+        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
+          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
+            date: formattedDate,
+          });
+          if (holiday) {
+            if (holiday.absencePeriodName === "NOON") {
+              noon = holiday.vacationTypeId;
+            } else {
+              morningOrFull = holiday.vacationTypeId;
+            }
+          }
+        }
+
+        return [morningOrFull, noon];
+      },
+
       /**
        *
        * @param {Date} from
@@ -543,7 +569,7 @@ $(function () {
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
-      day: '<div class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
+      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
 
       iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
 
@@ -682,6 +708,36 @@ $(function () {
           .join(" ");
       }
 
+      function style() {
+        // could be morning=sick and noon=vacation
+        const [idMorningOrFull, idNoon] = assert.vacationTypeId(date);
+        const colorMorningOrFull = window.uv.vacationTypes.colors[idMorningOrFull];
+        const colorNoon = window.uv.vacationTypes.colors[idNoon];
+        return [
+          assert.isPublicHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPublicHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+          assert.isPublicHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayFullTemporaryApproved(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayFullApproved(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayFullCancellationRequest(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayMorningTemporaryApproved(date)
+            ? `--absence-bar-color-morning:${colorMorningOrFull}`
+            : ``,
+          assert.isPersonalHolidayMorningApproved(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayMorningCancellationRequest(date)
+            ? `--absence-bar-color-morning:${colorMorningOrFull}`
+            : ``,
+          assert.isPersonalHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayNoonTemporaryApproved(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayNoonApproved(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayNoonCancellationRequest(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+        ]
+          .filter(Boolean)
+          .join(";");
+      }
+
       function isSelectable() {
         // NOTE: Order is important here!
 
@@ -714,6 +770,7 @@ $(function () {
         date: format(date, "yyyy-MM-dd"),
         day: format(date, "dd"),
         css: classes(),
+        style: style(),
         selectable: isSelectable(),
         title: assert.title(date),
         absenceId: assert.absenceId(date),

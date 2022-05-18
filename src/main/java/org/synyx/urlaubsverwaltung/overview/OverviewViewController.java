@@ -14,6 +14,8 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -61,6 +63,7 @@ public class OverviewViewController {
     private final OvertimeService overtimeService;
     private final SettingsService settingsService;
     private final DepartmentService departmentService;
+    private final VacationTypeService vacationTypeService;
     private final Clock clock;
 
     @Autowired
@@ -68,7 +71,7 @@ public class OverviewViewController {
                                   VacationDaysService vacationDaysService,
                                   ApplicationService applicationService, WorkDaysCountService workDaysCountService,
                                   SickNoteService sickNoteService, OvertimeService overtimeService,
-                                  SettingsService settingsService, DepartmentService departmentService, Clock clock) {
+                                  SettingsService settingsService, DepartmentService departmentService, VacationTypeService vacationTypeService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -78,6 +81,7 @@ public class OverviewViewController {
         this.overtimeService = overtimeService;
         this.settingsService = settingsService;
         this.departmentService = departmentService;
+        this.vacationTypeService = vacationTypeService;
         this.clock = clock;
     }
 
@@ -114,6 +118,11 @@ public class OverviewViewController {
         final ZonedDateTime now = ZonedDateTime.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
+        final List<VacationTypeDto> vacationTypeDtos = vacationTypeService.getAllVacationTypes().stream()
+            .map(OverviewViewController::toVacationTypeDto)
+            .collect(toList());
+        model.addAttribute("vacationTypeColors", vacationTypeDtos);
+
         prepareApplications(person, yearToShow, model);
         prepareHolidayAccounts(person, yearToShow, model);
         prepareSickNoteList(person, yearToShow, model);
@@ -131,6 +140,10 @@ public class OverviewViewController {
         model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE));
 
         return "person/overview";
+    }
+
+    private static VacationTypeDto toVacationTypeDto(VacationType vacationType) {
+        return new VacationTypeDto(vacationType.getId(), vacationType.getColor());
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {

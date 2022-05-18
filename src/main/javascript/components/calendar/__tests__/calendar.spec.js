@@ -64,6 +64,7 @@ describe("calendar", () => {
               absencePeriodName: "FULL",
               type: "VACATION",
               status: givenStatus,
+              vacationTypeId: 1,
             },
           ],
         });
@@ -100,6 +101,7 @@ describe("calendar", () => {
               absencePeriodName: "FULL",
               type: "VACATION",
               status: givenStatus,
+              vacationTypeId: 1,
             },
           ],
         });
@@ -136,6 +138,7 @@ describe("calendar", () => {
               absencePeriodName: "FULL",
               type: "VACATION",
               status: givenStatus,
+              vacationTypeId: 1,
             },
           ],
         });
@@ -174,12 +177,14 @@ describe("calendar", () => {
             absencePeriodName: "FULL",
             type: "VACATION",
             status: "ALLOWED",
+            vacationTypeId: 1,
           },
           {
             date: "2020-12-06",
             absencePeriodName: "MORNING",
             type: "VACATION",
             status: "ALLOWED",
+            vacationTypeId: 1,
           },
           {
             date: "2020-12-06",
@@ -198,6 +203,7 @@ describe("calendar", () => {
             absencePeriodName: "NOON",
             type: "VACATION",
             status: "ALLOWED",
+            vacationTypeId: 1,
           },
           {
             date: "2020-12-13",
@@ -307,6 +313,11 @@ describe("calendar", () => {
     window.uv = {};
     // 0=sunday, 1=monday
     window.uv.weekStartsOn = 1;
+
+    window.uv.vacationTypes = {};
+    window.uv.vacationTypes.colors = {
+      1: "#B4D455",
+    };
 
     document.body.innerHTML = `<div id="datepicker"></div>`;
 

@@ -156,6 +156,7 @@ public class AbsencePeriod {
         Integer getId();
         boolean hasStatusWaiting();
         boolean hasStatusAllowed();
+        Optional<Integer> getVacationTypeId();
     }
 
     /**
@@ -176,11 +177,17 @@ public class AbsencePeriod {
         private final AbsenceType type;
         private final Integer id;
         private final AbsenceStatus status;
+        private final Integer vacationTypeId;
 
         private AbstractRecordInfo(AbsenceType type, Integer id, AbsenceStatus status) {
+            this(type, id, status, null);
+        }
+
+        private AbstractRecordInfo(AbsenceType type, Integer id, AbsenceStatus status, Integer vacationTypeId) {
             this.type = type;
             this.id = id;
             this.status = status;
+            this.vacationTypeId = vacationTypeId;
         }
 
         @Override
@@ -210,6 +217,10 @@ public class AbsencePeriod {
             return !hasStatusWaiting();
         }
 
+        public Optional<Integer> getVacationTypeId() {
+            return Optional.ofNullable(vacationTypeId);
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -232,8 +243,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningVacation(Integer applicationId, AbsenceStatus status) {
-            super(AbsenceType.VACATION, applicationId, status);
+        public RecordMorningVacation(Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
+            super(AbsenceType.VACATION, applicationId, status, vacationTypeId);
         }
     }
 
@@ -244,8 +255,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonVacation(Integer applicationId, AbsenceStatus status) {
-            super(AbsenceType.VACATION, applicationId, status);
+        public RecordNoonVacation(Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
+            super(AbsenceType.VACATION, applicationId, status, vacationTypeId);
         }
     }
 
