@@ -25,7 +25,24 @@ import format from "../../lib/date-fns/format";
 import startOfWeek from "../../lib/date-fns/start-of-week";
 import tooltip from "../tooltip";
 import { getJSON } from "../../js/fetch";
-import { absenceCriteria } from "../../js/absence";
+import {
+  isNoWorkday,
+  isSickNoteMorning,
+  isSickNoteNoon,
+  isSickNoteFull,
+  isPersonalHolidayWaitingFull,
+  isPersonalHolidayTemporaryFull,
+  isPersonalHolidayApprovedFull,
+  isPersonalHolidayCancellationRequestedFull,
+  isPersonalHolidayWaitingMorning,
+  isPersonalHolidayTemporaryMorning,
+  isPersonalHolidayApprovedMorning,
+  isPersonalHolidayCancellationRequestedMorning,
+  isPersonalHolidayWaitingNoon,
+  isPersonalHolidayApprovedNoon,
+  isPersonalHolidayCancellationRequestedNoon,
+  isPersonalHolidayTemporaryNoon,
+} from "../../js/absence";
 import "./calendar.css";
 
 function paramize(p) {
@@ -263,83 +280,67 @@ $(function () {
 
     const HolidayService = {
       isNoWorkday(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.noWorkdayCriteria));
+        return isNoWorkday(getAbsencesForDate(date));
       },
 
       isSickDayFull(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.sickNoteFullCriteria));
+        return isSickNoteFull(getAbsencesForDate(date));
       },
 
       isSickDayMorning(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.sickNoteMorningCriteria));
+        return isSickNoteMorning(getAbsencesForDate(date));
       },
 
       isSickDayNoon(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.sickNoteNoonCriteria));
+        return isSickNoteNoon(getAbsencesForDate(date));
       },
 
       isPersonalHolidayFull(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayFullWaitingCriteria));
+        return isPersonalHolidayWaitingFull(getAbsencesForDate(date));
       },
 
       isPersonalHolidayFullTemporaryApproved(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayFullTemporaryCriteria));
+        return isPersonalHolidayTemporaryFull(getAbsencesForDate(date));
       },
 
       isPersonalHolidayFullApproved(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayFullApprovedCriteria));
+        return isPersonalHolidayApprovedFull(getAbsencesForDate(date));
       },
 
       isPersonalHolidayFullCancellationRequest(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayFullCancellationRequestedCriteria));
+        return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
       },
 
       isPersonalHolidayMorning(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayMorningWaitingCriteria));
+        return isPersonalHolidayWaitingMorning(getAbsencesForDate(date));
       },
 
       isPersonalHolidayMorningTemporaryApproved(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayMorningTemporaryCriteria));
+        return isPersonalHolidayTemporaryMorning(getAbsencesForDate(date));
       },
 
       isPersonalHolidayMorningApproved(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayMorningApprovedCriteria));
+        return isPersonalHolidayApprovedMorning(getAbsencesForDate(date));
       },
 
       isPersonalHolidayMorningCancellationRequest(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayMorningCancellationRequestedCriteria));
+        return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
       },
 
       isPersonalHolidayNoon(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayNoonWaitingCriteria));
+        return isPersonalHolidayWaitingNoon(getAbsencesForDate(date));
       },
 
       isPersonalHolidayNoonTemporaryApproved(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayNoonTemporaryCriteria));
+        return isPersonalHolidayTemporaryNoon(getAbsencesForDate(date));
       },
 
       isPersonalHolidayNoonApproved(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayNoonApprovedCriteria));
+        return isPersonalHolidayApprovedNoon(getAbsencesForDate(date));
       },
 
       isPersonalHolidayNoonCancellationRequest(date) {
-        const absences = getAbsencesForDate(date);
-        return Boolean(findWhere(absences, absenceCriteria.holidayNoonCancellationRequestedCriteria));
+        return isPersonalHolidayCancellationRequestedNoon(getAbsencesForDate(date));
       },
 
       isPublicHolidayFull(date) {

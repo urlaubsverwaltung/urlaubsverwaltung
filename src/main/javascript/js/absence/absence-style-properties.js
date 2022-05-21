@@ -1,15 +1,14 @@
-import { findWhere } from "underscore";
 import {
-  holidayFullApprovedCriteria,
-  holidayFullTemporaryCriteria,
-  holidayFullWaitingCriteria,
-  holidayMorningApprovedCriteria,
-  holidayMorningTemporaryCriteria,
-  holidayMorningWaitingCriteria,
-  holidayNoonApprovedCriteria,
-  holidayNoonTemporaryCriteria,
-  holidayNoonWaitingCriteria,
-} from "./absence-types";
+  isPersonalHolidayApprovedFull,
+  isPersonalHolidayApprovedMorning,
+  isPersonalHolidayApprovedNoon,
+  isPersonalHolidayTemporaryFull,
+  isPersonalHolidayTemporaryMorning,
+  isPersonalHolidayTemporaryNoon,
+  isPersonalHolidayWaitingFull,
+  isPersonalHolidayWaitingMorning,
+  isPersonalHolidayWaitingNoon,
+} from "./absence-assertions";
 
 const property = (n, v) => ({ name: n, value: v });
 const propertyMorning = (v) => property("--absence-bar-color-morning", v);
@@ -46,15 +45,15 @@ export function removeAbsenceTypeStyleFromNode(node) {
 function getStylePropertiesForDate(absences) {
   const [colorMorningOrFull, colorNoon] = getVacationTypeColors(absences);
   return [
-    findWhere(absences, holidayFullWaitingCriteria) ? propertyFull(colorMorningOrFull) : undefined,
-    findWhere(absences, holidayFullTemporaryCriteria) ? propertyFull(colorMorningOrFull) : undefined,
-    findWhere(absences, holidayFullApprovedCriteria) ? propertyFull(colorMorningOrFull) : undefined,
-    findWhere(absences, holidayMorningWaitingCriteria) ? propertyMorning(colorMorningOrFull) : undefined,
-    findWhere(absences, holidayMorningTemporaryCriteria) ? propertyMorning(colorMorningOrFull) : undefined,
-    findWhere(absences, holidayMorningApprovedCriteria) ? propertyMorning(colorMorningOrFull) : undefined,
-    findWhere(absences, holidayNoonWaitingCriteria) ? propertyNoon(colorNoon) : undefined,
-    findWhere(absences, holidayNoonTemporaryCriteria) ? propertyNoon(colorNoon) : undefined,
-    findWhere(absences, holidayNoonApprovedCriteria) ? propertyNoon(colorNoon) : undefined,
+    isPersonalHolidayWaitingFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
+    isPersonalHolidayTemporaryFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
+    isPersonalHolidayApprovedFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
+    isPersonalHolidayWaitingMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
+    isPersonalHolidayTemporaryMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
+    isPersonalHolidayApprovedMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
+    isPersonalHolidayWaitingNoon(absences) ? propertyNoon(colorNoon) : undefined,
+    isPersonalHolidayTemporaryNoon(absences) ? propertyNoon(colorNoon) : undefined,
+    isPersonalHolidayApprovedNoon(absences) ? propertyNoon(colorNoon) : undefined,
   ].filter(Boolean);
 }
 
