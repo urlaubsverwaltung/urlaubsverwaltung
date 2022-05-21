@@ -4,18 +4,7 @@ import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
 import { createDatepickerLocalization } from "./locale";
-import { addAbsenceTypeStyleToNode, removeAbsenceTypeStyleFromNode } from "./absence-style-properties";
-import {
-  holidayFullApprovedCriteria,
-  holidayFullTemporaryCriteria,
-  holidayFullWaitingCriteria,
-  holidayMorningApprovedCriteria,
-  holidayMorningTemporaryCriteria,
-  holidayMorningWaitingCriteria,
-  holidayNoonApprovedCriteria,
-  holidayNoonTemporaryCriteria,
-  holidayNoonWaitingCriteria,
-} from "./absence-types";
+import { criteria, addAbsenceTypeStyleToNode, removeAbsenceTypeStyleFromNode } from "../../js/absence";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -200,15 +189,16 @@ function getCssClassesForDate(date, publicHolidays, absences) {
   const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
   const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
 
-  const isPersonalHolidayFull = () => fitsCriteria(absences, holidayFullWaitingCriteria);
-  const isPersonalHolidayFullTemporaryApproved = () => fitsCriteria(absences, holidayFullTemporaryCriteria);
-  const isPersonalHolidayFullApproved = () => fitsCriteria(absences, holidayFullApprovedCriteria);
-  const isPersonalHolidayMorning = () => fitsCriteria(absences, holidayMorningWaitingCriteria);
-  const isPersonalHolidayMorningTemporaryApproved = () => fitsCriteria(absences, holidayMorningTemporaryCriteria);
-  const isPersonalHolidayMorningApproved = () => fitsCriteria(absences, holidayMorningApprovedCriteria);
-  const isPersonalHolidayNoon = () => fitsCriteria(absences, holidayNoonWaitingCriteria);
-  const isPersonalHolidayNoonTemporaryApproved = () => fitsCriteria(absences, holidayNoonTemporaryCriteria);
-  const isPersonalHolidayNoonApproved = () => fitsCriteria(absences, holidayNoonApprovedCriteria);
+  const isPersonalHolidayFull = () => fitsCriteria(absences, criteria.holidayFullWaitingCriteria);
+  const isPersonalHolidayFullTemporaryApproved = () => fitsCriteria(absences, criteria.holidayFullTemporaryCriteria);
+  const isPersonalHolidayFullApproved = () => fitsCriteria(absences, criteria.holidayFullApprovedCriteria);
+  const isPersonalHolidayMorning = () => fitsCriteria(absences, criteria.holidayMorningWaitingCriteria);
+  const isPersonalHolidayMorningTemporaryApproved = () =>
+    fitsCriteria(absences, criteria.holidayMorningTemporaryCriteria);
+  const isPersonalHolidayMorningApproved = () => fitsCriteria(absences, criteria.holidayMorningApprovedCriteria);
+  const isPersonalHolidayNoon = () => fitsCriteria(absences, criteria.holidayNoonWaitingCriteria);
+  const isPersonalHolidayNoonTemporaryApproved = () => fitsCriteria(absences, criteria.holidayNoonTemporaryCriteria);
+  const isPersonalHolidayNoonApproved = () => fitsCriteria(absences, criteria.holidayNoonApprovedCriteria);
 
   const isSickDayFull = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "FULL" });
   const isSickDayMorning = () =>
