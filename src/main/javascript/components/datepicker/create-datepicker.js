@@ -1,26 +1,10 @@
-import { endOfMonth, formatISO, isToday, isWeekend, parseISO } from "date-fns";
+import { endOfMonth, formatISO, parseISO } from "date-fns";
 import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
 import { createDatepickerLocalization } from "./locale";
-import {
-  addAbsenceTypeStyleToNode,
-  isPersonalHolidayApprovedFull,
-  isPersonalHolidayApprovedMorning,
-  isPersonalHolidayApprovedNoon,
-  isPersonalHolidayTemporaryFull,
-  isPersonalHolidayTemporaryMorning,
-  isPersonalHolidayTemporaryNoon,
-  isPersonalHolidayWaitingFull,
-  isPersonalHolidayWaitingMorning,
-  isPersonalHolidayWaitingNoon,
-  isSickNoteFull,
-  isSickNoteMorning,
-  isSickNoteNoon,
-  isNoWorkday,
-  removeAbsenceTypeStyleFromNode,
-} from "../../js/absence";
-import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
+import { addDatepickerCssClassesToNode, removeDatepickerCssClassesFromNode } from "./datepicker-css-classes";
+import { addAbsenceTypeStyleToNode, isNoWorkday, removeAbsenceTypeStyleFromNode } from "../../js/absence";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -29,25 +13,6 @@ import "../calendar/calendar.css";
 defineCustomElements(window);
 
 const noop = () => {};
-
-const datepickerClassnames = {
-  day: "datepicker-day",
-  today: "datepicker-day-today",
-  past: "datepicker-day-past",
-  weekend: "datepicker-day-weekend",
-  publicHolidayFull: "datepicker-day-public-holiday-full",
-  publicHolidayMorning: "datepicker-day-public-holiday-morning",
-  publicHolidayNoon: "datepicker-day-public-holiday-noon",
-  personalHolidayFull: "datepicker-day-personal-holiday-full",
-  personalHolidayFullApproved: "datepicker-day-personal-holiday-full-approved",
-  personalHolidayMorning: "datepicker-day-personal-holiday-morning",
-  personalHolidayMorningApproved: "datepicker-day-personal-holiday-morning-approved",
-  personalHolidayNoon: "datepicker-day-personal-holiday-noon",
-  personalHolidayNoonApproved: "datepicker-day-personal-holiday-noon-approved",
-  sickNoteFull: "datepicker-day-sick-note-full",
-  sickNoteMorning: "datepicker-day-sick-note-morning",
-  sickNoteNoon: "datepicker-day-sick-note-noon",
-};
 
 export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
   const { localisation } = window.uv.datepicker;
@@ -61,8 +26,8 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
   const showAbsences = () => {
     // clear all days
     for (const element of duetDateElement.querySelectorAll(".duet-date__day")) {
-      element.classList.remove(...Object.values(datepickerClassnames));
       element.querySelector("[data-uv-icon]")?.remove();
+      removeDatepickerCssClassesFromNode(element);
       removeAbsenceTypeStyleFromNode(element);
     }
 
@@ -100,10 +65,10 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         } else {
           date.setFullYear(selectedYear);
         }
-        const cssClasses = getCssClassesForDate(date, publicHolidays.value, absences.value);
-        dayElement.classList.add(...cssClasses);
 
         const absencesForDate = findByDate(absences.value, date);
+        const publicHolidaysForDate = findByDate(publicHolidays.value, date);
+        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate);
         addAbsenceTypeStyleToNode(dayElement, absencesForDate);
 
         let icon;
@@ -190,36 +155,6 @@ function waitForDatePickerHydration(rootElement) {
 
 function dateToString(date) {
   return date ? formatISO(date, { representation: "date" }) : "";
-}
-
-const isPast = () => false;
-
-function getCssClassesForDate(date, publicHolidays, absences) {
-  const dateString = dateToString(date);
-  const absencesForDate = absences.filter((absence) => absence.date === dateString);
-  const publicHolidaysForDate = publicHolidays.filter((publicHoliday) => publicHoliday.date === dateString);
-
-  return [
-    datepickerClassnames.day,
-    isToday(date) && datepickerClassnames.today,
-    isPast() && datepickerClassnames.past,
-    isWeekend(date) && datepickerClassnames.weekend,
-    isPublicHoliday(publicHolidaysForDate) && datepickerClassnames.publicHolidayFull,
-    isPublicHolidayMorning(publicHolidaysForDate) && datepickerClassnames.publicHolidayMorning,
-    isPublicHolidayNoon(publicHolidaysForDate) && datepickerClassnames.publicHolidayNoon,
-    isPersonalHolidayWaitingFull(absencesForDate) && datepickerClassnames.personalHolidayFull,
-    isPersonalHolidayTemporaryFull(absencesForDate) && datepickerClassnames.personalHolidayFull,
-    isPersonalHolidayApprovedFull(absencesForDate) && datepickerClassnames.personalHolidayFullApproved,
-    isPersonalHolidayWaitingMorning(absencesForDate) && datepickerClassnames.personalHolidayMorning,
-    isPersonalHolidayTemporaryMorning(absencesForDate) && datepickerClassnames.personalHolidayMorning,
-    isPersonalHolidayApprovedMorning(absencesForDate) && datepickerClassnames.personalHolidayMorningApproved,
-    isPersonalHolidayWaitingNoon(absencesForDate) && datepickerClassnames.personalHolidayNoon,
-    isPersonalHolidayTemporaryNoon(absencesForDate) && datepickerClassnames.personalHolidayNoon,
-    isPersonalHolidayApprovedNoon(absencesForDate) && datepickerClassnames.personalHolidayNoonApproved,
-    isSickNoteFull(absencesForDate) && datepickerClassnames.sickNoteFull,
-    isSickNoteMorning(absencesForDate) && datepickerClassnames.sickNoteMorning,
-    isSickNoteNoon(absencesForDate) && datepickerClassnames.sickNoteNoon,
-  ].filter(Boolean);
 }
 
 function findByDate(list, date) {
