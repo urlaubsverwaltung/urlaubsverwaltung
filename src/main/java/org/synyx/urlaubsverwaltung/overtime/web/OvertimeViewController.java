@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
@@ -66,18 +68,21 @@ public class OvertimeViewController {
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
     private final ApplicationService applicationService;
-    private final Clock clock;
+    private final VacationTypeViewModelService vacationTypeViewModelService;
     private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
                                   OvertimeFormValidator validator, DepartmentService departmentService,
-                                  ApplicationService applicationService, SettingsService settingsService, Clock clock) {
+                                  ApplicationService applicationService, VacationTypeViewModelService vacationTypeViewModelService,
+                                  SettingsService settingsService, Clock clock) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;
         this.departmentService = departmentService;
         this.applicationService = applicationService;
+        this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.settingsService = settingsService;
         this.clock = clock;
     }
@@ -284,6 +289,9 @@ public class OvertimeViewController {
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
+
+        final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
+        model.addAttribute("vacationTypeColors", vacationTypeColors);
     }
 
     private List<Application> getOvertimeAbsences(int year, Person person) {

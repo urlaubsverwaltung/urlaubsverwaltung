@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -17,9 +19,11 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,6 +57,8 @@ class AccountViewControllerTest {
     @Mock
     private AccountInteractionService accountInteractionService;
     @Mock
+    private VacationTypeViewModelService vacationTypeViewModelService;
+    @Mock
     private AccountFormValidator validator;
     @Mock
     private AccountForm accountForm;
@@ -61,7 +67,7 @@ class AccountViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new AccountViewController(personService, accountService, accountInteractionService, validator, clock);
+        sut = new AccountViewController(personService, accountService, accountInteractionService, vacationTypeViewModelService, validator, clock);
     }
 
     @Test
@@ -77,10 +83,13 @@ class AccountViewControllerTest {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("account", instanceOf(AccountForm.class)))
             .andExpect(model().attribute("year", notNullValue()))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
             .andExpect(view().name("account/account_form"));
     }
 
@@ -118,6 +127,7 @@ class AccountViewControllerTest {
     void updateAccountShowsFormIfValidationFailsOnFieldError() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -126,8 +136,9 @@ class AccountViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
-            .andExpect(view().name("account/account_form"))
-            .andExpect(model().attributeHasErrors("account"));
+            .andExpect(model().attributeHasErrors("account"))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(view().name("account/account_form"));
     }
 
     @Test

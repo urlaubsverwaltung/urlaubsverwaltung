@@ -9,6 +9,9 @@ describe("create-datepicker", () => {
       datepicker: {
         localisation: datepickerLocalisation(),
       },
+      vacationTypes: {
+        colors: {},
+      },
     };
     setLocale(de);
   });

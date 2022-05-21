@@ -13,7 +13,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -33,6 +35,7 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,6 +73,8 @@ class SickNoteViewControllerTest {
     @Mock
     private VacationTypeService vacationTypeService;
     @Mock
+    private VacationTypeViewModelService vacationTypeViewModelService;
+    @Mock
     private PersonService personService;
     @Mock
     private WorkDaysCountService workDaysCountService;
@@ -86,7 +91,7 @@ class SickNoteViewControllerTest {
     void setUp() {
         sut = new SickNoteViewController(sickNoteService,
             sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService,
-            vacationTypeService, personService, workDaysCountService, sickNoteValidator,
+            vacationTypeService, vacationTypeViewModelService, personService, workDaysCountService, sickNoteValidator,
             sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
     }
 
@@ -108,11 +113,13 @@ class SickNoteViewControllerTest {
     void ensureGetEditHasCorrectModelAttributes() throws Exception {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes()))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
@@ -246,6 +253,8 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostNewSickNoteShowsFormIfValidationFails() throws Exception {
 
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
             errors.rejectValue("person", "error");
@@ -253,6 +262,7 @@ class SickNoteViewControllerTest {
         }).when(sickNoteValidator).validate(any(), any());
 
         perform(post("/web/sicknote"))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
@@ -304,6 +314,8 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteShowsFormIfValidationFails() throws Exception {
 
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
             errors.rejectValue("person", "error");
@@ -311,6 +323,7 @@ class SickNoteViewControllerTest {
         }).when(sickNoteValidator).validate(any(), any());
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 

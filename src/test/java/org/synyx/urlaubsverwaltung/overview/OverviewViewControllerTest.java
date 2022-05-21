@@ -15,8 +15,9 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -39,6 +40,7 @@ import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -88,13 +90,14 @@ class OverviewViewControllerTest {
     private SettingsService settingsService;
 
     @Mock
-    private VacationTypeService vacationTypeService;
+    private VacationTypeViewModelService vacationTypeViewModelService;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
         sut = new OverviewViewController(personService, accountService, vacationDaysService,
-            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, vacationTypeService, clock);
+            applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService,
+            departmentService, vacationTypeViewModelService, clock);
     }
 
     @Test
@@ -319,6 +322,8 @@ class OverviewViewControllerTest {
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
 
@@ -363,6 +368,7 @@ class OverviewViewControllerTest {
         resultActions.andExpect(model().attribute("sickNotes", hasSize(2)));
         resultActions.andExpect(model().attribute("signedInUser", person));
         resultActions.andExpect(model().attribute("userIsAllowedToWriteOvertime", true));
+        resultActions.andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))));
     }
 
 

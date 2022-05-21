@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
@@ -57,6 +59,7 @@ class SickNoteViewController {
     private final SickNoteCommentService sickNoteCommentService;
     private final SickNoteTypeService sickNoteTypeService;
     private final VacationTypeService vacationTypeService;
+    private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
@@ -68,7 +71,7 @@ class SickNoteViewController {
     @Autowired
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
-                           VacationTypeService vacationTypeService, PersonService personService,
+                           VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
                            WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
                            SettingsService settingsService, Clock clock) {
@@ -78,6 +81,7 @@ class SickNoteViewController {
         this.sickNoteCommentService = sickNoteCommentService;
         this.sickNoteTypeService = sickNoteTypeService;
         this.vacationTypeService = vacationTypeService;
+        this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
         this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
@@ -129,6 +133,8 @@ class SickNoteViewController {
         model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
         model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
+        addVacationTypeColorsToModel(model);
+
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
@@ -144,6 +150,8 @@ class SickNoteViewController {
             model.addAttribute(SICK_NOTE, sickNoteForm);
             model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
             model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
+
+            addVacationTypeColorsToModel(model);
 
             return SICKNOTE_SICK_NOTE_FORM;
         }
@@ -168,6 +176,8 @@ class SickNoteViewController {
         model.addAttribute(SICK_NOTE, sickNoteForm);
         model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
+        addVacationTypeColorsToModel(model);
+
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
@@ -183,6 +193,8 @@ class SickNoteViewController {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, sickNoteForm);
             model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
+
+            addVacationTypeColorsToModel(model);
 
             return SICKNOTE_SICK_NOTE_FORM;
         }
@@ -270,5 +282,10 @@ class SickNoteViewController {
             vacationTypes = vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME);
         }
         return vacationTypes;
+    }
+
+    private void addVacationTypeColorsToModel(Model model) {
+        final List<VacationTypeDto> vacationTypeDtos = vacationTypeViewModelService.getVacationTypeColors();
+        model.addAttribute("vacationTypeColors", vacationTypeDtos);
     }
 }

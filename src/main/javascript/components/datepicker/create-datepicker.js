@@ -4,6 +4,18 @@ import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
 import { createDatepickerLocalization } from "./locale";
+import { addAbsenceTypeStyleToNode, removeAbsenceTypeStyleFromNode } from "./absence-style-properties";
+import {
+  holidayFullApprovedCriteria,
+  holidayFullTemporaryCriteria,
+  holidayFullWaitingCriteria,
+  holidayMorningApprovedCriteria,
+  holidayMorningTemporaryCriteria,
+  holidayMorningWaitingCriteria,
+  holidayNoonApprovedCriteria,
+  holidayNoonTemporaryCriteria,
+  holidayNoonWaitingCriteria,
+} from "./absence-types";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -46,6 +58,7 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
     for (const element of duetDateElement.querySelectorAll(".duet-date__day")) {
       element.classList.remove(...Object.values(datepickerClassnames));
       element.querySelector("[data-uv-icon]")?.remove();
+      removeAbsenceTypeStyleFromNode(element);
     }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
@@ -84,6 +97,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         }
         const cssClasses = getCssClassesForDate(date, publicHolidays.value, absences.value);
         dayElement.classList.add(...cssClasses);
+
+        const absencesForDate = findByDate(absences.value, date);
+        addAbsenceTypeStyleToNode(dayElement, absencesForDate);
 
         const isNoWorkday = fitsCriteriaMatcher(date)(absences.value, { type: "NO_WORKDAY" });
         let icon;
@@ -166,9 +182,13 @@ function waitForDatePickerHydration(rootElement) {
   });
 }
 
+function dateToString(date) {
+  return date ? formatISO(date, { representation: "date" }) : "";
+}
+
 function fitsCriteriaMatcher(date) {
-  const dateString = date ? formatISO(date, { representation: "date" }) : "";
-  return (list, filterAttributes) => Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
+  const dateString = dateToString(date);
+  return (list, criteria) => Boolean(findWhere(list, { ...criteria, date: dateString }));
 }
 
 const isPast = () => false;
@@ -179,60 +199,17 @@ function getCssClassesForDate(date, publicHolidays, absences) {
   const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });
   const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
   const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
-  const isPersonalHolidayFull = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "FULL",
-      status: "WAITING",
-    });
-  const isPersonalHolidayFullTemporaryApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "FULL",
-      status: "TEMPORARY_ALLOWED",
-    });
-  const isPersonalHolidayFullApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "FULL",
-      status: "ALLOWED",
-    });
-  const isPersonalHolidayMorning = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "MORNING",
-      status: "WAITING",
-    });
-  const isPersonalHolidayMorningTemporaryApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "MORNING",
-      status: "TEMPORARY_ALLOWED",
-    });
-  const isPersonalHolidayMorningApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "MORNING",
-      status: "ALLOWED",
-    });
-  const isPersonalHolidayNoon = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "NOON",
-      status: "WAITING",
-    });
-  const isPersonalHolidayNoonTemporaryApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "NOON",
-      status: "TEMPORARY_ALLOWED",
-    });
-  const isPersonalHolidayNoonApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "NOON",
-      status: "ALLOWED",
-    });
+
+  const isPersonalHolidayFull = () => fitsCriteria(absences, holidayFullWaitingCriteria);
+  const isPersonalHolidayFullTemporaryApproved = () => fitsCriteria(absences, holidayFullTemporaryCriteria);
+  const isPersonalHolidayFullApproved = () => fitsCriteria(absences, holidayFullApprovedCriteria);
+  const isPersonalHolidayMorning = () => fitsCriteria(absences, holidayMorningWaitingCriteria);
+  const isPersonalHolidayMorningTemporaryApproved = () => fitsCriteria(absences, holidayMorningTemporaryCriteria);
+  const isPersonalHolidayMorningApproved = () => fitsCriteria(absences, holidayMorningApprovedCriteria);
+  const isPersonalHolidayNoon = () => fitsCriteria(absences, holidayNoonWaitingCriteria);
+  const isPersonalHolidayNoonTemporaryApproved = () => fitsCriteria(absences, holidayNoonTemporaryCriteria);
+  const isPersonalHolidayNoonApproved = () => fitsCriteria(absences, holidayNoonApprovedCriteria);
+
   const isSickDayFull = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "FULL" });
   const isSickDayMorning = () =>
     fitsCriteria(absences, {
@@ -262,6 +239,11 @@ function getCssClassesForDate(date, publicHolidays, absences) {
     isSickDayMorning() && datepickerClassnames.sickNoteMorning,
     isSickDayNoon() && datepickerClassnames.sickNoteNoon,
   ].filter(Boolean);
+}
+
+function findByDate(list, date) {
+  const dateString = dateToString(date);
+  return list.filter((item) => item.date === dateString);
 }
 
 function pick(name) {

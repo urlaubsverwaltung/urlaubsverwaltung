@@ -23,6 +23,7 @@
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
     <uv:datepicker-localisation />
+    <uv:vacation-type-colors-script />
     <script defer src="<asset:url value='npm.duetds.js' />"></script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js' />"></script>

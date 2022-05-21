@@ -20,8 +20,10 @@ import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -82,6 +84,7 @@ class ApplicationForLeaveFormViewController {
     private final DepartmentService departmentService;
     private final AccountService accountService;
     private final VacationTypeService vacationTypeService;
+    private final VacationTypeViewModelService vacationTypeViewModelService;
     private final ApplicationInteractionService applicationInteractionService;
     private final ApplicationForLeaveFormValidator applicationForLeaveFormValidator;
     private final SettingsService settingsService;
@@ -92,7 +95,7 @@ class ApplicationForLeaveFormViewController {
     @Autowired
     ApplicationForLeaveFormViewController(PersonService personService, DepartmentService departmentService, AccountService accountService,
                                           VacationTypeService vacationTypeService,
-                                          ApplicationInteractionService applicationInteractionService,
+                                          VacationTypeViewModelService vacationTypeViewModelService, ApplicationInteractionService applicationInteractionService,
                                           ApplicationForLeaveFormValidator applicationForLeaveFormValidator,
                                           SettingsService settingsService, DateFormatAware dateFormatAware,
                                           Clock clock, SpecialLeaveSettingsService specialLeaveSettingsService) {
@@ -100,6 +103,7 @@ class ApplicationForLeaveFormViewController {
         this.departmentService = departmentService;
         this.accountService = accountService;
         this.vacationTypeService = vacationTypeService;
+        this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.applicationInteractionService = applicationInteractionService;
         this.applicationForLeaveFormValidator = applicationForLeaveFormValidator;
         this.settingsService = settingsService;
@@ -430,6 +434,9 @@ class ApplicationForLeaveFormViewController {
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
         final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
         model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
+
+        final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
+        model.addAttribute("vacationTypeColors", vacationTypeColors);
     }
 
     private static Predicate<Person> personEquals(Person person) {
