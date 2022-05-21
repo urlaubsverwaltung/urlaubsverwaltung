@@ -1,4 +1,3 @@
-import { findWhere } from "underscore";
 import { endOfMonth, formatISO, isToday, isWeekend, parseISO } from "date-fns";
 import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
@@ -18,8 +17,10 @@ import {
   isSickNoteFull,
   isSickNoteMorning,
   isSickNoteNoon,
+  isNoWorkday,
   removeAbsenceTypeStyleFromNode,
 } from "../../js/absence";
+import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -105,9 +106,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         const absencesForDate = findByDate(absences.value, date);
         addAbsenceTypeStyleToNode(dayElement, absencesForDate);
 
-        const isNoWorkday = fitsCriteriaMatcher(date)(absences.value, { type: "NO_WORKDAY" });
         let icon;
-        if (isNoWorkday) {
+
+        if (isNoWorkday(absencesForDate)) {
           const temporary = document.createElement("span");
           temporary.innerHTML = `<svg viewBox="0 0 20 20" class="tw-w-3 tw-h-3 tw-opacity-50 tw-stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
           icon = temporary.firstChild;
@@ -115,6 +116,7 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
           icon = document.createElement("span");
           icon.classList.add("tw-w-3", "tw-h-3", "tw-inline-block");
         }
+
         icon.dataset.uvIcon = "";
         dayElement.append(icon);
       }
@@ -190,31 +192,21 @@ function dateToString(date) {
   return date ? formatISO(date, { representation: "date" }) : "";
 }
 
-function fitsCriteriaMatcher(date) {
-  const dateString = dateToString(date);
-  return (list, criteria) => Boolean(findWhere(list, { ...criteria, date: dateString }));
-}
-
 const isPast = () => false;
 
 function getCssClassesForDate(date, publicHolidays, absences) {
-  const fitsCriteria = fitsCriteriaMatcher(date);
-
   const dateString = dateToString(date);
   const absencesForDate = absences.filter((absence) => absence.date === dateString);
-
-  const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });
-  const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
-  const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
+  const publicHolidaysForDate = publicHolidays.filter((publicHoliday) => publicHoliday.date === dateString);
 
   return [
     datepickerClassnames.day,
     isToday(date) && datepickerClassnames.today,
     isPast() && datepickerClassnames.past,
     isWeekend(date) && datepickerClassnames.weekend,
-    isPublicHolidayFull() && datepickerClassnames.publicHolidayFull,
-    isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
-    isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
+    isPublicHoliday(publicHolidaysForDate) && datepickerClassnames.publicHolidayFull,
+    isPublicHolidayMorning(publicHolidaysForDate) && datepickerClassnames.publicHolidayMorning,
+    isPublicHolidayNoon(publicHolidaysForDate) && datepickerClassnames.publicHolidayNoon,
     isPersonalHolidayWaitingFull(absencesForDate) && datepickerClassnames.personalHolidayFull,
     isPersonalHolidayTemporaryFull(absencesForDate) && datepickerClassnames.personalHolidayFull,
     isPersonalHolidayApprovedFull(absencesForDate) && datepickerClassnames.personalHolidayFullApproved,

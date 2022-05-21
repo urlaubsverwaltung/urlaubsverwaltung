@@ -43,6 +43,7 @@ import {
   isPersonalHolidayCancellationRequestedNoon,
   isPersonalHolidayTemporaryNoon,
 } from "../../js/absence";
+import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
 import "./calendar.css";
 
 function paramize(p) {
@@ -344,18 +345,15 @@ $(function () {
       },
 
       isPublicHolidayFull(date) {
-        const publicHolidays = getPublicHolidaysForDate(date);
-        return Boolean(findWhere(publicHolidays, { absencePeriodName: "FULL" }));
+        return isPublicHoliday(getPublicHolidaysForDate(date));
       },
 
       isPublicHolidayMorning(date) {
-        const publicHolidays = getPublicHolidaysForDate(date);
-        return Boolean(findWhere(publicHolidays, { absencePeriodName: "MORNING" }));
+        return isPublicHolidayMorning(getPublicHolidaysForDate(date));
       },
 
       isPublicHolidayNoon(date) {
-        const publicHolidays = getPublicHolidaysForDate(date);
-        return Boolean(findWhere(publicHolidays, { absencePeriodName: "NOON" }));
+        return isPublicHolidayNoon(getPublicHolidaysForDate(date));
       },
 
       getDescription: function (date) {
