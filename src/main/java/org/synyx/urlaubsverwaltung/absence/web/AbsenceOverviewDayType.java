@@ -22,12 +22,14 @@ public class AbsenceOverviewDayType {
     private final boolean publicHolidayNoon;
     private final boolean publicHolidayFull;
 
+    private final AbsenceOverviewDayTypeColor color;
+
     @SuppressWarnings("java:S107") // Methods should not have too many parameters -> builder below must be used for construction
     private AbsenceOverviewDayType(boolean waitingVacationMorning, boolean waitingVacationNoon, boolean waitingVacationFull,
-                           boolean allowedVacationMorning, boolean allowedVacationNoon, boolean allowedVacationFull,
-                           boolean sickNoteMorning, boolean sickNoteNoon, boolean sickNoteFull, boolean absenceMorning,
-                           boolean absenceNoon, boolean absenceFull, boolean publicHolidayMorning,
-                           boolean publicHolidayNoon, boolean publicHolidayFull) {
+                                   boolean allowedVacationMorning, boolean allowedVacationNoon, boolean allowedVacationFull,
+                                   boolean sickNoteMorning, boolean sickNoteNoon, boolean sickNoteFull, boolean absenceMorning,
+                                   boolean absenceNoon, boolean absenceFull, boolean publicHolidayMorning,
+                                   boolean publicHolidayNoon, boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
         this.waitingVacationMorning = waitingVacationMorning;
         this.waitingVacationNoon = waitingVacationNoon;
         this.waitingVacationFull = waitingVacationFull;
@@ -43,6 +45,7 @@ public class AbsenceOverviewDayType {
         this.publicHolidayMorning = publicHolidayMorning;
         this.publicHolidayNoon = publicHolidayNoon;
         this.publicHolidayFull = publicHolidayFull;
+        this.color = color;
     }
 
     public static Builder builder() {
@@ -109,6 +112,10 @@ public class AbsenceOverviewDayType {
         return publicHolidayFull;
     }
 
+    public AbsenceOverviewDayTypeColor getColor() {
+        return color;
+    }
+
     public static class Builder {
         private boolean waitingVacationMorning = false;
         private boolean waitingVacationNoon = false;
@@ -129,6 +136,8 @@ public class AbsenceOverviewDayType {
         private boolean publicHolidayMorning = false;
         private boolean publicHolidayNoon = false;
         private boolean publicHolidayFull = false;
+
+        private AbsenceOverviewDayTypeColor color = new AbsenceOverviewDayTypeColor();
 
         public Builder waitingVacationMorning() {
             this.waitingVacationMorning = true;
@@ -205,6 +214,11 @@ public class AbsenceOverviewDayType {
             return this;
         }
 
+        public Builder color(AbsenceOverviewDayTypeColor color) {
+            this.color = color;
+            return this;
+        }
+
         public AbsenceOverviewDayType build() {
             return new AbsenceOverviewDayType(
                 waitingVacationMorning,
@@ -221,8 +235,8 @@ public class AbsenceOverviewDayType {
                 absenceFull,
                 publicHolidayMorning,
                 publicHolidayNoon,
-                publicHolidayFull
-            );
+                publicHolidayFull,
+                color);
         }
     }
 }
