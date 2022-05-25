@@ -46,7 +46,9 @@ class ColorPicker extends HTMLDivElement {
     this.#focusedElementIndex = 0;
 
     this.setAttribute("tabindex", "0");
-    this.classList.add("focus:tw-outline-2", "focus:tw-outline-blue-500");
+    this.classList.add("tw-cursor-pointer", "focus:tw-outline-2", "focus:tw-outline-blue-500");
+
+    this.#dialogToggleButton.classList.add("tw-cursor-pointer");
 
     for (let input of this.querySelectorAll("input")) {
       input.setAttribute("tabindex", "-1");
@@ -169,7 +171,7 @@ class ColorPicker extends HTMLDivElement {
     this.classList.add("tw-flex", "tw-items-center");
 
     const span = document.createElement("span");
-    span.classList.add("dropdown-caret", "tw-mt-0.5", "tw-ml-1.5");
+    span.classList.add("dropdown-caret", "tw-cursor-pointer", "tw-mt-0.5", "tw-ml-1.5");
     this.append(span);
   }
 
