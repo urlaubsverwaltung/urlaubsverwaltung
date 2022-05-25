@@ -62,9 +62,9 @@ th.vacationOverview-cal-head.today::after {
 }
 
 .cal-day {
-  --absence-bar-color-morning: transparent;
-  --absence-bar-color-noon: transparent;
-  --absence-bar-color: transparent;
+  --absence-bar-color-morning: theme("backgroundColor.calendar.DEFAULT");
+  --absence-bar-color-noon: theme("backgroundColor.calendar.DEFAULT");
+  --absence-bar-color: theme("backgroundColor.calendar.DEFAULT");
   --background-color-left: theme("backgroundColor.calendar.DEFAULT");
   --background-color-right: theme("backgroundColor.calendar.DEFAULT");
   --font-color: theme("textColor.calendar.DEFAULT");
