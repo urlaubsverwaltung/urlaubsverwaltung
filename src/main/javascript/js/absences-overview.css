@@ -107,7 +107,14 @@ th.vacationOverview-cal-head.today::after {
   right: 4px;
   height: 4px;
   border-radius: 99999px;
+}
+
+.cal-day:is(.legend-absence-full-approved, .absence-full, .vacation-full-approved, .sick-note-full)::after {
   background-color: var(--absence-bar-color);
+}
+
+.cal-day:is(.vacation-full-waiting)::after {
+  border: solid 1px var(--absence-bar-color);
 }
 
 .cal-day:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before {
@@ -118,7 +125,14 @@ th.vacationOverview-cal-head.today::after {
   right: 50%;
   height: 4px;
   border-radius: 99999px;
+}
+
+.cal-day:is(.absence-morning, .vacation-morning-approved, .sick-note-morning)::before {
   background-color: var(--absence-bar-color-morning);
+}
+
+.cal-day:is(.vacation-morning-waiting)::before {
+  border: solid 1px var(--absence-bar-color-morning);
 }
 
 .cal-day:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after {
@@ -129,7 +143,14 @@ th.vacationOverview-cal-head.today::after {
   right: 4px;
   height: 4px;
   border-radius: 99999px;
+}
+
+.cal-day:is(.absence-noon, .vacation-noon-approved, .sick-note-noon)::after {
   background-color: var(--absence-bar-color-noon);
+}
+
+.cal-day:is(.vacation-noon-waiting)::after {
+  border: solid 1px var(--absence-bar-color-noon);
 }
 
 @media print {
