@@ -99,7 +99,7 @@ th.vacationOverview-cal-head.today::after {
   height: 100%;
 }
 
-.cal-day:is(.absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
+.cal-day:is(.legend-absence-full-approved, .absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 4px;

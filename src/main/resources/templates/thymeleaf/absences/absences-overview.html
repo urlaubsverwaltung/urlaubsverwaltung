@@ -297,70 +297,24 @@
             <td class="vacationOverview-legend-text" th:text="#{absences.overview.no-workday}"></td>
           </tr>
           <th:block th:if="${showRichLegend}">
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day vacation-full-approved"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.allowed.abbr}">
-                </span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.allowed}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day vacation-morning-approved"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.allowed.morning.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.allowed.morning}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day vacation-noon-approved"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.allowed.noon.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.allowed.noon}">
-              </td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day vacation-full-waiting"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.vacation.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.vacation}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day vacation-morning-waiting"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.vacation.morning.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.vacation.morning}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day vacation-noon-waiting"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.vacation.noon.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.vacation.noon}"></td>
-            </tr>
+            <th:block th:each="vacationTypeColor : ${vacationTypeColors}">
+              <tr>
+                <td class="vacationOverview-legend-colorbox">
+                  <div
+                    class="cal-day legend-absence-full-approved"
+                    th:styleappend="|--absence-bar-color:${vacationTypeColor.color};|"
+                  ></div>
+                  <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
+                </td>
+                <td class="vacationOverview-legend-text" th:text="${#messages.msg(vacationTypeColor.messageKey)}"></td>
+              </tr>
+            </th:block>
             <tr>
               <td class="vacationOverview-legend-colorbox">
                 <div class="cal-day sick-note-full"></div>
                 <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.abbr}"></span>
               </td>
               <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day sick-note-morning"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.morning.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick.morning}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day sick-note-noon"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.noon.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick.noon}"></td>
             </tr>
           </th:block>
           <th:block th:if="${not showRichLegend}">
@@ -370,20 +324,6 @@
                 <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
               </td>
               <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day absence-morning"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.morning.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence.morning}"></td>
-            </tr>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day absence-noon"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.noon.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence.noon}"></td>
             </tr>
           </th:block>
         </tbody>

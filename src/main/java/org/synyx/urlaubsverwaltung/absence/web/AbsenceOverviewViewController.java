@@ -141,6 +141,12 @@ public class AbsenceOverviewViewController {
         final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
         model.addAttribute("showRichLegend", !membersOfSignedInUser.isEmpty());
 
+        // use active vacation types instead of all to avoid too much items in the legend.
+        // (there could be non-active vacation types visible in the absence-overview)
+        // the legend will be removed soon -> therefore display just the active items
+        final List<VacationType> vacationTypes = vacationTypeService.getActiveVacationTypes();
+        model.addAttribute("vacationTypeColors", vacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList()));
+
         final DateRange dateRange = new DateRange(startDate, endDate);
         final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, membersOfSignedInUser);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
@@ -497,5 +503,9 @@ public class AbsenceOverviewViewController {
         return relevantPersons.stream()
             .distinct()
             .collect(toList());
+    }
+
+    private static VacationTypeColorDto toVacationTypeColorsDto(VacationType vacationType) {
+        return new VacationTypeColorDto(vacationType.getMessageKey(), vacationType.getColor());
     }
 }
