@@ -57,11 +57,11 @@ public interface SickNoteService {
     Long getNumberOfPersonsWithMinimumOneSickNote(int year);
 
     /**
-     * Get all {@link SickNote} with specific states
+     * Get all {@link SickNote} with specific states since
      *
-     * @return all {@link SickNote} with specific states
+     * @return all {@link SickNote} with specific states since
      */
-    List<SickNote> getForStates(List<SickNoteStatus> sickNoteStatuses);
+    List<SickNote> getForStatesSince(List<SickNoteStatus> sickNoteStatuses, LocalDate since);
 
     /**
      * Get all {@link SickNote} with specific states and persons

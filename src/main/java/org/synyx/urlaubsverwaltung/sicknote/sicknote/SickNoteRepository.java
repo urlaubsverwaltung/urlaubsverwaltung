@@ -44,7 +44,7 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     )
     List<SickNote> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, int daysBeforeEndOfSickPayNotification, LocalDate today);
 
-    List<SickNote> findByStatusIn(List<SickNoteStatus> openSickNoteStatuses);
+    List<SickNote> findByStatusInAndEndDateGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, LocalDate since);
 
     List<SickNote> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, List<Person> persons, LocalDate sinceStartDate);
 

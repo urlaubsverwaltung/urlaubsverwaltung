@@ -127,7 +127,7 @@ class AbsenceServiceImplTest {
         final LocalDate startDateSickNote = LocalDate.of(2019, 10, 10);
         final LocalDate endDateSickNote = LocalDate.of(2019, 10, 23);
         final SickNote sickNote = createSickNote(person, startDateSickNote, endDateSickNote, FULL);
-        when(sickNoteService.getForStates(List.of(ACTIVE))).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesSince(List.of(ACTIVE), since)).thenReturn(List.of(sickNote));
 
         final List<Absence> openAbsences = sut.getOpenAbsencesSince(since);
         assertThat(openAbsences).hasSize(2);
