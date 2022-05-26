@@ -534,114 +534,20 @@
                                                 </label>
                                                 <input type="checkbox" id="color-picker-${loop.index}">
                                                 <ul id="color-popup-${loop.index}" class="color-picker-dialog tw-list-none">
+                                                    <c:forEach var="selectableColor" varStatus="selectableColorLoop" items="${settings.absenceTypeSettings.colors}">
                                                     <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-1">
+                                                        <label for="color-${loop.index}-radio-${selectableColorLoop.index}">
                                                             <input
-                                                                <c:if test="${absenceType.color == 'NEUTRAL'}">checked</c:if>
-                                                                value="NEUTRAL"
-                                                                id="color-${loop.index}-radio-1"
+                                                                <c:if test="${absenceType.color == selectableColor}">checked</c:if>
+                                                                value="${selectableColor}"
+                                                                id="color-${loop.index}-radio-${selectableColorLoop.index}"
                                                                 name="absenceTypeSettings.items[${loop.index}].color"
                                                                 type="radio"
                                                             >
-                                                            <span style="background-color:var(--absence-color-NEUTRAL);"></span>
+                                                            <span style="background-color:var(--absence-color-${selectableColor});"></span>
                                                         </label>
                                                     </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-2">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'RED'}">checked</c:if>
-                                                                value="RED"
-                                                                id="color-${loop.index}-radio-2"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-RED);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-3">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'ORANGE'}">checked</c:if>
-                                                                value="ORANGE"
-                                                                id="color-${loop.index}-radio-3"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-ORANGE);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-4">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'YELLOW'}">checked</c:if>
-                                                                value="YELLOW"
-                                                                id="color-${loop.index}-radio-4"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-YELLOW);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-5">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'LIME'}">checked</c:if>
-                                                                value="LIME"
-                                                                id="color-${loop.index}-radio-5"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-LIME);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-6">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'CYAN'}">checked</c:if>
-                                                                value="CYAN"
-                                                                id="color-${loop.index}-radio-6"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-CYAN);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-7">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'BLUE'}">checked</c:if>
-                                                                value="BLUE"
-                                                                id="color-${loop.index}-radio-7"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-BLUE);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-8">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'VIOLET'}">checked</c:if>
-                                                                value="VIOLET"
-                                                                id="color-${loop.index}-radio-8"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-VIOLET);"></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="color-picker-option">
-                                                        <label for="color-${loop.index}-radio-9">
-                                                            <input
-                                                                <c:if test="${absenceType.color == 'FUCHSIA'}">checked</c:if>
-                                                                value="FUCHSIA"
-                                                                id="color-${loop.index}-radio-9"
-                                                                name="absenceTypeSettings.items[${loop.index}].color"
-                                                                type="radio"
-                                                            >
-                                                            <span style="background-color:var(--absence-color-FUCHSIA);"></span>
-                                                        </label>
-                                                    </li>
+                                                    </c:forEach>
                                                 </ul>
                                             </div>
                                         </td>
