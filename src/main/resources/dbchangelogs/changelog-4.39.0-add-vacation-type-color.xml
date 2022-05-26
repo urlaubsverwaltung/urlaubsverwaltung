@@ -73,4 +73,17 @@
     </update>
   </changeSet>
 
+  <changeSet author="seber" id="use-vacation-type-color-default">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+    </preConditions>
+
+    <update tableName="vacation_type">
+      <column name="color" value="NEUTRAL" />
+      <where>color is null</where>
+    </update>
+
+    <addNotNullConstraint tableName="vacation_type" columnName="color" columnDataType="VARCHAR(7)" />
+  </changeSet>
+
 </databaseChangeLog>
