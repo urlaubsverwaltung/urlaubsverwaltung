@@ -524,6 +524,7 @@
 
                                             <div is="uv-color-picker">
                                                 <label
+                                                    id="color-picker-label-${loop.index}"
                                                     for="color-picker-${loop.index}"
                                                     class="color-picker-button tw-px-3 tw-py-2 tw-w-12 tw-h-4 tw-rounded"
                                                     style="background-color:var(--absence-color-${absenceType.color})"

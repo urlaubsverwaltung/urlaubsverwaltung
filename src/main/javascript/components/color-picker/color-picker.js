@@ -45,6 +45,7 @@ class ColorPicker extends HTMLDivElement {
     this.#colorOptions = this.#dialog.querySelectorAll("li");
 
     this.#focusedElementIndex = 0;
+    this.#dialog.setAttribute("aria-labelledby", this.#dialogToggleButton.getAttribute("id"));
 
     this.setAttribute("tabindex", "0");
     this.classList.add("tw-cursor-pointer", "focus:tw-outline-2", "focus:tw-outline-blue-500");
@@ -67,6 +68,7 @@ class ColorPicker extends HTMLDivElement {
       option.setAttribute("id", id);
       option.setAttribute("role", "option");
       option.setAttribute("aria-selected", optionInput.checked ? "true" : "false");
+      option.setAttribute("aria-label", optionInput.value.toLowerCase());
       if (optionInput.checked) {
         selectedId = id;
         this.#focusedElementIndex = index;
