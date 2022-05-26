@@ -1,15 +1,14 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
 public enum VacationTypeColor {
-    NEUTRAL,
-    RED, // TODO -> no red yet, used by sick-note (hard coded currently)
+    GRAY,
     ORANGE,
     YELLOW,
-    LIME,
+    EMERALD,
     CYAN,
     BLUE,
     VIOLET,
-    FUCHSIA;
+    PINK;
 
     public static VacationTypeColor defaultColor() {
         return YELLOW;
