@@ -529,8 +529,6 @@
                                                     </span>
                                                 </label>
                                                 <input type="checkbox" id="color-picker-${loop.index}">
-
-                                                <%-- //::todo set checked radio--%>
                                                 <ul id="color-popup-${loop.index}" class="color-picker-dialog tw-list-none">
                                                     <li class="color-picker-option">
                                                         <label for="color-${loop.index}-radio-1">
