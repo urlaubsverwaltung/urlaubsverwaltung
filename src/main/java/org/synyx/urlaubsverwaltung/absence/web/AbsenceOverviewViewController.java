@@ -67,6 +67,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @Controller
 public class AbsenceOverviewViewController {
 
+    private static final VacationTypeColor ANONYMIZED_ABSENCE_COLOR = VacationTypeColor.YELLOW;
+
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final MessageSource messageSource;
@@ -315,25 +317,33 @@ public class AbsenceOverviewViewController {
             return showAllInformation ? builder.sickNoteNoon() : builder.absenceNoon();
         }
 
-        final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
-        final VacationTypeColor noonColor = recordInfoToColor(noon, vacationTypById);
-        final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorMorningAndNoon(morningColor, noonColor);
+        if (showAllInformation) {
+            final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
+            final VacationTypeColor noonColor = recordInfoToColor(noon, vacationTypById);
+            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorMorningAndNoon(morningColor, noonColor);
+            builder = builder.color(color);
+        } else {
+            final VacationTypeColor morningColor = morning.isPresent() ? ANONYMIZED_ABSENCE_COLOR : null;
+            final VacationTypeColor noonColor = noon.isPresent() ? ANONYMIZED_ABSENCE_COLOR : null;
+            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorMorningAndNoon(morningColor, noonColor);
+            builder = builder.color(color);
+        }
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (morningWaiting) {
-            return showAllInformation ? builder.waitingVacationMorning().color(color) : builder.absenceMorning();
+            return showAllInformation ? builder.waitingVacationMorning() : builder.absenceMorning();
         }
         final boolean morningAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowed).orElse(false);
         if (morningAllowed) {
-            return showAllInformation ? builder.allowedVacationMorning().color(color) : builder.absenceMorning();
+            return showAllInformation ? builder.allowedVacationMorning() : builder.absenceMorning();
         }
 
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
-            return showAllInformation ? builder.waitingVacationNoon().color(color) : builder.absenceNoon();
+            return showAllInformation ? builder.waitingVacationNoon() : builder.absenceNoon();
         }
 
-        return showAllInformation ? builder.allowedVacationNoon().color(color) : builder.absenceNoon();
+        return showAllInformation ? builder.allowedVacationNoon() : builder.absenceNoon();
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation, Function<Integer, VacationType> vacationTypById) {
@@ -353,15 +363,21 @@ public class AbsenceOverviewViewController {
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
 
-        // full day absence consists of a morning and a noon recordInfo.
-        // both recordInfos have the same vacationType, therefore we can use the morning color.
-        final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
-        final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorFull(morningColor);
+        if (showAllInformation) {
+            // full day absence consists of a morning and a noon recordInfo.
+            // both recordInfos have the same vacationType, therefore we can use the morning color.
+            final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
+            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorFull(morningColor);
+            builder = builder.color(color);
+        } else {
+            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorFull(ANONYMIZED_ABSENCE_COLOR);
+            builder = builder.color(color);
+        }
 
         if (morningWaiting && noonWaiting) {
-            return showAllInformation ? builder.waitingVacationFull().color(color) : builder.absenceFull();
+            return showAllInformation ? builder.waitingVacationFull() : builder.absenceFull();
         } else if (!morningWaiting && !noonWaiting) {
-            return showAllInformation ? builder.allowedVacationFull().color(color) : builder.absenceFull();
+            return showAllInformation ? builder.allowedVacationFull() : builder.absenceFull();
         }
 
         return builder;

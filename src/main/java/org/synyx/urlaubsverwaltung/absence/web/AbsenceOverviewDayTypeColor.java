@@ -8,12 +8,12 @@ public class AbsenceOverviewDayTypeColor {
     private final VacationTypeColor noon;
     private final VacationTypeColor full;
 
-    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorFull(VacationTypeColor fullColor) {
-        return new AbsenceOverviewDayTypeColor(null, null, fullColor);
+    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorNone() {
+        return new AbsenceOverviewDayTypeColor(null, null, null);
     }
 
-    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorMorning(VacationTypeColor morningColor) {
-        return new AbsenceOverviewDayTypeColor(morningColor, null, null);
+    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorFull(VacationTypeColor fullColor) {
+        return new AbsenceOverviewDayTypeColor(null, null, fullColor);
     }
 
     public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorNoon(VacationTypeColor noonColor) {

@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayTypeColor.absenceOverviewDayTypeColorNone;
+
 public class AbsenceOverviewDayType {
 
     private final boolean waitingVacationMorning;
@@ -137,7 +139,7 @@ public class AbsenceOverviewDayType {
         private boolean publicHolidayNoon = false;
         private boolean publicHolidayFull = false;
 
-        private AbsenceOverviewDayTypeColor color; // TODO null vs empty color object
+        private AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorNone();
 
         public Builder waitingVacationMorning() {
             this.waitingVacationMorning = true;
