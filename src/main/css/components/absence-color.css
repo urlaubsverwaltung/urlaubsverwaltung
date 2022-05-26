@@ -1,5 +1,19 @@
 @layer base {
   :root {
+    /* 400 */
+    --absence-color-NEUTRAL: #a3a3a3;
+    --absence-color-RED: #f87171;
+    --absence-color-ORANGE: #fb923c;
+    --absence-color-YELLOW: #facc15;
+    --absence-color-LIME: #a3e635;
+    --absence-color-CYAN: #22d3ee;
+    --absence-color-BLUE: #60a5fa;
+    --absence-color-VIOLET: #a78bfa;
+    --absence-color-FUCHSIA: #e879f9;
+  }
+
+  .tw-dark {
+    /* 300 */
     --absence-color-NEUTRAL: #d4d4d4;
     --absence-color-RED: #fca5a5;
     --absence-color-ORANGE: #fdba74;
