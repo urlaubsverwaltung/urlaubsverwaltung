@@ -24,12 +24,21 @@
 [is="uv-color-picker"] .color-picker-dialog {
   position: absolute;
   top: 100%;
-  width: 8rem;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
+  width: 10rem;
   display: flex;
-  @apply tw-bg-gray-800;
-  @apply dark:tw-bg-black;
+  @apply tw-rounded;
+  @apply tw-p-4;
+  @apply tw-bg-white;
+  @apply tw-shadow-2xl;
+  @apply tw-border;
+  @apply tw-border-zinc-200;
+  @apply dark:tw-shadow-none;
+  @apply dark:tw-border;
+  @apply dark:tw-border-zinc-700;
+  @apply dark:tw-bg-zinc-900;
+  @apply dark:tw-backdrop-filter;
+  @apply dark:tw-backdrop-blur-xl;
+  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70;
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] ~ .color-picker-dialog {
@@ -37,13 +46,15 @@
   display: block;
   opacity: 0;
   transform-origin: top left;
-  transform: translateX(-0.25rem) translateY(0.25rem) scale(0);
+  @apply -tw-translate-x-4;
+  @apply tw-translate-y-1;
+  @apply tw-scale-0;
   transition: all 150ms ease-in-out;
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"]:checked ~ .color-picker-dialog {
   opacity: 1;
-  transform: translateX(-0.25rem) translateY(0.25rem) scale(1);
+  @apply tw-scale-100;
 }
 
 [is="uv-color-picker"] .color-picker-dialog > *:not(:first-child) {
@@ -53,6 +64,7 @@
 [is="uv-color-picker"] .color-picker-dialog label {
   display: block;
   cursor: pointer;
+  height: 1.75rem;
 }
 
 [is="uv-color-picker"] .color-picker-dialog label input {
@@ -61,14 +73,10 @@
   left: -999999px;
 }
 
-[is="uv-color-picker"] .color-picker-dialog label span {
-  display: block;
-  height: 1.75rem;
-}
-
 [is="uv-color-picker"] .color-picker-option {
   transition: opacity 150ms ease-in-out;
   opacity: 1;
+  @apply tw-rounded;
 }
 
 [is="uv-color-picker"] .color-picker-option.active {

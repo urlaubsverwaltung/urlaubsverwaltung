@@ -535,7 +535,7 @@
                                                 <input type="checkbox" id="color-picker-${loop.index}">
                                                 <ul id="color-popup-${loop.index}" class="color-picker-dialog tw-list-none">
                                                     <c:forEach var="selectableColor" varStatus="selectableColorLoop" items="${settings.absenceTypeSettings.colors}">
-                                                    <li class="color-picker-option">
+                                                    <li class="color-picker-option" style="background-color:var(--absence-color-${selectableColor});">
                                                         <label for="color-${loop.index}-radio-${selectableColorLoop.index}">
                                                             <input
                                                                 <c:if test="${absenceType.color == selectableColor}">checked</c:if>
@@ -544,7 +544,6 @@
                                                                 name="absenceTypeSettings.items[${loop.index}].color"
                                                                 type="radio"
                                                             >
-                                                            <span style="background-color:var(--absence-color-${selectableColor});"></span>
                                                         </label>
                                                     </li>
                                                     </c:forEach>
