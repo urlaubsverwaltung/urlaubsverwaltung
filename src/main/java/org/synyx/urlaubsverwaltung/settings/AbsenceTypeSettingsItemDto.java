@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ public class AbsenceTypeSettingsItemDto {
     private String messageKey;
     private VacationCategory category;
     private boolean requiresApproval;
-    private String color;
+    private VacationTypeColor color;
 
     public Integer getId() {
         return id;
@@ -53,11 +54,11 @@ public class AbsenceTypeSettingsItemDto {
         this.requiresApproval = requiresApproval;
     }
 
-    public String getColor() {
+    public VacationTypeColor getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(VacationTypeColor color) {
         this.color = color;
     }
 
@@ -100,7 +101,7 @@ public class AbsenceTypeSettingsItemDto {
         private String messageKey;
         private VacationCategory category;
         private boolean requiresApproval;
-        private String color;
+        private VacationTypeColor color;
 
         Builder setId(Integer id) {
             this.id = id;
@@ -127,7 +128,7 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
-        Builder setColor(String color) {
+        Builder setColor(VacationTypeColor color) {
             this.color = color;
             return this;
         }

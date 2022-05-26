@@ -15,6 +15,7 @@ import java.util.List;
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 class ApplicationForLeaveFormTest {
 
@@ -40,7 +41,7 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.now().minusDays(2);
         final Time endTime = Time.valueOf(LocalTime.now().minusHours(7));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
 
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
 
@@ -138,7 +139,7 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.MAX;
         final Time endTime = Time.valueOf(LocalTime.MAX);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
 
         final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
         replacementDto.setPerson(holidayReplacement);
@@ -161,7 +162,7 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, vacationType=VacationType{" +
-            "id=1, active=true, category=HOLIDAY, messageKey='message_key', requiresApproval='true', color='#FACC15'}, dayLength=ZERO, hours=0, minutes=0, " +
+            "id=1, active=true, category=HOLIDAY, messageKey='message_key', requiresApproval='true', color='YELLOW'}, dayLength=ZERO, hours=0, minutes=0, " +
             "holidayReplacements=[HolidayReplacementDto{, person=Person{id='null'}, note='null', departments='null'}], " +
             "address='Address', teamInformed=true}");
     }

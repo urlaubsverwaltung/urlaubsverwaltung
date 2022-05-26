@@ -76,6 +76,8 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -188,7 +190,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -217,7 +219,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -246,7 +248,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15");
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -470,11 +472,11 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -483,7 +485,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getSignedInUser()).thenReturn(new Person());
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -495,7 +497,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(post("/web/application"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -604,7 +606,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final ResultActions perform = perform(post("/web/application/new")
             .param("vacationType.category", "HOLIDAY")
@@ -624,7 +626,7 @@ class ApplicationForLeaveFormViewControllerTest {
                     )
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -666,7 +668,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getPersonByID(42)).thenReturn(Optional.of(replacmentPerson));
         when(personService.getActivePersons()).thenReturn(List.of(replacmentPerson, signedInPerson, leetPerson));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
@@ -689,7 +691,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
                 hasProperty("personId", is(1337))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -779,7 +781,7 @@ class ApplicationForLeaveFormViewControllerTest {
         signedInPerson.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
@@ -802,7 +804,7 @@ class ApplicationForLeaveFormViewControllerTest {
                     hasProperty("person", hasProperty("id", is(21)))
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -851,7 +853,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getActivePersons()).thenReturn(List.of(person));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final int year = Year.now(clock).getValue();
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
@@ -873,7 +875,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -998,7 +1000,7 @@ class ApplicationForLeaveFormViewControllerTest {
         signedInPerson.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
@@ -1024,7 +1026,7 @@ class ApplicationForLeaveFormViewControllerTest {
                     )
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -1035,7 +1037,7 @@ class ApplicationForLeaveFormViewControllerTest {
         signedInPerson.setId(1);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, ZERO, ZERO, ZERO, "");
@@ -1059,7 +1061,7 @@ class ApplicationForLeaveFormViewControllerTest {
                     hasProperty("person", hasProperty("id", is(21)))
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
     }
 
@@ -1315,7 +1317,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     private Application someApplication() {
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, "#FACC15");
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW);
 
         final Application application = new Application();
         application.setVacationType(convert(holidayType));

@@ -27,7 +27,8 @@ public class VacationTypeEntity {
 
     private boolean requiresApproval;
 
-    private String color;
+    @Enumerated(STRING)
+    private VacationTypeColor color;
 
     public boolean isActive() {
         return active;
@@ -73,11 +74,11 @@ public class VacationTypeEntity {
         this.requiresApproval = requiresApproval;
     }
 
-    public void setColor(String color) {
+    public void setColor(VacationTypeColor color) {
         this.color = color;
     }
 
-    public String getColor() {
+    public VacationTypeColor getColor() {
         return this.color;
     }
 

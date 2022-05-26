@@ -1,30 +1,44 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
+
 public class AbsenceOverviewDayTypeColor {
 
-    private final String morning;
-    private final String noon;
-    private final String full;
+    private final VacationTypeColor morning;
+    private final VacationTypeColor noon;
+    private final VacationTypeColor full;
 
-    public AbsenceOverviewDayTypeColor() {
-        this("", "", "");
+    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorFull(VacationTypeColor fullColor) {
+        return new AbsenceOverviewDayTypeColor(null, null, fullColor);
     }
 
-    public AbsenceOverviewDayTypeColor(String morning, String noon, String full) {
+    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorMorning(VacationTypeColor morningColor) {
+        return new AbsenceOverviewDayTypeColor(morningColor, null, null);
+    }
+
+    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorNoon(VacationTypeColor noonColor) {
+        return new AbsenceOverviewDayTypeColor(null, noonColor, null);
+    }
+
+    public static AbsenceOverviewDayTypeColor absenceOverviewDayTypeColorMorningAndNoon(VacationTypeColor morningColor, VacationTypeColor noonColor) {
+        return new AbsenceOverviewDayTypeColor(morningColor, noonColor, null);
+    }
+
+    private AbsenceOverviewDayTypeColor(VacationTypeColor morning, VacationTypeColor noon, VacationTypeColor full) {
         this.morning = morning;
         this.noon = noon;
         this.full = full;
     }
 
-    public String getMorning() {
+    public VacationTypeColor getMorning() {
         return morning;
     }
 
-    public String getNoon() {
+    public VacationTypeColor getNoon() {
         return noon;
     }
 
-    public String getFull() {
+    public VacationTypeColor getFull() {
         return full;
     }
 }

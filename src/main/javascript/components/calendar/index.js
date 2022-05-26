@@ -648,8 +648,8 @@ $(function () {
       function style() {
         // could be morning=sick and noon=vacation
         const [idMorningOrFull, idNoon] = assert.vacationTypeId(date);
-        const colorMorningOrFull = window.uv.vacationTypes.colors[idMorningOrFull];
-        const colorNoon = window.uv.vacationTypes.colors[idNoon];
+        const colorMorningOrFull = `var(--absence-color-${window.uv.vacationTypes.colors[idMorningOrFull]})`;
+        const colorNoon = `var(--absence-color-${window.uv.vacationTypes.colors[idNoon]})`;
         return [
           assert.isPublicHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
           assert.isPublicHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,

@@ -137,7 +137,7 @@ public class AbsenceOverviewDayType {
         private boolean publicHolidayNoon = false;
         private boolean publicHolidayFull = false;
 
-        private AbsenceOverviewDayTypeColor color = new AbsenceOverviewDayTypeColor();
+        private AbsenceOverviewDayTypeColor color; // TODO null vs empty color object
 
         public Builder waitingVacationMorning() {
             this.waitingVacationMorning = true;

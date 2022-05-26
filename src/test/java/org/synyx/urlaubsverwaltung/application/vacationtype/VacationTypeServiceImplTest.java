@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class VacationTypeServiceImplTest {
@@ -116,8 +117,8 @@ class VacationTypeServiceImplTest {
         when(vacationTypeRepository.findAllById(Set.of(1, 2))).thenReturn(List.of(holidayEntity, overtimeEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1, true, false, "#FACC15"),
-            new VacationTypeUpdate(2, false, true, "#FACC15")
+            new VacationTypeUpdate(1, true, false, YELLOW),
+            new VacationTypeUpdate(2, false, true, YELLOW)
         ));
 
         @SuppressWarnings("unchecked")

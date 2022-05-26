@@ -5,9 +5,9 @@ public class VacationTypeUpdate {
     private final Integer id;
     private final boolean active;
     private final boolean requiresApproval;
-    private final String color;
+    private final VacationTypeColor color;
 
-    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApproval, String color) {
+    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApproval, VacationTypeColor color) {
         this.id = id;
         this.active = active;
         this.requiresApproval = requiresApproval;
@@ -26,7 +26,7 @@ public class VacationTypeUpdate {
         return requiresApproval;
     }
 
-    public String getColor() {
+    public VacationTypeColor getColor() {
         return color;
     }
 }

@@ -46,6 +46,7 @@ import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItems;
@@ -63,6 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -875,7 +877,7 @@ class AbsenceOverviewViewControllerTest {
 
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
-        vacationType.setColor("orange");
+        vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, absenceStatus, 1);
@@ -910,9 +912,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteNoon", is(false)),
                                     hasProperty("color",
                                         allOf(
-                                            hasProperty("morning", is("orange")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
+                                            hasProperty("morning", is(ORANGE)),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", nullValue())
                                         )
                                     )
                                 )
@@ -945,7 +947,7 @@ class AbsenceOverviewViewControllerTest {
 
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
-        vacationType.setColor("orange");
+        vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, absenceStatus, 1);
@@ -980,9 +982,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteNoon", is(false)),
                                     hasProperty("color",
                                         allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("orange")),
-                                            hasProperty("full", is(""))
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", is(ORANGE)),
+                                            hasProperty("full", nullValue())
                                         )
                                     )
                                 )
@@ -1015,7 +1017,7 @@ class AbsenceOverviewViewControllerTest {
 
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
-        vacationType.setColor("orange");
+        vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, absenceStatus, 1);
@@ -1051,9 +1053,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteNoon", is(false)),
                                     hasProperty("color",
                                         allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is("orange"))
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", is(ORANGE))
                                         )
                                     )
                                 )
@@ -1114,13 +1116,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1177,13 +1173,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1241,13 +1231,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1281,7 +1265,7 @@ class AbsenceOverviewViewControllerTest {
 
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
-        vacationType.setColor("orange");
+        vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
@@ -1316,9 +1300,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteNoon", is(false)),
                                     hasProperty("color",
                                         allOf(
-                                            hasProperty("morning", is("orange")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
+                                            hasProperty("morning", is(ORANGE)),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", nullValue())
                                         )
                                     )
                                 )
@@ -1351,7 +1335,7 @@ class AbsenceOverviewViewControllerTest {
 
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
-        vacationType.setColor("orange");
+        vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
@@ -1386,9 +1370,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteNoon", is(false)),
                                     hasProperty("color",
                                         allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("orange")),
-                                            hasProperty("full", is(""))
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", is(ORANGE)),
+                                            hasProperty("full", nullValue())
                                         )
                                     )
                                 )
@@ -1421,7 +1405,7 @@ class AbsenceOverviewViewControllerTest {
 
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
-        vacationType.setColor("orange");
+        vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
@@ -1457,9 +1441,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteNoon", is(false)),
                                     hasProperty("color",
                                         allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is("orange"))
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", is(ORANGE))
                                         )
                                     )
                                 )
@@ -1519,13 +1503,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1581,13 +1559,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1644,13 +1616,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1712,13 +1678,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1777,13 +1737,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1843,13 +1797,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(true)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1907,13 +1855,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -1969,13 +1911,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -2032,13 +1968,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -2104,13 +2034,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", not(nullValue()))
                                 )
                             )
                         ))
@@ -2173,13 +2097,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", not(nullValue()))
                                 )
                             )
                         ))
@@ -2243,13 +2161,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))
@@ -2311,13 +2223,7 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
-                                    hasProperty("color",
-                                        allOf(
-                                            hasProperty("morning", is("")),
-                                            hasProperty("noon", is("")),
-                                            hasProperty("full", is(""))
-                                        )
-                                    )
+                                    hasProperty("color", nullValue())
                                 )
                             )
                         ))

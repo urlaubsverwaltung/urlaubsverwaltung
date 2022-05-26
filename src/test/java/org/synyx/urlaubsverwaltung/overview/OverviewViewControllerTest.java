@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
@@ -58,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -322,7 +324,7 @@ class OverviewViewControllerTest {
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -368,7 +370,7 @@ class OverviewViewControllerTest {
         resultActions.andExpect(model().attribute("sickNotes", hasSize(2)));
         resultActions.andExpect(model().attribute("signedInUser", person));
         resultActions.andExpect(model().attribute("userIsAllowedToWriteOvertime", true));
-        resultActions.andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))));
+        resultActions.andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))));
     }
 
 

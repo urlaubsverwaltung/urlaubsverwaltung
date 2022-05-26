@@ -1,0 +1,13 @@
+@layer base {
+  :root {
+    --absence-color-NEUTRAL: #d4d4d4;
+    --absence-color-RED: #fca5a5;
+    --absence-color-ORANGE: #fdba74;
+    --absence-color-YELLOW: #fde047;
+    --absence-color-LIME: #bef264;
+    --absence-color-CYAN: #67e8f9;
+    --absence-color-BLUE: #93c5fd;
+    --absence-color-VIOLET: #c4b5fd;
+    --absence-color-FUCHSIA: #f0abfc;
+  }
+}

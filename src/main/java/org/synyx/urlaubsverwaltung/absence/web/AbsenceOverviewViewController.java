@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -54,6 +55,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayTypeColor.absenceOverviewDayTypeColorFull;
+import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayTypeColor.absenceOverviewDayTypeColorMorningAndNoon;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -312,9 +315,9 @@ public class AbsenceOverviewViewController {
             return showAllInformation ? builder.sickNoteNoon() : builder.absenceNoon();
         }
 
-        final String morningColor = recordInfoToColor(morning, vacationTypById);
-        final String noonColor = recordInfoToColor(noon, vacationTypById);
-        final AbsenceOverviewDayTypeColor color = new AbsenceOverviewDayTypeColor(morningColor, noonColor, "");
+        final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
+        final VacationTypeColor noonColor = recordInfoToColor(noon, vacationTypById);
+        final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorMorningAndNoon(morningColor, noonColor);
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (morningWaiting) {
@@ -352,8 +355,8 @@ public class AbsenceOverviewViewController {
 
         // full day absence consists of a morning and a noon recordInfo.
         // both recordInfos have the same vacationType, therefore we can use the morning color.
-        final String morningColor = recordInfoToColor(morning, vacationTypById);
-        final AbsenceOverviewDayTypeColor color = new AbsenceOverviewDayTypeColor("", "", morningColor);
+        final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
+        final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorFull(morningColor);
 
         if (morningWaiting && noonWaiting) {
             return showAllInformation ? builder.waitingVacationFull().color(color) : builder.absenceFull();
@@ -364,13 +367,13 @@ public class AbsenceOverviewViewController {
         return builder;
     }
 
-    private String recordInfoToColor(Optional<AbsencePeriod.RecordInfo> recordInfo, Function<Integer, VacationType> vacationTypById) {
+    private VacationTypeColor recordInfoToColor(Optional<AbsencePeriod.RecordInfo> recordInfo, Function<Integer, VacationType> vacationTypById) {
         return recordInfo.map(AbsencePeriod.RecordInfo::getVacationTypeId)
             .filter(Optional::isPresent)
             .map(Optional::get)
             .map(vacationTypById)
             .map(VacationType::getColor)
-            .orElse("");
+            .orElse(null);
     }
 
     private AbsenceOverviewDayType.Builder getPublicHolidayType(DayLength dayLength) {

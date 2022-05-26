@@ -8,6 +8,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.settings.AbsenceTypeSettingsDtoMapper.mapToAbsenceTypeItemSettingDto;
 
 class AbsenceTypeSettingsDtoMapperTest {
@@ -16,7 +17,7 @@ class AbsenceTypeSettingsDtoMapperTest {
     void mapToAbsenceTypeItemSettingDtoTest() {
 
         final VacationType vacationType = new VacationType();
-        vacationType.setColor("#123456");
+        vacationType.setColor(YELLOW);
         vacationType.setId(42);
         vacationType.setActive(true);
         vacationType.setRequiresApproval(false);
@@ -34,6 +35,6 @@ class AbsenceTypeSettingsDtoMapperTest {
                 AbsenceTypeSettingsItemDto::isRequiresApproval,
                 AbsenceTypeSettingsItemDto::getMessageKey,
                 AbsenceTypeSettingsItemDto::getCategory)
-            .contains(tuple("#123456", 42, true, false, "messageKey", HOLIDAY));
+            .contains(tuple(YELLOW, 42, true, false, "messageKey", HOLIDAY));
     }
 }

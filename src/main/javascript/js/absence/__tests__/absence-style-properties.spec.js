@@ -24,7 +24,9 @@ describe("absence-style-properties", () => {
 
       addAbsenceTypeStyleToNode(div, absences);
 
-      expect(div.style.getPropertyValue("--absence-bar-color-morning")).toBe(expectedColorValue);
+      expect(div.style.getPropertyValue("--absence-bar-color-morning")).toBe(
+        `var(--absence-color-${expectedColorValue})`,
+      );
     });
 
     it.each([
@@ -40,7 +42,7 @@ describe("absence-style-properties", () => {
 
       addAbsenceTypeStyleToNode(div, absences);
 
-      expect(div.style.getPropertyValue("--absence-bar-color-noon")).toBe(expectedColorValue);
+      expect(div.style.getPropertyValue("--absence-bar-color-noon")).toBe(`var(--absence-color-${expectedColorValue})`);
     });
 
     it.each([
@@ -56,8 +58,10 @@ describe("absence-style-properties", () => {
 
       addAbsenceTypeStyleToNode(div, absences);
 
-      expect(div.style.getPropertyValue("--absence-bar-color-morning")).toBe(expectMorningColor);
-      expect(div.style.getPropertyValue("--absence-bar-color-noon")).toBe(expectedNoonColor);
+      expect(div.style.getPropertyValue("--absence-bar-color-morning")).toBe(
+        `var(--absence-color-${expectMorningColor})`,
+      );
+      expect(div.style.getPropertyValue("--absence-bar-color-noon")).toBe(`var(--absence-color-${expectedNoonColor})`);
     });
 
     it.each([
@@ -73,7 +77,7 @@ describe("absence-style-properties", () => {
 
       addAbsenceTypeStyleToNode(div, absences);
 
-      expect(div.style.getPropertyValue("--absence-bar-color")).toBe(expectedColorValue);
+      expect(div.style.getPropertyValue("--absence-bar-color")).toBe(`var(--absence-color-${expectedColorValue})`);
     });
   });
 

@@ -11,9 +11,9 @@ import {
 } from "./absence-assertions";
 
 const property = (n, v) => ({ name: n, value: v });
-const propertyMorning = (v) => property("--absence-bar-color-morning", v);
-const propertyNoon = (v) => property("--absence-bar-color-noon", v);
-const propertyFull = (v) => property("--absence-bar-color", v);
+const propertyMorning = (v) => property("--absence-bar-color-morning", `var(--absence-color-${v})`);
+const propertyNoon = (v) => property("--absence-bar-color-noon", `var(--absence-color-${v})`);
+const propertyFull = (v) => property("--absence-bar-color", `var(--absence-color-${v})`);
 
 /**
  *

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -374,7 +375,7 @@ class OvertimeViewControllerTest {
         when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)));
 
         mockSettings();
 
@@ -384,7 +385,7 @@ class OvertimeViewControllerTest {
             .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))))
             .andExpect(model().attribute("signedInUser", is(person)));
     }
 
@@ -473,7 +474,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getOvertimeById(overtimeId)).thenReturn(Optional.of(overtime));
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)));
 
         mockSettings();
 
@@ -483,7 +484,7 @@ class OvertimeViewControllerTest {
             .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(overtimePerson)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))))
             .andExpect(model().attribute("signedInUser", is(overtimePerson)));
     }
 
@@ -628,7 +629,7 @@ class OvertimeViewControllerTest {
         person.setId(1);
         when(personService.getSignedInUser()).thenReturn(person);
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)));
 
         mockSettingsWithOvertimeReductionDisabled();
 
@@ -650,7 +651,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("overtimeReductionPossible", is(false)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))));
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))));
     }
 
     @Test
@@ -833,7 +834,7 @@ class OvertimeViewControllerTest {
         overtime.setId(2);
         when(overtimeService.getOvertimeById(2)).thenReturn(Optional.of(overtime));
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)));
 
         mockSettingsWithOvertimeReductionDisabled();
 
@@ -854,7 +855,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attribute("overtimeReductionPossible", is(false)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))));
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))));
     }
 
     @Test

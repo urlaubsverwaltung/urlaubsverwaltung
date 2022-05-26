@@ -12,13 +12,13 @@ public class VacationType {
     private VacationCategory category;
     private String messageKey;
     private boolean requiresApproval;
-    private String color;
+    private VacationTypeColor color;
 
     public VacationType() {
         // ok
     }
 
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, String color) {
+    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color) {
         this.id = id;
         this.active = active;
         this.category = category;
@@ -71,11 +71,11 @@ public class VacationType {
         this.requiresApproval = requiresApproval;
     }
 
-    public String getColor() {
+    public VacationTypeColor getColor() {
         return this.color;
     }
 
-    public void setColor(String color) {
+    public void setColor(VacationTypeColor color) {
         this.color = color;
     }
 

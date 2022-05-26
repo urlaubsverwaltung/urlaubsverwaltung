@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
@@ -52,6 +53,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -113,13 +116,13 @@ class SickNoteViewControllerTest {
     void ensureGetEditHasCorrectModelAttributes() throws Exception {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes()))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
@@ -253,7 +256,7 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostNewSickNoteShowsFormIfValidationFails() throws Exception {
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -262,7 +265,7 @@ class SickNoteViewControllerTest {
         }).when(sickNoteValidator).validate(any(), any());
 
         perform(post("/web/sicknote"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
@@ -314,7 +317,7 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteShowsFormIfValidationFails() throws Exception {
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, "orange")));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -323,7 +326,7 @@ class SickNoteViewControllerTest {
         }).when(sickNoteValidator).validate(any(), any());
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, "orange")))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
@@ -419,7 +422,7 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15"));
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -434,7 +437,7 @@ class SickNoteViewControllerTest {
         overtimeActive(true);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15"));
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -468,7 +471,7 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15"));
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {
@@ -491,7 +494,7 @@ class SickNoteViewControllerTest {
         overtimeActive(true);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15"));
+        final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {

@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class VacationTypeDto {
     private final Integer id;
-    private final String color;
+    private final VacationTypeColor color;
 
-    public VacationTypeDto(Integer id, String color) {
+    public VacationTypeDto(Integer id, VacationTypeColor color) {
         this.id = id;
         this.color = color;
     }
@@ -15,7 +15,7 @@ public class VacationTypeDto {
         return id;
     }
 
-    public String getColor() {
+    public VacationTypeColor getColor() {
         return color;
     }
 

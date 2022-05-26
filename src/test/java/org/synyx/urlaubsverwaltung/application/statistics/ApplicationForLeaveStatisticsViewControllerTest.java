@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -53,6 +54,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsViewController.UTF8_BOM;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsViewControllerTest {
@@ -147,7 +149,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(List.of());
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15"));
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -181,13 +183,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.setPersonBasedata(new PersonBasedata(1, "42", "some additional information"));
         statistic.setLeftOvertime(Duration.ofHours(10));
         statistic.setLeftVacationDays(BigDecimal.valueOf(2));
-        statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, "#FACC15"), BigDecimal.valueOf(3));
-        statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, "#FACC15"), BigDecimal.valueOf(4));
+        statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW), BigDecimal.valueOf(3));
+        statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW), BigDecimal.valueOf(4));
 
         final List<ApplicationForLeaveStatistics> statistics = List.of(statistic);
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, "#FACC15"));
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

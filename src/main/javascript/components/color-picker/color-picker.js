@@ -185,7 +185,7 @@ class ColorPicker extends HTMLDivElement {
       }
     }
 
-    this.#dialogToggleButton.style.setProperty("background-color", this.#value);
+    this.#dialogToggleButton.style.setProperty("background-color", `var(--absence-color-${this.#value})`);
   }
 
   #renderFocusedElement() {
