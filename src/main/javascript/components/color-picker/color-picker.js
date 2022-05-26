@@ -21,16 +21,13 @@ class ColorPicker extends HTMLDivElement {
     // makes the dialog visible via css
     this.#dialogToggleCheckbox.checked = this.#open;
 
-    if (typeof oldValue === "string" && typeof newValue !== "string") {
-      // reset focusedElementIndex when dialog is closed
-      for (let index = 0; index < this.#colorOptions.length; index++) {
-        const option = this.#colorOptions[index];
-        const optionInput = option.querySelector("input");
-        if (optionInput.value === this.#value) {
-          this.#focusedElementIndex = index;
-          this.#renderFocusedElement();
-          break;
-        }
+    for (let index = 0; index < this.#colorOptions.length; index++) {
+      const option = this.#colorOptions[index];
+      const optionInput = option.querySelector("input");
+      if (optionInput.value === this.#value) {
+        this.#focusedElementIndex = index;
+        this.#renderFocusedElement();
+        break;
       }
     }
   }
