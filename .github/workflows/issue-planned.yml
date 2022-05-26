@@ -8,6 +8,8 @@ jobs:
   apply-label:
     runs-on: ubuntu-20.04
     steps:
+      - name: sleep 20s
+        run: sleep 20
       - uses: actions/github-script@v6
         name: Add label 'status planned' to issue when milestoned
         with:
