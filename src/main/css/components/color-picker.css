@@ -22,34 +22,33 @@
 [is="uv-color-picker"] input[type="checkbox"] {}
 
 [is="uv-color-picker"] .color-picker-dialog {
-  position: absolute;
-  top: 100%;
-  width: 10rem;
-  display: flex;
-  @apply tw-rounded;
-  @apply tw-p-4;
-  @apply tw-bg-white;
-  @apply tw-shadow-2xl;
-  @apply tw-border;
-  @apply tw-border-zinc-200;
-  @apply dark:tw-shadow-none;
-  @apply dark:tw-border;
-  @apply dark:tw-border-zinc-700;
-  @apply dark:tw-bg-zinc-900;
-  @apply dark:tw-backdrop-filter;
-  @apply dark:tw-backdrop-blur-xl;
-  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70;
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: -1rem; /* to align the color boxes */
+    width: 10rem;
+    z-index: 1;
+    display: flex;
+    @apply tw-rounded;
+    @apply tw-p-4;
+    @apply tw-bg-white;
+    @apply tw-shadow-2xl;
+    @apply tw-border;
+    @apply tw-border-zinc-200;
+    @apply dark:tw-shadow-none;
+    @apply dark:tw-border;
+    @apply dark:tw-border-zinc-700;
+    @apply dark:tw-bg-zinc-900;
+    @apply dark:tw-backdrop-filter;
+    @apply dark:tw-backdrop-blur-xl;
+    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70;
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] ~ .color-picker-dialog {
-  z-index: 1;
   display: block;
   opacity: 0;
   transform-origin: top left;
-  @apply -tw-translate-x-4;
-  @apply tw-translate-y-1;
   @apply tw-scale-0;
-  transition: all 150ms ease-in-out;
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
 }
 
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"]:checked ~ .color-picker-dialog {

@@ -18,6 +18,10 @@ class ColorPicker extends HTMLDivElement {
 
     this.#open = typeof newValue === "string";
 
+    if (this.#open) {
+      this.#repositionDialog();
+    }
+
     // makes the dialog visible via css
     this.#dialogToggleCheckbox.checked = this.#open;
 
@@ -170,6 +174,19 @@ class ColorPicker extends HTMLDivElement {
     const span = document.createElement("span");
     span.classList.add("dropdown-caret", "tw-cursor-pointer", "tw-mt-0.5", "tw-ml-1.5");
     this.append(span);
+  }
+
+  #repositionDialog() {
+    // dialog could overflow on x-axis -> move dialog to the left if this is the case to avoid horizontal scrolling
+    const { left } = this.getBoundingClientRect();
+    const { width } = window.getComputedStyle(this.#dialog);
+    const widthValue = Number(width.slice(0, Math.max(0, width.length - 2))); // omit `"px"`
+    const windowWidth = window.innerWidth;
+    if (left + widthValue > windowWidth) {
+      this.#dialog.style.setProperty("left", `-${left + widthValue - windowWidth}px`);
+    } else {
+      this.#dialog.style.removeProperty("left");
+    }
   }
 
   #renderSelectedColor() {
