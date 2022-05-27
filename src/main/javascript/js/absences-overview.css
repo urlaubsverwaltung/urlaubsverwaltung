@@ -171,16 +171,6 @@ svg.no-workday-icon {
   @apply tw-opacity-75;
 }
 
-.absence-morning {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-.absence-noon {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-.absence-full {
-  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-
 .sick-note-morning {
   --absence-bar-color-morning: theme("backgroundColor.calendar.sick-note");
 }
