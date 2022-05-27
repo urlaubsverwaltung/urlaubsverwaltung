@@ -11,6 +11,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @SpringBootTest
 @Transactional
@@ -29,6 +30,7 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         active.setActive(true);
         active.setCategory(HOLIDAY);
         active.setMessageKey("message.key.active");
+        active.setColor(YELLOW);
         sut.save(active);
 
         final VacationTypeEntity inactive = new VacationTypeEntity();
@@ -36,6 +38,7 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         inactive.setActive(false);
         inactive.setCategory(OVERTIME);
         inactive.setMessageKey("message.key.inactive");
+        inactive.setColor(YELLOW);
         sut.save(inactive);
 
         final List<VacationTypeEntity> activeVacationTypes = sut.findByActiveIsTrue();
