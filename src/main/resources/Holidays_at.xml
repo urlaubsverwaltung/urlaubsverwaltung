@@ -10,57 +10,66 @@
     <tns:Fixed month="OCTOBER" day="26" descriptionPropertiesKey="NATIONAL_DAY"/>
     <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
     <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
     <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
     <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
     <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
     <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
     <tns:ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
     <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
     <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
   </tns:Holidays>
+
   <tns:SubConfigurations hierarchy="b" description="Burgenland">
     <tns:Holidays>
       <tns:Fixed month="NOVEMBER" day="11" descriptionPropertiesKey="MARTINS_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="k" description="Kärnten">
     <tns:Holidays>
       <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
       <tns:Fixed month="OCTOBER" day="10" descriptionPropertiesKey="PLEBISCITE"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="la" description="Niederösterreich">
     <tns:Holidays>
       <tns:Fixed month="NOVEMBER" day="15" descriptionPropertiesKey="LEOPOLD"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="ua" description="Oberösterreich">
     <tns:Holidays>
       <tns:Fixed month="MAY" day="4" descriptionPropertiesKey="FLORIAN"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="s" description="Salzburg">
     <tns:Holidays>
       <tns:Fixed month="SEPTEMBER" day="24" descriptionPropertiesKey="RUPERT"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="st" description="Steiermark">
     <tns:Holidays>
       <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="t" description="Tirol">
     <tns:Holidays>
       <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="va" description="Vorarlberg">
     <tns:Holidays>
       <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="JOSEFS_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="w" description="Wien">
     <tns:Holidays>
       <tns:Fixed month="NOVEMBER" day="15" descriptionPropertiesKey="LEOPOLD"/>
