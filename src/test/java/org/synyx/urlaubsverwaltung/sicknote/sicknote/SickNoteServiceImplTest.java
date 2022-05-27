@@ -103,13 +103,13 @@ class SickNoteServiceImplTest {
     }
 
     @Test
-    void getForStates() {
+    void getForStatesSince() {
         final List<SickNoteStatus> openSickNoteStatuses = List.of(ACTIVE);
 
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findByStatusIn(openSickNoteStatuses)).thenReturn(List.of(sickNote));
+        when(sickNoteRepository.findByStatusInAndEndDateGreaterThanEqual(openSickNoteStatuses, LocalDate.of(2020, 10, 3))).thenReturn(List.of(sickNote));
 
-        final List<SickNote> sickNotes = sut.getForStates(openSickNoteStatuses);
+        final List<SickNote> sickNotes = sut.getForStatesSince(openSickNoteStatuses, LocalDate.of(2020, 10, 3));
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);

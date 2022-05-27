@@ -92,7 +92,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final List<Application> openApplications = applicationService.getForStatesSince(APPLICATION_STATUSES, since);
         final List<Absence> applicationAbsences = generateAbsencesFromApplication(openApplications);
 
-        final List<SickNote> openSickNotes = sickNoteService.getForStates(SICK_NOTE_STATUSES);
+        final List<SickNote> openSickNotes = sickNoteService.getForStatesSince(SICK_NOTE_STATUSES, since);
         final List<Absence> sickNoteAbsences = generateAbsencesFromSickNotes(openSickNotes);
 
         return ListUtils.union(applicationAbsences, sickNoteAbsences);
