@@ -129,10 +129,10 @@ uv.mail.senderDisplayName=Urlaubsverwaltung
 # security
 uv.security.auth=default
 
-uv.security.directory-service.identifier
-uv.security.directory-service.last-name
-uv.security.directory-service.first-name
-uv.security.directory-service.mail-address
+uv.security.directory-service.identifier=sAMAccountName
+uv.security.directory-service.last-name=givenName
+uv.security.directory-service.first-name=sn
+uv.security.directory-service.mail-address=mail
 uv.security.directory-service.sync.cron=0 0 1 * * ?
 uv.security.directory-service.filter.member-of
 uv.security.directory-service.filter.object-class=person
