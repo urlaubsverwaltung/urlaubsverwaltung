@@ -442,8 +442,8 @@
                                 <spring:message code='settings.absenceTypes.title'/>
                             </h2>
                         </uv:section-heading>
-                        <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
-                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none md:tw-w-1/3 md:tw-ml-3 md:tw-pl-5 tw-pt-2 md:tw-pt-0 tw-text-sm">
+                        <div class="tw-flex tw-flex-col xl:tw-flex-row xl:tw-flex-row-reverse">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none xl:tw-w-1/3 xl:tw-ml-3 xl:tw-pl-5 tw-pt-2 md:tw-pt-0 tw-text-sm">
                                 <div>
                                     <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                 </div>
@@ -563,8 +563,8 @@
                                 <spring:message code='settings.specialleave.title'/>
                             </h2>
                         </uv:section-heading>
-                        <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
-                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-3 lg:tw-pl-5 tw-pt-2 lg:tw-pt-0 tw-text-sm">
+                        <div class="tw-flex tw-flex-col xl:tw-flex-row xl:tw-flex-row-reverse">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start xl:tw-flex-none xl:tw-w-1/3 xl:tw-ml-3 xl:tw-pl-5 tw-pt-2 xl:tw-pt-0 tw-text-sm">
                                 <div>
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                 </div>
