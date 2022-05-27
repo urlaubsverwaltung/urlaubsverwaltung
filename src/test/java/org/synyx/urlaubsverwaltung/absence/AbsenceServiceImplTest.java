@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -233,6 +234,9 @@ class AbsenceServiceImplTest {
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
         when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+
         final Application application = new Application();
         application.setId(42);
         application.setPerson(batman);
@@ -240,6 +244,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.MORNING);
         application.setStatus(ALLOWED);
+        application.setVacationType(vacationTypeEntity);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -253,6 +258,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
     }
 
@@ -269,6 +275,9 @@ class AbsenceServiceImplTest {
         workingTime.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
         when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+
         final Application application = new Application();
         application.setId(42);
         application.setPerson(batman);
@@ -276,6 +285,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.NOON);
         application.setStatus(ALLOWED);
+        application.setVacationType(vacationTypeEntity);
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
         when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
@@ -289,6 +299,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
     }
 
     @Test
@@ -340,6 +351,7 @@ class AbsenceServiceImplTest {
         application.setStartDate(LocalDate.of(2021, MAY, 17));
         application.setEndDate(LocalDate.of(2021, MAY, 21));
         application.setStatus(ALLOWED);
+        application.setVacationType(anyVacationTypeEntity());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
         when(publicHolidaysService.getPublicHoliday(any(), eq(GERMANY_BADEN_WUERTTEMBERG))).thenReturn(Optional.empty());
@@ -464,6 +476,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(start.plusDays(1));
         application.setDayLength(DayLength.MORNING);
         application.setStatus(ALLOWED);
+        application.setVacationType(anyVacationTypeEntity());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -517,6 +530,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, JUNE, 10));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
+        application.setVacationType(anyVacationTypeEntity());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
         when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
@@ -585,6 +599,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, MAY, 31));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
+        application.setVacationType(anyVacationTypeEntity());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
         when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
@@ -636,6 +651,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
+        application.setVacationType(anyVacationTypeEntity());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -691,6 +707,7 @@ class AbsenceServiceImplTest {
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
         application.setDayLength(FULL);
         application.setStatus(ALLOWED);
+        application.setVacationType(anyVacationTypeEntity());
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
@@ -725,5 +742,13 @@ class AbsenceServiceImplTest {
             assertThat(absenceRecords.get(index).getMorning()).isPresent();
             assertThat(absenceRecords.get(index).getNoon()).isPresent();
         });
+    }
+
+    private static VacationTypeEntity anyVacationTypeEntity() {
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+
+        return vacationTypeEntity;
     }
 }

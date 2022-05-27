@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 import java.util.Objects;
 
@@ -11,6 +12,7 @@ public class AbsenceTypeSettingsItemDto {
     private String messageKey;
     private VacationCategory category;
     private boolean requiresApproval;
+    private VacationTypeColor color;
 
     public Integer getId() {
         return id;
@@ -52,6 +54,14 @@ public class AbsenceTypeSettingsItemDto {
         this.requiresApproval = requiresApproval;
     }
 
+    public VacationTypeColor getColor() {
+        return color;
+    }
+
+    public void setColor(VacationTypeColor color) {
+        this.color = color;
+    }
+
     public static AbsenceTypeSettingsItemDto.Builder builder() {
         return new Builder();
     }
@@ -64,6 +74,7 @@ public class AbsenceTypeSettingsItemDto {
             ", messageKey='" + messageKey + '\'' +
             ", category='" + category + '\'' +
             ", requiresApproval=" + requiresApproval +
+            ", color=" + color +
             '}';
     }
 
@@ -81,7 +92,7 @@ public class AbsenceTypeSettingsItemDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, messageKey, category, requiresApproval);
+        return Objects.hash(id, active, messageKey, category, requiresApproval, color);
     }
 
     static class Builder {
@@ -90,6 +101,7 @@ public class AbsenceTypeSettingsItemDto {
         private String messageKey;
         private VacationCategory category;
         private boolean requiresApproval;
+        private VacationTypeColor color;
 
         Builder setId(Integer id) {
             this.id = id;
@@ -116,6 +128,11 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
+        Builder setColor(VacationTypeColor color) {
+            this.color = color;
+            return this;
+        }
+
         AbsenceTypeSettingsItemDto build() {
             final AbsenceTypeSettingsItemDto dto = new AbsenceTypeSettingsItemDto();
             dto.setId(id);
@@ -123,6 +140,7 @@ public class AbsenceTypeSettingsItemDto {
             dto.setMessageKey(messageKey);
             dto.setCategory(category);
             dto.setRequiresApproval(requiresApproval);
+            dto.setColor(color);
             return dto;
         }
     }

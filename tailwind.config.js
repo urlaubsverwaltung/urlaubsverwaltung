@@ -62,8 +62,6 @@ module.exports = {
           // ----
           "sick-note": withOpacity("--uv-cal-sick-note-bg"),
           "public-holiday": withOpacity("--uv-cal-public-holiday-bg"),
-          "personal-holiday": withOpacity("--uv-cal-personal-holiday-bg"),
-          "personal-holiday-approved": withOpacity("--uv-cal-personal-holiday-approved-bg"),
         },
       },
     },

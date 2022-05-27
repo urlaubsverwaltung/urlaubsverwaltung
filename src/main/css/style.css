@@ -2,11 +2,13 @@
 @import "./base.css";
 
 @import "tailwindcss/components";
+@import "./components/absence-color.css";
 @import "./components/alert.css";
 @import "./components/action-link.css";
 @import "./components/button.css";
 @import "./components/box.css";
 @import "./components/checkbox-switch.css";
+@import "./components/color-picker.css";
 @import "./components/dropdown-caret.css";
 @import "./components/dropdown-menu.css";
 @import "./components/loading.css";
@@ -43,8 +45,6 @@
     --uv-cal-sick-note-bg: 239, 68, 68;
     --uv-cal-public-holiday-bg: 203, 213, 225; /* slate.300 */
     --uv-cal-public-holiday-color: 10, 10, 10;
-    --uv-cal-personal-holiday-bg: 234, 179, 8;
-    --uv-cal-personal-holiday-approved-bg: 250, 204, 21;
   }
 
   .tw-dark {
@@ -57,7 +57,5 @@
     --uv-cal-sick-note-bg: 153, 27, 27; /* red.800 */
     --uv-cal-public-holiday-bg: 3, 105, 161; /* slate.800 */
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
-    --uv-cal-personal-holiday-bg: 250, 204, 21; /* yellow.400 */
-    --uv-cal-personal-holiday-approved-bg: 250, 204, 21; /* yellow.400 */
   }
 }

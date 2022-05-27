@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 class VacationTypeEntityTest {
 
@@ -52,9 +53,10 @@ class VacationTypeEntityTest {
         vacationType.setId(10);
         vacationType.setActive(true);
         vacationType.setRequiresApproval(false);
+        vacationType.setColor(YELLOW);
 
         final String vacationTypeToString = vacationType.toString();
-        assertThat(vacationTypeToString).isEqualTo("VacationType{id=10, active=true, category=HOLIDAY, messageKey='messageKey', requiresApproval='false'}");
+        assertThat(vacationTypeToString).isEqualTo("VacationTypeEntity{id=10, active=true, category=HOLIDAY, messageKey='messageKey', requiresApproval=false, color=YELLOW}");
     }
 
     @Test

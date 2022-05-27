@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 class ApplicationMapperTest {
 
@@ -23,7 +24,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final VacationType newVacationType = new VacationType(1, true, OVERTIME, "message_key", true);
+        final VacationType newVacationType = new VacationType(1, true, OVERTIME, "message_key", true, YELLOW);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setHours(BigDecimal.ONE);
@@ -42,7 +43,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final VacationType newVacationType = new VacationType(1, true, SPECIALLEAVE, "message_key", true);
+        final VacationType newVacationType = new VacationType(1, true, SPECIALLEAVE, "message_key", true, YELLOW);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
         applicationForLeaveForm.setReason("Birth of a child");
@@ -61,7 +62,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setHours(Duration.ofHours(8));
 
-        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 
@@ -79,7 +80,7 @@ class ApplicationMapperTest {
         oldApplication.setVacationType(oldVacationType);
         oldApplication.setReason("Wedding!");
 
-        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType newVacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(newVacationType);
 

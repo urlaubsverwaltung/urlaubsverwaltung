@@ -1,0 +1,25 @@
+@layer base {
+  :root {
+    /* 400 */
+    --absence-color-GRAY: #9ca3af;
+    --absence-color-ORANGE: #fb923c;
+    --absence-color-YELLOW: #facc15;
+    --absence-color-EMERALD: #34d399;
+    --absence-color-CYAN: #22d3ee;
+    --absence-color-BLUE: #60a5fa;
+    --absence-color-VIOLET: #a78bfa;
+    --absence-color-PINK: #f472b6;
+  }
+
+  .tw-dark {
+    /* 300 */
+    --absence-color-GRAY: #d1d5db;
+    --absence-color-ORANGE: #fdba74;
+    --absence-color-YELLOW: #fde047;
+    --absence-color-EMERALD: #6ee7b7;
+    --absence-color-CYAN: #67e8f9;
+    --absence-color-BLUE: #93c5fd;
+    --absence-color-VIOLET: #c4b5fd;
+    --absence-color-PINK: #f9a8d4;
+  }
+}

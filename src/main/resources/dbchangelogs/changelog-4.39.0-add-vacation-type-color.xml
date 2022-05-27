@@ -1,0 +1,115 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="aendi" id="add-vacation-type-color">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+    </preConditions>
+
+    <addColumn tableName="vacation_type">
+      <column name="color" type="VARCHAR(7)"/>
+    </addColumn>
+
+    <update tableName="vacation_type">
+      <column name="color" value="#FDE047" />
+      <where>id = '1000'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="#FDE047" />
+      <where>id = '2000'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="#FDE047" />
+      <where>id = '3000'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="#FDE047" />
+      <where>id = '4000'</where>
+    </update>
+  </changeSet>
+
+  <changeSet author="seber" id="use-vacation-type-color-enum">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+    </preConditions>
+
+    <update tableName="vacation_type">
+      <column name="color" value="NEUTRAL" />
+      <where>color = '#D4D4D4'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="RED" />
+      <where>color = '#FCA5A5'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="ORANGE" />
+      <where>color = '#FDBA74'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="YELLOW" />
+      <where>color = '#FDE047'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="LIME" />
+      <where>color = '#BEF264'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="CYAN" />
+      <where>color = '#67E8F9'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="BLUE" />
+      <where>color = '#93C5FD'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="VIOLET" />
+      <where>color = '#C4B5FD'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="FUCHSIA" />
+      <where>color = '#F0ABFC'</where>
+    </update>
+  </changeSet>
+
+  <changeSet author="seber" id="use-vacation-type-color-default">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+    </preConditions>
+
+    <update tableName="vacation_type">
+      <column name="color" value="NEUTRAL" />
+      <where>color is null</where>
+    </update>
+
+    <addNotNullConstraint tableName="vacation_type" columnName="color" columnDataType="VARCHAR(7)" />
+  </changeSet>
+
+  <changeSet author="seber" id="update-vacation-type-color">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+    </preConditions>
+
+    <update tableName="vacation_type">
+      <column name="color" value="GRAY" />
+      <where>color = 'NEUTRAL'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="EMERALD" />
+      <where>color = 'LIME'</where>
+    </update>
+    <update tableName="vacation_type">
+      <column name="color" value="PINK" />
+      <where>color = 'FUCHSIA'</where>
+    </update>
+
+    <!-- RED has been removed since this is used by sick-note -->
+    <!-- randomly set it to GRAY 🤷 -->
+    <update tableName="vacation_type">
+      <column name="color" value="GRAY" />
+      <where>color = 'RED'</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

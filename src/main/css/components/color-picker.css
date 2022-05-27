@@ -1,0 +1,93 @@
+[is="uv-color-picker"] {
+  position: relative;
+}
+
+[is="uv-color-picker"] label {
+  margin: 0 !important; /* reset bootstrap stuff */
+}
+
+[is="uv-color-picker"] .color-picker-button-color {
+  @apply tw-inline-block;
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-w-12;
+  @apply tw-h-4;
+  @apply tw-rounded;
+  @apply tw-ring-1;
+  @apply tw-ring-inset;
+  @apply tw-ring-zinc-300;
+  @apply dark:tw-ring-zinc-600;
+}
+
+[is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] {
+  position: absolute;
+  top: -999999px;
+  left: -999999px;
+}
+
+[is="uv-color-picker"] .color-picker-dialog {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: -1rem; /* to align the color boxes */
+    width: 10rem;
+    z-index: 1;
+    display: flex;
+    @apply tw-rounded;
+    @apply tw-p-4;
+    @apply tw-bg-white;
+    @apply tw-shadow-2xl;
+    @apply tw-border;
+    @apply tw-border-zinc-200;
+    @apply dark:tw-shadow-none;
+    @apply dark:tw-border;
+    @apply dark:tw-border-zinc-700;
+    @apply dark:tw-bg-zinc-900;
+    @apply dark:tw-backdrop-filter;
+    @apply dark:tw-backdrop-blur-xl;
+    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/70;
+}
+
+[is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] ~ .color-picker-dialog {
+  display: block;
+  opacity: 0;
+  transform-origin: top left;
+  @apply tw-scale-0;
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+}
+
+[is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"]:checked ~ .color-picker-dialog {
+  opacity: 1;
+  @apply tw-scale-100;
+}
+
+[is="uv-color-picker"] .color-picker-dialog > *:not(:first-child) {
+  margin-top: 0.25rem !important; /* important because of bootstrap reset above */
+}
+
+[is="uv-color-picker"] .color-picker-dialog label {
+  display: block;
+  cursor: pointer;
+  height: 1.75rem;
+}
+
+[is="uv-color-picker"] .color-picker-dialog label input {
+  position: absolute;
+  top: -999999px;
+  left: -999999px;
+}
+
+[is="uv-color-picker"] .color-picker-option {
+  transition: opacity 150ms ease-in-out;
+  opacity: 1;
+  @apply tw-rounded;
+}
+
+[is="uv-color-picker"] .color-picker-option.active {
+  @apply tw-outline;
+  @apply tw-outline-2;
+  @apply tw-outline-blue-500;
+}
+
+[is="uv-color-picker"] .color-picker-option:hover {
+  opacity: 0.8;
+}

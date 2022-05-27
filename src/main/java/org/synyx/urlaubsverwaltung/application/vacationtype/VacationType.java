@@ -12,17 +12,19 @@ public class VacationType {
     private VacationCategory category;
     private String messageKey;
     private boolean requiresApproval;
+    private VacationTypeColor color;
 
     public VacationType() {
         // ok
     }
 
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval) {
+    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color) {
         this.id = id;
         this.active = active;
         this.category = category;
         this.messageKey = messageKey;
         this.requiresApproval = requiresApproval;
+        this.color = color;
     }
 
     public boolean isActive() {
@@ -69,6 +71,14 @@ public class VacationType {
         this.requiresApproval = requiresApproval;
     }
 
+    public VacationTypeColor getColor() {
+        return this.color;
+    }
+
+    public void setColor(VacationTypeColor color) {
+        this.color = color;
+    }
+
     @Override
     public String toString() {
         return "VacationType{" +
@@ -77,6 +87,7 @@ public class VacationType {
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
             ", requiresApproval='" + requiresApproval + '\'' +
+            ", color='" + color + '\'' +
             '}';
     }
 
@@ -85,11 +96,12 @@ public class VacationType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VacationType that = (VacationType) o;
-        return active == that.active && requiresApproval == that.requiresApproval && category == that.category && Objects.equals(messageKey, that.messageKey);
+        return active == that.active && requiresApproval == that.requiresApproval && category == that.category && Objects.equals(messageKey, that.messageKey)
+            && Objects.equals(color, that.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(active, category, messageKey, requiresApproval);
+        return Objects.hash(active, category, messageKey, requiresApproval, color);
     }
 }

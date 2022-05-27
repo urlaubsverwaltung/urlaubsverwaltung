@@ -238,7 +238,7 @@ public class AbsenceApiController {
     private DayAbsenceDto toDayAbsenceDto(LocalDate date, DayLength dayLength, AbsencePeriod.RecordInfo recordInfo) {
         final String type = toType(recordInfo.getType()).map(DayAbsenceDto.Type::name).orElse("");
         final String status = recordInfo.getStatus().name();
-        return new DayAbsenceDto(date, dayLength.getDuration(), dayLength.name(), type, status, recordInfo.getId());
+        return new DayAbsenceDto(date, dayLength.getDuration(), dayLength.name(), type, status, recordInfo.getId(), recordInfo.getVacationTypeId().orElse(null));
     }
 
     private DayAbsenceDto.Type toType(String dayAbsenceType) {

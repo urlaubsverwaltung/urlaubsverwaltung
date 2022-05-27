@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
@@ -26,6 +27,10 @@ public class VacationTypeEntity {
     private String messageKey;
 
     private boolean requiresApproval;
+
+    @Enumerated(STRING)
+    @NotNull
+    private VacationTypeColor color;
 
     public boolean isActive() {
         return active;
@@ -71,14 +76,23 @@ public class VacationTypeEntity {
         this.requiresApproval = requiresApproval;
     }
 
+    public void setColor(VacationTypeColor color) {
+        this.color = color;
+    }
+
+    public VacationTypeColor getColor() {
+        return this.color;
+    }
+
     @Override
     public String toString() {
-        return "VacationType{" +
+        return "VacationTypeEntity{" +
             "id=" + id +
             ", active=" + active +
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
-            ", requiresApproval='" + requiresApproval + '\'' +
+            ", requiresApproval=" + requiresApproval +
+            ", color=" + color +
             '}';
     }
 

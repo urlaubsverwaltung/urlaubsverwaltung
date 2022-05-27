@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -40,17 +42,21 @@ public class WorkingTimeViewController {
     private final PersonService personService;
     private final WorkingTimeService workingTimeService;
     private final WorkingTimeWriteService workingTimeWriteService;
+    private final VacationTypeViewModelService vacationTypeViewModelService;
     private final SettingsService settingsService;
     private final WorkingTimeValidator validator;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeViewController(PersonService personService, WorkingTimeService workingTimeService,
-                                     WorkingTimeWriteService workingTimeWriteService, SettingsService settingsService, WorkingTimeValidator validator,
+                                     WorkingTimeWriteService workingTimeWriteService,
+                                     VacationTypeViewModelService vacationTypeViewModelService,
+                                     SettingsService settingsService, WorkingTimeValidator validator,
                                      Clock clock) {
         this.personService = personService;
         this.workingTimeService = workingTimeService;
         this.workingTimeWriteService = workingTimeWriteService;
+        this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.settingsService = settingsService;
         this.validator = validator;
         this.clock = clock;
@@ -112,6 +118,9 @@ public class WorkingTimeViewController {
         model.addAttribute("weekDays", DayOfWeek.values());
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("defaultFederalState", defaultFederalState);
+
+        final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
+        model.addAttribute("vacationTypeColors", vacationTypeColors);
     }
 
     private List<WorkingTimeHistoryDto> toWorkingTimeHistoryDtos(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes) {

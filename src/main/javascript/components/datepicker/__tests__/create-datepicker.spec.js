@@ -9,6 +9,9 @@ describe("create-datepicker", () => {
       datepicker: {
         localisation: datepickerLocalisation(),
       },
+      vacationTypes: {
+        colors: {},
+      },
     };
     setLocale(de);
   });
@@ -489,17 +492,20 @@ describe("create-datepicker", () => {
         const assertHolidayFull = (dateString) => {
           const element = getElement(dateString);
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-full-approved");
+          expect(element.classList).toContain("datepicker-day-absence-full");
+          expect(element.classList).toContain("absence-full--solid");
         };
         const assertHolidayNoon = (dateString) => {
           const element = getElement(dateString);
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-noon-approved");
+          expect(element.classList).toContain("datepicker-day-absence-noon");
+          expect(element.classList).toContain("absence-noon--solid");
         };
         const assertHolidayMorning = (dateString) => {
           const element = getElement(dateString);
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-morning-approved");
+          expect(element.classList).toContain("datepicker-day-absence-morning");
+          expect(element.classList).toContain("absence-morning--solid");
         };
         const assertSickFull = (dateString) => {
           const element = getElement(dateString);
@@ -660,9 +666,18 @@ describe("create-datepicker", () => {
 
           const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-full");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-noon");
+
+          expect(element.classList).toContain("datepicker-day-absence-full");
+          expect(element.classList).not.toContain("absence-full--solid");
+          expect(element.classList).toContain("absence-full--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-morning");
+          expect(element.classList).not.toContain("absence-morning--solid");
+          expect(element.classList).not.toContain("absence-morning--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-noon");
+          expect(element.classList).not.toContain("absence-noon--solid");
+          expect(element.classList).not.toContain("absence-noon--outline");
         });
 
         test("morning", async () => {
@@ -679,9 +694,18 @@ describe("create-datepicker", () => {
 
           const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-full");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-morning");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-noon");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-full");
+          expect(element.classList).not.toContain("absence-full--solid");
+          expect(element.classList).not.toContain("absence-full--outline");
+
+          expect(element.classList).toContain("datepicker-day-absence-morning");
+          expect(element.classList).not.toContain("absence-morning--solid");
+          expect(element.classList).toContain("absence-morning--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-noon");
+          expect(element.classList).not.toContain("absence-noon--solid");
+          expect(element.classList).not.toContain("absence-noon--outline");
         });
 
         test("noon", async () => {
@@ -698,9 +722,18 @@ describe("create-datepicker", () => {
 
           const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-full");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-noon");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-full");
+          expect(element.classList).not.toContain("absence-full--solid");
+          expect(element.classList).not.toContain("absence-full--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-morning");
+          expect(element.classList).not.toContain("absence-morning--solid");
+          expect(element.classList).not.toContain("absence-morning--outline");
+
+          expect(element.classList).toContain("datepicker-day-absence-noon");
+          expect(element.classList).not.toContain("absence-noon--solid");
+          expect(element.classList).toContain("absence-noon--outline");
         });
       });
 
@@ -740,9 +773,18 @@ describe("create-datepicker", () => {
 
           const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-full-approved");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning-approved");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-noon-approved");
+
+          expect(element.classList).toContain("datepicker-day-absence-full");
+          expect(element.classList).toContain("absence-full--solid");
+          expect(element.classList).not.toContain("absence-full--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-morning");
+          expect(element.classList).not.toContain("absence-morning--solid");
+          expect(element.classList).not.toContain("absence-morning--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-noon");
+          expect(element.classList).not.toContain("absence-noon--solid");
+          expect(element.classList).not.toContain("absence-noon--outline");
         });
 
         test("morning", async () => {
@@ -759,9 +801,18 @@ describe("create-datepicker", () => {
 
           const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-full-approved");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-morning-approved");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-noon-approved");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-full");
+          expect(element.classList).not.toContain("absence-full--solid");
+          expect(element.classList).not.toContain("absence-full--outline");
+
+          expect(element.classList).toContain("datepicker-day-absence-morning");
+          expect(element.classList).toContain("absence-morning--solid");
+          expect(element.classList).not.toContain("absence-morning--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-noon");
+          expect(element.classList).not.toContain("absence-noon--solid");
+          expect(element.classList).not.toContain("absence-noon--outline");
         });
 
         test("noon", async () => {
@@ -778,9 +829,18 @@ describe("create-datepicker", () => {
 
           const element = getDatepickerDayElement("24. Dezember");
           expect(element.classList).toContain("datepicker-day");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-full-approved");
-          expect(element.classList).not.toContain("datepicker-day-personal-holiday-morning-approved");
-          expect(element.classList).toContain("datepicker-day-personal-holiday-noon-approved");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-full");
+          expect(element.classList).not.toContain("absence-full--solid");
+          expect(element.classList).not.toContain("absence-full--outline");
+
+          expect(element.classList).not.toContain("datepicker-day-absence-morning");
+          expect(element.classList).not.toContain("absence-morning--solid");
+          expect(element.classList).not.toContain("absence-morning--outline");
+
+          expect(element.classList).toContain("datepicker-day-absence-noon");
+          expect(element.classList).toContain("absence-noon--solid");
+          expect(element.classList).not.toContain("absence-noon--outline");
         });
       });
 

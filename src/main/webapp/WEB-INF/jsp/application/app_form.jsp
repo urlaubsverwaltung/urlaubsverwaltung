@@ -41,6 +41,7 @@
         window.uv.i18n['application.applier.days'] = "<spring:message code='application.applier.days' javaScriptEscape='true' />";
     </script>
     <uv:datepicker-localisation/>
+    <uv:vacation-type-colors-script />
     <link rel="stylesheet" type="text/css"
           href="<asset:url value='account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css' />"/>
     <link rel="stylesheet" type="text/css"

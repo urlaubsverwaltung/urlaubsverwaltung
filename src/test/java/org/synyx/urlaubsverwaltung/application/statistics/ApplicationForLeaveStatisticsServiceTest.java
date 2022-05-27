@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -62,7 +64,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         user.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(user);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         verifyNoMoreInteractions(personService);
@@ -90,7 +92,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         anyPerson.setPermissions(List.of(USER));
         when(personService.getActivePersons()).thenReturn(List.of(anyPerson));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -120,7 +122,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final PersonBasedata personBasedata = new PersonBasedata(1, "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -152,7 +154,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         anyPerson.setPermissions(List.of(USER));
         when(personService.getActivePersons()).thenReturn(List.of(anyPerson));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -179,7 +181,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         departmentMember.setPermissions(List.of(USER));
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentMember));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -207,7 +209,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(inactiveDepartmentMember));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -234,7 +236,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(departmentMember));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -261,7 +263,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         inactiveDepartmentMember.setPermissions(List.of(USER, INACTIVE));
         when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(inactiveDepartmentMember));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -297,7 +299,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMember));
         when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMemberTwo, departmentMemberThree));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -334,7 +336,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(departmentService.getMembersForDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMember));
         when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(departmentMember, departmentMemberTwo));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -370,7 +372,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(inactiveDepartmentMember, inactiveDepartmentMemberTwo));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 

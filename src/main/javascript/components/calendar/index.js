@@ -25,6 +25,25 @@ import format from "../../lib/date-fns/format";
 import startOfWeek from "../../lib/date-fns/start-of-week";
 import tooltip from "../tooltip";
 import { getJSON } from "../../js/fetch";
+import {
+  isNoWorkday,
+  isSickNoteMorning,
+  isSickNoteNoon,
+  isSickNoteFull,
+  isPersonalHolidayWaitingFull,
+  isPersonalHolidayTemporaryFull,
+  isPersonalHolidayApprovedFull,
+  isPersonalHolidayCancellationRequestedFull,
+  isPersonalHolidayWaitingMorning,
+  isPersonalHolidayTemporaryMorning,
+  isPersonalHolidayApprovedMorning,
+  isPersonalHolidayCancellationRequestedMorning,
+  isPersonalHolidayWaitingNoon,
+  isPersonalHolidayApprovedNoon,
+  isPersonalHolidayCancellationRequestedNoon,
+  isPersonalHolidayTemporaryNoon,
+} from "../../js/absence";
+import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
 import "./calendar.css";
 
 function paramize(p) {
@@ -61,12 +80,12 @@ $(function () {
     dayPublicHolidayFull: "datepicker-day-public-holiday-full",
     dayPublicHolidayMorning: "datepicker-day-public-holiday-morning",
     dayPublicHolidayNoon: "datepicker-day-public-holiday-noon",
-    dayPersonalHolidayFull: "datepicker-day-personal-holiday-full",
-    dayPersonalHolidayFullApproved: "datepicker-day-personal-holiday-full-approved",
-    dayPersonalHolidayMorning: "datepicker-day-personal-holiday-morning",
-    dayPersonalHolidayMorningApproved: "datepicker-day-personal-holiday-morning-approved",
-    dayPersonalHolidayNoon: "datepicker-day-personal-holiday-noon",
-    dayPersonalHolidayNoonApproved: "datepicker-day-personal-holiday-noon-approved",
+    dayPersonalHolidayFull: "datepicker-day-absence-full absence-full--outline",
+    dayPersonalHolidayFullApproved: "datepicker-day-absence-full absence-full--solid",
+    dayPersonalHolidayMorning: "datepicker-day-absence-morning absence-morning--outline",
+    dayPersonalHolidayMorningApproved: "datepicker-day-absence-morning absence-morning--solid",
+    dayPersonalHolidayNoon: "datepicker-day-absence-noon absence-noon--outline",
+    dayPersonalHolidayNoonApproved: "datepicker-day-absence-noon absence-noon--solid",
     daySickDayFull: "datepicker-day-sick-note-full",
     daySickDayMorning: "datepicker-day-sick-note-morning",
     daySickDayNoon: "datepicker-day-sick-note-noon",
@@ -184,8 +203,8 @@ $(function () {
       absenceType: function (date) {
         return holidayService.getAbsenceType(date);
       },
-      status: function (date) {
-        return holidayService.getStatus(date);
+      vacationTypeId: function (date) {
+        return holidayService.getVacationTypeId(date);
       },
     };
 
@@ -215,162 +234,124 @@ $(function () {
       return getJSON(url);
     }
 
-    function cacheAbsences(type, year) {
-      const c = (_CACHE[type] = _CACHE[type] || {});
+    function cacheAbsences(year) {
+      const absenceCache = (_CACHE["absences"] = _CACHE["absences"] || {});
 
       return function (data) {
-        const absences = data.absences;
+        absenceCache[year] = absenceCache[year] || [];
 
-        if (absences.length > 0) {
-          $.each(absences, function (index, absence) {
-            c[absence.type] = c[absence.type] || {};
-            c[absence.type][year] = c[absence.type][year] || [];
-            c[absence.type][year].push(absence);
-          });
-        } else {
-          c[year] = [];
+        for (let absence of data.absences) {
+          absenceCache[year].push(absence);
         }
       };
     }
 
     function cachePublicHoliday(year) {
-      const c = (_CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {});
+      const publicHolidayCache = (_CACHE["publicHoliday"] = _CACHE["publicHoliday"] || {});
 
       return function (data) {
-        const publicHolidays = data.publicHolidays;
+        publicHolidayCache[year] = publicHolidayCache[year] || [];
 
-        if (publicHolidays.length > 0) {
-          $.each(publicHolidays, function (index, publicHoliday) {
-            c[year] = c[year] || [];
-            c[year].push(publicHoliday);
-          });
-        } else {
-          c[year] = c[year] || [];
+        for (let publicHoliday of data.publicHolidays) {
+          publicHolidayCache[year].push(publicHoliday);
         }
       };
     }
 
-    function isOfType(type, matcherAttributes) {
-      return function (date) {
-        const year = getYear(date);
-        const formattedDate = format(date, "yyyy-MM-dd");
+    function getAbsencesForDate(date) {
+      const year = getYear(date);
+      const formattedDate = format(date, "yyyy-MM-dd");
+      const cache = _CACHE["absences"] || {};
+      const absencesForYear = cache[year] || [];
 
-        if (!_CACHE[type]) {
-          return false;
-        }
-
-        if (_CACHE[type][year]) {
-          const absence = findWhere(_CACHE[type][year], {
-            ...matcherAttributes,
-            date: formattedDate,
-          });
-          return Boolean(absence);
-        }
-
-        return false;
-      };
+      return absencesForYear.filter((absence) => absence.date === formattedDate);
     }
 
-    function isOfAbsenceType(absenceType, matcherAttributes) {
-      return function (date) {
-        const year = getYear(date);
-        const formattedDate = format(date, "yyyy-MM-dd");
+    function getPublicHolidaysForDate(date) {
+      const year = getYear(date);
+      const formattedDate = format(date, "yyyy-MM-dd");
+      const cache = _CACHE["publicHoliday"] || {};
+      const publicHolidaysForYear = cache[year] || [];
 
-        if (!_CACHE["absences"] || !_CACHE["absences"][absenceType]) {
-          return false;
-        }
-
-        if (_CACHE["absences"][absenceType][year]) {
-          const absence = findWhere(_CACHE["absences"][absenceType][year], {
-            ...matcherAttributes,
-            date: formattedDate,
-          });
-          return Boolean(absence);
-        }
-
-        return false;
-      };
+      return publicHolidaysForYear.filter((absence) => absence.date === formattedDate);
     }
-
-    const absencePeriod = Object.freeze({
-      FULL: "FULL",
-      MORNING: "MORNING",
-      NOON: "NOON",
-    });
 
     const HolidayService = {
-      isNoWorkday: isOfAbsenceType("NO_WORKDAY"),
+      isNoWorkday(date) {
+        return isNoWorkday(getAbsencesForDate(date));
+      },
 
-      isSickDayFull: isOfAbsenceType("SICK_NOTE", {
-        absencePeriodName: absencePeriod.FULL,
-      }),
-      isSickDayMorning: isOfAbsenceType("SICK_NOTE", {
-        absencePeriodName: absencePeriod.MORNING,
-      }),
-      isSickDayNoon: isOfAbsenceType("SICK_NOTE", {
-        absencePeriodName: absencePeriod.NOON,
-      }),
+      isSickDayFull(date) {
+        return isSickNoteFull(getAbsencesForDate(date));
+      },
 
-      isPersonalHolidayFull: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.FULL,
-        status: "WAITING",
-      }),
-      isPersonalHolidayFullTemporaryApproved: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.FULL,
-        status: "TEMPORARY_ALLOWED",
-      }),
-      isPersonalHolidayFullApproved: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.FULL,
-        status: "ALLOWED",
-      }),
-      isPersonalHolidayFullCancellationRequest: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.FULL,
-        status: "ALLOWED_CANCELLATION_REQUESTED",
-      }),
+      isSickDayMorning(date) {
+        return isSickNoteMorning(getAbsencesForDate(date));
+      },
 
-      isPersonalHolidayMorning: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.MORNING,
-        status: "WAITING",
-      }),
-      isPersonalHolidayMorningTemporaryApproved: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.MORNING,
-        status: "TEMPORARY_ALLOWED",
-      }),
-      isPersonalHolidayMorningApproved: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.MORNING,
-        status: "ALLOWED",
-      }),
-      isPersonalHolidayMorningCancellationRequest: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.MORNING,
-        status: "ALLOWED_CANCELLATION_REQUESTED",
-      }),
+      isSickDayNoon(date) {
+        return isSickNoteNoon(getAbsencesForDate(date));
+      },
 
-      isPersonalHolidayNoon: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.NOON,
-        status: "WAITING",
-      }),
-      isPersonalHolidayNoonTemporaryApproved: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.NOON,
-        status: "TEMPORARY_ALLOWED",
-      }),
-      isPersonalHolidayNoonApproved: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.NOON,
-        status: "ALLOWED",
-      }),
-      isPersonalHolidayNoonCancellationRequest: isOfAbsenceType("VACATION", {
-        absencePeriodName: absencePeriod.NOON,
-        status: "ALLOWED_CANCELLATION_REQUESTED",
-      }),
+      isPersonalHolidayFull(date) {
+        return isPersonalHolidayWaitingFull(getAbsencesForDate(date));
+      },
 
-      isPublicHolidayFull: isOfType("publicHoliday", {
-        absencePeriodName: absencePeriod.FULL,
-      }),
-      isPublicHolidayMorning: isOfType("publicHoliday", {
-        absencePeriodName: absencePeriod.MORNING,
-      }),
-      isPublicHolidayNoon: isOfType("publicHoliday", {
-        absencePeriodName: absencePeriod.NOON,
-      }),
+      isPersonalHolidayFullTemporaryApproved(date) {
+        return isPersonalHolidayTemporaryFull(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayFullApproved(date) {
+        return isPersonalHolidayApprovedFull(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayFullCancellationRequest(date) {
+        return isPersonalHolidayCancellationRequestedFull(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayMorning(date) {
+        return isPersonalHolidayWaitingMorning(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayMorningTemporaryApproved(date) {
+        return isPersonalHolidayTemporaryMorning(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayMorningApproved(date) {
+        return isPersonalHolidayApprovedMorning(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayMorningCancellationRequest(date) {
+        return isPersonalHolidayCancellationRequestedMorning(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayNoon(date) {
+        return isPersonalHolidayWaitingNoon(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayNoonTemporaryApproved(date) {
+        return isPersonalHolidayTemporaryNoon(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayNoonApproved(date) {
+        return isPersonalHolidayApprovedNoon(getAbsencesForDate(date));
+      },
+
+      isPersonalHolidayNoonCancellationRequest(date) {
+        return isPersonalHolidayCancellationRequestedNoon(getAbsencesForDate(date));
+      },
+
+      isPublicHolidayFull(date) {
+        return isPublicHoliday(getPublicHolidaysForDate(date));
+      },
+
+      isPublicHolidayMorning(date) {
+        return isPublicHolidayMorning(getPublicHolidaysForDate(date));
+      },
+
+      isPublicHolidayNoon(date) {
+        return isPublicHolidayNoon(getPublicHolidaysForDate(date));
+      },
 
       getDescription: function (date) {
         const year = getYear(date);
@@ -388,68 +369,38 @@ $(function () {
         return "";
       },
 
-      getStatus: function (date) {
-        const year = getYear(date);
-        const formattedDate = format(date, "yyyy-MM-dd");
-
-        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
-          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
-            date: formattedDate,
-          });
-          if (holiday) {
-            return holiday.status;
-          }
-        }
-      },
-
       getAbsenceId: function (date) {
-        const year = getYear(date);
-        const formattedDate = format(date, "yyyy-MM-dd");
-
-        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
-          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
-            date: formattedDate,
-          });
-          if (holiday) {
-            return holiday.href;
-          }
+        const absences = getAbsencesForDate(date);
+        if (absences[0]) {
+          return absences[0].href;
         }
-
-        if (_CACHE["absences"] && _CACHE["absences"]["SICK_NOTE"] && _CACHE["absences"]["SICK_NOTE"][year]) {
-          const sickDay = findWhere(_CACHE["absences"]["SICK_NOTE"][year], {
-            date: formattedDate,
-          });
-          if (sickDay) {
-            return sickDay.href;
-          }
-        }
-
         return "-1";
       },
 
       getAbsenceType: function (date) {
-        const year = getYear(date);
-        const formattedDate = format(date, "yyyy-MM-dd");
-
-        if (_CACHE["absences"] && _CACHE["absences"]["VACATION"] && _CACHE["absences"]["VACATION"][year]) {
-          const holiday = findWhere(_CACHE["absences"]["VACATION"][year], {
-            date: formattedDate,
-          });
-          if (holiday) {
-            return holiday.type;
-          }
+        const absences = getAbsencesForDate(date);
+        if (absences[0]) {
+          return absences[0].type;
         }
-
-        if (_CACHE["absences"] && _CACHE["absences"]["SICK_NOTE"] && _CACHE["absences"]["SICK_NOTE"][year]) {
-          const sickDay = findWhere(_CACHE["absences"]["SICK_NOTE"][year], {
-            date: formattedDate,
-          });
-          if (sickDay) {
-            return sickDay.type;
-          }
-        }
-
         return "";
+      },
+
+      getVacationTypeId: function (date) {
+        let morningOrFull;
+        let noon;
+
+        const absences = getAbsencesForDate(date);
+        for (let absence of absences) {
+          if (absence.type === "VACATION") {
+            if (absence.absencePeriodName === "NOON") {
+              noon = absence.vacationTypeId;
+            } else {
+              morningOrFull = absence.vacationTypeId;
+            }
+          }
+        }
+
+        return [morningOrFull, noon];
       },
 
       /**
@@ -510,7 +461,7 @@ $(function () {
           from: firstDayOfYear,
           to: lastDayOfYear,
           noWorkdaysInclusive: true,
-        }).then(cacheAbsences("absences", year));
+        }).then(cacheAbsences(year));
       },
     };
 
@@ -543,7 +494,7 @@ $(function () {
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
-      day: '<div class="datepicker-day {{css}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
+      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
 
       iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
 
@@ -682,6 +633,36 @@ $(function () {
           .join(" ");
       }
 
+      function style() {
+        // could be morning=sick and noon=vacation
+        const [idMorningOrFull, idNoon] = assert.vacationTypeId(date);
+        const colorMorningOrFull = `var(--absence-color-${window.uv.vacationTypes.colors[idMorningOrFull]})`;
+        const colorNoon = `var(--absence-color-${window.uv.vacationTypes.colors[idNoon]})`;
+        return [
+          assert.isPublicHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPublicHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+          assert.isPublicHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayFull(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayFullTemporaryApproved(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayFullApproved(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayFullCancellationRequest(date) ? `--absence-bar-color:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayMorning(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayMorningTemporaryApproved(date)
+            ? `--absence-bar-color-morning:${colorMorningOrFull}`
+            : ``,
+          assert.isPersonalHolidayMorningApproved(date) ? `--absence-bar-color-morning:${colorMorningOrFull}` : ``,
+          assert.isPersonalHolidayMorningCancellationRequest(date)
+            ? `--absence-bar-color-morning:${colorMorningOrFull}`
+            : ``,
+          assert.isPersonalHolidayNoon(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayNoonTemporaryApproved(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayNoonApproved(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+          assert.isPersonalHolidayNoonCancellationRequest(date) ? `--absence-bar-color-noon:${colorNoon}` : ``,
+        ]
+          .filter(Boolean)
+          .join(";");
+      }
+
       function isSelectable() {
         // NOTE: Order is important here!
 
@@ -714,6 +695,7 @@ $(function () {
         date: format(date, "yyyy-MM-dd"),
         day: format(date, "dd"),
         css: classes(),
+        style: style(),
         selectable: isSelectable(),
         title: assert.title(date),
         absenceId: assert.absenceId(date),

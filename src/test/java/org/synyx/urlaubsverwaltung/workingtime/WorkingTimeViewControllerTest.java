@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -44,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
 
@@ -62,13 +65,15 @@ class WorkingTimeViewControllerTest {
     @Mock
     private WorkingTimeWriteService workingTimeWriteService;
     @Mock
+    private VacationTypeViewModelService vacationTypeViewModelService;
+    @Mock
     private SettingsService settingsService;
     @Mock
     private WorkingTimeValidator validator;
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeViewController(personService, workingTimeService, workingTimeWriteService, settingsService, validator, Clock.systemUTC());
+        sut = new WorkingTimeViewController(personService, workingTimeService, workingTimeWriteService, vacationTypeViewModelService, settingsService, validator, Clock.systemUTC());
     }
 
     @Test
@@ -90,6 +95,8 @@ class WorkingTimeViewControllerTest {
         when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm(workingTime))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("valid", equalTo(true)))))
@@ -98,6 +105,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(GERMANY_BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
     }
 
@@ -136,6 +144,7 @@ class WorkingTimeViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -144,6 +153,7 @@ class WorkingTimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("workingtime/workingtime_form"));
 
         verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());

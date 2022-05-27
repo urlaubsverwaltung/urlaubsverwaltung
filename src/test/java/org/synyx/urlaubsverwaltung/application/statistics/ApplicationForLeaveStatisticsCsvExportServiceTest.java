@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsCsvExportServiceTest {
@@ -57,7 +59,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         person.setLastName("personOneLastName");
         final PersonBasedata basedata = new PersonBasedata(-1, "42", "OneInformation");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
         applicationForLeaveStatistics.setPersonBasedata(basedata);
@@ -103,7 +105,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwo.setLastName("personTwoLastName");
         final PersonBasedata basedataTwo = new PersonBasedata(-1, "42", "SecondInformation");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW);
 
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
         personOneStatistics.setPersonBasedata(basedataOne);

@@ -1,9 +1,10 @@
-import { findWhere } from "underscore";
-import { endOfMonth, formatISO, isToday, isWeekend, parseISO } from "date-fns";
+import { endOfMonth, formatISO, parseISO } from "date-fns";
 import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
 import { createDatepickerLocalization } from "./locale";
+import { addDatepickerCssClassesToNode, removeDatepickerCssClassesFromNode } from "./datepicker-css-classes";
+import { addAbsenceTypeStyleToNode, isNoWorkday, removeAbsenceTypeStyleFromNode } from "../../js/absence";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -12,25 +13,6 @@ import "../calendar/calendar.css";
 defineCustomElements(window);
 
 const noop = () => {};
-
-const datepickerClassnames = {
-  day: "datepicker-day",
-  today: "datepicker-day-today",
-  past: "datepicker-day-past",
-  weekend: "datepicker-day-weekend",
-  publicHolidayFull: "datepicker-day-public-holiday-full",
-  publicHolidayMorning: "datepicker-day-public-holiday-morning",
-  publicHolidayNoon: "datepicker-day-public-holiday-noon",
-  personalHolidayFull: "datepicker-day-personal-holiday-full",
-  personalHolidayFullApproved: "datepicker-day-personal-holiday-full-approved",
-  personalHolidayMorning: "datepicker-day-personal-holiday-morning",
-  personalHolidayMorningApproved: "datepicker-day-personal-holiday-morning-approved",
-  personalHolidayNoon: "datepicker-day-personal-holiday-noon",
-  personalHolidayNoonApproved: "datepicker-day-personal-holiday-noon-approved",
-  sickNoteFull: "datepicker-day-sick-note-full",
-  sickNoteMorning: "datepicker-day-sick-note-morning",
-  sickNoteNoon: "datepicker-day-sick-note-noon",
-};
 
 export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
   const { localisation } = window.uv.datepicker;
@@ -44,8 +26,9 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
   const showAbsences = () => {
     // clear all days
     for (const element of duetDateElement.querySelectorAll(".duet-date__day")) {
-      element.classList.remove(...Object.values(datepickerClassnames));
       element.querySelector("[data-uv-icon]")?.remove();
+      removeDatepickerCssClassesFromNode(element);
+      removeAbsenceTypeStyleFromNode(element);
     }
 
     const firstDayOfMonth = `${yearElement.value}-${twoDigit(Number(monthElement.value) + 1)}-01`;
@@ -82,12 +65,15 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
         } else {
           date.setFullYear(selectedYear);
         }
-        const cssClasses = getCssClassesForDate(date, publicHolidays.value, absences.value);
-        dayElement.classList.add(...cssClasses);
 
-        const isNoWorkday = fitsCriteriaMatcher(date)(absences.value, { type: "NO_WORKDAY" });
+        const absencesForDate = findByDate(absences.value, date);
+        const publicHolidaysForDate = findByDate(publicHolidays.value, date);
+        addDatepickerCssClassesToNode(dayElement, date, absencesForDate, publicHolidaysForDate);
+        addAbsenceTypeStyleToNode(dayElement, absencesForDate);
+
         let icon;
-        if (isNoWorkday) {
+
+        if (isNoWorkday(absencesForDate)) {
           const temporary = document.createElement("span");
           temporary.innerHTML = `<svg viewBox="0 0 20 20" class="tw-w-3 tw-h-3 tw-opacity-50 tw-stroke-2" fill="currentColor" width="16" height="16" role="img" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path></svg>`;
           icon = temporary.firstChild;
@@ -95,6 +81,7 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
           icon = document.createElement("span");
           icon.classList.add("tw-w-3", "tw-h-3", "tw-inline-block");
         }
+
         icon.dataset.uvIcon = "";
         dayElement.append(icon);
       }
@@ -166,102 +153,13 @@ function waitForDatePickerHydration(rootElement) {
   });
 }
 
-function fitsCriteriaMatcher(date) {
-  const dateString = date ? formatISO(date, { representation: "date" }) : "";
-  return (list, filterAttributes) => Boolean(findWhere(list, { ...filterAttributes, date: dateString }));
+function dateToString(date) {
+  return date ? formatISO(date, { representation: "date" }) : "";
 }
 
-const isPast = () => false;
-
-function getCssClassesForDate(date, publicHolidays, absences) {
-  const fitsCriteria = fitsCriteriaMatcher(date);
-
-  const isPublicHolidayFull = () => fitsCriteria(publicHolidays, { absencePeriodName: "FULL" });
-  const isPublicHolidayMorning = () => fitsCriteria(publicHolidays, { absencePeriodName: "MORNING" });
-  const isPublicHolidayNoon = () => fitsCriteria(publicHolidays, { absencePeriodName: "NOON" });
-  const isPersonalHolidayFull = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "FULL",
-      status: "WAITING",
-    });
-  const isPersonalHolidayFullTemporaryApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "FULL",
-      status: "TEMPORARY_ALLOWED",
-    });
-  const isPersonalHolidayFullApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "FULL",
-      status: "ALLOWED",
-    });
-  const isPersonalHolidayMorning = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "MORNING",
-      status: "WAITING",
-    });
-  const isPersonalHolidayMorningTemporaryApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "MORNING",
-      status: "TEMPORARY_ALLOWED",
-    });
-  const isPersonalHolidayMorningApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "MORNING",
-      status: "ALLOWED",
-    });
-  const isPersonalHolidayNoon = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "NOON",
-      status: "WAITING",
-    });
-  const isPersonalHolidayNoonTemporaryApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "NOON",
-      status: "TEMPORARY_ALLOWED",
-    });
-  const isPersonalHolidayNoonApproved = () =>
-    fitsCriteria(absences, {
-      type: "VACATION",
-      absencePeriodName: "NOON",
-      status: "ALLOWED",
-    });
-  const isSickDayFull = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "FULL" });
-  const isSickDayMorning = () =>
-    fitsCriteria(absences, {
-      type: "SICK_NOTE",
-      absencePeriodName: "MORNING",
-    });
-  const isSickDayNoon = () => fitsCriteria(absences, { type: "SICK_NOTE", absencePeriodName: "NOON" });
-
-  return [
-    datepickerClassnames.day,
-    isToday(date) && datepickerClassnames.today,
-    isPast() && datepickerClassnames.past,
-    isWeekend(date) && datepickerClassnames.weekend,
-    isPublicHolidayFull() && datepickerClassnames.publicHolidayFull,
-    isPublicHolidayMorning() && datepickerClassnames.publicHolidayMorning,
-    isPublicHolidayNoon() && datepickerClassnames.publicHolidayNoon,
-    isPersonalHolidayFull() && datepickerClassnames.personalHolidayFull,
-    isPersonalHolidayFullTemporaryApproved() && datepickerClassnames.personalHolidayFull,
-    isPersonalHolidayFullApproved() && datepickerClassnames.personalHolidayFullApproved,
-    isPersonalHolidayMorning() && datepickerClassnames.personalHolidayMorning,
-    isPersonalHolidayMorningTemporaryApproved() && datepickerClassnames.personalHolidayMorning,
-    isPersonalHolidayMorningApproved() && datepickerClassnames.personalHolidayMorningApproved,
-    isPersonalHolidayNoon() && datepickerClassnames.personalHolidayNoon,
-    isPersonalHolidayNoonTemporaryApproved() && datepickerClassnames.personalHolidayNoon,
-    isPersonalHolidayNoonApproved() && datepickerClassnames.personalHolidayNoonApproved,
-    isSickDayFull() && datepickerClassnames.sickNoteFull,
-    isSickDayMorning() && datepickerClassnames.sickNoteMorning,
-    isSickDayNoon() && datepickerClassnames.sickNoteNoon,
-  ].filter(Boolean);
+function findByDate(list, date) {
+  const dateString = dateToString(date);
+  return list.filter((item) => item.date === dateString);
 }
 
 function pick(name) {

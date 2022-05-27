@@ -64,6 +64,7 @@ describe("calendar", () => {
               absencePeriodName: "FULL",
               type: "VACATION",
               status: givenStatus,
+              vacationTypeId: 1,
             },
           ],
         });
@@ -100,6 +101,7 @@ describe("calendar", () => {
               absencePeriodName: "FULL",
               type: "VACATION",
               status: givenStatus,
+              vacationTypeId: 1,
             },
           ],
         });
@@ -136,6 +138,7 @@ describe("calendar", () => {
               absencePeriodName: "FULL",
               type: "VACATION",
               status: givenStatus,
+              vacationTypeId: 1,
             },
           ],
         });
@@ -174,12 +177,14 @@ describe("calendar", () => {
             absencePeriodName: "FULL",
             type: "VACATION",
             status: "ALLOWED",
+            vacationTypeId: 1,
           },
           {
             date: "2020-12-06",
             absencePeriodName: "MORNING",
             type: "VACATION",
             status: "ALLOWED",
+            vacationTypeId: 1,
           },
           {
             date: "2020-12-06",
@@ -198,6 +203,7 @@ describe("calendar", () => {
             absencePeriodName: "NOON",
             type: "VACATION",
             status: "ALLOWED",
+            vacationTypeId: 1,
           },
           {
             date: "2020-12-13",
@@ -220,17 +226,17 @@ describe("calendar", () => {
       const $ = document.querySelector.bind(document);
       expect(
         $(
-          '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-personal-holiday-full-approved"]',
+          '[data-datepicker-date="2020-12-05"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-full absence-full--solid"]',
         ),
       ).toBeTruthy();
       expect(
         $(
-          '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-personal-holiday-morning-approved datepicker-day-sick-note-noon"]',
+          '[data-datepicker-date="2020-12-06"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-morning absence-morning--solid datepicker-day-sick-note-noon"]',
         ),
       ).toBeTruthy();
       expect(
         $(
-          '[data-datepicker-date="2020-12-12"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-personal-holiday-noon-approved datepicker-day-sick-note-morning"]',
+          '[data-datepicker-date="2020-12-12"][class="datepicker-day datepicker-day-weekend datepicker-day-past datepicker-day-absence-noon absence-noon--solid datepicker-day-sick-note-morning"]',
         ),
       ).toBeTruthy();
       expect(
@@ -307,6 +313,11 @@ describe("calendar", () => {
     window.uv = {};
     // 0=sunday, 1=monday
     window.uv.weekStartsOn = 1;
+
+    window.uv.vacationTypes = {};
+    window.uv.vacationTypes.colors = {
+      1: "#B4D455",
+    };
 
     document.body.innerHTML = `<div id="datepicker"></div>`;
 

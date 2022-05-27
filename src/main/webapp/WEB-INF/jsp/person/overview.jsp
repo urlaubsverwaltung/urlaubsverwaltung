@@ -38,6 +38,7 @@
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
     </script>
+    <uv:vacation-type-colors-script />
     <script defer src="<asset:url value="npm.date-fns.js" />"></script>
     <script defer src="<asset:url value="app_detail~app_form~person_overview.js" />"></script>
     <script defer src="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js' />"></script>

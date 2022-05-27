@@ -442,8 +442,8 @@
                                 <spring:message code='settings.absenceTypes.title'/>
                             </h2>
                         </uv:section-heading>
-                        <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
-                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-3 lg:tw-pl-5 tw-pt-2 lg:tw-pt-0 tw-text-sm">
+                        <div class="tw-flex tw-flex-col xl:tw-flex-row xl:tw-flex-row-reverse">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none xl:tw-w-1/3 xl:tw-ml-3 xl:tw-pl-5 tw-pt-2 md:tw-pt-0 tw-text-sm">
                                 <div>
                                     <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
                                 </div>
@@ -481,6 +481,9 @@
                                                 <spring:message code='settings.absenceTypes.table.head.approval' />
                                             </span>
                                         </th>
+                                        <th scope="col">
+                                            <spring:message code='settings.absenceTypes.table.head.color' />
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -514,6 +517,43 @@
                                                 <spring:message code="settings.absenceTypes.action.approve.label" />
                                             </label>
                                         </td>
+                                        <td data-th-text="<spring:message code='settings.absenceTypes.table.head.color' />">
+                                            <label for="color-${loop.index}" class="tw-sr-only">
+                                                <spring:message code="settings.absenceTypes.action.color.label" />
+                                            </label>
+
+                                            <div is="uv-color-picker">
+                                                <label
+                                                    id="color-picker-label-${loop.index}"
+                                                    for="color-picker-${loop.index}"
+                                                    class="color-picker-button"
+                                                >
+                                                    <span
+                                                        class="color-picker-button-color"
+                                                        style="background-color:var(--absence-color-${absenceType.color})"
+                                                    ></span>
+                                                    <span class="tw-sr-only">
+                                                        <spring:message code="settings.absenceTypes.action.color.label" />
+                                                    </span>
+                                                </label>
+                                                <input type="checkbox" id="color-picker-${loop.index}">
+                                                <ul id="color-popup-${loop.index}" class="color-picker-dialog tw-list-none">
+                                                    <c:forEach var="selectableColor" varStatus="selectableColorLoop" items="${settings.absenceTypeSettings.colors}">
+                                                    <li class="color-picker-option" style="background-color:var(--absence-color-${selectableColor});">
+                                                        <label for="color-${loop.index}-radio-${selectableColorLoop.index}">
+                                                            <input
+                                                                <c:if test="${absenceType.color == selectableColor}">checked</c:if>
+                                                                value="${selectableColor}"
+                                                                id="color-${loop.index}-radio-${selectableColorLoop.index}"
+                                                                name="absenceTypeSettings.items[${loop.index}].color"
+                                                                type="radio"
+                                                            >
+                                                        </label>
+                                                    </li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -526,8 +566,8 @@
                                 <spring:message code='settings.specialleave.title'/>
                             </h2>
                         </uv:section-heading>
-                        <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-flex-row-reverse">
-                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start lg:tw-flex-none lg:tw-w-1/3 lg:tw-ml-3 lg:tw-pl-5 tw-pt-2 lg:tw-pt-0 tw-text-sm">
+                        <div class="tw-flex tw-flex-col xl:tw-flex-row xl:tw-flex-row-reverse">
+                            <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start xl:tw-flex-none xl:tw-w-1/3 xl:tw-ml-3 xl:tw-pl-5 tw-pt-2 xl:tw-pt-0 tw-text-sm">
                                 <div>
                                     <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
                                 </div>

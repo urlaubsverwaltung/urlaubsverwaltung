@@ -153,7 +153,7 @@
   opacity: 0.6;
 }
 
-.datepicker-day:is(.datepicker-day-personal-holiday-full, .datepicker-day-personal-holiday-full-approved, .datepicker-day-sick-note-full)::after {
+.datepicker-day:is(.datepicker-day-absence-full, .datepicker-day-sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -161,10 +161,18 @@
   right: 0.375rem;
   height: 0.25rem;
   border-radius: 99999px;
+}
+
+.datepicker-day.absence-full--outline::after {
+  border: solid 1px var(--absence-bar-color);
+}
+
+.datepicker-day.datepicker-day-sick-note-full::after,
+.datepicker-day.absence-full--solid::after {
   background-color: var(--absence-bar-color);
 }
 
-.datepicker-day:is(.datepicker-day-personal-holiday-morning, .datepicker-day-personal-holiday-morning-approved, .datepicker-day-sick-note-morning)::before {
+.datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-sick-note-morning)::before {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -172,10 +180,18 @@
   right: 50%;
   height: 0.25rem;
   border-radius: 99999px;
+}
+
+.datepicker-day.absence-morning--outline::before {
+  border: solid 1px var(--absence-bar-color-morning);
+}
+
+.datepicker-day.datepicker-day-sick-note-morning::before,
+.datepicker-day.absence-morning--solid::before {
   background-color: var(--absence-bar-color-morning);
 }
 
-.datepicker-day:is(.datepicker-day-personal-holiday-noon, .datepicker-day-personal-holiday-noon-approved, .datepicker-day-sick-note-noon)::after {
+.datepicker-day:is(.datepicker-day-absence-noon, .datepicker-day-sick-note-noon)::after {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -183,6 +199,14 @@
   right: 0.375rem;
   height: 0.25rem;
   border-radius: 99999px;
+}
+
+.datepicker-day.absence-noon--outline::after {
+  border: solid 1px var(--absence-bar-color-noon);
+}
+
+.datepicker-day.datepicker-day-sick-note-noon::after,
+.datepicker-day.absence-noon--solid::after {
   background-color: var(--absence-bar-color-noon);
 }
 
@@ -191,27 +215,6 @@ td.datepicker-day {
 }
 
 /* NOTE: Order of the day classes is very important because of css classes overloading! */
-
-.datepicker-day-personal-holiday-morning {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday");
-}
-.datepicker-day-personal-holiday-noon {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday");
-}
-.datepicker-day-personal-holiday-full {
-  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday");
-}
-
-.datepicker-day-personal-holiday-morning-approved,
-.datepicker-day-personal-holiday-morning-approved.datepicker-day-past {
-  --absence-bar-color-morning: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-.datepicker-day-personal-holiday-noon-approved {
-  --absence-bar-color-noon: theme("backgroundColor.calendar.personal-holiday-approved");
-}
-.datepicker-day-personal-holiday-full-approved {
-  --absence-bar-color: theme("backgroundColor.calendar.personal-holiday-approved");
-}
 
 .datepicker-day:not([data-datepicker-selectable="false"]) {
   cursor: pointer;
