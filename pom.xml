@@ -160,13 +160,6 @@
       <version>0.7.0</version>
     </dependency>
 
-    <!-- Time/Date lib -->
-    <dependency>
-      <groupId>org.threeten</groupId>
-      <artifactId>threeten-extra</artifactId>
-      <version>1.7.0</version>
-    </dependency>
-
     <!-- SPRINGBOOT DEVTOOLS -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

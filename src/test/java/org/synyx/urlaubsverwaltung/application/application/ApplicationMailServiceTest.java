@@ -925,7 +925,7 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("daysBeforeUpcomingApplication", 1);
+        model.put("daysBeforeUpcomingApplication", 1L);
 
         sut.sendRemindForUpcomingApplicationsReminderNotification(List.of(application, application));
 
@@ -973,12 +973,12 @@ class ApplicationMailServiceTest {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("daysBeforeUpcomingHolidayReplacement", 2);
+        model.put("daysBeforeUpcomingHolidayReplacement", 2L);
         model.put("replacementNote", "Note");
 
         final Map<String, Object> modelTwo = new HashMap<>();
         modelTwo.put("application", application);
-        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 2);
+        modelTwo.put("daysBeforeUpcomingHolidayReplacement", 2L);
         modelTwo.put("replacementNote", "Note 2");
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
