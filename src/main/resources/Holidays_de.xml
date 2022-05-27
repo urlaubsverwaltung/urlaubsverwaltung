@@ -6,35 +6,77 @@
     <tns:Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/>
     <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
     <tns:Fixed month="JUNE" day="17" validFrom="1954" validTo="1990" descriptionPropertiesKey="UNIFICATION"/>
-    <tns:Fixed month="OCTOBER" day="3" validFrom="1990" descriptionPropertiesKey="UNIFICATION"/>
+    <tns:Fixed month="OCTOBER" day="3" validFrom="1990" descriptionPropertiesKey="UNIFICATION_GERMANY"/>
     <tns:Fixed month="OCTOBER" day="31" validFrom="2017" validTo="2017" descriptionPropertiesKey="REFORMATION_DAY"/>
-    <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
-    <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+    <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="FIRST_CHRISTMAS_DAY"/>
+    <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="SECOND_CHRISTMAS_DAY"/>
     <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>
     <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>
-    <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
+
+    <tns:RelativeToFixed validFrom="1934" validTo="1938" descriptionPropertiesKey="REPENTANCE_PRAYER">
+      <tns:Weekday>WEDNESDAY</tns:Weekday>
+      <tns:When>BEFORE</tns:When>
+      <tns:Date month="NOVEMBER" day="23"/>
+    </tns:RelativeToFixed>
+    <tns:RelativeToFixed validFrom="1990" validTo="1994" descriptionPropertiesKey="REPENTANCE_PRAYER">
+      <tns:Weekday>WEDNESDAY</tns:Weekday>
+      <tns:When>BEFORE</tns:When>
+      <tns:Date month="NOVEMBER" day="23"/>
+    </tns:RelativeToFixed>
+
     <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
     <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
     <tns:ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
-    <tns:ChristianHoliday type="WHIT_SUNDAY" descriptionPropertiesKey="christian.WHIT_SUNDAY"/>
     <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
   </tns:Holidays>
+
+  <tns:SubConfigurations hierarchy="be" description="Berlin">
+    <tns:Holidays>
+      <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2019"/>
+      <tns:Fixed month="MAY" day="8" descriptionPropertiesKey="LIBERATION" validFrom="2020" validTo="2020"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+    </tns:Holidays>
+  </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="bb" description="Brandenburg">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
+      <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
+      <tns:ChristianHoliday type="WHIT_SUNDAY" descriptionPropertiesKey="christian.WHIT_SUNDAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="bw" description="Baden-Württenberg">
+
+  <tns:SubConfigurations hierarchy="bw" description="Baden-Württemberg">
     <tns:Holidays>
       <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
       <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="by" description="Bayern">
+
+  <tns:SubConfigurations hierarchy="by" description="Bavaria">
     <tns:Holidays>
       <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
       <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+
+      <tns:RelativeToFixed validFrom="1981" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
     </tns:Holidays>
     <tns:SubConfigurations hierarchy="mu" description="Munich">
@@ -64,81 +106,141 @@
       </tns:Holidays>
     </tns:SubConfigurations>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="he" description="Hessen">
     <tns:Holidays>
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+
+      <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+      <tns:ChristianHoliday type="WHIT_SUNDAY" descriptionPropertiesKey="christian.WHIT_SUNDAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="mv" description="Mecklenburg-Vorpommern">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="nw" description="Nordrhein-Westfalen">
+
+  <tns:SubConfigurations hierarchy="nw" description="North Rhine-Westphalia">
     <tns:Holidays>
       <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="rp" description="Rheinland-Pfalz">
+
+  <tns:SubConfigurations hierarchy="rp" description="Rhineland-Palatinate">
     <tns:Holidays>
       <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="sl" description="Saarland">
     <tns:Holidays>
       <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
       <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
+
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="sn" description="Sachsen">
+
+  <tns:SubConfigurations hierarchy="sn" description="Saxony">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
-      <tns:RelativeToFixed descriptionPropertiesKey="REPENTANCE_PRAYER">
+
+      <tns:RelativeToFixed validFrom="1995" descriptionPropertiesKey="REPENTANCE_PRAYER">
         <tns:Weekday>WEDNESDAY</tns:Weekday>
         <tns:When>BEFORE</tns:When>
         <tns:Date month="NOVEMBER" day="23"/>
       </tns:RelativeToFixed>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="st" description="Sachsen-Anhalt">
+
+  <tns:SubConfigurations hierarchy="st" description="Saxony-Anhalt">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
       <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="th" description="Thüringen">
+
+  <tns:SubConfigurations hierarchy="th" description="Thuringia">
     <tns:Holidays>
       <tns:Fixed month="SEPTEMBER" day="20" descriptionPropertiesKey="CHILDRENS_DAY" validFrom="2019"/>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="sh" description="Schleswig-Holstein">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="hh" description="Hamburg">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
     </tns:Holidays>
   </tns:SubConfigurations>
+
   <tns:SubConfigurations hierarchy="hb" description="Bremen">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
     </tns:Holidays>
   </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="ni" description="Niedersachsen">
+
+  <tns:SubConfigurations hierarchy="ni" description="Lower-Saxony">
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY" validFrom="2018"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
-  <tns:SubConfigurations hierarchy="b" description="Berlin">
-    <tns:Holidays>
-      <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2019"/>
+
+      <tns:RelativeToFixed validFrom="1945" validTo="1989" descriptionPropertiesKey="REPENTANCE_PRAYER">
+        <tns:Weekday>WEDNESDAY</tns:Weekday>
+        <tns:When>BEFORE</tns:When>
+        <tns:Date month="NOVEMBER" day="23"/>
+      </tns:RelativeToFixed>
     </tns:Holidays>
   </tns:SubConfigurations>
 </tns:Configuration>
-
