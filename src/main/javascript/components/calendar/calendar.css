@@ -153,7 +153,7 @@
   opacity: 0.6;
 }
 
-.datepicker-day:is(.datepicker-day-absence-full, .datepicker-day-absence-full-approved, .datepicker-day-sick-note-full)::after {
+.datepicker-day:is(.datepicker-day-absence-full, .datepicker-day-sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -163,15 +163,15 @@
   border-radius: 99999px;
 }
 
-.datepicker-day:is(.datepicker-day-absence-full)::after {
+.datepicker-day.absence-full--outline::after {
   border: solid 1px var(--absence-bar-color);
 }
 
-.datepicker-day:is(.datepicker-day-absence-full-approved)::after {
+.datepicker-day.absence-full--solid::after {
   background-color: var(--absence-bar-color);
 }
 
-.datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-absence-morning-approved, .datepicker-day-sick-note-morning)::before {
+.datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-sick-note-morning)::before {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -181,15 +181,15 @@
   border-radius: 99999px;
 }
 
-.datepicker-day:is(.datepicker-day-absence-morning)::before {
+.datepicker-day.absence-morning--outline::before {
   border: solid 1px var(--absence-bar-color-morning);
 }
 
-.datepicker-day:is(.datepicker-day-absence-morning-approved)::before {
+.datepicker-day.absence-morning--solid::before {
   background-color: var(--absence-bar-color-morning);
 }
 
-.datepicker-day:is(.datepicker-day-absence-noon, .datepicker-day-absence-noon-approved, .datepicker-day-sick-note-noon)::after {
+.datepicker-day:is(.datepicker-day-absence-noon, .datepicker-day-sick-note-noon)::after {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -199,11 +199,11 @@
   border-radius: 99999px;
 }
 
-.datepicker-day:is(.datepicker-day-absence-noon)::after {
+.datepicker-day.absence-noon--outline::after {
   border: solid 1px var(--absence-bar-color-noon);
 }
 
-.datepicker-day:is(.datepicker-day-absence-noon-approved)::after {
+.datepicker-day.absence-noon--solid::after {
   background-color: var(--absence-bar-color-noon);
 }
 

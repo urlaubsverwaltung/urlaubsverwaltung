@@ -99,7 +99,7 @@ th.vacationOverview-cal-head.today::after {
   height: 100%;
 }
 
-.cal-day:is(.legend-absence-full-approved, .absence-full, .vacation-full-waiting, .vacation-full-approved, .sick-note-full)::after {
+.cal-day:is(.absence-full, .sick-note-full)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -109,15 +109,15 @@ th.vacationOverview-cal-head.today::after {
   border-radius: 99999px;
 }
 
-.cal-day:is(.legend-absence-full-approved, .absence-full, .vacation-full-approved, .sick-note-full)::after {
+.cal-day.absence-full--solid::after {
   background-color: var(--absence-bar-color);
 }
 
-.cal-day:is(.vacation-full-waiting)::after {
+.cal-day.absence-full--outline::after {
   border: solid 1px var(--absence-bar-color);
 }
 
-.cal-day:is(.absence-morning, .vacation-morning-waiting, .vacation-morning-approved, .sick-note-morning)::before {
+.cal-day:is(.absence-morning, .sick-note-morning)::before {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -127,15 +127,15 @@ th.vacationOverview-cal-head.today::after {
   border-radius: 99999px;
 }
 
-.cal-day:is(.absence-morning, .vacation-morning-approved, .sick-note-morning)::before {
+.cal-day.absence-morning--solid::before {
   background-color: var(--absence-bar-color-morning);
 }
 
-.cal-day:is(.vacation-morning-waiting)::before {
+.cal-day.absence-morning--outline::before {
   border: solid 1px var(--absence-bar-color-morning);
 }
 
-.cal-day:is(.absence-noon, .vacation-noon-waiting, .vacation-noon-approved, .sick-note-noon)::after {
+.cal-day:is(.absence-noon, .sick-note-noon)::after {
   content: "";
   position: absolute;
   bottom: 4px;
@@ -145,11 +145,11 @@ th.vacationOverview-cal-head.today::after {
   border-radius: 99999px;
 }
 
-.cal-day:is(.absence-noon, .vacation-noon-approved, .sick-note-noon)::after {
+.cal-day.absence-noon--solid::after {
   background-color: var(--absence-bar-color-noon);
 }
 
-.cal-day:is(.vacation-noon-waiting)::after {
+.cal-day.absence-noon--outline::after {
   border: solid 1px var(--absence-bar-color-noon);
 }
 

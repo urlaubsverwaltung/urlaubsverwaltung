@@ -331,19 +331,19 @@ public class AbsenceOverviewViewController {
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (morningWaiting) {
-            return showAllInformation ? builder.waitingVacationMorning() : builder.absenceMorning();
+            return showAllInformation ? builder.waitingAbsenceMorning() : builder.absenceMorning();
         }
         final boolean morningAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowed).orElse(false);
         if (morningAllowed) {
-            return showAllInformation ? builder.allowedVacationMorning() : builder.absenceMorning();
+            return builder.absenceMorning();
         }
 
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
-            return showAllInformation ? builder.waitingVacationNoon() : builder.absenceNoon();
+            return showAllInformation ? builder.waitingAbsenceNoon() : builder.absenceNoon();
         }
 
-        return showAllInformation ? builder.allowedVacationNoon() : builder.absenceNoon();
+        return builder.absenceNoon();
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation, Function<Integer, VacationType> vacationTypById) {
@@ -375,9 +375,9 @@ public class AbsenceOverviewViewController {
         }
 
         if (morningWaiting && noonWaiting) {
-            return showAllInformation ? builder.waitingVacationFull() : builder.absenceFull();
+            return showAllInformation ? builder.waitingAbsenceFull() : builder.absenceFull();
         } else if (!morningWaiting && !noonWaiting) {
-            return showAllInformation ? builder.allowedVacationFull() : builder.absenceFull();
+            return builder.absenceFull();
         }
 
         return builder;

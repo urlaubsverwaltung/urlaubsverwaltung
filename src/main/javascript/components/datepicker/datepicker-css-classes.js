@@ -15,7 +15,7 @@ import {
 } from "../../js/absence";
 import { isToday, isWeekend } from "date-fns";
 
-const datepickerClassnames = {
+const css = {
   day: "datepicker-day",
   today: "datepicker-day-today",
   past: "datepicker-day-past",
@@ -24,11 +24,14 @@ const datepickerClassnames = {
   publicHolidayMorning: "datepicker-day-public-holiday-morning",
   publicHolidayNoon: "datepicker-day-public-holiday-noon",
   absenceFull: "datepicker-day-absence-full",
-  absenceFullApproved: "datepicker-day-absence-full-approved",
+  absenceFullSolid: "absence-full--solid",
+  absenceFullOutline: "absence-full--outline",
   absenceMorning: "datepicker-day-absence-morning",
-  absenceMorningApproved: "datepicker-day-absence-morning-approved",
+  absenceMorningSolid: "absence-morning--solid",
+  absenceMorningOutline: "absence-morning--outline",
   absenceNoon: "datepicker-day-absence-noon",
-  absenceNoonApproved: "datepicker-day-absence-noon-approved",
+  absenceNoonSolid: "absence-noon--solid",
+  absenceNoonOutline: "absence-noon--outline",
   sickNoteFull: "datepicker-day-sick-note-full",
   sickNoteMorning: "datepicker-day-sick-note-morning",
   sickNoteNoon: "datepicker-day-sick-note-noon",
@@ -41,7 +44,7 @@ const isPast = () => false;
  * @param node {HTMLElement}
  */
 export function removeDatepickerCssClassesFromNode(node) {
-  node.classList.remove(...Object.values(datepickerClassnames));
+  node.classList.remove(...Object.values(css));
 }
 
 /**
@@ -58,24 +61,26 @@ export function addDatepickerCssClassesToNode(node, date, absences, publicHolida
 
 function getCssClassesForDate(date, absences, publicHolidays) {
   return [
-    datepickerClassnames.day,
-    isToday(date) && datepickerClassnames.today,
-    isPast() && datepickerClassnames.past,
-    isWeekend(date) && datepickerClassnames.weekend,
-    isPublicHoliday(publicHolidays) && datepickerClassnames.publicHolidayFull,
-    isPublicHolidayMorning(publicHolidays) && datepickerClassnames.publicHolidayMorning,
-    isPublicHolidayNoon(publicHolidays) && datepickerClassnames.publicHolidayNoon,
-    isPersonalHolidayWaitingFull(absences) && datepickerClassnames.absenceFull,
-    isPersonalHolidayTemporaryFull(absences) && datepickerClassnames.absenceFull,
-    isPersonalHolidayApprovedFull(absences) && datepickerClassnames.absenceFullApproved,
-    isPersonalHolidayWaitingMorning(absences) && datepickerClassnames.absenceMorning,
-    isPersonalHolidayTemporaryMorning(absences) && datepickerClassnames.absenceMorning,
-    isPersonalHolidayApprovedMorning(absences) && datepickerClassnames.absenceMorningApproved,
-    isPersonalHolidayWaitingNoon(absences) && datepickerClassnames.absenceNoon,
-    isPersonalHolidayTemporaryNoon(absences) && datepickerClassnames.absenceNoon,
-    isPersonalHolidayApprovedNoon(absences) && datepickerClassnames.absenceNoonApproved,
-    isSickNoteFull(absences) && datepickerClassnames.sickNoteFull,
-    isSickNoteMorning(absences) && datepickerClassnames.sickNoteMorning,
-    isSickNoteNoon(absences) && datepickerClassnames.sickNoteNoon,
-  ].filter(Boolean);
+    css.day,
+    isToday(date) && css.today,
+    isPast() && css.past,
+    isWeekend(date) && css.weekend,
+    isPublicHoliday(publicHolidays) && css.publicHolidayFull,
+    isPublicHolidayMorning(publicHolidays) && css.publicHolidayMorning,
+    isPublicHolidayNoon(publicHolidays) && css.publicHolidayNoon,
+    isPersonalHolidayWaitingFull(absences) && [css.absenceFull, css.absenceFullOutline],
+    isPersonalHolidayTemporaryFull(absences) && [css.absenceFull, css.absenceFullOutline],
+    isPersonalHolidayApprovedFull(absences) && [css.absenceFull, css.absenceFullSolid],
+    isPersonalHolidayWaitingMorning(absences) && [css.absenceMorning, css.absenceMorningOutline],
+    isPersonalHolidayTemporaryMorning(absences) && [css.absenceMorning, css.absenceMorningOutline],
+    isPersonalHolidayApprovedMorning(absences) && [css.absenceMorning, css.absenceMorningSolid],
+    isPersonalHolidayWaitingNoon(absences) && [css.absenceNoon, css.absenceNoonOutline],
+    isPersonalHolidayTemporaryNoon(absences) && [css.absenceNoon, css.absenceNoonOutline],
+    isPersonalHolidayApprovedNoon(absences) && [css.absenceNoon, css.absenceNoonSolid],
+    isSickNoteFull(absences) && css.sickNoteFull,
+    isSickNoteMorning(absences) && css.sickNoteMorning,
+    isSickNoteNoon(absences) && css.sickNoteNoon,
+  ]
+    .flat()
+    .filter(Boolean);
 }
