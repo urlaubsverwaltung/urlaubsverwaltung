@@ -207,10 +207,10 @@ class ApplicationTest {
         assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, " +
             "boss=Person{id='10'}, canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, " +
             "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
-            "vacationType=VacationType{id=null, active=false, category=HOLIDAY, messageKey='null', requiresApproval='false', color='YELLOW'}, dayLength=FULL, " +
-            "holidayReplacements=[HolidayReplacement{, person=Person{id='10'}, note='hello myself'}], " +
-            "address='Address', applicationDate=1970-01-01, cancelDate=+999999999-12-31, " +
-            "editedDate=+999999999-12-31, remindDate=+999999999-12-31, status=ALLOWED, teamInformed=true, hours=PT10H}");
+            "vacationType=VacationTypeEntity{id=null, active=false, category=HOLIDAY, messageKey='null', requiresApproval=false, color=YELLOW}, " +
+            "dayLength=FULL, holidayReplacements=[HolidayReplacement{, person=Person{id='10'}, note='hello myself'}], " +
+            "address='Address', applicationDate=1970-01-01, cancelDate=+999999999-12-31, editedDate=+999999999-12-31, " +
+            "remindDate=+999999999-12-31, status=ALLOWED, teamInformed=true, hours=PT10H}");
     }
 
     @Test

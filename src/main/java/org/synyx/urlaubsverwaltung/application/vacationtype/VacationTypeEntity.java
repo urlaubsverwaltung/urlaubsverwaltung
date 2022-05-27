@@ -86,13 +86,13 @@ public class VacationTypeEntity {
 
     @Override
     public String toString() {
-        return "VacationType{" +
+        return "VacationTypeEntity{" +
             "id=" + id +
             ", active=" + active +
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
-            ", requiresApproval='" + requiresApproval + '\'' +
-            ", color='" + color + '\'' +
+            ", requiresApproval=" + requiresApproval +
+            ", color=" + color +
             '}';
     }
 
