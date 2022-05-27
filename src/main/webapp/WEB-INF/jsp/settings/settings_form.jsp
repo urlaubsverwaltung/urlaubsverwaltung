@@ -526,9 +526,12 @@
                                                 <label
                                                     id="color-picker-label-${loop.index}"
                                                     for="color-picker-${loop.index}"
-                                                    class="color-picker-button tw-px-3 tw-py-2 tw-w-12 tw-h-4 tw-rounded"
-                                                    style="background-color:var(--absence-color-${absenceType.color})"
+                                                    class="color-picker-button"
                                                 >
+                                                    <span
+                                                        class="color-picker-button-color"
+                                                        style="background-color:var(--absence-color-${absenceType.color})"
+                                                    ></span>
                                                     <span class="tw-sr-only">
                                                         <spring:message code="settings.absenceTypes.action.color.label" />
                                                     </span>

@@ -37,12 +37,11 @@ class ColorPicker extends HTMLDivElement {
   }
 
   connectedCallback() {
-    this.#addListboxHint();
-
     this.#dialogToggleButton = this.querySelector("[class~='color-picker-button']");
     this.#dialogToggleCheckbox = this.querySelector(`#${this.#dialogToggleButton.getAttribute("for")}`);
     this.#dialog = this.querySelector(".color-picker-dialog");
     this.#colorOptions = this.#dialog.querySelectorAll("li");
+    this.#addListboxHint();
 
     this.#focusedElementIndex = 0;
     this.#dialog.setAttribute("aria-labelledby", this.#dialogToggleButton.getAttribute("id"));
@@ -83,7 +82,11 @@ class ColorPicker extends HTMLDivElement {
     // otherwise the browser jumps to the checkbox element (which is positioned absolutely on top of the screen)
     // checkbox state is updated in #render
     // eslint-disable-next-line unicorn/consistent-function-scoping
-    const handleDialogToggleButtonClick = (event) => event.preventDefault();
+    const handleDialogToggleButtonClick = (event) => {
+      event.preventDefault();
+      const { left } = this.#dialogToggleButton.getBoundingClientRect();
+      this.#dialog.style.setProperty("transform-origin", `${event.clientX - left}px 0`);
+    };
 
     const handleClick = (event) => {
       // update selected color visualisation
@@ -174,8 +177,10 @@ class ColorPicker extends HTMLDivElement {
     this.classList.add("tw-flex", "tw-items-center");
 
     const span = document.createElement("span");
-    span.classList.add("dropdown-caret", "tw-cursor-pointer", "tw-mt-0.5", "tw-ml-1.5");
-    this.append(span);
+    span.classList.add("dropdown-caret", "tw-cursor-pointer", "-tw-mt-px", "tw-ml-1.5");
+
+    this.#dialogToggleButton.classList.add("tw-flex", "tw-items-center");
+    this.#dialogToggleButton.append(span);
   }
 
   #repositionDialog() {
@@ -201,7 +206,9 @@ class ColorPicker extends HTMLDivElement {
       }
     }
 
-    this.#dialogToggleButton.style.setProperty("background-color", `var(--absence-color-${this.#value})`);
+    this.#dialogToggleButton
+      .querySelector(".color-picker-button-color")
+      .style.setProperty("background-color", `var(--absence-color-${this.#value})`);
   }
 
   #renderFocusedElement() {

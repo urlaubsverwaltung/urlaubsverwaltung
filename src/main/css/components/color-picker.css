@@ -6,7 +6,13 @@
   margin: 0 !important; /* reset bootstrap stuff */
 }
 
-[is="uv-color-picker"] > label.color-picker-button {
+[is="uv-color-picker"] .color-picker-button-color {
+  @apply tw-inline-block;
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-w-12;
+  @apply tw-h-4;
+  @apply tw-rounded;
   @apply tw-ring-1;
   @apply tw-ring-inset;
   @apply tw-ring-zinc-300;
