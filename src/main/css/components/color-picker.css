@@ -19,8 +19,6 @@
   left: -999999px;
 }
 
-[is="uv-color-picker"] input[type="checkbox"] {}
-
 [is="uv-color-picker"] .color-picker-dialog {
     position: absolute;
     top: calc(100% + 0.25rem);
