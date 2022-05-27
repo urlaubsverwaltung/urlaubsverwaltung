@@ -109,6 +109,7 @@ th.vacationOverview-cal-head.today::after {
   border-radius: 99999px;
 }
 
+.cal-day.sick-note-full::after,
 .cal-day.absence-full--solid::after {
   background-color: var(--absence-bar-color);
 }
@@ -127,6 +128,7 @@ th.vacationOverview-cal-head.today::after {
   border-radius: 99999px;
 }
 
+.cal-day.sick-note-morning::before,
 .cal-day.absence-morning--solid::before {
   background-color: var(--absence-bar-color-morning);
 }
@@ -145,6 +147,7 @@ th.vacationOverview-cal-head.today::after {
   border-radius: 99999px;
 }
 
+.cal-day.sick-note-noon::after,
 .cal-day.absence-noon--solid::after {
   background-color: var(--absence-bar-color-noon);
 }
