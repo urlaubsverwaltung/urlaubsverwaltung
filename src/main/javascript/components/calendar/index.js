@@ -203,9 +203,6 @@ $(function () {
       absenceType: function (date) {
         return holidayService.getAbsenceType(date);
       },
-      status: function (date) {
-        return holidayService.getStatus(date);
-      },
       vacationTypeId: function (date) {
         return holidayService.getVacationTypeId(date);
       },
@@ -370,15 +367,6 @@ $(function () {
         }
 
         return "";
-      },
-
-      getStatus: function (date) {
-        const absences = getAbsencesForDate(date);
-        for (let absence of absences) {
-          if (absence.type === "VACATION") {
-            return status;
-          }
-        }
       },
 
       getAbsenceId: function (date) {
